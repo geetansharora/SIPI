@@ -1,0 +1,81 @@
+{
+  "schemaVersion": 1,
+  "id": "cdr-natural-frequency",
+  "kind": "cdr",
+  "model": "cdr",
+  "modelVersion": "1.1",
+  "contractVersion": "2.1",
+  "params": {
+    "fn": 4,
+    "zeta": 0.5,
+    "margin": 0.3,
+    "ceiling": 20,
+    "jitterFrequency": 4,
+    "jitterAmplitude": 0.4
+  },
+  "topology": "Declared linear type-2 second-order CDR teaching loop.",
+  "planes": "Input phase, recovered phase and residual phase at the same time; phase measured in UI.",
+  "evidence": {
+    "type": "analytical",
+    "provenance": "First-principles boundary conditions, linear circuit laws or the declared teaching-loop equation; no measured or licensed data."
+  },
+  "checks": [
+    {
+      "metric": "inputAtZero",
+      "expected": 0,
+      "absoluteTolerance": 1e-10,
+      "unit": "UI",
+      "derivation": "Input is a sine with zero phase at t=0."
+    },
+    {
+      "metric": "recoveredAtZero",
+      "expected": -0.2,
+      "absoluteTolerance": 1e-10,
+      "unit": "UI",
+      "derivation": "At f=fn and ζ=.5, H=1−j. A .4 UI peak-to-peak sine has .2 UI amplitude; the quadrature term at t=0 is −.2 UI."
+    },
+    {
+      "metric": "residualAtZero",
+      "expected": 0.2,
+      "absoluteTolerance": 1e-10,
+      "unit": "UI",
+      "derivation": "Residual=input−recovered=0−(−.2) UI."
+    },
+    {
+      "metric": "recoveredAtQuarter",
+      "expected": 0.2,
+      "absoluteTolerance": 1e-10,
+      "unit": "UI",
+      "derivation": "At a quarter period, sin=1 and cos=0; Re(H)=1 gives .2 UI."
+    },
+    {
+      "metric": "residualAtQuarter",
+      "expected": 0,
+      "absoluteTolerance": 1e-10,
+      "unit": "UI",
+      "derivation": "Input and recovered phase coincide at a quarter period in this example."
+    }
+  ],
+  "lesson": {
+    "prediction": "If the recovered phase amplitude exceeds the input amplitude, can the residual still be found by subtracting magnitudes?",
+    "experiment": "Open the scenario, keep its network and stimulus fixed, and inspect the stated observation. Compare with the derived answer before changing one variable.",
+    "explanation": "No. At f=fn the real part of the denominator vanishes; the declared loop reduces to H=1−j/(2ζ). At ζ=.5 the residual transfer is j, so the phase relation determines instantaneous error.",
+    "transferQuestion": "Does this frequency equal the closed-loop −3 dB bandwidth?",
+    "answer": "No. It is the natural frequency of the declared denominator; the closed-loop bandwidth depends on damping and the numerator."
+  },
+  "limitations": [
+    "Steady-state linear teaching loop, not acquisition, cycle slips, noise, or a BER-qualified tolerance mask.",
+    "Peak-to-peak input amplitude is twice its sine amplitude.",
+    "Quarter-period sample is checked against its exported time coordinate."
+  ],
+  "scenario": "/topics/signal-integrity/receiver-and-clock.html#lab=cdr;v=2.1;cdr-fn=4;cdr-zeta=50;cdr-margin=30;cdr-jitter-f=4;cdr-jitter-a=40",
+  "parameterUnits": {
+    "fn": "MHz",
+    "zeta": "-",
+    "margin": "UI",
+    "ceiling": "UI pp",
+    "jitterFrequency": "MHz",
+    "jitterAmplitude": "UI pp"
+  },
+  "stimulus": "Steady-state sinusoidal input phase, 0.4 UI peak-to-peak at 4 MHz."
+}

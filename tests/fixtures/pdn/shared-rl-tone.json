@@ -1,0 +1,22 @@
+{
+  "schemaVersion":1,
+  "id":"pdn-shared-rl-tone",
+  "title":"Two loads share upstream resistance and inductance",
+  "availability":"helper-only",
+  "stages":[{"series":null,"shunt":{"r":0.1,"l":1e-9}},{"series":{"r":0.2,"l":2e-9}},{"series":{"r":0.3,"l":3e-9}}],
+  "units":{"r":"ohm","l":"H","current":"A","time":"s","voltage":"V"},
+  "grid":{"samples":1024,"dt":1e-9,"cycles":8},
+  "loads":[{"node":2,"dc":2,"sin":1,"cos":0},{"node":1,"dc":1,"sin":0,"cos":0.5}],
+  "observe":[2,1],
+  "expectedDcVolts":[-1.5,-0.9],
+  "sharedPaths":[[{"r":0.6,"l":6e-9},{"r":0.3,"l":3e-9}],[{"r":0.3,"l":3e-9},{"r":0.3,"l":3e-9}]],
+  "absoluteToleranceVolts":1e-9,
+  "derivation":"KCL puts both load currents through the source-to-node-1 path (0.3 ohm, 3 nH). Only node-2 current traverses the final link. KVL gives each observation as minus the sum of R*I + L*dI/dt along shared paths. Constant terms give -1.5 V at node 2 and -0.9 V at node 1. The sine/cosine derivatives preserve phase and test the withdrawal sign.",
+  "prediction":"Do equal current changes at different nodes cause the same voltage change everywhere?",
+  "explanation":"Both currents affect the common upstream path. Only the downstream current crosses the final link, so the two observation voltages differ. Inductance also makes voltage depend on the rate of change of current.",
+  "transferQuestion":"If opposite currents cancel at node 1, must the node-2 voltage also vanish?",
+  "answer":"No. Downstream current still crosses the final link. Cancellation is tied to the observation and excitation locations.",
+  "evidence":{"type":"analytical","provenance":"Kirchhoff laws and v=L di/dt; no production output used as a golden value."},
+  "limitations":["Ideal three-node series RL teaching network, without capacitor banks or a regulator loop.","Periodic, bin-aligned tone; no causal pulse or FFT-window accuracy claim.","The existing five-stage lab cannot instantiate this exact topology."],
+  "relatedPage":"/topics/labs/pdn-chain.html"
+}

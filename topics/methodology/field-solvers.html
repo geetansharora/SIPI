@@ -1,0 +1,347 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Field Solvers for SI/PI: 2D, 2.5D, and 3D | SIPI</title>
+<meta name="description" content="What each class of solver assumes, which structures each is exact for, and how to partition a channel so the slow one runs on as little as possible.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<link rel="stylesheet" href="../../css/base.css?v=e4f774de">
+<link rel="stylesheet" href="../../css/components.css?v=295837ab">
+  <!-- meta:start -->
+  <link rel="canonical" href="https://sipi.work/topics/methodology/field-solvers.html">
+  <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="SIPI">
+  <meta property="og:title" content="Field Solvers for SI/PI: 2D, 2.5D, and 3D | SIPI">
+  <meta property="og:description" content="What each class of solver assumes, which structures each is exact for, and how to partition a channel so the slow one runs on as little as possible.">
+  <meta property="og:url" content="https://sipi.work/topics/methodology/field-solvers.html">
+  <meta property="og:image" content="https://sipi.work/assets/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Field Solvers for SI/PI: 2D, 2.5D, and 3D | SIPI">
+  <meta name="twitter:description" content="What each class of solver assumes, which structures each is exact for, and how to partition a channel so the slow one runs on as little as possible.">
+  <meta name="twitter:image" content="https://sipi.work/assets/og.png">
+  <!-- meta:end -->
+</head>
+<body>
+
+<header class="masthead">
+  <a class="wordmark" href="../../index.html">SIPI</a>
+  <nav>
+    <a href="../../index.html#fundamentals">Fundamentals</a>
+    <a href="../../index.html#power-integrity">Power</a>
+    <a href="../../index.html#interfaces">Interfaces</a>
+    <a href="../../start.html">Start</a>
+    <a href="../../labs.html">Labs</a>
+    <a href="../../reference.html">Reference</a>
+    <button class="theme-toggle" data-act="theme" type="button">System</button>
+  </nav>
+</header>
+
+<main>
+  <div class="page-head">
+    <p class="crumb"><a href="../../index.html#methodology">Methodology</a> / 02</p>
+    <h1>Field Solvers for SI/PI: 2D, 2.5D, and 3D</h1>
+    <p class="byline">
+      <!-- review:start --><span>By Geetansh Arora — Principal SI/PI Engineer</span><time datetime="2026-09-18" title="Technical review by Geetansh Arora on this date">18 Sep 2026</time><span>8 min</span><!-- review:end -->
+    </p>
+    <p class="answer">
+      A field solver computes what Maxwell's equations say about a structure you describe. The
+      three classes differ in what they <em>assume</em> before they start &#8212; and those
+      assumptions, not the accuracy claims, are what decide which one is right for a given
+      question.
+    </p>
+  </div>
+
+  <!-- ───────────── the picture ───────────── -->
+  <figure class="figure">
+    <div class="figure__bar"><span>Three assumptions &#183; and how to spend the expensive one</span></div>
+    <div class="figure__body"><svg viewBox="-4 14 680 250" role="img" aria-label="Three classes of field solver compared by what each assumes about the geometry, alongside a diagram showing how a channel is partitioned so the slow solver runs on as little as possible.">
+  <text class="lbl-hi" x="0" y="34">solvers differ by what they assume about the geometry</text>
+  <rect class="edge" x="0" y="46" width="200" height="112" rx="3" fill="var(--surface-2)"/><text class="lbl-hi" x="14" y="68">2D</text><text class="lbl-sig" x="186" y="68" text-anchor="end">seconds</text><text class="lbl" x="14" y="90">assumes:</text><text class="lbl-ref" x="14" y="106">the cross-section never changes</text><text class="lbl" x="14" y="130">exact for:</text><text class="lbl-sig" x="14" y="146">any uniform trace</text>
+  <rect class="edge" x="236" y="46" width="200" height="112" rx="3" fill="var(--surface-2)"/><text class="lbl-hi" x="250" y="68">2.5D planar</text><text class="lbl-ref" x="422" y="68" text-anchor="end">minutes</text><text class="lbl" x="250" y="90">assumes:</text><text class="lbl-ref" x="250" y="106">flat layers, vertical vias</text><text class="lbl" x="250" y="130">exact for:</text><text class="lbl-sig" x="250" y="146">planes, cavities, PDN</text>
+  <rect class="edge" x="472" y="46" width="200" height="112" rx="3" fill="var(--surface-2)"/><text class="lbl-hi" x="486" y="68">3D FEM/FDTD</text><text class="lbl-bad" x="658" y="68" text-anchor="end">hours</text><text class="lbl" x="486" y="90">assumes:</text><text class="lbl-ref" x="486" y="106">nothing</text><text class="lbl" x="486" y="130">exact for:</text><text class="lbl-sig" x="486" y="146">vias, launches, bondwires</text>
+  <g transform="translate(0,176)">
+    <text class="lbl-hi" x="0" y="0">the partition is the technique</text>
+    <rect x="0" y="12" width="70" height="24" rx="2" fill="var(--alarm)" opacity=".5"/>
+    <text class="lbl-hi" x="35" y="28" text-anchor="middle">3D</text>
+    <rect x="72" y="12" width="200" height="24" rx="2" fill="var(--signal)" opacity=".45"/>
+    <text class="lbl-hi" x="172" y="28" text-anchor="middle">2D — the long uniform trace</text>
+    <rect x="274" y="12" width="70" height="24" rx="2" fill="var(--alarm)" opacity=".5"/>
+    <text class="lbl-hi" x="309" y="28" text-anchor="middle">3D</text>
+    <rect x="346" y="12" width="200" height="24" rx="2" fill="var(--signal)" opacity=".45"/>
+    <text class="lbl-hi" x="446" y="28" text-anchor="middle">2D</text>
+    <rect x="548" y="12" width="70" height="24" rx="2" fill="var(--alarm)" opacity=".5"/>
+    <text class="lbl-hi" x="583" y="28" text-anchor="middle">3D</text>
+    <text class="lbl" x="0" y="56">breakout · via transitions · connector launch in 3D; everything between them in 2D; then cascade</text>
+    <text class="lbl-bad" x="0" y="74">and check convergence — a single 3D run with no mesh refinement is a number with unknown error bars</text>
+  </g>
+</svg></div>
+    <figcaption><b>Partition the channel according to its geometry.</b> Use 3D models for the breakout region, via transitions, and connector launch; use 2D models for the uniform trace segments between them; then cascade the S-parameters. This provides an accurate result efficiently and makes each block reusable across variants. A 2D model of a changing cross-section omits the discontinuity, so the result looks clean because the impairment is absent rather than small. A 3D result with an inadequate mesh has unknown error bars; check it through mesh convergence. A frequency-independent D<sub>k</sub> and D<sub>f</sub> model is non-causal and can produce energy before the excitation arrives, so use a suitable dispersive fit.</figcaption>
+  </figure>
+
+  <div class="prose">
+    <p>
+      Every closed-form formula an engineer first learns — such as Wheeler's microstrip equation or the classic
+      <span class="num">Z<sub>0</sub> = &radic;(L/C)</span> relationship — is a simplified analytical approximation.
+      These formulas assume infinite reference planes, zero conductor thickness, perfectly rectangular traces,
+      and uniform dielectrics. In actual PCB and package manufacturing, traces have trapezoidal sidewalls, dielectrics
+      are inhomogeneous fiberglass weaves, and signals transition through vertical vias with complex anti-pad cutouts.
+      At multi-gigabit speeds, closed-form formulas fail completely.
+    </p>
+
+    <p>
+      A <strong>field solver</strong> replaces rules of thumb by solving Maxwell's equations directly on the actual
+      physical geometry. By discretizing the physical space into a computational mesh of millions of tiny elements,
+      the solver calculates the precise electric and magnetic fields, yielding exact frequency-dependent impedance,
+      loss, and coupling matrices.
+    </p>
+
+    <p>
+      However, &ldquo;field solver&rdquo; is not a single uniform tool. Solving electromagnetics in three dimensions
+      is notoriously computationally expensive. The entire discipline of practical modeling centers on choosing
+      the <strong>cheapest solver class</strong> whose geometric assumptions still capture the essential physics
+      of the structure: 2D solvers for uniform cross-sections, 2.5D planar solvers for power-ground plane pairs,
+      and full 3D solvers for complex transitions.
+    </p>
+
+    <h2>What a solver is doing, and why there are three</h2>
+
+    <p>
+      Every electrical property on this site comes from fields: impedance from where the electric
+      field terminates, inductance from where the magnetic field loops, coupling from field that
+      reaches a neighbour. A field solver computes those fields numerically for a geometry you
+      supply.
+    </p>
+
+    <p>
+      Solving the full three-dimensional problem is expensive, and usually unnecessary. Most of a
+      board is a trace running over a plane with a cross-section that does not change along its
+      length — and for that, the three-dimensional problem collapses to a two-dimensional one that
+      solves in seconds.
+    </p>
+
+    <p>
+      So the classes of solver are really classes of <em>assumption</em>: how much of the geometry
+      you are allowed to say is repetitive, and therefore how much work can be skipped.
+    </p>
+
+    <h2 class="section-rule"><span>The three classes</span></h2>
+
+    <ul class="tight">
+      <li><strong>2D.</strong> Assumes the cross-section is uniform along the length, and solves it once
+        to give RLGC per unit length. For a straight trace over a solid plane this is not an
+        approximation — it is exact, and it runs in seconds. Use it for every uniform transmission line
+        in the design, and sweep it freely.</li>
+      <li><strong>2.5D / planar (method of moments).</strong> Assumes the structure is a stack of flat
+        layers with vertical connections between them, which is exactly what a PCB is. Handles arbitrary
+        shapes within each layer — plane cutouts, cavity resonance, irregular fills — far faster than
+        full 3D. This is the natural tool for plane-pair PDN work.</li>
+      <li><strong>3D (FEM or FDTD).</strong> Assumes nothing about the geometry. Necessary for anything
+        genuinely three-dimensional: vias with their antipads and surrounding ground vias, connector
+        launches, bond wires, package transitions. Slowest by orders of magnitude, and the accuracy
+        depends heavily on the mesh.</li>
+    </ul>
+
+    <div class="note">
+      <b>The partition is the technique</b>
+      Partition the channel by geometry: use 3D models for the breakout region, via transitions, and
+      connector launch; use 2D models for every uniform trace segment; then cascade the S-parameters.
+      This gives an accurate result in a fraction of the time — and it makes each block reusable across
+      variants, which matters far more than the single-run saving.
+    </div>
+
+    <h2 class="section-rule"><span>Where each one misleads</span></h2>
+
+    <p>
+      <strong>2D applied where the cross-section changes.</strong> A trace that necks down through a
+      breakout, or runs over a plane cutout, is not uniform, and a 2D solve of the nominal geometry will
+      simply not contain the discontinuity. The result looks clean because the impairment is absent, not
+      because it is small.
+    </p>
+
+    <p>
+      <strong>3D with an inadequate mesh.</strong> A 3D solver's answer is only as good as its
+      discretisation, and the default mesh is often too coarse for thin dielectrics and skin-depth
+      effects at high frequency. The check is convergence: refine the mesh and re-run, and if the answer
+      moves meaningfully, it had not converged. A single 3D run with no convergence check is a number
+      with unknown error bars.
+    </p>
+
+    <p>
+      <strong>Any solver with the wrong material model.</strong> A frequency-independent D<sub>k</sub>
+      and D<sub>f</sub> is non-causal, and produces the characteristic artefacts — energy arriving
+      before it was sent — in the time domain. A dispersive model such as a Djordjević-Sarkar fit costs
+      nothing extra and removes an entire class of confusing results.
+    </p>
+
+    <p>
+      One last practical note: solvers give you S-parameters, and S-parameters are the thing to sanity
+      check. Passivity, causality and reciprocity should be verified on every extracted block before it
+      is cascaded, because a violation in one block propagates into everything downstream and is far
+      harder to find there.
+    </p>
+
+    <h2 class="section-rule"><span>Why this decides how your board behaves</span></h2>
+
+    <ul class="tight">
+      <li><strong>Match the solver class to the geometry.</strong> A 2D solve cannot represent a via
+        because the geometry violates the translational-uniformity assumption on which the method rests.</li>
+      <li><strong>Convergence is not accuracy.</strong> A converged result is one that stopped
+        changing with mesh refinement. It can still be the exact answer to a badly posed
+        problem.</li>
+      <li><strong>Boundary conditions are part of the model.</strong> What a solver assumes at the
+        edges of its domain changes the answer, especially for anything radiating or resonant.</li>
+      <li><strong>Material data drives everything.</strong> A perfect solve with a wrong
+        D<sub>f</sub> is wrong, and the error grows with frequency.</li>
+    </ul>
+
+    <h2 class="section-rule"><span>What to do about it</span></h2>
+
+    <p>
+      <strong>Match the class to the geometry, not to the budget.</strong> Uniform cross-section →
+      2D, exactly and in seconds. Layered planar structures → 2.5D. Genuinely three-dimensional
+      structures — vias, launches, connectors — → 3D, and only those.
+    </p>
+
+    <p>
+      <strong>Check convergence deliberately.</strong> Refine the mesh and confirm the answer stops
+      moving. A single run at default settings is an opinion.
+    </p>
+
+    <p>
+      <strong>Validate against something you already know.</strong> Solve a structure with a known
+      answer — a plain 50 Ω line, or a quarter-wave stub whose resonance you can compute — before
+      trusting the solver on the structure you cannot check.
+    </p>
+
+    <p>
+      <strong>State your material assumptions with any result.</strong> D<sub>k</sub>,
+      D<sub>f</sub>, at what frequency, copper roughness and its parameter definition. A result
+      without them is not reproducible.
+    </p>
+
+    <div class="note">
+      <b>Using this to find a fault</b>
+      <ul class="tight">
+        <li><b>A solved impedance that does not match the fabricator's coupon.</b> Compare the
+          geometry assumptions first — etch trapezoid, copper thickness, solder mask — before
+          suspecting the laminate.</li>
+        <li><b>3D results that change with domain size.</b> Boundary conditions are affecting the
+          answer, which means the domain is too small or the boundary type is wrong.</li>
+        <li><b>Loss under-predicted, growing with frequency.</b> Roughness, usually either absent
+          or given the wrong roughness parameter.</li>
+        <li><b>A resonance in the solve that hardware does not show.</b> Check whether the model's
+          boundary made a cavity the real structure does not have.</li>
+      </ul>
+    </div>
+
+    <details class="deeper">
+      <summary>Go deeper — what each class assumes, and where each misleads</summary>
+
+      <ul class="tight">
+        <li><strong>2D</strong> assumes the cross-section is uniform along the length. For a
+          straight trace over a solid plane that is not an approximation — it is exact. It
+          misleads the moment the geometry stops being uniform, and it has no way to tell you
+          that it has.</li>
+        <li><strong>2.5D, or planar method-of-moments</strong>, assumes the structure is a stack of
+          flat layers with vertical connections between them — which is exactly what a PCB is. It
+          handles arbitrary shapes within a layer, so it is the right tool for plane cutouts and
+          cavity behaviour. It misleads where true three-dimensional field structure matters, such
+          as inside a connector or around a bond wire.</li>
+        <li><strong>3D</strong> assumes nothing about the geometry and pays for it in runtime. It
+          misleads mainly through the modeller: domain size, boundary conditions, port definitions
+          and mesh density are all choices, and all of them can produce a converged answer to the
+          wrong question.</li>
+      </ul>
+
+      <p>
+        <strong>Ports are the underrated part.</strong> A 3D solve produces S-parameters relative to
+        ports you defined, and how a port is set up — its reference conductor, its size, whether it
+        is a wave port or a lumped one — changes the result. Two engineers solving the same via with
+        different port setups will disagree, and both will have converged.
+      </p>
+
+      <p>
+        <strong>And partition coupling.</strong> Splitting a structure into pieces and solving each
+        separately is only valid if the pieces are not coupled. Two vias solved independently and
+        cascaded is not the same as two vias solved together, and the difference is exactly the
+        coupling you split apart. Cut where the fields are quiet.
+      </p>
+
+      <p>
+        <strong>The solver selection matrix: matching physics to geometry.</strong> Deciding which solver to
+        deploy on a specific PCB or package feature comes down to geometric symmetries and field orientation:
+      </p>
+
+      <ul class="tight">
+        <li><strong>2D Solvers (Boundary Element / Finite Difference):</strong>
+          <em>Assumes</em> invariance along the Z-axis (propagation direction). Field equations reduce to transverse
+          electro-magnetic (TEM or quasi-TEM) modes. Runtime: <em>seconds</em>. Solves transmission line per-unit-length
+          parameters (<span class="num">R, L, G, C</span>) and characteristic impedance (<span class="num">Z<sub>0</sub>, Z<sub>diff</sub></span>).
+          <strong>Use for:</strong> 95% of total trace length across microstrip, stripline, and coplanar topologies.
+          <strong>Fails when:</strong> Traces neck down near BGA escapes, cross splits in reference planes, or couple to
+          non-parallel routing.</li>
+        <li><strong>2.5D Planar Solvers (Method of Moments / Transmission Matrix):</strong>
+          <em>Assumes</em> planar, stratified dielectric layers with current flowing predominantly in X-Y planes and
+          strictly vertical (1D) currents on via barrels. Runtime: <em>minutes</em>. Meshes only the conducting surfaces
+          rather than 3D air/dielectric volumes, shrinking matrix dimensions dramatically.
+          <strong>Use for:</strong> Power integrity plane-pair impedance extraction, cavity resonances, irregular DC power
+          islands, and board-wide decoupling capacitor placement.
+          <strong>Fails when:</strong> Horizontal fields dominate, such as antipad fringe fields in dense via fields,
+          tilted wirebonds, or connector pin headers.</li>
+        <li><strong>3D Full-Wave Solvers (Finite Element Method - FEM / FDTD):</strong>
+          <em>Assumes</em> zero geometric symmetry. Solves full vector Maxwell's curl equations in 3D space by dividing the
+          entire volume into tetrahedral or hexahedral meshes. Runtime: <em>hours to overnight</em>.
+          <strong>Use for:</strong> High-speed via transitions (>10 GHz), connector launches, BGA ball-to-board breakouts,
+          optical transceiver receptacles, and socket interfaces.
+          <strong>Fails when:</strong> Misconfigured! The biggest danger is artificial boundary reflection (insufficient
+          radiation boundary distance), poor wave port sizing, or halting before adaptive mesh refinement achieves
+          scattering parameter convergence (<span class="num">&Delta;S &le; 0.01</span>).</li>
+      </ul>
+    </details>
+
+    <h2 class="section-rule"><span>In the real world</span></h2>
+
+    <p>
+      Solvers have become easy to run and no easier to run well. The defaults produce a picture, and
+      the picture is persuasive in a way that hides every assumption behind it.
+    </p>
+
+    <p>
+      Which is why the habit of validating against a known case is worth more than any amount of
+      tool expertise. If a solver reproduces a quarter-wave resonance you calculated by hand, you
+      have learned something about the solver. If it does not, you have learned something more
+      important.
+    </p>
+
+    <h3>Related</h3>
+    <ul class="tight">
+      <li><a href="../methodology/simulation-flow.html">Signal Integrity Simulation Workflow</a></li>
+      <li><a href="../fundamentals/s-parameters.html">S-Parameters: Insertion Loss, Return Loss, and Mixed Mode</a></li>
+      <li><a href="../power-integrity/plane-resonance.html">Power-Plane Cavity Resonance and Edge Radiation</a></li>
+      <li><a href="../package-board/connectors-cables.html">High-Speed Connectors and Cables</a></li>
+    </ul>
+  </div>
+
+  <!-- pager:start -->
+  <nav class="pager" aria-label="Previous and next topic">
+    <a class="prev" href="../../topics/methodology/simulation-flow.html"><span class="dir">Previous</span><span>Signal Integrity Simulation Workflow</span></a>
+    <a class="next" href="../../topics/methodology/correlation.html"><span class="dir">Next</span><span>Correlating Simulation and Measurement</span></a>
+  </nav>
+  <!-- pager:end -->
+</main>
+
+<footer class="site-foot">
+  <span>SIPI &#8212; signal and power integrity, visualised.</span>
+  <span>Created and directed by Geetansh Arora. <a href="../../colophon.html">About, review &amp; AI assistance</a> &#183; <a href="../../model-contract.html">Model assumptions</a> &#183; <a href="../../docs/claims.md">Claim ledger</a></span>
+</footer>
+
+<script src="../../js/site.js?v=acb47d86"></script>
+<script src="../../js/search.js?v=6c93a285"></script>
+</body>
+</html>

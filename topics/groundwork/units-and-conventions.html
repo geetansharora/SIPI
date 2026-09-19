@@ -1,0 +1,475 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SI/PI Units, Conventions, and Reference Planes | SIPI</title>
+<meta name="description" content="SI/PI Units, Conventions, and Reference Planes">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<link rel="stylesheet" href="../../css/base.css?v=e4f774de">
+<link rel="stylesheet" href="../../css/components.css?v=295837ab">
+  <!-- meta:start -->
+  <link rel="canonical" href="https://sipi.work/topics/groundwork/units-and-conventions.html">
+  <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="SIPI">
+  <meta property="og:title" content="SI/PI Units, Conventions, and Reference Planes | SIPI">
+  <meta property="og:description" content="SI/PI Units, Conventions, and Reference Planes">
+  <meta property="og:url" content="https://sipi.work/topics/groundwork/units-and-conventions.html">
+  <meta property="og:image" content="https://sipi.work/assets/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="SI/PI Units, Conventions, and Reference Planes | SIPI">
+  <meta name="twitter:description" content="SI/PI Units, Conventions, and Reference Planes">
+  <meta name="twitter:image" content="https://sipi.work/assets/og.png">
+  <!-- meta:end -->
+</head>
+<body>
+
+<header class="masthead">
+  <a class="wordmark" href="../../index.html">SIPI</a>
+  <nav>
+    <a href="../../index.html#fundamentals">Fundamentals</a>
+    <a href="../../index.html#power-integrity">Power</a>
+    <a href="../../index.html#interfaces">Interfaces</a>
+    <a href="../../start.html">Start</a>
+    <a href="../../labs.html">Labs</a>
+    <a href="../../reference.html">Reference</a>
+    <button class="theme-toggle" data-act="theme" type="button">System</button>
+  </nav>
+</header>
+
+<main>
+  <div class="page-head">
+    <p class="crumb"><a href="../../index.html#groundwork">Groundwork</a> / 01</p>
+    <h1>SI/PI Units, Conventions, and Reference Planes</h1>
+    <p class="byline">
+      <!-- review:start --><span>By Geetansh Arora — Principal SI/PI Engineer</span><time datetime="2026-09-12" title="Technical review by Geetansh Arora on this date">12 Sep 2026</time><span>11 min</span><!-- review:end -->
+    </p>
+    <p class="answer">
+      Most arguments in signal integrity that look like disagreements about
+      physics turn out to be disagreements about definitions. Two people quote a
+      rise time, a jitter number, or a loss figure, and they mean different
+      quantities. This page is the list of the ones that actually cause trouble.
+    </p>
+  </div>
+
+  <div class="prose">
+    <h2>Why conventions cause real failures</h2>
+
+    <p>
+      In low-speed board design, numbers are forgiving. If a supply rail is labeled
+      3.3 V or a clock is labeled 50 MHz, everyone on the team understands the circuit
+      in roughly the same way. In signal and power integrity, almost every number you
+      encounter — whether it is a rise time, jitter budget, insertion loss, or trace
+      impedance — is fundamentally incomplete without its convention, bandwidth limit,
+      or reference plane.
+    </p>
+
+    <p>
+      A unit mistake is not a rounding error. It is usually a factor of two, or
+      2π, or the difference between a standard deviation and a peak-to-peak
+      width — and those do not show up as a slightly wrong answer. They show up
+      as a design that passed review and fails on the bench.
+    </p>
+
+    <p>
+      Worse, most of them are silent. Nothing in a spreadsheet objects when a
+      20–80% rise time is fed into a formula expecting 10–90%. The number that
+      comes out is plausible, and it is wrong by about 40%.
+    </p>
+
+    <h2 class="section-rule"><span>Rise time: two definitions, and no single factor between them</span></h2>
+
+    <p>
+      The <strong>10–90%</strong> rise time is the standard signal-integrity convention.
+      The <strong>20–80%</strong> figure is common in high-speed serial-link specifications,
+      because channel loss rounds off the corners of an edge, making the 0–10% and 90–100%
+      tails noisy and difficult to measure cleanly on an oscilloscope.
+    </p>
+
+    <p>
+      <strong>The ratio between them depends on the shape of the edge</strong>, and
+      the widely-repeated "about 0.6" is not right for any of the shapes people
+      actually mean. Each of these has a closed form, so they are facts rather
+      than fits:
+    </p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Edge shape</th><th>20–80 ⁄ 10–90</th><th>why</th></tr></thead>
+        <tbody>
+          <tr><td>Gaussian cumulative</td><td><b>0.657</b></td><td>ratio of normal quantiles, (z₈₀−z₂₀)⁄(z₉₀−z₁₀)</td></tr>
+          <tr><td>Linear ramp</td><td><b>0.750</b></td><td>exactly 0.6⁄0.8, because the edge is straight</td></tr>
+          <tr><td>First-order exponential</td><td><b>0.631</b></td><td>ln(4)⁄ln(9), from a single RC</td></tr>
+          <tr><td>Cubic smoothstep</td><td>0.700</td><td>the shape the wave labs on this site use</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>
+      So the spread across plausible shapes is 0.63 to 0.75 — nearly 20% — and
+      using 0.6 is wrong by about <b>9%</b> even for the Gaussian edge it is
+      usually attributed to. Mixing the two conventions without converting
+      inflates a 10–90% time by <b>1.52×</b> for a Gaussian edge, not the
+      "almost twice" a 0.6 factor suggests. Every knee frequency and critical
+      length built on it then comes out wrong in the dangerous direction — too
+      optimistic.
+    </p>
+
+    <p>
+      <strong>A concrete worked example:</strong> Suppose an ASIC driver produces an edge
+      with a measured 20–80% rise time of 30 ps. Modeled as a Gaussian cumulative step
+      (ratio 0.657), its equivalent 10–90% rise time is:
+    </p>
+
+    <div class="eq">
+      <span class="eq__main"><i class="var">t</i><sub>r(10–90)</sub> = <i class="var">t</i><sub>r(20–80)</sub> / 0.657 = 30 ps / 0.657 ≈ 45.7 ps</span>
+      <span class="eq__note">assuming an unverified 0.6 factor yields 50 ps; treating 30 ps as 10–90% directly underestimates high-frequency content</span>
+    </div>
+
+    <p>
+      The habit worth having is not to memorise a better factor. It is to
+      <em>identify the shape</em> before converting, and to say which one you
+      assumed when you write the number down. If you cannot tell — which is
+      common, because a real edge is none of these exactly — measure both
+      percentages off the same waveform rather than converting one into the
+      other.
+    </p>
+
+    <div class="note">
+      <b>The check that takes five seconds</b>
+      Before using any rise time in a formula, ask which two percentages it was
+      measured between. If the convention is undocumented, use the more conservative
+      interpretation and record the assumption before checking whether the design still closes.
+    </div>
+
+    <h2 class="section-rule"><span>ω and f, and the 2π that goes missing</span></h2>
+
+    <p>
+      Frequency <i>f</i> is in hertz — cycles per second. Angular frequency
+      <i>ω</i> is in radians per second, and ω = 2πf. Impedance formulas are
+      written in ω; instruments and specifications are written in f.
+    </p>
+
+    <div class="eq">
+      <span class="eq__main"><i class="var">X</i><sub>L</sub> = <i class="var">ω</i><i class="var">L</i> = 2π<i class="var">f</i><i class="var">L</i> &nbsp;&nbsp;&nbsp;&nbsp; <i class="var">X</i><sub>C</sub> = 1/(<i class="var">ω</i><i class="var">C</i>) = 1/(2π<i class="var">f</i><i class="var">C</i>)</span>
+      <span class="eq__note">a missing 2π is a factor of 6.28 — large enough to be obvious, and small enough to survive a review</span>
+    </div>
+
+    <h2 class="section-rule"><span>Rate, symbol rate, and the unit interval</span></h2>
+
+    <p>
+      These three are the same thing only for binary signalling, and PAM4 broke
+      that assumption for good.
+    </p>
+
+    <ul class="tight">
+      <li><strong>Bit rate</strong> — bits per second. What the interface is sold as.</li>
+      <li><strong>Symbol rate</strong> — symbols per second, in baud. For NRZ it
+        equals the bit rate; for PAM4 it is half.</li>
+      <li><strong>Unit interval (UI)</strong> — the duration of one
+        <em>symbol</em>. UI = 1/symbol rate.</li>
+      <li><strong>Nyquist frequency</strong> — half the <em>symbol</em> rate. This is
+        the frequency a channel budget is written at.</li>
+    </ul>
+
+    <p>
+      So PCIe Gen 6 at 64 GT/s has a 32 Gbaud symbol rate, a 31.25 ps UI, and a
+      16 GHz Nyquist — the same Nyquist as Gen 5 at half the data rate. Quoting
+      "64 GT/s" and reaching for 32 GHz is the single most common error in this
+      family.
+    </p>
+
+    <div class="note">
+      <b>And DDR counts differently again</b>
+      A DDR bus transfers on both clock edges, so a 8533 MT/s interface runs a
+      4266.5 MHz clock and a UI of about 117 ps. MT/s is transfers per second,
+      not clock cycles.
+    </div>
+
+    <h2 class="section-rule"><span>RMS, peak, and peak-to-peak</span></h2>
+
+    <p>
+      Three ways to describe an amplitude, and they are not interchangeable —
+      most importantly, <b>they combine differently</b>.
+    </p>
+
+    <ul class="tight">
+      <li><strong>RMS is not the same thing as σ, except when the mean is zero.</strong>
+        In general RMS² = mean² + σ², so the two coincide only for a zero-mean
+        quantity. For jitter about its own average that is fine and the shorthand is
+        harmless; for a supply ripple sitting on a DC rail, or a skew measured
+        against an absolute reference, it is a real error — the RMS of a 1 V rail
+        with 10 mV of noise is 1.00005 V, not 10 mV. Check that the mean has been
+        removed before using the words interchangeably.</li>
+      <li><strong>Quadrature addition needs more than "random".</strong>
+        σ = √(σ₁² + σ₂²) is the <em>independent</em> case. The general form carries
+        the covariance, σ² = σ₁² + σ₂² + 2·ρ·σ₁·σ₂, and ρ is not always zero: two
+        jitter terms driven by the same supply, or two skew terms sharing a clock
+        tree, are correlated by construction. With ρ = +1 they add linearly; with
+        ρ = −1 they cancel. Root-sum-square is an assumption you are making, and it
+        is worth saying so.</li>
+      <li><strong>Peak-to-peak</strong> is what you quote for anything bounded.
+        Bounded contributions add <em>directly</em>, worst case to worst case.</li>
+      <li><strong>Peak</strong> is half of peak-to-peak for a symmetric signal, and
+        the source of a great many factor-of-two errors. For an asymmetric one it is
+        not half of anything — say which peak you mean.</li>
+    </ul>
+
+    <p>
+      Adding a peak-to-peak deterministic jitter to an RMS random jitter in
+      quadrature understates the total. Adding two independent RMS contributions
+      linearly overstates it. Neither error announces itself — and neither does
+      assuming independence between two terms that share a cause.
+    </p>
+
+    <h2 class="section-rule"><span>Decibels, and what they are relative to</span></h2>
+
+    <p>
+      A decibel is always a <em>ratio</em>, and the suffix says what the reference
+      is. Dropping the suffix drops the meaning.
+    </p>
+
+    <p>
+      <strong>And the factor of 10 or 20 carries a hidden condition.</strong>
+      A decibel is defined on <em>power</em>: 10·log₁₀(P₂/P₁). The voltage form
+      with 20 in front of it is a consequence of P = V²/Z, and it is only
+      equivalent to the power form <em>when the two voltages are measured across
+      the same impedance</em>. In a 50 Ω instrument chain that holds everywhere
+      and the distinction never bites. It stops holding the moment an impedance
+      changes between the two points — across a transformer, at a probe tip
+      loading a high-impedance node, at the input of an amplifier with a
+      different input impedance from its source, or between the two sides of the
+      impedance step that the whole of this site is otherwise about. A
+      "−6 dB voltage divider" into a different impedance is not −6 dB of power,
+      and which of the two a specification means is worth reading rather than
+      assuming.
+    </p>
+
+    <div class="table-scroll">
+      <table class="data">
+        <thead><tr><th>Unit</th><th>Ratio of</th><th>Formula</th></tr></thead>
+        <tbody>
+          <tr><td>dB</td><td>two powers</td><td>10·log₁₀(P₂/P₁)</td></tr>
+          <tr><td>dB</td><td>two <em>voltages</em></td><td>20·log₁₀(V₂/V₁)</td></tr>
+          <tr><td>dBm</td><td>power against 1 mW</td><td>10·log₁₀(P/1 mW)</td></tr>
+          <tr><td>dBV</td><td>voltage against 1 V</td><td>20·log₁₀(V/1 V)</td></tr>
+          <tr><td>dBc</td><td>power against the carrier</td><td>10·log₁₀(P/P<sub>carrier</sub>)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>
+      The 10-versus-20 distinction is the one that bites. S-parameters are
+      <em>voltage</em> ratios, so S₂₁ in dB uses 20·log₁₀. Use 10 and a 14 dB
+      channel becomes a 7 dB one.
+    </p>
+
+    <h2 class="section-rule"><span>Insertion loss and return loss, and their signs</span></h2>
+
+    <p>
+      Both are quoted as positive numbers in conversation and are negative
+      quantities in a file, which causes endless confusion.
+    </p>
+
+    <ul class="tight">
+      <li><strong>S₂₁</strong> is transmission. For a passive channel it is at or
+        below 0 dB. "12 dB of loss" and "S₂₁ = −12 dB" are the same statement.</li>
+      <li><strong>S₁₁</strong> is reflection. "20 dB of return loss" means
+        S₁₁ = −20 dB, and <em>more</em> return loss is better — which is the
+        opposite of how "loss" reads everywhere else.</li>
+      <li><strong>α, the attenuation constant,</strong> is a <em>rate</em> in dB per
+        inch and is positive and rising with frequency. A plot in dB/inch going
+        <em>up</em> and an S₂₁ plot going <em>down</em> are consistent; the giveaway
+        is the "per inch".</li>
+    </ul>
+
+    <h2 class="section-rule"><span>Single-ended, differential, and common mode</span></h2>
+
+    <p>
+      A differential pair has two impedances, and four ways to normalise a
+      measurement. The relationships are fixed and worth memorising:
+    </p>
+
+    <div class="eq">
+      <span class="eq__main"><i class="var">Z</i><sub>diff</sub> = 2 · <i class="var">Z</i><sub>odd</sub> &nbsp;&nbsp;&nbsp;&nbsp; <i class="var">Z</i><sub>common</sub> = <i class="var">Z</i><sub>even</sub> / 2</span>
+      <span class="eq__note">and Z_diff is always LESS than 2·Z₀ for a coupled pair — two 50 Ω traces routed close are about 85–90 Ω differential, not 100</span>
+    </div>
+
+    <p>
+      In mixed-mode S-parameters the naming is <b>output mode first</b>: SCD21 is
+      differential in, common out. That ordering is the single most common
+      misreading, and SCD21 is the plot that predicts an emissions failure.
+    </p>
+
+    <h2 class="section-rule"><span>Reference planes: the one that invalidates everything</span></h2>
+
+    <p>
+      Every S-parameter, every loss figure and every eye measurement is relative
+      to a <em>place</em>. Measured at the connector it includes the launch;
+      de-embedded to the board it does not; after the receiver's equaliser it is a
+      different picture again.
+    </p>
+
+    <p>
+      Two numbers measured to different planes are not comparable, and nothing in
+      either number says so. When a simulation and a measurement disagree, this is
+      a more common cause than the physics.
+    </p>
+
+    <div class="note">
+      <b>Three questions for any number somebody hands you</b>
+      <ul class="tight">
+        <li><b>At what frequency?</b> A dB-per-inch figure with no frequency is
+          not a specification.</li>
+        <li><b>Between which planes?</b> Including what, excluding what.</li>
+        <li><b>Measured or modelled, and at which corner?</b> Nominal is not a
+          sign-off.</li>
+      </ul>
+      If all three have answers, the number can be used. If any does not, it is a
+      rumour.
+    </div>
+
+    <details class="deeper">
+      <summary>Go deeper — the factor-of-two table</summary>
+
+      <p>
+        Nearly every units error on this site's subject matter is one of these.
+        Worth reading once and recognising later.
+      </p>
+
+      <div class="table-scroll">
+        <table class="data">
+          <thead><tr><th>Confusion</th><th>Factor</th><th>Which way it hurts</th></tr></thead>
+          <tbody>
+            <tr><td>20–80% vs 10–90% rise time</td><td>0.6</td><td>edge looks slower → knee too low → under-designed</td></tr>
+            <tr><td>peak vs peak-to-peak</td><td>2</td><td>either way, depending on which is assumed</td></tr>
+            <tr><td>± tolerance vs peak-to-peak window</td><td>2</td><td>a PDN twice as expensive, or half as good</td></tr>
+            <tr><td>10·log vs 20·log</td><td>2 (in dB)</td><td>a 14 dB channel read as 7 dB → wildly optimistic</td></tr>
+            <tr><td>ω vs f</td><td>6.28</td><td>every reactance wrong by 2π</td></tr>
+            <tr><td>bit rate vs symbol rate (PAM4)</td><td>2</td><td>Nyquist doubled → a channel judged impossible</td></tr>
+            <tr><td>TDR distance vs delay</td><td>2</td><td>a discontinuity located twice as far away as it is</td></tr>
+            <tr><td>MT/s vs clock MHz (DDR)</td><td>2</td><td>UI halved or doubled</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>
+        The TDR one deserves a note because it is geometric rather than
+        definitional. A TDR sees a reflection after a <em>round trip</em>, so a
+        feature 2 inches away shows up at 4 inches' worth of delay. Instruments
+        divide by two to report distance — but only if you told them the right
+        propagation velocity, which depends on D<sub>k</sub>. Get that wrong and
+        every distance on the plot is wrong by the same ratio.
+      </p>
+
+      <p>
+        <strong>Worked conversion:</strong> Suppose a TDR trace on a low-loss
+        laminate (D<sub>k</sub> ≈ 3.3, propagation delay ≈ 150 ps/inch) shows an
+        impedance bump at 1 ns after the launch. The one-way electrical delay is
+        1000 ps / 2 = 500 ps. The physical distance to the discontinuity is:
+      </p>
+
+      <div class="eq">
+        <span class="eq__main">Distance = (1000 ps / 2) / (150 ps/inch) = 500 ps / 150 ps/inch ≈ 3.33 inches</span>
+        <span class="eq__note">forgetting the round-trip factor of 2 puts you at 6.67 inches — past the connector you were looking for</span>
+      </div>
+
+      <p>
+        A related habit worth building: <b>quote delays in picoseconds in a
+        report and inches only in conversation.</b> Picoseconds are what was
+        measured. Inches are an interpretation that carries an assumption about
+        the material.
+      </p>
+    </details>
+
+    <h2 class="section-rule"><span>In the real world</span></h2>
+
+    <p>
+      The reason this page exists is that units errors are the most common
+      preventable failure in the subject and the least interesting to find. They
+      do not require insight to discover, only attention — and they cost exactly
+      as much as a genuine physics mistake.
+    </p>
+
+    <p>
+      The habit that prevents most of them is writing the unit next to every
+      number, everywhere, including in variable names. This site's code does it:
+      <code>trUI</code>, <code>lossDb</code>, <code>rjRms</code>,
+      <code>trSamples</code>. It looks pedantic right up until the afternoon it
+      saves.
+    </p>
+
+    <h3>Related</h3>
+    <ul class="tight">
+      <li><a href="../fundamentals/edge-rate-not-clock-rate.html">Signal Bandwidth: Why Edge Rate Matters</a> — where rise time actually matters</li>
+      <li><a href="../fundamentals/jitter-taxonomy.html">Jitter — RJ, DJ, DCD, PJ and TJ</a> — why RMS and peak-to-peak cannot be added</li>
+      <li><a href="../fundamentals/s-parameters.html">S-Parameters: Insertion Loss, Return Loss, and Mixed Mode</a> — reference planes, port order, normalisation</li>
+      <li><a href="../fundamentals/differential-signalling.html">Differential signalling</a> — odd, even, differential and common</li>
+      <li><a href="domain-bridges.html">Time-Domain and Frequency-Domain Analysis</a> — the transforms these units describe</li>
+    </ul>
+  </div>
+
+
+  <script type="application/json" data-exercises>
+{
+  "title": "Check yourself",
+  "items": [
+    {
+      "ask": "A PAM4 link runs at 64 GT/s. What is its Nyquist frequency?",
+      "unit": "GHz",
+      "answer": 16,
+      "tolerance": 0.05,
+      "hint": "PAM4 carries two bits per symbol, and Nyquist is half the SYMBOL rate.",
+      "misreads": [
+        {
+          "value": 32,
+          "note": "That is half the BIT rate. PAM4 sends two bits per symbol, so the symbol rate is 32 Gbaud and Nyquist is half of that again."
+        },
+        {
+          "value": 64,
+          "note": "That is the bit rate itself. Nyquist is half the symbol rate, not the bit rate."
+        }
+      ],
+      "why": "64 GT/s ÷ 2 bits per symbol = 32 Gbaud, and Nyquist is half of that: 16 GHz — the same as PCIe Gen 5 at half the data rate. That is the entire reason PAM4 exists. Reaching for 32 GHz here is the most common error in this family, and it makes a perfectly buildable channel look impossible."
+    },
+    {
+      "ask": "A TDR shows a discontinuity 600 ps after the launch. In FR-4 stripline at 170 ps/inch, how far away is it?",
+      "unit": "inches",
+      "answer": 1.76,
+      "tolerance": 0.1,
+      "hint": "A TDR sees the round trip.",
+      "misreads": [
+        {
+          "value": 3.5,
+          "note": "You forgot the round trip. The reflection travelled out and back, so the distance is half the delay's worth."
+        }
+      ],
+      "why": "600 ps is the round trip, so the one-way delay is 300 ps, and 300 / 170 ≈ 1.76 inches. The factor of two is geometric rather than definitional, and the distance also inherits your assumed Dk — which is why delays belong in a written report and inches belong in conversation."
+    }
+  ]
+}
+  </script>
+
+  <!-- pager:start -->
+  <nav class="pager" aria-label="Previous and next topic">
+    <span class="prev"><span class="dir">Previous</span><span>—</span></span>
+    <a class="next" href="../../topics/groundwork/domain-bridges.html"><span class="dir">Next</span><span>Time-Domain and Frequency-Domain Analysis</span></a>
+  </nav>
+  <!-- pager:end -->
+</main>
+
+<footer class="site-foot">
+  <span>SIPI &#8212; signal and power integrity, visualised.</span>
+  <span>Created and directed by Geetansh Arora. <a href="../../colophon.html">About, review &amp; AI assistance</a> &#183; <a href="../../model-contract.html">Model assumptions</a> &#183; <a href="../../docs/claims.md">Claim ledger</a></span>
+</footer>
+
+<script src="../../js/site.js?v=acb47d86"></script>
+<script src="../../js/viz-loader.js?v=89d5884d"></script>
+<script src="../../js/search.js?v=6c93a285"></script>
+</body>
+</html>

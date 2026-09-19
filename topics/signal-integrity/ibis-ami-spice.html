@@ -1,0 +1,383 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IBIS, IBIS-AMI, and SPICE Model Selection | SIPI</title>
+<meta name="description" content="Three levels of buffer model, what each one can represent, and why AMI's two entry points map onto the two simulation methods.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<link rel="stylesheet" href="../../css/base.css?v=e4f774de">
+<link rel="stylesheet" href="../../css/components.css?v=295837ab">
+  <!-- meta:start -->
+  <link rel="canonical" href="https://sipi.work/topics/signal-integrity/ibis-ami-spice.html">
+  <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="SIPI">
+  <meta property="og:title" content="IBIS, IBIS-AMI, and SPICE Model Selection | SIPI">
+  <meta property="og:description" content="Three levels of buffer model, what each one can represent, and why AMI's two entry points map onto the two simulation methods.">
+  <meta property="og:url" content="https://sipi.work/topics/signal-integrity/ibis-ami-spice.html">
+  <meta property="og:image" content="https://sipi.work/assets/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="IBIS, IBIS-AMI, and SPICE Model Selection | SIPI">
+  <meta name="twitter:description" content="Three levels of buffer model, what each one can represent, and why AMI's two entry points map onto the two simulation methods.">
+  <meta name="twitter:image" content="https://sipi.work/assets/og.png">
+  <!-- meta:end -->
+</head>
+<body>
+
+<header class="masthead">
+  <a class="wordmark" href="../../index.html">SIPI</a>
+  <nav>
+    <a href="../../index.html#fundamentals">Fundamentals</a>
+    <a href="../../index.html#power-integrity">Power</a>
+    <a href="../../index.html#interfaces">Interfaces</a>
+    <a href="../../start.html">Start</a>
+    <a href="../../labs.html">Labs</a>
+    <a href="../../reference.html">Reference</a>
+    <button class="theme-toggle" data-act="theme" type="button">System</button>
+  </nav>
+</header>
+
+<main>
+  <div class="page-head">
+    <p class="crumb"><a href="../../index.html#signal-integrity">SI in practice</a> / 05</p>
+    <h1>IBIS, IBIS-AMI, and SPICE Model Selection</h1>
+    <p class="byline">
+      <!-- review:start --><span>By Geetansh Arora — Principal SI/PI Engineer</span><time datetime="2026-09-16" title="Technical review by Geetansh Arora on this date">16 Sep 2026</time><span>9 min</span><!-- review:end -->
+    </p>
+    <p class="answer">
+      A link simulation needs models of the devices at both ends, while transistor-level details
+      are rarely distributed. The industry therefore uses three levels of abstraction, each trading
+      accuracy for speed and for how much the vendor has to reveal. Knowing which level answers which
+      question saves a great deal of time.
+    </p>
+  </div>
+
+  <!-- ───────────── the picture ───────────── -->
+  <figure class="figure">
+    <div class="figure__bar"><span>Three levels of buffer model &#183; and the two AMI entry points</span></div>
+    <div class="figure__body"><svg viewBox="-4 20 660 250" role="img" aria-label="Three levels of buffer model side by side — IBIS, IBIS-AMI and transistor-level SPICE — with what each represents and what it omits.">
+  <text class="lbl" x="0" y="38">accuracy &#8594; &#183; runtime &#8594; &#183; how much silicon IP it exposes &#8594;</text>
+  <rect class="edge" x="0" y="46" width="200" height="134" rx="3" fill="var(--surface-2)"/><text class="lbl-hi" x="12" y="68">IBIS</text><text class="lbl-sig" x="188" y="68" text-anchor="end">fast</text><text class="lbl-sig" x="12" y="92">&#10003; V-I and V-T curves</text><text class="lbl-sig" x="12" y="108">&#10003; package parasitics</text><text class="lbl-sig" x="12" y="124">&#10003; die capacitance</text><text class="lbl" x="12" y="140">&#8212; no equalisation at all</text>
+  <rect class="edge" x="228" y="46" width="200" height="134" rx="3" fill="var(--surface-2)"/><text class="lbl-hi" x="240" y="68">IBIS-AMI</text><text class="lbl-ref" x="416" y="68" text-anchor="end">workable</text><text class="lbl-sig" x="240" y="92">&#10003; everything IBIS has</text><text class="lbl-sig" x="240" y="108">&#10003; FFE / CTLE / DFE</text><text class="lbl-sig" x="240" y="124">&#10003; CDR behaviour</text><text class="lbl" x="240" y="140">&#8212; compiled — opaque</text>
+  <rect class="edge" x="456" y="46" width="200" height="134" rx="3" fill="var(--surface-2)"/><text class="lbl-hi" x="468" y="68">SPICE</text><text class="lbl-bad" x="644" y="68" text-anchor="end">slow</text><text class="lbl-sig" x="468" y="92">&#10003; the actual circuit</text><text class="lbl-sig" x="468" y="108">&#10003; every non-linearity</text><text class="lbl" x="468" y="124">&#8212; orders slower</text><text class="lbl" x="468" y="140">&#8212; usually encrypted</text>
+  <g transform="translate(0,214)">
+    <rect class="edge" x="228" y="0" width="200" height="42" rx="3" fill="none" stroke="var(--signal)" stroke-dasharray="3 3"/>
+    <text class="lbl-sig" x="238" y="16">Init &#8594; LTI impulse response</text>
+    <text class="lbl-sig" x="238" y="32">GetWave &#8594; time domain, non-linear</text>
+    <text class="lbl" x="0" y="24">which one a model implements</text>
+    <text class="lbl" x="0" y="40">decides which flows you can run</text>
+    <text class="lbl-bad" x="656" y="24" text-anchor="end">check package parasitics are not counted twice</text>
+    <text class="lbl-bad" x="656" y="40" text-anchor="end">— by IBIS and by the extracted S-parameters</text>
+  </g>
+</svg></div>
+    <figcaption><b>A buffer model trades accuracy for runtime and for how much silicon IP it exposes.</b> IBIS describes the analogue front end behaviourally and has no concept of equalisation at all. IBIS-AMI adds the transmitter and receiver algorithms as compiled libraries &#8212; which is what makes modern serial-link simulation possible, because the equalisation <em>is</em> most of the link and no vendor will publish it in readable form. The two AMI entry points are the whole design. <code>Init</code> takes the channel's impulse response and returns a modified one &#8212; a purely LTI operation, which is exactly what a statistical flow needs. <code>GetWave</code> processes a real waveform and can be as non-linear as it likes, which is what a time-domain flow needs. What a model's flags declare it will <em>do</em> — whether Init returns a modified impulse response, and whether the waveform path is used — is what decides which simulations you can run, so check the flags rather than inferring from the entry points.</figcaption>
+  </figure>
+
+  <div class="prose">
+    <p>
+      When validating multi-gigabit interconnects, hardware engineers face a fundamental modeling dilemma.
+      Transistor-level SPICE schematics represent proprietary intellectual property that semiconductor vendors
+      strictly refuse to disclose. Furthermore, running full transient SPICE simulations across millions of bits
+      on a 32 Gbps backplane is computationally intractable — a single simulation would take weeks to execute.
+    </p>
+
+    <p>
+      Classic IBIS (I/O Buffer Information Specification) solved the IP-protection and speed challenges for
+      legacy parallel interfaces (like DDR, PCI, or flash memories) by replacing transistor netlists with
+      table-driven current-voltage (I-V) curves, voltage-time (V-t) switching tables, and basic package parasitics.
+      However, classic IBIS completely breaks down for modern multi-gigabit SerDes: it treats the buffer as a static
+      analog impedance and has zero mechanism to represent digital signal processing (DSP), feed-forward equalization
+      (FFE), continuous-time filters (CTLE), decision feedback loops (DFE), or clock-data recovery (CDR).
+    </p>
+
+    <p>
+      IBIS-AMI (Algorithmic Modeling Interface) was created to bridge this architectural divide. It splits the
+      transceiver into two distinct domains: a standard IBIS analog buffer representing pad capacitance and termination,
+      coupled to compiled, platform-native binary dynamic link libraries (DLLs or shared objects) that execute the
+      vendor's proprietary DSP algorithms at hardware speeds. Understanding how SPICE, classic IBIS, and IBIS-AMI
+      trade off speed, architectural visibility, and analog fidelity is essential to choosing the right tool for
+      each phase of design sign-off.
+    </p>
+
+    <h2>Why models exist in layers</h2>
+
+    <p>
+      To simulate a channel you need to know what the driver does and what the receiver does. The
+      obvious answer — use the actual circuit — fails for two reasons at once.
+    </p>
+
+    <p>
+      <strong>It is too slow.</strong> A transistor-level simulation of a SerDes running millions of
+      bits is not a thing you do overnight. And you need millions of bits, because that is what an
+      eye is made of.
+    </p>
+
+    <p>
+      <strong>It is commercially impossible.</strong> A driver's netlist is among the most sensitive
+      IP a silicon vendor has. No amount of asking will produce one.
+    </p>
+
+    <p>
+      So the industry built abstractions: descriptions detailed enough to predict behaviour and
+      abstract enough to share. Each layer keeps what matters for a class of question and discards
+      the rest.
+    </p>
+
+    <h2 class="section-rule"><span>Three levels</span></h2>
+
+    <ul class="tight">
+      <li><strong>IBIS.</strong> A behavioural description of the analogue buffer: V-I curves for the
+        pull-up and pull-down, V-T curves for the switching behaviour, package parasitics, and die
+        capacitance. Fast, portable, and reveals nothing about the transistors. It represents the
+        <em>driver and receiver front end</em>, and nothing else — an IBIS model has no concept of
+        equalisation.</li>
+      <li><strong>IBIS-AMI.</strong> IBIS plus compiled shared libraries that model the transmitter and
+        receiver algorithms — FFE taps, CTLE response, DFE adaptation, CDR behaviour. This is what makes
+        modern serial link simulation possible at all, because the equalisation is most of the link and
+        vendors will not publish it in readable form.</li>
+      <li><strong>SPICE / transistor-level.</strong> The actual circuit. Most accurate, slowest by
+        orders of magnitude, and commercially sensitive enough that it is usually delivered encrypted if
+        at all. Reserved for questions the behavioural models cannot answer.</li>
+    </ul>
+
+    <div class="note">
+      <b>Check the flags, not the entry points</b>
+      An AMI model's shared library has a defined lifecycle: initialisation, an optional per-block
+      waveform path, and a close/cleanup call. <code>AMI_Init</code> and <code>AMI_Close</code> bracket
+      the model's life and are not optional — they are how it is created and destroyed. What varies is
+      the <em>processing behaviour</em>, and the model declares that in its flags rather than by which
+      functions happen to exist.
+      <br><br>
+      Two behaviours matter. Does <code>AMI_Init</code> return a <em>modified</em> impulse response, or
+      does it merely initialise and leave the channel alone? That is what a statistical flow depends
+      on. And is the waveform path actually used, so the model can be non-linear and time-varying? That
+      is what a time-domain flow depends on. A model may be usable in one flow, the other, or both —
+      but read that off the flags and the accompanying documentation, not from the presence of a symbol
+      in the library. Check against the
+      <a href="https://ibis.org/ver8.0/ver8_0.pdf">IBIS specification</a> edition the model claims.
+    </div>
+
+    <h2 class="section-rule"><span>Where models mislead</span></h2>
+
+    <p>
+      Model problems are a large share of channel-simulation problems, and they share a signature: the
+      result looks entirely reasonable.
+    </p>
+
+    <ul class="tight">
+      <li><strong>Corners that do not exist.</strong> IBIS ships typ/min/max curves, and it is easy to
+        combine a fast driver with a slow receiver in a way silicon never produces. Worse, running
+        typical only is the most common mistake — the fast-strong corner has both a lower output
+        impedance and a faster edge, which makes reflections and crosstalk worse simultaneously.</li>
+      <li><strong>An AMI model tuned for its own reference channel.</strong> Adaptive blocks converge
+        against what they are given; a model validated on a smooth channel can behave oddly on one with
+        a resonance.</li>
+      <li><strong>Package parasitics counted twice.</strong> If the IBIS package model and the extracted
+        package S-parameters both include the same balls and traces, the channel is longer than reality
+        by one package. This is common enough to be worth checking every time.</li>
+    </ul>
+
+    <p>
+      The practical sequence: IBIS for pre-layout topology and termination work, where speed matters and
+      equalisation is not yet the question; AMI for everything to do with a serial link's real margin;
+      transistor-level only for the specific effect nothing else reproduces, and budget the runtime
+      before you promise the result.
+    </p>
+
+    <h3>Sources</h3>
+    <ul class="tight refs">
+      <li><a href="https://ibis.org/ver8.0/ver8_0.pdf">IBIS 8.0 specification</a> &#8212; AMI lifecycle, entry points and model flags</li>
+    </ul>
+      <h2 class="section-rule"><span>Why this decides how your board behaves</span></h2>
+
+    <ul class="tight">
+      <li><strong>The model level decides which questions you can even ask.</strong> An IBIS model
+        has no concept of equalisation, so it cannot answer anything about a modern serial link's
+        margin. Choosing the wrong level does not give a wrong answer — it gives a confident answer
+        to a different question.</li>
+      <li><strong>Most of a modern link is in the AMI part.</strong> The equalisation and clock
+        recovery do more to the eye than the channel does, so a channel simulation without them is
+        not a simulation of the link.</li>
+      <li><strong>Model validity limits are rarely stated and always exist.</strong> Every model was
+        extracted under conditions — a load range, a voltage, a temperature, a data rate — and is
+        not guaranteed outside them.</li>
+      <li><strong>Corners matter as much as typical.</strong> A model delivered with only a typical
+        corner cannot support a sign-off that has to cover fast-strong and slow-weak.</li>
+    </ul>
+
+    <h2 class="section-rule"><span>What to do about it</span></h2>
+
+    <p>
+      <strong>Ask what the model was validated against, not just what it contains.</strong> The
+      useful question to a vendor is "what measurement or transistor-level result was this checked
+      against, and over what range?" A model that has never been correlated is a document, not a
+      prediction.
+    </p>
+
+    <p>
+      <strong>Check the corners are present and use them.</strong> Fast-strong is where reflections
+      and crosstalk are worst; slow-weak is where timing is worst. A typical-only run covers
+      neither.</p>
+
+    <p>
+      <strong>Sanity-check the simple things before trusting the complex ones.</strong> Does the IBIS
+      model's V-I curve give the output impedance you expect? Does its V-T curve give the rise time
+      the datasheet quotes? Those take minutes and catch a surprising fraction of bad models.
+    </p>
+
+    <p>
+      <strong>Reserve transistor-level for questions the others genuinely cannot answer.</strong>
+      Non-linear behaviour, unusual loading, or an interaction outside the chosen abstraction —
+      those justify it. Ordinary channel margin does not.
+    </p>
+
+    <div class="note">
+      <b>Using this to find a fault</b>
+      <ul class="tight">
+        <li><b>Simulation and hardware disagree, and the channel model is verified.</b> Look at the
+          buffer models next. A wrong output impedance or rise time moves everything downstream.</li>
+        <li><b>Results that change dramatically with a small change in load.</b> Possibly outside
+          the model's extraction range. Check what load it was characterised into.</li>
+        <li><b>An AMI model that behaves identically regardless of the channel.</b> Its adaptation
+          may not be running — many models need to be given enough symbols to converge and will
+          silently report their initial state if not.</li>
+        <li><b>Different simulators giving different answers with the same files.</b> Usually a
+          difference in how the AMI flow is driven — block size, bit count, or whether the
+          statistical or time-domain path was taken.</li>
+      </ul>
+    </div>
+
+    <details class="deeper">
+      <summary>Go deeper — what each layer contains, the AMI Init/GetWave architecture, and model modes</summary>
+
+      <p>
+        <strong>IBIS</strong> is a behavioural description of the analogue buffer: V-I curves for
+        the pull-up and pull-down, V-T curves for the switching behaviour, package parasitics and
+        die capacitance. It represents the driver and receiver <em>front end</em> and nothing else.
+        It is fast, portable, and reveals nothing about the transistors — which is why vendors
+        publish it.
+      </p>
+
+      <p>
+        <strong>IBIS-AMI</strong> adds compiled shared libraries that model the transmitter and
+        receiver <em>algorithms</em>: FFE taps, CTLE response, DFE adaptation, CDR behaviour. The
+        algorithms are in binary form, so the vendor's implementation stays private while its
+        behaviour is available. This is what makes modern serial link simulation possible at all.
+      </p>
+
+      <p>
+        <strong>SPICE / transistor-level</strong> is the actual circuit: most accurate, slowest by
+        orders of magnitude, and usually delivered encrypted if at all.
+      </p>
+
+      <p>
+        <strong>The IBIS-AMI API: Init vs. GetWave.</strong> An IBIS-AMI model consists of three distinct files:
+        a standard <code>.ibs</code> file declaring the analog electrical buffer (C_comp, package RLC, termination),
+        a <code>.ami</code> text configuration file declaring user parameters and algorithmic flags, and a compiled
+        shared library (<code>.dll</code> on Windows or <code>.so</code> on Linux) exposing two primary C API entry points:
+      </p>
+
+      <ul class="tight">
+        <li><strong><code>AMI_Init</code> (The Impulse / Statistical Entry Point):</strong> Called once before the
+          simulation begins. The EDA simulator passes the combined analog channel impulse response (the LTI cascade
+          of TX analog buffer, S-parameter interconnect, and RX termination). If the model declares
+          <code>Init_Returns_Impulse = True</code>, the function processes the impulse through its linear filters
+          (such as FFE or ideal CTLE) and returns a modified impulse response to the simulator. This modified impulse
+          is what powers rapid statistical eye synthesis down to <span class="num">10<sup>-12</sup></span>.</li>
+        <li><strong><code>AMI_GetWave</code> (The Time-Domain / Waveform Entry Point):</strong> Called iteratively
+          during transient bit-by-bit simulation. The simulator chunks the transmitted bitstream into sequential
+          waveform blocks (e.g. 10,000 samples) and feeds them into <code>AMI_GetWave</code>. Inside this function,
+          the vendor's compiled code runs non-linear DSP: dynamically adapting CTLE gain, adjusting DFE feedback taps
+          via Least Mean Squares (LMS) logic, and simulating the Phase-Locked Loop (PLL) and Clock and Data Recovery
+          (CDR) tracking. It returns modified analog samples alongside an array of recovered clock tick timestamps.</li>
+      </ul>
+
+      <p>
+        <strong>Statistical vs. Bit-by-Bit model flags.</strong> The declared flags in the <code>.ami</code> file
+        dictate what simulation modes are mathematically permissible:
+      </p>
+
+      <ul class="tight">
+        <li><strong>Dual-Mode Models:</strong> Both <code>Init_Returns_Impulse = True</code> and
+          <code>GetWave_Exists = True</code>. These support both statistical and time-domain flows. However, the two
+          modes often produce divergent results: <code>AMI_Init</code> typically evaluates an idealized, perfectly
+          converged equalizer, while <code>AMI_GetWave</code> models the real-world quantized adaptation loop, noise
+          penalties, and finite settling times.</li>
+        <li><strong>GetWave-Only Models:</strong> <code>Init_Returns_Impulse = False</code> and
+          <code>GetWave_Exists = True</code>. Common in modern SerDes with highly complex non-linear digital DSP
+          or ADC-based architectures. These models <em>cannot</em> be used in statistical mode; they mandate
+          time-domain bit-by-bit runs.</li>
+        <li><strong>Init-Only Models:</strong> <code>GetWave_Exists = False</code>. Restricted to linear equalizers
+          (pure FFE / linear CTLE). They cannot represent dynamic DFE adaptation or CDR cycle-slipping.</li>
+      </ul>
+
+      <p>
+        <strong>Practical simulation pitfalls.</strong> Two operational rules are mandatory when running AMI flows:
+      </p>
+
+      <ul class="tight">
+        <li><strong>Burn-in and settling periods:</strong> Because <code>AMI_GetWave</code> models live silicon
+          adaptation, the first 100,000 to 500,000 bits are consumed by the CDR acquiring phase lock and the DFE
+          taps hunting for convergence. Always discard these initial warm-up bits; evaluating eyes during the
+          convergence transient will report a completely closed, false-failing link.</li>
+        <li><strong>Impulse response truncation:</strong> In statistical mode, if the EDA tool truncates the channel
+          impulse response before all trailing reflection echoes have died down, <code>AMI_Init</code> will silently
+          omit return-loss ripples, yielding an overly optimistic eye diagram.</li>
+      </ul>
+    </details>
+
+    <h2 class="section-rule"><span>In the real world</span></h2>
+
+    <p>
+      Model quality is the most common limiting factor in channel simulation accuracy, and it is the
+      part least under your control. The channel you can model well — it is copper and you can
+      measure it. The chips you take on trust.
+    </p>
+
+    <p>
+      Which makes the relationship with the silicon vendor part of the engineering. The questions
+      worth asking early are which corners exist, what the models were correlated against, and
+      whether the AMI implementation supports both flows. Discovering the answers during a debug is
+      considerably more expensive than asking at the start.
+    </p>
+
+    <h3>Related</h3>
+    <ul class="tight">
+      <li><a href="../signal-integrity/statistical-vs-time-domain.html">Statistical and Time-Domain Channel Simulation</a></li>
+      <li><a href="../signal-integrity/equalization.html">Equalization and Clock Recovery: CTLE, FFE, DFE, and CDR</a></li>
+      <li><a href="../methodology/simulation-flow.html">Signal Integrity Simulation Workflow</a></li>
+      <li><a href="../fundamentals/reflections.html">Transmission-Line Reflections and Ringing</a></li>
+    </ul>
+  </div>
+
+<!-- sources:start -->
+    <section class="sources">
+      <h2 class="section-rule"><span>Sources</span></h2>
+      <ul class="sources__list">
+      <li><a href="https://ibis.org/ver8.0/ver8_0.pdf" rel="noopener">IBIS 8.0 specification — AMI lifecycle and flags</a></li>
+      </ul>
+      <p class="sources__note">Rows marked with a claim id are tracked in <a href="../../docs/claims.md">the claim ledger</a>, which records what each source can and cannot establish.</p>
+    </section>
+    <!-- sources:end -->
+  <!-- pager:start -->
+  <nav class="pager" aria-label="Previous and next topic">
+    <a class="prev" href="../../topics/signal-integrity/statistical-vs-time-domain.html"><span class="dir">Previous</span><span>Statistical and Time-Domain Channel Simulation</span></a>
+    <a class="next" href="../../topics/signal-integrity/de-embedding.html"><span class="dir">Next</span><span>S-Parameter De-Embedding and Fixture Removal</span></a>
+  </nav>
+  <!-- pager:end -->
+</main>
+
+<footer class="site-foot">
+  <span>SIPI &#8212; signal and power integrity, visualised.</span>
+  <span>Created and directed by Geetansh Arora. <a href="../../colophon.html">About, review &amp; AI assistance</a> &#183; <a href="../../model-contract.html">Model assumptions</a> &#183; <a href="../../docs/claims.md">Claim ledger</a></span>
+</footer>
+
+<script src="../../js/site.js?v=acb47d86"></script>
+<script src="../../js/search.js?v=6c93a285"></script>
+</body>
+</html>

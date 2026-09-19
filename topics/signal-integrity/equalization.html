@@ -1,0 +1,483 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Equalization and Clock Recovery: CTLE, FFE, DFE, and CDR | SIPI</title>
+<meta name="description" content="The four blocks that reopen a closed eye, what each is physically able to correct, and the three impairments none of them touch.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<link rel="stylesheet" href="../../css/base.css?v=e4f774de">
+<link rel="stylesheet" href="../../css/components.css?v=295837ab">
+  <!-- meta:start -->
+  <link rel="canonical" href="https://sipi.work/topics/signal-integrity/equalization.html">
+  <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="SIPI">
+  <meta property="og:title" content="Equalization and Clock Recovery: CTLE, FFE, DFE, and CDR | SIPI">
+  <meta property="og:description" content="The four blocks that reopen a closed eye, what each is physically able to correct, and the three impairments none of them touch.">
+  <meta property="og:url" content="https://sipi.work/topics/signal-integrity/equalization.html">
+  <meta property="og:image" content="https://sipi.work/assets/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Equalization and Clock Recovery: CTLE, FFE, DFE, and CDR | SIPI">
+  <meta name="twitter:description" content="The four blocks that reopen a closed eye, what each is physically able to correct, and the three impairments none of them touch.">
+  <meta name="twitter:image" content="https://sipi.work/assets/og.png">
+  <!-- meta:end -->
+</head>
+<body>
+
+<header class="masthead">
+  <a class="wordmark" href="../../index.html">SIPI</a>
+  <nav>
+    <a href="../../index.html#fundamentals">Fundamentals</a>
+    <a href="../../index.html#power-integrity">Power</a>
+    <a href="../../index.html#interfaces">Interfaces</a>
+    <a href="../../start.html">Start</a>
+    <a href="../../labs.html">Labs</a>
+    <a href="../../reference.html">Reference</a>
+    <button class="theme-toggle" data-act="theme" type="button">System</button>
+  </nav>
+</header>
+
+<main>
+  <div class="page-head">
+    <p class="crumb"><a href="../../index.html#signal-integrity">SI in practice</a> / 02</p>
+    <h1>Equalization and Clock Recovery: CTLE, FFE, DFE, and CDR</h1>
+    <p class="byline">
+      <!-- review:start --><span>By Geetansh Arora — Principal SI/PI Engineer</span><time datetime="2026-09-15" title="Technical review by Geetansh Arora on this date">15 Sep 2026</time><span>10 min</span><!-- review:end -->
+    </p>
+    <p class="answer">
+      Equalisation is the receiver and transmitter conspiring to undo what the copper did. There
+      are four blocks in the standard toolkit, they fix genuinely different things, and the single
+      most useful thing to know is which cursor each one can reach &#8212; because that determines
+      which of them can help with your problem and which cannot.
+    </p>
+  </div>
+
+  <!-- ───────────── the picture ───────────── -->
+  <section class="instrument" data-viz="equalizer" aria-label="The same eye before and after receiver equalisation, with independent control of CTLE boost and DFE tap count">
+    <script type="application/json" data-contract>{"kind":"analytical","evidence":"independent","purpose":"Separate what each equaliser block can and cannot reach.","equations":["H(s)=(1+s/wz)/((1+s/wp1)(1+s/wp2))","DFE subtracts h[k]*a[n-k] for k>0"],"units":"UI, V","validity":"Ideal or decision-directed DFE as selected; no adaptation dynamics.","numerics":"Half-open tap window; CTLE normalised to unity peak gain.","limitations":"Ideal or decision-directed DFE as selected; no adaptation dynamics.","suites":["CTLE","DFE","CTLE solver","DFE slicer"],"version":"2.0","reviewed":"2026-09-12","panel":"equalizer"}</script>
+    <div class="instrument__bar">
+      <span class="instrument__title">The same channel &#183; at the pad, and after the receiver</span>
+        <span data-evidence="independent" data-model-version="2.0" class="model-tag model-tag--analytical" title="Causal CTLE pole-zero and known-symbol or decision-directed DFE. Noiseless channel.">analytical</span>
+      <span class="instrument__readout" role="status" aria-live="polite" aria-label="Current values">
+        <span>at the pad <b data-out="raw">—</b></span>
+        <span>after EQ <b data-out="eq">—</b></span>
+        <span>improvement <b data-out="gain">—</b></span>
+        <span>decision errors <b data-out="errs">—</b></span>
+      </span>
+    </div>
+    <div class="panels two-up">
+      <div class="panel">
+        <span class="panel__label">At the receiver pad — no equalisation</span>
+        <canvas data-cv="raw" role="img" aria-label="An eye diagram at the receiver pad with no equalisation applied, showing a closed or nearly closed opening."></canvas>
+        <div class="legend"><span><i style="background:var(--reflect)"></i>raw channel</span></div>
+      </div>
+      <div class="panel">
+        <span class="panel__label">After CTLE and DFE</span>
+        <canvas data-cv="eq" role="img" aria-label="The same eye after a continuous-time linear equaliser and a decision-feedback equaliser, showing a reopened centre."></canvas>
+        <div class="legend"><span><i style="background:var(--signal)"></i>equalised</span></div>
+      </div>
+    </div>
+    <div class="controls">
+      <div class="ctl">
+        <div class="ctl__head"><label for="eq-loss">Channel loss at Nyquist</label><output id="eq-loss-out" for="eq-loss">20 dB</output></div>
+        <input type="range" id="eq-loss" min="0" max="34" step="1" value="20">
+      </div>
+      <div class="ctl">
+        <div class="ctl__head"><label for="eq-boost">CTLE boost</label><output id="eq-boost-out" for="eq-boost">8 dB</output></div>
+        <input type="range" id="eq-boost" min="0" max="16" step="1" value="8">
+        <span class="ctl__note">Linear — lifts noise and crosstalk too</span>
+      </div>
+      <div class="ctl">
+        <div class="ctl__head"><label for="eq-dfe">DFE taps</label><output id="eq-dfe-out" for="eq-dfe">5 taps</output></div>
+        <input type="range" id="eq-dfe" min="0" max="8" step="1" value="5">
+        <span class="ctl__note">Cancels post-cursor exactly <em>when the prior decisions were right</em>; never touches pre-cursor</span>
+      </div>
+      <div class="ctl">
+        <div class="ctl__head"><label for="eq-mode">DFE feedback</label></div>
+        <label class="check" for="eq-mode"><input type="checkbox" id="eq-mode"> decision-directed</label>
+        <label class="check" for="eq-err"><input type="checkbox" id="eq-err" disabled> inject one wrong decision</label>
+        <span class="ctl__note">Unchecked = ideal cancellation from the known symbols, which no receiver can do. This channel model is noiseless, so decisions only go wrong where the eye is already shut &#8212; inject one to see a single error propagate through the taps.</span>
+      </div>
+    </div>
+    <div class="presets">
+      <button class="preset" type="button" data-preset="typical" aria-pressed="true">Both on</button>
+      <button class="preset" type="button" data-preset="noeq" aria-pressed="false">Everything off</button>
+      <button class="preset" type="button" data-preset="ctle" aria-pressed="false">CTLE only</button>
+      <button class="preset" type="button" data-preset="dfeonly" aria-pressed="false">DFE only</button>
+      <button class="preset" type="button" data-preset="hard" aria-pressed="false">30 dB channel</button>
+    </div>
+    <div class="transport"><span data-out="note">—</span></div>
+  </section>
+
+  <div class="prose">
+    <p>
+      When a multi-gigabit signal travels down a PCB trace, the channel acts as an aggressive low-pass
+      filter. Conductor skin effect and dielectric loss disproportionately swallow the signal's high-frequency
+      harmonics, while low-frequency components pass through with relatively little attenuation. By the time
+      a sharp square wave reaches the far end of an electrical channel with 20 to 30 dB of loss at the Nyquist
+      frequency, its transitions have melted into long, sloping tails that spill across multiple unit intervals.
+      At the sampling latch, these overlapping pulses collide into severe inter-symbol interference (ISI),
+      and the eye diagram closes shut.
+    </p>
+
+    <p>
+      Equalisation is the deliberate engineering process of reversing that channel distortion. If the channel
+      attenuates high-frequency energy, an equaliser boosts it; if previous bits leave lingering voltage tails
+      that contaminate the current symbol, an equaliser predicts that residual tail and subtracts it before slicing.
+    </p>
+
+    <p>
+      Modern SerDes architectures divide this workload across three complementary stages: <strong>TX FFE</strong>
+      (feed-forward equalisation at the transmitter), <strong>RX CTLE</strong> (continuous-time linear equalisation
+      in the receiver's analog front end), and <strong>RX DFE</strong> (decision feedback equalisation after the
+      decision latch). Understanding why links require all three &#8212; rather than simply cranking up one
+      favourite dial &#8212; is essential to designing viable multi-gigabit interconnects.
+    </p>
+
+    <h2>What is actually being undone</h2>
+
+    <p>
+      Start from what the channel did. A lossy channel attenuates high frequencies, which rounds
+      edges, which spreads each bit's energy across several bit periods. At the sampling instant the
+      receiver sees the bit it wants plus contributions from its neighbours — the cursor, plus
+      pre-cursors and post-cursors. See <a href="../fundamentals/isi.html">ISI</a>.
+    </p>
+
+    <p>
+      So there are two ways to fix it, and they are genuinely different in kind.
+    </p>
+
+    <p>
+      <strong>Reshape the waveform</strong> so the tails are smaller — boost the frequencies the
+      channel attenuated, and the pulse sharpens. This is filtering, it is linear, and it treats the
+      signal as a waveform without caring what the bits are. A CTLE and an FFE both do this.
+    </p>
+
+    <p>
+      <strong>Subtract the interference</strong> using knowledge of what the bits were. If you know
+      the previous bit was a one, and you know how much tail a one leaves, you can subtract exactly
+      that. This is not filtering — it uses the data, and it is why a DFE can be exact where a
+      linear filter can only approximate.
+    </p>
+
+    <h2>The four blocks</h2>
+
+    <ul class="tight">
+      <li><strong>FFE — feed-forward equaliser.</strong> A linear FIR filter, usually at the
+        transmitter. It can shape both pre-cursor and post-cursor because it operates on known data
+        before launch. Its catch is a power budget: a transmitter cannot boost high frequencies, so it
+        <em>attenuates the low ones</em> instead, and the total launched amplitude falls. Aggressive
+        FFE trades signal amplitude for flatness.</li>
+      <li><strong>CTLE — continuous-time linear equaliser.</strong> An analogue peaking filter at the
+        receiver that raises high-frequency gain relative to low-frequency gain. It is commonly an
+        efficient first stage. Being linear, it also passes or amplifies impairments in its band — including crosstalk
+        and noise.</li>
+      <li><strong>DFE — decision-feedback equaliser.</strong> Non-linear. It subtracts the known
+        contribution of already-decided bits, cancelling post-cursor ISI <em>exactly</em> — subject
+        to four conditions named below — and without
+        amplifying noise, which is what makes it so valuable. Two limits: it cannot touch pre-cursor,
+        because those bits are not decided yet, and a wrong decision feeds back, propagating errors in
+        a burst.</li>
+      <li><strong>CDR — clock and data recovery.</strong> Not an equaliser, but part of the same
+        budget. It extracts the clock from the data, and its loop bandwidth helps determine which jitter it
+        tracks: slow wander may be followed while faster jitter remains in the sampling error.
+        Spread-spectrum tracking lives here.</li>
+    </ul>
+
+    <div class="note">
+      <b>What &ldquo;exactly&rdquo; is doing in that sentence</b>
+      A DFE cancels post-cursor ISI exactly, and the word is load-free only under four
+      conditions. It subtracts <em>what it decided</em>, multiplied by <em>the taps it
+      holds</em>, for <em>as many symbols as it has taps</em>, assuming the channel
+      <em>adds</em> those contributions linearly. So:
+      <ul class="tight">
+        <li><strong>the prior decisions were right</strong> — a wrong one is subtracted with
+          the wrong sign, which injects twice the tap instead of removing it;</li>
+        <li><strong>the taps match the channel</strong> — a mis-adapted tap subtracts the
+          wrong amount and leaves a residue of the difference;</li>
+        <li><strong>the tap span covers the memory</strong> — whatever post-cursor falls
+          beyond the last tap is untouched;</li>
+        <li><strong>the channel is linear</strong> — a compressing driver or a saturating
+          receiver stage breaks the superposition the subtraction assumes.</li>
+      </ul>
+      The first condition has a threshold you can compute. A wrong decision does not merely
+      fail to cancel the post-cursor, it <em>adds</em> one of the opposite sign, so the next
+      sample is disturbed by twice the tap. If that exceeds the cursor &mdash; a post-cursor
+      above <b>0.5</b> of the main cursor &mdash; the next decision flips too, and the error
+      becomes a burst rather than a single slip. Below it the DFE recovers on the following
+      symbol.
+    </div>
+
+    <div class="note">
+      <b>The division of labour</b>
+      Pre-cursor is the transmitter's problem, because only the transmitter knows the future. Post-cursor
+      is best handled by the receiver's DFE, because it can cancel exactly rather than amplify. A design
+      that tries to fix everything at one end is spending far more power than one that splits the work.
+    </div>
+
+    <h2 class="section-rule"><span>Which cursor can each one reach?</span></h2>
+
+    <p>
+      This is the table that decides which block helps you, and it follows entirely from <em>when</em>
+      each block sees the data.
+    </p>
+
+    <div class="table-scroll">
+      <table class="data">
+        <thead><tr><th>Block</th><th>Where</th><th>Pre-cursor</th><th>Post-cursor</th><th>Noise cost</th></tr></thead>
+        <tbody>
+          <tr><td>FFE</td><td>transmitter</td><td><b>yes</b></td><td>yes</td><td>lowers launched amplitude</td></tr>
+          <tr><td>CTLE</td><td>receiver, analogue</td><td>yes</td><td>yes</td><td>amplifies noise and crosstalk</td></tr>
+          <tr><td>DFE</td><td>receiver, after the slicer</td><td><b>no</b></td><td><b>exactly</b></td><td>does not linearly amplify input noise; decision errors propagate</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>
+      The two bold entries are the whole story. A DFE cannot touch pre-cursors because it works from
+      <em>decided</em> bits, and the bits that cause pre-cursor interference have not arrived yet.
+      An FFE can, because it sits at the transmitter where every bit is known in advance. That
+      asymmetry is why real links use both.
+    </p>
+
+    <h2 class="section-rule"><span>What none of them fix</span></h2>
+
+    <p>
+      These limits help distinguish a tuning problem from a channel or noise problem:
+    </p>
+
+    <ul class="tight">
+      <li><strong>A notch.</strong> Equalisers scale what arrives. At the bottom of a via-stub
+        resonance there is nothing to scale — the energy is gone. Boosting there amplifies only noise,
+        and the notch is why the eye is closed. The fix is backdrilling, not a gain setting.</li>
+      <li><strong>Crosstalk.</strong> The DFE shown here has no model of the aggressor; the CTLE passes
+        it along with the signal. Reduce coupling or aggressor excitation, or use a receiver method
+        explicitly designed with the correlated aggressor information.</li>
+      <li><strong>Random noise.</strong> Every linear equaliser raises the noise with the signal, so
+        the signal-to-noise ratio at best stays put. Once you are noise-limited, more equalisation makes
+        things worse.</li>
+    </ul>
+
+    <p>
+      There is a corollary the panel above makes uncomfortably visible: <strong>more equalisation is
+      not automatically better.</strong> Once the DFE has enough taps to cancel the post-cursor
+      exactly, extra CTLE boost costs amplitude without removing ISI that was still there, and the
+      combination can measure worse than the DFE alone. In silicon the CTLE still earns its place
+      &mdash; it improves the edge information the CDR runs on, and it lifts the signal before the
+      sampler's own noise &mdash; but neither of those appears in a noiseless linear model, and
+      neither is a reason to keep turning the boost up.
+    </p>
+
+    <p>
+      A practical diagnostic follows from all of this. If sweeping equaliser settings in simulation
+      produces a broad, flat optimum, smooth loss compensation is likely helping. A sharp optimum, or
+      little improvement across the range, suggests checking for a resonance, crosstalk, noise, model
+      limits, and adaptation behavior before adding more equalisation.
+    </p>
+
+    <h2 class="section-rule"><span>Why this decides how your board behaves</span></h2>
+
+    <ul class="tight">
+      <li><strong>Equalisation buys reach, and pays for it in noise.</strong> A CTLE flattens the
+        channel by amplifying the band the channel attenuated — and crosstalk and noise live there
+        too. On a dense bus you can equalise your way into a worse eye.</li>
+      <li><strong>A smooth equaliser cannot reconstruct a deep notch.</strong> Additional boost near
+        a cancelled frequency also raises noise and consumes range. This distinguishes a resonance
+        from smooth loss. See
+        <a href="../fundamentals/vias.html">vias</a>.</li>
+      <li><strong>Adaptation means the eye you measure is not the eye the receiver sees.</strong>
+        Modern receivers converge their own settings, so a measured eye at the pad can be closed
+        while the link runs perfectly.</li>
+      <li><strong>A DFE changes the error statistics.</strong> Error propagation makes errors arrive
+        in bursts rather than independently, which matters enormously to a forward-error-correction
+        budget.</li>
+    </ul>
+
+    <h2 class="section-rule"><span>What to do about it</span></h2>
+
+    <p>
+      <strong>Fix the channel before you equalise it.</strong> Equalisation is a budget item with a
+      cost, not a free repair. A backdrilled stub or a shorter route gives margin back with no noise
+      penalty at all.
+    </p>
+
+    <p>
+      <strong>Match the tool to the cursor.</strong> Post-cursor-dominated ISI wants a DFE.
+      Pre-cursor content wants transmitter FFE. Broad smooth loss wants CTLE. Reaching for more CTLE
+      boost when the problem is post-cursor is the common inefficiency.
+    </p>
+
+    <p>
+      <strong>Check crosstalk with the equaliser on, not off.</strong> The interaction is the point.
+      Turn the aggressors up with the CTLE enabled and watch what happens — see
+      <a href="what-closes-the-eye.html">what closes the eye</a>.
+    </p>
+
+    <p>
+      <strong>Report the CDR bandwidth with any jitter number.</strong> The loop decides which jitter
+      the receiver tracks out, so two measurements at different bandwidths are not comparable.
+    </p>
+
+    <div class="note">
+      <b>Using this to find a fault</b>
+      <ul class="tight">
+        <li><b>Equalisation helps far less than predicted.</b> Look for a notch in S<sub>21</sub>
+          before adding taps. A resonance is not an equalisation problem.</li>
+        <li><b>More boost makes it worse.</b> Crosstalk or noise dominated. The CTLE is amplifying
+          the thing that is actually hurting you.</li>
+        <li><b>Errors arriving in bursts rather than singly.</b> DFE error propagation is a strong
+          suspect, especially if the burst length is close to the number of taps.</li>
+        <li><b>Adapted settings that sit at a limit.</b> The channel may be consuming the available
+          equaliser range. Confirm convergence, initialization, coefficient quantization, and the
+          reference-receiver definition before treating the limit as channel margin.</li>
+      </ul>
+    </div>
+
+    <details class="deeper">
+      <summary>Go deeper — why a DFE adds no noise, and what an FFE actually costs</summary>
+
+      <p>
+        <strong>Why the DFE is exact — and why it cannot touch pre-cursors.</strong> Sampled at the decision instants,
+        the received value is the wanted bit plus a sum of known coefficients times <em>already-decided</em> symbols:
+        <span class="num">y[n] - &Sigma; d<sub>k</sub> &middot; &acirc;[n - k]</span>.
+        Those symbols <span class="num">&acirc;[n - k]</span> are quantized values, not noisy analog estimates, so
+        the post-cursor sum can be subtracted with zero residual. Crucially, because it subtracts a synthesized,
+        noiseless digital reconstruction rather than filtering the incoming analog waveform, the DFE introduces
+        zero high-frequency noise amplification. That is the singular superpower no linear equaliser possesses.
+      </p>
+
+      <p>
+        However, the DFE has an absolute structural boundary: <em>it cannot cancel pre-cursor ISI</em>. A decision
+        feedback loop operates causally — it can only feed back decisions that the slicer has already resolved in
+        past clock cycles. It has no access to future bits that have not yet arrived. If a channel suffers from
+        severe pre-cursor dispersion (energy arriving ahead of the pulse peak due to high-frequency phase distortion),
+        the DFE is completely blind to it; pre-cursor ISI must be handled upstream by the TX FFE or RX CTLE.
+      </p>
+
+      <p>
+        The other operational price of a DFE is error propagation. When an unexpected noise excursion causes the
+        slicer to make a wrong bit decision, that inverted symbol is fed back into the summer with the wrong sign.
+        Instead of subtracting interference, it adds to it, dramatically increasing the probability that the next
+        symbol will also be decided incorrectly. Consequently, DFE error events are not independent single-bit
+        flips; they arrive in bursts whose duration scales with the tap span of the feedback loop.
+      </p>
+
+      <p>
+        <strong>What an FFE costs — and how FIR taps work.</strong> A transmitter feed-forward equaliser is a
+        discrete-time FIR filter operating on digital symbols before the DAC or driver stage:
+        <span class="num">V<sub>out</sub>[n] = c<sub>-1</sub>&middot;x[n+1] + c<sub>0</sub>&middot;x[n] + c<sub>1</sub>&middot;x[n-1] + c<sub>2</sub>&middot;x[n-2]</span>.
+        The main tap <span class="num">c<sub>0</sub></span> provides the fundamental pulse drive, post-cursor taps
+        (<span class="num">c<sub>1</sub>, c<sub>2</sub></span>) cancel the decaying tail, and the pre-cursor tap
+        (<span class="num">c<sub>-1</sub></span>) counteracts leading-edge dispersion. Notice why the transmitter can
+        cancel pre-cursor ISI where the receiver DFE fails: the transmitter's digital buffer holds the upcoming bit stream
+        in a shift register, granting it look-ahead access to future symbols.
+      </p>
+
+      <p>
+        A transmitter cannot create voltage out of thin air — its output swing is clamped by the supply rail
+        (<span class="num">&Sigma; |c<sub>k</sub>| &le; 1</span>). Therefore, "boosting high frequencies" at the
+        transmitter is mathematically achieved by <em>attenuating low frequencies</em> (de-emphasis) or driving
+        transitions harder while dropping steady-state levels (pre-shoot and de-emphasis):
+      </p>
+
+      <div class="eq">
+        <span class="eq__main">de-emphasis [dB] = 20&middot;log<sub>10</sub>( <i class="var">V</i><sub>transition</sub> / <i class="var">V</i><sub>steady</sub> )</span>
+        <span class="eq__note">more equalisation means a smaller steady-state level — high-frequency flatness is bought with overall signal amplitude</span>
+      </div>
+
+      <p>
+        This creates an inherent engineering trade-off: over-equalising with TX FFE flattens channel loss but starves
+        the receiver of signal amplitude, dropping the received SNR below the thermal noise floor. A channel that is
+        ISI-limited benefits from aggressive FFE; one that is noise- or crosstalk-limited rapidly degrades with it.
+      </p>
+
+      <p>
+        <strong>The CTLE zero-pole intuition.</strong> A continuous-time linear equaliser is implemented as an active
+        or passive analog filter with a classic one-zero, two-pole transfer function:
+      </p>
+
+      <div class="eq">
+        <span class="eq__main"><i class="var">H</i>(<i class="var">s</i>) = (1 + <i class="var">s</i>/&omega;<sub>z</sub>) / ( (1 + <i class="var">s</i>/&omega;<sub>p1</sub>)(1 + <i class="var">s</i>/&omega;<sub>p2</sub>) )</span>
+        <span class="eq__note">the zero provides peaking gain to counteract channel roll-off; the poles clamp out-of-band amplification</span>
+      </div>
+
+      <p>
+        The frequency placement of these roots is deliberate:
+      </p>
+
+      <ul class="tight">
+        <li><strong>The zero (&omega;<sub>z</sub>):</strong> Placed well below Nyquist (commonly around
+          <span class="num">0.2 &times; f<sub>Nyquist</sub></span>), initiating the upward gain slope where
+          dielectric loss begins steepening.</li>
+        <li><strong>The first pole (&omega;<sub>p1</sub>):</strong> Placed near the Nyquist frequency to terminate the
+          peaking slope, establishing the target high-frequency boost (peaking gain, typically
+          <span class="num">6 to 15 dB</span>).</li>
+        <li><strong>The second pole (&omega;<sub>p2</sub>):</strong> Placed well above Nyquist to roll off high-frequency
+          amplification, preventing wideband thermal noise and high-frequency crosstalk from swamping the receiver.</li>
+      </ul>
+
+      <p>
+        Because the CTLE transfer function is continuous and smooth, it can only compensate for smooth, monotonic
+        channel roll-off. It cannot invert narrow reflection notches or stub resonances. Furthermore, any real CTLE
+        imparts minimum-phase group delay distortion; ignoring phase response during simulation yields unphysical,
+        over-optimistic eye openings.
+      </p>
+
+      <p>
+        <strong>And the CDR is part of the budget.</strong> It is not an equaliser, but its loop
+        bandwidth decides which jitter the receiver tracks out: slow wander is followed and
+        effectively removed, fast jitter is not. Jitter numbers are only comparable at the same loop
+        bandwidth, which is why specifications define one.
+      </p>
+    </details>
+
+    <h2 class="section-rule"><span>In the real world</span></h2>
+
+    <p>
+      Equalisation has changed what a channel is allowed to look like. A specification that assumes a
+      reference receiver with a defined CTLE and DFE is permitting channels that would have been
+      unusable a generation earlier — and that permission is why the eye at the receiver pad is
+      allowed to be completely closed.
+    </p>
+
+    <p>
+      The consequence for day-to-day work is that measuring the analogue eye tells you less than it
+      used to. The meaningful questions are what the adapted settings converged to and how much range
+      they had left, because those help describe margin. An eye image becomes interpretable when it
+      carries the reference plane, equaliser and CDR settings, pattern, population, and receiver criteria.
+    </p>
+
+    <h3>Related</h3>
+    <ul class="tight">
+      <li><a href="../fundamentals/isi.html">Intersymbol Interference (ISI) and Channel Memory</a></li>
+      <li><a href="../signal-integrity/nrz-vs-pam4.html">NRZ and PAM4: Levels, Bandwidth, and SNR</a></li>
+      <li><a href="../interfaces/pcie-gen4-gen5.html">PCIe 4.0 and 5.0 Signal Integrity: Loss and Equalization</a></li>
+      <li><a href="../signal-integrity/ibis-ami-spice.html">IBIS, IBIS-AMI, and SPICE Model Selection</a></li>
+    </ul>
+  </div>
+
+  <!-- pager:start -->
+  <nav class="pager" aria-label="Previous and next topic">
+    <a class="prev" href="../../topics/signal-integrity/what-closes-the-eye.html"><span class="dir">Previous</span><span>Eye Closure: Loss, Reflections, Discontinuities, and Crosstalk</span></a>
+    <a class="next" href="../../topics/signal-integrity/nrz-vs-pam4.html"><span class="dir">Next</span><span>NRZ and PAM4: Levels, Bandwidth, and SNR</span></a>
+  </nav>
+  <!-- pager:end -->
+</main>
+
+<footer class="site-foot">
+  <span>SIPI &#8212; signal and power integrity, visualised.</span>
+  <span>Created and directed by Geetansh Arora. <a href="../../colophon.html">About, review &amp; AI assistance</a> &#183; <a href="../../model-contract.html">Model assumptions</a> &#183; <a href="../../docs/claims.md">Claim ledger</a></span>
+</footer>
+
+<script src="../../js/site.js?v=acb47d86"></script>
+<script src="../../js/viz-kit.js?v=a53e49c3"></script>
+<script src="../../js/viz/eq.js?v=526af488"></script>
+<script src="../../js/viz-loader.js?v=89d5884d"></script>
+<script src="../../js/search.js?v=6c93a285"></script>
+</body>
+</html>

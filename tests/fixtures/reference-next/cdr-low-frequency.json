@@ -1,0 +1,68 @@
+{
+  "schemaVersion": 1,
+  "id": "cdr-low-frequency",
+  "title": "Low-frequency CDR tracking retains a small phase residual",
+  "kind": "cdr",
+  "modelVersion": "1.1",
+  "contractVersion": "2.1",
+  "inputs": {
+    "fn": 40,
+    "zeta": 0.5,
+    "margin": 0.3,
+    "ceiling": 20,
+    "jitterFrequency": 1,
+    "jitterAmplitude": 0.4
+  },
+  "inputUnits": {
+    "fn": "MHz",
+    "zeta": "-",
+    "margin": "UI pp",
+    "ceiling": "UI pp",
+    "jitterFrequency": "MHz",
+    "jitterAmplitude": "UI pp"
+  },
+  "checks": [
+    {
+      "metric": "hReal",
+      "expected": 1.0006249997557068,
+      "absoluteTolerance": 1e-12,
+      "unit": "-",
+      "derivation": "For ζ=.5 and r=f/fn, H=(1+jr)/(1−r²+jr). Rationalizing gives Re(H)=1/(1−r²+r⁴)."
+    },
+    {
+      "metric": "hImag",
+      "expected": -1.5634765621182917e-05,
+      "absoluteTolerance": 1e-12,
+      "unit": "-",
+      "derivation": "The same reduced expression gives Im(H)=−r³/(1−r²+r⁴)."
+    },
+    {
+      "metric": "eReal",
+      "expected": -0.0006249997557067872,
+      "absoluteTolerance": 1e-12,
+      "unit": "-",
+      "derivation": "Residual transfer E=1−H, as complex quantities."
+    },
+    {
+      "metric": "eImag",
+      "expected": 1.5634765621182917e-05,
+      "absoluteTolerance": 1e-12,
+      "unit": "-",
+      "derivation": "Im(E)=−Im(H); subtracting magnitudes loses this term."
+    }
+  ],
+  "evidence": {
+    "type": "analytical",
+    "provenance": "First-principles network limits or algebraic reduction of the declared teaching loop, independent of production numerical output."
+  },
+  "prediction": "Does residual phase equal one minus the recovered-phase magnitude?",
+  "explanation": "No. Residual is the complex difference 1−H. These finite low/high frequency cases approach tracking/no-tracking limits while preserving the nonzero phase terms.",
+  "limitations": [
+    "Linear, steady-state declared teaching loop.",
+    "Finite ratios f/fn, not exact zero/infinite frequency.",
+    "No acquisition, cycle-slip, hardware-mask or BER claim."
+  ],
+  "relatedPage": "/topics/signal-integrity/receiver-and-clock.html",
+  "availability": "lab-scenario",
+  "scenario": "/topics/signal-integrity/receiver-and-clock.html#lab=cdr;v=2.1;cdr-fn=40;cdr-zeta=50;cdr-margin=30;cdr-jitter-f=1;cdr-jitter-a=40"
+}

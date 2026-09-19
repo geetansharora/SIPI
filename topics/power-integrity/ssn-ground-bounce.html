@@ -1,0 +1,414 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Simultaneous Switching Noise and Ground Bounce | SIPI</title>
+<meta name="description" content="Why simultaneously switching outputs shift the local reference, a worked di/dt number, and the mitigations that actually move it.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<link rel="stylesheet" href="../../css/base.css?v=e4f774de">
+<link rel="stylesheet" href="../../css/components.css?v=295837ab">
+  <!-- meta:start -->
+  <link rel="canonical" href="https://sipi.work/topics/power-integrity/ssn-ground-bounce.html">
+  <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="SIPI">
+  <meta property="og:title" content="Simultaneous Switching Noise and Ground Bounce | SIPI">
+  <meta property="og:description" content="Why simultaneously switching outputs shift the local reference, a worked di/dt number, and the mitigations that actually move it.">
+  <meta property="og:url" content="https://sipi.work/topics/power-integrity/ssn-ground-bounce.html">
+  <meta property="og:image" content="https://sipi.work/assets/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Simultaneous Switching Noise and Ground Bounce | SIPI">
+  <meta name="twitter:description" content="Why simultaneously switching outputs shift the local reference, a worked di/dt number, and the mitigations that actually move it.">
+  <meta name="twitter:image" content="https://sipi.work/assets/og.png">
+  <!-- meta:end -->
+</head>
+<body>
+
+<header class="masthead">
+  <a class="wordmark" href="../../index.html">SIPI</a>
+  <nav>
+    <a href="../../index.html#fundamentals">Fundamentals</a>
+    <a href="../../index.html#power-integrity">Power</a>
+    <a href="../../index.html#interfaces">Interfaces</a>
+    <a href="../../start.html">Start</a>
+    <a href="../../labs.html">Labs</a>
+    <a href="../../reference.html">Reference</a>
+    <button class="theme-toggle" data-act="theme" type="button">System</button>
+  </nav>
+</header>
+
+<main>
+  <div class="page-head">
+    <p class="crumb"><a href="../../index.html#power-integrity">Power Integrity</a> / 08</p>
+    <h1>Simultaneous Switching Noise and Ground Bounce</h1>
+    <p class="byline">
+      <!-- review:start --><span>By Geetansh Arora — Principal SI/PI Engineer</span><time datetime="2026-09-15" title="Technical review by Geetansh Arora on this date">15 Sep 2026</time><span>9 min</span><!-- review:end -->
+    </p>
+    <p class="answer">
+      &ldquo;Ground&rdquo; is a name, not a guarantee. When many outputs switch at once, the
+      current they all share has to flow through the same package and board inductance &#8212; and
+      across an inductance, a changing current <em>is</em> a voltage. The chip's local ground
+      momentarily is not the same potential as everyone else's, and every signal referenced to it
+      moves with it.
+    </p>
+  </div>
+
+  <!-- ───────────── the picture ───────────── -->
+  <section class="instrument" data-viz="ssn" aria-label="Interactive plot of simultaneous switching noise showing total current and the ground bounce it produces across shared return inductance">
+    <script type="application/json" data-contract>{"kind":"analytical","evidence":"independent","purpose":"Show ground bounce as v=L di/dt across a shared return.","equations":["v=L*di/dt","peak slope = (pi/2)*dI/tr for a raised-cosine edge"],"units":"A/s, H, V","validity":"Single lumped shared inductance; no mutual coupling between returns.","numerics":"Closed form; peak rather than mean slope reported.","limitations":"Single lumped shared inductance; no mutual coupling between returns.","suites":["PDN"],"version":"2.0","reviewed":"2026-09-12","panel":"ssn"}</script>
+    <div class="instrument__bar">
+      <span class="instrument__title">V = L &#183; di/dt &#183; across the return you share</span>
+        <span data-evidence="independent" data-model-version="2.0" class="model-tag model-tag--analytical" title="L di/dt through a stated shared inductance. No mutual coupling between returns.">analytical</span>
+      <span class="instrument__readout" role="status" aria-live="polite" aria-label="Current values">
+        <span>total current <b data-out="ipk">—</b></span>
+        <span>di/dt <b data-out="didt">—</b></span>
+        <span>ground bounce <b data-out="vpk">—</b></span>
+        <span> <b data-out="frac">—</b></span>
+      </span>
+    </div>
+    <div class="panels">
+      <div class="panel">
+        <span class="panel__label">Total switching current, and the bounce it makes</span>
+        <canvas data-cv="ssn" role="img" aria-label="Total switching current and the resulting ground bounce voltage plotted against time, with the noise budget marked."></canvas>
+        <div class="legend"><span><i style="background:var(--reflect)"></i>ground bounce</span><span><i class="dash" style="color:var(--muted)"></i>total current</span><span><i class="dash" style="color:var(--alarm)"></i>noise budget</span></div>
+      </div>
+    </div>
+    <div class="controls">
+      <div class="ctl">
+        <div class="ctl__head"><label for="sn-n">Bits switching together</label><output id="sn-n-out" for="sn-n">16 bits</output></div>
+        <input type="range" id="sn-n" min="1" max="32" step="1" value="16">
+        <span class="ctl__note">Data bus inversion caps this at half</span>
+      </div>
+      <div class="ctl">
+        <div class="ctl__head"><label for="sn-i">Current per bit</label><output id="sn-i-out" for="sn-i">13 mA</output></div>
+        <input type="range" id="sn-i" min="2" max="40" step="1" value="13">
+      </div>
+      <div class="ctl">
+        <div class="ctl__head"><label for="sn-tr">Edge rate</label><output id="sn-tr-out" for="sn-tr">150 ps</output></div>
+        <input type="range" id="sn-tr" min="30" max="600" step="10" value="150">
+        <span class="ctl__note">Slew control trades timing for noise</span>
+      </div>
+      <div class="ctl">
+        <div class="ctl__head"><label for="sn-l">Shared return inductance</label><output id="sn-l-out" for="sn-l">50 pH</output></div>
+        <input type="range" id="sn-l" min="5" max="200" step="5" value="50">
+        <span class="ctl__note">More ground balls is the biggest lever</span>
+      </div>
+    </div>
+    <div class="presets">
+      <button class="preset" type="button" data-preset="x16" aria-pressed="true">x16 bus</button>
+      <button class="preset" type="button" data-preset="dbi" aria-pressed="false">With DBI</button>
+      <button class="preset" type="button" data-preset="gnd" aria-pressed="false">More ground balls</button>
+      <button class="preset" type="button" data-preset="slow" aria-pressed="false">Slew-rate control</button>
+    </div>
+    <div class="transport"><span data-out="note">—</span></div>
+  </section>
+
+  <div class="prose">
+    <h2>Where the voltage comes from</h2>
+
+    <p>
+      In introductory electronics, &ldquo;ground&rdquo; is treated as a universal, unshakeable 0 V reference
+      that remains rock-solid everywhere in a circuit. But inside a physical microchip, ground is not a mathematical
+      ideal &#8212; it is a physical network of microscopic metal lines, bond wires, package vias, and solder balls.
+      And like all physical conductors, every one of those connections possesses parasitic inductance.
+    </p>
+
+    <p>
+      When an entire parallel bus &#8212; 16, 32, or 64 output drivers &#8212; switches simultaneously on a clock edge,
+      each driver dumps a rapid pulse of current into the return network. Because multiple drivers share the same
+      ground pins and package balls to return that current to the board, their switching currents combine. That rapid,
+      collective change in current (<span class="num">di/dt</span>) rushing through the shared return inductance
+      (<span class="num">L</span>) generates a sudden voltage spike: <span class="num">V = L &#183; di/dt</span>. For a
+      few hundred picoseconds, the chip's internal ground plane is thrown violently off zero, an effect known as
+      ground bounce or simultaneous switching noise (SSN).
+    </p>
+
+    <p>
+      There is only one equation behind this page, and it is one you already know:
+      <span class="num">v = L·di/dt</span>. A voltage appears across an inductance whenever the
+      current through it changes.
+    </p>
+
+    <p>
+      Now find the inductance. A driver switching a line pulls current from the die, through the
+      bumps, the package planes, the balls, the board, and back. Every one of those is an inductor,
+      and — this is the part that matters — much of that path is <em>shared</em> between many
+      drivers, because they use the same power and ground pins.
+    </p>
+
+    <p>
+      So when sixteen outputs switch at the same instant, sixteen current changes add up in that
+      shared inductance, and the voltage that develops appears between the die's local ground and
+      the ground everything else is referenced to. Nothing has gone wrong; this is just what an
+      inductor does.
+    </p>
+
+    <h2 class="section-rule"><span>The reference is not fixed</span></h2>
+
+    <p>
+      A driver switching a terminated line pulls current through the die, the bumps, the package planes,
+      the balls and the board, and back. Every one of those has inductance, and much of it is
+      <em>shared</em> between drivers. Across shared inductance, <span class="num">V = L·di/dt</span> —
+      and that voltage appears between the local ground on the die and the ground everyone else thinks
+      they share.
+    </p>
+
+    <p>
+      Put numbers on a plausible LPDDR-class case. A DQ driver into a terminated line sources on the
+      order of 13 mA, switching in perhaps 150 ps:
+    </p>
+
+    <div class="eq">
+      d<i class="var">i</i>/d<i class="var">t</i> = 13 mA / 150 ps ≈ 8.7 × 10<sup>7</sup> A/s &nbsp;&nbsp;per DQ
+      <span class="cap">Sixteen DQ switching together gives a <em>mean</em> slope of &#8776; 1.4 &#215; 10&#8313; A/s, and through 50 pH of shared return that is about 70 mV. But a real edge is not a ramp: a raised-cosine transition peaks at &#960;/2 times its mean slope, so the worst instantaneous bounce is nearer 110 mV &#8212; on a rail whose entire noise budget may be under 100 mV. The panel above plots the peak, because that is the number the receiver actually sees.</span>
+    </div>
+
+    <p>
+      That is the whole mechanism, and it explains its two names. Seen from the ground network it is
+      ground bounce; seen from the supply it is rail collapse; seen from the signal it is a shifted
+      threshold. They are one effect measured at three places.
+    </p>
+
+    <p>
+      <strong>The quiet line that switches: the classic signature.</strong> The most dangerous observable
+      consequence of ground bounce is not what happens to the switching bits, but what happens to a &ldquo;quiet&rdquo;
+      line held static. Suppose 31 bits of a 32-bit bus switch from high to low simultaneously, while bit 0 stays
+      held at a steady logic &lsquo;0&rsquo;. Bit 0's output transistor is fully turned on, holding its external pin
+      firmly to the chip's internal ground rail.
+    </p>
+
+    <p>
+      When the other 31 bits fire, the collective return current spikes through the shared package inductance,
+      and the chip's internal ground violently bounces up by 300 to 500 mV. Because bit 0 is clamped to that internal
+      ground, its external pin is dragged upward along with it. To a receiver on the other end of the board whose ground
+      remained at a quiet 0 V, that 400 mV glitch appears as an unprompted pulse. If it crosses the receiver's
+      logic-low threshold (<span class="num">V<sub>IL</sub></span>), a quiet control line triggers a false clock edge,
+      a memory read gets corrupted, or a state machine takes a phantom step &#8212; while the switching data lines
+      themselves appear perfectly healthy.
+    </p>
+
+    <h2 class="section-rule"><span>Why it hurts twice</span></h2>
+
+    <p>
+      SSN does not just add noise — it adds noise that is <strong>correlated with the data</strong>. The
+      bounce is largest exactly when the most bits switch, which is exactly when the receiver is trying
+      to resolve an edge. It shifts the threshold at the moment of decision, so it converts directly
+      into timing error, and because it depends on the data pattern it behaves like deterministic
+      jitter rather than random noise. A pattern that avoids simultaneous switching will not show it.
+    </p>
+
+    <div class="note">
+      <b>Why it gets simulated too late</b>
+      SSN needs three things at once: a full package model with the real return network, a driver model
+      with real edge rates, and a worst-case switching pattern. The package model usually arrives last,
+      so the first honest SSN result often lands after layout is frozen. Running an early estimate with
+      a lumped package model is worth far more than a perfect result that arrives too late to act on.
+    </div>
+
+    <p>
+      The mitigations, in order of how much they move the number:
+    </p>
+
+    <ul class="tight">
+      <li><strong>More returns, better distributed.</strong> Ground balls and bumps interleaved with the
+        signals is the single biggest lever, because it attacks the shared inductance directly.</li>
+      <li><strong>Cap the number of simultaneous transitions.</strong> Data bus inversion is the
+        lever, and there are two distinct kinds. <em>Transition-based</em> inversion (DBI-AC) counts
+        the bits that would <em>change</em> since the previous cycle and inverts when more than half
+        of them would — which is the one that bounds di/dt, and so the one relevant here.
+        <em>Level-based</em> inversion (DBI-DC) counts the bits that would sit at one level and
+        inverts to balance the termination current, which is a static power and reference-level
+        question rather than a switching one. Both appear in DDR and LPDDR, they are configured
+        separately, and only the first caps simultaneous switching. Which is available, and in which
+        mode, is an edition question — see the claim ledger.</li>
+      <li><strong>Slew rate control.</strong> Slower edges reduce di/dt proportionally. It costs timing
+        margin, so it is a trade rather than a fix, but it is often the only lever left after layout.</li>
+      <li><strong>On-die decoupling near the I/O.</strong> Supplies the transient locally so it never
+        crosses the package inductance at all.</li>
+    </ul>
+
+    <h2 class="section-rule"><span>Why this decides how your board behaves</span></h2>
+
+    <ul class="tight">
+      <li><strong>It moves the reference, not just the signal.</strong> A receiver compares an input
+        against a threshold derived from its own supply and ground. If those move, every input moves
+        with them — including the quiet ones.</li>
+      <li><strong>It is correlated with the data.</strong> The bounce is largest exactly when the
+        most bits switch, which is exactly when the receiver is trying to resolve an edge. It is not
+        a random noise source that averages away; it arrives at the worst possible moment by
+        construction.</li>
+      <li><strong>A quiet bit is the one that fails.</strong> The classic signature: a line held
+        static while its neighbours all switch. It has no signal of its own to ride out the
+        reference moving, so it is where the failure shows.</li>
+      <li><strong>It scales with the number switching, not with the rate.</strong> Sixteen bits
+        switching together at 100 MHz is worse than one bit at 1 GHz, because di/dt adds.</li>
+    </ul>
+
+    <h2 class="section-rule"><span>What to do about it</span></h2>
+
+    <p>
+      <strong>Reduce the shared inductance.</strong> More power and ground pins, distributed among
+      the signals rather than clustered at the edge, so each group of drivers has a shorter and less
+      shared return. This is a package and pinout decision, made very early.
+    </p>
+
+    <p>
+      <strong>Reduce di/dt.</strong> Slower edges, or staggered switching so not everything moves in
+      the same picosecond. Output slew-rate control exists largely for this, and on a wide bus it is
+      the most effective knob you have.
+    </p>
+
+    <p>
+      <strong>Reduce the number switching together.</strong> Data bus inversion is precisely this:
+      if more than half the bits would change, send the complement and flag it. What that bounds
+      depends on which variant is implemented — minimising transitions is the one that targets
+      SSN.
+    </p>
+
+    <p>
+      <strong>Do not expect board decoupling to help much.</strong> The shared inductance is mostly
+      inside the package, and a capacitor on the board is outside it. This is the same inductive
+      fence as everywhere else in PI.
+    </p>
+
+    <div class="note">
+      <b>Using this to find a fault</b>
+      <ul class="tight">
+        <li><b>A static bit that glitches when its neighbours switch.</b> Textbook SSN. Count how
+          many neighbours and in which direction — the failure should track the number switching
+          the same way.</li>
+        <li><b>Failures that depend on the data pattern but not on the channel.</b> If the pattern
+          dependence follows the <em>number of simultaneous transitions</em> rather than run
+          length, it is SSN rather than <a href="../fundamentals/isi.html">ISI</a>.</li>
+        <li><b>Noise on the die's ground that board probing cannot see.</b> Expected. The bounce is
+          between the die and the board; measuring on the board measures the wrong side of the
+          inductance.</li>
+        <li><b>Better with a slower driver setting.</b> Strong confirmation — di/dt is the term
+          you changed.</li>
+      </ul>
+    </div>
+
+    <details class="deeper">
+      <summary>Go deeper — why the peak is π/2 above the mean, and the three names for one effect</summary>
+
+      <p>
+        The arithmetic above uses the <em>mean</em> slope — total current change divided by
+        transition time. A real edge is not a ramp. For a raised-cosine transition, the
+        instantaneous slope peaks at π/2 times the mean:
+      </p>
+
+      <div class="eq">
+        <span class="eq__main">d<i class="var">i</i>/d<i class="var">t</i>|<sub>peak</sub> = (π/2) · Δ<i class="var">I</i> / <i class="var">t</i><sub>r</sub></span>
+        <span class="eq__note">about 1.57×, so a bounce computed from the mean slope understates the peak by more than half again</span>
+      </div>
+
+      <p>
+        That factor matters because the receiver does not average. It sees the instantaneous
+        reference, so the peak is the number that decides whether a bit is read correctly. The panel
+        above plots the peak for exactly this reason.
+      </p>
+
+      <p>
+        <strong>Three names, one effect.</strong> Seen from the ground network it is
+        <em>ground bounce</em>; seen from the supply it is <em>rail collapse</em>; seen from the
+        signal it is a <em>shifted threshold</em>. They are one voltage measured at three places,
+        and the multiplicity of names causes real confusion in debugging — two people can be
+        describing the same measurement and think they disagree.
+      </p>
+
+      <p>
+        <strong>Why this is a mutual-inductance problem too.</strong> The treatment above uses a
+        single shared self-inductance, which is the first-order picture. In a real package the
+        return paths of adjacent drivers are also mutually coupled, so a driver's current induces
+        voltage in its neighbour's loop as well as in the shared one.
+      </p>
+
+      <p>
+        <strong>Which way that pushes depends on the sign, and the sign depends on the
+        geometry and on what the drivers are doing.</strong> The mutual term enters as
+        M·di/dt with a sign set by the relative orientation of the two loops, so:
+      </p>
+
+      <ul class="tight">
+        <li>Aggressors switching the <em>same</em> direction through loops oriented the
+          <em>same</em> way add — and this is the case that makes SSN grow faster than
+          linearly with aggressor count, and makes a measured number exceed a simple
+          L·di/dt estimate.</li>
+        <li>Aggressors switching in <em>opposite</em> directions, or through loops whose
+          orientation opposes, subtract. A differential pair returning through adjacent
+          pins is the deliberate version of this: the mutual term is what makes its net
+          return current nearly zero, which is why differential signalling is kind to a
+          package in the first place.</li>
+        <li>Uncorrelated aggressors partially cancel on average, which is why a
+          data bus with a scrambled payload measures below its all-aligned worst case
+          and why compliance patterns are chosen to align the switching on purpose.</li>
+      </ul>
+
+      <p>
+        So the honest summary is that the uncoupled estimate is neither reliably
+        optimistic nor reliably pessimistic: it is missing a term whose sign you have to
+        work out. If you need the number rather than the mechanism, extract the
+        inductance matrix and let the simulator carry the signs — which is a lumped
+        calculation, not a reason to abandon one.
+      </p>
+
+      <p>
+        <strong>And why it is a crosstalk problem in disguise.</strong> Coupling through a shared
+        return is exactly the mechanism on the
+        <a href="../fundamentals/return-current-paths.html">return current</a> page, one level up:
+        two signals whose returns share an impedance are coupled through it. SSN is that effect
+        inside a package, with many aggressors and a shared inductance instead of two traces and a
+        plane opening.
+      </p>
+    </details>
+
+    <h2 class="section-rule"><span>In the real world</span></h2>
+
+    <p>
+      SSN is the impairment that most often gets misattributed, because it presents as a signal
+      integrity failure on a net that is electrically fine. The trace is the right impedance, the
+      termination is correct, the channel loss is in budget — and the bit still fails, because the
+      thing that moved was the reference.
+    </p>
+
+    <p>
+      The discriminating question is always the same: <b>does the failure depend on what the
+      neighbours are doing, rather than on what this net is doing?</b> If it does, stop analysing
+      the net and start counting simultaneous transitions.
+    </p>
+
+    <h3>Related</h3>
+    <ul class="tight">
+      <li><a href="../fundamentals/return-current-paths.html">Return-Current Paths and Reference Continuity</a></li>
+      <li><a href="../power-integrity/pdn-induced-jitter.html">Power-Supply-Induced Jitter: Connecting PI and SI</a></li>
+      <li><a href="../interfaces/lpddr5x.html">LPDDR5 and LPDDR5X Signal Integrity: Timing, ODT, and Training</a></li>
+      <li><a href="../package-board/bga-escape-routing.html">BGA Escape Routing and Breakout Congestion</a></li>
+      <li><a href="../labs/adc-interference.html">Lab D: ADC Interference, Aliasing and Reference Noise</a> — where switching noise goes when it reaches an analog reference instead of a receiver</li>
+    </ul>
+  </div>
+
+  <!-- pager:start -->
+  <nav class="pager" aria-label="Previous and next topic">
+    <a class="prev" href="../../topics/power-integrity/ir-drop-electromigration.html"><span class="dir">Previous</span><span>DC IR Drop and Electromigration</span></a>
+    <a class="next" href="../../topics/power-integrity/pdn-induced-jitter.html"><span class="dir">Next</span><span>Power-Supply-Induced Jitter: Connecting PI and SI</span></a>
+  </nav>
+  <!-- pager:end -->
+</main>
+
+<footer class="site-foot">
+  <span>SIPI &#8212; signal and power integrity, visualised.</span>
+  <span>Created and directed by Geetansh Arora. <a href="../../colophon.html">About, review &amp; AI assistance</a> &#183; <a href="../../model-contract.html">Model assumptions</a> &#183; <a href="../../docs/claims.md">Claim ledger</a></span>
+</footer>
+
+<script src="../../js/site.js?v=acb47d86"></script>
+<script src="../../js/viz-kit.js?v=a53e49c3"></script>
+<script src="../../js/viz/pdn-extras.js?v=57fcc26f"></script>
+<script src="../../js/viz-loader.js?v=89d5884d"></script>
+<script src="../../js/search.js?v=6c93a285"></script>
+</body>
+</html>

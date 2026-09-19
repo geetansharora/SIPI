@@ -1,0 +1,6 @@
+! Passive, reciprocal, NOT port-symmetric: S^H S = identity, so sigma_max = 1.
+! The |S11 +/- S21| shortcut reports 1.414214 here and calls it active.
+! From Astra's review, 12 September 2026, appendix A.
+# Hz S RI R 50
+0 0.7071067811865476 0 0.7071067811865476 0 0.7071067811865476 0 -0.7071067811865476 0
+1000000000 0.7071067811865476 0 0.7071067811865476 0 0.7071067811865476 0 -0.7071067811865476 0

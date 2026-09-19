@@ -1,0 +1,841 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lab D: ADC Interference, Aliasing and Reference Noise | SIPI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<link rel="stylesheet" href="../../css/base.css?v=e4f774de">
+<link rel="stylesheet" href="../../css/components.css?v=295837ab">
+<link rel="stylesheet" href="../../css/adc-lab.css?v=46db406b">
+  <!-- meta:start -->
+  <link rel="canonical" href="https://sipi.work/topics/labs/adc-interference.html">
+  <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="SIPI">
+  <meta property="og:title" content="Lab D: ADC Interference, Aliasing and Reference Noise | SIPI">
+  <meta property="og:description" content="">
+  <meta property="og:url" content="https://sipi.work/topics/labs/adc-interference.html">
+  <meta property="og:image" content="https://sipi.work/assets/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Lab D: ADC Interference, Aliasing and Reference Noise | SIPI">
+  <meta name="twitter:description" content="">
+  <meta name="twitter:image" content="https://sipi.work/assets/og.png">
+  <!-- meta:end -->
+</head>
+<body>
+
+<header class="masthead">
+  <a class="wordmark" href="../../index.html">SIPI</a>
+  <nav>
+    <a href="../../index.html#fundamentals">Fundamentals</a>
+    <a href="../../index.html#power-integrity">Power</a>
+    <a href="../../index.html#interfaces">Interfaces</a>
+    <a href="../../start.html">Start</a>
+    <a href="../../labs.html">Labs</a>
+    <a href="../../reference.html">Reference</a>
+    <button class="theme-toggle" data-act="theme" type="button">System</button>
+  </nav>
+</header>
+
+<main>
+  <div class="page-head">
+    <p class="crumb"><a href="../../index.html#labs">Labs</a> / 04</p>
+    <h1>Lab D: ADC Interference, Aliasing and Reference Noise</h1>
+    <p class="byline">
+      <!-- review:start --><span>By Geetansh Arora — Principal SI/PI Engineer</span><time datetime="2026-09-18" title="Technical review by Geetansh Arora on this date">18 Sep 2026</time><span>18 min</span><!-- review:end -->
+    </p>
+    <p class="answer">
+      An analog-to-digital converter compares a voltage with its reference at instants
+      its clock defines, so anything coupled onto the input or the reference at those
+      instants becomes part of the code &#8212; and sampling, not the aggressor, decides
+      where in frequency that error lands.
+    </p>
+  </div>
+
+  <div class="prose lab-intro">
+    <p>
+      On modern mixed-signal circuit boards, high-speed digital processors live mere millimetres away from
+      sensitive analog-to-digital converters (ADCs). Microcontroller GPIOs, memory buses, and high-frequency
+      switch-mode power supplies constantly inject picosecond current spikes into shared ground planes and
+      adjacent traces.
+    </p>
+
+    <p>
+      When high-frequency digital noise couples into an analog front-end, intuitive circuit thinking suggests
+      the noise should remain at its original frequency — for example, a 100 MHz clock harmonic staying safely
+      at 100 MHz, far above an audio or sensor bandwidth. In a sampled system, however, this intuition fails.
+      The ADC's sampling clock acts as a mathematical mixer: any noise present on the input or reference rail
+      at the precise sampling aperture is <strong>folded (aliased) directly down into the baseband</strong>.
+      A 100.001 MHz clock harmonic can fold into the audio band as a piercing 1 kHz tone that no digital filter
+      can distinguish from true signal.
+    </p>
+
+    <p>
+      Furthermore, how that interference behaves depends fundamentally on the converter's internal architecture.
+      A Successive Approximation Register (SAR) converter makes instantaneous bit decisions across multiple clock
+      ticks, making it acutely vulnerable to reference rail droop during specific bit trials. An oversampling
+      Delta-Sigma (&Delta;&Sigma;) modulator shapes quantization noise and relies on decimation filters, creating
+      deep attenuation notches that can completely swallow an aggressor — or allow it to alias catastrophically
+      if it falls near the modulator clock.
+    </p>
+
+    <h2 class="section-rule"><span>What this page does, and how to use the lab</span></h2>
+
+    <p>
+      Every board that measures something has digital signals switching near its analog-to-digital converter
+      &#8212; GPIOs, clocks, serial buses &#8212; and a little of that switching always couples in. What matters
+      is what it does once inside: a spur, lost SNR, an offset that will not calibrate out. That depends as much
+      on the converter and its clock as on the aggressor.
+    </p>
+
+    <p>
+      The lab below lets you build that situation and watch the result. It simulates a SAR and a second-order
+      Delta-Sigma converter sample by sample, with one aggressor you shape and couple in, and measures the output
+      the way a converter test would. Change any control and every plot answers together.
+    </p>
+
+    <ul class="lab-map" aria-label="How the lab is laid out">
+      <li class="lab-map__top"><b>Along the top: the results</b>SNR, the SNR lost to the aggressor, SFDR and offset.</li>
+      <li class="lab-map__left"><b>Left: the aggressor</b>Scenarios, then its frequency, clock, swing and edges, and how it couples in.</li>
+      <li class="lab-map__mid"><b>Middle: what happens</b>The output spectrum, spurs labelled by the harmonic behind them, and the folding map tracing each harmonic to where it lands.</li>
+      <li class="lab-map__right"><b>Right: the converter</b>SAR or Delta-Sigma, resolution or oversampling, full scale, noise and test tone.</li>
+      <li class="lab-map__bottom"><b>Below the plots: more views</b>The disturbance in time, SNR swept against aggressor frequency, the modulator's full band, and every value as text.</li>
+    </ul>
+
+    <h3>A good way to start</h3>
+    <ol>
+      <li><b>Open a scenario.</b> Choose <b>Folds into band</b> on the left, read its note, and find its spur in
+        the spectrum; the folding map's dashed line leads back to the harmonic that made it.</li>
+      <li><b>Predict, then change one thing.</b> Say what you expect before you move a control &#8212; where the
+        spur goes, whether SNR falls &#8212; then check the numbers along the top.</li>
+      <li><b>Swap the converter.</b> Change the architecture on the right. The aggressor stays as it was, so any
+        difference belongs to the converter.</li>
+      <li><b>Take the guided tour.</b> <b>Guided</b>, at the top right of the lab, asks a question at each step and
+        sets the lab up for it.</li>
+    </ol>
+
+    <div class="note">
+      <b>Along the way</b>
+      Point at a control and the line under the plots says what it changes. Hover over a plot to read its values,
+      or <strong>expand</strong> it to fill the frame. Values can be typed with their units, such as 4.1273 MHz or
+      500 ps. <strong>Pin A</strong> freezes the current result so a change shows against it, and
+      <strong>Verify</strong> lists what the model includes and what it leaves out.
+    </div>
+
+    <p>The lesson below the lab explains the physics behind everything the lab shows.</p>
+  </div>
+
+  <section class="instrument lab" data-viz="adcLab" aria-label="Interactive ADC interference lab: an aggressor couples into a SAR or Delta-Sigma converter's input or reference, and the output spectrum, SNR and offset respond">
+<script type="application/json" data-contract>{"kind":"numerical","evidence":"independent","purpose":"Say where a coupled digital aggressor lands in a converter's output — as spurs, as offset, or as raised noise — and what that does to SNR, for a SAR and a delta-sigma converter fed the same disturbance.","equations":["aggressor: 50%-duty trapezoid, 10-90% rise/fall, full ramp = that / 0.8, through one pole at the path bandwidth","flat coupling: v = G·y(t); capacitive: v = G·(f_bw/f_ref)·(x - y), i.e. G/(2*pi*f_ref)·dy/dt with G stated at f_ref = 1 MHz","fold: f_out = |f - round(f/fs)·fs|","SAR trial j: c <- c + 2^(N-1-j) if h >= (Vref + d(t_j))·(2c/2^N - 1)","delta-sigma, for the implemented ordering: X1 = (U-V)/(1-z^-1), X2 = (X1-V)/(1-z^-1), V = z^-1·X2 + E, giving V = z^-1·U + (1-z^-1)^2·E because (1-z^-1)^2 + z^-1(2-z^-1) = 1","sinc-cubed: three cascaded length-OSR moving averages; |H(f)| = |sin(pi·f·OSR/fmod)/(OSR·sin(pi·f/fmod))|^3","SNR excludes the fundamental, input harmonics 2-6 and DC, each +/-4 bins; interference counts as noise"],"units":"Hz, seconds, volts, dBFS, dB, LSB, ppm","validity":"Ideal comparator, DAC, sample-and-hold and clocks. One periodic trapezoidal aggressor. Oversampling is capped at 256 so a run stays interactive. Every parameter is checked against a declared domain before a run — enums, a finite positive reference, whole-number resolution 6-24 and oversampling 8-1024, an input below Nyquist and at or below full scale, finite non-negative noise, swing, phase, ppm, coupling and bandwidth, a positive rise/fall time — and a value outside it is refused with its reason. A reference driven to zero or below is refused, and so is an overloaded loop.","numerics":"SAR 65,536 samples at 16 bits. Delta-sigma output records are chosen from the oversampling ratio to hold the cost near a million modulator samples: 16,384 outputs at OSR 32 and 64, 8,192 at 128, 4,096 at 256, after a warm-up of 4,096 + 8·OSR modulator samples plus a full decimator kernel. Coherent input: an odd number of cycles in a power-of-two record, kept two lobes clear of DC and Nyquist. 4-term Blackman-Harris window, lobes summed over +/-4 bins. Deterministic noise seed. One run is synchronous and cannot be cancelled part way: measured at 14 ms for the SAR and 38-89 ms for the delta-sigma, so a dragged control coalesces to one run.","limitations":"No clock jitter or aperture uncertainty, no supply or ground bounce as a separate path, no DAC mismatch, no continuous-time or multi-bit modulator, no anti-alias filter beyond the single path pole. DNL and INL are named as mechanisms and are NOT measured: there is no static ramp or histogram test here, and THD is not a substitute for one. Interference that folds inside an excluded lobe is excluded with it and does not reduce the reported SNR, however large it is; diagnostics.masked names any such component and measurements.maskedCount counts them. The excluded bins carry no measurable noise of their own, so the measured average density stands in for them: exact for white noise, and otherwise bounded by the replaced fraction, which is under 0.2% of bins and so under 0.01 dB. The reference-ripple mixing shown is a property of this loop and does not transfer unchanged to a continuous-time or multi-bit modulator. Nothing here is a compliance measurement.","suites":["ADC SAR","ADC delta-sigma","ADC aliasing","ADC coupling","ADC decimation","ADC metrics","ADC reference coupling","ADC domain"],"version":"1.0","reviewed":"2026-09-18","panel":"adcLab"}</script>
+<div class="lab-frame">
+<div class="instrument__bar">
+        <span class="instrument__title">One aggressor · two converters</span>
+        <span data-evidence="independent" data-model-version="1.0" class="model-tag model-tag--numerical" title="Time-domain simulation of both converters and an FFT of their output, checked against closed forms, a Fourier series and a least-squares tone fit">numerical</span>
+        <span class="instrument__readout adc-metrics" role="status" aria-live="polite" aria-label="Current values">
+          <span class="adc-metric adc-metric--main"><span class="adc-metric__label">SNR</span><b data-out="snr">—</b></span>
+          <span class="adc-metric"><span class="adc-metric__label">lost to the aggressor</span><b data-out="loss">—</b></span>
+          <span class="adc-metric"><span class="adc-metric__label">SFDR</span><b data-out="sfdr">—</b></span>
+          <span class="adc-metric"><span class="adc-metric__label">offset</span><b data-out="offset">—</b></span>
+        </span>
+      <button type="button" class="tool-btn lab-full" data-lab-full aria-pressed="false">full screen</button>
+</div>
+<aside class="lab-rail lab-rail--left" aria-label="Aggressor and coupling controls">
+<p class="lab-rail__side">Aggressor <span>what couples in</span></p>
+<section class="lab-group" aria-labelledby="adc-left-0">
+<h3 class="lab-group__title" id="adc-left-0">Scenarios · <span data-out="arch-name">SAR</span></h3>
+<div class="presets adc-scenarios">
+        <button class="preset" type="button" data-when="sar" data-preset="sar-clean" aria-pressed="false">Clean</button>
+        <button class="preset" type="button" data-when="sar" data-preset="sar-fold" aria-pressed="false">Folds into band</button>
+        <button class="preset" type="button" data-when="sar" data-preset="sar-gpio" aria-pressed="false">GPIO at 1 MHz</button>
+        <button class="preset" type="button" data-when="sar" data-preset="sar-locked" aria-pressed="false">Shared clock 4×</button>
+        <button class="preset" type="button" data-when="sar" data-preset="sar-slow" aria-pressed="false">Slow edges</button>
+        <button class="preset" type="button" data-when="sar" data-preset="sar-fast" aria-pressed="false">Fast edges</button>
+        <button class="preset" type="button" data-when="sar" data-preset="sar-ref" aria-pressed="false">Ripple on Vref</button>
+        <button class="preset" type="button" data-when="ds" data-preset="ds-clean" aria-pressed="false">Clean</button>
+        <button class="preset" type="button" data-when="ds" data-preset="ds-notch" aria-pressed="false">On the notch</button>
+        <button class="preset" type="button" data-when="ds" data-preset="ds-offnotch" aria-pressed="false">…1 Hz off it</button>
+        <button class="preset" type="button" data-when="ds" data-preset="ds-clock" aria-pressed="false">Near the clock</button>
+        <button class="preset" type="button" data-when="ds" data-preset="ds-ref" aria-pressed="false">Ripple on Vref</button>
+        <p class="presets__note" data-out="note"></p>
+      </div>
+</section>
+<section class="lab-group" aria-labelledby="adc-left-1">
+<h3 class="lab-group__title" id="adc-left-1">Aggressor</h3>
+<div class="ctl adc-check">
+          <div class="adc-check__row"><input type="checkbox" id="adc-agg-sync"><label for="adc-agg-sync">Shares the converter's clock</label></div>
+          <p class="ctl__note">Off, the default: the aggressor runs from its own oscillator, like a GPIO or a nearby interface, and knows nothing of the converter's clock. On: it is timed from the same crystal, as PWM or SPI from the microcontroller that clocks the converter can be, so its ratio to the converter clock is exact.</p>
+        </div>
+<div class="ctl" data-when="free">
+          <div class="ctl__head"><label for="adc-agg-f">Frequency</label><span class="adc-value"><input class="ctl__num adc-entry" type="text" inputmode="decimal" spellcheck="false" data-entry="adc-agg-f" aria-label="Aggressor frequency, with unit"></span></div>
+          <input type="range" id="adc-agg-f" min="0" max="1000" step="1" value="733">
+          <p class="ctl__note">Drag, or type a value with its unit: 4.1273 MHz, 51 Hz, 128k.</p>
+        </div>
+<div class="ctl" data-when="free">
+          <div class="ctl__head"><label for="adc-agg-ppm">Frequency error</label><span class="adc-value"><input class="ctl__num adc-num" type="text" inputmode="decimal" spellcheck="false" data-num="adc-agg-ppm" aria-label="Aggressor frequency error against the converter crystal, ppm"><span class="ctl__unit">ppm</span></span></div>
+          <input type="range" id="adc-agg-ppm" min="-200" max="200" step="1" value="20">
+          <p class="ctl__note">The aggressor's error against the converter's crystal. Two oscillators never agree exactly: at a nominal match the aggressor beats at this fraction of its frequency, and 20 ppm of 1 MHz is 20 Hz.</p>
+        </div>
+<div class="ctl" data-when="locked ds">
+          <div class="ctl__head"><label for="adc-agg-base">A multiple of</label></div>
+          <select class="sel" id="adc-agg-base">
+            <option value="clock">the modulator clock</option>
+            <option value="odr">the output data rate</option>
+          </select>
+          <p class="ctl__note">A multiple of the output data rate lands on the sinc³ filter's nulls; a multiple of the modulator clock folds straight to DC.</p>
+        </div>
+<div class="adc-pair" data-when="locked">
+<div class="ctl">
+          <div class="ctl__head"><label for="adc-agg-k">Multiple</label><span class="adc-value"><input class="ctl__num adc-num" type="text" inputmode="decimal" spellcheck="false" data-num="adc-agg-k" aria-label="Multiple of the clock"><span class="ctl__unit">×</span></span></div>
+          <input type="range" id="adc-agg-k" min="1" max="64" step="1" value="4">
+          <p class="ctl__note">Every harmonic of an exact multiple is also an exact multiple, so all of them land in the same place.</p>
+        </div>
+<div class="ctl">
+          <div class="ctl__head"><label for="adc-agg-phase">Phase</label><span class="adc-value"><input class="ctl__num adc-num" type="text" inputmode="decimal" spellcheck="false" data-num="adc-agg-phase" aria-label="Aggressor phase, degrees"><span class="ctl__unit">°</span></span></div>
+          <input type="range" id="adc-agg-phase" min="0" max="355" step="5" value="90">
+          <p class="ctl__note">Where the aggressor is at every sample. With a shared clock the error is the aggressor's value at this phase, so it sets the offset.</p>
+        </div>
+</div>
+<div class="adc-pair">
+<div class="ctl">
+          <div class="ctl__head"><label for="adc-agg-amp">Swing</label><span class="adc-value"><input class="ctl__num adc-num" type="text" inputmode="decimal" spellcheck="false" data-num="adc-agg-amp" aria-label="Aggressor swing, volts peak to peak"><span class="ctl__unit">V</span></span></div>
+          <input type="range" id="adc-agg-amp" min="1" max="50" step="1" value="18">
+          <p class="ctl__note">The aggressor's logic swing, peak to peak, before coupling. Its mean is left out: a DC shift is an offset you would calibrate.</p>
+        </div>
+<div class="ctl">
+          <div class="ctl__head"><label for="adc-edge">Rise/fall time</label><span class="adc-value"><input class="ctl__num adc-entry" type="text" inputmode="decimal" spellcheck="false" data-entry="adc-edge" aria-label="Aggressor rise and fall time, 10 to 90 percent, with unit"></span></div>
+          <input type="range" id="adc-edge" min="0" max="1000" step="1" value="125">
+          <p class="ctl__note">10–90%. Held to a fifth of the aggressor's period, so the range follows its frequency: up to 200 ns at 1 MHz, 2 ns at 100 MHz. Faster edges carry harmonics further.</p>
+        </div>
+</div>
+<p class="adc-derived" data-out="agg-derived"></p>
+</section>
+<section class="lab-group" aria-labelledby="adc-left-2">
+<h3 class="lab-group__title" id="adc-left-2">Coupling</h3>
+<div class="adc-pair">
+<div class="ctl">
+          <div class="ctl__head"><label for="adc-path">Into</label></div>
+          <select class="sel" id="adc-path">
+            <option value="none">nothing</option>
+            <option value="input">the input</option>
+            <option value="reference">the reference</option>
+          </select>
+          <p class="ctl__note">Into the input, a disturbance adds. Into the reference, it multiplies: the code is the input divided by the reference.</p>
+        </div>
+<div class="ctl">
+          <div class="ctl__head"><label for="adc-coupling-type">Mechanism</label></div>
+          <select class="sel" id="adc-coupling-type">
+            <option value="flat">flat</option>
+            <option value="capacitive">capacitive</option>
+          </select>
+          <p class="ctl__note">Flat: a shared impedance passes every harmonic at one ratio. Capacitive: coupling follows the rate of change, so faster edges and higher harmonics arrive larger.</p>
+        </div>
+</div>
+<div class="adc-pair">
+<div class="ctl">
+          <div class="ctl__head"><label for="adc-coupling">Level</label><span class="adc-value"><input class="ctl__num adc-num" type="text" inputmode="decimal" spellcheck="false" data-num="adc-coupling" aria-label="Coupling level, dB"><span class="ctl__unit">dB</span></span></div>
+          <input type="range" id="adc-coupling" min="-140" max="-20" step="1" value="-80">
+          <p class="ctl__note">Voltage ratio from the aggressor to the pin. For capacitive coupling, the ratio at 1 MHz.</p>
+        </div>
+<div class="ctl">
+          <div class="ctl__head"><label for="adc-path-bw">RC bandwidth</label><span class="adc-value"><input class="ctl__num adc-entry" type="text" inputmode="decimal" spellcheck="false" data-entry="adc-path-bw" aria-label="Coupling path bandwidth, with unit"></span></div>
+          <input type="range" id="adc-path-bw" min="0" max="1000" step="1" value="610">
+          <p class="ctl__note">One RC pole between the aggressor and the pin: the filter at the input, or the reference's decoupling. Harmonics above it are attenuated before the converter samples them, so they cannot fold.</p>
+        </div>
+</div>
+</section>
+</aside>
+<div class="lab-stage">
+<div class="lab-row lab-row--anchor" style="--anchor-columns: minmax(0, 6fr) minmax(0, 5fr)">
+<figure data-lab-unit="spectrum" data-lab-name="Output spectrum" class="panel"><div class="lab-panel-head"><span class="lab-unit-label">Output spectrum</span><button type="button" class="tool-btn lab-expand" data-lab-expand aria-pressed="false" aria-label="Expand Output spectrum">expand</button></div>
+          <canvas data-cv="spectrum" role="img" aria-label="Output spectrum of the converter in dBFS against frequency, with the input tone, the per-bin noise floor and each interference spur labelled with the aggressor harmonic that produced it."></canvas>
+          <figcaption class="sr-only">Each label names the aggressor harmonic behind a spur.</figcaption>
+        </figure>
+<figure data-lab-unit="fold" data-lab-name="Folding map" class="panel"><div class="lab-panel-head"><span class="lab-unit-label">Folding map</span><button type="button" class="tool-btn lab-expand" data-lab-expand aria-pressed="false" aria-label="Expand Folding map">expand</button></div>
+          <canvas data-cv="fold" role="img" aria-label="Top: the aggressor's harmonics at the converter pin against their own frequency. Bottom: where each lands in the output band after sampling, with lines joining the five strongest."></canvas>
+          <figcaption class="sr-only">Harmonics at the pin, and where sampling puts them.</figcaption>
+        </figure>
+</div>
+<div class="lab-strip">
+<div class="ctl adc-axis">
+          <label for="adc-axis">Frequency axis</label>
+          <select class="sel" id="adc-axis">
+            <option value="log">logarithmic</option>
+            <option value="linear">linear</option>
+          </select>
+        </div>
+<p class="adc-strip-note" data-lab-help aria-hidden="true">Point at or focus a control to see what it changes. Interference counts as noise in SNR; DC is reported as offset.</p>
+</div>
+<div class="lab-tabs" role="tablist" aria-label="Linked views">
+<button type="button" role="tab" id="lab-tab-time" aria-controls="lab-view-time" aria-selected="true" tabindex="0" data-view="time">Disturbance in time</button>
+<button type="button" role="tab" id="lab-tab-sweep" aria-controls="lab-view-sweep" aria-selected="false" tabindex="-1" data-view="sweep">SNR against aggressor frequency</button>
+<button type="button" role="tab" id="lab-tab-band" aria-controls="lab-view-band" aria-selected="false" tabindex="-1" data-view="band">Modulator full band</button>
+<button type="button" role="tab" id="lab-tab-values" aria-controls="lab-view-values" aria-selected="false" tabindex="-1" data-view="values">Values as text</button>
+</div>
+<div class="lab-view is-active" id="lab-view-time" role="tabpanel" aria-labelledby="lab-tab-time" data-view="time" data-count="1">
+<figure data-lab-unit="time" data-lab-name="Disturbance in time" class="panel"><div class="lab-panel-head"><span class="lab-unit-label">Disturbance in time</span><button type="button" class="tool-btn lab-expand" data-lab-expand aria-pressed="false" aria-label="Expand Disturbance in time">expand</button></div>
+          <canvas data-cv="time" role="img" aria-label="The coupled disturbance at the converter pin over a few sample periods, with the instants the converter looks at it marked. A SAR samples the input once but reads the reference at every bit trial; a Delta-Sigma looks at both on every modulator sample."></canvas>
+        </figure>
+</div>
+<div class="lab-view" id="lab-view-sweep" role="tabpanel" aria-labelledby="lab-tab-sweep" data-view="sweep" data-count="1">
+<figure data-lab-unit="sweep" data-lab-name="SNR against aggressor frequency" class="panel"><div class="lab-panel-head"><span class="lab-unit-label">SNR against aggressor frequency</span><label class="adc-head-ctl"><span>sweep</span><select class="sel" id="adc-sweep-range">
+              <option value="sar" data-arch="sar">0 to 5 × the sample rate</option>
+              <option value="ds-odr" data-arch="ds">0 to 6 × the output data rate</option>
+              <option value="ds-clock" data-arch="ds">the nearest modulator-clock multiple ± 3 × the data rate</option>
+            </select></label><button type="button" class="tool-btn lab-expand" data-lab-expand aria-pressed="false" aria-label="Expand SNR against aggressor frequency">expand</button></div>
+          <canvas data-cv="sweep" role="img" aria-label="SNR and output offset against aggressor frequency, swept in 240 steps through each nominal multiple of the relevant clock with the aggressor's own frequency error applied, every other setting held. Near a multiple the aggressor beats slowly, and its error moves between SNR and offset."></canvas>
+        </figure>
+</div>
+<div class="lab-view" id="lab-view-band" role="tabpanel" aria-labelledby="lab-tab-band" data-view="band" data-count="1">
+<figure data-lab-unit="band" data-lab-name="Modulator full band" class="panel"><div class="lab-panel-head"><span class="lab-unit-label">Modulator full band</span><button type="button" class="tool-btn lab-expand" data-lab-expand aria-pressed="false" aria-label="Expand Modulator full band">expand</button></div>
+          <canvas data-cv="band" role="img" aria-label="Spectrum of the Delta-Sigma modulator's bitstream up to half the modulator clock, with the output band shaded and the sinc-cubed decimation filter overlaid: quantization noise pushed up and away from the band, and the filter that removes it. Reference ripple near half the clock multiplies that noise back down."></canvas>
+        </figure>
+</div>
+<div class="lab-view" id="lab-view-values" role="tabpanel" aria-labelledby="lab-tab-values" data-view="values" data-count="1">
+<dl data-summary class="viz-summary" aria-label="Current values"></dl>
+</div>
+</div>
+<aside class="lab-rail lab-rail--right" aria-label="Converter and input controls">
+<p class="lab-rail__side">Converter <span>what samples it</span></p>
+<section class="lab-group" aria-labelledby="adc-right-0">
+<h3 class="lab-group__title" id="adc-right-0">Converter</h3>
+<div class="ctl">
+          <div class="ctl__head"><label for="adc-arch">Architecture</label></div>
+          <select class="sel" id="adc-arch">
+            <option value="sar">SAR</option>
+            <option value="ds">Delta-Sigma, 2nd order, 1-bit</option>
+          </select>
+          <p class="ctl__note">Switching keeps the aggressor, so the same disturbance can be compared on both converters.</p>
+        </div>
+<div class="ctl" data-when="sar">
+          <div class="ctl__head"><label for="adc-bits">Resolution</label><span class="adc-value"><input class="ctl__num adc-num" type="text" inputmode="decimal" spellcheck="false" data-num="adc-bits" aria-label="SAR resolution, bits"><span class="ctl__unit">bits</span></span></div>
+          <input type="range" id="adc-bits" min="10" max="18" step="1" value="16">
+          <p class="ctl__note">Ideal quantization SNR is 6.02 dB per bit plus 1.76 dB, for a full-scale sine.</p>
+        </div>
+<div class="ctl" data-when="sar">
+          <div class="ctl__head"><label for="adc-fs">Sample rate</label><span class="adc-value"><input class="ctl__num adc-entry" type="text" inputmode="decimal" spellcheck="false" data-entry="adc-fs" aria-label="SAR sample rate, with unit"></span></div>
+          <input type="range" id="adc-fs" min="0" max="1000" step="1" value="750">
+          <p class="ctl__note">Every frequency folds into 0 to half of this. Exact multiples of it fold to DC.</p>
+        </div>
+<div class="ctl" data-when="ds">
+          <div class="ctl__head"><label for="adc-fmod">Modulator clock</label><span class="adc-value"><input class="ctl__num adc-entry" type="text" inputmode="decimal" spellcheck="false" data-entry="adc-fmod" aria-label="Delta-Sigma modulator clock, with unit"></span></div>
+          <input type="range" id="adc-fmod" min="0" max="1000" step="1" value="602">
+          <p class="ctl__note">The rate the loop samples at. An aggressor near a multiple of it folds straight into the band before any filter runs.</p>
+        </div>
+<div class="ctl" data-when="ds">
+          <div class="ctl__head"><label for="adc-osr">Oversampling ratio</label></div>
+          <select class="sel" id="adc-osr">
+            <option value="32">32</option>
+            <option value="64">64</option>
+            <option value="128">128</option>
+            <option value="256">256</option>
+          </select>
+          <p class="ctl__note">Each doubling moves the output data rate down an octave and buys about 15 dB of quantization SNR for a second-order loop.</p>
+        </div>
+<p class="adc-derived" data-out="rate-derived"></p>
+<div class="ctl">
+          <div class="ctl__head"><label for="adc-vref">Full scale</label></div>
+          <select class="sel" id="adc-vref">
+            <option value="1.25">±1.25 V</option>
+            <option value="2.5">±2.5 V</option>
+            <option value="5">±5 V</option>
+          </select>
+          <p class="ctl__note">The reference. A larger full scale makes the same coupled millivolts a smaller fraction of it.</p>
+        </div>
+<div class="ctl">
+          <div class="ctl__head"><label for="adc-noise">Input noise</label><span class="adc-value"><input class="ctl__num adc-num" type="text" inputmode="decimal" spellcheck="false" data-num="adc-noise" aria-label="Input noise, microvolts rms"><span class="ctl__unit">µV rms</span></span></div>
+          <input type="range" id="adc-noise" min="0" max="300" step="1" value="0">
+          <p class="ctl__note">White noise at the input on every sample, such as kT/C: 20.4 µV rms for 10 pF at 300 K.</p>
+        </div>
+</section>
+<section class="lab-group" aria-labelledby="adc-right-1">
+<h3 class="lab-group__title" id="adc-right-1">Input tone</h3>
+<div class="ctl">
+          <div class="ctl__head"><label for="adc-in-f">Frequency</label><span class="adc-value"><input class="ctl__num adc-entry" type="text" inputmode="decimal" spellcheck="false" data-entry="adc-in-f" aria-label="Input tone frequency, with unit"></span></div>
+          <input type="range" id="adc-in-f" min="0" max="1000" step="1" value="400">
+          <p class="ctl__note">Moved to the nearest frequency with an odd number of cycles in the record, so the tone sits exactly on a bin.</p>
+        </div>
+<div class="ctl">
+          <div class="ctl__head"><label for="adc-in-a">Amplitude</label><span class="adc-value"><input class="ctl__num adc-num" type="text" inputmode="decimal" spellcheck="false" data-num="adc-in-a" aria-label="Input tone amplitude, dBFS"><span class="ctl__unit">dBFS</span></span></div>
+          <input type="range" id="adc-in-a" min="-600" max="-5" step="5" value="-10">
+          <p class="ctl__note">Reference coupling scales with this; input coupling does not. A 1-bit Delta-Sigma loop overloads near full scale and is refused there.</p>
+        </div>
+<p class="adc-derived" data-out="in-derived"></p>
+</section>
+<section class="lab-group">
+<details class="lab-notes"><summary>Learning sequence</summary>
+<div class="experiment-flow" aria-label="ADC interference learning sequence">
+        <div class="experiment-step"><strong>Predict</strong><p>A 4 MHz clock couples into a 1 MS/s SAR. Where in the output spectrum does it appear, and does locking it to exactly 4 × the sample clock make it harmless?</p></div>
+        <div class="experiment-step"><strong>Experiment</strong><p>Run <i>Folds into band</i>, then <i>Locked at 4 × clock</i>, then <i>…50 ppm apart</i>. Watch SNR, the offset and where the spur sits.</p></div>
+        <div class="experiment-step"><strong>Explain</strong><p>Sampling folds every harmonic to its distance from the nearest multiple of the clock. An exact multiple folds everything to DC, which SNR excludes and offset reports; two oscillators are never exact.</p></div>
+        <div class="experiment-step"><strong>Transfer</strong><p>A 10 Hz Delta-Sigma must live beside a 51 Hz square wave. Name two changes that would each remove its spur, and say which one also protects against a 60 Hz neighbour.</p></div>
+      </div>
+</details>
+</section>
+</aside>
+</div>
+<script type="application/json" data-guide>
+{
+  "title": "Where interference lands",
+  "steps": [
+    {
+      "say": "A 16-bit SAR at 1 MS/s, converting a 10 kHz tone at −1 dBFS. A 1.8 V clock at 4.1273 MHz, on its own oscillator, couples 80 dB down into its input: 112 µV at the pin. SNR is 85.2 dB against 97.1 dB with nothing coupled.",
+      "set": {
+        "_p": "sar-fold"
+      },
+      "ask": "The aggressor is at 4.1273 MHz, far above the 500 kHz band. Where does its fundamental appear in the output?",
+      "answer": "At 127.4 kHz — its distance from 4 MHz, the nearest multiple of the sample rate, including the aggressor's own 20 ppm error. Sampling cannot tell 4.1273 MHz from 127.4 kHz: both produce the same samples. Every odd harmonic folds the same way, which is why the folding map shows more than one spur."
+    },
+    {
+      "say": "Now a GPIO toggling at 1 MHz beside the same converter — a nominal perfect match with the 1 MS/s sample rate, but the GPIO has its own oscillator.",
+      "set": {
+        "_p": "sar-gpio"
+      },
+      "ask": "An aggressor at exactly the sample rate would fold to DC. Does this one leave SNR alone?",
+      "answer": "No. 20 ppm off, it beats at 20 Hz. That is slower than the 65.5 ms record resolves, so the fundamental lands in the DC bins and reads as offset — an offset that wanders in any real measurement — while harmonics 5, 7 and 9 land at 100, 140 and 180 Hz. SNR 74.7 dB. A nominal match between independent clocks puts the interference near DC, where slow measurements live."
+    },
+    {
+      "say": "Now make the aggressor share the converter's clock, at exactly 4 × the sample rate.",
+      "set": {
+        "_p": "sar-locked"
+      },
+      "ask": "SNR goes back to 97.1 dB. Has the interference gone?",
+      "answer": "No — it has moved to DC. Every sample catches the aggressor at the same phase, so the error is a constant: +0.90 mV, 11.8 LSB of offset. SNR excludes DC, so it cannot see it. Drag the phase to 0° and the offset flips sign: it is the aggressor's value at the sampling instant. Only a shared clock makes the ratio this exact."
+    },
+    {
+      "say": "Switch to a Delta-Sigma with a 10 Hz output data rate and put a 50 Hz square wave beside it, 40 dB down, on its own oscillator.",
+      "set": {
+        "_p": "ds-notch"
+      },
+      "ask": "The sinc³ filter has a null at 50 Hz. Does SNR move?",
+      "answer": "By 2.9 dB. The fundamental sits 1 mHz from its null, but harmonic n sits n mHz from its own, and far enough up the series that is inside the passband. Try the next scenario, 51 Hz: the 251st harmonic lands 1.26 Hz from five times the 2.56 kHz modulator clock, folds into the band before the filter runs, and costs 16.4 dB."
+    },
+    {
+      "say": "Last: ripple on a Delta-Sigma's reference, a few hertz below half its modulator clock — nowhere near the 1 kHz band.",
+      "set": {
+        "_p": "ds-ref"
+      },
+      "ask": "There is no spur in the output. Why did SNR fall by nearly 18 dB?",
+      "answer": "The feedback DAC multiplies the bitstream by the reference. The bitstream carries its shaped quantization noise right up near half the modulator clock, and multiplying by ripple at that frequency shifts that noise down to DC — into the band. The Modulator full band view shows the noise it borrowed from."
+    }
+  ],
+  "transfer": "A board carries a 16-bit SAR sampling at 1 MS/s and a 25 MHz system clock with 500 ps edges routed past its reference pin. Predict where the clock's harmonics land, whether the reference path or the input path is the bigger worry, and what one layout change and one clocking change would each do.",
+  "transferNote": "There is no reveal. Try it: set the aggressor to 25 MHz, the edge to 500 ps and the path to the reference, then compare."
+}
+      </script>
+  </section>
+
+  <div class="prose lab-after">
+    <h2 class="section-rule"><span>Two ways to turn a voltage into a number</span></h2>
+
+    <p>
+      Both converters in the lab do the same job &#8212; they decide which of 2<sup>N</sup> codes best
+      describes a voltage &#8212; but they spend their time very differently, and that difference decides
+      which interference hurts each of them.
+    </p>
+
+    <figure class="figure adc-diagrams">
+      <div class="figure__bar"><span>Where interference enters &#183; red marks the input, the reference and the clock</span></div>
+      <div class="figure__pair">
+        <div><span class="figure__label">SAR &#8212; one sample, N decisions</span><svg viewBox="0 0 360 210" role="img" aria-label="SAR converter. The input passes a sample-and-hold into a comparator. A DAC scaled by the reference feeds the comparator's other input. Successive-approximation logic sets the DAC's trial code and produces the output code. Interference enters at the input, the reference and the clock.">
+  <text class="txt" x="4" y="64">V<tspan dy="3" font-size="10.5">in</tspan></text>
+  <path class="wire" d="M28 60 H60"/>
+  <rect class="blk" x="60" y="40" width="58" height="40" rx="3"/>
+  <text class="txt" x="89" y="64" text-anchor="middle">S/H</text>
+  <path class="wire" d="M118 55 H172"/>
+  <path class="blk" d="M172 38 V92 L222 65 Z"/>
+  <text class="txt--small" x="178" y="59">+</text>
+  <text class="txt--small" x="178" y="84">&#8722;</text>
+  <path class="wire" d="M222 65 H248"/>
+  <rect class="blk" x="248" y="45" width="84" height="40" rx="3"/>
+  <text class="txt" x="290" y="69" text-anchor="middle">SAR logic</text>
+  <path class="wire" d="M332 65 H350"/>
+  <path class="arrow" d="M350 61 L357 65 L350 69 Z"/>
+  <text class="txt--small" x="354" y="38" text-anchor="end">code</text>
+  <rect class="blk" x="118" y="118" width="84" height="36" rx="3"/>
+  <text class="txt" x="160" y="140" text-anchor="middle">DAC</text>
+  <path class="wire" d="M160 118 V80 H172"/>
+  <path class="wire wire--fb" d="M290 85 V136 H202"/>
+  <text class="txt--small" x="296" y="116">trial</text>
+  <text class="txt--small" x="296" y="129">code</text>
+  <text class="txt" x="4" y="140">V<tspan dy="3" font-size="10.5">ref</tspan></text>
+  <path class="wire" d="M36 136 H118"/>
+  <path class="wire" d="M50 192 H318 V85"/>
+  <path class="wire" d="M110 192 V80"/>
+  <text class="txt" x="4" y="196">clock</text>
+  <circle class="entry" cx="46" cy="60" r="4.5"/>
+  <text class="entry-txt" x="40" y="46" text-anchor="middle">input</text>
+  <circle class="entry" cx="70" cy="136" r="4.5"/>
+  <text class="entry-txt" x="62" y="124" text-anchor="middle">reference</text>
+  <circle class="entry" cx="70" cy="192" r="4.5"/>
+  <text class="entry-txt" x="74" y="180" text-anchor="middle">clock</text>
+</svg></div>
+        <div><span class="figure__label">Delta-Sigma &#8212; many coarse samples, then a filter</span><svg viewBox="0 0 360 210" role="img" aria-label="Second-order Delta-Sigma converter. The input minus the fed-back DAC output is integrated twice, a 1-bit quantizer clocked at the modulator rate makes a bitstream, a DAC scaled by the reference feeds it back to both summing points, and a sinc-cubed filter produces the output code at the output data rate. Interference enters at the input, the reference and the clock.">
+  <text class="txt" x="4" y="64">V<tspan dy="3" font-size="10.5">in</tspan></text>
+  <path class="wire" d="M28 60 H53"/>
+  <circle class="blk" cx="64" cy="60" r="11"/>
+  <text class="txt--small" x="64" y="64" text-anchor="middle">&#931;</text>
+  <path class="wire" d="M75 60 H88"/>
+  <rect class="blk" x="88" y="45" width="34" height="30" rx="3"/>
+  <text class="txt" x="105" y="65" text-anchor="middle">&#8747;</text>
+  <path class="wire" d="M122 60 H137"/>
+  <circle class="blk" cx="148" cy="60" r="11"/>
+  <text class="txt--small" x="148" y="64" text-anchor="middle">&#931;</text>
+  <path class="wire" d="M159 60 H172"/>
+  <rect class="blk" x="172" y="45" width="34" height="30" rx="3"/>
+  <text class="txt" x="189" y="65" text-anchor="middle">&#8747;</text>
+  <path class="wire" d="M206 60 H222"/>
+  <rect class="blk" x="222" y="45" width="40" height="30" rx="3"/>
+  <text class="txt--small" x="242" y="64" text-anchor="middle">1-bit</text>
+  <path class="wire" d="M262 60 H286"/>
+  <rect class="blk" x="286" y="40" width="68" height="40" rx="3"/>
+  <text class="txt" x="320" y="58" text-anchor="middle">sinc&#179;</text>
+  <text class="txt--small" x="320" y="72" text-anchor="middle">&#247; OSR</text>
+  <path class="wire" d="M320 80 V102"/>
+  <path class="arrow" d="M316 102 L320 109 L324 102 Z"/>
+  <text class="txt--small" x="320" y="124" text-anchor="middle">code</text>
+  <path class="wire wire--fb" d="M274 60 V150 H236"/>
+  <rect class="blk" x="176" y="135" width="60" height="30" rx="3"/>
+  <text class="txt" x="206" y="155" text-anchor="middle">DAC</text>
+  <path class="wire wire--fb" d="M176 150 H64 V71"/>
+  <path class="wire wire--fb" d="M148 150 V71"/>
+  <text class="txt--small" x="70" y="92">&#8722;</text>
+  <text class="txt--small" x="154" y="92">&#8722;</text>
+  <path class="wire" d="M206 198 V165"/>
+  <text class="txt" x="214" y="202">V<tspan dy="3" font-size="10.5">ref</tspan></text>
+  <path class="wire" d="M242 16 V45"/>
+  <text class="txt--small" x="250" y="20">f<tspan dy="3" font-size="10">mod</tspan></text>
+  <circle class="entry" cx="40" cy="60" r="4.5"/>
+  <text class="entry-txt" x="40" y="46" text-anchor="middle">input</text>
+  <circle class="entry" cx="206" cy="182" r="4.5"/>
+  <text class="entry-txt" x="197" y="186" text-anchor="end">reference</text>
+  <circle class="entry" cx="242" cy="30" r="4.5"/>
+  <text class="entry-txt" x="233" y="34" text-anchor="end">clock</text>
+</svg></div>
+      </div>
+    </figure>
+
+    <p>
+      <strong>A SAR converter samples once, then searches.</strong> A switch and a capacitor hold the input
+      still, and the logic asks N questions about it, most significant first: is the input above half of
+      full scale? Above three quarters? Each question sets a DAC to a trial code and compares, and each
+      answer fixes one bit. The DAC's voltage is the trial code times the reference, so the reference is
+      read N times per conversion, once per question &#8212; each at a slightly different moment.
+    </p>
+
+    <p>
+      <strong>A Delta-Sigma converter samples fast and coarsely, then averages.</strong> Its modulator is a
+      feedback loop around a quantizer with only two levels. It integrates the difference between the input
+      and what it last fed back, and chooses +V<sub>ref</sub> or &#8722;V<sub>ref</sub> to keep that integral
+      near zero, so the average of the bitstream follows the input. The error of a two-level quantizer is
+      enormous on every sample, but the loop pushes it towards high frequencies, where a digital filter
+      removes it while lowering the rate by the oversampling ratio. The lab's loop is second order, with a
+      sinc&#179; filter.
+    </p>
+
+    <div class="table-scroll">
+      <table class="data">
+        <thead>
+          <tr><th></th><th>SAR</th><th>Delta-Sigma</th></tr>
+        </thead>
+        <tbody>
+          <tr><th>Conversion</th><td>one sample, then N comparisons against a reference-scaled DAC</td><td>many 1-bit samples in a feedback loop, then a digital filter</td></tr>
+          <tr><th>Resolution comes from</th><td>DAC matching, comparator noise and the sampling capacitor's noise</td><td>the oversampling ratio and the order of the noise shaping</td></tr>
+          <tr><th>Time to a result</th><td>one conversion</td><td>the filter's length: three output samples for sinc&#179;</td></tr>
+          <tr><th>Switching between inputs</th><td>natural &#8212; every sample stands alone</td><td>slow &#8212; the filter settles again after every switch</td></tr>
+          <tr><th>Anti-alias filtering</th><td>needed for everything above f<sub>s</sub>/2</td><td>needed only near multiples of the modulator clock</td></tr>
+          <tr><th>Reference disturbance</th><td>read at every bit decision</td><td>scales the feedback, and mixes with shaped quantization noise</td></tr>
+          <tr><th>&#8220;Safe&#8221; interference frequency</th><td>exact multiples of f<sub>s</sub>, which fold to DC and become offset</td><td>exact multiples of the output data rate, where the filter has nulls</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2 class="section-rule"><span>Sampling decides where the error lands</span></h2>
+
+    <p>
+      A clock coupled at 4 MHz can hurt a converter whose band ends at 500 kHz, because a sampler cannot tell
+      two frequencies apart once they produce the same samples. A tone sampled at f<sub>s</sub> is
+      indistinguishable from a tone at its distance to the nearest multiple of f<sub>s</sub>: 4.1273 MHz
+      sampled at 1 MS/s looks exactly like 127.3 kHz. A clock is a square wave, so it is not one tone but a
+      series &#8212; the odd harmonics, each smaller in proportion to its number &#8212; and every harmonic
+      folds on its own. That is the spread of spurs in <b>Folds into band</b>.
+    </p>
+
+    <p>
+      Before you run <b>Shared clock 4&#215;</b>, predict what an exact multiple does. If every sample catches
+      the aggressor at the same point in its cycle, every sample sees the same error, which is a constant. The
+      spectrum comes back clean and SNR returns to its ideal value, because SNR leaves DC out &#8212; but the
+      output has moved by the aggressor's value at that phase: 0.90 mV, or 11.8 LSB. The interference did not
+      go away. It became offset.
+    </p>
+
+    <p>
+      But an exact multiple needs a shared clock, and most aggressors &#8212; a GPIO, a nearby interface
+      &#8212; run from oscillators of their own and know nothing of the converter's. Two oscillators never
+      agree exactly. In <b>GPIO at 1 MHz</b> the aggressor sits 20 ppm off a 1 MS/s converter, so its
+      fundamental beats at 20 Hz. That is slower than the lab's 65.5 ms record can resolve, so it lands in
+      the DC bins and reads as offset &#8212; an offset that wanders in any real measurement &#8212; while its
+      harmonics land at 100, 140 and 180 Hz, where slow, precise measurements live. The frequency that looked
+      safest puts the interference closest to DC. The lab treats every aggressor this way unless you tick
+      <b>Shares the converter's clock</b>.
+    </p>
+
+    <p>
+      <strong>Edge rate decides how far the series reaches.</strong> A trapezoid's harmonics fall at
+      20 dB per decade up to 0.8/(&#960;t<sub>r</sub>), where t<sub>r</sub> is the 10&#8211;90% rise time of a
+      linear edge, and at 40 dB per decade beyond it: 255 MHz for 1 ns, 25 MHz for 10 ns. Through a flat coupling path the fundamental dominates, and the edge barely
+      matters. Through a capacitor the coupled voltage follows dV/dt, so each harmonic arrives larger than it
+      otherwise would until the edge rolls the series off. Compare <b>Slow edges</b> with <b>Fast edges</b>:
+      7.2 dB of SNR from edge rate alone.
+    </p>
+
+    <h2 class="section-rule"><span>The input adds; the reference multiplies</span></h2>
+
+    <p>
+      On the input, a disturbance simply adds to the signal, and its spurs do not depend on how large the
+      signal is. On the reference it multiplies. The code is the input divided by the reference, so a small
+      fractional ripple &#948; on the reference becomes an error of &#8722;&#948; times the input: a pair of
+      sidebands around the input tone that scale with it. Halve the input and the sidebands fall 6.02 dB
+      with it, so SNR does not improve. Only a quieter reference helps.
+    </p>
+
+    <p>
+      A SAR reads its reference at every bit decision, so a disturbance that is quiet at the sampling instant
+      still corrupts the code if it arrives during the search. A Delta-Sigma reads it on every modulator
+      sample, where it multiplies a bitstream full of shaped quantization noise. Ripple near half the
+      modulator clock takes the noise the loop pushed furthest away and shifts it back down to DC. In
+      <b>Ripple on V<sub>ref</sub></b> no spur appears at all, yet SNR falls from 90.1 to 72.2 dB.
+    </p>
+
+    <h2 class="section-rule"><span>What the error becomes: offset, gain and linearity</span></h2>
+
+    <p>
+      Beside SNR the lab reports <strong>offset</strong>: the average of every output sample in the record. The
+      input sine completes a whole number of cycles in the record, so it averages to exactly zero, and the
+      model's converter has no offset of its own &#8212; whatever offset you see, the aggressor put there. It is
+      reported on its own because SNR leaves the DC bins out, so an error that lands on DC does not lower SNR at
+      all.
+    </p>
+
+    <p>
+      An aggressor whose error lands inside the band rises and falls many times within a record and averages
+      away; it costs SNR instead. An aggressor that shares the converter's clock is different. Its error repeats
+      identically on every conversion, so it behaves like a flaw in the converter itself &#8212; and which flaw
+      depends on where it couples and when it arrives. For the 16-bit SAR at 1 MS/s, with a 1.8 V aggressor
+      sharing its clock at exactly 1 MHz:
+    </p>
+
+    <div class="table-scroll">
+      <table class="data">
+        <thead>
+          <tr><th>Coupling</th><th>What every conversion sees</th><th>What it becomes</th><th>In the model</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Into the input, &#8722;40 dB</td><td>the same voltage added to every sample</td><td><strong>Offset error</strong>: the whole transfer curve shifts</td><td>offset +9.0 mV, which is 118 LSB of 76.3 &#181;V; the tone's level and its distortion unchanged</td></tr>
+          <tr><td>Into the reference, &#8722;20 dB, phase 180&#176;: every bit trial sees the same level</td><td>every decision threshold scaled by one factor</td><td><strong>Gain error</strong>: the transfer curve tilts</td><td>the tone reads &#8722;0.68 dBFS instead of &#8722;1.00 dBFS, as if the reference were 2.41 V; no offset, no added distortion</td></tr>
+          <tr><td>Into the reference, &#8722;20 dB, phase 270&#176;: an edge arrives during the bit trials</td><td>the early bits and the late bits decided against different references</td><td><strong>Nonlinearity</strong>: the mechanism behind DNL and INL &#8212; shown here as distortion, not measured as a static spec</td><td>THD rises from &#8722;126.5 dB to &#8722;53.5 dB and SINAD falls from 97.1 dB to 47.6 dB; no offset</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>
+      The first two are not linearity errors. INL is measured against a straight line through the transfer
+      curve, after offset and gain have been removed, so a curve that is shifted or tilted but still straight has
+      none. The third is one, because a SAR decides its bits one at a time, each against a DAC scaled by the
+      reference at that moment. Change the reference partway through a conversion and the bits decided before
+      the change are weighed differently from those decided after it, exactly as if the DAC's bit weights were
+      mismatched. The errors gather at the major code transitions, where many bits change at once, and they
+      repeat with the bit pattern &#8212; the signature an unsettled reference leaves in a DNL plot. The lab runs
+      no static ramp test, so it shows the same flaw the way a spectrum does, as distortion: with the aggressor
+      40 dB down, SINAD still falls to 52.5 dB.
+    </p>
+
+    <p>
+      Be careful with that last step, because it is the one most easily overstated. DNL and INL are named here as
+      the <em>mechanism</em>, not as measurements: they are defined on a static transfer curve, extracted from code
+      transitions over a slow ramp against a straight line, and this lab never runs that test. THD is not a
+      substitute for it. The two only look alike while the disturbance repeats in step with the conversions &#8212;
+      a reference error that is different on every conversion is not a static nonlinearity at all, however much
+      distortion it produces, which is exactly what the next paragraph is about.
+    </p>
+
+    <p>
+      An aggressor on its own oscillator repeats nothing. Near a multiple of the clock its error drifts at the
+      beat frequency, so a DC measurement sees an offset that wanders: <b>GPIO at 1 MHz</b> reads anywhere between
+      &#8722;0.21 and +0.21 mV, depending on where the aggressor is when the record starts. A histogram test of INL
+      sees its code bins smeared differently every time. Static specifications assume an error that repeats, and
+      an independent aggressor never does.
+    </p>
+
+    <p>
+      A Delta-Sigma converter follows the same logic for offset and gain. Its feedback DAC has only two levels, so
+      it has no bit weights to mismatch and no DNL in the SAR's sense; reference ripple that correlates with the
+      bitstream appears instead as noise and distortion that change with the input level. That mixing is a property
+      of <em>this</em> loop &#8212; discrete-time, second order, one bit, with the reference multiplying the feedback
+      directly. A continuous-time modulator, a multi-bit feedback DAC or a different decimator will move the result;
+      read the mechanism here, not a number to expect from a particular part.
+    </p>
+
+    <div class="note">
+      <b>See all three</b>
+      Tick <strong>Shares the converter's clock</strong>, set the multiple to 1 and couple into the input at
+      &#8722;40 dB: the offset appears and SNR does not move. Couple into the reference at &#8722;20 dB with the
+      phase at 180&#176; and read the input tone's level in <strong>Values as text</strong>. Then move the phase to
+      270&#176;: SINAD and SFDR fall, and the offset stays at zero.
+    </div>
+
+    <h2 class="section-rule"><span>What the Delta-Sigma filter can and cannot remove</span></h2>
+
+    <p>
+      The sinc&#179; filter has a null at every multiple of the output data rate, so a 10 Hz output rate
+      nulls 50 Hz and 60 Hz at once. For a sine the null is narrow: 51 Hz is still rejected by 103 dB, but
+      55 Hz by only 74 dB. For a square wave the null holds only for the harmonics that stay on it. In
+      <b>On the notch</b> a 50 Hz square wave 20 ppm off sits 1 mHz from its null, yet costs 2.9 dB: harmonic
+      n sits n mHz from its own null, and far enough up the series that is inside the passband.
+    </p>
+
+    <p>
+      One hertz further and the damage is of a different kind. In <b>&#8230;1 Hz off it</b> a 51 Hz square wave
+      costs 16.4 dB of SNR, and the filter's skirt has nothing to do with it: the square wave's 251st harmonic,
+      at 12,801.3 Hz, sits 1.26 Hz from five times the 2.56 kHz modulator clock. The modulator samples it as
+      1.26 Hz before the filter runs, and a filter cannot reject what it is shown as signal. Anything near a multiple of the modulator
+      clock behaves the same way: <b>Near the clock</b> puts an aggressor 20 ppm from the clock at 5.12 Hz,
+      inside the band.
+    </p>
+
+    <div class="note">
+      <b>Why the lab's modulator clock is slow</b>
+      The lab caps the oversampling ratio at 256 so that a run stays interactive, which puts the modulator
+      clock for a 10 Hz output rate at 2.56 kHz. A converter that oversamples further has a faster modulator
+      clock, and the harmonics that fold near its multiples are higher and weaker &#8212; but the mechanism is
+      the same, and so is the fix.
+    </div>
+  </div>
+
+  <details class="deeper">
+    <summary>Go deeper &#8212; what the lab measures, and the algebra behind it</summary>
+    <div class="deeper__body">
+
+      <h3>What SNR counts here</h3>
+      <p>
+        SNR is the fundamental's power over everything else in the band except its harmonics 2 to 6 and DC.
+        Interference counts as noise, because to a measurement it is. SINAD includes the harmonics, ENOB is
+        SINAD referred to full scale, and SFDR compares the fundamental with the largest single spur. The
+        spectrum uses a 4-term Blackman&#8211;Harris window and sums each tone over &#177;4 bins, so a spur
+        that falls between bins is still measured at its full power.
+      </p>
+
+      <div class="eq">
+        SNR<sub>ideal</sub> = 6.02&#183;<i class="var">N</i> + 1.76 dB
+        <span class="cap">Quantization alone, for a full-scale sine: 98.1 dB at 16 bits. The lab's SAR input sits 1 dB below full scale, so 97.1 dB.</span>
+      </div>
+
+      <div class="eq">
+        SQNR &#8776; 6.02 + 1.76 &#8722; 10&#183;log<sub>10</sub>(&#960;<sup>4</sup>/5) + 50&#183;log<sub>10</sub>(OSR) dB
+        <span class="cap">A second-order loop with a 1-bit quantizer, in the linear model: 85.2 dB at an oversampling ratio of 64, and 15.05 dB more for every doubling. A real 1-bit loop measures a few dB under the model &#8212; 4.1 dB in the lab at 128.</span>
+      </div>
+
+      <h3>The fold</h3>
+      <div class="eq">
+        <i class="var">f</i><sub>out</sub> = | <i class="var">f</i> &#8722; round(<i class="var">f</i> / <i class="var">f</i><sub>s</sub>)&#183;<i class="var">f</i><sub>s</sub> |
+        <span class="cap">4.1273 MHz at 1 MS/s lands at 127.3 kHz. For a Delta-Sigma, fold by the output data rate and scale by the filter's response at the original frequency.</span>
+      </div>
+
+      <h3>A clock's harmonics</h3>
+      <div class="eq">
+        |<i class="var">c</i><sub>n</sub>| = (2<i class="var">A</i> / n&#960;) &#183; | sin(n&#960;<i class="var">t</i><sub>e</sub>/<i class="var">T</i>) / (n&#960;<i class="var">t</i><sub>e</sub>/<i class="var">T</i>) |
+        <span class="cap">Odd n only, for a 50%-duty trapezoid of A peak to peak whose linear edges each last t<sub>e</sub> = t<sub>r</sub>/0.8, for a 10&#8211;90% rise time t<sub>r</sub>. A 1.8 V swing has a 1.146 V fundamental; coupled 80 dB down that is 114.6 &#181;V, &#8722;86.8 dBFS on a &#177;2.5 V converter. The lab's 20 MHz path pole takes another 0.2 dB, so it reads &#8722;87.0 dBFS.</span>
+      </div>
+
+      <h3>The sinc&#179; response</h3>
+      <div class="eq">
+        |<i class="var">H</i>(<i class="var">f</i>)| = | sin(&#960;<i class="var">f</i>/<i class="var">f</i><sub>ODR</sub>) / (OSR&#183;sin(&#960;<i class="var">f</i>/<i class="var">f</i><sub>mod</sub>)) |<sup>3</sup>
+        <span class="cap">Zero at every multiple of the output data rate except the multiples of f<sub>mod</sub>, where it returns to one. At a 10 Hz output rate and an oversampling ratio of 256: &#8722;102.9 dB at 51 Hz and &#8722;74.2 dB at 55 Hz.</span>
+      </div>
+
+      <h3>Reference coupling</h3>
+      <div class="eq">
+        code &#8733; <i class="var">V</i><sub>in</sub> / (<i class="var">V</i><sub>ref</sub>(1 + &#948;)) &#8776; (<i class="var">V</i><sub>in</sub> / <i class="var">V</i><sub>ref</sub>)&#183;(1 &#8722; &#948;)
+        <span class="cap">With V<sub>in</sub> = a&#183;sin &#969;<sub>in</sub>t and &#948; = d&#183;cos &#969;<sub>a</sub>t, the error is two sidebands at &#969;<sub>in</sub> &#177; &#969;<sub>a</sub>, each a&#183;d/2 &#8212; proportional to the input.</span>
+      </div>
+
+      <p>
+        The second-order loop's noise transfer function is (1 &#8722; z<sup>&#8722;1</sup>)<sup>2</sup>. Its
+        magnitude is 4 at half the modulator clock &#8212; 16 times the power of plain quantization noise
+        &#8212; and close to zero in the band. Multiplying the bitstream by ripple 7 Hz below half the clock
+        moves that peak to within 7 Hz of DC.
+      </p>
+
+      <h3>The noise the lab can add</h3>
+      <div class="eq">
+        <i class="var">v</i><sub>n</sub> = &#8730;(<i class="var">kT</i> / <i class="var">C</i>)
+        <span class="cap">A sampling capacitor's own noise: 20.4 &#181;V rms for 10 pF at 300 K. The lab's input noise control adds white noise of this kind to every sample.</span>
+      </div>
+
+      <h3>What the model leaves out</h3>
+      <p>
+        Clock jitter and aperture uncertainty; supply and ground bounce as paths of their own; DAC mismatch
+        and nonlinearity; continuous-time and multi-bit modulators; and any anti-alias filter beyond a single
+        pole. Each of these moves the numbers. None of them changes where a folded tone lands.
+      </p>
+    </div>
+  </details>
+
+  <div class="prose">
+    <h2 class="section-rule"><span>In the real world</span></h2>
+    <p>
+      <strong>Treat the reference as a signal.</strong> A SAR reads it at every bit decision, so its
+      decoupling has to hold it still through the whole conversion, not only at the sampling instant. A
+      Delta-Sigma turns ripple near half its modulator clock into noise. Keep aggressors, and the paths their
+      return currents take, away from the reference and its capacitor.
+    </p>
+    <p>
+      <strong>Lock only what stays locked.</strong> Deriving a noisy clock from the converter's own clock
+      turns its harmonics into offset instead of spurs, and offset can be calibrated out. But only a shared
+      oscillator gives an exact ratio: two crystals at nominally the same frequency are the case that hurts
+      most.
+    </p>
+    <p>
+      <strong>Slow the edges you do not need.</strong> Near a converter, a series resistor on a clock or data
+      line gives up edge rate that line may not need and removes harmonics that would otherwise fold into the
+      band. Under capacitive coupling, edge rate matters as much as amplitude.
+    </p>
+    <p>
+      <strong>Choose the output data rate on purpose.</strong> A Delta-Sigma's nulls sit at multiples of its
+      output data rate, and 10 Hz nulls both 50 Hz and 60 Hz. The nulls are narrow, and they do nothing for a
+      harmonic that lands near a multiple of the modulator clock. A spread-spectrum clock spreads each
+      harmonic over a band: it lowers a spur's peak, but the power still counts against SNR.
+    </p>
+    <p>
+      <strong>Measure the way the lab does.</strong> Coherent sampling puts the input exactly on a bin, a
+      window handles the aggressor that will not be coherent, and SNR, SFDR and offset each answer a
+      different question. An aggressor at an exact multiple passes an SNR test and fails an offset one.
+    </p>
+  </div>
+  <!-- pager:start -->
+  <nav class="pager" aria-label="Previous and next topic">
+    <a class="prev" href="../../topics/labs/pdn-chain.html"><span class="dir">Previous</span><span>Lab C: PDN Impedance, Current Sharing, and Transient Droop</span></a>
+    <span class="next"><span class="dir">Next</span><span>—</span></span>
+  </nav>
+  <!-- pager:end -->
+
+</main>
+
+<footer class="site-foot">
+  <span>SIPI &#8212; signal and power integrity, visualised.</span>
+  <span>Created and directed by Geetansh Arora. <a href="../../colophon.html">About, review &amp; AI assistance</a> &#183; <a href="../../model-contract.html">Model assumptions</a> &#183; <a href="../../docs/claims.md">Claim ledger</a></span>
+</footer>
+
+<script src="../../js/site.js?v=acb47d86"></script>
+<script src="../../js/viz-kit.js?v=a53e49c3"></script>
+<script src="../../js/models/adc-model.js?v=0d3c17ea"></script>
+<script src="../../js/viz/adc-lab.js?v=edb74527"></script>
+<script src="../../js/viz-loader.js?v=89d5884d"></script>
+<script src="../../js/lab-workspace.js?v=49b1d309"></script>
+<script src="../../js/search.js?v=6c93a285"></script>
+</body>
+</html>

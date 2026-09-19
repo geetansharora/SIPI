@@ -1,0 +1,68 @@
+{
+  "schemaVersion": 1,
+  "version": "1.0",
+  "date": "2026-09-16",
+  "status": "integrated into the public reference library; eight helper-only checks and two replayable CDR scenarios",
+  "experiments": [
+    {
+      "id": "matched-t-pad",
+      "title": "A matched resistive pad halves the wave amplitude",
+      "input": "/tests/fixtures/reference-next/matched-t-pad.json",
+      "availability": "helper-only"
+    },
+    {
+      "id": "quarter-wave-open-stub",
+      "title": "An open stub transforms into a shunt short at quarter wave",
+      "input": "/tests/fixtures/reference-next/quarter-wave-open-stub.json",
+      "availability": "helper-only"
+    },
+    {
+      "id": "series-rlc-cancellation",
+      "title": "Series RLC reactance changes sign through resonance",
+      "input": "/tests/fixtures/reference-next/series-rlc-cancellation.json",
+      "availability": "helper-only"
+    },
+    {
+      "id": "parallel-reactance-cancellation",
+      "title": "Parallel branches can raise impedance while their currents oppose",
+      "input": "/tests/fixtures/reference-next/parallel-reactance-cancellation.json",
+      "availability": "helper-only"
+    },
+    {
+      "id": "cdr-low-frequency",
+      "title": "Low-frequency CDR tracking retains a small phase residual",
+      "input": "/tests/fixtures/reference-next/cdr-low-frequency.json",
+      "availability": "lab-scenario"
+    },
+    {
+      "id": "cdr-high-frequency",
+      "title": "High-frequency CDR input mostly becomes residual error",
+      "input": "/tests/fixtures/reference-next/cdr-high-frequency.json",
+      "availability": "lab-scenario"
+    },
+    {
+      "id": "asymmetric-two-port-passivity",
+      "title": "Passivity is the largest singular value, not the largest element",
+      "input": "/tests/fixtures/reference-next/asymmetric-two-port-passivity.json",
+      "availability": "helper-only"
+    },
+    {
+      "id": "two-bank-anti-resonance",
+      "title": "Two capacitor banks: the reactance cancellation and the impedance peak are not the same frequency",
+      "input": "/tests/fixtures/reference-next/two-bank-anti-resonance.json",
+      "availability": "helper-only"
+    },
+    {
+      "id": "fractional-delay-phase",
+      "title": "An off-grid delay is exact in phase and rounded in the impulse",
+      "input": "/tests/fixtures/reference-next/fractional-delay-phase.json",
+      "availability": "helper-only"
+    },
+    {
+      "id": "pdn-shared-rl-dc-limit",
+      "title": "Two loads on a shared R-L path: the DC limit is resistance only",
+      "input": "/tests/fixtures/reference-next/pdn-shared-rl-dc-limit.json",
+      "availability": "helper-only"
+    }
+  ]
+}

@@ -1,0 +1,385 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Jitter Components: RJ, DJ, DCD, PJ, and TJ | SIPI</title>
+<meta name="description" content="Random and deterministic jitter components, bounded and unbounded behavior, and why total jitter must be stated at a BER.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<link rel="stylesheet" href="../../css/base.css?v=e4f774de">
+<link rel="stylesheet" href="../../css/components.css?v=295837ab">
+  <!-- meta:start -->
+  <link rel="canonical" href="https://sipi.work/topics/fundamentals/jitter-taxonomy.html">
+  <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="SIPI">
+  <meta property="og:title" content="Jitter Components: RJ, DJ, DCD, PJ, and TJ | SIPI">
+  <meta property="og:description" content="Random and deterministic jitter components, bounded and unbounded behavior, and why total jitter must be stated at a BER.">
+  <meta property="og:url" content="https://sipi.work/topics/fundamentals/jitter-taxonomy.html">
+  <meta property="og:image" content="https://sipi.work/assets/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Jitter Components: RJ, DJ, DCD, PJ, and TJ | SIPI">
+  <meta name="twitter:description" content="Random and deterministic jitter components, bounded and unbounded behavior, and why total jitter must be stated at a BER.">
+  <meta name="twitter:image" content="https://sipi.work/assets/og.png">
+  <!-- meta:end -->
+</head>
+<body>
+
+<header class="masthead">
+  <a class="wordmark" href="../../index.html">SIPI</a>
+  <nav>
+    <a href="../../index.html#fundamentals">Fundamentals</a>
+    <a href="../../index.html#power-integrity">Power</a>
+    <a href="../../index.html#interfaces">Interfaces</a>
+    <a href="../../start.html">Start</a>
+    <a href="../../labs.html">Labs</a>
+    <a href="../../reference.html">Reference</a>
+    <button class="theme-toggle" data-act="theme" type="button">System</button>
+  </nav>
+</header>
+
+<main>
+  <div class="page-head">
+    <p class="crumb"><a href="../../index.html#fundamentals">Fundamentals</a> / 11</p>
+    <h1>Jitter Components: RJ, DJ, DCD, PJ, and TJ</h1>
+    <p class="byline">
+      <!-- review:start --><span>By Geetansh Arora — Principal SI/PI Engineer</span><time datetime="2026-09-13" title="Technical review by Geetansh Arora on this date">13 Sep 2026</time><span>10 min</span><!-- review:end -->
+    </p>
+    <p class="answer">
+      Jitter describes variation in an edge's arrival time. Some causes are bounded &#8212; they have a
+      worst case &#8212; while others are modeled as unbounded, so increasingly rare excursions appear
+      over longer observations. These two kinds require different treatment. A total-jitter value
+      therefore needs its associated bit error rate to be interpreted correctly.
+    </p>
+  </div>
+
+  <!-- ───────────── the picture ───────────── -->
+  <section class="instrument" data-viz="jitter" aria-label="Interactive jitter distribution showing the dual-Dirac model and total jitter at a chosen bit error rate">
+    <script type="application/json" data-contract>{"kind":"analytical","evidence":"independent","purpose":"Show how TJ depends on the BER you name.","equations":["Q(BER) by bisection on the Gaussian tail integral"],"units":"ps, UI","validity":"Gaussian tails assumed; a periodic component is fitted badly.","numerics":"Same erfc treatment as the bathtub.","limitations":"Gaussian tails assumed; a periodic component is fitted badly.","suites":["Bathtub","Convergence"],"version":"2.0","reviewed":"2026-09-12","panel":"jitter"}</script>
+    <div class="instrument__bar">
+      <span class="instrument__title">The dual-Dirac model &#183; two impulses convolved with a Gaussian</span>
+        <span data-evidence="independent" data-model-version="2.0" class="model-tag model-tag--analytical" title="Dual-Dirac. Assumes bounded DJ and Gaussian RJ — real distributions may be neither.">analytical</span>
+      <span class="instrument__readout" role="status" aria-live="polite" aria-label="Current values">
+        <span>TJ <b data-out="tj">—</b></span>
+        <span>RJ multiplier <b data-out="q">—</b></span>
+        <span>at BER <b data-out="ber">—</b></span>
+        <span>of a 62.5 ps UI <b data-out="budget">—</b></span>
+      </span>
+    </div>
+    <div class="panels">
+      <div class="panel">
+        <span class="panel__label">Edge arrival time, as a probability density</span>
+        <canvas data-cv="hist" role="img" aria-label="A probability density of edge arrival times: two Gaussian lobes separated by the deterministic jitter, with the total jitter span marked at the chosen bit error rate."></canvas>
+        <div class="legend"><span><i style="background:var(--signal)"></i>distribution</span><span><i class="dash" style="color:var(--reflect)"></i>the two Diracs (DJ)</span><span><i style="background:var(--alarm)"></i>TJ at the target BER</span></div>
+      </div>
+    </div>
+    <div class="controls">
+      <div class="ctl">
+        <div class="ctl__head"><label for="jt-rj">Random jitter &#963;</label><output id="jt-rj-out" for="jt-rj">1.0 ps</output></div>
+        <input type="range" id="jt-rj" min="1" max="50" step="1" value="10">
+        <span class="ctl__note">Unbounded &#8212; quoted RMS</span>
+      </div>
+      <div class="ctl">
+        <div class="ctl__head"><label for="jt-dj">Deterministic jitter</label><output id="jt-dj-out" for="jt-dj">12 ps</output></div>
+        <input type="range" id="jt-dj" min="0" max="40" step="1" value="12">
+        <span class="ctl__note">Bounded &#8212; quoted peak-to-peak</span>
+      </div>
+      <div class="ctl">
+        <div class="ctl__head"><label for="jt-ber">Target BER</label><output id="jt-ber-out" for="jt-ber">1e-12</output></div>
+        <input type="range" id="jt-ber" min="0" max="3" step="1" value="2">
+        <span class="ctl__note">1e-6 &#183; 1e-9 &#183; 1e-12 &#183; 1e-15</span>
+      </div>
+    </div>
+    <div class="presets">
+      <button class="preset" type="button" data-preset="typical" aria-pressed="true">Gen 4 lane</button>
+      <button class="preset" type="button" data-preset="lowrj" aria-pressed="false">Halve the RJ</button>
+      <button class="preset" type="button" data-preset="lowdj" aria-pressed="false">Halve the DJ instead</button>
+      <button class="preset" type="button" data-preset="strict" aria-pressed="false">At 1e-15</button>
+    </div>
+    <div class="transport"><span data-out="note">—</span></div>
+  </section>
+
+  <div class="prose">
+    <h2>Two kinds of wrong, and why they cannot be added</h2>
+
+    <p>
+      Jitter, at its simplest, is the signal arriving early or late. A
+      receiver expects an edge at a specific instant; jitter is the
+      deviation from that expectation. If you have ever watched a clock
+      signal on a scope with persistence turned on and noticed the edge
+      looking fuzzy — not a crisp line but a band of transitions smeared
+      across a few picoseconds — you have seen jitter.
+    </p>
+
+    <p>
+      The reason signal integrity cares so much about jitter is that
+      timing budgets at modern data rates are extraordinarily tight. At
+      32 GT/s (PCIe Gen 5), the entire bit period is 31.25 ps. If
+      jitter consumes 10 ps of that, a third of the timing budget is gone
+      before you account for loss, ISI, or anything else. The taxonomy
+      on this page exists because different causes of jitter have
+      fundamentally different statistical properties — and you cannot fix
+      what you cannot name.
+    </p>
+
+    <p>
+      Suppose an edge is supposed to arrive at time zero and does not. Ask one question about the
+      cause: <strong>is there a worst case?</strong>
+    </p>
+
+    <p>
+      Sometimes there is. Duty-cycle distortion moves an edge by a fixed amount. The ISI from a
+      channel has a worst data pattern, and once you have found it, no pattern is worse. These are
+      <strong>bounded</strong>, and a peak-to-peak number describes them completely.
+    </p>
+
+    <p>
+      Sometimes there is not. Thermal noise in a receiver's input stage is Gaussian, and a Gaussian
+      has tails that go on forever. There is no displacement so large that it is impossible — only
+      displacements that are increasingly unlikely. Wait long enough and you will see one. These are
+      <strong>unbounded</strong>, so a peak-to-peak number needs an observation interval or BER: it would
+      be a statement about how long you happened to watch.
+    </p>
+
+    <p>
+      That is why the taxonomy exists, and why the two halves are quoted in different units — DJ in
+      picoseconds peak-to-peak, RJ as an RMS value σ. They are different kinds of quantity, and
+      adding them requires deciding how far into the Gaussian's tail you care to go. Which is a
+      decision about <em>bit error rate</em>.
+    </p>
+
+    <h2 class="section-rule"><span>The split that matters</span></h2>
+
+    <p>
+      Every serial interface spec decomposes jitter the same way, because the two halves combine
+      differently and one of them has no maximum at all.
+    </p>
+
+    <ul class="tight">
+      <li><strong>Random jitter (RJ)</strong> — thermal and shot noise, Gaussian, unbounded. Quoted as
+        an RMS value (σ) because an unconstrained peak-to-peak figure does not converge: wait long enough and you
+        will see any excursion you like.</li>
+      <li><strong>Deterministic jitter (DJ)</strong> — bounded, repeatable, caused by something
+        identifiable. Quoted peak-to-peak. It has real sub-types, and naming the right one is most of
+        a debug:
+        <ul class="tight">
+          <li><strong>DCD</strong> — duty cycle distortion, from an offset threshold or an asymmetric
+            driver. Alternate edges move in opposite directions.</li>
+          <li><strong>DDJ / ISI jitter</strong> — the pattern-dependent kind, straight out of channel
+            loss.</li>
+          <li><strong>PJ</strong> — periodic jitter, from a coupled tone: a switching regulator, a
+            neighbouring clock, a spur on the PLL reference.</li>
+          <li><strong>BUJ</strong> — bounded uncorrelated jitter, typically crosstalk from an aggressor
+            with no relationship to your data.</li>
+        </ul>
+      </li>
+    </ul>
+
+    <h2 class="section-rule"><span>Why the BER has to be in the answer</span></h2>
+
+    <p>
+      Because RJ is unbounded, &ldquo;total jitter&rdquo; only means something once you say how often you
+      are willing to be wrong. The dual-Dirac model — which is what the specs standardise on — collapses
+      all the bounded jitter into two impulses separated by DJ, convolves that with the Gaussian, and
+      gives you:
+    </p>
+
+    <div class="note">
+      <b>DJ(δδ) is a fitting parameter, not a measured width</b>
+      This is the part most worth internalising. The two impulses are a <em>model</em>, chosen so the
+      resulting curve matches the observed tails — they are not a claim that the real deterministic
+      jitter has two values. The DJ that comes out is whatever separation makes the fit work, and for a
+      distribution that is not actually bimodal it will generally differ from the true peak-to-peak
+      width of the deterministic part.
+      <br><br>
+      Two consequences. A DJ(δδ) from one instrument, fitting convention or extrapolation range is not
+      automatically comparable with another. And because the fit is anchored in the tails, how many
+      points you measured, how far out, and how transitions were weighted all move the answer. Quote
+      the convention alongside the number, or it is not reproducible.
+    </div>
+
+    <div class="eq">
+      <i class="var">TJ</i>(BER) = <i class="var">DJ</i><sub>pp</sub> + 2·<i class="var">Q</i>(BER)·<i class="var">RJ</i><sub>rms</sub>
+      <span class="cap">Q = 7.034 at BER 10⁻¹², so the multiplier on RJ is 14.07σ. At 10⁻¹⁵ it is 15.88σ. Three extra decades of reliability cost you less than two extra sigma — the Gaussian tail is that steep.</span>
+    </div>
+
+    <p>
+      Two consequences follow directly. First, quoting TJ without its BER is an error, not shorthand —
+      the same link has a different TJ at every BER. Second, RJ and DJ are not interchangeable
+      picoseconds: at 10⁻¹², one picosecond of RMS random jitter costs you fourteen picoseconds of
+      budget, while one picosecond of DJ costs one. Chasing a small RJ improvement is often worth more
+      than a much larger DJ improvement.
+    </p>
+
+    <div class="note">
+      <b>Where the decomposition goes wrong</b>
+      The dual-Dirac model assumes the deterministic part is genuinely bounded and the random part is
+      genuinely Gaussian. Crosstalk from many uncorrelated aggressors starts looking Gaussian and gets
+      absorbed into the RJ estimate — where it is then multiplied by 14, over-stating its cost. A
+      periodic tone that is not quite periodic does the same. When measured and extrapolated numbers
+      disagree, a mis-classified jitter component is the usual reason.
+    </div>
+
+    <h2 class="section-rule"><span>Why this decides how your board behaves</span></h2>
+
+    <ul class="tight">
+      <li><strong>It decides what your fix should be.</strong> Bounded jitter has a cause you can
+        find and remove. Unbounded jitter is noise, and the only levers are more signal, less
+        bandwidth, or a better front end. Misclassify and you will spend weeks looking for a
+        source that does not exist.</li>
+      <li><strong>It decides how the numbers combine.</strong> Two random sources add in
+        quadrature — σ<sub>total</sub> = √(σ₁² + σ₂²) — because independent Gaussians do. Two
+        deterministic sources add directly, worst case to worst case. Adding a DJ to an RJ in
+        quadrature understates your jitter; adding two RJs linearly wildly overstates it.</li>
+      <li><strong>It decides whether more measurement helps.</strong> Watching longer reveals more
+        of the random tail and nothing new about the deterministic part. If your measured TJ keeps
+        growing with capture length, you are watching RJ; if it plateaus, you have found the DJ
+        bound.</li>
+      <li><strong>The CDR changes the answer.</strong> A clock-recovery loop tracks slow wander
+        and rejects it, so jitter below the loop bandwidth is largely invisible to the receiver.
+        Jitter numbers are only comparable at the same loop bandwidth.</li>
+    </ul>
+
+    <h2 class="section-rule"><span>What to do about it</span></h2>
+
+    <p>
+      <strong>Classify before you fix.</strong> Almost all jitter debug is identification, and the
+      sub-types announce themselves if you look for the right signature. Alternate edges moving in
+      opposite directions is DCD. Displacement that correlates with the data pattern is DDJ, and it
+      belongs to the channel. A periodic wobble names its own source once you measure its
+      frequency. Displacement that appears only when a neighbour is active is crosstalk.
+    </p>
+
+    <p>
+      <strong>Attack the deterministic part first.</strong> It is bounded, identifiable and usually
+      the larger share on a real channel — and each decade of BER multiplies the random part but
+      leaves the deterministic part exactly where it was. Removing 5 ps of DJ removes 5 ps at every
+      BER. Removing 1 ps of RJ removes 14 ps at 10<sup>−12</sup>.
+    </p>
+
+    <p>
+      <strong>For the random part, look at the supply before the silicon.</strong> Power-supply
+      induced jitter is often the largest contributor and the one most under your control — it is a
+      PDN problem wearing a timing costume. See
+      <a href="../power-integrity/pdn-induced-jitter.html">PDN-induced jitter</a>.
+    </p>
+
+    <div class="note">
+      <b>Using this to find a fault</b>
+      <ul class="tight">
+        <li><b>TJ that keeps rising the longer you measure.</b> Random-dominated. Stop hunting for
+          a coupled source and look at noise, supply and receiver sensitivity.</li>
+        <li><b>TJ that plateaus quickly.</b> Deterministic-dominated. There is a cause to find,
+          and the sub-type tells you where.</li>
+        <li><b>Jitter that changes with the test pattern.</b> DDJ, so it is the channel. Correlate
+          against run length — long runs followed by an isolated bit is the classic worst case.</li>
+        <li><b>A clean spectrum except one spur.</b> Periodic jitter. Read the frequency and go
+          find what runs at it. A switching regulator is the single most common answer.</li>
+        <li><b>Jitter that appears at the receiver and not the transmitter.</b> Either the
+          channel added it, or the receiver's own reference is noisy. Measure the recovered clock
+          against a clean reference to tell those apart.</li>
+      </ul>
+    </div>
+
+    <details class="deeper">
+      <summary>Go deeper — the dual-Dirac model, its Q multiplier, and what the fit hides</summary>
+
+      <p>
+        The specification model collapses all bounded jitter into two impulses separated by DJ,
+        convolves that pair with the Gaussian representing RJ, and reads the total width at the
+        target error rate:
+      </p>
+
+      <div class="eq">
+        <span class="eq__main">TJ(BER) = DJ<sub>pp</sub> + 2 · <i class="var">Q</i>(BER) · RJ<sub>rms</sub></span>
+        <span class="eq__note">Q is the number of standard deviations for that BER — 7.03 at 1e-12, 7.94 at 1e-15</span>
+      </div>
+
+      <p>
+        The factor of two is there because both edges of the eye are closing, each by
+        Q·σ. That is also why the multiplier on RJ is about 14 at 10<sup>−12</sup>: one part of σ
+        each side, seven deviations deep.
+      </p>
+
+      <p>
+        <strong>The part most worth internalising:</strong> DJ(δδ) is a <em>fitting parameter</em>,
+        not a measured width. The two impulses are a model chosen so the resulting curve matches the
+        observed tails — not a claim that the real deterministic jitter has two values. For a
+        distribution that is not actually bimodal, the DJ that comes out will generally differ from
+        the true peak-to-peak width of the deterministic part.
+      </p>
+
+      <p>
+        Two consequences follow. A dual-Dirac DJ from one instrument is not necessarily comparable
+        with one from another unless they fit over the same range. And a distribution with a
+        genuinely non-Gaussian tail — a large periodic component, say, whose distribution is
+        arcsine-shaped rather than bell-shaped — will be fitted badly, and the extrapolation will be
+        wrong in a direction the fit cannot warn you about.
+      </p>
+
+      <p>
+        <strong>Where Q comes from.</strong> Q(BER) inverts the Gaussian tail integral: the
+        probability that a Gaussian exceeds Q standard deviations is ½·erfc(Q/√2), and setting that
+        equal to the target BER and solving gives Q. Nothing in that derivation is about jitter; it
+        is a property of the Gaussian, which is exactly why it only applies to the part of jitter
+        that genuinely is one.
+      </p>
+
+      <p>
+        <strong>A caution about quadrature addition.</strong> RJ sources add as
+        √(σ₁² + σ₂²) only if they are <em>independent</em>. Two jitter contributions driven by the
+        same supply noise are not independent, and adding them in quadrature understates the total.
+        This is a common and quiet error in budgets that list PSIJ contributions from several
+        blocks on one rail.
+      </p>
+    </details>
+
+    <h2 class="section-rule"><span>In the real world</span></h2>
+
+    <p>
+      The single most useful habit in jitter work is refusing to accept a jitter number without
+      three things attached: the BER it is quoted at, the clock-recovery bandwidth it was measured
+      with, and the reference plane. Without those it is not comparable to anything — not to a
+      specification, not to a simulation, not to last week's measurement.
+    </p>
+
+    <p>
+      The second habit is treating the decomposition as a hypothesis. An instrument will happily
+      report a DJ and an RJ for any distribution you give it, including ones where the model does
+      not apply. When the numbers look strange, look at the histogram itself before trusting the
+      split it was reduced to.
+    </p>
+
+    <h3>Related</h3>
+    <ul class="tight">
+      <li><a href="../fundamentals/bathtub-curves.html">Bathtub curves and BER extrapolation</a></li>
+      <li><a href="../fundamentals/eye-diagram.html">Eye Diagrams: Construction and Interpretation</a></li>
+      <li><a href="../fundamentals/isi.html">Intersymbol Interference (ISI) and Channel Memory</a></li>
+      <li><a href="../power-integrity/pdn-induced-jitter.html">Power-Supply-Induced Jitter: Connecting PI and SI</a></li>
+    </ul>
+  </div>
+
+  <!-- pager:start -->
+  <nav class="pager" aria-label="Previous and next topic">
+    <a class="prev" href="../../topics/fundamentals/eye-diagram.html"><span class="dir">Previous</span><span>Eye Diagrams: Construction and Interpretation</span></a>
+    <a class="next" href="../../topics/fundamentals/bathtub-curves.html"><span class="dir">Next</span><span>Bathtub curves and BER extrapolation</span></a>
+  </nav>
+  <!-- pager:end -->
+</main>
+
+<footer class="site-foot">
+  <span>SIPI &#8212; signal and power integrity, visualised.</span>
+  <span>Created and directed by Geetansh Arora. <a href="../../colophon.html">About, review &amp; AI assistance</a> &#183; <a href="../../model-contract.html">Model assumptions</a> &#183; <a href="../../docs/claims.md">Claim ledger</a></span>
+</footer>
+
+<script src="../../js/site.js?v=acb47d86"></script>
+<script src="../../js/viz-kit.js?v=a53e49c3"></script>
+<script src="../../js/viz/jitter.js?v=cef8ecda"></script>
+<script src="../../js/viz-loader.js?v=89d5884d"></script>
+<script src="../../js/search.js?v=6c93a285"></script>
+</body>
+</html>

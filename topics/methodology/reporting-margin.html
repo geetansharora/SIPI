@@ -1,0 +1,311 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reporting Signal and Power Integrity Margin | SIPI</title>
+<meta name="description" content="Why a single margin number is never the answer, how corner stacking quietly changes what you are claiming, and what a report has to state to be actionable.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<link rel="stylesheet" href="../../css/base.css?v=e4f774de">
+<link rel="stylesheet" href="../../css/components.css?v=295837ab">
+  <!-- meta:start -->
+  <link rel="canonical" href="https://sipi.work/topics/methodology/reporting-margin.html">
+  <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="SIPI">
+  <meta property="og:title" content="Reporting Signal and Power Integrity Margin | SIPI">
+  <meta property="og:description" content="Why a single margin number is never the answer, how corner stacking quietly changes what you are claiming, and what a report has to state to be actionable.">
+  <meta property="og:url" content="https://sipi.work/topics/methodology/reporting-margin.html">
+  <meta property="og:image" content="https://sipi.work/assets/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Reporting Signal and Power Integrity Margin | SIPI">
+  <meta name="twitter:description" content="Why a single margin number is never the answer, how corner stacking quietly changes what you are claiming, and what a report has to state to be actionable.">
+  <meta name="twitter:image" content="https://sipi.work/assets/og.png">
+  <!-- meta:end -->
+</head>
+<body>
+
+<header class="masthead">
+  <a class="wordmark" href="../../index.html">SIPI</a>
+  <nav>
+    <a href="../../index.html#fundamentals">Fundamentals</a>
+    <a href="../../index.html#power-integrity">Power</a>
+    <a href="../../index.html#interfaces">Interfaces</a>
+    <a href="../../start.html">Start</a>
+    <a href="../../labs.html">Labs</a>
+    <a href="../../reference.html">Reference</a>
+    <button class="theme-toggle" data-act="theme" type="button">System</button>
+  </nav>
+</header>
+
+<main>
+  <div class="page-head">
+    <p class="crumb"><a href="../../index.html#methodology">Methodology</a> / 04</p>
+    <h1>Reporting Signal and Power Integrity Margin</h1>
+    <p class="byline">
+      <!-- review:start --><span>By Geetansh Arora — Principal SI/PI Engineer</span><time datetime="2026-09-18" title="Technical review by Geetansh Arora on this date">18 Sep 2026</time><span>9 min</span><!-- review:end -->
+    </p>
+    <p class="answer">
+      A margin number is a claim, and a claim needs to say what it was computed from. Two engineers
+      can analyse the same channel, both correctly, and report margins differing by a factor of
+      two &#8212; because they stacked the variations differently. The number is not wrong; it is
+      incomplete.
+    </p>
+  </div>
+
+  <!-- ───────────── the picture ───────────── -->
+  <figure class="figure">
+    <div class="figure__bar"><span>Same five numbers &#183; a factor of two apart</span></div>
+    <div class="figure__body"><svg viewBox="-4 14 680 260" role="img" aria-label="Five independent timing contributors shown as bars, with worst-case stacking and root-sum-square stacking giving very different totals from the same numbers.">
+  <text class="lbl-hi" x="0" y="36">the same five numbers, two conventions</text>
+  <rect x="150" y="60" width="109" height="16" rx="2" fill="var(--signal)" opacity=".6"/><text class="lbl" x="142" y="72" text-anchor="end">driver corner</text><text class="lbl-hi" x="263" y="72">4.2 ps</text><rect x="150" y="82" width="81" height="16" rx="2" fill="var(--signal)" opacity=".6"/><text class="lbl" x="142" y="94" text-anchor="end">crosstalk</text><text class="lbl-hi" x="235" y="94">3.1 ps</text><rect x="150" y="104" width="62" height="16" rx="2" fill="var(--signal)" opacity=".6"/><text class="lbl" x="142" y="116" text-anchor="end">PDN noise</text><text class="lbl-hi" x="216" y="116">2.4 ps</text><rect x="150" y="126" width="47" height="16" rx="2" fill="var(--signal)" opacity=".6"/><text class="lbl" x="142" y="138" text-anchor="end">skew</text><text class="lbl-hi" x="201" y="138">1.8 ps</text><rect x="150" y="148" width="75" height="16" rx="2" fill="var(--signal)" opacity=".6"/><text class="lbl" x="142" y="160" text-anchor="end">jitter</text><text class="lbl-hi" x="229" y="160">2.9 ps</text>
+  <g transform="translate(0,186)">
+    <rect x="150" y="0" width="374" height="20" rx="2" fill="var(--alarm)" opacity=".55"/>
+    <text class="lbl-bad" x="142" y="14" text-anchor="end">worst case</text>
+    <text class="lbl-hi" x="528" y="14">14.4 ps</text>
+    <rect x="150" y="26" width="174" height="20" rx="2" fill="var(--reflect)" opacity=".65"/>
+    <text class="lbl-ref" x="142" y="40" text-anchor="end">root-sum-square</text>
+    <text class="lbl-hi" x="328" y="40">6.7 ps</text>
+    <text class="lbl" x="0" y="70">a factor of 2.1 between them — so the convention has to be stated, per contributor</text>
+    <text class="lbl-bad" x="0" y="88">and RSS is only valid for INDEPENDENT terms: a fast driver and a fast edge share a cause</text>
+  </g>
+</svg></div>
+    <figcaption><b>There is no neutral way to combine variations.</b> Worst-case stacking is guaranteed conservative and, for a channel with many independent contributors, describes a part that will essentially never be built. Root-sum-square reflects a realistic population &#8212; but only for genuinely independent terms, and the moment you RSS two things that share a cause (a fast driver and a fast edge, say) you have understated the risk. Neither is right in general; what matters is that the report says which was used, for which contributors, and why. <b>The single most useful line in a margin report is what was <em>not</em> included.</b> No crosstalk. Nominal package model. Two aggressors rather than sixteen. Every simulation excludes something, and naming the exclusions is what lets the next person judge whether the number applies to their question. One cultural note that outweighs the arithmetic: a report that always says &ldquo;pass&rdquo; stops being read. Reporting a negative margin with its sensitivity attached is worth more to a programme than a positive one that assumed the problem away.</figcaption>
+  </figure>
+
+  <div class="prose">
+    <p>
+      In hardware design reviews, few slides receive more attention than the final sign-off table:
+      &ldquo;PCIe Gen 5 Lane 0: <span class="num">+14 ps timing margin, +22 mV voltage margin — PASS</span>.&rdquo;
+      To project managers and layout teams, those green numbers are treated as an objective, binary warranty
+      that the board will function reliably in the field.
+    </p>
+
+    <p>
+      To an experienced signal integrity engineer, however, an isolated margin number is completely meaningless.
+      Was that 14 picoseconds evaluated at typical room temperature silicon, or at slow-weak process corners with
+      a <span class="num">105 &deg;C</span> junction temperature and 5% supply droop? Did the simulation include
+      the sixteen adjacent data lines switching simultaneously, or was the channel simulated in total isolation?
+      Did the statistical model extrapolate to a Bit Error Rate of <span class="num">10<sup>-6</sup></span> or
+      <span class="num">10<sup>-12</sup></span>?
+    </p>
+
+    <p>
+      Margin is not a static physical property of a circuit board. It is the mathematical distance between a
+      simulated waveform and an interface specification, <strong>conditioned on an explicit stack of assumptions</strong>.
+      A margin report that fails to state its operating corners, statistical stacking conventions, and conscious
+      model omissions does not communicate confidence — it creates a dangerous illusion of safety that unravels
+      the moment hardware reaches high-volume production.
+    </p>
+
+    <h2>What a margin is a statement about</h2>
+
+    <p>
+      Margin is the distance between what a design achieves and what it must achieve. Both halves of
+      that are less definite than they sound.
+    </p>
+
+    <p>
+      "What it achieves" depends on which corner you evaluated, how you combined the variations, and
+      which impairments were in the model. "What it must achieve" depends on the target error rate,
+      the reference plane and the reference receiver.
+    </p>
+
+    <p>
+      So a margin of 5 ps is not a fact about a board. It is a fact about a board <em>plus a set of
+      choices</em>, and the choices move the answer more than most design changes do. Reporting the
+      number without them is the problem this page is about.
+    </p>
+
+    <h2 class="section-rule"><span>Corner stacking is a choice, and it must be stated</span></h2>
+
+    <p>
+      There is no neutral way to combine variations. The two common conventions differ by a large
+      factor and answer different questions:
+    </p>
+
+    <ul class="tight">
+      <li><strong>Worst-case stacking.</strong> Every variation at its bad extreme simultaneously.
+        Guaranteed conservative, and for a channel with many independent contributors it describes a
+        part that will essentially never be built. Useful as a bound; misleading as a prediction.</li>
+      <li><strong>Root-sum-square.</strong> Combines <em>statistical</em> quantities — standard
+        deviations of distributions — into a number that reflects a realistic population. It needs two
+        conditions that are routinely broken. It needs actual distributions: a min/max specification
+        limit is not a sigma, and RSS-ing datasheet limits yields a figure with no defined confidence
+        attached to it. And it needs independence: when two terms share a cause — a fast driver and a
+        fast edge both come from the same process corner — the covariance term is non-zero and RSS
+        understates the spread. State the distributions assumed, the confidence claimed, and which
+        terms were treated as independent so another engineer can check the result.</li>
+    </ul>
+
+    <p>
+      Neither is right in general. What matters is that the report says which was used, for which
+      contributors, and why — because a reader who knows the convention can adjust, and a reader who
+      does not cannot.
+    </p>
+
+    <div class="note">
+      <b>The single most useful line in a margin report</b>
+      What was <em>not</em> included. No crosstalk. Nominal package model. Typical PDN noise. Two
+      aggressors rather than sixteen. Every simulation excludes something, and naming the exclusions is
+      what lets the next person judge whether the number applies to their question. A report with no
+      exclusions listed has not been thought about — it has not become complete.
+    </div>
+
+    <h2 class="section-rule"><span>What makes a number actionable</span></h2>
+
+    <p>
+      A margin figure should come with enough context to act on it without asking a question:
+    </p>
+
+    <ul class="tight">
+      <li><strong>Where it was measured</strong> — which node, before or after equalisation, at what
+        reference plane.</li>
+      <li><strong>At what BER</strong>, since eye height and width mean nothing without it, and whether
+        that number was measured or extrapolated.</li>
+      <li><strong>Which corners</strong>, and how they were combined.</li>
+      <li><strong>What is in the model</strong>: which blocks are extracted, which are estimated, which
+        are vendor-supplied and unvalidated.</li>
+      <li><strong>The sensitivity.</strong> A number alone is a verdict; a number with its sensitivity
+        is a design tool. &ldquo;3 ps of margin, losing 0.4 ps per additional aggressor&rdquo; tells the
+        layout engineer what to do.</li>
+    </ul>
+
+    <p>
+      One cultural note that matters more than any of the above. A report that always says &ldquo;pass&rdquo;
+      stops being read. The value of the function is that it occasionally says the uncomfortable thing
+      early, with the evidence attached — and that only survives if a marginal result is reported as
+      marginal rather than rounded into compliance. Reporting a negative margin with the sensitivity
+      attached is more useful to a programme than reporting a positive one that assumed the problem away.
+    </p>
+
+    <h2 class="section-rule"><span>Why this decides how your board behaves</span></h2>
+
+    <ul class="tight">
+      <li><strong>Incomparable numbers cause wrong decisions.</strong> A worst-case margin and an
+        RSS margin differ by a large factor, and a team comparing them is comparing nothing.</li>
+      <li><strong>A number without its assumptions cannot be re-used.</strong> A later design variant
+        needs a durable record of the assumptions behind the result.</li>
+      <li><strong>Hidden pessimism costs money.</strong> Stacking every variation at its limit
+        describes a board that will never be built, and designing to it buys layers and laminate
+        you did not need.</li>
+      <li><strong>Hidden optimism costs more.</strong> Combining deterministic quantities in
+        quadrature understates the total, and the failure appears in the field.</li>
+    </ul>
+
+    <h2 class="section-rule"><span>What to do about it</span></h2>
+
+    <p>
+      <strong>State the stacking convention, always.</strong> Worst-case or RSS, and which
+      contributions went into which. This single line prevents most of the confusion.
+    </p>
+
+    <p>
+      <strong>Never combine deterministic and random in quadrature.</strong> RSS is for independent
+      statistical quantities. Deterministic contributions add directly, worst case to worst case —
+      and two random contributions driven by the same supply noise are not independent either.</p>
+
+    <p>
+      <strong>Report the model version and the inputs.</strong> Which S-parameter files, which buffer
+      models, which corners, which data rate. A margin is reproducible or it is an opinion.
+    </p>
+
+    <p>
+      <strong>Say what is not in the number.</strong> Every analysis omits something — supply noise,
+      an unmodelled connector, temperature. Naming the omissions is what lets a reviewer judge
+      the margin rather than accept it.
+    </p>
+
+    <div class="note">
+      <b>What makes a number actionable</b>
+      A margin report that someone can act on says, at minimum: the quantity and its units; the
+      reference plane; the target error rate; the corner set and stacking convention; the model
+      versions; and the known omissions. Six lines. A number without them is not a result someone
+      else can build on, however carefully it was computed.
+    </div>
+
+    <details class="deeper">
+      <summary>Go deeper — why the two conventions differ so much, and what to do instead</summary>
+
+      <p>
+        <strong>Worst-case stacking</strong> puts every variation at its bad extreme simultaneously.
+        It is guaranteed conservative and, for a channel with many independent contributors,
+        describes a part that will essentially never be built. Useful as a bound; misleading as a
+        prediction.
+      </p>
+
+      <p>
+        <strong>Root-sum-square</strong> combines standard deviations of independent distributions:
+      </p>
+
+      <div class="eq">
+        <span class="eq__main">σ<sub>total</sub> = √( σ<sub>1</sub>² + σ<sub>2</sub>² + … )</span>
+        <span class="eq__note">valid only for independent random quantities — not for deterministic ones, and not for correlated ones</span>
+      </div>
+
+      <p>
+        The gap between the two conventions grows with the number of contributors. With four equal
+        independent terms, worst-case is 4× one of them and RSS is 2×. With nine, it is 9× against
+        3×. That is why the convention has to be stated: the ratio is not a detail.
+      </p>
+
+      <p>
+        <strong>What to do instead of choosing.</strong> Report both where it matters, or run a
+        statistical analysis that samples the actual distributions with their correlations. The
+        latter is the honest answer when the decision is expensive, because it neither invents a
+        board that cannot exist nor assumes independence that is not there.
+      </p>
+
+      <p>
+        <strong>The correlations that bite.</strong> Several variations on this site are not
+        independent, and treating them as such is a common quiet error: resin flow and
+        D<sub>k</sub> are both driven by the glass-to-resin ratio; several jitter contributions
+        share one supply; temperature moves loss, delay and capacitance together. Each of those
+        makes RSS optimistic.
+      </p>
+    </details>
+
+    <h2 class="section-rule"><span>In the real world</span></h2>
+
+    <p>
+      Margin reporting is where technical work becomes an organisational artefact. The number leaves
+      your hands and gets compared, aggregated and decided upon by people who were not there — and
+      it will be read as more definite than it is.
+    </p>
+
+    <p>
+      Which makes the assumptions block the most valuable part of the report, and the part most
+      often cut for brevity. Six lines of context is what turns a number into evidence, and evidence
+      is what survives being questioned six months later.
+    </p>
+
+    <h3>Related</h3>
+    <ul class="tight">
+      <li><a href="../fundamentals/bathtub-curves.html">Bathtub curves and BER extrapolation</a></li>
+      <li><a href="../signal-integrity/channel-budgeting.html">Channel Loss Budgeting Across Die, Package, and Board</a></li>
+      <li><a href="../methodology/debug-playbook.html">SI/PI Debugging: From Symptom to Cause</a></li>
+      <li><a href="../signal-integrity/compliance-masks.html">Transmitter Compliance Masks and Receiver Eye Masks</a></li>
+    </ul>
+  </div>
+
+  <!-- pager:start -->
+  <nav class="pager" aria-label="Previous and next topic">
+    <a class="prev" href="../../topics/methodology/correlation.html"><span class="dir">Previous</span><span>Correlating Simulation and Measurement</span></a>
+    <a class="next" href="../../topics/methodology/debug-playbook.html"><span class="dir">Next</span><span>SI/PI Debugging: From Symptom to Cause</span></a>
+  </nav>
+  <!-- pager:end -->
+</main>
+
+<footer class="site-foot">
+  <span>SIPI &#8212; signal and power integrity, visualised.</span>
+  <span>Created and directed by Geetansh Arora. <a href="../../colophon.html">About, review &amp; AI assistance</a> &#183; <a href="../../model-contract.html">Model assumptions</a> &#183; <a href="../../docs/claims.md">Claim ledger</a></span>
+</footer>
+
+<script src="../../js/site.js?v=acb47d86"></script>
+<script src="../../js/search.js?v=6c93a285"></script>
+</body>
+</html>

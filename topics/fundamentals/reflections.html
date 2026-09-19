@@ -1,0 +1,408 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Transmission-Line Reflections and Ringing | SIPI</title>
+<meta name="description" content="How impedance discontinuities create reflections and ringing, with bounce diagrams and practical termination choices.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<link rel="stylesheet" href="../../css/base.css?v=e4f774de">
+<link rel="stylesheet" href="../../css/components.css?v=295837ab">
+  <!-- meta:start -->
+  <link rel="canonical" href="https://sipi.work/topics/fundamentals/reflections.html">
+  <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="SIPI">
+  <meta property="og:title" content="Transmission-Line Reflections and Ringing | SIPI">
+  <meta property="og:description" content="How impedance discontinuities create reflections and ringing, with bounce diagrams and practical termination choices.">
+  <meta property="og:url" content="https://sipi.work/topics/fundamentals/reflections.html">
+  <meta property="og:image" content="https://sipi.work/assets/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Transmission-Line Reflections and Ringing | SIPI">
+  <meta name="twitter:description" content="How impedance discontinuities create reflections and ringing, with bounce diagrams and practical termination choices.">
+  <meta name="twitter:image" content="https://sipi.work/assets/og.png">
+  <!-- meta:end -->
+</head>
+<body>
+
+<header class="masthead">
+  <a class="wordmark" href="../../index.html">SIPI</a>
+  <nav>
+    <a href="../../index.html#fundamentals">Fundamentals</a>
+    <a href="../../index.html#power-integrity">Power</a>
+    <a href="../../index.html#interfaces">Interfaces</a>
+    <a href="../../start.html">Start</a>
+    <a href="../../labs.html">Labs</a>
+    <a href="../../reference.html">Reference</a>
+    <button class="theme-toggle" data-act="theme" type="button">System</button>
+  </nav>
+</header>
+
+<main>
+  <div class="page-head">
+    <p class="crumb"><a href="../../index.html#fundamentals">Fundamentals</a> / 04</p>
+    <h1>Transmission-Line Reflections and Ringing</h1>
+    <p class="byline">
+      <!-- review:start --><span>By Geetansh Arora — Principal SI/PI Engineer</span><time datetime="2026-09-12" title="Technical review by Geetansh Arora on this date">12 Sep 2026</time><span>7 min</span><!-- review:end -->
+    </p>
+    <p class="answer">
+      A signal that meets a change in impedance sends part of itself back the way it came. On a line
+      that isn't terminated, that echo bounces between the driver and the load — again and again —
+      until the losses finally kill it.
+    </p>
+  </div>
+
+  <!-- ───────────── the picture ───────────── -->
+  <section class="instrument" data-viz="reflection" aria-label="Interactive transmission line reflection simulator">
+    <script type="application/json" data-contract>{"kind":"analytical","evidence":"independent","purpose":"Show how a step reflects between two mismatched ends, and why the ringing decays at the rate it does.","equations":["Gs=(Rs-Z0)/(Rs+Z0)","GL=(RL-Z0)/(RL+Z0)","a0=Vs*Z0/(Rs+Z0)","V(x,t) by superposition of 7 launched waves"],"units":"ps, V, ohm","validity":"Passive terminations. Lossless: late-time amplitudes are optimistic.","numerics":"Closed-form lattice sum. The edge is a CUBIC SMOOTHSTEP, s^2*(3-2s), centred on t = 0 and spanning tr from 0 to 1 — not a raised cosine, which the contract and the module header both used to claim. The two differ by at most 1% pointwise, but the rise-time convention differs: a cubic smoothstep's 10-90% time is 0.608*tr where a raised cosine's is 0.590*tr.","limitations":"tr is the full 0-100% support of the smoothstep, not a 10-90% time. Multiply by 0.608 to compare with a datasheet 10-90% figure. Lossless, so late-time amplitudes are optimistic.","suites":["Reflections","Line1D"],"version":"2.0","reviewed":"2026-09-12","panel":"reflection"}</script>
+    <div class="instrument__bar">
+      <span class="instrument__title">1 V step into a 3-inch stripline · T<sub>d</sub> = 500 ps</span>
+        <span data-evidence="independent" data-model-version="2.0" class="model-tag model-tag--analytical" title="Lossless-line superposition. Exact for the stated topology; no loss, no reactive load.">analytical</span>
+      <span class="instrument__readout" role="status" aria-live="polite" aria-label="Current values">
+        <span>Γ<sub>s</sub> <b data-out="gs">—</b></span>
+        <span>Γ<sub>L</sub> <b data-out="gl">—</b></span>
+        <span>launched <b data-out="a0">—</b></span>
+        <span>overshoot <b data-out="over">—</b></span>
+      </span>
+    </div>
+
+    <div class="panels">
+      <div class="panel">
+        <span class="panel__label">Voltage along the line — watch the wave travel and bounce</span>
+        <canvas data-cv="line" role="img"
+          aria-label="Voltage plotted against position along a 3-inch line, animating in time as the wave propagates and reflects."></canvas>
+        <div class="legend">
+          <span><i style="background:var(--signal)"></i>total voltage</span>
+          <span><i class="dash" style="color:var(--signal)"></i>forward wave</span>
+          <span><i class="dash" style="color:var(--reflect)"></i>reflected wave</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="panels two-up">
+      <div class="panel panel--scrub">
+        <span class="panel__label">Voltage vs time — drag to scrub</span>
+        <canvas data-cv="scope" role="img"
+          aria-label="Voltage against time at the driver and at the load, over four round trips."></canvas>
+        <div class="legend">
+          <span><i style="background:var(--signal)"></i>at load</span>
+          <span><i style="background:var(--reflect)"></i>at driver</span>
+          <span><i class="dash" style="color:var(--muted)"></i>settled value</span>
+        </div>
+      </div>
+      <div class="panel panel--scrub">
+        <span class="panel__label">Bounce diagram — position across, time down</span>
+        <canvas data-cv="lattice" role="img"
+          aria-label="Lattice diagram: each diagonal is one traverse of the line, labelled with the amplitude of that wave."></canvas>
+        <div class="legend">
+          <span><i style="background:var(--signal)"></i>travelling to the load</span>
+          <span><i style="background:var(--reflect)"></i>travelling back</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="controls">
+      <div class="ctl">
+        <div class="ctl__head"><label for="rf-rs">Driver impedance R<sub>s</sub></label><output id="rf-rs-out" for="rf-rs">10 Ω</output></div>
+        <input type="range" id="rf-rs" min="2" max="150" step="1" value="10">
+        <span class="ctl__note">Output impedance of the buffer</span>
+      </div>
+      <div class="ctl">
+        <div class="ctl__head"><label for="rf-z0">Line impedance Z<sub>0</sub></label><output id="rf-z0-out" for="rf-z0">50 Ω</output></div>
+        <input type="range" id="rf-z0" min="25" max="100" step="1" value="50">
+        <span class="ctl__note">Set by stackup and trace geometry</span>
+      </div>
+      <div class="ctl">
+        <div class="ctl__head"><label for="rf-rl">Load R<sub>L</sub></label><output id="rf-rl-out" for="rf-rl">∞ (open)</output></div>
+        <input type="range" id="rf-rl" min="0" max="200" step="1" value="50">
+        <label class="check" for="rf-open"><input type="checkbox" id="rf-open" checked> open circuit (a CMOS input pin)</label>
+      </div>
+      <div class="ctl">
+        <div class="ctl__head"><label for="rf-tr">Rise time t<sub>r</sub></label><output id="rf-tr-out" for="rf-tr">80 ps</output></div>
+        <input type="range" id="rf-tr" min="20" max="800" step="10" value="80">
+        <span class="ctl__note">Slow it past 2T<sub>d</sub> = 1000 ps and the ringing hides</span>
+      </div>
+    </div>
+
+    <div class="presets">
+      <button class="preset" type="button" data-preset="unterminated" aria-pressed="false">Unterminated</button>
+      <button class="preset" type="button" data-preset="series" aria-pressed="false">Series terminated</button>
+      <button class="preset" type="button" data-preset="parallel" aria-pressed="false">Parallel terminated</button>
+      <button class="preset" type="button" data-preset="short" aria-pressed="false">Shorted far end</button>
+      <button class="preset" type="button" data-preset="mismatch" aria-pressed="false">Mismatched both ends</button>
+    </div>
+
+    <div class="transport">
+      <button type="button" data-act="play" aria-pressed="false">▶ Play</button>
+      <span class="transport__step">
+        <button type="button" data-act="prev" aria-label="Previous event">‹</button>
+        <span class="transport__at" data-out="event" role="status" aria-live="polite">edge launched · t = 0</span>
+        <button type="button" data-act="next" aria-label="Next event">›</button>
+      </span>
+      <span data-out="note">—</span>
+    </div>
+  
+    <script type="application/json" data-guide>
+{
+  "title": "Four ways to end a line",
+  "steps": [
+    {
+      "say": "A fast driver into an open far end — a CMOS input pin, which is what most nets actually see. Step through the events with the arrows and watch the wave bounce.",
+      "set": {
+        "_p": "unterminated"
+      }
+    },
+    {
+      "say": "Raise the driver impedance to match the line. Nothing at the far end has changed.",
+      "set": {
+        "_p": "series"
+      },
+      "ask": "The far end still reflects everything. Why does the ringing stop?",
+      "answer": "Because a reflection needs two ends. The wave still comes back from the open load at full amplitude, but it arrives at a driver whose impedance now equals the line, so Γs is zero and there is nothing to send back out. One round trip and it is over — which is why series termination costs one resistor and half the voltage on the way out."
+    },
+    {
+      "say": "Terminate at the load instead, with Z0 to ground.",
+      "set": {
+        "_p": "parallel"
+      }
+    },
+    {
+      "say": "Now short the far end.",
+      "set": {
+        "_p": "short"
+      },
+      "ask": "What is different about a short compared with an open?",
+      "answer": "The sign. An open forces the current to zero, so the reflected voltage adds and the far end doubles. A short forces the voltage to zero, so the reflected wave inverts and cancels. Γ runs from −1 at a short, through 0 at a match, to +1 at an open — and the sign of what comes back is the sign of Γ."
+    }
+  ],
+  "transfer": "A 2-inch net rings badly. A colleague adds a 33 Ω series resistor at the driver and it stops. Explain what that resistor did in terms of Γ at both ends — and predict what would have happened if they had put it at the receiver instead.",
+  "transferNote": "One of those two positions damps the round trip and the other does not."
+}
+  </script>
+  </section>
+
+  <!-- ───────────── the intuition ───────────── -->
+  <div class="prose">
+    <h2>What you see on the scope</h2>
+
+    <p>
+      Before the physics, the symptom. You probe a net at the receiver and
+      expect to see a clean 0-to-1 V step. Instead the waveform overshoots to
+      1.6 V, dips back to 0.7 V, bounces up again, and after a few cycles
+      settles to the 1 V it was supposed to reach. That staircase is
+      <strong>ringing</strong>, and it is the single most recognisable
+      waveform defect in digital board design.
+    </p>
+
+    <p>
+      Ringing is not random noise. It is a signal bouncing back and forth
+      between the two ends of a trace, like a ball between two walls. Each
+      bounce is smaller than the last — the driver absorbs some of the energy
+      on every return trip — but the first overshoot can be large enough to
+      damage an input, trip an ESD clamp, or violate a timing spec. The rest
+      of this page explains why it happens and how to predict its amplitude.
+    </p>
+
+    <h2 class="section-rule"><span>What is actually happening</span></h2>
+
+    <p>
+      Here is the thing that makes reflections click: <strong>the driver has no idea what is at the far
+      end of the line.</strong> When the buffer switches, the edge starts travelling down the trace at
+      roughly half the speed of light, and it will not reach the load for another 500 picoseconds. It
+      has to decide how much voltage to launch <em>right now</em>, with no information about the load
+      whatsoever.
+    </p>
+
+    <p>
+      So it does the only thing it can. It sees the line's characteristic impedance — 50 Ω, in the
+      panel above — and treats it as if it were a 50 Ω resistor to ground. A 10 Ω driver into a 50 Ω
+      line is just a voltage divider: it launches about 833 mV of the 1 V swing, and that packet of
+      voltage sets off down the trace.
+    </p>
+
+    <p>
+      Half a nanosecond later it arrives at the load and finds an open circuit — a CMOS input pin is,
+      to a first approximation, no load at all. Now there is a contradiction. The wave is carrying
+      833 mV and 16.7 mA of current, but an open circuit cannot accept any current. The only way to
+      satisfy both the line and the load is to launch a <em>second</em> wave back toward the driver,
+      one that exactly cancels the incoming current — and that reflected wave carries another 833 mV
+      with it. Which is why the voltage at the load momentarily jumps to <strong>1.67 V</strong>, well
+      above the rail it was supposed to reach.
+    </p>
+
+    <p>
+      That echo now travels back, and 500 ps later it reaches the driver — which is a 10 Ω source, also
+      not a match for 50 Ω. So it reflects <em>again</em>, this time mostly inverted, and heads back to
+      the load. Each round trip the amplitude shrinks by the product of the two reflection coefficients,
+      and the voltage staircases its way toward the value it should have had all along. Drag the scrubber
+      on the middle panel and you can watch each step land, one every 2T<sub>d</sub>.
+    </p>
+
+    <div class="note">
+      <b>The part that costs you silicon</b>
+      Compare the 1.67 V overshoot with the receiver's specified AC limit and allowed duration.
+      Repeated excursions outside that envelope can affect reliability, while an undershoot or
+      secondary crossing can consume noise margin or create an unintended transition.
+    </div>
+
+    <h2 class="section-rule"><span>Three ways to control reflections</span></h2>
+
+    <p>
+      Every termination scheme is the same idea wearing different clothes: <strong>make one end of the
+      line look like the line.</strong> Kill either reflection coefficient and the echo has nowhere to go.
+    </p>
+
+    <ul class="tight">
+      <li><strong>Series termination.</strong> Add resistance at the driver until R<sub>s</sub> = Z<sub>0</sub>.
+        The wave still reflects off the open load, but when it gets home it is absorbed instead of bounced.
+        Costs one resistor and no DC power — which is why it is everywhere on low-speed control nets.
+        Try the preset: the waveform steps up once and stops.</li>
+      <li><strong>Parallel termination.</strong> Put Z<sub>0</sub> to ground at the load. Now nothing
+        reflects in the first place and the waveform is clean from the first edge — but you burn DC
+        current the whole time the line sits high.</li>
+      <li><strong>Use no added termination when the route is electrically short.</strong> If the edge is slow compared with the round trip,
+        the reflections come home while the driver is still switching and simply blend into the edge.
+        Push the rise-time slider past 1000 ps and watch the ringing dissolve.</li>
+    </ul>
+
+    <div class="note">
+      <b>Use the impedances at the physical endpoints</b>
+      For a source termination, include the driver's output impedance, package, and added resistor;
+      their sum is what the returning wave sees. For a parallel termination, include the receiver
+      input and the connection between the resistor and pad. A resistor with the right printed value
+      can still be the wrong termination when a via or stub separates it from the endpoint.
+    </div>
+  </div>
+
+  <!-- ───────────── go deeper ───────────── -->
+  <details class="deeper">
+    <summary>Go deeper — the maths, the numbers, and where the rules of thumb break</summary>
+    <div class="deeper__body">
+
+      <p>Everything above falls out of one equation. At any interface between an impedance
+        <span class="num">Z<sub>2</sub></span> and the line it sits on, the fraction of the incident wave
+        that comes back is:</p>
+
+      <div class="eq">
+        Γ = ( <i class="var">Z</i><sub>2</sub> − <i class="var">Z</i><sub>0</sub> ) / ( <i class="var">Z</i><sub>2</sub> + <i class="var">Z</i><sub>0</sub> )
+        <span class="cap">Γ = +1 at an open (Z₂ → ∞), −1 at a short (Z₂ = 0), and exactly 0 when Z₂ = Z₀. Γ is bounded by ±1 for any passive load.</span>
+      </div>
+
+      <p>And the amount the driver launches in the first place is a plain resistive divider against the
+        line, not against the load:</p>
+
+      <div class="eq">
+        <i class="var">V</i><sub>inc</sub> = <i class="var">V</i><sub>s</sub> · <i class="var">Z</i><sub>0</sub> / ( <i class="var">R</i><sub>s</sub> + <i class="var">Z</i><sub>0</sub> )
+        <span class="cap">With Vs = 1 V, Rs = 10 Ω, Z₀ = 50 Ω: 833 mV. The load never enters this expression.</span>
+      </div>
+
+      <p>The voltage sitting at the load right after the first reflection is the incident wave plus its
+        own echo, which is where the 1.67 V comes from:</p>
+
+      <div class="eq">
+        <i class="var">V</i><sub>load</sub>(T<sub>d</sub>) = <i class="var">V</i><sub>inc</sub> · ( 1 + Γ<sub>L</sub> ) = 833 mV × 2 = 1.67 V
+        <span class="cap">Every subsequent step is smaller by a factor of Γ<sub>L</sub>·Γ<sub>s</sub>, arriving one round trip (2T<sub>d</sub>) apart.</span>
+      </div>
+
+      <h3>When does this matter?</h3>
+
+      <p>The industry rule of thumb is that reflections become a problem when the round-trip delay is a
+        meaningful fraction of the rise time — commonly stated as:</p>
+
+      <div class="eq">
+        terminate when &nbsp; 2<i class="var">T</i><sub>d</sub> &gt; <i class="var">t</i><sub>r</sub> / 3
+        <span class="cap">Equivalently: a trace becomes "long" past roughly t_r / (6 · propagation delay per unit length).</span>
+      </div>
+
+      <p><strong>Where that rule is insufficient.</strong> It assumes a single driver, a single receiver, and a
+        uniform line. Extend the analysis for:</p>
+
+      <ul class="tight">
+        <li><strong>Multi-drop nets.</strong> Every stub is another discontinuity with its own Γ. The
+          round-trip rule alone does not describe a resonant T-branch.</li>
+        <li><strong>Loads that aren't resistive.</strong> A real CMOS input is a few pF, not an open. The
+          reflection coefficient becomes frequency-dependent, and the sharp corners in the panel above
+          become rounded in silicon.</li>
+        <li><strong>Long lossy channels.</strong> Past a couple of GHz the line attenuates the echo faster
+          than the reflection coefficients do. Above ~10 dB of insertion loss the reflections mostly
+          bury themselves — but by then loss and ISI are your problem instead.</li>
+      </ul>
+
+      <h3>The three schemes, side by side</h3>
+
+      <div class="table-scroll">
+        <table class="data">
+          <thead>
+            <tr><th>Scheme</th><th>Γ killed</th><th>DC power</th><th>Signal at load</th><th>Typical use</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Series (source)</td><td>Γ<sub>s</sub> → 0</td><td>none</td><td>full swing, one step</td><td>reset, control, slow GPIO</td></tr>
+            <tr><td>Parallel to ground</td><td>Γ<sub>L</sub> → 0</td><td>V²/Z₀ when high</td><td>set by the source/load divider, not by the termination</td><td>rarely alone</td></tr>
+            <tr><td>Thevenin (split)</td><td>Γ<sub>L</sub> → 0</td><td>continuous</td><td>full swing, biased</td><td>legacy DDR address/command</td></tr>
+            <tr><td>On-die (ODT)</td><td>Γ<sub>L</sub> → 0</td><td>gated per burst</td><td>full swing</td><td>LPDDR5X, PCIe, USB, UFS</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>Modern high-speed interfaces have almost entirely moved the termination on-die, which is worth
+        understanding as an SI decision and not just a packaging one: a resistor on the board sits a via
+        and a stub away from the actual receiver, and at 8533 MT/s that parasitic inductance is enough to
+        undo most of what the termination was supposed to buy you. Putting it inside the pad removes the
+        stub — and lets the controller switch it on only during a read burst, which is the only reason
+        the power budget survives.</p>
+
+    </div>
+  </details>
+
+  <!-- ───────────── in the real world ───────────── -->
+  <div class="prose">
+    <h2 class="section-rule"><span>In the real world</span></h2>
+    <p>
+      Reflections are a useful early hypothesis when a net misbehaves, and source damping is often inexpensive.
+      They can also be designed in and then discovered at
+      bring-up, because a schematic gives you no hint that a trace is electrically long. Fast data buses
+      usually receive careful transmission-line analysis, while a reset line routed 8 inches across the
+      board to four loads may receive less attention. With an uncharacterised buffer, that line can arrive
+      with 400 mV of ringing near the receiver's threshold.
+    </p>
+    <p>
+      The practical sign-off habit: before worrying about eye diagrams, sweep the driver corner. A fast-
+      strong process corner has a lower R<sub>s</sub> and a faster t<sub>r</sub> than the typical model —
+      both of which make reflections worse. A net that passes at typical and fails at fast-strong is the
+      classic reflection signature, and you can spot it in the panel above by dragging R<sub>s</sub> down
+      and t<sub>r</sub> left at the same time.
+    </p>
+
+    <h3>Related</h3>
+    <ul class="tight">
+      <li><a href="../../reference.html#experiment-open-line">Open, short, matched, and resistive line reference experiments</a> — saved Lab A cases with analytical boundary values and tolerances</li>
+      <li><a href="./when-is-a-trace-a-transmission-line.html">When does a trace become a transmission line?</a></li>
+      <li><a href="./characteristic-impedance.html">Transmission-Line Characteristic Impedance</a></li>
+      <li><a href="./termination-schemes.html">Transmission-Line Termination Schemes</a></li>
+      <li><a href="../interfaces/lpddr5x.html">LPDDR5X sign-off: ODT and driver strength training</a></li>
+    </ul>
+  </div>
+  <!-- pager:start -->
+  <nav class="pager" aria-label="Previous and next topic">
+    <a class="prev" href="../../topics/fundamentals/characteristic-impedance.html"><span class="dir">Previous</span><span>Transmission-Line Characteristic Impedance</span></a>
+    <a class="next" href="../../topics/fundamentals/termination-schemes.html"><span class="dir">Next</span><span>Transmission-Line Termination Schemes</span></a>
+  </nav>
+  <!-- pager:end -->
+</main>
+
+<footer class="site-foot">
+  <span>SIPI &#8212; signal and power integrity, visualised.</span>
+  <span>Created and directed by Geetansh Arora. <a href="../../colophon.html">About, review &amp; AI assistance</a> &#183; <a href="../../model-contract.html">Model assumptions</a> &#183; <a href="../../docs/claims.md">Claim ledger</a></span>
+</footer>
+
+<script src="../../js/site.js?v=acb47d86"></script>
+<script src="../../js/search.js?v=6c93a285"></script>
+<script src="../../js/viz-kit.js?v=a53e49c3"></script>
+<script src="../../js/viz/reflection.js?v=8bb872ad"></script>
+<script src="../../js/viz-loader.js?v=89d5884d"></script>
+</body>
+</html>

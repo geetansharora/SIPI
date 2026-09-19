@@ -1,0 +1,364 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PCIe 6.0 Signal Integrity: PAM4, FLIT, and FEC | SIPI</title>
+<meta name="description" content="What changes for the SI engineer when PCIe goes to PAM4: the same Nyquist frequency, a 9.5 dB amplitude penalty, and a raw BER you can actually measure.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<link rel="stylesheet" href="../../css/base.css?v=e4f774de">
+<link rel="stylesheet" href="../../css/components.css?v=295837ab">
+  <!-- meta:start -->
+  <link rel="canonical" href="https://sipi.work/topics/interfaces/pcie-gen6.html">
+  <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="SIPI">
+  <meta property="og:title" content="PCIe 6.0 Signal Integrity: PAM4, FLIT, and FEC | SIPI">
+  <meta property="og:description" content="What changes for the SI engineer when PCIe goes to PAM4: the same Nyquist frequency, a 9.5 dB amplitude penalty, and a raw BER you can actually measure.">
+  <meta property="og:url" content="https://sipi.work/topics/interfaces/pcie-gen6.html">
+  <meta property="og:image" content="https://sipi.work/assets/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="PCIe 6.0 Signal Integrity: PAM4, FLIT, and FEC | SIPI">
+  <meta name="twitter:description" content="What changes for the SI engineer when PCIe goes to PAM4: the same Nyquist frequency, a 9.5 dB amplitude penalty, and a raw BER you can actually measure.">
+  <meta name="twitter:image" content="https://sipi.work/assets/og.png">
+  <!-- meta:end -->
+</head>
+<body>
+
+<header class="masthead">
+  <a class="wordmark" href="../../index.html">SIPI</a>
+  <nav>
+    <a href="../../index.html#fundamentals">Fundamentals</a>
+    <a href="../../index.html#power-integrity">Power</a>
+    <a href="../../index.html#interfaces">Interfaces</a>
+    <a href="../../start.html">Start</a>
+    <a href="../../labs.html">Labs</a>
+    <a href="../../reference.html">Reference</a>
+    <button class="theme-toggle" data-act="theme" type="button">System</button>
+  </nav>
+</header>
+
+<main>
+  <div class="page-head">
+    <p class="crumb"><a href="../../index.html#interfaces">Interface sign-off</a> / 03</p>
+    <h1>PCIe 6.0 Signal Integrity: PAM4, FLIT, and FEC</h1>
+    <p class="byline">
+      <!-- review:start --><span>By Geetansh Arora — Principal SI/PI Engineer</span><time datetime="2026-09-17" title="Technical review by Geetansh Arora on this date">17 Sep 2026</time><span>9 min</span><!-- review:end -->
+    </p>
+    <p class="answer">
+      Gen 6 keeps the symbol rate and doubles the data rate by sending two bits per symbol. That
+      means the channel sees the same Nyquist frequency as Gen 5, which is the central bandwidth benefit,
+      but the receiver now has to resolve four levels instead of two, and the raw error rate that
+      results is high enough that forward error correction stops being optional.
+    </p>
+  </div>
+
+  <!-- ───────────── the picture ───────────── -->
+  <figure class="figure">
+    <div class="figure__bar"><span>PAM4 &#183; the same Nyquist, a third the eye, and FEC in the budget</span></div>
+    <div class="figure__body"><svg viewBox="-4 14 732 250" role="img" aria-label="Gen 6 compared with Gen 5: the same 16 gigahertz Nyquist frequency, twice the data rate, a third of the eye amplitude, and a raw error rate a million times worse that forward error correction brings back.">
+  <g>
+    <text class="lbl-hi" x="0" y="34">what did not change</text>
+    <rect x="0" y="46" width="300" height="30" rx="2" fill="var(--signal)" opacity=".35"/>
+    <text class="lbl-hi" x="150" y="66" text-anchor="middle">Nyquist stays at 16 GHz</text>
+    <text class="lbl" x="0" y="94">so the channel work is familiar: same insertion loss</text>
+    <text class="lbl" x="0" y="110">budget, same intolerance of via stubs, same connectors</text>
+    <text class="lbl-sig" x="0" y="134">32 Gbaud carrying 64 Gb/s — two bits per symbol</text>
+  </g>
+  <g transform="translate(370,0)">
+    <text class="lbl-hi" x="0" y="34">what it cost</text>
+    <rect x="0" y="46" width="60" height="30" rx="2" fill="var(--reflect)" opacity=".7"/>
+    <text class="lbl-hi" x="30" y="66" text-anchor="middle">NRZ</text>
+    <rect x="90" y="46" width="20" height="30" rx="2" fill="var(--alarm)" opacity=".7"/>
+    <rect x="114" y="46" width="20" height="30" rx="2" fill="var(--alarm)" opacity=".7"/>
+    <rect x="138" y="46" width="20" height="30" rx="2" fill="var(--alarm)" opacity=".7"/>
+    <text class="lbl-hi" x="124" y="66" text-anchor="middle">PAM4</text>
+    <text class="lbl-bad" x="190" y="66">&#8722;9.5 dB</text>
+    <text class="lbl" x="0" y="98">three eyes in the swing that held one</text>
+    <text class="lbl" x="0" y="114">and they are not identical — Tx linearity is now specified</text>
+  </g>
+  <g transform="translate(0,166)">
+    <text class="lbl-hi" x="0" y="0">and the fix that changes sign-off</text>
+    <rect x="0" y="14" width="170" height="26" rx="2" fill="var(--alarm)" opacity=".45"/>
+    <text class="lbl-hi" x="85" y="32" text-anchor="middle">raw BER ~1e&#8722;6</text>
+    <path class="flow" d="M176,27 L206,27"/>
+    <rect x="212" y="14" width="150" height="26" rx="2" fill="var(--reflect)" opacity=".5"/>
+    <text class="lbl-hi" x="287" y="32" text-anchor="middle">FLIT + FEC</text>
+    <path class="flow" d="M368,27 L398,27"/>
+    <rect x="404" y="14" width="170" height="26" rx="2" fill="var(--signal)" opacity=".5"/>
+    <text class="lbl-hi" x="489" y="32" text-anchor="middle">delivered 1e&#8722;12 and better</text>
+    <text class="lbl-sig" x="0" y="60">a raw error every ~16 µs at 64 GT/s — measurable</text>
+    <text class="lbl-sig" x="0" y="76">so the bathtub is acquired, not extrapolated six decades</text>
+    <text class="lbl" x="676" y="60" text-anchor="end">precoding breaks DFE error bursts, which is</text>
+    <text class="lbl" x="676" y="76" text-anchor="end">what a lightweight FEC handles worst</text>
+  </g>
+</svg></div>
+    <figcaption><b>Gen 6 doubles the rate without doubling the frequency the channel must carry.</b> Two bits per symbol means 64 GT/s uses the same 32 Gbaud &#8212; and therefore the same 16 GHz Nyquist &#8212; as Gen 5's NRZ. An NRZ implementation at the same transfer rate would need 32 GHz, where practical copper channels have much greater loss. PAM4 instead introduces an amplitude cost of 20&#183;log&#8321;&#8320;(3) &#8776; 9.5 dB before its additional error events. The standard addresses this with a raw error rate near 10<sup>&#8722;6</sup> and FEC. At that raw BER, an error occurs about every 16 microseconds, making direct bathtub acquisition more practical than at much lower BER targets.</figcaption>
+  </figure>
+
+  <div class="prose">
+    <p>
+      When the PCI-SIG standards body began drafting the specification for PCIe Gen 6 (<span class="num">64 GT/s</span>),
+      the industry ran directly into the physical limits of copper interconnects. Had Gen 6 followed the historical
+      precedent of simply doubling the NRZ clock rate, it would have required a 64 GBaud symbol rate and a
+      <span class="num">32 GHz Nyquist frequency</span>. At 32 GHz, standard server PCB laminates, via breakouts,
+      and card-edge connectors exhibit more than <span class="num">60 dB</span> of insertion loss over typical
+      chassis distances — an attenuation so massive that a signal could not even cross from a CPU to an adjacent
+      expansion slot.
+    </p>
+
+    <p>
+      To preserve standard server reach without forcing an industry-wide transition to exotic, high-cost optical
+      cables, PCIe Gen 6 enacted the most radical architectural disruption in the standard's history: it abandoned
+      binary NRZ and adopted <strong>Pulse Amplitude Modulation 4-Level (PAM4)</strong>. By packing two bits into
+      each electrical symbol, Gen 6 delivers 64 GT/s while operating at the exact same 32 GBaud symbol rate and
+      <strong>16 GHz Nyquist frequency</strong> as Gen 5. The channel's frequency response sees no increase in loss.
+    </p>
+
+    <p>
+      However, compressing four voltage levels into the same total swing extracts a punishing penalty: an immediate
+      <span class="num">9.54 dB</span> signal-to-noise ratio (SNR) reduction and extreme vulnerability to driver
+      non-linearity. For the first time, PCIe deliberately abandons an "error-free" raw physical layer, accepting
+      a raw bit error rate of roughly <span class="num">10<sup>-6</sup></span> and relying on a lightweight Forward
+      Error Correction (FEC) engine, 1b/1b precoding, and fixed 256-byte FLIT architecture to guarantee enterprise
+      reliability.
+    </p>
+
+    <h2>Why the rate could not simply double again</h2>
+
+    <p>
+      Every previous PCIe generation doubled the data rate by doubling the symbol rate. Gen 5 runs
+      at 32 GT/s NRZ, so Gen 6 the same way would mean 64 Gbaud and a 32 GHz Nyquist.
+    </p>
+
+    <p>
+      Channel loss at 32 GHz is not something a connectorised copper channel of useful length can
+      survive. Not "difficult" — the reach would collapse to something that does not reach a slot.
+    </p>
+
+    <p>
+      So Gen 6 changes the modulation instead. Four voltage levels, two bits per symbol, the same
+      32 Gbaud symbol rate, and therefore the same Nyquist frequency as Gen 5. The channel's job
+      does not get harder. The receiver's does.
+    </p>
+
+    <h2 class="section-rule"><span>The trade PAM4 makes</span></h2>
+
+    <p>
+      PAM4 encodes two bits in four voltage levels, so 64 GT/s is carried at the same 32 Gbaud symbol
+      rate as Gen 5's 32 GT/s NRZ — and therefore at the same <strong>16 GHz Nyquist frequency</strong>.
+      Doubling the rate with NRZ would instead require a 32 GHz Nyquist frequency, where loss can
+      become prohibitive for a copper channel of useful length.
+    </p>
+
+    <p>
+      The tradeoff appears in amplitude. Three eyes have to fit in the swing that previously held one, so
+      each eye is a third the height:
+    </p>
+
+    <div class="eq">
+      SNR penalty = 20·log<sub>10</sub>(3) ≈ 9.5 dB
+      <span class="cap">Before accounting for the extra transitions and the additional error events PAM4 introduces, which push the practical penalty higher still. Nine and a half decibels is a large fraction of a channel budget to give away at the start.</span>
+    </div>
+
+    <p>
+      There is a second, subtler cost: the three eyes are not identical. Level-dependent nonlinearity in
+      the driver makes the outer eyes and the inner eye behave differently, so transmitter linearity
+      becomes a specified parameter in a way it never was for NRZ.
+    </p>
+
+    <h2 class="section-rule"><span>Why FEC becomes mandatory</span></h2>
+
+    <p>
+      Nine decibels of lost amplitude cannot be recovered from the channel, so Gen 6 changes the target
+      instead. The raw bit error rate is relaxed to around 10<sup>−6</sup>, and forward error correction
+      brings the delivered rate back to 10<sup>−12</sup> and better. FEC is no longer a protocol nicety
+      — it is a term in the electrical budget, and the link is designed knowing the correction is there.
+    </p>
+
+    <p>
+      That requires a fixed-size transport to carry the code words, which is what <strong>FLIT mode</strong>
+      provides: fixed-length flow control units with FEC and CRC in known positions. Gen 6 is FLIT-only,
+      and a Gen 6-capable link uses FLIT mode at lower rates too.
+    </p>
+
+    <p>
+      <strong>Precoding</strong> completes the picture. A DFE that makes a wrong decision feeds that
+      error back and can produce a burst, and burst errors are exactly what a lightweight FEC handles
+      worst. Precoding at the transmitter breaks the correlation so DFE errors arrive isolated rather
+      than clustered, which is what makes the correction budget work.
+    </p>
+
+    <div class="note">
+      <b>The change that most affects day-to-day work</b>
+      A raw BER of 10<sup>−6</sup> is <em>measurable</em>. At 64 GT/s that is an error roughly every
+      16 microseconds — a bathtub curve you can actually acquire rather than extrapolate. Gen 6 quietly
+      removes the largest source of uncertainty in serial link sign-off: no longer fitting Gaussian
+      tails six decades below anything observed, but measuring the real distribution and letting FEC
+      cover the rest.
+    </div>
+
+    <h2 class="section-rule"><span>What stays the same</span></h2>
+
+    <p>
+      Because Nyquist has not moved, the channel work is familiar: the same 16 GHz insertion loss
+      budget, the same intolerance of via stubs, the same connector and escape discontinuities. What
+      changes is how little margin there is to absorb any of it, and how much more a reflection or a
+      crosstalk aggressor costs when it lands on an eye a third the size.
+    </p>
+
+    <h3>Sources</h3>
+    <ul class="tight refs">
+      <li><strong>PCI-SIG Base 6.0</strong> &#8212; FLIT mode, FEC, CRC and replay are four separate mechanisms &#8212; ledger claims C-8 to C-10</li>
+    </ul>
+      <h2 class="section-rule"><span>Why this decides how your board behaves</span></h2>
+
+    <ul class="tight">
+      <li><strong>Everything that is not loss now matters three times more.</strong> Crosstalk,
+        reflections and supply noise all eat three times the fraction of an eye they did at NRZ.</li>
+      <li><strong>Return loss becomes disproportionately important.</strong> Backdrilling, launch
+        design and connector footprints move up the priority list relative to laminate choice.</li>
+      <li><strong>A high raw error rate is normal.</strong> Designing to an NRZ instinct about
+        acceptable raw BER leads to over-design; reading a raw number as a failure leads to
+        alarm.</li>
+      <li><strong>Burst structure matters now.</strong> FEC has a limited burst-correcting
+        capacity, so errors that arrive together are worse than the same number arriving
+        independently.</li>
+    </ul>
+
+    <h2 class="section-rule"><span>What to do about it</span></h2>
+
+    <p>
+      <strong>Re-budget noise, not just loss.</strong> The temptation is to reuse a Gen 5 channel
+      because Nyquist did not move. The loss budget survives; the noise budget does not.
+    </p>
+
+    <p>
+      <strong>Check all three eyes.</strong> They are not identical — transmitter level linearity and
+      threshold placement affect them differently — and reporting one number for a PAM4 link is
+      incomplete.
+    </p>
+
+    <p>
+      <strong>Separate raw and post-correction error rates in every report.</strong> Quoting one as
+      the other is the most common confusion on this topic.
+    </p>
+
+    <p>
+      <strong>Look for sources of bursty errors specifically.</strong> DFE error propagation and
+      periodic aggressors produce exactly the structure FEC handles worst.
+    </p>
+
+    <div class="note">
+      <b>Using this to find a fault</b>
+      <ul class="tight">
+        <li><b>One eye much worse than the other two.</b> Level linearity or threshold placement —
+          a device issue, since the channel treats all three alike.</li>
+        <li><b>Post-FEC errors with an acceptable raw rate.</b> Bursts. Look at error spacing, not
+          just error count.</li>
+        <li><b>A channel that was comfortable at Gen 5 and marginal at Gen 6.</b> Check crosstalk
+          and return loss before loss, since loss is the one thing that did not change.</li>
+      </ul>
+    </div>
+
+    <details class="deeper">
+      <summary>Go deeper — the mechanisms Gen 6 adds, and what they are each for</summary>
+
+      <p>
+        <strong>1b/1b Precoding: breaking DFE error bursts.</strong> In a high-speed PAM4 receiver, the decision
+        feedback equaliser (DFE) slices the incoming waveform among three stacked eyes. If random noise causes
+        the slicer to pick the wrong level, the erroneous decision feeds back into the summer with inverted polarity.
+        This feedback frequently triggers an extended burst of successive symbol errors.
+      </p>
+
+      <p>
+        A lightweight FEC code has a strictly bounded burst-correction capability; a sustained burst of 8 or 16
+        consecutive corrupted symbols will overwhelm the decoder and trigger an uncorrectable frame drop. To eliminate
+        this hazard, PCIe Gen 6 introduces a <strong>1b/1b precoder</strong> at the transmitter:
+        <span class="num">y[n] = x[n] &oplus; y[n-1]</span>. The receiver applies the inverse operation:
+        <span class="num">x[n] = y[n] &oplus; y[n-1]</span>. Mathematically, this decimation converts an extended run
+        of consecutive feedback errors into exactly two bit errors (one at the start of the burst and one at the end),
+        instantly truncating the burst into isolated errors that the FEC effortlessly corrects.
+      </p>
+
+      <p>
+        <strong>The 256-Byte FLIT and Low-Latency FEC.</strong> Prior PCIe generations operated with variable-length
+        Transaction Layer Packets (TLPs) wrapped in 128b/130b sync headers. FEC, however, requires a fixed, deterministic
+        block size to compute parity over. Gen 6 therefore scraps variable framing and mandates a rigid
+        <strong>256-byte Flow Control Unit (FLIT)</strong> architecture across all packet types:
+      </p>
+
+      <ul class="tight">
+        <li><strong>Payload:</strong> 236 bytes of TLP data, 6 bytes of Data Link Layer protocol headers.</li>
+        <li><strong>CRC (Cyclic Redundancy Check):</strong> 8 bytes of robust error detection.</li>
+        <li><strong>FEC Parity:</strong> 6 bytes (48 bits) of lightweight Forward Error Correction.</li>
+      </ul>
+
+      <p>
+        Unlike enterprise Ethernet (which utilizes heavy Reed-Solomon RS(544, 514) codes that add over 100 ns of
+        algorithmic decode latency), PCIe Gen 6 selected a lightweight single-symbol correctable code that decodes in
+        <strong>less than 2 nanoseconds</strong>. This near-zero latency penalty is essential to preserving CPU cache
+        coherency protocols (such as CXL). If an error pattern exceeds the FEC's correction threshold, the 8-byte CRC
+        instantly catches the corrupted FLIT and commands a fast hardware-level replay from the link partner's buffer.
+      </p>
+
+      <p>
+        <strong>Transmitter linearity and SNDR.</strong> In NRZ links, transmitter quality was measured simply
+        by rise time and total voltage swing. In PAM4, non-linear driver compression between the four levels
+        (L0, L1, L2, L3) degrades margin faster than dielectric loss. Gen 6 mandates strict linearity metrics:
+      </p>
+
+      <ul class="tight">
+        <li><strong>Level Separation Mismatch Ratio (R<sub>LM</sub>):</strong> Measures whether the three eye heights
+          are evenly spaced. Standards require <span class="num">R<sub>LM</sub> &ge; 0.95</span>; uneven spacing
+          compresses the middle or upper eye, making it disproportionately vulnerable to noise.</li>
+        <li><strong>Signal-to-Noise-and-Distortion Ratio (SNDR):</strong> Quantifies total transmitted signal power
+          against the sum of driver non-linearity, harmonic distortion, and random noise. Gen 6 requires an SNDR of at
+          least <span class="num">31.5 to 32 dB</span> measured through a reference compliance channel.</li>
+      </ul>
+    </details>
+
+    <h2 class="section-rule"><span>In the real world</span></h2>
+
+    <p>
+      Gen 6 changes the character of signal integrity work on PCIe more than any previous generation
+      did. NRZ debugging was mostly about loss and reflections, which are fixed with geometry and
+      materials. PAM4 debugging is mostly about noise, linearity and error statistics.
+    </p>
+
+    <p>
+      The practical consequence is that the first instinct has to change. On a marginal NRZ link the
+      question was usually "how do I get less loss?". On a marginal Gen 6 link it is more often "what
+      is adding noise, and does it arrive in bursts?".
+    </p>
+
+    <h3>Related</h3>
+    <ul class="tight">
+      <li><a href="../signal-integrity/nrz-vs-pam4.html">NRZ and PAM4: Levels, Bandwidth, and SNR</a></li>
+      <li><a href="../interfaces/pcie-gen4-gen5.html">PCIe 4.0 and 5.0 Signal Integrity: Loss and Equalization</a></li>
+      <li><a href="../fundamentals/bathtub-curves.html">Bathtub curves and BER extrapolation</a></li>
+      <li><a href="../signal-integrity/equalization.html">Equalization and Clock Recovery: CTLE, FFE, DFE, and CDR</a></li>
+    </ul>
+  </div>
+
+  <!-- pager:start -->
+  <nav class="pager" aria-label="Previous and next topic">
+    <a class="prev" href="../../topics/interfaces/pcie-gen4-gen5.html"><span class="dir">Previous</span><span>PCIe 4.0 and 5.0 Signal Integrity: Loss and Equalization</span></a>
+    <a class="next" href="../../topics/interfaces/usb-3x.html"><span class="dir">Next</span><span>USB 3.1 and 3.2 Signal Integrity: SSC and Compliance</span></a>
+  </nav>
+  <!-- pager:end -->
+</main>
+
+<footer class="site-foot">
+  <span>SIPI &#8212; signal and power integrity, visualised.</span>
+  <span>Created and directed by Geetansh Arora. <a href="../../colophon.html">About, review &amp; AI assistance</a> &#183; <a href="../../model-contract.html">Model assumptions</a> &#183; <a href="../../docs/claims.md">Claim ledger</a></span>
+</footer>
+
+<script src="../../js/site.js?v=acb47d86"></script>
+<script src="../../js/search.js?v=6c93a285"></script>
+</body>
+</html>

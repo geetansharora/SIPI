@@ -1,0 +1,7 @@
+! Lossy, passive, reciprocal, port-symmetric, with real phase on every entry.
+! The case the old shortcut was actually correct for -- kept so the fix is shown
+! not to have broken it.
+# Hz S RI R 50
+0 0.1 0 0.6 0 0.6 0 0.1 0
+5000000000 0.0707106781 0.0707106781 0.3 -0.5196152423 0.3 -0.5196152423 0.0707106781 0.0707106781
+10000000000 -0.05 0.0866025404 -0.3 -0.5196152423 -0.3 -0.5196152423 -0.05 0.0866025404

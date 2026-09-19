@@ -1,0 +1,100 @@
+/* Lab D: ADC interference — the few rules the shared lab workspace does not
+   already provide. Loaded only by that page; every selector is scoped to it. */
+
+/* Controls that belong to the other architecture or frequency mode. The kit's
+   .ctl { display: flex } would otherwise defeat the hidden attribute. */
+.lab-rail [hidden] { display: none !important; }
+
+/* One head for every control: the label, then the value box with its unit kept
+   beside it. The kit's head spreads its children to the edges, which left a unit
+   stranded at the far right; the value travels as one group instead. */
+.lab-rail .ctl__head { align-items: center; }
+.adc-value { display: inline-flex; align-items: center; gap: .3rem; margin-left: auto; flex: none; }
+.adc-value .ctl__num { box-sizing: border-box; width: 3.4rem; margin: 0; }
+.adc-value .adc-entry { width: 6.6rem; }
+.adc-value .ctl__unit { margin: 0; min-width: 1.6rem; }
+
+/* What a control resolves to — the aggressor's actual frequency and its ratio to
+   the clock, the output data rate, the coherent input tone. */
+.adc-derived {
+  margin: -.2rem 0 0;
+  font: .7rem/1.45 var(--font-mono); color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Scenarios for the current architecture, two to a row. */
+.lab-rail .adc-scenarios { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .3rem; }
+.lab-rail .adc-scenarios .preset { text-align: left; padding: .28rem .4rem; font-size: .7rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.lab-rail .adc-scenarios [data-out="note"] { -webkit-line-clamp: 2; line-clamp: 2; }
+.lab-rail .adc-scenarios .presets__group,
+.lab-rail .adc-scenarios .presets__note,
+.lab-rail .adc-scenarios .lab-more { grid-column: 1 / -1; }
+
+/* A checkbox and its label on one line, the label wrapping beside the box. */
+.adc-check__row { display: flex; align-items: flex-start; gap: .45rem; font: .72rem/1.35 var(--font-mono); color: var(--ink-2); }
+.adc-check__row input { margin: .1rem 0 0; accent-color: var(--signal); }
+
+/* Two controls side by side. In both columns the label takes the first line and the
+   value the second, so the two sliders always sit at the same height. */
+.adc-pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .5rem .8rem; align-items: end; }
+.adc-pair .ctl__head { flex-wrap: wrap; row-gap: .2rem; }
+.adc-pair .ctl__head > label { flex: 1 0 100%; }
+.adc-pair .adc-value { margin-left: 0; }
+.adc-pair .adc-value .ctl__num { width: 3rem; }
+.adc-pair .adc-value .adc-entry { width: 5.4rem; }
+.adc-pair .sel { min-width: 0; }
+
+.lab-strip .adc-axis { flex-direction: row; align-items: center; gap: .5rem; }
+.lab-strip .adc-axis label { font: .72rem var(--font-mono); color: var(--ink-2); white-space: nowrap; }
+.lab-strip .adc-axis .sel { width: auto; }
+/* Two lines, always: a help text that grew on hover would push the plots below it. */
+.adc-strip-note {
+  margin: 0; flex: 1; min-width: 0; height: 2.8em;
+  font: .7rem/1.4 var(--font-mono); color: var(--muted);
+  display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; overflow: hidden;
+}
+.adc-strip-note b { color: var(--ink-2); font-weight: 600; }
+
+/* The lesson's block diagrams draw from theme tokens, so they follow light and dark. */
+.adc-diagrams .blk { fill: var(--surface-2); stroke: var(--border); stroke-width: 1.2; }
+.adc-diagrams .wire { fill: none; stroke: var(--ink-2); stroke-width: 1.4; }
+.adc-diagrams .wire--fb { stroke-dasharray: 4 3; }
+.adc-diagrams .txt { fill: var(--ink); font: 14px var(--font-mono); }
+.adc-diagrams .txt--small { fill: var(--muted); font: 12.5px var(--font-mono); }
+.adc-diagrams .entry { fill: var(--alarm); }
+.adc-diagrams .entry-txt { fill: var(--alarm); font: 600 12.5px var(--font-mono); }
+.adc-diagrams .arrow { fill: var(--ink-2); }
+
+/* Short laptop screens: the workspace already compacts its own rows; pairs follow. */
+@media (min-width: 75rem) and (max-height: 50rem) {
+  .adc-pair { gap: .3rem .6rem; }
+  .adc-derived { margin-top: -.3rem; line-height: 1.3; }
+}
+
+/* Room for the plots. A figure keeps the browser's 40 px side margins unless told
+   otherwise, the typed read-at row repeats what the hover marker shows, and the
+   captions now live in each plot's description and title row. */
+.instrument.lab[data-viz="adcLab"] figure.panel { margin: 0; }
+/* The typed "read at" box is the only way to get an exact value out of a plot
+   without a pointer, so it is never removed — a keyboard or screen-reader user has
+   no hover. It folds away to give the plots the height the page wants, and unfolds
+   as soon as it takes focus, which is exactly when someone is using it. No
+   transition: this has to be instant for whoever tabbed into it. */
+.instrument.lab[data-viz="adcLab"] .probe__at { max-height: 0; overflow: hidden; margin: 0; }
+.instrument.lab[data-viz="adcLab"] .probe__at:focus-within { max-height: 3rem; overflow: visible; margin-top: 2px; }
+
+/* A view's own control, in its header row rather than a side column. */
+.adc-head-ctl { display: flex; align-items: center; gap: .4rem; min-width: 0; font: .7rem var(--font-mono); color: var(--muted); }
+.adc-head-ctl .sel { width: auto; max-width: 20rem; padding: .15rem .35rem; font-size: .72rem; }
+
+/* The result, read first. The headline numbers sit in a row that starts where the
+   plots start, so they read as those plots' result rather than the frame's caption:
+   SNR largest, in the signal colour; the others one step smaller. */
+.lab-frame > .instrument__bar > .adc-metrics { padding-left: var(--rail); gap: .3rem 2.4rem; align-items: baseline; margin-top: .1rem; }
+.adc-metric { display: inline-flex; align-items: baseline; gap: .5rem; white-space: nowrap; }
+.adc-metric__label { font: .7rem var(--font-mono); letter-spacing: .03em; color: var(--muted); }
+.adc-metrics .adc-metric b { font: 600 1.08rem/1.15 var(--font-mono); color: var(--ink); font-variant-numeric: tabular-nums; }
+.adc-metrics .adc-metric b small { font-size: .7rem; font-weight: 400; color: var(--muted); }
+.adc-metrics .adc-metric--main b { font-size: 1.45rem; color: var(--signal-text); }
+.adc-metrics .adc-metric b[data-tone="alarm"] { color: var(--alarm-text); }
+@media (max-width: 74.99rem) { .lab-frame > .instrument__bar > .adc-metrics { padding-left: 0; } }

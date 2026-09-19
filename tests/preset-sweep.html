@@ -1,0 +1,163 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Preset sweep — every panel, every preset, every transition</title>
+<style>
+  body { font: 13px/1.5 ui-monospace, Menlo, monospace; margin: 1.5rem; background: #0e1216; color: #dbe3ea; }
+  h1 { font-size: 1rem; letter-spacing: .04em; text-transform: uppercase; color: #8fa3b3; }
+  table { border-collapse: collapse; width: 100%; margin-top: 1rem; }
+  th, td { text-align: left; padding: .25rem .5rem; border-bottom: 1px solid #1e262e; vertical-align: top; }
+  th { color: #8fa3b3; font-weight: 500; }
+  .ok { color: #4ea86a; }
+  .bad { color: #e0655c; font-weight: 700; }
+  .warn { color: #d29a3a; }
+  #sum { margin: 1rem 0; padding: .75rem 1rem; border: 1px solid #1e262e; border-radius: 4px; }
+  iframe { width: 1100px; height: 800px; border: 0; position: absolute; left: -9999px; top: 0; }
+  code { color: #7fc3e8; }
+</style>
+
+<h1>Preset sweep</h1>
+<p>Loads every page that carries a panel, activates every preset through the DOM, and
+   performs a transition between each adjacent pair. Fails a preset if it throws, if the
+   pressed state does not follow, or if it changes no computed readout while not already
+   being the active preset.</p>
+<p>This broad activation sweep is complemented by the focused
+   <a href="state-transitions.html">flagship state-transition and semantic-export suite</a>,
+   which follows edits, view changes, exports and scenario reloads through the browser.</p>
+<div id="sum">running…</div>
+<table id="out"><thead>
+  <tr><th>page</th><th>preset</th><th>errors</th><th>pressed</th><th>readouts changed</th></tr>
+</thead><tbody></tbody></table>
+<iframe id="fr"></iframe>
+
+<script>
+const SETTLE = 90;          // ms after a click before reading state back
+const LOAD_TIMEOUT = 12000;
+
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+const tbody = document.querySelector('#out tbody');
+const results = [];
+
+function row(cells, cls) {
+  const tr = document.createElement('tr');
+  cells.forEach((c) => {
+    const td = document.createElement('td');
+    td.textContent = c;
+    if (cls) td.className = cls;
+    tr.appendChild(td);
+  });
+  tbody.appendChild(tr);
+}
+
+/* Read every computed readout on the page as one string, so "did anything change"
+   is a single comparison. A preset that changes nothing visible is either a no-op
+   or a handler that died before it repainted — both are failures worth seeing. */
+function readouts(doc) {
+  return [...doc.querySelectorAll('[data-out]')]
+    .map((n) => n.getAttribute('data-out') + '=' + n.textContent.trim())
+    .join('|');
+}
+
+function pressedName(doc) {
+  const on = [...doc.querySelectorAll('.preset[data-preset][aria-pressed="true"]')];
+  return on.length === 1 ? on[0].dataset.preset : (on.length ? 'MULTIPLE' : 'NONE');
+}
+
+async function loadPage(url) {
+  const fr = document.getElementById('fr');
+  const done = new Promise((res, rej) => {
+    const t = setTimeout(() => rej(new Error('load timeout')), LOAD_TIMEOUT);
+    fr.onload = () => { clearTimeout(t); res(); };
+  });
+  fr.src = url + '?sweep=' + Date.now();
+  await done;
+  const w = fr.contentWindow;
+  const errs = [];
+  /* Errors thrown inside a click handler surface on the iframe's own window, not
+     on ours. Both hooks are needed: onerror for synchronous throws, the rejection
+     hook for anything a handler defers. */
+  w.addEventListener('error', (e) => errs.push(String(e.message || e.error)));
+  w.addEventListener('unhandledrejection', (e) => errs.push('rejection: ' + e.reason));
+  w.onerror = (m) => { errs.push(String(m)); return false; };
+  await sleep(400);                       // let modules mount and draw once
+  const missing = [...fr.contentDocument.querySelectorAll('[data-viz]')]
+    .filter((p) => p.dataset.vizMounted !== '1').map((p) => p.dataset.viz);
+  if (missing.length) throw new Error('panels did not mount: ' + missing.join(', ') + '; inspect startup console errors');
+  return { doc: fr.contentDocument, win: w, errs };
+}
+
+async function clickAndCheck(ctx, btn, label, expectName) {
+  const before = readouts(ctx.doc);
+  const nErrBefore = ctx.errs.length;
+  /* Clicking the preset that is already active legitimately changes nothing, so
+     "no readout changed" is only interesting when the panel was somewhere else. */
+  const wasPressed = btn.getAttribute('aria-pressed') === 'true';
+  btn.click();
+  await sleep(SETTLE);
+  const after = readouts(ctx.doc);
+  const newErrs = ctx.errs.slice(nErrBefore);
+  const pressed = pressedName(ctx.doc);
+  const changed = before !== after;
+  const pressedOk = pressed === expectName;
+  const pass = newErrs.length === 0 && pressedOk && (changed || wasPressed);
+  return { label, errs: newErrs, pressed, pressedOk, changed, wasPressed, pass };
+}
+
+(async function run() {
+  const manifest = await (await fetch('panels.json')).json();
+  let nPass = 0, nFail = 0, nNoChange = 0;
+
+  for (const page of manifest.pages) {
+    const url = '../' + page.url;
+    let ctx;
+    try {
+      ctx = await loadPage(url);
+    } catch (e) {
+      row([page.url, '(page)', String(e.message), '—', '—'], 'bad');
+      results.push({ page: page.url, preset: '(page)', error: String(e.message) });
+      nFail++;
+      continue;
+    }
+
+    const btns = [...ctx.doc.querySelectorAll('.preset[data-preset]')];
+    if (!btns.length) {
+      row([page.url, '(no presets)', '', '', ''], 'warn');
+      continue;
+    }
+
+    /* Pass 1: every preset from wherever the page happens to be. */
+    for (const b of btns) {
+      const r = await clickAndCheck(ctx, b, b.dataset.preset, b.dataset.preset);
+      results.push(Object.assign({ page: page.url }, r));
+      if (r.pass) nPass++; else nFail++;
+      if (!r.changed && !r.wasPressed) nNoChange++;
+      row([page.url, r.label,
+           r.errs.length ? r.errs.join(' ; ') : 'none',
+           r.pressed + (r.pressedOk ? '' : '  ← expected ' + r.label),
+           r.changed ? 'yes' : (r.wasPressed ? 'n/a — already active' : 'NO')],
+          r.pass ? 'ok' : 'bad');
+    }
+
+    /* Pass 2: adjacent transitions. The M7 defect mutated parameters and then threw,
+       so a panel could sit showing preset A's plot with preset B's state. A single
+       activation cannot see that; a transition can. */
+    for (let i = 1; i < btns.length; i++) {
+      await clickAndCheck(ctx, btns[i - 1], btns[i - 1].dataset.preset, btns[i - 1].dataset.preset);
+      const r = await clickAndCheck(ctx, btns[i], btns[i].dataset.preset, btns[i].dataset.preset);
+      r.label = btns[i - 1].dataset.preset + ' → ' + btns[i].dataset.preset;
+      results.push(Object.assign({ page: page.url }, r));
+      if (r.pass) nPass++; else nFail++;
+      row([page.url, r.label,
+           r.errs.length ? r.errs.join(' ; ') : 'none',
+           r.pressed + (r.pressedOk ? '' : '  ← expected ' + btns[i].dataset.preset),
+           r.changed ? 'yes' : 'NO'],
+          r.pass ? 'ok' : 'bad');
+    }
+  }
+
+  const sum = { checks: nPass + nFail, passed: nPass, failed: nFail, noReadoutChange: nNoChange };
+  document.getElementById('sum').textContent = JSON.stringify(sum);
+  document.getElementById('sum').className = nFail ? 'bad' : 'ok';
+  window.__RESULT = { summary: sum, failures: results.filter((r) => r.pass === false) };
+  window.__DONE = true;
+})();
+</script>

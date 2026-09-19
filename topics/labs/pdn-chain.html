@@ -1,0 +1,433 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lab C: PDN Impedance, Current Sharing, and Transient Droop | SIPI</title>
+<meta name="description" content="One PDN ladder shown six ways: impedance magnitude and phase, which capacitor bank supplies the current at each frequency, the topology annotated live, the transient droop, and the current spectrum that excites it.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<link rel="stylesheet" href="../../css/base.css?v=e4f774de">
+<link rel="stylesheet" href="../../css/components.css?v=295837ab">
+  <!-- meta:start -->
+  <link rel="canonical" href="https://sipi.work/topics/labs/pdn-chain.html">
+  <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="SIPI">
+  <meta property="og:title" content="Lab C: PDN Impedance, Current Sharing, and Transient Droop | SIPI">
+  <meta property="og:description" content="One PDN ladder shown six ways: impedance magnitude and phase, which capacitor bank supplies the current at each frequency, the topology annotated live, the transient droop, and the current spectrum that excites it.">
+  <meta property="og:url" content="https://sipi.work/topics/labs/pdn-chain.html">
+  <meta property="og:image" content="https://sipi.work/assets/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Lab C: PDN Impedance, Current Sharing, and Transient Droop | SIPI">
+  <meta name="twitter:description" content="One PDN ladder shown six ways: impedance magnitude and phase, which capacitor bank supplies the current at each frequency, the topology annotated live, the transient droop, and the current spectrum that excites it.">
+  <meta name="twitter:image" content="https://sipi.work/assets/og.png">
+  <!-- meta:end -->
+</head>
+<body>
+
+<header class="masthead">
+  <a class="wordmark" href="../../index.html">SIPI</a>
+  <nav>
+    <a href="../../index.html#fundamentals">Fundamentals</a>
+    <a href="../../index.html#power-integrity">Power</a>
+    <a href="../../index.html#interfaces">Interfaces</a>
+    <a href="../../start.html">Start</a>
+    <a href="../../labs.html">Labs</a>
+    <a href="../../reference.html">Reference</a>
+    <button class="theme-toggle" data-act="theme" type="button">System</button>
+  </nav>
+</header>
+
+<main>
+  <div class="page-head">
+    <p class="crumb"><a href="../../index.html#labs">Labs</a> / 03</p>
+    <h1>Lab C: PDN Impedance, Current Sharing, and Transient Droop</h1>
+    <p class="byline">
+      <!-- review:start --><span>By Geetansh Arora — Principal SI/PI Engineer</span><time datetime="2026-09-18" title="Technical review by Geetansh Arora on this date">18 Sep 2026</time><span>14 min</span><!-- review:end -->
+    </p>
+    <p class="answer">
+      A power delivery network passes current through different paths as frequency changes.
+      Impedance peaks often appear near the handover between paths, where one capacitor bank
+      has become inductive while the next is still capacitive. This lab connects those frequency
+      responses to branch current, transient droop, and the different effects of die and board loads.
+    </p>
+  </div>
+
+
+  <!-- ───────────── the lab ───────────── -->
+  <section class="instrument lab" data-viz="labPdn" aria-label="Interactive power delivery network lab: impedance magnitude and phase, branch currents, an annotated topology, the transient droop and the load current spectrum">
+<script type="application/json" data-contract>{"kind":"numerical","evidence":"independent","purpose":"Say in amps which capacitor bank supplies the load at each frequency, and which two make each peak.","equations":["Zout_vrm=R(1+jf/fbw)","ladder reduction from the VRM end","M di/dt + R i + vC = -Br I - Bl dI/dt; dvC/dt = diag(1/C)i","Y(f) v(f) = i(f); Zij = vi / ij","rail deviation dVi = -sum_j Zij Ij for positive withdrawal"],"units":"Hz, ohm, A, V, s","validity":"Lumped five-stage RL/series-RLC network with zero initial incremental state. No plane cavity modes or spatial distribution. The browser transient is causal; the finite observation interval can omit later behavior and timestep resolution still matters.","numerics":"420 log-spaced frequency points with nodal transfer impedances. Two-load browser transients use an eight-state causal ladder model and a small matrix exponential with first-order-held sampled currents; analytic raised-cosine derivatives recover inductive voltage. Nominal record 32768 × 200 ps; edge refinement halves dt and doubles sample count at fixed duration. Physical event times are rounded to samples. Signed contributions are solved separately and summed; no repeating-record tail is introduced. The legacy single-load API and explicit test-only periodic option retain FFT convolution for regression comparisons. All board/die complex transfer pairs and full-precision time traces remain exported. Frequency inspection retains nearest-native-Hz semantics.","limitations":"The causal transient starts from zero incremental state and approximates current between samples linearly. A quiet pre-event baseline follows from causality and is not a timestep convergence certificate. Six selected two-load corners are compared with an independent causal trapezoidal reference; this is not proof for every parameter combination. Reported extrema cover the declared observation interval, not all future time. The VRM remains a first-order R+jwL teaching model, without compensation, phase margin or nonlinear behavior. The topology has one die and one board load; scalar target impedance remains a single-load heuristic. Frequency branch-current magnitudes can exceed the injected current because phasors circulate. Legacy FFT-only helper results retain periodic-record limitations.","suites":["PDN ladder","Lab C assembled","Lab result contract"],"version":"2.3","reviewed":"2026-09-13","panel":"labPdn"}</script>
+<div class="lab-frame">
+<div class="instrument__bar">
+      <span class="instrument__title">One ladder · regulator to die</span>
+      <span data-evidence="independent" data-model-version="2.3" class="model-tag model-tag--numerical" title="Lumped five-stage RL/RLC network with a causal, zero-state transient. Timestep and finite observation-window limits remain; no plane cavity modes or spatial distribution.">numerical</span>
+      <span class="instrument__readout" role="status" aria-live="polite" aria-label="Current values">
+        <span>worst peak <b data-out="zpk">—</b></span>
+        <span>over target <b data-out="zt">—</b></span>
+        <span>at <b data-out="fsel">—</b></span>
+        <span>|Z| there <b data-out="zsel">—</b></span>
+        <span>phase <b data-out="ph">—</b></span>
+        <span>combined die droop <b data-out="droop">—</b></span>
+        <span>overshoot <b data-out="overshoot">—</b></span>
+        <span>transient method <b data-out="quality">—</b></span>
+        <span>load knee <b data-out="knee">—</b></span>
+      </span>
+    <button type="button" class="tool-btn lab-full" data-lab-full aria-pressed="false">full screen</button>
+</div>
+<aside class="lab-rail lab-rail--left" aria-label="Supply side controls">
+<p class="lab-rail__side">Supply side <span>regulator to board</span></p>
+<details class="control-group lab-group" open><summary class="lab-group__title" id="lab-left-0">Regulator</summary><div class="control-group__grid lab-group__body"><div class="ctl">
+        <div class="ctl__head"><label for="pd-fbw">VRM loop bandwidth</label><output id="pd-fbw-out" for="pd-fbw">120 kHz</output></div>
+        <input type="range" id="pd-fbw" aria-describedby="pd-fbw-note" min="10" max="800" step="10" value="120">
+        <span class="ctl__note" id="pd-fbw-note">Flat output impedance below it, rising above</span>
+      </div></div></details>
+<details class="control-group lab-group" open><summary class="lab-group__title" id="lab-left-1">Plane</summary><div class="control-group__grid lab-group__body"><div class="ctl">
+        <div class="ctl__head"><label for="pd-lplane">Plane inductance to the board caps</label><output id="pd-lplane-out" for="pd-lplane">900 pH</output></div>
+        <input type="range" id="pd-lplane" min="100" max="3000" step="50" value="900">
+      </div></div></details>
+<details class="control-group lab-group" open><summary class="lab-group__title" id="lab-left-2">Board capacitor bank</summary><div class="control-group__grid lab-group__body"><div class="ctl">
+        <div class="ctl__head"><label for="pd-nboard">Board capacitors</label><output id="pd-nboard-out" for="pd-nboard">20</output></div>
+        <input type="range" id="pd-nboard" aria-describedby="pd-nboard-note" min="1" max="60" step="1" value="20">
+        <span class="ctl__note" id="pd-nboard-note">In parallel: divides R and L, multiplies C</span>
+      </div>
+<div class="ctl">
+        <div class="ctl__head"><label for="pd-esr">…their ESR, each</label><output id="pd-esr-out" for="pd-esr">20 mΩ</output></div>
+        <input type="range" id="pd-esr" aria-describedby="pd-esr-note" min="2" max="150" step="2" value="20">
+        <span class="ctl__note" id="pd-esr-note">The only thing damping the peak</span>
+      </div>
+<div class="ctl">
+        <div class="ctl__head"><label for="pd-esl">…and their mounting ESL</label><output id="pd-esl-out" for="pd-esl">1100 pH</output></div>
+        <input type="range" id="pd-esl" aria-describedby="pd-esl-note" min="200" max="3000" step="50" value="1100">
+        <span class="ctl__note" id="pd-esl-note">Via and pad loop, not the part number</span>
+      </div></div></details>
+<details class="control-group lab-group" open><summary class="lab-group__title" id="lab-left-3">Board load</summary><div class="control-group__grid lab-group__body"><div class="lab-pairs">
+<div class="ctl"><label for="pd-imax2">Board load current (A; zero disables)</label><input type="number" id="pd-imax2" value="0" min="0" max="40" step="1"></div>
+<div class="ctl"><label for="pd-tr2">Board rise and fall edge (ps)</label><input type="number" id="pd-tr2" value="800" min="200" max="20000" step="200"></div>
+<div class="ctl"><label for="pd-start2Ns">Board load start (ns)</label><input type="number" id="pd-start2Ns" value="786.4" min="100" max="1500" step="0.1"></div>
+<div class="ctl"><label for="pd-width2Ns">Board pulse width (ns)</label><input type="number" id="pd-width2Ns" value="1835" min="100" max="2500" step="1"></div>
+</div></div></details>
+<p class="lab-help" aria-hidden="true">Point at or focus a control to see what it changes.</p>
+</aside>
+<div class="lab-stage">
+<div class="lab-stage__head">
+<div class="presets">
+      <button class="preset" type="button" data-preset="soc" aria-pressed="true">Typical SoC rail</button>
+      <button class="preset" type="button" data-preset="thin" aria-pressed="false">Capacitors removed</button>
+      <button class="preset" type="button" data-preset="lossy" aria-pressed="false">Deliberately lossy</button>
+      <button class="preset" type="button" data-preset="nodie" aria-pressed="false">Not enough on-die</button>
+    </div>
+<div class="transport"><span data-out="note">—</span></div>
+</div>
+<div class="lab-row lab-row--anchor">
+<div data-lab-unit="z" data-lab-name="Impedance" class="panel">
+        <div class="lab-panel-head"><span class="panel__label">Impedance the die sees</span><button type="button" class="tool-btn lab-expand" data-lab-expand aria-pressed="false" aria-label="Expand Impedance">expand</button></div>
+        <canvas data-inspection="native" data-cv="z" role="img" aria-label="Impedance magnitude against frequency on log axes. Three traces: the driving-point impedance at the die, and the transfer impedance seen at the board and at the regulator per amp drawn at the die. The target impedance is marked and each anti-resonant peak is dotted. Click or arrow-key to select a peak."></canvas>
+        <div class="legend"><span><i style="background:var(--signal)"></i>at the die</span><span><i style="background:var(--reflect)"></i>seen at the board</span><span><i style="background:var(--ink2)"></i>seen at the VRM</span><span><i class="dash" style="color:var(--alarm)"></i>target</span></div>
+      </div>
+<div data-lab-unit="topo" data-lab-name="Ladder" class="panel" data-summary-host>
+        <div class="lab-panel-head"><span class="panel__label">The ladder, at the selected frequency</span><button type="button" class="tool-btn lab-expand" data-lab-expand aria-pressed="false" aria-label="Expand Ladder">expand</button></div>
+        <canvas data-cv="topo" role="img" aria-label="Schematic of the five-stage ladder with each bank's share of the load current at the selected frequency."></canvas>
+      </div>
+</div>
+<div class="lab-tabs" role="tablist" aria-label="Linked views">
+<button type="button" role="tab" id="lab-tab-time" aria-controls="lab-view-time" aria-selected="true" tabindex="0" data-view="time">Droop and bank shares</button>
+<button type="button" role="tab" id="lab-tab-phase" aria-controls="lab-view-phase" aria-selected="false" tabindex="-1" data-view="phase">Phase and load spectrum</button>
+<button type="button" role="tab" id="lab-tab-two" aria-controls="lab-view-two" aria-selected="false" tabindex="-1" data-view="two">Two loads</button>
+<button type="button" role="tab" id="lab-tab-transfer" aria-controls="lab-view-transfer" aria-selected="false" tabindex="-1" data-view="transfer">Transfer impedance</button>
+<button type="button" role="tab" id="lab-tab-values" aria-controls="lab-view-values" aria-selected="false" tabindex="-1" data-view="values">Values as text</button>
+</div>
+<div class="lab-view is-active" id="lab-view-time" role="tabpanel" aria-labelledby="lab-tab-time" data-view="time" data-count="2">
+<div data-lab-unit="vt" data-lab-name="Droop" class="panel">
+        <div class="lab-panel-head"><span class="panel__label">Droop — load applied, then released</span><button type="button" class="tool-btn lab-expand" data-lab-expand aria-pressed="false" aria-label="Expand Droop">expand</button></div>
+        <canvas data-cv="vt" role="img" aria-label="Rail voltage against time for a current pulse, drawn as a droop, with the target impedance times the current marked."></canvas>
+      </div>
+<div data-lab-unit="branch" data-lab-name="Bank shares" class="panel">
+        <div class="lab-panel-head"><span class="panel__label">Which bank supplies the current</span><button type="button" class="tool-btn lab-expand" data-lab-expand aria-pressed="false" aria-label="Expand Bank shares">expand</button></div>
+        <canvas data-cv="branch" role="img" aria-label="Fraction of one amp of load current supplied by each stage, against frequency, each bank labelled at its own peak."></canvas>
+      </div>
+</div>
+<div class="lab-view" id="lab-view-phase" role="tabpanel" aria-labelledby="lab-tab-phase" data-view="phase" data-count="2">
+<div data-lab-unit="phase" data-lab-name="Phase" class="panel">
+        <div class="lab-panel-head"><span class="panel__label">Phase — who is winning</span><button type="button" class="tool-btn lab-expand" data-lab-expand aria-pressed="false" aria-label="Expand Phase">expand</button></div>
+        <canvas data-cv="phase" role="img" aria-label="Impedance phase in degrees against frequency, positive where the network is inductive and negative where it is capacitive."></canvas>
+      </div>
+<div data-lab-unit="spec" data-lab-name="Load spectrum" class="panel">
+        <div class="lab-panel-head"><span class="panel__label">Die-load current spectrum (load 1)</span><button type="button" class="tool-btn lab-expand" data-lab-expand aria-pressed="false" aria-label="Expand Load spectrum">expand</button></div>
+        <canvas data-cv="spec" role="img" aria-label="Amplitude spectrum of the load current pulse against frequency, on its own axis, with the selected frequency marked."></canvas>
+      </div>
+</div>
+<div class="lab-view" id="lab-view-two" role="tabpanel" aria-labelledby="lab-tab-two" data-view="two" data-count="1">
+<section data-lab-unit="pd-multi-title" data-lab-name="Two loads" class="panel lab-split" aria-labelledby="pd-multi-title"><div class="lab-panel-head"><h3 id="pd-multi-title">Two loads: how board and die activity share a rail</h3><button type="button" class="tool-btn lab-expand" data-lab-expand aria-pressed="false" aria-label="Expand Two loads">expand</button></div><div class="comparison-plots">
+        <div class="comparison-plot">
+          <span class="panel__label">Voltage response</span>
+          <canvas data-cv="multi" role="img" aria-label="Signed rail voltage deviation at the selected node and load mode, with shared bounds for comparison."></canvas>
+        </div>
+        <div class="comparison-plot">
+          <span class="panel__label">Load-current timing</span>
+          <canvas data-cv="loads" role="img" aria-label="Die load 1 and board load 2 withdrawal currents on the same absolute time axis as the voltage."></canvas>
+        </div>
+      </div><div class="lab-side"><div class="decision-controls">
+        <label for="pd-observe">Observe voltage at</label><select id="pd-observe"><option value="0">Die</option><option value="1">Board</option></select>
+        <label for="pd-compare">Voltage response</label><select id="pd-compare"><option value="2">Both loads combined</option><option value="0">Load 1 alone</option><option value="1">Load 2 alone</option></select>
+        <label for="pd-excite">Transfer impedance: excite</label><select id="pd-excite"><option value="0">Die</option><option value="1">Board</option></select>
+      </div><p class="comparison-status" data-out="multi-detail" role="status" aria-live="polite"></p><details class="lab-notes"><summary>Learning sequence and notes</summary>
+<p>Load 1 draws current at the die; load 2 draws at the board node. Try enabling load 2, then move its start time. The same current change can produce different voltage excursions at the two observation points. This ladder has one die and one board load.</p>
+<p class="panel__note">Solid: die current. Dashed: board current. Positive current is drawn from the rail; negative voltage is droop. Start times and pulse widths are in physical time. Width runs from the start of the rising edge to the start of the falling edge; both edges use the selected duration.</p>
+<p class="panel__note">The transient starts from rest and follows the load changes forward in time. Extending the record reveals later behavior without changing earlier samples. A finite timestep still limits resolution, and the reported peak covers the stated observation interval. A quiet baseline is expected here; it does not prove timestep convergence.</p>
+<p class="panel__note">The frequency and branch-current panels above use a unit excitation at the die. Their peak selection also sets the transfer-impedance readout here. A peak identifies a possible ringing mode; the load spectrum and timing determine how strongly it is excited. The original droop panel shows the combined die response. A single target impedance times one load current does not bound two transfer paths, so its target line is hidden while the board load is active.</p>
+<div class="experiment-flow" aria-label="Two-load PDN learning sequence">
+        <div class="experiment-step"><strong>Predict</strong><p>Keep load 1 unchanged and enable the board load. Will equal current changes create equal voltage excursions at the die, or will the shared paths and injection locations matter?</p></div>
+        <div class="experiment-step"><strong>Experiment</strong><p>Start from Typical SoC rail, set the board load to 3 A, and compare load 1 alone, load 2 alone, and both combined. Then move the board-load start time. Starts and widths are in ns; edges are in ps.</p></div>
+        <div class="experiment-step"><strong>Explain</strong><p>The die and board injections reach each observation through different complex transfer impedances. Their signed time responses add. Adding separate worst-droop values would discard timing and phase.</p></div>
+        <div class="experiment-step"><strong>Transfer</strong><p>Can equal and opposite current changes cancel at every node?</p><details class="experiment-answer"><summary>Check your reasoning</summary>At one common injection node they cancel in this linear model. At distinct nodes they generally do not, because the transfer paths differ.</details></div>
+      </div>
+</details></div></section>
+</div>
+<div class="lab-view" id="lab-view-transfer" role="tabpanel" aria-labelledby="lab-tab-transfer" data-view="transfer" data-count="1">
+<section data-lab-unit="pd-transfer-title" data-lab-name="Transfer impedance" class="panel lab-split" aria-labelledby="pd-transfer-title"><div class="lab-panel-head"><h3 id="pd-transfer-title">Transfer impedance: which load affects which node?</h3><button type="button" class="tool-btn lab-expand" data-lab-expand aria-pressed="false" aria-label="Expand Transfer impedance">expand</button></div><canvas data-inspection="native" data-cv="transferZ" role="img" aria-label="Magnitude of the selected board or die driving-point or transfer impedance. Click or use left and right arrow keys to select a native frequency sample."></canvas><div class="lab-side"><div class="decision-controls frequency-controls">
+        <div class="inspection-pair" role="group" aria-label="Transfer-impedance node pair">
+          <label for="pd-transfer-observe">Observe</label><select id="pd-transfer-observe"><option value="0">Die</option><option value="1">Board</option></select>
+          <label for="pd-transfer-excite">Excite</label><select id="pd-transfer-excite"><option value="0">Die</option><option value="1">Board</option></select>
+        </div>
+        <div class="inspection-entry">
+          <label for="pd-frequency">Requested frequency (Hz)</label><input type="number" id="pd-frequency" min="1000" max="5000000000" step="any" value="1000" inputmode="decimal" aria-describedby="pd-frequency-help">
+          <button type="button" id="pd-frequency-go">Inspect nearest sample</button>
+        </div>
+        <div class="inspection-actions" role="group" aria-label="Move through native frequency samples">
+          <button type="button" id="pd-frequency-prev">Previous sample</button><button type="button" id="pd-frequency-next">Next sample</button>
+        </div>
+        <button type="button" id="pd-frequency-fit">Reset transfer plot zoom</button>
+      </div><p data-out="transfer-detail" role="status" aria-live="polite"></p><details class="lab-notes"><summary>Notes</summary>
+<p class="panel__hint">Matching observation and excitation nodes gives driving-point impedance. Different nodes give transfer impedance: the voltage at one node per amp applied at the other. This passive reciprocal circuit has equal forward and reverse transfer impedances, although the two driving-point impedances can differ. Keep the circuit fixed and compare all four selections.</p>
+<p class="panel__hint" id="pd-frequency-help">The plot shows transfer magnitude with common bounds across all four node pairs. Entering Hz, clicking the plot, or using its left/right arrow keys selects the nearest computed sample; the readout gives its actual frequency, complex impedance, and principal phase. There is no separate phase curve. Frequency selection also moves the markers in the original unit die-excitation investigation, whose branch-current shares keep that excitation. No scalar target line is applied here. Exports preserve real and imaginary impedance in ohms.</p>
+</details></div></section>
+</div>
+<div class="lab-view" id="lab-view-values" role="tabpanel" aria-labelledby="lab-tab-values" data-view="values" data-count="1">
+<dl data-summary class="viz-summary" aria-label="Current values"></dl>
+</div>
+</div>
+<aside class="lab-rail lab-rail--right" aria-label="Die side controls">
+<p class="lab-rail__side">Die side <span>package to die</span></p>
+<details class="control-group lab-group" open><summary class="lab-group__title" id="lab-right-0">Package</summary><div class="control-group__grid lab-group__body"><div class="ctl">
+        <div class="ctl__head"><label for="pd-lpkg">Package inductance</label><output id="pd-lpkg-out" for="pd-lpkg">350 pH</output></div>
+        <input type="range" id="pd-lpkg" aria-describedby="pd-lpkg-note" min="50" max="1200" step="25" value="350">
+        <span class="ctl__note" id="pd-lpkg-note">Why board capacitors stop mattering above ~100 MHz</span>
+      </div></div></details>
+<details class="control-group lab-group" open><summary class="lab-group__title" id="lab-right-1">Die</summary><div class="control-group__grid lab-group__body"><div class="ctl">
+        <div class="ctl__head"><label for="pd-cdie">On-die capacitance</label><output id="pd-cdie-out" for="pd-cdie">200 nF</output></div>
+        <input type="range" id="pd-cdie" aria-describedby="pd-cdie-note" min="10" max="600" step="10" value="200">
+        <span class="ctl__note" id="pd-cdie-note">The only thing fast enough at the top end</span>
+      </div></div></details>
+<details class="control-group lab-group" open><summary class="lab-group__title" id="lab-right-2">Die load</summary><div class="control-group__grid lab-group__body"><div class="ctl">
+        <div class="ctl__head"><label for="pd-imax">Die load current</label><output id="pd-imax-out" for="pd-imax">8 A</output></div>
+        <input type="range" id="pd-imax" min="0" max="40" step="1" value="8">
+      </div>
+<div class="ctl">
+        <div class="ctl__head"><label for="pd-tr">Die rise and fall edge</label><output id="pd-tr-out" for="pd-tr">800 ps</output></div>
+        <input type="range" id="pd-tr" aria-describedby="pd-tr-note" min="200" max="20000" step="200" value="800">
+        <span class="ctl__note" id="pd-tr-note">Decides how far up the spectrum reaches</span>
+      </div>
+<div class="lab-pairs">
+<div class="ctl"><label for="pd-startNs">Die load start (ns)</label><input type="number" id="pd-startNs" value="786.4" min="100" max="1500" step="0.1"></div>
+<div class="ctl"><label for="pd-widthNs">Die pulse width (ns)</label><input type="number" id="pd-widthNs" value="1835" min="100" max="2500" step="1"></div>
+</div></div></details>
+<details class="control-group lab-group" open><summary class="lab-group__title" id="lab-right-3">Target criterion</summary><div class="control-group__grid lab-group__body"><div class="ctl">
+        <div class="ctl__head"><label for="pd-zt">Target impedance</label><output id="pd-zt-out" for="pd-zt">10 mΩ</output></div>
+        <input type="range" id="pd-zt" min="1" max="80" step="1" value="10">
+      </div></div></details>
+<p class="lab-help" aria-hidden="true">Point at or focus a control to see what it changes.</p>
+</aside>
+</div>
+<script type="application/json" data-guide>
+{
+  "title": "Five experiments on one rail",
+  "steps": [
+    {
+      "say": "Start on the typical SoC rail. Click the highest peak on the impedance panel and watch the topology light up beneath it.",
+      "set": {
+        "_p": "soc"
+      },
+      "ask": "Two banks are active at that peak. What is happening between them?",
+      "answer": "One has already turned inductive and the next has not yet taken over. Above its own resonance a capacitor is an inductor; below its resonance the next bank downstream is still capacitive. Where those overlap you have an inductor in parallel with a capacitor, which is a parallel resonance — and a parallel resonance is a high impedance, not a low one. Every PDN peak is this same handover failing."
+    },
+    {
+      "say": "Now add capacitors: drag the board count from 20 up to 50.",
+      "set": {
+        "pd-nboard": "50"
+      },
+      "ask": "The capacitor count increased. What happened to the worst peak, and why?",
+      "answer": "The peak increased from 57 mΩ to 61 mΩ at nearly the same frequency. Parts in parallel divide the bank's ESR as well as its ESL, and the board bank's ESR is the dominant damping term for this peak; plane, via, package, and regulator losses also contribute but are smaller here. Adding capacitors therefore reduced the available damping. The frequency changed little because this board-to-package handover is set mainly by the package bank and plane inductance. This is why decoupling changes should be evaluated against the complete impedance curve rather than capacitor count alone."
+    },
+    {
+      "say": "Put the count back to 20 and raise the ESR instead, from 20 mΩ to 90 mΩ.",
+      "set": {
+        "pd-nboard": "20",
+        "pd-esr": "90"
+      },
+      "ask": "Increasing ESR usually sounds undesirable. Why did it reduce this impedance peak?",
+      "answer": "The peak is a resonance, and resistance provides damping. ESR raises the impedance floor slightly in the band where that bank supplies current, while flattening the peak where it interacts with the neighboring bank. This is why controlled-ESR parts can be useful. Plane resistance, regulator output resistance, and die losses also provide damping; ESR is the contribution directly associated with the capacitor selection."
+    },
+    {
+      "say": "Reset the ESR, then change only the mounting inductance — 1100 pH up to 2400 pH — leaving the capacitance exactly as it is.",
+      "set": {
+        "pd-esr": "20",
+        "pd-esl": "2400"
+      },
+      "ask": "The capacitance stayed fixed. Why did the high-frequency impedance increase?",
+      "answer": "Above self-resonance, ESL dominates the capacitor's impedance. Capacitance helps set the resonance frequency, while the mounting loop controls the high-frequency path. That loop includes the via pair, pad, and plane spreading, so placement geometry can matter more than increasing the nominal capacitance."
+    },
+    {
+      "say": "Last one. Look at the droop panel: the load turns on, then off again.",
+      "set": {
+        "pd-esl": "1100",
+        "pd-imax": "16"
+      },
+      "ask": "Is release the mirror image of application?",
+      "answer": "Nearly, and the difference matters. Both edges excite the same resonances, so the rail rings both times — but on release the stored inductive energy has nowhere to go and pushes the rail *up*, which is an overshoot rather than a droop. Timing margin is usually set by the droop; reliability and the high-rail spec are set by the overshoot, and the two are checked separately for that reason."
+    }
+  ],
+  "transfer": "Your own rail has a 40 mΩ peak at 3 MHz and meets its target everywhere else. You may add board capacitors, swap them for higher-ESR parts, or shorten the plane inductance to the package. Predict which of the three moves the peak DOWN, which moves it sideways, and which could make it worse — then say what you would measure to tell which one you actually got.",
+  "transferNote": "There is no reveal on this one. If your reasoning names the circuit that is resonating and the resistance in series with its circulating current, you have the idea."
+}
+  </script>
+</section>
+
+  <!-- ───────────── the intuition ───────────── -->
+  <div class="prose">
+    <p>
+      In circuit schematics, a DC power rail is drawn as a flat horizontal line connecting a voltage regulator
+      module (VRM) to a processor, surrounded by dozens of decoupling capacitors. The intuitive mental model is
+      that capacitors act as a static &ldquo;reservoir&rdquo; or bucket of charge: when the processor demands a sudden
+      spike of current, charge drains from the bucket, and as long as the total capacitance is large enough, the voltage
+      rail remains stable.
+    </p>
+
+    <p>
+      In high-speed digital systems, this reservoir analogy collapses. Current cannot travel across a circuit board
+      instantaneously, and parasitic loop inductance (<span class="num">L</span>) fiercely opposes rapid changes in
+      current (<span class="num">V = L &middot; di/dt</span>). In electrical terms, the VRM is miles away, bulk capacitors
+      are hundreds of millimetres away, surface-mount ceramic capacitors are centimetres away, and on-die capacitance
+      sits right at the transistors.
+    </p>
+
+    <p>
+      The power distribution network is therefore not a reservoir; it is a <strong>high-speed relay race across
+      frequency</strong>. Each stage of the network is only fast enough to supply current within a specific frequency
+      window. This interactive lab lets you configure each runner in the relay — VRM bandwidth, bulk capacitors,
+      board MLCCs, package inductance, and on-die capacitance — to see how their handover creates the board's composite
+      impedance profile and transient droop.
+    </p>
+
+    <h2>A relay race, not a reservoir</h2>
+    <p>
+      A bucket-of-charge picture can help at low frequency, but it leaves out the delivery
+      path that matters as frequency rises. We also need to ask how quickly current can reach
+      the load; the inductance in that path sets this limit alongside the capacitance.
+    </p>
+    <p>
+      So the network becomes a relay. The regulator supplies everything up to its
+      loop bandwidth. Bulk capacitors take over into the hundreds of kilohertz.
+      Board capacitors carry the megahertz range until their mounting inductance
+      stops them. The package handles tens of megahertz, and above roughly a hundred
+      megahertz nothing outside the die can reach the load in time at all.
+    </p>
+    <div class="eq">
+      <span class="eq__main">f<sub>SRF</sub> = 1 / (2π √(L·C))</span>
+      <span class="eq__note">below it a capacitor; above it an inductor; nothing else to remember</span>
+    </div>
+
+    <h2>Every peak is a failed handover</h2>
+    <p>
+      Between any two banks there is a band where the upstream one has passed its
+      resonance and become an inductor, while the downstream one is still below its
+      own resonance and still a capacitor. An inductor in parallel with a capacitor
+      is a parallel resonance, and a parallel resonance is a <em>maximum</em> of
+      impedance, not a minimum.
+    </p>
+    <p>
+      That is the entire mechanism behind every peak on the impedance panel, and it
+      explains the result that surprises people most: adding capacitance moves a peak
+      rather than removing it. The height of a peak is set by how much resistance is
+      in the loop. The only three levers are damping it, moving it somewhere the load
+      has no energy, or reducing the inductance that created it.
+    </p>
+
+    <details class="deeper">
+      <summary>Go deeper — target impedance, and what this model leaves out</summary>
+      <p>
+        The target impedance line is the crudest useful specification in power
+        integrity:
+      </p>
+      <div class="eq">
+        <span class="eq__main">Z<sub>target</sub> = ΔV<sub>allowed</sub> / ΔI<sub>max</sub></span>
+        <span class="eq__note">one number, applied across every frequency the load excites</span>
+      </div>
+      <p>
+        It is crude because it assumes the load draws current at every frequency
+        equally, which no real load does — that is exactly why the current spectrum
+        panel is on this page and on its own axis. A peak that sits where the load
+        has almost no spectral content costs nothing; a smaller peak sitting on a
+        clock harmonic can dominate the noise. Comparing the two panels is worth more
+        than either alone.
+      </p>
+      <p>
+        What the model leaves out:
+      </p>
+      <ul>
+        <li><b>Plane cavity modes.</b> This is a lumped ladder, so the planes are
+          single inductances. A real plane pair is a resonant cavity with modes of
+          its own — see <a href="../power-integrity/plane-resonance.html">plane
+          resonance</a>.</li>
+        <li><b>Spatial distribution.</b> Every capacitor in a bank is at the same
+          place here. In reality a capacitor two inches away has more loop inductance
+          than one beside the pin and belongs in a different bank.</li>
+        <li><b>The VRM control loop.</b> Modelled as a resistance rising into an
+          inductance, which is the right shape but not a real compensator — see
+          <a href="../power-integrity/vrm-loop-bandwidth.html">VRM loop bandwidth</a>.</li>
+        <li><b>The transient window.</b> The causal calculation starts from zero incremental state. Extending the record reveals later behavior without changing earlier samples. Refining the timestep checks resolution; it is a separate question from whether the baseline is quiet. Peak measurements describe the stated observation interval.</li>
+      </ul>
+    </details>
+
+    <h2>In the real world</h2>
+    <p>
+      The practical sequence is almost always: get the impedance curve, find the worst
+      peak, then ask which two banks made it — that is what the topology panel is for.
+      Only then does a fix make sense, because the fix depends entirely on the answer.
+      A peak between the board and package banks is a mounting-inductance problem. A
+      peak between bulk and board is usually a damping problem.
+    </p>
+    <p>
+      The final check connects the impedance to the actual load spectrum, timing, and
+      location. A target exceedance where the load has little spectral energy may have a
+      small transient effect, while a resonance aligned with significant activity may need
+      attention even when a scalar driving-point target appears satisfactory. Use the
+      two-load view to examine the relevant transfer paths before drawing that conclusion.
+    </p>
+  </div>
+
+
+  <!-- pager:start -->
+  <nav class="pager" aria-label="Previous and next topic">
+    <a class="prev" href="../../topics/labs/one-channel.html"><span class="dir">Previous</span><span>Lab B: Channel Response, ISI, and Eye Diagrams</span></a>
+    <a class="next" href="../../topics/labs/adc-interference.html"><span class="dir">Next</span><span>Lab D: ADC Interference, Aliasing and Reference Noise</span></a>
+  </nav>
+  <!-- pager:end -->
+</main>
+
+<footer class="site-foot">
+  <span>SIPI &#8212; signal and power integrity, visualised.</span>
+  <span>Created and directed by Geetansh Arora. <a href="../../colophon.html">About, review &amp; AI assistance</a> &#183; <a href="../../model-contract.html">Model assumptions</a> &#183; <a href="../../docs/claims.md">Claim ledger</a></span>
+</footer>
+
+<script src="../../js/site.js?v=acb47d86"></script>
+<script src="../../js/viz-kit.js?v=a53e49c3"></script>
+<script src="../../js/viz/lab-pdn.js?v=78a0be56"></script>
+<script src="../../js/viz-loader.js?v=89d5884d"></script>
+<script src="../../js/lab-workspace.js?v=49b1d309"></script>
+<script src="../../js/search.js?v=6c93a285"></script>
+</body>
+</html>

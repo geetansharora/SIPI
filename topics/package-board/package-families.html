@@ -1,0 +1,335 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IC Package Interconnects: Wirebond, Flip-Chip, FOWLP, Interposers, and Chiplets | SIPI</title>
+<meta name="description" content="Five ways to connect a die to the world, ranked by the two things that matter electrically: connection inductance and connection count.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<link rel="stylesheet" href="../../css/base.css?v=e4f774de">
+<link rel="stylesheet" href="../../css/components.css?v=295837ab">
+  <!-- meta:start -->
+  <link rel="canonical" href="https://sipi.work/topics/package-board/package-families.html">
+  <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="SIPI">
+  <meta property="og:title" content="IC Package Interconnects: Wirebond, Flip-Chip, FOWLP, Interposers, and Chiplets | SIPI">
+  <meta property="og:description" content="Five ways to connect a die to the world, ranked by the two things that matter electrically: connection inductance and connection count.">
+  <meta property="og:url" content="https://sipi.work/topics/package-board/package-families.html">
+  <meta property="og:image" content="https://sipi.work/assets/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="IC Package Interconnects: Wirebond, Flip-Chip, FOWLP, Interposers, and Chiplets | SIPI">
+  <meta name="twitter:description" content="Five ways to connect a die to the world, ranked by the two things that matter electrically: connection inductance and connection count.">
+  <meta name="twitter:image" content="https://sipi.work/assets/og.png">
+  <!-- meta:end -->
+</head>
+<body>
+
+<header class="masthead">
+  <a class="wordmark" href="../../index.html">SIPI</a>
+  <nav>
+    <a href="../../index.html#fundamentals">Fundamentals</a>
+    <a href="../../index.html#power-integrity">Power</a>
+    <a href="../../index.html#interfaces">Interfaces</a>
+    <a href="../../start.html">Start</a>
+    <a href="../../labs.html">Labs</a>
+    <a href="../../reference.html">Reference</a>
+    <button class="theme-toggle" data-act="theme" type="button">System</button>
+  </nav>
+</header>
+
+<main>
+  <div class="page-head">
+    <p class="crumb"><a href="../../index.html#package-board">Package & board</a> / 01</p>
+    <h1>IC Package Interconnects: Wirebond, Flip-Chip, FOWLP, Interposers, and Chiplets</h1>
+    <p class="byline">
+      <!-- review:start --><span>By Geetansh Arora — Principal SI/PI Engineer</span><time datetime="2026-09-16" title="Technical review by Geetansh Arora on this date">16 Sep 2026</time><span>8 min</span><!-- review:end -->
+    </p>
+    <p class="answer">
+      A package is not just a way to get signals off a die &#8212; electrically it is an inductance
+      in every path, and the family you choose sets how large. Two numbers decide what a package
+      can do: the inductance per connection, and the number of connections.
+    </p>
+  </div>
+
+  <!-- ───────────── the picture ───────────── -->
+  <figure class="figure">
+    <div class="figure__bar"><span>Five answers to one question &#183; how to get off a die without adding inductance</span></div>
+    <div class="figure__body"><svg viewBox="-4 0 712 160" role="img" aria-label="Five packaging families in cross-section, ordered by connection inductance: wirebond with long bond wires at the die edge, flip-chip with a bump array, fan-out wafer-level with a redistribution layer, a 2.5D silicon interposer, and chiplets connected die to die.">
+<g transform="translate(0,0)">
+    <text class="lbl-hi" x="60" y="16" text-anchor="middle">Wirebond</text>
+    <rect class="dielectric" x="10" y="86" width="100" height="14"/><rect class="copper" x="36" y="66" width="48" height="16" rx="1"/><path class="flow-bad" d="M36,68 C22,44 18,60 14,86"/><path class="flow-bad" d="M84,68 C98,44 102,60 106,86"/><text class="lbl" x="60" y="60" text-anchor="middle">die</text>
+    <text class="lbl" x="60" y="126" text-anchor="middle">edge only</text>
+    <text class="lbl-bad" x="60" y="142" text-anchor="middle">high L</text>
+  </g><g transform="translate(148,0)">
+    <text class="lbl-hi" x="60" y="16" text-anchor="middle">Flip-chip FCBGA</text>
+    <rect class="dielectric" x="10" y="86" width="100" height="14"/><rect class="copper" x="24" y="56" width="72" height="18" rx="1"/><circle cx="30" cy="80" r="3.5" fill="var(--signal)"/><circle cx="41" cy="80" r="3.5" fill="var(--signal)"/><circle cx="52" cy="80" r="3.5" fill="var(--signal)"/><circle cx="63" cy="80" r="3.5" fill="var(--signal)"/><circle cx="74" cy="80" r="3.5" fill="var(--signal)"/><circle cx="85" cy="80" r="3.5" fill="var(--signal)"/><circle cx="96" cy="80" r="3.5" fill="var(--signal)"/><text class="lbl" x="60" y="50" text-anchor="middle">die, face down</text>
+    <text class="lbl" x="60" y="126" text-anchor="middle">bumps over the area</text>
+    <text class="lbl-sig" x="60" y="142" text-anchor="middle">low L</text>
+  </g><g transform="translate(296,0)">
+    <text class="lbl-hi" x="60" y="16" text-anchor="middle">FOWLP</text>
+    <rect class="dielectric" x="10" y="92" width="100" height="8"/><rect class="copper" x="26" y="58" width="68" height="18" rx="1"/><rect x="14" y="76" width="92" height="10" fill="var(--reflect)" opacity=".5"/><text class="lbl" x="60" y="52" text-anchor="middle">die</text><text class="lbl-ref" x="60" y="110" text-anchor="middle">RDL, no substrate</text>
+    <text class="lbl" x="60" y="126" text-anchor="middle">shortest paths</text>
+    <text class="lbl-sig" x="60" y="142" text-anchor="middle">low L</text>
+  </g><g transform="translate(444,0)">
+    <text class="lbl-hi" x="60" y="16" text-anchor="middle">2.5D interposer</text>
+    <rect class="dielectric" x="8" y="92" width="104" height="8"/><rect x="14" y="74" width="92" height="14" fill="var(--reflect)" opacity=".45"/><rect class="copper" x="18" y="54" width="40" height="16" rx="1"/><rect class="copper" x="64" y="54" width="40" height="16" rx="1"/><circle cx="20" cy="72" r="2" fill="var(--signal)"/><circle cx="27" cy="72" r="2" fill="var(--signal)"/><circle cx="34" cy="72" r="2" fill="var(--signal)"/><circle cx="41" cy="72" r="2" fill="var(--signal)"/><circle cx="48" cy="72" r="2" fill="var(--signal)"/><circle cx="55" cy="72" r="2" fill="var(--signal)"/><circle cx="62" cy="72" r="2" fill="var(--signal)"/><circle cx="69" cy="72" r="2" fill="var(--signal)"/><circle cx="76" cy="72" r="2" fill="var(--signal)"/><circle cx="83" cy="72" r="2" fill="var(--signal)"/><circle cx="90" cy="72" r="2" fill="var(--signal)"/><circle cx="97" cy="72" r="2" fill="var(--signal)"/><circle cx="104" cy="72" r="2" fill="var(--signal)"/><text class="lbl" x="60" y="48" text-anchor="middle">die + HBM</text>
+    <text class="lbl" x="60" y="126" text-anchor="middle">thousands of nets</text>
+    <text class="lbl-sig" x="60" y="142" text-anchor="middle">low L</text>
+  </g><g transform="translate(592,0)">
+    <text class="lbl-hi" x="60" y="16" text-anchor="middle">Chiplets / UCIe</text>
+    <rect class="dielectric" x="8" y="92" width="104" height="8"/><rect x="14" y="76" width="92" height="12" fill="var(--reflect)" opacity=".45"/><rect class="copper" x="16" y="54" width="42" height="18" rx="1"/><rect class="copper" x="64" y="54" width="42" height="18" rx="1"/><path class="flow" d="M58,64 L64,64"/><text class="lbl-sig" x="61" y="48" text-anchor="middle">mm apart</text>
+    <text class="lbl" x="60" y="126" text-anchor="middle">wide and slow</text>
+    <text class="lbl-sig" x="60" y="142" text-anchor="middle">low L</text>
+  </g>
+</svg></div>
+    <figcaption><b>Two numbers decide what a package can do electrically:</b> the inductance per connection and the number of connections. Everything else &#8212; cost, thermal, mechanical &#8212; matters enormously in practice but does not change that story. <b>Wirebond</b> connects only around the die perimeter, so count scales with edge length, and every connection is a millimetre of thin wire &#8212; nanohenries. That is fatal twice: it limits edge rates, and it puts a hard ceiling on how fast the PDN can deliver charge. <b>Flip-chip</b> inverts the die onto a bump array over its whole face, so connections scale with <em>area</em> and each is a short solder bump. That is the change that made wide, fast interfaces possible &#8212; and it is why the bump map is a power-integrity document as much as a signal one. <b>Interposers and chiplets</b> change the question rather than answer it better: once connections cost almost nothing, the efficient design is very wide, comparatively slow and very short, which is the opposite of the serial-link trend.</figcaption>
+  </figure>
+
+  <div class="prose">
+    <p>
+      Every integrated circuit begins life as a bare die of silicon: transistors fabricated on a nanometer scale,
+      with input/output pads spaced only 40 to 80 micrometres apart. A standard printed circuit board, by contrast,
+      is a mechanical macro-structure: surface mount pads, drill vias, and copper traces are spaced hundreds of
+      micrometres to millimetres apart. The semiconductor package is the electromechanical bridge that translates
+      between these two vastly different dimensional universes.
+    </p>
+
+    <p>
+      Historically, packaging was treated as little more than a protective mechanical shell — a piece of molded
+      epoxy with metal leads to seal out moisture and conduct heat away from the die. But as digital edge rates
+      dropped below 50 picoseconds and processor core currents escalated past 100 amperes, the package became
+      the dominant electrical bottleneck in the entire system. Every millimetre of metal path inside the package
+      introduces parasitic loop inductance (<i class="var">L</i>) and shunt capacitance (<i class="var">C</i>).
+      On power rails, package inductance chokes transient charge delivery; on high-speed serial lanes, it forms
+      discontinuities that cause ringing and cross-coupling.
+    </p>
+
+    <p>
+      The evolution of semiconductor packaging is therefore a relentless progression to eliminate parasitic
+      inductance by shrinking interconnect distance: from looping wirebonds (nanohenries of inductance) to
+      area-array flip-chip bumps (tens of picohenries), to substrate-less Fan-Out Wafer-Level Packaging (FOWLP),
+      and finally to 2.5D silicon interposers and 3D chiplet architectures. Understanding this progression explains
+      why modern system performance is increasingly dictated by packaging technology rather than board-level routing.
+    </p>
+
+    <h2>What a package has to do</h2>
+
+    <p>
+      A die has pads a few tens of micrometres apart. A board has features a few hundred
+      micrometres apart, at best. A package's mechanical job is to bridge that gap — fan the
+      connections out from die scale to board scale.
+    </p>
+
+    <p>
+      Electrically, every one of those connections is a conductor with a loop around it, which means
+      an inductance. That inductance is in series with every signal and, more painfully, in series
+      with every power and ground connection — where it is what stops board decoupling from reaching
+      the die and what turns di/dt into
+      <a href="../power-integrity/ssn-ground-bounce.html">ground bounce</a>.
+    </p>
+
+    <p>
+      So the electrical story of packaging is almost entirely a story about that inductance: how
+      short the connection is, how large the loop around it is, and how many of them there are to
+      share the current.
+    </p>
+
+    <h2 class="section-rule"><span>The axis that matters</span></h2>
+
+    <p>
+      Two numbers decide what a package can do electrically: the <strong>inductance per
+      connection</strong> and the <strong>number of connections</strong>. The first limits how fast a
+      signal can switch and how well the PDN holds up under di/dt; the second limits how much bandwidth
+      you can carry in parallel. Everything else — cost, thermal, mechanical — matters enormously in
+      practice but does not change the electrical story.
+    </p>
+
+    <div class="table-scroll">
+      <table class="data">
+        <thead><tr><th>Family</th><th>Connection</th><th>Inductance</th><th>Electrically suits</th></tr></thead>
+        <tbody>
+          <tr><td>Wirebond</td><td>bond wire, die edge only</td><td>high — nanohenries</td><td>low pin count, modest speed</td></tr>
+          <tr><td>Flip-chip FCBGA</td><td>bump array over the whole die</td><td>low — tens of pH</td><td>high pin count, high speed</td></tr>
+          <tr><td>FOWLP</td><td>redistribution layer, no substrate</td><td>low, and very short</td><td>thin, mobile, good PI</td></tr>
+          <tr><td>2.5D interposer</td><td>microbump to silicon interposer</td><td>very low, very fine pitch</td><td>HBM, thousands of nets</td></tr>
+          <tr><td>Chiplets / UCIe</td><td>die-to-die, sub-millimetre reach</td><td>lowest</td><td>enormous parallel bandwidth</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2 class="section-rule"><span>Reading the table</span></h2>
+
+    <p>
+      <strong>Wirebond</strong> connects only around the die's perimeter, so the connection count scales
+      with edge length rather than area — and every connection is a millimetre or more of thin wire,
+      which is nanohenries. That inductance is fatal twice over: it limits signal edge rates, and it puts
+      a hard ceiling on how fast the PDN can deliver charge. Wirebond parts have first-droop problems
+      that no board work can touch.
+    </p>
+
+    <p>
+      <strong>Flip-chip</strong> inverts the die onto a bump array covering the whole face. Connections
+      now scale with <em>area</em>, and each is a short solder bump rather than a long wire. This is the
+      change that made wide, fast interfaces possible, and it is why the bump map is a
+      power-integrity document as much as a signal one — the distribution of power bumps across the die
+      face is what determines on-die IR drop and how well the die is fed under transient.
+    </p>
+
+    <p>
+      <strong>Fan-out wafer-level packaging</strong> removes the organic substrate entirely, routing on a
+      redistribution layer built directly over the reconstituted wafer. The result is thinner and the
+      paths are shorter, which helps both SI and PI — and is why it dominates mobile, where the total
+      stack height is a product specification.
+    </p>
+
+    <p>
+      <strong>2.5D interposers and chiplets</strong> change the question rather than answer it better.
+      Once connections cost almost nothing electrically and can be counted in thousands, the efficient
+      design is a very wide, comparatively slow, very short link — the opposite of the serial-link
+      trend. UCIe die-to-die traffic runs over reaches measured in millimetres, where loss is
+      irrelevant and the constraints become power per bit and crosstalk density.
+    </p>
+
+    <div class="note">
+      <b>What this means for a board engineer</b>
+      The package sets your starting conditions and you rarely get a vote. Ask for the package model
+      early and check three things: the inductance of the power path from balls to bumps, the loss the
+      package contributes at Nyquist for your interface, and whether the ball map gives signals a
+      sensible return next to them. All three are much harder to change after the substrate is designed.
+    </div>
+
+    <h2 class="section-rule"><span>Why this decides how your board behaves</span></h2>
+
+    <ul class="tight">
+      <li><strong>It sets the inductive fence.</strong> The package inductance is what isolates
+        board decoupling from the die above a few hundred megahertz, and therefore what makes on-die
+        capacitance necessary. See <a href="../power-integrity/three-frequency-domains.html">the
+        three droops</a>.</li>
+      <li><strong>It sets how many pins can switch together.</strong> SSN is L·di/dt across a
+        <em>shared</em> inductance, so the power and ground pin count — and their distribution among
+        the signals — decides how wide a bus can be.</li>
+      <li><strong>It is a discontinuity in every channel.</strong> The package's trace, via and
+        bump form part of the channel, and their impedance is rarely the board's.</li>
+      <li><strong>It constrains the board before the board exists.</strong> Ball pitch decides the
+        escape problem, which decides layer count, which decides thickness, which decides via
+        stubs.</li>
+    </ul>
+
+    <h2 class="section-rule"><span>What to do about it</span></h2>
+
+    <p>
+      <strong>Treat pin assignment as an electrical decision.</strong> Distributing power and ground
+      among the signals rather than clustering them reduces the shared inductance every signal sees.
+      This is decided very early and is nearly free at that moment.
+    </p>
+
+    <p>
+      <strong>Ask for the package model before you need it.</strong> A channel simulation without one
+      is missing a real discontinuity, and a PDN simulation without one is missing the resonance that
+      matters most.
+    </p>
+
+    <p>
+      <strong>Push back on pitch if you can.</strong> A finer pitch is a mechanical and cost decision
+      that lands on the board as via-in-pad, more layers, or both. It is worth being in that
+      conversation.
+    </p>
+
+    <div class="note">
+      <b>Using this to find a fault</b>
+      <ul class="tight">
+        <li><b>Ground bounce that scales with the number of simultaneous outputs.</b> Shared package
+          inductance. Look at the power and ground pin distribution, not at the board.</li>
+        <li><b>A PDN resonance in the hundreds of megahertz.</b> Package inductance against on-die
+          capacitance. No board component is inside that loop.</li>
+        <li><b>A channel discontinuity that TDR places inside the package.</b> Compare the package
+          model's impedance with the board's — they are often deliberately different, and the
+          transition costs something.</li>
+      </ul>
+    </div>
+
+    <details class="deeper">
+      <summary>Go deeper — where each family's inductance comes from</summary>
+
+      <p>
+        The differences between families are geometric, and once you see the geometry the numbers
+        follow.
+      </p>
+
+      <ul class="tight">
+        <li><strong>Wirebond</strong> connects the die edge to the substrate with a bond wire that
+          arcs up and over. It is long, thin and far from its return, so the loop is large —
+          nanohenries. And only the die's perimeter is available, so connection count scales with
+          perimeter rather than area.</li>
+        <li><strong>Flip-chip</strong> turns the die over and connects it through an array of bumps
+          across its whole face. Each bump is short and has a nearby return, so the inductance is
+          tens of picohenries — two orders of magnitude better — and the count scales with
+          <em>area</em>.</li>
+        <li><strong>Fan-out wafer-level packaging</strong> replaces the substrate with a
+          redistribution layer built directly on the reconstituted wafer. Shorter still, and thinner,
+          which is why it dominates mobile.</li>
+        <li><strong>2.5D interposers</strong> put two dies on a shared silicon carrier with very fine
+          wiring between them, which is how very wide, very short die-to-die interfaces become
+          possible at all.</li>
+      </ul>
+
+      <p>
+        The pattern worth extracting: <b>every step in this progression shortens the connection and
+        brings its return closer.</b> That is the whole electrical evolution of packaging, and it is
+        driven by the same L·di/dt that drives everything else.
+      </p>
+
+      <p>
+        One consequence that surprises people: a flip-chip package's advantage is not only per-pin.
+        Because the connections cover the die's area rather than its edge, you can afford far more
+        power and ground bumps, and the shared inductance falls faster than the per-pin number
+        alone suggests.
+      </p>
+    </details>
+
+    <h2 class="section-rule"><span>In the real world</span></h2>
+
+    <p>
+      Package choice is usually made on cost, thermal and mechanical grounds, and the electrical
+      consequences arrive as constraints rather than as options. The useful posture is therefore to
+      know what each family implies and to get that into the decision early, rather than to expect
+      to choose on electrical merit.
+    </p>
+
+    <p>
+      The other thing worth doing early is asking who owns the package model and when it will exist.
+      It is the piece of the chain most likely to be missing when the first serious simulation is
+      run, and its absence hides exactly the resonances that matter.
+    </p>
+
+    <h3>Related</h3>
+    <ul class="tight">
+      <li><a href="../power-integrity/cps-co-analysis.html">Chip-Package-System Power Integrity Co-Analysis</a></li>
+      <li><a href="../package-board/bga-escape-routing.html">BGA Escape Routing and Breakout Congestion</a></li>
+      <li><a href="../power-integrity/three-frequency-domains.html">PDN Frequency Regions: Board, Package, and Die</a></li>
+      <li><a href="../signal-integrity/channel-budgeting.html">Channel Loss Budgeting Across Die, Package, and Board</a></li>
+    </ul>
+  </div>
+
+  <!-- pager:start -->
+  <nav class="pager" aria-label="Previous and next topic">
+    <a class="prev" href="../../topics/signal-integrity/receiver-and-clock.html"><span class="dir">Previous</span><span>Receiver Sampling, Clock Recovery, and Jitter Tolerance</span></a>
+    <a class="next" href="../../topics/package-board/stackup-design.html"><span class="dir">Next</span><span>PCB Stackup Design and Dielectric Selection</span></a>
+  </nav>
+  <!-- pager:end -->
+</main>
+
+<footer class="site-foot">
+  <span>SIPI &#8212; signal and power integrity, visualised.</span>
+  <span>Created and directed by Geetansh Arora. <a href="../../colophon.html">About, review &amp; AI assistance</a> &#183; <a href="../../model-contract.html">Model assumptions</a> &#183; <a href="../../docs/claims.md">Claim ledger</a></span>
+</footer>
+
+<script src="../../js/site.js?v=acb47d86"></script>
+<script src="../../js/search.js?v=6c93a285"></script>
+</body>
+</html>

@@ -1,0 +1,120 @@
+{
+  "schemaVersion": 1,
+  "modelVersion": "1.3",
+  "contractVersion": "2.3",
+  "evidence": "Independent causal trapezoidal companion-network comparison; no measurement correlation.",
+  "base": {
+    "rvrm": 4,
+    "fbw": 120,
+    "lplane": 900,
+    "lpkg": 350,
+    "cboard": 1,
+    "nboard": 20,
+    "esr": 20,
+    "esl": 1100,
+    "cdie": 200,
+    "imax": 8,
+    "tr": 800,
+    "zt": 10,
+    "imax2": 3,
+    "tr2": 800,
+    "startNs": 800,
+    "widthNs": 1800,
+    "start2Ns": 1000,
+    "width2Ns": 1000
+  },
+  "units": {
+    "rvrm": "mohm",
+    "fbw": "kHz",
+    "lplane": "pH",
+    "lpkg": "pH",
+    "cboard": "uF",
+    "nboard": "count",
+    "esr": "mohm",
+    "esl": "pH",
+    "cdie": "nF",
+    "imax": "A",
+    "tr": "ps",
+    "zt": "mohm",
+    "imax2": "A",
+    "tr2": "ps",
+    "startNs": "ns",
+    "widthNs": "ns",
+    "start2Ns": "ns",
+    "width2Ns": "ns"
+  },
+  "acceptance": {
+    "waveformFraction": 0.05,
+    "droopFraction": 0.02,
+    "timestepVolts": 0.002,
+    "referenceRefinementFraction": 0.005
+  },
+  "cases": [
+    {
+      "id": "overlapping-default",
+      "params": {}
+    },
+    {
+      "id": "board-first-separated",
+      "params": {
+        "startNs": 1500,
+        "widthNs": 500,
+        "start2Ns": 100,
+        "width2Ns": 500,
+        "tr": 20000,
+        "tr2": 20000
+      }
+    },
+    {
+      "id": "fast-die-edge",
+      "params": {
+        "tr": 200,
+        "imax": 16,
+        "tr2": 800,
+        "widthNs": 500,
+        "width2Ns": 500
+      }
+    },
+    {
+      "id": "sparse-low-esr",
+      "params": {
+        "nboard": 1,
+        "esr": 2,
+        "esl": 3000,
+        "lpkg": 1200,
+        "cdie": 10,
+        "tr": 2000,
+        "tr2": 2000
+      }
+    },
+    {
+      "id": "dense-damped",
+      "params": {
+        "nboard": 60,
+        "esr": 150,
+        "esl": 200,
+        "lplane": 100,
+        "lpkg": 50,
+        "cdie": 600,
+        "imax": 40,
+        "imax2": 40,
+        "tr": 20000,
+        "tr2": 20000
+      }
+    },
+    {
+      "id": "slow-vrm-window-limit",
+      "params": {
+        "fbw": 10,
+        "tr": 20000,
+        "tr2": 20000
+      }
+    }
+  ],
+  "limitations": [
+    "Selected combined corners, not an exhaustive supported-domain proof.",
+    "Causal zero-state transient, with finite timestep and observation interval.",
+    "Budgets describe teaching-model checks, not hardware sign-off.",
+    "Refinement preserves physical pulses and compares a fixed observation interval."
+  ]
+}

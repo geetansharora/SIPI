@@ -1,0 +1,602 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lab A: Transmission-Line Reflections and Energy Flow | SIPI</title>
+<meta name="description" content="A lossless line, shown four ways at once: voltage and current along it, a movable probe, the bounce diagram, and the energy account that explains why an open end rings instead of dissipating.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<link rel="stylesheet" href="../../css/base.css?v=e4f774de">
+<link rel="stylesheet" href="../../css/components.css?v=295837ab">
+  <!-- meta:start -->
+  <link rel="canonical" href="https://sipi.work/topics/labs/travelling-waves.html">
+  <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="SIPI">
+  <meta property="og:title" content="Lab A: Transmission-Line Reflections and Energy Flow | SIPI">
+  <meta property="og:description" content="A lossless line, shown four ways at once: voltage and current along it, a movable probe, the bounce diagram, and the energy account that explains why an open end rings instead of dissipating.">
+  <meta property="og:url" content="https://sipi.work/topics/labs/travelling-waves.html">
+  <meta property="og:image" content="https://sipi.work/assets/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Lab A: Transmission-Line Reflections and Energy Flow | SIPI">
+  <meta name="twitter:description" content="A lossless line, shown four ways at once: voltage and current along it, a movable probe, the bounce diagram, and the energy account that explains why an open end rings instead of dissipating.">
+  <meta name="twitter:image" content="https://sipi.work/assets/og.png">
+  <!-- meta:end -->
+</head>
+<body>
+
+<header class="masthead">
+  <a class="wordmark" href="../../index.html">SIPI</a>
+  <nav>
+    <a href="../../index.html#fundamentals">Fundamentals</a>
+    <a href="../../index.html#power-integrity">Power</a>
+    <a href="../../index.html#interfaces">Interfaces</a>
+    <a href="../../start.html">Start</a>
+    <a href="../../labs.html">Labs</a>
+    <a href="../../reference.html">Reference</a>
+    <button class="theme-toggle" data-act="theme" type="button">System</button>
+  </nav>
+</header>
+
+<main>
+  <div class="page-head">
+    <p class="crumb"><a href="../../index.html#labs">Labs</a> / 01</p>
+    <h1>Lab A: Transmission-Line Reflections and Energy Flow</h1>
+    <p class="byline">
+      <!-- review:start --><span>By Geetansh Arora — Principal SI/PI Engineer</span><time datetime="2026-09-18" title="Technical review by Geetansh Arora on this date">18 Sep 2026</time><span>12 min</span><!-- review:end -->
+    </p>
+    <p class="answer">
+      A wave on a line carries voltage <em>and</em> current, in a fixed ratio set by Z<sub>0</sub>.
+      A backward wave carries them in the <em>opposite</em> ratio: i = −v/Z<sub>0</sub> rather than
+      +v/Z<sub>0</sub>. Which of the two appears to reverse at the far end therefore depends on the
+      sign of Γ<sub>L</sub> — an open (Γ = +1) returns the voltage unchanged and so doubles it while
+      the currents cancel; a short (Γ = −1) inverts the voltage and so doubles the current instead.
+      That one sign is why the energy has nowhere to go, and why the line rings instead of settling.
+    </p>
+  </div>
+
+
+  <!-- ───────────── the lab ───────────── -->
+  <section class="instrument lab" data-viz="labWaves" aria-label="Interactive transmission-line lab: voltage and current along the line, a movable probe, the bounce diagram and an energy account">
+<script type="application/json" data-contract>{"kind":"numerical","evidence":"independent","purpose":"Make the current half of a travelling wave visible, and account for where the energy goes.","equations":["V/I=+Z0 forward, -Z0 backward","E=Td*int(0.5 v^2/Z0 + 0.5 i^2 Z0)"],"units":"ps, V, A, ohm, pJ","validity":"Lossless, uniform, no mid-line discontinuity.","numerics":"Trapezoid integration with 900 time intervals and max(220, ceil(64 Td/tr)) spatial intervals, capped at 65536. The energy history uses 121 uniformly spaced times plus finite-edge boundary transition landmarks; straight segments join computed samples. History is cached until physical settings change. Cursor energies are recomputed at the actual cursor time; the residual is shown on a separate aligned scale. Energy integrals begin before the source edge. Energy-history UI updates debounce rapid physical edits, then yield between samples with a generation guard. Pending histories are hidden and omitted from exports; instantaneous calculations remain current. Completed histories use the same sample grid and quadrature as the synchronous model.","limitations":"Lossless, uniform, no mid-line discontinuity. The energy account is refused rather than reported when it closes to worse than 1%. Across every length and edge the controls allow it now closes to 0.086% or better.","suites":["Line1D","Lab A assembled","Lab result contract"],"version":"2.2","reviewed":"2026-09-13","panel":"labWaves"}</script>
+<div class="lab-frame">
+<div class="instrument__bar">
+      <span class="instrument__title">One step · four ways to look at it</span>
+      <span data-evidence="independent" data-model-version="2.2" class="model-tag model-tag--numerical" title="Lossless line, ideal step source, frequency-independent Z0 and 24 launched waves. No loss, no dispersion, no discontinuity along the line.">numerical</span>
+      <span class="instrument__readout" role="status" aria-live="polite" aria-label="Current values">
+        <span>Γ<sub>s</sub> <b data-out="gs">—</b></span>
+        <span>Γ<sub>L</sub> <b data-out="gl">—</b></span>
+        <span>T<sub>d</sub> <b data-out="td">—</b></span>
+        <span>V at probe <b data-out="vp">—</b></span>
+        <span>I at probe <b data-out="ip">—</b></span>
+        <span>V/I there <b data-out="zp">—</b></span>
+      </span>
+    <button type="button" class="tool-btn lab-full" data-lab-full aria-pressed="false">full screen</button>
+</div>
+<aside class="lab-rail lab-rail--left" aria-label="Source end controls">
+<p class="lab-rail__side">Source end <span>driver and line</span></p>
+<details class="control-group lab-group" open><summary class="lab-group__title" id="lab-left-0">Scenarios</summary><div class="control-group__grid lab-group__body"><div class="presets">
+      <button class="preset" type="button" data-preset="unterminated" aria-pressed="false">Unterminated</button>
+      <button class="preset" type="button" data-preset="series" aria-pressed="false">Series terminated</button>
+      <button class="preset" type="button" data-preset="parallel" aria-pressed="false">Parallel terminated</button>
+      <button class="preset" type="button" data-preset="shorted" aria-pressed="false">Shorted far end</button>
+      <button class="preset" type="button" data-preset="mismatch" aria-pressed="false">Mismatched both ends</button>
+    </div>
+<div class="transport"><span data-out="note">—</span></div></div></details>
+<details class="control-group lab-group" open><summary class="lab-group__title" id="lab-left-1">Driver</summary><div class="control-group__grid lab-group__body"><div class="ctl">
+        <div class="ctl__head"><label for="lw-rs">Driver impedance R<sub>s</sub></label><output id="lw-rs-out" for="lw-rs">10 Ω</output></div>
+        <input type="range" id="lw-rs" aria-describedby="lw-rs-note" min="2" max="150" step="1" value="10">
+        <span class="ctl__note" id="lw-rs-note">Decides what happens to a wave coming back</span>
+      </div></div></details>
+<details class="control-group lab-group" open><summary class="lab-group__title" id="lab-left-2">Source edge</summary><div class="control-group__grid lab-group__body"><div class="ctl">
+        <div class="ctl__head"><label for="lw-tr">Rise time t<sub>r</sub></label><output id="lw-tr-out" for="lw-tr">60 ps</output></div>
+        <input type="range" id="lw-tr" aria-describedby="lw-tr-note" min="10" max="500" step="10" value="60">
+        <span class="ctl__note" id="lw-tr-note">Only matters compared with T<sub>d</sub></span>
+      </div></div></details>
+<details class="control-group lab-group" open><summary class="lab-group__title" id="lab-left-3">Line</summary><div class="control-group__grid lab-group__body"><div class="ctl">
+        <div class="ctl__head"><label for="lw-z0">Line impedance Z<sub>0</sub></label><output id="lw-z0-out" for="lw-z0">50 Ω</output></div>
+        <input type="range" id="lw-z0" aria-describedby="lw-z0-note" min="25" max="100" step="1" value="50">
+        <span class="ctl__note" id="lw-z0-note">Sets the V/I ratio a wave must obey</span>
+      </div>
+<div class="ctl">
+        <div class="ctl__head"><label for="lw-len">Line length</label><output id="lw-len-out" for="lw-len">3 in</output></div>
+        <input type="range" id="lw-len" aria-describedby="lw-len-note" min="1" max="12" step="1" value="3">
+        <span class="ctl__note" id="lw-len-note">Stripline at 170 ps/in — length is delay</span>
+      </div></div></details>
+<p class="lab-help" aria-hidden="true">Point at or focus a control to see what it changes.</p>
+</aside>
+<div class="lab-stage">
+<div class="lab-row lab-row--anchor" style="--anchor-columns: minmax(0, 1fr) minmax(0, 1fr)">
+<div data-lab-unit="line" data-lab-name="Voltage along the line" class="panel">
+        <div class="lab-panel-head"><span class="panel__label">Voltage along the line, right now</span><button type="button" class="tool-btn lab-expand" data-lab-expand aria-pressed="false" aria-label="Expand Voltage along the line">expand</button></div>
+        <canvas data-cv="line" role="img" aria-label="Voltage against position along the line, with the forward wave, the backward wave and their sum drawn separately."></canvas>
+        <div class="legend"><span><i style="background:var(--signal)"></i>total</span><span><i class="dash" style="color:var(--muted)"></i>forward</span><span><i class="dash" style="color:var(--reflect)"></i>backward</span></div>
+      </div>
+<div data-lab-unit="current" data-lab-name="Current along the line" class="panel">
+        <div class="lab-panel-head"><span class="panel__label">Current along the line, same instant</span><button type="button" class="tool-btn lab-expand" data-lab-expand aria-pressed="false" aria-label="Expand Current along the line">expand</button></div>
+        <canvas data-cv="current" role="img" aria-label="Current against position along the line. The backward wave carries current in the opposite direction, so current subtracts where voltage adds."></canvas>
+        <div class="legend"><span><i style="background:var(--signal)"></i>total</span><span><i class="dash" style="color:var(--muted)"></i>forward</span><span><i class="dash" style="color:var(--reflect)"></i>backward</span></div>
+      </div>
+</div>
+<div class="lab-strip">
+<div class="transport">
+      <button type="button" data-act="play" aria-pressed="false">▶ Play</button>
+      <span class="transport__step">
+        <button type="button" data-act="prev" aria-label="Previous arrival">‹</button>
+        <span class="transport__at" data-out="ev">—</span>
+        <button type="button" data-act="next" aria-label="Next arrival">›</button>
+      </span>
+      
+    </div>
+<div class="ctl">
+        <div class="ctl__head"><label for="lw-t">Time</label><output id="lw-t-out" for="lw-t">0.00 ns</output></div>
+        <input type="range" id="lw-t" aria-describedby="lw-t-note" min="0" max="3060" step="1" value="0">
+        <span class="ctl__note" id="lw-t-note">Scrub it, or press play</span>
+      </div>
+</div>
+<div class="lab-tabs" role="tablist" aria-label="Linked views">
+<button type="button" role="tab" id="lab-tab-events" aria-controls="lab-view-events" aria-selected="true" tabindex="0" data-view="events">Probe and reflections</button>
+<button type="button" role="tab" id="lab-tab-energy" aria-controls="lab-view-energy" aria-selected="false" tabindex="-1" data-view="energy">Energy</button>
+<button type="button" role="tab" id="lab-tab-values" aria-controls="lab-view-values" aria-selected="false" tabindex="-1" data-view="values">Values as text</button>
+</div>
+<div class="lab-view is-active" id="lab-view-events" role="tabpanel" aria-labelledby="lab-tab-events" data-view="events" data-count="2">
+<div data-lab-unit="probe" data-lab-name="At the probe" class="panel">
+        <div class="lab-panel-head"><span class="panel__label">At the probe, over time</span><button type="button" class="tool-btn lab-expand" data-lab-expand aria-pressed="false" aria-label="Expand At the probe">expand</button></div>
+        <canvas data-cv="probe" role="img" aria-label="Voltage and current at the probe position against time, on a shared time axis with separate left and right scales."></canvas>
+        <div class="legend"><span><i style="background:var(--signal)"></i>V, left scale</span><span><i class="dash" style="color:var(--reflect)"></i>I, right scale</span></div>
+      </div>
+<div data-lab-unit="lattice" data-lab-name="Reflections" class="panel">
+        <div class="lab-panel-head"><span class="panel__label">Where each wave came from</span><button type="button" class="tool-btn lab-expand" data-lab-expand aria-pressed="false" aria-label="Expand Reflections">expand</button></div>
+        <canvas data-cv="lattice" role="img" tabindex="0" aria-label="Bounce diagram: distance across, time downward. Each line is one launched wave, thickness by amplitude, red where the amplitude is negative. Click a line, or arrow-key through them, to pause at its probe crossing and link the plots and energy account."></canvas>
+        <p class="event-detail" data-out="event-detail" role="status" aria-live="polite">Select a wave with a click or arrow keys. Time pauses at its probe crossing; amber markers link the spatial and probe plots.</p>
+      </div>
+</div>
+<div class="lab-view" id="lab-view-energy" role="tabpanel" aria-labelledby="lab-tab-energy" data-view="energy" data-count="1">
+<div data-lab-unit="energy" data-lab-name="Energy" class="panel lab-split" data-summary-host><div class="lab-panel-head"><span class="panel__label">Where the energy goes over time</span><button type="button" class="tool-btn lab-expand" data-lab-expand aria-pressed="false" aria-label="Expand Energy">expand</button></div><canvas data-cv="energy" role="img" aria-label="Energy versus time: source input, source resistance dissipation, load delivery and energy stored on the line. A separate aligned plot shows the numerical residual. The cursor follows time and selected reflection events."></canvas><div class="legend">
+        <span><i style="background:var(--ink)"></i>From source</span>
+        <span><i class="dash" style="color:var(--reflect)"></i>In source resistance</span>
+        <span><i style="background:var(--signal)"></i>To load</span>
+        <span><i class="dash" style="color:var(--muted)"></i>Stored on line</span>
+        <span><i style="background:var(--alarm)"></i>Residual, lower scale</span>
+      </div><div class="lab-side"><p class="panel__hint" data-out="energy-history" role="status" aria-live="polite"></p><details class="lab-notes"><summary>Notes</summary>
+<p class="panel__hint">Move Time, select a reflection, or reveal a prediction to follow the same instant here.
+        Energy integrates from before the source edge begins. These are totals for all waves, not energy assigned to one reflection. Source energy is net supplied energy: it can fall when the ideal source absorbs a returning wave.</p>
+</details></div></div>
+</div>
+<div class="lab-view" id="lab-view-values" role="tabpanel" aria-labelledby="lab-tab-values" data-view="values" data-count="1">
+<dl data-summary class="viz-summary" aria-label="Current values"></dl>
+</div>
+</div>
+<aside class="lab-rail lab-rail--right" aria-label="Load end controls">
+<p class="lab-rail__side">Load end <span>termination and probe</span></p>
+<details class="control-group lab-group" open><summary class="lab-group__title" id="lab-right-0">Load</summary><div class="control-group__grid lab-group__body"><div class="ctl">
+        <div class="ctl__head"><label for="lw-rl">Load R<sub>L</sub></label><output id="lw-rl-out" for="lw-rl">∞ (open)</output></div>
+        <input type="range" id="lw-rl" min="0" max="200" step="1" value="50">
+        <label class="check" for="lw-open"><input type="checkbox" id="lw-open" checked> open circuit (a CMOS input pin)</label>
+      </div></div></details>
+<details class="control-group lab-group" open><summary class="lab-group__title" id="lab-right-1">Probe</summary><div class="control-group__grid lab-group__body"><div class="ctl">
+        <div class="ctl__head"><label for="lw-xp">Probe position</label><output id="lw-xp-out" for="lw-xp">50 %</output></div>
+        <input type="range" id="lw-xp" aria-describedby="lw-xp-note" min="0" max="100" step="1" value="50">
+        <span class="ctl__note" id="lw-xp-note">Where you clipped the scope on</span>
+      </div></div></details>
+<section class="lab-group">
+<div class="panel arrival-prediction" aria-labelledby="lw-predict-title">
+      <h3 id="lw-predict-title">Predict the next reflection</h3>
+      <p>Use the termination and the incident wave’s sign to predict the reflected voltage.
+        Starting a question pauses the experiment; revealing moves to the boundary arrival.</p>
+      <button type="button" data-act="predict-arrival">Start a prediction</button>
+      <label for="lw-prediction">Reflected voltage sign</label>
+      <select id="lw-prediction">
+        <option value="">Choose a sign</option>
+        <option value="positive">Positive</option>
+        <option value="negative">Negative</option>
+        <option value="zero">Zero — absorbed</option>
+      </select>
+      <button type="button" data-act="reveal-arrival" disabled>Reveal and go to arrival</button>
+      <p data-out="prediction" role="status" aria-live="polite">Pause and predict the sign of the next reflected voltage wave.</p>
+    </div>
+</section>
+<section class="lab-group">
+<details class="lab-notes"><summary>Learning sequence</summary>
+<div class="experiment-flow" aria-label="Reflection-boundary learning sequence">
+      <div class="experiment-step"><strong>Predict</strong><p>At an ideal open or short, which of the total boundary quantities must become zero: voltage or current?</p></div>
+      <div class="experiment-step"><strong>Experiment</strong><p>Compare the open and short presets at a selected arrival. Read voltage and current together, then follow source energy, resistor dissipation, load delivery, stored energy, and the residual.</p></div>
+      <div class="experiment-step"><strong>Explain</strong><p>Forward current is V/Z₀ and backward current is −V/Z₀. At an open, reflected voltage keeps its sign and current cancels. At a short, voltage reverses and cancels. Neither ideal boundary dissipates load energy.</p></div>
+      <div class="experiment-step"><strong>Transfer</strong><p>Why can net source energy decrease while a returning wave reaches the driver? Separate energy returned to the ideal source from resistor dissipation, stored line energy, and numerical residual.</p></div>
+    </div>
+</details>
+</section>
+<p class="lab-help" aria-hidden="true">Point at or focus a control to see what it changes.</p>
+</aside>
+</div>
+<script type="application/json" data-guide>
+{
+  "title": "Five experiments on one line",
+  "steps": [
+    {
+      "say": "Start with a 3-inch line, a fast 10 Ω driver, and nothing at the far end. Press play, or step through the arrivals with the arrows. Watch the two top panels together.",
+      "set": {
+        "_p": "unterminated",
+        "lw-len": "3",
+        "lw-tr": "60",
+        "lw-xp": "50"
+      },
+      "ask": "The line is 3 inches of stripline. When does the far end first move?",
+      "answer": "At 510 ps — 3 inches at about 170 ps/inch. Nothing you do at the driver can reach the load faster than that, which is why the driver spends the first Td driving what looks to it like a plain 50 Ω resistor. It has not yet been told the far end is open."
+    },
+    {
+      "say": "Look at the two panels side by side at the instant the wave hits the open end.",
+      "ask": "Voltage doubles there. What does the current do?",
+      "answer": "It goes to zero — it has to. An open end can carry no current, so the reflected wave must cancel the incident current exactly. A backward wave carries current the other way, so cancelling the current means adding the voltage. That is the whole asymmetry: Γ is the same number for both, but current picks up a minus sign."
+    },
+    {
+      "say": "Now match the source instead of the load: Rs to 50 Ω, far end still open.",
+      "set": {
+        "_p": "series"
+      },
+      "ask": "The load still reflects everything. Why does the ringing stop after one round trip?",
+      "answer": "A reflection needs two ends. The wave comes back at full amplitude, but it arrives at a driver whose impedance equals the line, so Γs = 0 and there is nothing left to send out again. One round trip and it is over. The cost is in the energy account: the 50 Ω source resistor burns as much as the load ever receives."
+    },
+    {
+      "say": "Change only the length — 3 inches to 9 — and leave everything else alone. Watch the lattice panel.",
+      "set": {
+        "_p": "unterminated",
+        "lw-len": "9"
+      },
+      "ask": "The overshoot is the same height. What changed?",
+      "answer": "The timing changes. Γ depends on impedances rather than length, so the bounce amplitudes stay unchanged while the lattice stretches in time. Length determines whether the ringing settles before the sampling instant. The first overshoot also depends on rise time: when tr is longer than about twice Td, the reflected transition overlaps the incident edge."
+    },
+    {
+      "say": "Last one. Set the far end to 75 Ω and drag the probe from the driver to the load, watching the V/I readout in the bar.",
+      "set": {
+        "_p": "mismatch",
+        "lw-xp": "20"
+      },
+      "ask": "The V/I ratio at the probe is neither 50 Ω nor 75 Ω for most of the sweep. What is it?",
+      "answer": "It is the instantaneous ratio of the waves overlapping at the probe, rather than a new physical impedance. V/I equals Z0 where a single wave travels alone and equals RL at the load boundary. A TDR uses the quiet window before a reflection returns, where the first of those conditions is satisfied."
+    }
+  ],
+  "transfer": "You have a 3-inch net, a driver whose output impedance you can choose, and a receiver that is a pure capacitive load. You may not add a terminating component. Predict the output impedance that gives the cleanest settled waveform, and say what you have traded away to get it.",
+  "transferNote": "Think about where the returning wave goes, and what the launch amplitude becomes."
+}
+  </script>
+</section>
+
+  <!-- ───────────── the intuition ───────────── -->
+  <div class="prose">
+    <p>
+      In introductory electronics, voltage and current are treated as scalar values that exist instantaneously
+      across an entire node. If you close a switch, Ohm's law asserts that current immediately flows through the entire
+      loop. On circuit boards with nanosecond and picosecond edge rates, this lumped-element intuition breaks down
+      completely. Voltage and current do not appear everywhere at once; they travel down copper traces as a
+      <strong>coupled electromagnetic wavefront</strong> propagating at roughly six inches per nanosecond.
+    </p>
+
+    <p>
+      Most textbooks teach transmission line reflections using algebraic bounce diagrams that track voltage alone.
+      This voltage-only framing obscures the fundamental physics: a transmission line cannot carry voltage without
+      carrying current in the exact ratio determined by its characteristic impedance (<span class="num">Z<sub>0</sub></span>).
+      When that wave strikes a load boundary, current and voltage do not behave identically — current subtracts
+      where voltage adds.
+    </p>
+
+    <p>
+      This interactive lab makes the full wave visible. By stepping through time, you can observe forward and backward
+      waves separating across space, probe the local <span class="num">V/I</span> ratio at any point along the trace,
+      and inspect a real-time energy account that tracks exactly how much energy is stored in fields, absorbed by
+      termination resistors, or trapped bouncing between mismatched boundaries.
+    </p>
+
+    <h2>Voltage and current in a travelling wave</h2>
+    <p>
+      A transmission line is not a wire with a delay. It is a medium that can only carry
+      energy in one particular combination: a voltage and a current whose ratio is
+      Z<sub>0</sub>. Launch 833 mV into a 50 Ω line and you have also launched 16.7 mA,
+      whether you wanted to or not. The two are not independent quantities that happen to
+      travel together — they are one wave described two ways.
+    </p>
+    <div class="eq">
+      <span class="eq__main">V<sub>f</sub> / I<sub>f</sub> = +Z<sub>0</sub></span>
+      <span class="eq__main">V<sub>b</sub> / I<sub>b</sub> = −Z<sub>0</sub></span>
+      <span class="eq__note">the sign is the direction of travel, and it is the only difference</span>
+    </div>
+    <p>
+      When a wave meets a boundary it cannot satisfy, it splits. At the load the line
+      insists on V/I = Z<sub>0</sub>; the resistor insists on V/I = R<sub>L</sub>. The only
+      way to satisfy both is to launch a second wave going the other way, sized so the totals
+      work out. That is all a reflection coefficient is — the size of the wave you need to
+      add so that Ohm's law and the line's ratio agree at the same point.
+    </p>
+    <div class="eq">
+      <span class="eq__main">Γ = (R<sub>L</sub> − Z<sub>0</sub>) / (R<sub>L</sub> + Z<sub>0</sub>)</span>
+      <span class="eq__note">+1 at an open, 0 at a match, −1 at a short</span>
+    </div>
+    <p>
+      Because the backward wave carries its current the other way, the totals behave in
+      opposite directions. At an open end the currents cancel and the voltages add, so you
+      see twice the incident voltage and no current at all. At a short the voltages cancel
+      and the currents add. The same Γ, read through a sign.
+    </p>
+
+    <h2>The energy account is the part people skip</h2>
+    <p>
+      Open the energy panel and step an unterminated line through its first two round trips.
+      Almost nothing is delivered to the load — an open end absorbs no energy, by definition
+      — and almost nothing is burned in a 10 Ω driver. The energy is simply still on the
+      line, sloshing between the electric field in the dielectric and the magnetic field
+      around the conductor.
+    </p>
+    <p>
+      That is what ringing <em>is</em>. It is not a control-loop instability or a resonance
+      in the usual sense; it is energy with nowhere to be dissipated, bouncing between two
+      boundaries that both refuse to absorb it. Termination is not a trick to make a
+      waveform look nicer. It is the act of putting something in the circuit that can turn
+      that energy into heat, and the reason a series resistor works is that it makes the
+      driver itself that something.
+    </p>
+
+    <details class="deeper">
+      <summary>Go deeper — the lattice, and what the model leaves out</summary>
+      <p>
+        Every wave on this page is one entry in a geometric series. The first forward wave
+        is a divider against the line, not the load:
+      </p>
+      <div class="eq">
+        <span class="eq__main">a<sub>0</sub> = V<sub>s</sub> · Z<sub>0</sub> / (R<sub>s</sub> + Z<sub>0</sub>)</span>
+        <span class="eq__note">the load does not appear — at t = 0 the far end has not been heard from</span>
+      </div>
+      <p>
+        Each round trip multiplies by Γ<sub>L</sub>Γ<sub>s</sub>, so wave <em>m</em> leaves the
+        driver at 2<em>m</em>T<sub>d</sub> with amplitude a<sub>0</sub>(Γ<sub>L</sub>Γ<sub>s</sub>)<sup>m</sup>,
+        and the backward wave leaving the load at (2<em>m</em>+1)T<sub>d</sub> carries
+        a<sub>0</sub>Γ<sub>L</sub>(Γ<sub>L</sub>Γ<sub>s</sub>)<sup>m</sup>. Because
+        |Γ<sub>L</sub>Γ<sub>s</sub>| &lt; 1 for any passive pair, the series converges, and it
+        converges to the plain DC divider V<sub>s</sub>R<sub>L</sub>/(R<sub>s</sub>+R<sub>L</sub>) —
+        which is the sanity check worth remembering. However complicated the bouncing looks,
+        the endpoint is the answer you would have got from a resistor divider with no line at all.
+      </p>
+      <p>
+        What this model deliberately leaves out, and what each omission costs you:
+      </p>
+      <ul>
+        <li><b>Loss.</b> The line is lossless, so the ringing decays only through the
+          terminations. A real 9-inch stripline at these edge rates would take the corners
+          off each bounce and shrink the later ones. The arrival <em>times</em> are right;
+          the late-time amplitudes are optimistic.</li>
+        <li><b>Dispersion.</b> Z<sub>0</sub> and the propagation velocity are frequency-flat
+          here. In FR-4 both drift with frequency, which rounds edges further and smears the
+          crisp arrivals the lattice draws.</li>
+        <li><b>Discontinuities along the line.</b> There are none — the line is uniform
+          between two boundaries. A via field or a connector in the middle would add a third
+          reflection site, and the lattice would branch at it rather than running edge to edge.</li>
+        <li><b>The return path.</b> Treated as ideal. Every current in the top panels has an
+          equal and opposite current in the reference plane directly beneath it; break that
+          plane and the inductance of the detour becomes a discontinuity the model above
+          cannot represent.</li>
+      </ul>
+    </details>
+
+    <h2 class="section-rule"><span>The other half: where the return goes</span></h2>
+
+    <p>
+      Everything above treats the line as two terminals and a delay. That is the
+      right model for timing, and it says nothing about <em>where</em> the current
+      goes on its way back — which is the half of the problem that decides
+      crosstalk, emissions, and whether the impedance you designed is the
+      impedance you built.
+    </p>
+
+    <figure class="figure">
+      <svg viewBox="0 0 760 116" role="img"
+           aria-label="Four cross-sections. One: a trace over a continuous plane, return current concentrated directly beneath it. Two: the same trace crossing a gap in the plane, the return current forced to detour around the gap, enclosing a much larger loop. Three: a layer transition with a return via placed close to the signal via, keeping the loop small. Four: the same transition with the return via far away, enclosing a large loop.">
+        <defs>
+          <marker id="rp-arrow" viewBox="0 0 8 8" refX="4" refY="4" markerWidth="5" markerHeight="5" orient="auto">
+            <path d="M0 0 L8 4 L0 8 z" class="copper"/>
+          </marker>
+        </defs>
+
+        <!-- 1 · continuous plane -->
+        <text class="lbl-hi" x="8" y="16">1 · continuous reference</text>
+        <rect class="dielectric" x="8" y="24" width="170" height="46"/>
+        <rect class="plane" x="8" y="64" width="170" height="8"/>
+        <rect class="copper" x="70" y="28" width="46" height="8"/>
+        <path class="flow" marker-end="url(#rp-arrow)" d="M93 40 v18"/>
+        <path class="flow" d="M70 68 h46"/>
+        <text class="lbl" x="8" y="92">the return sits under the signal, because that is the</text>
+        <text class="lbl" x="8" y="104">lowest-inductance path — not the shortest one</text>
+
+        <!-- 2 · a gap -->
+        <text class="lbl-hi" x="196" y="16">2 · a gap in the plane</text>
+        <rect class="dielectric" x="196" y="24" width="170" height="46"/>
+        <rect class="plane" x="196" y="64" width="64" height="8"/>
+        <rect class="plane" x="302" y="64" width="64" height="8"/>
+        <rect class="copper" x="258" y="28" width="46" height="8"/>
+        <path class="flow" marker-end="url(#rp-arrow)" d="M281 40 v14"/>
+        <path class="flow-bad" d="M281 58 H256 V78 H306 V58 H281"/>
+        <text class="lbl" x="196" y="92">the current has nowhere under the trace to be, so it</text>
+        <text class="lbl" x="196" y="104">detours — and the loop it encloses is what radiates</text>
+
+        <!-- 3 · transition, return via close -->
+        <text class="lbl-hi" x="392" y="16">3 · layer change, return via close</text>
+        <rect class="dielectric" x="392" y="24" width="170" height="46"/>
+        <rect class="plane" x="392" y="44" width="170" height="6"/>
+        <rect class="plane" x="392" y="64" width="170" height="6"/>
+        <rect class="copper" x="404" y="28" width="40" height="6"/>
+        <rect class="copper" x="470" y="56" width="40" height="6"/>
+        <path class="copper" d="M441 28 h6 v34 h-6 z"/>
+        <path class="copper" d="M455 44 h5 v26 h-5 z"/>
+        <path class="flow" marker-end="url(#rp-arrow)" d="M447 36 h8"/>
+        <text class="lbl" x="392" y="92">a via nearby lets the return change layer with the</text>
+        <text class="lbl" x="392" y="104">signal, and the loop stays about as small as it was</text>
+
+        <!-- 4 · transition, return via far -->
+        <text class="lbl-hi" x="588" y="16">4 · the same, via far away</text>
+        <rect class="dielectric" x="588" y="24" width="164" height="46"/>
+        <rect class="plane" x="588" y="44" width="164" height="6"/>
+        <rect class="plane" x="588" y="64" width="164" height="6"/>
+        <rect class="copper" x="596" y="28" width="34" height="6"/>
+        <rect class="copper" x="660" y="56" width="34" height="6"/>
+        <path class="copper" d="M627 28 h5 v34 h-5 z"/>
+        <path class="copper" d="M736 44 h5 v26 h-5 z"/>
+        <path class="flow-bad" d="M632 38 H738 V58 H660"/>
+        <text class="lbl" x="588" y="92">the return still has to change layer, and now it goes</text>
+        <text class="lbl" x="588" y="104">the long way — the added loop is inductance in series</text>
+
+      </svg>
+      <figcaption>
+        <b>Four return paths, drawn rather than solved.</b> The lumped model above has
+        no opinion about any of this — it has two terminals. A gap in the reference or a
+        distant return via adds series inductance the delay model cannot see, and the
+        first symptom is usually that the impedance you measure is not the impedance you
+        designed.
+      </figcaption>
+    </figure>
+
+    <div class="note">
+      <b>What that drawing is, and is not</b>
+      <p>
+        <strong>It is a schematic.</strong> The arrows show which way current goes and
+        roughly where it concentrates. They are not streamlines, not field lines, and not
+        the output of any solver — <em>nothing in that figure was computed</em>. Cases 2
+        and 4 enclose a larger loop than 1 and 3, showing the effect directly, and the
+        drawing will not tell you by how much.
+      </p>
+      <p>
+        For a number you need a field solver or a measurement. What the figure is for is
+        recognising which of the four you are looking at on a real board, and therefore
+        which question to ask next.
+      </p>
+      <p>
+        The rest of this lab <em>is</em> computed: the panel above is an exact lattice
+        solution of a uniform line and its
+        <a href="../../model-contract.html#labWaves">model contract</a> says so. This
+        figure is the one place on the page that communicates the idea schematically;
+        streamlines would imply field-solver evidence that this drawing does not provide.
+      </p>
+    </div>
+
+    <h2 class="section-rule"><span>One case that does have a number</span></h2>
+
+    <p>
+      Cases 3 and 4 differ only in where the return via sits, and that particular
+      question has an <em>exact</em> closed form — no field solver and no thin-wire
+      approximation. For two parallel round conductors of radius r whose centres are
+      s apart, the external inductance per unit length is:
+    </p>
+
+    <div class="eq">
+      <span class="eq__main">L′ = (μ₀ ⁄ π) · arccosh( s ⁄ 2r )</span>
+      <span class="eq__note">exact for round conductors at any s &gt; 2r; the familiar (μ₀/π)·ln(s/r) is its s ≫ r limit</span>
+    </div>
+
+    <p>
+      For a 1.6 mm board with 0.3 mm via barrels, that gives the loop the signal via
+      and its return form:
+    </p>
+
+    <div class="table-scroll">
+      <table class="data">
+        <thead><tr><th>Return via at</th><th>Loop inductance</th><th>and at 1 GHz that is</th></tr></thead>
+        <tbody>
+          <tr><td>0.5 mm</td><td><b>0.703 nH</b></td><td>4.4 Ω</td></tr>
+          <tr><td>1.2 mm</td><td>1.321 nH</td><td>8.3 Ω</td></tr>
+          <tr><td>2.0 mm</td><td><b>1.654 nH</b></td><td>10.4 Ω</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>
+      So moving that one via from half a millimetre to two millimetres costs
+      <b>0.95 nH</b> — a factor of <b>2.35</b>, and about <b>6 Ω</b> of extra series
+      reactance at a gigahertz. That is the quantitative version of the difference
+      between cases 3 and 4, and it is the kind of number worth having before a layout
+      review rather than after one.
+    </p>
+
+    <div class="note">
+      <b>Two things about that formula</b>
+      <p>
+        <strong>Use the arccosh, not the logarithm.</strong> At a spacing-to-radius
+        ratio of 2.7 — close barrels, which is exactly the case you care about — the
+        ln form overstates the inductance by <b>23.3%</b>. It converges: 1.2% at a
+        ratio of 6.7, and under 0.1% by 27. The approximation is fine where the answer
+        does not matter and wrong where it does.
+      </p>
+      <p>
+        <strong>It is an estimate of one contribution, not a bound and not a
+        prediction of the board.</strong> This is the <em>external</em> inductance of
+        two uniform round barrels through a board of thickness&nbsp;l. An earlier
+        version of this page called it an upper bound, on the grounds that everything
+        omitted would reduce it. Current shared with other return vias does reduce it.
+        Two other omissions <em>add</em>:
+      </p>
+      <ul class="tight">
+        <li><strong>Internal inductance.</strong> A round conductor carries
+          μ₀⁄8π per unit length inside itself at DC. For two 1.6&nbsp;mm barrels that
+          is <b>0.160&nbsp;nH</b> on top of the 1.199&nbsp;nH external figure at
+          1&nbsp;mm spacing — <b>13.3%</b>. Skin effect expels it as frequency rises,
+          so the formula is close at gigahertz and low at DC.</li>
+        <li><strong>The end transitions.</strong> A barrel meets a trace, and that
+          junction encloses its own loop. Nothing here accounts for it.</li>
+      </ul>
+      <p>
+        So the error is two-sided, which is why this is not a bound. Compare two
+        placements with it; do not quote either as the loop inductance of your net.
+        It is labelled <em>analytical</em> rather than <em>measured</em> for exactly
+        that reason.
+      </p>
+    </div>
+
+    <h2>In the real world</h2>
+    <p>
+      The practical question is almost never "is there a reflection" — there always is. It is
+      whether the ringing has settled by the time the receiver looks. A 2-inch net at
+      170 ps/inch is <b>340 ps one way and 680 ps per round trip</b>, and with a 60 ps edge it
+      will ring for several nanoseconds at small amplitude. At 100 MHz that interval may have little
+      effect on sampling, while at 3.2 GT/s it occupies the available timing budget.
+    </p>
+    <p>
+      That is why the rule of thumb is written in terms of edge rate rather than clock rate:
+      if 2T<sub>d</sub> is shorter than about a third of the rise time, the reflections
+      arrive while the edge is still moving and fold harmlessly into it.
+    </p>
+    <p>
+      Longer than that and the net is <b>electrically long</b>, which means it has to be
+      analysed as a transmission line rather than as a node — the voltage is no longer one
+      number. It does <em>not</em> automatically follow that a separate terminating component is
+      required. A driver whose output impedance already equals Z<sub>0</sub> is series-terminated
+      by construction and needs nothing added; a net whose receiver is reached before the first
+      reflection returns may be fine untermined; an interface with on-die termination has already
+      paid for it. What being electrically long changes is the <em>analysis</em>. Whether it also
+      changes the bill of materials depends on the source impedance, the topology and the timing
+      budget, and the energy panel is the quickest way to see which termination you actually
+      bought.
+    </p>
+  </div>
+
+
+  <!-- pager:start -->
+  <nav class="pager" aria-label="Previous and next topic">
+    <a class="prev" href="../../topics/methodology/measurement-practice.html"><span class="dir">Previous</span><span>SI/PI Measurement: Fixtures, Calibration, and Instrument Effects</span></a>
+    <a class="next" href="../../topics/labs/one-channel.html"><span class="dir">Next</span><span>Lab B: Channel Response, ISI, and Eye Diagrams</span></a>
+  </nav>
+  <!-- pager:end -->
+</main>
+
+<footer class="site-foot">
+  <span>SIPI &#8212; signal and power integrity, visualised.</span>
+  <span>Created and directed by Geetansh Arora. <a href="../../colophon.html">About, review &amp; AI assistance</a> &#183; <a href="../../model-contract.html">Model assumptions</a> &#183; <a href="../../docs/claims.md">Claim ledger</a></span>
+</footer>
+
+<script src="../../js/site.js?v=acb47d86"></script>
+<script src="../../js/viz-kit.js?v=a53e49c3"></script>
+<script src="../../js/viz/lab-waves.js?v=413cf8dd"></script>
+<script src="../../js/viz-loader.js?v=89d5884d"></script>
+<script src="../../js/lab-workspace.js?v=49b1d309"></script>
+<script src="../../js/search.js?v=6c93a285"></script>
+</body>
+</html>

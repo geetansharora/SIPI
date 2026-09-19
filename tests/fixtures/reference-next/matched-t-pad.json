@@ -1,0 +1,61 @@
+{
+  "schemaVersion": 1,
+  "id": "matched-t-pad",
+  "title": "A matched resistive pad halves the wave amplitude",
+  "kind": "pad",
+  "inputs": {
+    "referenceOhms": 50,
+    "seriesOhms": 16.666666666666668,
+    "shuntOhms": 66.66666666666667,
+    "frequencyHz": 1000000000.0
+  },
+  "inputUnits": {
+    "referenceOhms": "ohm",
+    "seriesOhms": "ohm",
+    "shuntOhms": "ohm",
+    "frequencyHz": "Hz"
+  },
+  "checks": [
+    {
+      "metric": "s21Real",
+      "expected": 0.5,
+      "absoluteTolerance": 1e-10,
+      "unit": "-",
+      "derivation": "Symmetric matched T pad: series arms Z0(K−1)/(K+1), shunt 2Z0K/(K²−1), K=2."
+    },
+    {
+      "metric": "s21Imag",
+      "expected": 0.0,
+      "absoluteTolerance": 1e-10,
+      "unit": "-",
+      "derivation": "Pure resistors introduce no reactive phase."
+    },
+    {
+      "metric": "reflectionMagnitude",
+      "expected": 0.0,
+      "absoluteTolerance": 1e-10,
+      "unit": "-",
+      "derivation": "The T-pad input is Z0 when the output is terminated in Z0."
+    },
+    {
+      "metric": "transmittedPower",
+      "expected": 0.25,
+      "absoluteTolerance": 1e-10,
+      "unit": "-",
+      "derivation": "Equal real reference impedances: normalized transmitted power is |S21|²=.25."
+    }
+  ],
+  "evidence": {
+    "type": "analytical",
+    "provenance": "First-principles network limits or algebraic reduction of the declared teaching loop, independent of production numerical output."
+  },
+  "prediction": "If voltage-wave amplitude halves, is half the incident power transmitted?",
+  "explanation": "No. With matched equal real references, transmitted power is one quarter; the resistors dissipate the remaining three quarters.",
+  "limitations": [
+    "Ideal resistors, equal real reference impedances.",
+    "This is a known-attenuation network benchmark, not a lossy transmission-line material model.",
+    "The related lesson does not instantiate this exact T pad."
+  ],
+  "relatedPage": "/topics/fundamentals/s-parameters.html",
+  "availability": "helper-only"
+}

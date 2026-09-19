@@ -1,0 +1,5 @@
+! Non-reciprocal: S21 != S12, as an isolator. Passive: sigma_max = 0.9.
+! Reciprocity alone never implied port symmetry; this file has neither.
+# Hz S RI R 50
+0 0 0 0 0 0.9 0 0 0
+1000000000 0 0 0 0 0.9 0 0 0

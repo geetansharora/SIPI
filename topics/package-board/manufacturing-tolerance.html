@@ -1,0 +1,353 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PCB Manufacturing Variation: Etch, Glass Weave, and Impedance | SIPI</title>
+<meta name="description" content="The three manufacturing variations that move electrical performance, and which of them a length-matched layout cannot fix.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<link rel="stylesheet" href="../../css/base.css?v=e4f774de">
+<link rel="stylesheet" href="../../css/components.css?v=295837ab">
+  <!-- meta:start -->
+  <link rel="canonical" href="https://sipi.work/topics/package-board/manufacturing-tolerance.html">
+  <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="SIPI">
+  <meta property="og:title" content="PCB Manufacturing Variation: Etch, Glass Weave, and Impedance | SIPI">
+  <meta property="og:description" content="The three manufacturing variations that move electrical performance, and which of them a length-matched layout cannot fix.">
+  <meta property="og:url" content="https://sipi.work/topics/package-board/manufacturing-tolerance.html">
+  <meta property="og:image" content="https://sipi.work/assets/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="PCB Manufacturing Variation: Etch, Glass Weave, and Impedance | SIPI">
+  <meta name="twitter:description" content="The three manufacturing variations that move electrical performance, and which of them a length-matched layout cannot fix.">
+  <meta name="twitter:image" content="https://sipi.work/assets/og.png">
+  <!-- meta:end -->
+</head>
+<body>
+
+<header class="masthead">
+  <a class="wordmark" href="../../index.html">SIPI</a>
+  <nav>
+    <a href="../../index.html#fundamentals">Fundamentals</a>
+    <a href="../../index.html#power-integrity">Power</a>
+    <a href="../../index.html#interfaces">Interfaces</a>
+    <a href="../../start.html">Start</a>
+    <a href="../../labs.html">Labs</a>
+    <a href="../../reference.html">Reference</a>
+    <button class="theme-toggle" data-act="theme" type="button">System</button>
+  </nav>
+</header>
+
+<main>
+  <div class="page-head">
+    <p class="crumb"><a href="../../index.html#package-board">Package & board</a> / 06</p>
+    <h1>PCB Manufacturing Variation: Etch, Glass Weave, and Impedance</h1>
+    <p class="byline">
+      <!-- review:start --><span>By Geetansh Arora — Principal SI/PI Engineer</span><time datetime="2026-09-17" title="Technical review by Geetansh Arora on this date">17 Sep 2026</time><span>9 min</span><!-- review:end -->
+    </p>
+    <p class="answer">
+      The board you get is not the board you drew. Traces come out narrower and trapezoidal,
+      dielectric thickness varies with resin flow, and the laminate's dielectric constant depends
+      on where the glass weave happens to sit. All of it moves impedance and delay &#8212; and a
+      design that only works at nominal is a design with a yield problem.
+    </p>
+  </div>
+
+  <!-- ───────────── the picture ───────────── -->
+  <figure class="figure">
+    <div class="figure__bar"><span>Two ways the board differs from the drawing</span></div>
+    <div class="figure__body"><svg viewBox="-4 14 680 250" role="img" aria-label="Two manufacturing effects: an etched trace is trapezoidal and narrower at the top than drawn, and a differential pair running parallel to the glass weave can have one conductor over glass and the other over resin.">
+  <g>
+    <text class="lbl-hi" x="0" y="28">etch — the trace you get is not the trace you drew</text>
+    <rect class="dielectric" x="0" y="80" width="280" height="46"/>
+    <rect class="plane" x="0" y="126" width="280" height="8"/>
+    <path class="edge dash" d="M96,60 L96,80 M184,60 L184,80" stroke="var(--muted)"/>
+    <text class="lbl" x="140" y="54" text-anchor="middle">drawn width</text>
+    <path d="M100,80 L180,80 L172,62 L108,62 Z" fill="var(--signal)" opacity=".8"/>
+    <path class="edge" d="M100,80 L180,80 L172,62 L108,62 Z" stroke="var(--signal)"/>
+    <text class="lbl-sig" x="140" y="100" text-anchor="middle">actual: trapezoid, narrower on top</text>
+    <text class="lbl" x="0" y="160">narrower &#8594; less C &#8594; higher Z&#8320;</text>
+    <text class="lbl" x="0" y="176">so artwork width &#8800; specified width</text>
+    <text class="lbl-ref" x="0" y="200">this is a large slice of the &#177;10% tolerance</text>
+  </g>
+  <g transform="translate(370,0)">
+    <text class="lbl-hi" x="0" y="28">glass weave — length matching cannot fix this</text>
+    <rect class="dielectric" x="0" y="60" width="290" height="70"/>
+    <rect x="0" y="60" width="17" height="70" fill="var(--muted)" opacity=".28"/><rect x="29" y="60" width="17" height="70" fill="var(--muted)" opacity=".28"/><rect x="58" y="60" width="17" height="70" fill="var(--muted)" opacity=".28"/><rect x="87" y="60" width="17" height="70" fill="var(--muted)" opacity=".28"/><rect x="116" y="60" width="17" height="70" fill="var(--muted)" opacity=".28"/><rect x="145" y="60" width="17" height="70" fill="var(--muted)" opacity=".28"/><rect x="174" y="60" width="17" height="70" fill="var(--muted)" opacity=".28"/><rect x="203" y="60" width="17" height="70" fill="var(--muted)" opacity=".28"/><rect x="232" y="60" width="17" height="70" fill="var(--muted)" opacity=".28"/><rect x="261" y="60" width="17" height="70" fill="var(--muted)" opacity=".28"/>
+    <rect class="copper" x="0" y="74" width="290" height="9" rx="1"/>
+    <rect class="copper-2" x="0" y="104" width="290" height="9" rx="1"/>
+    <text class="lbl-sig" x="6" y="72">mostly over glass &#8212; faster</text>
+    <text class="lbl-ref" x="6" y="128">mostly over resin &#8212; slower</text>
+    <text class="lbl-bad" x="0" y="160">equal routed length, different arrival time</text>
+    <text class="lbl" x="0" y="180">serpentines make it worse — they add length</text>
+    <text class="lbl" x="0" y="196">in the same orientation</text>
+    <text class="lbl-sig" x="0" y="220">fix upstream: route 10–15° off the weave,</text>
+    <text class="lbl-sig" x="0" y="236">or specify a spread-glass style</text>
+  </g>
+</svg></div>
+    <figcaption><b>Etching removes copper downward and sideways at once</b>, so a finished trace is trapezoidal and narrower at the top than drawn. Narrower means less capacitance to the plane and therefore a higher Z<sub>0</sub> &#8212; which is why etch variation is one of the larger contributors to the &#177;10% a controlled-impedance build is specified to, and why the artwork width and the specified width are not the same number. <b>Glass weave skew is the one that length matching cannot fix.</b> Laminate is woven glass in resin and the two have different dielectric constants, so a trace running parallel to the weave can sit mostly over glass while its partner three mils away sits mostly over resin. Equal routed lengths, genuinely different velocities &#8212; and adding serpentines makes it worse, because they add length in the same orientation. Every real fix is upstream of layout: route at an angle to the weave, or specify a spread or mechanically-flattened glass style.</figcaption>
+  </figure>
+
+  <div class="prose">
+    <p>
+      When an engineer exports Gerber or ODB++ production files from an EDA tool, the geometry looks
+      mathematically pristine: copper traces have perfectly rectangular cross-sections with vertical sidewalls,
+      dielectric cores are modeled as completely flat and homogeneous, and layer thicknesses are pinned to the
+      exact micrometre. But printed circuit boards are not precision-machined in a cleanroom; they are mass-produced
+      through an aggressive sequence of chemical acid baths, high-pressure hot lamination presses, and mechanical
+      drilling spindles.
+    </p>
+
+    <p>
+      In the fab shop, chemistry and fluid dynamics immediately begin distorting that CAD perfection. Liquid
+      etchant sprays attack copper sideways beneath the photoresist mask as well as downwards, turning sharp
+      rectangular traces into sloping trapezoids. Viscous epoxy resin liquefies under hundreds of pounds of
+      lamination pressure, flowing unevenly into gaps between copper features and causing dielectric thickness
+      to fluctuate across the panel. And the core laminate itself is not uniform plastic — it is a woven textile
+      of glass yarn bundles embedded in resin, creating a microscopic grid of fluctuating dielectric permittivity.
+    </p>
+
+    <p>
+      These manufacturing spreads are not minor aesthetic artifacts; they represent the primary variance in
+      high-speed link margins. A mere <span class="num">0.5 mil</span> etch variation can swing characteristic
+      impedance by <span class="num">5 &Omega;</span>, consuming half of your standard &plusmn;10% tolerance window
+      before components are even soldered. Meanwhile, glass-weave skew can desynchronize a 32 Gbps differential pair
+      by several picoseconds, converting differential data into destructive common-mode noise. Surviving bring-up
+      requires designing for the board the factory actually builds, not the idealized model in your CAD tool.
+    </p>
+
+    <h2>Why a drawn dimension is not a built one</h2>
+
+    <p>
+      A board is manufactured by chemical and mechanical processes, and processes have spread. Three
+      of them matter electrically, and it is worth knowing what each one physically does.
+    </p>
+
+    <p>
+      <strong>Etching</strong> removes copper by dissolving it, and the etchant attacks from the top
+      and the sides at the same time. So a finished trace is trapezoidal rather than rectangular,
+      and narrower at the top than the artwork. How much narrower depends on copper weight,
+      position on the panel, and the fabricator's process.
+    </p>
+
+    <p>
+      <strong>Lamination</strong> presses prepreg between the layers, and the resin flows under heat
+      and pressure. How far it flows depends on how much copper is nearby, so dielectric thickness
+      varies across a board — thinner where there is more copper to flow around.
+    </p>
+
+    <p>
+      <strong>The laminate itself is not uniform.</strong> It is glass fibre woven into bundles, set
+      in resin, and the two materials have different dielectric constants. A trace over a bundle and
+      a trace over the gap between bundles see different effective D<sub>k</sub>.
+    </p>
+
+    <h2 class="section-rule"><span>Etch: the trace you get is not the trace you drew</span></h2>
+
+    <p>
+      Etching removes copper from the top down and sideways at the same time, so a finished trace is
+      trapezoidal rather than rectangular, and narrower at the top than the drawn width. Etch factor
+      varies with copper weight, with position on the panel, and between fabricators.
+    </p>
+
+    <p>
+      The electrical consequence is impedance. A narrower trace has less capacitance to the plane and
+      therefore higher Z<sub>0</sub>, so etch variation shows up directly as impedance variation — and
+      it is one of the larger contributors to the ±10% tolerance that controlled-impedance builds are
+      specified to. The fabricator compensates by adjusting the drawn width to hit the target after
+      etch, which is why the artwork width and the specified width are not the same number.
+    </p>
+
+    <h2 class="section-rule"><span>Dielectric variation</span></h2>
+
+    <p>
+      Laminate D<sub>k</sub> is quoted as a single number and behaves as a distribution. It varies with
+      the ratio of glass to resin, which varies with how the prepreg flowed during lamination, which
+      varies with what copper was underneath. A dense plane area and a sparse routing area press
+      differently, so the same board has different dielectric thickness — and therefore different
+      impedance — in different places.
+    </p>
+
+    <p>
+      This is what impedance coupons are for: a test structure on the panel edge, measured by TDR, that
+      demonstrates the build hit its target. Worth knowing that a coupon proves the panel, not your
+      trace, and it is measured in a location chosen for convenience.
+    </p>
+
+    <div class="note">
+      <b>Glass weave skew is the one length matching cannot fix</b>
+      Laminate is woven glass in resin, and the two have different dielectric constants. A trace running
+      parallel to the weave can sit mostly over glass while its partner three mils away sits mostly over
+      resin — so the two travel at genuinely different velocities. Equal routed lengths arrive at
+      different times, and adding serpentines makes it worse rather than better because it adds length
+      in the same orientation.
+      <br><br>
+      The fixes are all upstream of layout: route at an angle to the weave (10–15° is enough), specify a
+      spread or flattened glass style so the resin-rich and glass-rich regions are smaller than the trace,
+      or use a mechanically-spread laminate. All three are stackup or fabrication decisions.
+    </div>
+
+    <h2 class="section-rule"><span>What to do about it</span></h2>
+
+    <p>
+      Simulate at the corners, not the nominal — and be specific about which corners actually co-vary.
+      Get the <em>directions</em> right first, because they are easy to state backwards: at fixed
+      everything else, a <strong>thinner</strong> dielectric brings the trace closer to its reference,
+      raises the capacitance per unit length and so <strong>lowers</strong> Z₀; a <strong>narrower</strong>
+      trace has less area facing the plane, less capacitance, and so <strong>raises</strong> it. They
+      push in opposite directions, not the same one.
+    </p>
+    <p>
+      That is what makes the real worst case a question about covariance rather than about extremes.
+      <em>Thin and wide</em> is the low-impedance corner; <em>thick and narrow</em> is the high one —
+      and each is a single coherent process outcome. Stacking every parameter at its individual worst
+      value without asking which ones move together can produce a combination that the manufacturing
+      process does not create and a limit the design does not need.
+    </p>
+
+    <p>
+      Then decide what the tolerance is worth. Tightening controlled impedance from ±10% to ±7% costs
+      real money on every board built. It is worth it on a channel that is genuinely reflection-limited,
+      and it is worth nothing at all on one that is loss-limited — where the same money spent on a
+      lower-D<sub>f</sub> laminate would buy far more margin.
+    </p>
+
+    <h2 class="section-rule"><span>Why this decides how your board behaves</span></h2>
+
+    <ul class="tight">
+      <li><strong>Impedance moves, so reflections appear.</strong> A ±10% impedance window is a
+        reflection of up to about 5% at every transition into a terminated part, and that is in your
+        budget whether you accounted for it or not.</li>
+      <li><strong>Delay moves, so length matching drifts.</strong> D<sub>k</sub> sets velocity, so a
+        laminate that came in high is a board where every matched length is slightly wrong.</li>
+      <li><strong>Glass weave breaks pair symmetry.</strong> The two halves of a differential pair
+        can sit over different amounts of glass and genuinely propagate at different speeds — skew
+        that no amount of serpentine matching fixes.</li>
+      <li><strong>It explains board-to-board variation.</strong> The classic "works on some units"
+        failure is usually tolerance, and looking for a design error instead can consume weeks.</li>
+    </ul>
+
+    <h2 class="section-rule"><span>What to do about it</span></h2>
+
+    <p>
+      <strong>Simulate at the corners, not at nominal.</strong> A design that only closes at nominal
+      impedance will have a yield problem, and the symptom will look like a marginal,
+      lot-dependent failure rather than an impedance one.
+    </p>
+
+    <p>
+      <strong>Specify impedance and tolerance, let the fab solve for width.</strong> Fixing the width
+      and hoping means you get the width you asked for and the impedance you did not — which is why
+      artwork width and specified width are different numbers.
+    </p>
+
+    <p>
+      <strong>Address glass weave at the stackup, not the layout.</strong> Spread-glass styles, or
+      routing at an angle to the weave, are the fixes. Both are decided before layout.
+    </p>
+
+    <p>
+      <strong>Ask for coupon data, by lot.</strong> When boards behave differently, the impedance
+      coupons are the fastest way to find out whether the boards were different.
+    </p>
+
+    <div class="note">
+      <b>Using this to find a fault</b>
+      <ul class="tight">
+        <li><b>Some boards pass and some fail, same design.</b> Get the coupon data for both lots
+          before changing anything. This is tolerance until proven otherwise.</li>
+        <li><b>Intra-pair skew with perfectly matched lengths.</b> Glass weave. Check the routing
+          angle relative to the weave direction.</li>
+        <li><b>Impedance off in one region of the board.</b> Resin flow — look at the copper
+          distribution nearby, since thickness varies with how much copper the resin had to flow
+          around.</li>
+        <li><b>Delay longer than the model, uniformly.</b> D<sub>k</sub> came in high. It scales
+          every length on the board by the same ratio, which is a useful signature.</li>
+      </ul>
+    </div>
+
+    <details class="deeper">
+      <summary>Go deeper — which direction each variation pushes, and why they do not simply add</summary>
+
+      <p>
+        The signs matter, because they decide whether two variations reinforce or cancel:
+      </p>
+
+      <ul class="tight">
+        <li><strong>Over-etch</strong> → narrower trace → less capacitance to the plane →
+          <b>higher</b> Z<sub>0</sub>.</li>
+        <li><strong>Thinner dielectric</strong> → plane closer → more capacitance →
+          <b>lower</b> Z<sub>0</sub>, and a shorter return loop.</li>
+        <li><strong>Higher D<sub>k</sub></strong> → more capacitance → <b>lower</b> Z<sub>0</sub>,
+          and a <b>slower</b> wave.</li>
+        <li><strong>Thicker copper</strong> → more cross-section → lower conductor loss, but also a
+          larger etch factor, so the two partly offset.</li>
+      </ul>
+
+      <p>
+        <strong>Why they do not simply add.</strong> A worst-case analysis that stacks every
+        variation at its limit in the same direction is usually far too pessimistic, because the
+        variations are not independent. Resin flow depends on copper distribution; D<sub>k</sub>
+        depends on the glass-to-resin ratio, which is the same quantity that sets thickness. Some of
+        them are correlated, and some are anti-correlated.
+      </p>
+
+      <p>
+        Which is why a serious tolerance analysis is statistical rather than worst-case: sample the
+        distributions, respect the correlations, and look at the resulting spread. Stacking limits
+        gives a number that no board will ever exhibit and can lead you to over-design expensively.
+      </p>
+
+      <p>
+        <strong>And the one that is genuinely not a distribution.</strong> Glass weave skew is not a
+        random spread around a mean — it depends on where a specific trace happens to sit relative
+        to a specific weave, which is essentially arbitrary and can differ between two pairs on the
+        same board. It is better treated as a bounded worst case than as a tolerance.
+      </p>
+    </details>
+
+    <h2 class="section-rule"><span>In the real world</span></h2>
+
+    <p>
+      Tolerance is the difference between a design that works and a product that ships. A prototype
+      that passes is one sample from a distribution, and the interesting question is always what the
+      rest of the distribution does.
+    </p>
+
+    <p>
+      Which makes coupon data one of the more valuable things you can ask for routinely rather than
+      only in a crisis. A few builds' worth of impedance measurements tells you what your actual
+      spread is, and whether the ±10% you designed against is generous or optimistic for the
+      fabricator you are using.
+    </p>
+
+    <h3>Related</h3>
+    <ul class="tight">
+      <li><a href="../package-board/stackup-design.html">PCB Stackup Design and Dielectric Selection</a></li>
+      <li><a href="../fundamentals/differential-signalling.html">Differential Signaling and Mode Conversion</a></li>
+      <li><a href="../fundamentals/characteristic-impedance.html">Transmission-Line Characteristic Impedance</a></li>
+      <li><a href="../methodology/correlation.html">Correlating Simulation and Measurement</a></li>
+    </ul>
+  </div>
+
+  <!-- pager:start -->
+  <nav class="pager" aria-label="Previous and next topic">
+    <a class="prev" href="../../topics/package-board/connectors-cables.html"><span class="dir">Previous</span><span>High-Speed Connectors and Cables</span></a>
+    <a class="next" href="../../topics/package-board/package-and-system.html"><span class="dir">Next</span><span>Package Interconnects as Transmission Lines</span></a>
+  </nav>
+  <!-- pager:end -->
+</main>
+
+<footer class="site-foot">
+  <span>SIPI &#8212; signal and power integrity, visualised.</span>
+  <span>Created and directed by Geetansh Arora. <a href="../../colophon.html">About, review &amp; AI assistance</a> &#183; <a href="../../model-contract.html">Model assumptions</a> &#183; <a href="../../docs/claims.md">Claim ledger</a></span>
+</footer>
+
+<script src="../../js/site.js?v=acb47d86"></script>
+<script src="../../js/search.js?v=6c93a285"></script>
+</body>
+</html>

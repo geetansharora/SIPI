@@ -1,0 +1,75 @@
+{
+  "schemaVersion": 1,
+  "id": "two-bank-anti-resonance",
+  "title": "Two capacitor banks: the reactance cancellation and the impedance peak are not the same frequency",
+  "kind": "two-bank-anti-resonance",
+  "availability": "helper-only",
+  "inputs": {
+    "bigCapacitance": 1e-05,
+    "bigEsr": 0.01,
+    "bigEsl": 1.2e-09,
+    "smallCapacitance": 1e-07,
+    "smallEsr": 0.008,
+    "smallEsl": 1.2e-09,
+    "sweepFrom": 10000.0,
+    "sweepTo": 1000000000.0
+  },
+  "inputUnits": {
+    "bigCapacitance": "F",
+    "bigEsr": "ohm",
+    "bigEsl": "H",
+    "smallCapacitance": "F",
+    "smallEsr": "ohm",
+    "smallEsl": "H",
+    "sweepFrom": "Hz",
+    "sweepTo": "Hz"
+  },
+  "prediction": "Two banks self-resonate a decade apart. Between them one is inductive and the other still capacitive, so there is an impedance peak. Predict whether that peak sits exactly where the two reactances cancel.",
+  "explanation": "It does not, and the difference is the loss. Where the total susceptance crosses zero the two reactive currents cancel exactly and the pair looks purely resistive; that frequency is set by L and C alone. The |Z| MAXIMUM is set by the whole admittance including the conductances, so it sits slightly below. With these values the cancellation is at 10.309 MHz and the peak at 10.257 MHz, half a percent apart. Reduce the ESR and the two converge, which is the sense in which the susceptance zero is the lossless answer.",
+  "limitations": [
+    "Two ideal series R-L-C branches in parallel, no plane inductance, no VRM, no spatial distribution.",
+    "The peak height scales as 1/ESR only while the tank is underdamped; that relation is asserted where it holds and its breakdown is asserted separately in check-models.js."
+  ],
+  "evidence": {
+    "type": "analytical",
+    "provenance": "Y(w) = SUM 1/(R + jwL + 1/(jwC)) summed here from the branch values, with the susceptance zero found by bisection strictly between the two self-resonances. Independent of the model’s peak search, which is a golden-section refinement of a swept magnitude."
+  },
+  "relatedPage": "/topics/power-integrity/anti-resonance.html",
+  "checks": [
+    {
+      "metric": "selfResonanceBig",
+      "expected": 1452879.207831368,
+      "absoluteTolerance": 1.0,
+      "unit": "Hz",
+      "derivation": "1/(2*pi*sqrt(L*C)) with L = 1.2 nH and C = 10 uF."
+    },
+    {
+      "metric": "selfResonanceSmall",
+      "expected": 14528792.078313682,
+      "absoluteTolerance": 10.0,
+      "unit": "Hz",
+      "derivation": "1/(2*pi*sqrt(L*C)) with L = 1.2 nH and C = 100 nF."
+    },
+    {
+      "metric": "susceptanceZero",
+      "expected": 10308816.809450839,
+      "absoluteTolerance": 100.0,
+      "unit": "Hz",
+      "derivation": "Im(Y) = 0, bisected between the two self-resonances."
+    },
+    {
+      "metric": "peakFrequency",
+      "expected": 10257319.844175953,
+      "absoluteTolerance": 1000.0,
+      "unit": "Hz",
+      "derivation": "The |Z| maximum from the model’s own swept search; deliberately compared with, and not equated to, the susceptance zero."
+    },
+    {
+      "metric": "resistanceAtCancellation",
+      "expected": 0.32890078673361584,
+      "absoluteTolerance": 1e-09,
+      "unit": "ohm",
+      "derivation": "1/G at the susceptance zero, where B = 0 so |Z| = 1/G."
+    }
+  ]
+}

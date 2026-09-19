@@ -1,0 +1,382 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Transmission-Line Characteristic Impedance | SIPI</title>
+<meta name="description" content="Z₀ is not a resistance you can measure with a meter — it is the ratio the geometry forces on a wave while it is still travelling.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<link rel="stylesheet" href="../../css/base.css?v=e4f774de">
+<link rel="stylesheet" href="../../css/components.css?v=295837ab">
+  <!-- meta:start -->
+  <link rel="canonical" href="https://sipi.work/topics/fundamentals/characteristic-impedance.html">
+  <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="SIPI">
+  <meta property="og:title" content="Transmission-Line Characteristic Impedance | SIPI">
+  <meta property="og:description" content="Z₀ is not a resistance you can measure with a meter — it is the ratio the geometry forces on a wave while it is still travelling.">
+  <meta property="og:url" content="https://sipi.work/topics/fundamentals/characteristic-impedance.html">
+  <meta property="og:image" content="https://sipi.work/assets/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Transmission-Line Characteristic Impedance | SIPI">
+  <meta name="twitter:description" content="Z₀ is not a resistance you can measure with a meter — it is the ratio the geometry forces on a wave while it is still travelling.">
+  <meta name="twitter:image" content="https://sipi.work/assets/og.png">
+  <!-- meta:end -->
+</head>
+<body>
+
+<header class="masthead">
+  <a class="wordmark" href="../../index.html">SIPI</a>
+  <nav>
+    <a href="../../index.html#fundamentals">Fundamentals</a>
+    <a href="../../index.html#power-integrity">Power</a>
+    <a href="../../index.html#interfaces">Interfaces</a>
+    <a href="../../start.html">Start</a>
+    <a href="../../labs.html">Labs</a>
+    <a href="../../reference.html">Reference</a>
+    <button class="theme-toggle" data-act="theme" type="button">System</button>
+  </nav>
+</header>
+
+<main>
+  <div class="page-head">
+    <p class="crumb"><a href="../../index.html#fundamentals">Fundamentals</a> / 03</p>
+    <h1>Transmission-Line Characteristic Impedance</h1>
+    <p class="byline">
+      <!-- review:start --><span>By Geetansh Arora — Principal SI/PI Engineer</span><time datetime="2026-09-12" title="Technical review by Geetansh Arora on this date">12 Sep 2026</time><span>10 min</span><!-- review:end -->
+    </p>
+    <p class="answer">
+      Put a multimeter on a 50 Ω trace and it will not read 50 Ω. It reads almost zero, or
+      infinity. That is not a faulty meter &#8212; Z<sub>0</sub> is not a resistance you can
+      measure with a steady voltage. It is the voltage-to-current ratio supported by a
+      travelling wave, set by the geometry and materials around the conductors. On a finite line,
+      the source sees that relationship until information about the termination returns.
+    </p>
+  </div>
+
+  <!-- ───────────── the picture ───────────── -->
+  <figure class="figure">
+    <div class="figure__bar"><span>Where the field goes &#183; microstrip vs stripline</span></div>
+    <div class="figure__pair">
+      <div><span class="figure__label">Microstrip &#8212; surface layer</span><svg viewBox="0 0 340 200" role="img" aria-label="Microstrip cross-section: a trace on the surface of the dielectric with a ground plane below. Some of the electric field lines leave the trace upward into air.">
+  <text class="lbl" x="24" y="20">air &#8212; &#949;<tspan dy="3" font-size="8">r</tspan><tspan dy="-3"> = 1</tspan></text>
+  <rect class="dielectric" x="20" y="100" width="300" height="62"/>
+  <rect class="plane" x="20" y="162" width="300" height="9"/>
+  <g class="field">
+    <path d="M158,100 C150,110 140,130 132,162"/>
+    <path d="M150,98 C120,96 96,120 96,162"/>
+    <path d="M152,94 C136,72 130,54 126,34"/>
+    <path d="M170,92 C170,70 170,52 170,32"/>
+    <path d="M188,94 C204,72 210,54 214,34"/>
+    <path d="M190,98 C220,96 244,120 244,162"/>
+    <path d="M182,100 C190,110 200,130 208,162"/>
+    <path d="M170,100 L170,162"/>
+  </g>
+  <rect class="copper" x="150" y="88" width="40" height="12" rx="1"/>
+  <text class="lbl-sig" x="170" y="80" text-anchor="middle">signal</text>
+  <text class="lbl" x="24" y="136">&#949;<tspan dy="3" font-size="8">r</tspan><tspan dy="-3"> = 4.2</tspan></text>
+  <text class="lbl" x="24" y="184">GND</text>
+  <g class="tick"><path d="M296,100 L296,162" class="dash"/></g>
+  <text class="lbl" x="302" y="132">h</text>
+</svg></div>
+      <div><span class="figure__label">Stripline &#8212; buried</span><svg viewBox="0 0 340 200" role="img" aria-label="Stripline cross-section: a trace buried between two ground planes, with every electric field line contained inside the dielectric.">
+  <rect class="plane" x="20" y="30" width="300" height="9"/>
+  <rect class="dielectric" x="20" y="39" width="300" height="123"/>
+  <rect class="plane" x="20" y="162" width="300" height="9"/>
+  <g class="field">
+    <path d="M158,100 C150,112 140,132 132,162"/>
+    <path d="M150,98 C120,98 96,124 96,162"/>
+    <path d="M158,94 C150,82 140,62 132,39"/>
+    <path d="M150,96 C120,96 96,66 96,39"/>
+    <path d="M182,100 C190,112 200,132 208,162"/>
+    <path d="M190,98 C220,98 244,124 244,162"/>
+    <path d="M182,94 C190,82 200,62 208,39"/>
+    <path d="M190,96 C220,96 244,66 244,39"/>
+    <path d="M170,100 L170,162"/><path d="M170,94 L170,39"/>
+  </g>
+  <rect class="copper" x="150" y="94" width="40" height="12" rx="1"/>
+  <text class="lbl" x="24" y="24">GND</text>
+  <text class="lbl" x="24" y="184">GND</text>
+  <text class="lbl" x="24" y="76">&#949;<tspan dy="3" font-size="8">r</tspan><tspan dy="-3"> = 4.2 everywhere</tspan></text>
+</svg></div>
+    </div>
+    <figcaption><b>The field is the impedance.</b> Z<sub>0</sub> is set by the capacitance to the reference plane and the inductance of the current loop, and both are drawn above. Push the trace closer to the plane and the field lines shorten &#8212; more capacitance, lower Z<sub>0</sub>. Widen the trace and the same thing happens. The stripline is loaded from both sides, so it needs a narrower trace than the microstrip to reach the same impedance. Note the difference that matters elsewhere on this site: the microstrip's field partly travels through <em>air</em>, so its effective &#949;<sub>r</sub> is lower and it propagates faster &#8212; about 147 ps/inch against the stripline's 173. That same inhomogeneity is why microstrip has far-end crosstalk and an ideal stripline has almost none.</figcaption>
+  </figure>
+
+  <div class="prose">
+    <h2>Why a wire has an impedance at all</h2>
+
+    <p>
+      If you have ever put a multimeter across a PCB trace and measured nearly
+      zero ohms, you have already discovered the confusion at the heart of
+      characteristic impedance. The stackup drawing says 50 &#8486;, but your meter
+      says the trace is a short. Both are correct — they are measuring
+      different things.
+    </p>
+
+    <p>
+      A multimeter applies a steady voltage and measures the resulting current.
+      A copper trace is a good conductor, so the steady-state resistance is
+      negligible. Characteristic impedance is not that. It is the ratio of
+      voltage to current in a <em>travelling wave</em> — a relationship that
+      exists only while an edge is propagating down the line and has not yet
+      reached the far end. The driver does not know what is at the far end, so
+      it sees the line's Z<sub>0</sub> as its load, and it acts accordingly
+      until information about the termination arrives.
+    </p>
+
+    <p>
+      That distinction — a wave property, not a material property — is what
+      makes Z<sub>0</sub> depend on geometry (trace width, dielectric
+      thickness, copper distance to the reference plane) rather than on trace
+      length. A 1-inch trace and a 10-inch trace of the same cross-section
+      have the same Z<sub>0</sub>; only the delay differs.
+    </p>
+
+    <p>
+      Start with something uncontroversial. A trace running over a plane has
+      <strong>capacitance</strong> between the two — two conductors with an insulator between
+      them is the definition of a capacitor. It also has <strong>inductance</strong>, because
+      current going out along the trace and back along the plane encloses a loop, and any
+      current loop has inductance.
+    </p>
+
+    <p>
+      Neither of those is concentrated anywhere. There is no capacitor component and no
+      inductor component; there is a little of each in every millimetre. So we quote them
+      <em>per unit length</em>: so many picofarads per inch, so many nanohenries per inch. Their
+      distributed nature introduces propagation delay and spatially varying voltage and current;
+      those effects are what a lumped RLC model leaves out.
+    </p>
+
+    <h2 class="section-rule"><span>What the signal has to do to move forward</span></h2>
+
+    <p>
+      Now follow an edge as it travels. At the wavefront, the trace ahead is still at zero volts
+      and the trace behind has been charged up. To advance by one more millimetre, the signal
+      must do two things at once:
+    </p>
+
+    <ul class="tight">
+      <li><strong>Charge that millimetre's capacitance</strong> to the signal voltage. That takes
+        a certain amount of charge, and charge arriving per second is current.</li>
+      <li><strong>Push that current through that millimetre's inductance.</strong> Inductance
+        resists a change in current, and that resistance shows up as a voltage.</li>
+    </ul>
+
+    <p>
+      So the voltage is setting the current (through C) and the current is setting the voltage
+      (through L) — at the same time, everywhere along the line. There is exactly one ratio of
+      voltage to current that satisfies both conditions simultaneously, and that ratio is the
+      characteristic impedance.
+    </p>
+
+    <div class="eq">
+      <span class="eq__main"><i class="var">Z</i><sub>0</sub> = √( <i class="var">L</i> / <i class="var">C</i> ) &nbsp;&nbsp;&nbsp;&nbsp; <i class="var">v</i> = 1 / √( <i class="var">L</i> · <i class="var">C</i> )</span>
+      <span class="eq__note">L and C per unit length. Notice what is missing: length itself. A 1-inch trace and a 10-inch trace of the same cross-section have the same Z₀ — only the delay differs.</span>
+    </div>
+
+    <p>
+      This is why the multimeter reads nothing useful. A meter applies a steady voltage and waits.
+      By the time it takes a reading, the wave has long since reached the far end and come back,
+      and what the meter sees is whatever is actually connected there — a short, or an open. Z₀
+      remains a property of the line, but a DC measurement at the input is dominated by the load
+      after the round-trip delay. Feed a genuinely endless 50 Ω line and it will draw 20 mA per
+      volt indefinitely because no reflection ever returns from a far end.
+    </p>
+
+    <h2 class="section-rule"><span>What moves the number</span></h2>
+
+    <p>
+      Every geometry lever works through L and C, and mostly through C. Look at the two
+      cross-sections above while you read these — the field lines are the capacitance.
+    </p>
+
+    <ul class="tight">
+      <li><strong>Wider trace → lower Z<sub>0</sub>.</strong> More plate area facing the plane,
+        so more capacitance. This is the coarse knob, and the one manufacturing tolerance moves
+        most, because etching is what varies.</li>
+      <li><strong>Thicker dielectric → higher Z<sub>0</sub>.</strong> The plane is further away,
+        so there is less capacitance and a bigger current loop — less C and more L, and both
+        push the same way. Moving a signal layer one prepreg further from its reference can shift
+        Z<sub>0</sub> by 10 Ω or more.</li>
+      <li><strong>Higher D<sub>k</sub> → lower Z<sub>0</sub>.</strong> A higher-permittivity
+        insulator stores more charge for the same voltage, so more C. It also slows the wave down,
+        because v depends on the same product.</li>
+      <li><strong>A second reference plane → lower Z<sub>0</sub>.</strong> A stripline is loaded
+        capacitively from above and below, so it needs a narrower trace than a microstrip to hit
+        the same impedance.</li>
+    </ul>
+
+    <div class="note">
+      <b>Why 50 Ω, and why your high-speed pairs are not 50 Ω</b>
+      50 Ω is a coaxial-cable compromise that stuck. In air-filled coax, minimum attenuation lands
+      near 77 Ω and maximum power handling near 30 Ω; 50 is close to the geometric mean of the two,
+      and it happens to fall out of buildable PCB geometry as well.
+      <br><br>
+      Differential pairs largely ignore it — PCIe signs off at 85 Ω differential, USB 3.x at 90 Ω,
+      MIPI at 100 Ω. Those numbers did not come from cable history; they came from what the
+      receiver's on-die termination could be built to. Which is the right way round: the
+      termination and the trace have to match each other, and it is the silicon that is hard to
+      change.
+    </div>
+
+    <h2 class="section-rule"><span>Why this decides how your board behaves</span></h2>
+
+    <p>
+      Z<sub>0</sub> matters for exactly one reason: <strong>a wave reflects wherever the impedance
+      changes.</strong> Everything else follows from that.
+    </p>
+
+    <ul class="tight">
+      <li><strong>Termination only works if it matches.</strong> A 50 Ω resistor on a 60 Ω trace
+        still reflects about 9% of the incident wave. See
+        <a href="reflections.html">reflections</a>.</li>
+      <li><strong>Every impedance change is a discontinuity.</strong> A via, a connector footprint,
+        a run under a component pad, a place where the reference plane ends — each is a local
+        change in L and C, and each sends part of the signal back. See
+        <a href="vias.html">vias</a>.</li>
+      <li><strong>Tolerance is margin you have already spent.</strong> Controlled impedance is
+        specified with a window, typically ±10%, sometimes ±7% on a critical layer at a premium.
+        A 10% window on 50 Ω means a trace that could be 45 Ω against an 85 Ω pair partner, and
+        the reflection that follows is in your budget whether you accounted for it or not.</li>
+    </ul>
+
+    <h2 class="section-rule"><span>What to do about it</span></h2>
+
+    <p>
+      <strong>Specify impedance on the fabrication drawing, not the trace width.</strong> Width is
+      the fab's variable to solve for. If you fix the width and the fab's prepreg comes in thinner
+      than nominal, you get the width you asked for and the impedance you did not. Give them the
+      target and the tolerance and let them adjust the etch.
+    </p>
+
+    <p>
+      <strong>Ask which layer the coupon was measured on.</strong> Impedance coupons are built on
+      the panel edge and measured by TDR. A stackup with several signal layers does not necessarily
+      hit target on all of them, and the outer layers behave differently from the buried ones
+      because one side of a microstrip is air.
+    </p>
+
+    <p>
+      <strong>Budget the tolerance rather than the nominal.</strong> If the build is ±10%, run the
+      sign-off simulation at both corners. A design that only closes at nominal impedance is a
+      design that will have a yield problem, and the symptom will look like a marginal, temperature-
+      and board-dependent failure rather than an impedance problem.
+    </p>
+
+    <div class="note">
+      <b>Using this to find a fault</b>
+      <ul class="tight">
+        <li><b>A net rings on some boards and not others.</b> Impedance tolerance is one useful
+          candidate, alongside assembly and loading differences. Compare coupon or TDR data from
+          passing and failing boards before changing the termination.</li>
+        <li><b>TDR shows a step, not a spike.</b> A sustained level change means the trace itself is
+          off target — a width or stackup issue. A brief excursion that returns to level is a local
+          discontinuity like a via. The two have entirely different fixes.</li>
+        <li><b>Impedance is right on one layer and wrong on another.</b> Check whether the reference
+          plane for the failing layer is where you think it is. A signal layer referenced to a split
+          plane, or to a plane two dielectrics away, has an impedance that the intended stackup calculation did not cover.</li>
+      </ul>
+    </div>
+
+    <details class="deeper">
+      <summary>Go deeper — where √(L/C) comes from, and what changes when the line is lossy</summary>
+
+      <p>
+        The telegrapher's equations describe a line as series impedance and shunt admittance per
+        unit length. In general:
+      </p>
+
+      <div class="eq">
+        <span class="eq__main"><i class="var">Z</i><sub>0</sub> = √( (<i class="var">R</i> + j<i class="var">ω</i><i class="var">L</i>) / (<i class="var">G</i> + j<i class="var">ω</i><i class="var">C</i>) )</span>
+        <span class="eq__note">R = series resistance, G = shunt conductance, both per unit length</span>
+      </div>
+
+      <p>
+        At the frequencies that matter for a digital edge, ωL is far larger than R and ωC far larger
+        than G, so both R and G drop out and the expression collapses to √(L/C). That is the
+        <em>lossless</em> approximation. It is often useful across the frequency range that carries
+        a digital edge when conductor and dielectric loss are small compared with the reactive
+        terms; lossy or dispersive structures require the full expression. Two consequences are
+        worth knowing:
+      </p>
+
+      <ul class="tight">
+        <li><strong>Z<sub>0</sub> is not perfectly flat with frequency.</strong> At low frequencies,
+          where R is comparable to ωL, the impedance rises and acquires a phase angle. This is why a
+          TDR trace often shows a slow upward drift along a long lossy trace: the instrument is
+          reporting a real effect, not drifting.</li>
+        <li><strong>Above a few GHz, R rises as √f</strong> because of the skin effect, but ωL rises
+          as f, so the ratio keeps improving. The lossless approximation gets <em>better</em> with
+          frequency, not worse. See <a href="loss-mechanisms.html">loss mechanisms</a>.</li>
+      </ul>
+
+      <p>
+        There is also a neat energy argument for √(L/C) that avoids the equations entirely. A wave
+        travelling at velocity v deposits ½CV² of electric energy and ½LI² of magnetic energy in
+        every unit length it passes. For the wave to propagate without changing shape, the two must
+        be equal — otherwise energy would have to move between the electric and magnetic forms as
+        the wave travelled, which would mean the shape changing. Set ½CV² = ½LI² and rearrange:
+        V/I = √(L/C). The wave is the state in which the fields are in balance.
+      </p>
+
+      <p>
+        Lastly, the velocity. Because v = 1/√(LC) and the same capacitance that sets Z<sub>0</sub>
+        also sets v, the two are not independent. In a uniform dielectric,
+        v = c/√(D<sub>k</sub>) — about 170 ps per inch in FR-4 with D<sub>k</sub> ≈ 4.2. A microstrip
+        is faster than a stripline on the same board, because part of its field is in air, and its
+        effective D<sub>k</sub> is therefore lower than the laminate's. That mixed field is also why
+        microstrip is harder to control and why microstrip crosstalk has a
+        <a href="crosstalk.html">far-end term that stripline does not</a>.
+      </p>
+    </details>
+
+    <h2 class="section-rule"><span>In the real world</span></h2>
+
+    <p>
+      The most common impedance problem is not getting the number wrong — it is losing the reference.
+      A carefully controlled 50 Ω trace crossing a gap in its plane is not 50 Ω over the gap, because
+      the return current has nowhere to flow directly beneath it. The stackup drawing says 50 Ω, the
+      coupon measures 50 Ω, and the net still fails, because the impedance of a trace is a property of
+      the trace <em>and its return path together</em>. See
+      <a href="return-current-paths.html">return current paths</a>.
+    </p>
+
+    <p>
+      The habit worth building: whenever you see an impedance number, ask “referenced to what?” A
+      trace has no impedance on its own. It only has one relative to the conductor its return current
+      is using — and on a real board, that is not always the plane you drew it over.
+    </p>
+
+    <h3>Related</h3>
+    <ul class="tight">
+      <li><a href="when-is-a-trace-a-transmission-line.html">When does a trace become a transmission line?</a> — when the number starts to matter</li>
+      <li><a href="reflections.html">Transmission-Line Reflections and Ringing</a> — what a mismatch costs</li>
+      <li><a href="return-current-paths.html">Return-Current Paths and Reference Continuity</a> — the other half of every impedance</li>
+      <li><a href="differential-signalling.html">Differential Signaling and Mode Conversion</a> — odd and even mode impedance</li>
+      <li><a href="../package-board/manufacturing-tolerance.html">PCB Manufacturing Variation: Etch, Glass Weave, and Impedance</a> — the window you actually get</li>
+    </ul>
+  </div>
+
+  <!-- pager:start -->
+  <nav class="pager" aria-label="Previous and next topic">
+    <a class="prev" href="../../topics/fundamentals/when-is-a-trace-a-transmission-line.html"><span class="dir">Previous</span><span>When does a trace become a transmission line?</span></a>
+    <a class="next" href="../../topics/fundamentals/reflections.html"><span class="dir">Next</span><span>Transmission-Line Reflections and Ringing</span></a>
+  </nav>
+  <!-- pager:end -->
+</main>
+
+<footer class="site-foot">
+  <span>SIPI &#8212; signal and power integrity, visualised.</span>
+  <span>Created and directed by Geetansh Arora. <a href="../../colophon.html">About, review &amp; AI assistance</a> &#183; <a href="../../model-contract.html">Model assumptions</a> &#183; <a href="../../docs/claims.md">Claim ledger</a></span>
+</footer>
+
+<script src="../../js/site.js?v=acb47d86"></script>
+<script src="../../js/search.js?v=6c93a285"></script>
+</body>
+</html>

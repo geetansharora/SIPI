@@ -1,0 +1,383 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PCB Stackup Design and Dielectric Selection | SIPI</title>
+<meta name="description" content="Why layer count is set by references rather than routing, how dielectric height controls impedance and crosstalk together, and when the material choice matters.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<link rel="stylesheet" href="../../css/base.css?v=e4f774de">
+<link rel="stylesheet" href="../../css/components.css?v=295837ab">
+  <!-- meta:start -->
+  <link rel="canonical" href="https://sipi.work/topics/package-board/stackup-design.html">
+  <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="SIPI">
+  <meta property="og:title" content="PCB Stackup Design and Dielectric Selection | SIPI">
+  <meta property="og:description" content="Why layer count is set by references rather than routing, how dielectric height controls impedance and crosstalk together, and when the material choice matters.">
+  <meta property="og:url" content="https://sipi.work/topics/package-board/stackup-design.html">
+  <meta property="og:image" content="https://sipi.work/assets/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="PCB Stackup Design and Dielectric Selection | SIPI">
+  <meta name="twitter:description" content="Why layer count is set by references rather than routing, how dielectric height controls impedance and crosstalk together, and when the material choice matters.">
+  <meta name="twitter:image" content="https://sipi.work/assets/og.png">
+  <!-- meta:end -->
+</head>
+<body>
+
+<header class="masthead">
+  <a class="wordmark" href="../../index.html">SIPI</a>
+  <nav>
+    <a href="../../index.html#fundamentals">Fundamentals</a>
+    <a href="../../index.html#power-integrity">Power</a>
+    <a href="../../index.html#interfaces">Interfaces</a>
+    <a href="../../start.html">Start</a>
+    <a href="../../labs.html">Labs</a>
+    <a href="../../reference.html">Reference</a>
+    <button class="theme-toggle" data-act="theme" type="button">System</button>
+  </nav>
+</header>
+
+<main>
+  <div class="page-head">
+    <p class="crumb"><a href="../../index.html#package-board">Package & board</a> / 02</p>
+    <h1>PCB Stackup Design and Dielectric Selection</h1>
+    <p class="byline">
+      <!-- review:start --><span>By Geetansh Arora — Principal SI/PI Engineer</span><time datetime="2026-09-16" title="Technical review by Geetansh Arora on this date">16 Sep 2026</time><span>9 min</span><!-- review:end -->
+    </p>
+    <p class="answer">
+      A stackup is the one decision that constrains everything else. Impedance, loss, crosstalk,
+      return paths, via stubs and the PDN's plane capacitance are all set by it, and it is fixed
+      before a single trace is routed. Almost every signal integrity problem that cannot be fixed
+      later was decided here.
+    </p>
+  </div>
+
+  <!-- ───────────── the picture ───────────── -->
+  <figure class="figure">
+    <div class="figure__bar"><span>Eight layers &#183; three of them for signals</span></div>
+    <div class="figure__body"><svg viewBox="-4 14 700 232" role="img" aria-label="An eight layer stackup showing signal layers each adjacent to a reference plane, a symmetric build, and a power-ground plane pair.">
+  <text class="lbl-hi" x="0" y="26">8 layers &#8212; and only three of them carry signals</text>
+  <rect class="dielectric" x="90" y="34" width="340" height="22"/><rect class="copper" x="150" y="34" width="34" height="8" rx="1"/><rect class="copper" x="212" y="34" width="34" height="8" rx="1"/><rect class="copper" x="300" y="34" width="34" height="8" rx="1"/><text class="lbl-hi" x="82" y="42" text-anchor="end">L1</text><text class="lbl" x="440" y="42">signal &#183; microstrip · fast, but FEXT</text><rect class="dielectric" x="90" y="56" width="340" height="20"/><rect x="90" y="56" width="340" height="6" fill="var(--muted)" opacity=".55"/><text class="lbl-hi" x="82" y="62" text-anchor="end">L2</text><text class="lbl" x="440" y="62">GND &#183; reference for L1 and L3</text><rect class="dielectric" x="90" y="76" width="340" height="22"/><rect class="copper" x="150" y="76" width="34" height="8" rx="1"/><rect class="copper" x="212" y="76" width="34" height="8" rx="1"/><rect class="copper" x="300" y="76" width="34" height="8" rx="1"/><text class="lbl-hi" x="82" y="84" text-anchor="end">L3</text><text class="lbl" x="440" y="84">signal &#183; stripline · no FEXT</text><rect class="dielectric" x="90" y="98" width="340" height="20"/><rect x="90" y="98" width="340" height="6" fill="var(--muted)" opacity=".55"/><text class="lbl-hi" x="82" y="104" text-anchor="end">L4</text><text class="lbl" x="440" y="104">PWR &#183; plane pair with L5</text><rect class="dielectric" x="90" y="118" width="340" height="20"/><rect x="90" y="118" width="340" height="6" fill="var(--muted)" opacity=".55"/><text class="lbl-hi" x="82" y="124" text-anchor="end">L5</text><text class="lbl" x="440" y="124">GND &#183; thin dielectric here = better decaps</text><rect class="dielectric" x="90" y="138" width="340" height="22"/><rect class="copper" x="150" y="138" width="34" height="8" rx="1"/><rect class="copper" x="212" y="138" width="34" height="8" rx="1"/><rect class="copper" x="300" y="138" width="34" height="8" rx="1"/><text class="lbl-hi" x="82" y="146" text-anchor="end">L6</text><text class="lbl" x="440" y="146">signal &#183; stripline</text><rect class="dielectric" x="90" y="160" width="340" height="20"/><rect x="90" y="160" width="340" height="6" fill="var(--muted)" opacity=".55"/><text class="lbl-hi" x="82" y="166" text-anchor="end">L7</text><text class="lbl" x="440" y="166">GND &#183; reference for L6 and L8</text><rect class="dielectric" x="90" y="180" width="340" height="22"/><rect class="copper" x="150" y="180" width="34" height="8" rx="1"/><rect class="copper" x="212" y="180" width="34" height="8" rx="1"/><rect class="copper" x="300" y="180" width="34" height="8" rx="1"/><text class="lbl-hi" x="82" y="188" text-anchor="end">L8</text><text class="lbl" x="440" y="188">signal &#183; microstrip</text>
+  
+  <text class="lbl-bad" x="0" y="220">layer count is set by reference planes, not by routing &#8212; and by having to come out of the press flat</text>
+</svg></div>
+    <figcaption><b>Routing capacity is only one input to the stackup layer count.</b> Every high-speed signal layer needs a solid reference plane immediately adjacent, because that plane is where the return current runs &#8212; and layers you add for references cost exactly as much as layers you add for routing. Symmetry is the second constraint and it is mechanical: an asymmetric build warps during lamination, which is why stackups jump 4, 6, 8, 10 rather than moving one at a time. The most powerful single number here is the distance from a trace to its plane, because it sets three things at once: impedance (closer means lower Z<sub>0</sub>), crosstalk (halving the height roughly quarters the coupling), and the quality of every return path and decoupling loop referenced to it. On a dense design that trade is worth taking &#8212; thin dielectric, narrow traces, more loss, far less crosstalk. On a long lossy channel it reverses.</figcaption>
+  </figure>
+
+  <div class="prose">
+    <p>
+      When designing a high-speed circuit board, the most consequential architectural decisions happen before
+      the CAD engineer routes a single net. You cannot define the geometry of a 50 &Omega; single-ended line or
+      a 100 &Omega; differential pair without first knowing the dielectric thickness and relative permittivity
+      (<i class="var">D<sub>k</sub></i>) of the core beneath it. You cannot establish clean, continuous return
+      current paths without committing to where solid reference planes live. And you cannot control through-hole
+      via stub lengths without fixing the board's total vertical thickness.
+    </p>
+
+    <p>
+      The PCB stackup is the master vertical blueprint of the board: the exact recipe of copper foils, prepreg
+      bonding sheets, and hardened core laminates pressed together under heat and pressure. It dictates the physical
+      foundation for every transmission line parameter across the entire design. If a stackup is constructed poorly
+      — with split planes, floating reference boundaries, or high-loss dielectric resins — no amount of length
+      tuning or serpentine routing in layout can restore the lost signal integrity.
+    </p>
+
+    <p>
+      Furthermore, a stackup is an unyielding compromise between electromagnetic physics and mechanical manufacturing.
+      An electrically ideal stackup might pack dozens of thin dielectric layers to squeeze out crosstalk and minimize
+      via loop inductance. But if the copper distribution is mechanically asymmetric across the central core, the
+      board will warp like a potato chip during infrared reflow soldering, fracturing BGA joints and destroying
+      factory yield. Designing a successful stackup is about balancing this multi-variable equation early.
+    </p>
+
+    <h2>What a stackup actually is</h2>
+
+    <p>
+      A multilayer board is copper layers separated by insulating layers, pressed together. The
+      <strong>stackup</strong> is the recipe: how many copper layers, how thick each one is, what
+      insulator sits between them and how thick that is, and what each copper layer is for —
+      routing, or a solid plane.
+    </p>
+
+    <p>
+      That recipe is not an implementation detail. Every electrical property on this site traces
+      back to it: impedance comes from trace width over dielectric height, loss from the laminate,
+      crosstalk from spacing and height, return paths from where the planes are, and via stubs from
+      total thickness.
+    </p>
+
+    <p>
+      And it is decided first. You cannot route until you know what layers exist, which means the
+      stackup is committed before anyone has seen a real routing problem.
+    </p>
+
+    <h2 class="section-rule"><span>Layer count is a reference-plane count</span></h2>
+
+    <p>
+      Estimating how much routing fits on each layer is a useful starting point, but reference planes also
+      set the layer count. Every high-speed signal layer needs a solid reference plane immediately adjacent
+      to it, because that plane is where the return current runs — and layers you add for references
+      cost as much as layers you add for routing.
+    </p>
+
+    <p>
+      Symmetry is the second constraint and it is mechanical rather than electrical. An asymmetric build
+      warps during lamination as the resin cures, and a warped board does not assemble. So layers come
+      in balanced pairs around the centre, which is why stackups jump 4, 6, 8, 10 rather than moving one
+      at a time.
+    </p>
+
+    <div class="note">
+      <b>The pairing question</b>
+      Two signal layers between one pair of planes saves a layer and creates broadside coupling between
+      the two signal layers, which is far stronger than edge coupling. It is acceptable if the two layers
+      route orthogonally, and it is a crosstalk problem if they run parallel over any distance. Deciding
+      this in the stackup — rather than discovering it in routing — is what makes the difference.
+    </div>
+
+    <h2 class="section-rule"><span>Dielectric height does three jobs at once</span></h2>
+
+    <p>
+      The distance from a trace to its reference plane is the most powerful single number in the
+      stackup, because it sets three things simultaneously:
+    </p>
+
+    <ul class="tight">
+      <li><strong>Impedance.</strong> Closer to the plane means more capacitance and lower
+        Z<sub>0</sub>, so a thinner dielectric needs a narrower trace for the same impedance — and a
+        narrower trace has more conductor loss.</li>
+      <li><strong>Crosstalk.</strong> Coupling between neighbours falls steeply as the plane gets closer,
+        because the field is pulled down to the reference instead of sideways. Halving the height
+        roughly quarters the coupling.</li>
+      <li><strong>Return path quality.</strong> A closer plane is a tighter loop for every via and every
+        decoupling capacitor referenced to it.</li>
+    </ul>
+
+    <p>
+      That is a genuinely good trade in dense designs: thin dielectric, narrow traces, tight spacing,
+      more loss but far less crosstalk. On a long lossy channel the trade reverses — you want a thick
+      dielectric and a wide trace to keep conductor loss down, and you buy the isolation with space
+      instead.
+    </p>
+
+    <h2 class="section-rule"><span>When the material actually matters</span></h2>
+
+    <p>
+      Dielectric loss scales linearly with frequency while conductor loss scales as its square root, so
+      they cross somewhere between 1 and 5 GHz for common laminates. Below the crossover the geometry
+      dominates and an expensive laminate buys very little. Above it, D<sub>f</sub> is the largest single
+      lever available — moving from a mid-loss material to a low-loss one can more than halve the
+      dielectric term.
+    </p>
+
+    <p>
+      Two other material properties earn their place on the specification at high speed. <strong>Copper
+      foil roughness</strong>, because once the skin depth is under a micron the surface profile adds
+      real loss — this is why VLP and HVLP grades are called out explicitly. And <strong>glass
+      style</strong>, because a spread or mechanically-flattened weave is what prevents the two halves of
+      a differential pair sitting over different amounts of glass and arriving skewed.
+    </p>
+
+    <h2 class="section-rule"><span>Why this decides how your board behaves</span></h2>
+
+    <ul class="tight">
+      <li><strong>Dielectric height does three jobs at once.</strong> It sets impedance with width,
+        it sets how tightly the return current is held under the trace, and it sets crosstalk.
+        Those cannot be traded independently — halving the height quarters the coupling and needs a
+        narrower trace, which raises conductor loss.</li>
+      <li><strong>Total thickness sets your via stub problem.</strong> A thick board puts stub
+        resonances in band; a thin one does not. See <a href="../fundamentals/vias.html">vias</a>.</li>
+      <li><strong>Plane pair spacing sets PDN behaviour.</strong> Thin plane pairs add distributed
+        capacitance, lower the cavity's impedance, and shorten every decoupling capacitor's mounting
+        loop.</li>
+      <li><strong>Layer count is a reference-plane count.</strong> Every high-speed signal layer
+        needs a solid plane adjacent to it, so planes cost layers just as routing does.</li>
+    </ul>
+
+    <h2 class="section-rule"><span>What to do about it</span></h2>
+
+    <p>
+      <strong>Start from the constraints that cannot move.</strong> Total thickness from the
+      mechanical design, the number of routing layers from the escape problem, and the loss budget
+      from the channel budget. Those three usually determine most of the stackup before any
+      preference is expressed.
+    </p>
+
+    <p>
+      <strong>Give every high-speed layer an adjacent solid plane, and know which one.</strong> Not
+      "there is a plane two layers away" — adjacent, and solid under the whole route.
+    </p>
+
+    <p>
+      <strong>Decide broadside pairs deliberately.</strong> Two signal layers between one plane pair
+      saves a layer and creates broadside coupling between them. That is acceptable if the two
+      layers route orthogonally or carry unrelated signals, and expensive if they carry a bus.
+    </p>
+
+    <p>
+      <strong>Specify impedance, not width, and specify the foil.</strong> Width is the fab's
+      variable. Foil roughness is yours, and a low-loss resin on rough foil throws away much of what
+      you paid for.
+    </p>
+
+    <div class="note">
+      <b>Using this to find a fault</b>
+      <ul class="tight">
+        <li><b>Impedance right on some layers and wrong on others.</b> Check what each layer is
+          actually referenced to. A signal layer referenced across a split, or two dielectrics away,
+          has an impedance that the intended stackup calculation did not cover.</li>
+        <li><b>Crosstalk worse on one layer than another with identical spacing.</b> Different
+          dielectric height. Coupling scales with height far more strongly than with spacing.</li>
+        <li><b>A channel with more loss than the laminate explains.</b> Foil roughness, often
+          unspecified and therefore whatever the fab had.</li>
+        <li><b>Boards that warp or fail assembly.</b> Asymmetry. The build has to be balanced about
+          the centre, which is why layer counts jump in twos.</li>
+      </ul>
+    </div>
+
+    <details class="deeper">
+      <summary>Go deeper — why symmetry is mandatory, and what a layer really costs</summary>
+
+      <p>
+        <strong>Symmetry is mechanical, not electrical.</strong> An asymmetric build warps during
+        lamination as the resin cures and shrinks, because the stresses above and below the centre
+        do not balance. A warped board does not assemble reliably. This is why layer counts go 4, 6,
+        8, 10 rather than moving one at a time, and it is a constraint no electrical argument
+        overrides.
+      </p>
+
+      <p>
+        <strong>What a layer costs.</strong> More than its area. Each additional layer pair adds
+        lamination cycles and yield risk, adds thickness — which lengthens every via stub — and on a
+        sequential build adds significant cost. So the pressure to reduce layer count is real, and
+        the usual casualty is a reference plane, which is exactly the wrong thing to remove.
+      </p>
+
+      <p>
+        <strong>The height trade, stated properly.</strong> Moving a signal layer closer to its
+        reference:
+      </p>
+
+      <ul class="tight">
+        <li>needs a <em>narrower</em> trace for the same impedance, which raises conductor loss;</li>
+        <li>reduces crosstalk roughly with the square of the height;</li>
+        <li>tightens the return current distribution, making the design more tolerant of small
+          plane imperfections;</li>
+        <li>and reduces the loop area of every via transition on that layer.</li>
+      </ul>
+
+      <p>
+        Three of those are improvements and one is a cost, which is why the usual answer is to go as
+        thin as the loss budget allows. On a low-loss build where you are conductor-limited rather
+        than dielectric-limited, that trade tightens considerably — see
+        <a href="../fundamentals/loss-mechanisms.html">loss mechanisms</a>.
+      </p>
+
+      <p>
+        <strong>Laminate material selection: the D<sub>f</sub> hierarchy.</strong> The dielectric loss
+        of an interconnect scales directly with frequency and the laminate's dissipation factor
+        (<span class="num">D<sub>f</sub> = tan &delta;</span>):
+        <span class="num">&alpha;<sub>d</sub> &prop; f &middot; &radic;D<sub>k</sub> &middot; D<sub>f</sub></span>.
+        Selecting the right resin system is an explicit trade between bill-of-materials cost and reach:
+      </p>
+
+      <ul class="tight">
+        <li><strong>Standard FR-4:</strong> <span class="num">D<sub>f</sub> &approx; 0.015 to 0.020</span>,
+          <span class="num">D<sub>k</sub> &approx; 4.2 to 4.5</span>. Lowest cost, high moisture absorption.
+          Acceptable for low-speed digital, DC-DC power converters, and traces carrying less than
+          <span class="num">3 Gbps</span> over short distances. At 10 Gbps and above, its steep dielectric
+          attenuation completely closes the eye.</li>
+        <li><strong>Mid-Loss Laminates (e.g. Isola FR408HR, Nelco N4000-13):</strong>
+          <span class="num">D<sub>f</sub> &approx; 0.008 to 0.010</span>, <span class="num">D<sub>k</sub> &approx; 3.6 to 3.8</span>.
+          Cost-effective workhorse for PCIe Gen 3 and Gen 4 channels up to 6–10 inches, and standard DDR4/DDR5
+          routing.</li>
+        <li><strong>Low-Loss / Ultra-Low-Loss (e.g. Panasonic Megtron 6, Isola Tachyon 100G):</strong>
+          <span class="num">D<sub>f</sub> &approx; 0.002 to 0.004</span>, <span class="num">D<sub>k</sub> &approx; 3.0 to 3.4</span>.
+          High-performance polyphenyl ether (PPE) resin systems. Mandatory for PCIe Gen 5/Gen 6 (32 to 64 GT/s),
+          56G/112G PAM4 Ethernet, and multi-board backplanes. They feature extremely flat <i class="var">D<sub>k</sub></i>
+          stability across frequency, minimizing phase dispersion.</li>
+      </ul>
+
+      <p>
+        <strong>Copper foil roughness: why smooth copper matters more than low D<sub>f</sub>.</strong>
+        At gigahertz frequencies, the skin effect forces current to flow within a microscopic surface layer
+        (<span class="num">&delta; = 1 / &radic;(&pi; f &mu; &sigma;)</span> — less than
+        <span class="num">0.66 &mu;m</span> deep at 10 GHz). To ensure copper foil bonds mechanically to resin,
+        foil manufacturers chemically treat the surface with microscopic dendrites ("teeth"). If the tooth height
+        is comparable to or larger than the skin depth, the current is forced to follow the undulating contours of
+        the tooth profile, drastically increasing the effective path length and raising high-frequency conductor
+        loss by 200% to 300%:
+      </p>
+
+      <ul class="tight">
+        <li><strong>Standard Electrodeposited (STD/ED) Copper:</strong> Mean tooth roughness
+          <span class="num">R<sub>z</sub> &approx; 6 to 10 &mu;m</span>. Severe conductor attenuation above 3 GHz;
+          unsuitable for high-speed channels.</li>
+        <li><strong>Very Low Profile (VLP) / Reverse Treated Foil (RTF):</strong>
+          <span class="num">R<sub>z</sub> &approx; 2 to 3 &mu;m</span>. The practical baseline for modern enterprise
+          boards operating between 5 and 16 GHz.</li>
+        <li><strong>Hyper Very Low Profile (HVLP / Profile-Free):</strong>
+          <span class="num">R<sub>z</sub> &lt; 1.0 &mu;m</span>. Nearly mirror-smooth copper. Essential for 28 Gbps+
+          and 112G PAM4 designs. At these speeds, switching from standard foil to HVLP often saves more decibels
+          than upgrading to a more expensive low-loss dielectric.</li>
+      </ul>
+
+      <p>
+        <strong>And the glass weave.</strong> Laminate is woven glass bundles impregnated with cured resin, and the
+        two materials have starkly different dielectric constants (glass <span class="num">D<sub>k</sub> &approx; 6.0</span>,
+        epoxy resin <span class="num">D<sub>k</sub> &approx; 3.0</span>). In loose, open weaves (like standard 106 or 1080
+        glass styles), one trace of a differential pair can route directly over a dense glass knuckle while its twin
+        runs over an open, resin-rich cavity. That differential <i class="var">D<sub>k</sub></i> delta causes
+        propagation velocity skew within the pair, converting differential signal energy into destructive common-mode
+        noise. Modern stackups specify <strong>spread-glass</strong> fabrics (such as 1067, 1078, or 3313 styles) whose
+        yarns are mechanically flattened in both warp and fill directions, eliminating the open windows and providing
+        a homogeneous dielectric constant across the board.
+      </p>
+    </details>
+
+    <h2 class="section-rule"><span>In the real world</span></h2>
+
+    <p>
+      The stackup is the highest-leverage document in a board project and frequently the least
+      reviewed. It is often produced by the fabricator from a thickness target and a layer count,
+      and returned as a fait accompli that the signal integrity engineer sees after routing has
+      started.
+    </p>
+
+    <p>
+      Getting into that conversation early is worth more than any amount of later optimisation,
+      because almost nothing in it can be changed once layout is underway — and the things that
+      cannot be changed are exactly the ones that decide whether the channel closes.
+    </p>
+
+    <h3>Related</h3>
+    <ul class="tight">
+      <li><a href="../fundamentals/loss-mechanisms.html">PCB Transmission-Line Loss Mechanisms</a></li>
+      <li><a href="../fundamentals/characteristic-impedance.html">Transmission-Line Characteristic Impedance</a></li>
+      <li><a href="../package-board/manufacturing-tolerance.html">PCB Manufacturing Variation: Etch, Glass Weave, and Impedance</a></li>
+      <li><a href="../fundamentals/crosstalk.html">PCB Crosstalk: NEXT, FEXT, and Mutual Coupling</a></li>
+    </ul>
+  </div>
+
+  <!-- pager:start -->
+  <nav class="pager" aria-label="Previous and next topic">
+    <a class="prev" href="../../topics/package-board/package-families.html"><span class="dir">Previous</span><span>IC Package Interconnects: Wirebond, Flip-Chip, FOWLP, Interposers, and Chiplets</span></a>
+    <a class="next" href="../../topics/package-board/bga-escape-routing.html"><span class="dir">Next</span><span>BGA Escape Routing and Breakout Congestion</span></a>
+  </nav>
+  <!-- pager:end -->
+</main>
+
+<footer class="site-foot">
+  <span>SIPI &#8212; signal and power integrity, visualised.</span>
+  <span>Created and directed by Geetansh Arora. <a href="../../colophon.html">About, review &amp; AI assistance</a> &#183; <a href="../../model-contract.html">Model assumptions</a> &#183; <a href="../../docs/claims.md">Claim ledger</a></span>
+</footer>
+
+<script src="../../js/site.js?v=acb47d86"></script>
+<script src="../../js/search.js?v=6c93a285"></script>
+</body>
+</html>

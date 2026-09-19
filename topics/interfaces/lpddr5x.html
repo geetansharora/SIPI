@@ -1,0 +1,455 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LPDDR5 and LPDDR5X Signal Integrity: Timing, ODT, and Training | SIPI</title>
+<meta name="description" content="How an LPDDR5X channel is signed off: WCK/CK architecture, why training exists, and why the enemies are crosstalk and SSN rather than loss.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<link rel="stylesheet" href="../../css/base.css?v=e4f774de">
+<link rel="stylesheet" href="../../css/components.css?v=295837ab">
+  <!-- meta:start -->
+  <link rel="canonical" href="https://sipi.work/topics/interfaces/lpddr5x.html">
+  <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="SIPI">
+  <meta property="og:title" content="LPDDR5 and LPDDR5X Signal Integrity: Timing, ODT, and Training | SIPI">
+  <meta property="og:description" content="How an LPDDR5X channel is signed off: WCK/CK architecture, why training exists, and why the enemies are crosstalk and SSN rather than loss.">
+  <meta property="og:url" content="https://sipi.work/topics/interfaces/lpddr5x.html">
+  <meta property="og:image" content="https://sipi.work/assets/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="LPDDR5 and LPDDR5X Signal Integrity: Timing, ODT, and Training | SIPI">
+  <meta name="twitter:description" content="How an LPDDR5X channel is signed off: WCK/CK architecture, why training exists, and why the enemies are crosstalk and SSN rather than loss.">
+  <meta name="twitter:image" content="https://sipi.work/assets/og.png">
+  <!-- meta:end -->
+</head>
+<body>
+
+<header class="masthead">
+  <a class="wordmark" href="../../index.html">SIPI</a>
+  <nav>
+    <a href="../../index.html#fundamentals">Fundamentals</a>
+    <a href="../../index.html#power-integrity">Power</a>
+    <a href="../../index.html#interfaces">Interfaces</a>
+    <a href="../../start.html">Start</a>
+    <a href="../../labs.html">Labs</a>
+    <a href="../../reference.html">Reference</a>
+    <button class="theme-toggle" data-act="theme" type="button">System</button>
+  </nav>
+</header>
+
+<main>
+  <div class="page-head">
+    <p class="crumb"><a href="../../index.html#interfaces">Interface sign-off</a> / 01</p>
+    <h1>LPDDR5 and LPDDR5X Signal Integrity: Timing, ODT, and Training</h1>
+    <p class="byline">
+      <!-- review:start --><span>By Geetansh Arora — Principal SI/PI Engineer</span><time datetime="2026-09-17" title="Technical review by Geetansh Arora on this date">17 Sep 2026</time><span>10 min</span><!-- review:end -->
+    </p>
+    <p class="answer">
+      LPDDR5X is a wide parallel bus where every bit has its own wire and a strobe travels
+      alongside to say when to sample. That makes it a <em>timing</em> problem rather than a loss
+      problem &#8212; the channel is short, but a data bit occupies about 117 ps and everything
+      that moves an edge is spending it.
+    </p>
+  </div>
+
+  <!-- ───────────── the picture ───────────── -->
+  <section class="instrument" data-viz="lpddrBudget" aria-label="Interactive LPDDR5X write timing budget shown as a stacked bar across one unit interval, with each contributor adjustable">
+    <script type="application/json" data-contract>{"kind":"illustrative","evidence":"plausible","purpose":"Show how a UI is consumed by contributions that are not all the same kind.","equations":["UI_ps = 1e6 / rate_MTps        (the control is a TRANSFER rate in MT/s)","budget terms summed as an RSS of the independent contributors"],"units":"ps","validity":"ILLUSTRATIVE — the contributions are representative magnitudes, not JEDEC values. Training gain is a labelled model, not a specification.","numerics":"Exact arithmetic on the budget terms. At 8533 MT/s, UI = 1e6/8533 = 117.2 ps, which is what the page states.","limitations":"The contract previously wrote UI = 1/(2*rate), which is the formula for a clock frequency rather than a transfer rate and would have given 58.6 ps. The code was always right; the contract was not. The budget split itself is illustrative — the terms are plausible magnitudes, not a sourced allocation.","suites":["Units","State"],"version":"1.0","reviewed":"2026-09-12","panel":"lpddrBudget"}</script>
+    <div class="instrument__bar">
+      <span class="instrument__title">117 ps &#183; and everything that wants a piece of it</span>
+        <span data-evidence="plausible" data-model-version="1.0" class="model-tag model-tag--illustrative" title="Conceptual timing budget. Training gain is assumed, not calibrated.">illustrative</span>
+      <span class="instrument__readout" role="status" aria-live="polite" aria-label="Current values">
+        <span>one UI <b data-out="ui">—</b></span>
+        <span>left for the mask <b data-out="left">—</b></span>
+        <span> <b data-out="pct">—</b></span>
+        <span>biggest term <b data-out="worst">—</b></span>
+      </span>
+    </div>
+    <div class="panels">
+      <div class="panel">
+        <span class="panel__label">The unit interval, spent</span>
+        <canvas data-cv="budget" role="img" aria-label="A single horizontal bar representing one unit interval, divided into segments for each timing contributor, with whatever remains shown as the margin left for the receiver mask."></canvas>
+        <div class="legend"><span><i style="background:var(--reflect)"></i>DRAM internal skew</span><span><i style="background:var(--alarm)"></i>crosstalk and SSN</span><span><i style="background:var(--muted)"></i>ISI and routing</span><span><i style="background:var(--signal)"></i>jitter, and what's left</span></div>
+      </div>
+    </div>
+    <div class="controls">
+      <div class="ctl">
+        <div class="ctl__head"><label for="lp-rate">Data rate</label><output id="lp-rate-out" for="lp-rate">8533 MT/s</output></div>
+        <input type="range" id="lp-rate" min="0" max="5" step="1" value="5"
+               aria-valuetext="8533 MT/s" list="lp-bins">
+        <datalist id="lp-bins"><option value="0"></option><option value="1"></option><option value="2"></option><option value="3"></option><option value="4"></option><option value="5"></option></datalist>
+        <span class="ctl__note">Speed bins: 3200 · 4266 · 5500 · 6400 · 7500 · 8533. LPDDR5 to 6400, LPDDR5X above it.</span>
+      </div>
+      <div class="ctl">
+        <div class="ctl__head"><label for="lp-tdqs">tDQS2DQ</label><output id="lp-tdqs-out" for="lp-tdqs">18 ps</output></div>
+        <input type="range" id="lp-tdqs" min="0" max="40" step="1" value="18">
+        <span class="ctl__note">Inside the DRAM — no board fix exists</span>
+      </div>
+      <div class="ctl">
+        <div class="ctl__head"><label for="lp-xtalk">Crosstalk</label><output id="lp-xtalk-out" for="lp-xtalk">14 ps</output></div>
+        <input type="range" id="lp-xtalk" min="0" max="40" step="1" value="14">
+        <span class="ctl__note">Sixteen aggressors, no room to space them</span>
+      </div>
+      <div class="ctl">
+        <div class="ctl__head"><label for="lp-ssn">SSN</label><output id="lp-ssn-out" for="lp-ssn">12 ps</output></div>
+        <input type="range" id="lp-ssn" min="0" max="40" step="1" value="12">
+        <span class="ctl__note">Bounded by data bus inversion</span>
+      </div>
+      <div class="ctl">
+        <div class="ctl__head"><label for="lp-isi">ISI and reflections</label><output id="lp-isi-out" for="lp-isi">16 ps</output></div>
+        <input type="range" id="lp-isi" min="0" max="40" step="1" value="16">
+        <span class="ctl__note">Package, escape vias, any stub</span>
+      </div>
+      <div class="ctl">
+        <div class="ctl__head"><label for="lp-skew">Routing skew</label><output id="lp-skew-out" for="lp-skew">6 ps</output></div>
+        <input type="range" id="lp-skew" min="0" max="30" step="1" value="6">
+        <span class="ctl__note">The part layout actually controls</span>
+      </div>
+      <div class="ctl">
+        <div class="ctl__head"><label for="lp-jit">Clock jitter</label><output id="lp-jit-out" for="lp-jit">9 ps</output></div>
+        <input type="range" id="lp-jit" min="0" max="30" step="1" value="9">
+        <span class="ctl__note">WCK path and PLL</span>
+      </div>
+      <div class="ctl">
+        <div class="ctl__head"><label for="lp-train">Training</label></div>
+        <label class="check" for="lp-train"><input type="checkbox" id="lp-train" checked> read/write training has run</label>
+        <span class="ctl__note">Centres the strobe — removes most of tDQS2DQ</span>
+      </div>
+    </div>
+    <div class="presets">
+      <button class="preset" type="button" data-preset="typ" aria-pressed="true">Trained, 8533</button>
+      <button class="preset" type="button" data-preset="untr" aria-pressed="false">Untrained</button>
+      <button class="preset" type="button" data-preset="hot" aria-pressed="false">Hot corner</button>
+      <button class="preset" type="button" data-preset="dense" aria-pressed="false">Congested escape</button>
+      <button class="preset" type="button" data-preset="slow" aria-pressed="false">Back to 6400</button>
+    </div>
+    <div class="transport"><span data-out="note">—</span></div>
+  </section>
+
+  <div class="prose">
+    <p>
+      Every modern flagship smartphone, ultra-thin laptop, and edge-AI processor relies on Low-Power Double
+      Data Rate 5X (LPDDR5X) SDRAM to feed high-bandwidth memory to multi-core CPU, GPU, and NPU engines.
+      Running memory at up to <span class="num">8533 MT/s</span> (Megatransfers per second) presents one of
+      the most unforgiving timing environments in hardware engineering: at 8533 MT/s, the unit interval
+      (UI) — the total time a bit is valid — collapses to a microscopic <span class="num">117 picoseconds</span>.
+    </p>
+
+    <p>
+      In high-speed serial links (such as PCIe or USB3), speeds beyond 5 Gbps universally switch to differential
+      signalling, where balanced two-wire pairs cancel common-mode noise and reject ground bounce. But memory
+      architectures cannot afford the pin penalty of differential routing: an LPDDR5X interface must route 16
+      or 32 parallel data lines (DQ) across cramped mobile board real estate. As a result, data lanes remain strictly
+      <strong>single-ended</strong>, while the forwarded high-speed write clock (WCK) is differential.
+    </p>
+
+    <p>
+      This hybrid architecture creates an intense signal integrity cross-pressure: raw single-ended data bits
+      must survive violent simultaneous switching noise (SSN), dense trace-to-trace crosstalk, and power supply
+      droop, yet arrive at the receiver aligned within single-digit picoseconds of the differential WCK strobe.
+      LPDDR5X is not an interface you design simply with trace geometry; it is an active, trained subsystem
+      where silicon calibration and board layout must operate as a unified machine.
+    </p>
+
+    <h2>Parallel and source-synchronous, and why that changes everything</h2>
+
+    <p>
+      Almost everything else on this site is a serial link: one differential pair, the clock
+      recovered from the data itself. A DRAM interface is the opposite. Sixteen data wires per
+      channel, all switching together, with a separate strobe that tells the receiver when to
+      sample.
+    </p>
+
+    <p>
+      That is called <strong>source-synchronous</strong>, and it has one enormous advantage: the
+      strobe travels the same path as the data, so anything that delays the data delays the strobe
+      too and cancels. Common-mode delay is free.
+    </p>
+
+    <p>
+      What does not cancel is <em>difference</em>. Skew between one data bit and the strobe, or
+      between bits, spends budget directly. So a DRAM channel is not really about loss — it is
+      short — it is about everything that makes one wire different from another.
+    </p>
+
+    <h2 class="section-rule"><span>What it is</span></h2>
+
+    <p>
+      JEDEC's low-power DRAM interface: a source-synchronous parallel bus, x16 per channel. The
+      top speed bin is a property of an <em>edition</em>, not of the family — LPDDR5 was specified
+      to 6400 MT/s and LPDDR5X to 8533 MT/s in the editions this page was written against, and
+      later editions raise both. Treat those two numbers as "the bins in the revision you are
+      designing to", and go and read which revision that is. At 8533 MT/s a data bit occupies
+      about <strong>117 ps</strong>, which is the entire budget for skew, jitter, noise and every
+      uncertainty in the path.
+    </p>
+
+    <p>
+      The clocking is the part worth understanding, because it is what makes the rate achievable. There
+      are two clocks, not one. <strong>CK</strong> carries command and address and runs comparatively
+      slowly. <strong>WCK</strong> is the fast write strobe supplied by the controller, at a programmable
+      2:1 or 4:1 ratio to CK, and it only runs when it is needed. Reads come back with their own strobe
+      from the DRAM. Separating the slow control path from the fast data path means the command bus
+      never has to meet a 117 ps budget.
+    </p>
+
+    <h2 class="section-rule"><span>The channel</span></h2>
+
+    <p>
+      Point-to-point, controller to DRAM, routed on a phone or compute board over roughly 10–30 mm — or
+      no board at all when the DRAM is stacked on the package. There is no DIMM, no connector and no
+      fly-by topology. &ldquo;Never multi-drop&rdquo; is a step too far, though: a dual-rank
+      configuration puts two devices on the same data net, and the topology, loading and timing that
+      follow depend on rank count, transfer direction, and the particular controller and PHY. Check
+      the configuration before assuming the simple case.
+    </p>
+    <p>
+      In that simple case, compared with a serial link, this channel is almost trivially short
+      <em>for loss</em>: insertion loss at Nyquist is a fraction of a decibel and equalisation is
+      beside the point.
+    </p>
+
+    <p>
+      <strong>Short for loss is not short for reflections, and the arithmetic is worth doing.</strong>
+      At roughly 6.7 ps/mm, a 10 mm net is 67 ps one way and <b>134 ps</b> per round trip; a 30 mm
+      net is 201 ps and <b>402 ps</b>. Against a 117 ps unit interval, the first reflection arrives
+      between one and three and a half bits late — and a second and third follow it. So reflections
+      here do <em>not</em> settle inside a UI, and the reason they are survivable is not that they
+      are fast: it is that they are small, because the impedance steps on a controlled point-to-point
+      net are modest and on-die termination absorbs most of what does come back. Remove the
+      termination, or add a stub, and the timing consequence appears immediately at these lengths.
+    </p>
+
+    <p>
+      What you get instead is density. Sixteen data lines plus strobes and command signals, escaping a
+      fine-pitch BGA and running as a tightly-packed bundle, all switching within the same few hundred
+      picoseconds.
+    </p>
+
+    <h2 class="section-rule"><span>Where the margin actually goes</span></h2>
+
+    <ul class="tight">
+      <li><strong>Crosstalk</strong> is the dominant channel impairment. Sixteen aggressors in a dense
+        escape, with far-end crosstalk arriving exactly when the data edge does. Spacing is the fix and
+        there is no room for it, which is why so much of the routing effort goes into the breakout.</li>
+      <li><strong>SSN</strong> is the dominant noise term. A x16 bus switching together pushes a large
+        di/dt through shared return inductance and moves the reference the receiver measures against.
+        Data bus inversion exists in the spec to bound this by capping how many bits may switch at once.</li>
+      <li><strong>Reflections</strong> from the package, the escape vias and any stub, all landing well
+        inside a 117 ps window. On-die termination and driver strength are both programmable so the
+        system can be tuned rather than designed exactly.</li>
+      <li><strong>t<sub>DQS2DQ</sub> and its relatives</strong> — internal DRAM skews between strobe and
+        data that vary part to part, voltage to voltage and temperature to temperature. These are not
+        channel effects at all, and no amount of board work removes them.</li>
+    </ul>
+
+    <div class="note">
+      <b>Why training is the whole story</b>
+      At 117 ps you cannot close the budget with static design margin, because a meaningful fraction of
+      the uncertainty is inside the DRAM and varies with temperature. So the interface is designed to be
+      <em>measured and centred at runtime</em>: CS and CA training, WCK leveling, read training to
+      centre the strobe in the data eye, write training to do the same in the other direction, with
+      periodic retraining as the part heats. Board design's job is to leave a large enough eye for
+      training to find, not to deliver a centred one.
+    </div>
+
+    <h2 class="section-rule"><span>Sign-off</span></h2>
+
+    <p>
+      At these rates JEDEC specifies a <strong>receiver mask</strong> rather than simple setup and hold
+      times — a keep-out region in voltage and time at the DRAM pad that the signal must not enter, with
+      the corresponding transmitter requirements at the controller. Sign-off means demonstrating that
+      mask is respected across process, voltage and temperature corners, with worst-case crosstalk
+      patterns and realistic SSN, using a package model that includes the return network.
+    </p>
+
+    <p>
+      The practical trap: simulate the data bus alone and it passes comfortably. The failures live in
+      the combinations — worst-case aggressor pattern <em>and</em> maximum simultaneous switching
+      <em>and</em> the fast-strong driver corner. Any two of those is usually fine.
+    </p>
+
+    <h3>Sources</h3>
+    <ul class="tight refs">
+      <li><strong>JEDEC JESD209-5x (LPDDR5/5X)</strong> &#8212; speed bins, clocking architecture, DBI modes and training &#8212; ledger claims C-2 to C-5 are awaiting a read against it</li>
+    </ul>
+      <h2 class="section-rule"><span>Why this decides how your board behaves</span></h2>
+
+    <ul class="tight">
+      <li><strong>Skew is the currency, not decibels.</strong> Length matching, via count, layer
+        assignment and glass weave all matter more than laminate choice.</li>
+      <li><strong>Many bits switch together, so SSN is a first-class impairment.</strong> Sixteen
+        outputs changing in the same picosecond is exactly the case on
+        <a href="../power-integrity/ssn-ground-bounce.html">Simultaneous Switching Noise and Ground Bounce</a>, and it is why
+        the quiet bit is the one that fails.</li>
+      <li><strong>Crosstalk is bus-wide.</strong> Every victim has neighbours on both sides, and
+        the worst case is all of them switching the same way at once.</li>
+      <li><strong>The interface is trained, so the board's job is to be trainable.</strong>
+        Training can centre a strobe; it cannot fix a discontinuity or a coupling.</li>
+    </ul>
+
+    <h2 class="section-rule"><span>What to do about it</span></h2>
+
+    <p>
+      <strong>Match within a byte lane tightly and between lanes loosely.</strong> Each lane has its
+      own strobe, so the tight constraint is within a lane. Matching across the whole bus to the
+      same tolerance spends routing effort for nothing.
+    </p>
+
+    <p>
+      <strong>Give the return path as much attention as the trace.</strong> Every layer change on a
+      bus this wide multiplies, and the returns share openings.
+    </p>
+
+    <p>
+      <strong>Keep the power delivery close and the pin distribution even.</strong> SSN is set by
+      shared inductance, which is a pinout and package property more than a board one.</p>
+
+    <p>
+      <strong>Read the training results, not just the pass/fail.</strong> Where training landed —
+      how far from centre, how much eye it found — is the margin information, and it is available
+      from the controller without any instrumentation.
+    </p>
+
+    <div class="note">
+      <b>Using this to find a fault</b>
+      <ul class="tight">
+        <li><b>One bit failing while its neighbours pass.</b> Look at that bit's routing
+          differences first: an extra via, a different layer, a longer stub.</li>
+        <li><b>Failures that depend on how many bits switch together.</b> SSN. Compare against data
+          patterns with different switching densities.</li>
+        <li><b>Training margins that vary a lot bit to bit.</b> Skew or crosstalk. The pattern
+          across the bus — edges versus middle — distinguishes them.</li>
+        <li><b>A bus that works cold and fails hot.</b> Timing, via delay and supply, all of which
+          move with temperature. Compare the training results at both.</li>
+      </ul>
+    </div>
+
+    <details class="deeper">
+      <summary>Go deeper — why two clocks, and what training can and cannot fix</summary>
+
+      <p>
+        The clocking is what makes the rate achievable, and it is worth understanding. There are two
+        clocks, not one. A command/address clock runs at a lower rate for the control bus, and a
+        separate faster strobe accompanies the data. Separating them means the wide, slow control
+        bus and the narrow, fast data bus do not have to meet the same timing constraint.
+      </p>
+
+      <p>
+        Reads and writes also use different strobes, because they travel in opposite directions and
+        source-synchronous timing only cancels delay for signals travelling <em>together</em>. A
+        single bidirectional strobe would lose that property in one direction.
+      </p>
+
+      <p>
+        <strong>The WCK-to-DQ clocking architecture.</strong> LPDDR5X replaces the traditional bidirectional
+        data strobe (DQS) with two dedicated differential clock pairs: a low-speed Command/Address clock (CK)
+        and a high-speed forwarded Write Clock (WCK). WCK operates in either <span class="num">1:2</span> or
+        <span class="num">1:4</span> frequency modes relative to the data rate. At 8533 MT/s, in 1:2 mode,
+        WCK operates at <span class="num">4266 MHz</span>, clocking bits on both rising and falling edges.
+      </p>
+
+      <p>
+        Because WCK and DQ originate from the controller's PHY but traverse different driver stages, package balls,
+        and receiver buffers inside the DRAM, the static phase offset (<span class="num">t<sub>WCK2DQ</sub></span>)
+        can consume a massive fraction of the 117 ps bit period. Maintaining alignment across temperature drift
+        requires continuous background tracking: the memory controller monitors phase drift and dynamically adjusts
+        internal delay lines to keep the sampling edge locked to the eye center.
+      </p>
+
+      <p>
+        <strong>Training sequences: how the bus calibrates itself.</strong> At boot, an LPDDR5X bus is completely
+        untrained and cannot transfer a single byte of data. The controller must execute an elaborate sequence of
+        hardware training loops:
+      </p>
+
+      <ul class="tight">
+        <li><strong>Command/Address (CA) Training:</strong> Sweeps the delay of each CA pin relative to CK,
+          centering the command latching point.</li>
+        <li><strong>Write Leveling &amp; WCK2CK Synchronization:</strong> Aligns the arrival of the WCK clock with
+          the memory clock domain inside the DRAM, compensating for PCB flight-time differences across the board.</li>
+        <li><strong>Read/Write DQ Eye Centering:</strong> Sweeps per-bit delay verniers in steps of
+          <span class="num">1 to 2 ps</span>. The controller tracks the early and late boundaries of the data eye
+          independently for every individual DQ pin, placing the sampling strobe at the mathematical median.</li>
+        <li><strong>V<sub>REF</sub> Calibration (VREF_CA and VREF_DQ):</strong> Because LPDDR5X uses low-voltage
+          signalling (sub-0.5 V swings), the receiver's internal reference voltage (<span class="num">V<sub>ref</sub></span>)
+          is trained in millivolt increments to compensate for driver pull-up/pull-down asymmetry and board impedance
+          mismatches.</li>
+      </ul>
+
+      <p>
+        <strong>Dynamic On-Die Termination (ODT) switching.</strong> To balance signal integrity against mobile
+        battery life, LPDDR5X dynamically turns termination resistors on and off. During high-speed writes, the DRAM
+        activates target ODT (e.g. <span class="num">40 &Omega;, 48 &Omega;, or 60 &Omega;</span>) to absorb transmission
+        line reflections; during idle periods, ODT drops to high-impedance to eliminate quiescent current draw.
+      </p>
+
+      <p>
+        The timing hazard is ODT turn-on and turn-off latency (<span class="num">t<sub>ODTon</sub>, t<sub>ODToff</sub></span>).
+        If the termination does not settle to its target impedance before the first symbol of a burst arrives, that initial
+        bit encounters an open-circuit boundary and generates a massive reflection spike that corrupts the preamble.
+      </p>
+
+      <p>
+        <strong>What training fixes — and what it cannot.</strong> Training removes static skew: routing mismatch,
+        package trace length differences, and semiconductor process variation. This is why board length matching
+        within a byte lane is less burdensome than on older generations.
+      </p>
+
+      <p>
+        <strong>What training cannot fix.</strong> Anything that varies faster than the training loops run:
+        high-frequency crosstalk, SSN ground bounce, multi-reflections from via stubs, and power supply droop.
+        Training centers a data eye; it cannot open an eye that has been closed by bad layout. A system that trains
+        successfully with only 5 ps of residual margin will pass bench testing at room temperature, only to crash in
+        the field when high-density GPU traffic excites maximum switching noise.
+      </p>
+    </details>
+
+    <h2 class="section-rule"><span>In the real world</span></h2>
+
+    <p>
+      LPDDR sign-off is dominated by two things that are decided before layout: the pinout and the
+      package. Everything the board designer can do is bounded by how much shared inductance the
+      package presents and how the byte lanes map onto physical positions.
+    </p>
+
+    <p>
+      Which makes the early conversation the valuable one. Once the ballout is fixed, the remaining
+      levers are length matching and return paths — necessary, and much smaller than the decisions
+      already made.
+    </p>
+
+    <h3>Related</h3>
+    <ul class="tight">
+      <li><a href="../fundamentals/crosstalk.html">PCB Crosstalk: NEXT, FEXT, and Mutual Coupling</a></li>
+      <li><a href="../power-integrity/ssn-ground-bounce.html">Simultaneous Switching Noise and Ground Bounce</a></li>
+      <li><a href="../fundamentals/termination-schemes.html">Transmission-Line Termination Schemes</a></li>
+      <li><a href="../package-board/bga-escape-routing.html">BGA Escape Routing and Breakout Congestion</a></li>
+    </ul>
+  </div>
+
+  <!-- pager:start -->
+  <nav class="pager" aria-label="Previous and next topic">
+    <a class="prev" href="../../topics/package-board/package-and-system.html"><span class="dir">Previous</span><span>Package Interconnects as Transmission Lines</span></a>
+    <a class="next" href="../../topics/interfaces/pcie-gen4-gen5.html"><span class="dir">Next</span><span>PCIe 4.0 and 5.0 Signal Integrity: Loss and Equalization</span></a>
+  </nav>
+  <!-- pager:end -->
+</main>
+
+<footer class="site-foot">
+  <span>SIPI &#8212; signal and power integrity, visualised.</span>
+  <span>Created and directed by Geetansh Arora. <a href="../../colophon.html">About, review &amp; AI assistance</a> &#183; <a href="../../model-contract.html">Model assumptions</a> &#183; <a href="../../docs/claims.md">Claim ledger</a></span>
+</footer>
+
+<script src="../../js/site.js?v=acb47d86"></script>
+<script src="../../js/viz-kit.js?v=a53e49c3"></script>
+<script src="../../js/viz/lpddr.js?v=c201fbab"></script>
+<script src="../../js/viz-loader.js?v=89d5884d"></script>
+<script src="../../js/search.js?v=6c93a285"></script>
+</body>
+</html>

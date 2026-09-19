@@ -1,0 +1,47 @@
+{
+  "schemaVersion": 1,
+  "id": "pdn-shared-rl-dc-limit",
+  "title": "Two loads on a shared R-L path: the DC limit is resistance only",
+  "kind": "pdn-shared-rl",
+  "availability": "helper-only",
+  "inputs": {
+    "node2Current": 2,
+    "node1Current": 1,
+    "sharedResistance": 0.3,
+    "finalLinkResistance": 0.3
+  },
+  "inputUnits": {
+    "node2Current": "A",
+    "node1Current": "A",
+    "sharedResistance": "ohm",
+    "finalLinkResistance": "ohm"
+  },
+  "prediction": "Two loads draw 2 A and 1 A from different nodes of one R-L chain. Predict each node’s steady rail deviation before the inductances are considered.",
+  "explanation": "At DC the inductances carry no voltage, so each observation is minus the sum of R*I along the paths the two currents actually share. Both currents pass through the source-to-node-1 link; only the node-2 current traverses the final one. That gives -1.5 V at node 2 and -0.9 V at node 1 — numbers that depend on which path is shared, which is the whole point of a two-load model and is invisible in a single-load one.",
+  "limitations": [
+    "Helper only: there is no exact Lab C scenario that reproduces this network, and inventing one would imply a replay the page cannot perform.",
+    "The DC limit says nothing about the transient, which is checked separately against a causal reference in tests/check-pdn-multi.js."
+  ],
+  "evidence": {
+    "type": "analytical",
+    "provenance": "KCL and KVL on the shared paths recorded in tests/fixtures/pdn/shared-rl-tone.json, whose derivation field states them. Evaluated here through the public K.pdnMultiTransient path with the currents held constant, so the inductive terms vanish."
+  },
+  "relatedPage": "/topics/labs/pdn-chain.html",
+  "checks": [
+    {
+      "metric": "dcNode2",
+      "expected": -1.5,
+      "absoluteTolerance": 1e-09,
+      "unit": "V",
+      "derivation": "-(0.6*2 + 0.3*1) = -1.5 V: both currents through 0.3 ohm, node-2 current also through the 0.3 ohm final link, counted as the fixture records it."
+    },
+    {
+      "metric": "dcNode1",
+      "expected": -0.9,
+      "absoluteTolerance": 1e-09,
+      "unit": "V",
+      "derivation": "-(0.3*2 + 0.3*1) = -0.9 V: only the shared 0.3 ohm link carries both."
+    }
+  ],
+  "sourceFile": "tests/fixtures/pdn/shared-rl-tone.json"
+}

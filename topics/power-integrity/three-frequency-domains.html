@@ -1,0 +1,355 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PDN Frequency Regions: Board, Package, and Die | SIPI</title>
+<meta name="description" content="Why each PDN stage has a hard frequency ceiling, how the three droops map onto them, and what that means for where a fix has to live.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<link rel="stylesheet" href="../../css/base.css?v=e4f774de">
+<link rel="stylesheet" href="../../css/components.css?v=295837ab">
+  <!-- meta:start -->
+  <link rel="canonical" href="https://sipi.work/topics/power-integrity/three-frequency-domains.html">
+  <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="SIPI">
+  <meta property="og:title" content="PDN Frequency Regions: Board, Package, and Die | SIPI">
+  <meta property="og:description" content="Why each PDN stage has a hard frequency ceiling, how the three droops map onto them, and what that means for where a fix has to live.">
+  <meta property="og:url" content="https://sipi.work/topics/power-integrity/three-frequency-domains.html">
+  <meta property="og:image" content="https://sipi.work/assets/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="PDN Frequency Regions: Board, Package, and Die | SIPI">
+  <meta name="twitter:description" content="Why each PDN stage has a hard frequency ceiling, how the three droops map onto them, and what that means for where a fix has to live.">
+  <meta name="twitter:image" content="https://sipi.work/assets/og.png">
+  <!-- meta:end -->
+</head>
+<body>
+
+<header class="masthead">
+  <a class="wordmark" href="../../index.html">SIPI</a>
+  <nav>
+    <a href="../../index.html#fundamentals">Fundamentals</a>
+    <a href="../../index.html#power-integrity">Power</a>
+    <a href="../../index.html#interfaces">Interfaces</a>
+    <a href="../../start.html">Start</a>
+    <a href="../../labs.html">Labs</a>
+    <a href="../../reference.html">Reference</a>
+    <button class="theme-toggle" data-act="theme" type="button">System</button>
+  </nav>
+</header>
+
+<main>
+  <div class="page-head">
+    <p class="crumb"><a href="../../index.html#power-integrity">Power Integrity</a> / 05</p>
+    <h1>PDN Frequency Regions: Board, Package, and Die</h1>
+    <p class="byline">
+      <!-- review:start --><span>By Geetansh Arora — Principal SI/PI Engineer</span><time datetime="2026-09-14" title="Technical review by Geetansh Arora on this date">14 Sep 2026</time><span>9 min</span><!-- review:end -->
+    </p>
+    <p class="answer">
+      Apply a load step and the rail does not sag once. It sags three times, on three very
+      different timescales, because three different stores of charge run out one after another
+      before the next takes over. Knowing which droop you are looking at tells you which hardware
+      can possibly fix it &#8212; and, more usefully, which cannot.
+    </p>
+  </div>
+
+  <!-- ───────────── the picture ───────────── -->
+  <figure class="figure">
+    <div class="figure__bar"><span>One load step &#183; three droops, three owners</span></div>
+    <div class="figure__body"><svg viewBox="0 0 700 250" role="img" aria-label="Rail voltage against time on a logarithmic axis after a load step, showing three separate droops at roughly one nanosecond, tens of nanoseconds and microseconds, each held up by a different part of the power delivery network.">
+  <g class="tick">
+    <path d="M56,30 L56,196"/><path d="M56,196 L676,196"/>
+    <path d="M180,30 L180,196" stroke="var(--grid)"/>
+    <path d="M334,30 L334,196" stroke="var(--grid)"/>
+    <path d="M488,30 L488,196" stroke="var(--grid)"/>
+    <path d="M642,30 L642,196" stroke="var(--grid)"/>
+  </g>
+  <path class="dash" d="M56,60 L676,60" stroke="var(--muted)" fill="none"/>
+  <text class="lbl" x="60" y="52">nominal V<tspan dy="3" font-size="8">dd</tspan></text>
+  <path class="dash" d="M56,186 L676,186" stroke="var(--alarm)" fill="none"/>
+  <text class="lbl-bad" x="672" y="178" text-anchor="end">lower limit</text>
+
+  <path class="flow" d="M56,60 L150,60 C168,60 172,138 186,138 C200,138 206,74 222,72
+                         C250,70 286,70 300,70 C316,70 322,126 340,126 C358,126 366,78 386,76
+                         C420,74 450,74 470,74 C492,74 500,116 520,116 C542,116 556,66 584,62
+                         C620,58 650,60 676,60" stroke-width="2.2"/>
+
+  <g>
+    <circle cx="186" cy="138" r="4" fill="var(--reflect)"/><text class="lbl-ref" x="186" y="156" text-anchor="middle">first droop</text>
+    <text class="lbl" x="186" y="170" text-anchor="middle">on-die C</text>
+    <circle cx="340" cy="126" r="4" fill="var(--reflect)"/><text class="lbl-ref" x="340" y="144" text-anchor="middle">second droop</text>
+    <text class="lbl" x="340" y="158" text-anchor="middle">package + board caps</text>
+    <circle cx="520" cy="116" r="4" fill="var(--reflect)"/><text class="lbl-ref" x="520" y="134" text-anchor="middle">third droop</text>
+    <text class="lbl" x="520" y="148" text-anchor="middle">bulk caps, then the VRM</text>
+  </g>
+
+  <text class="lbl" x="180" y="212" text-anchor="middle">1 ns</text>
+  <text class="lbl" x="334" y="212" text-anchor="middle">10 ns</text>
+  <text class="lbl" x="488" y="212" text-anchor="middle">1 &#181;s</text>
+  <text class="lbl" x="642" y="212" text-anchor="middle">100 &#181;s</text>
+  <text class="lbl" x="676" y="234" text-anchor="end">time (log)</text>
+  <text class="lbl" x="10" y="44">V</text>
+
+  <g class="tick"><path d="M56,30 L56,26" stroke="var(--signal)"/></g>
+  <text class="lbl-sig" x="62" y="26">load step</text>
+</svg></div>
+    <figcaption><b>The rail does not sag once.</b> Apply a current step and it dips three times on three timescales, because each stage of the network runs out of stored charge before the next takes over. Each dip has a different owner and a different fix, and they barely overlap: the <b>first droop</b> at around a nanosecond is held up by on-die capacitance and can only be fixed on the die or in the package; the <b>second</b> at tens of nanoseconds belongs to package capacitors and board ceramics; the <b>third</b> at microseconds is bulk capacitance and then the regulator's control loop. This is why identifying which droop you have is the first move. A first-droop problem cannot be fixed with a board capacitor no matter how many you add or how close they sit &#8212; the inductance between the board and the die is a fence, and the charge simply cannot get there in time.</figcaption>
+  </figure>
+
+  <div class="prose">
+    <h2>Why one step produces three dips</h2>
+
+    <p>
+      When you capture a high-speed load transient on an oscilloscope, you do not see a single, smooth voltage
+      sag. Instead, you see a jagged sequence of three distinct dips unfolding across vastly different timescales:
+      one in the first nanosecond, another tens of nanoseconds later, and a third stretching across microseconds.
+      To an untrained eye, this looks like random ringing or chaotic noise. But it is actually an orderly
+      organizational chart of the system's power architecture.
+    </p>
+
+    <p>
+      Power integrity is fundamentally a division of labor: a strict jurisdictional map where the VRM, board
+      capacitors, package planes, and on-die capacitors each &ldquo;own&rdquo; a specific frequency band. Because each
+      tier is separated from the transistors by a different amount of physical distance and loop inductance, each
+      tier runs out of stored charge before the next slower, larger tier can respond. Knowing which hardware tier
+      governs each timescale is the most critical diagnostic rule in PI: an engineer who tries to solve a 1 ns droop
+      with a board capacitor will spend weeks achieving nothing, because that event sits entirely outside the board's
+      jurisdiction.
+    </p>
+
+    <p>
+      Picture the instant a load step arrives. The current has to come from somewhere, and the
+      candidates are at different distances — on-die capacitance a few micrometres away, package
+      capacitance a millimetre away, board capacitors centimetres away, the regulator further still.
+    </p>
+
+    <p>
+      Between each of those and the load is some inductance, and inductance sets how quickly that
+      source can start delivering. So the nearest store responds first, because it has the least
+      inductance in the way. It is also the smallest, so it runs down quickest — and the rail sags
+      until the next store, further away and slower, picks up.
+    </p>
+
+    <p>
+      That handover is a droop. There are three of them because there are three handovers, and each
+      one happens on the timescale set by the inductance between those two stores. The pattern is a
+      relay race where each runner is faster than the next but carries less.
+    </p>
+
+    <h2 class="section-rule"><span>Three droops, three owners</span></h2>
+
+    <div class="note">
+      <b>A useful decomposition, not a law of nature</b>
+      The three bands below describe a common architecture — a board regulator, a package with its own
+      capacitance, a die with on-die decoupling — and the numbers move with every one of those choices.
+      Nothing forces there to be exactly three. A design with no package capacitance merges two of them;
+      one with an on-package regulator loses the longest; a distributed plane contributes a spread of
+      overlapping resonances rather than a single clean peak, and peaks can appear <em>within</em> a
+      stage rather than only at the boundaries between them.
+      <br><br>
+      What does generalise is the reasoning: charge for a fast transient must come from somewhere
+      electrically close, and series inductance decides how close that has to be. Use the table as a
+      way to ask which store is supplying your event, not as a set of fixed frequencies.
+    </div>
+
+    <p>
+      Apply a load step and watch the rail. It does not sag once; it sags three times, on three
+      timescales, and each dip is a different part of the network running out of stored charge before
+      the next one takes over.
+    </p>
+
+    <div class="table-scroll">
+      <table class="data">
+        <thead><tr><th>Droop</th><th>Timescale</th><th>Frequency</th><th>Held up by</th><th>Fixed by</th></tr></thead>
+        <tbody>
+          <tr><td>First</td><td>~1 ns</td><td>hundreds of MHz</td><td>on-die capacitance</td><td>die and package only</td></tr>
+          <tr><td>Second</td><td>~10–100 ns</td><td>tens of MHz</td><td>package caps, board ceramics</td><td>package, board mounting</td></tr>
+          <tr><td>Third</td><td>~1–10 µs</td><td>~100 kHz</td><td>bulk caps, then the VRM</td><td>bulk capacitance, VRM loop</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>
+      Identify which droop you are looking at and the list of things worth trying collapses to a
+      handful. Skip that step and you can spend weeks adding capacitors on the wrong side of a fence.
+    </p>
+
+    <h2 class="section-rule"><span>The fence is inductance</span></h2>
+
+    <p>
+      Every stage is separated from the next by series inductance — balls, vias, bond wires or bumps,
+      plane spreading. That inductance rises with frequency as an impedance, and above some frequency it
+      is simply larger than anything the far side can offer. Charge on the board side physically cannot
+      get to the die fast enough, and the die is on its own.
+    </p>
+
+    <div class="note">
+      <b>The rule this produces</b>
+      <strong>You cannot fix a die-frequency problem with a board component.</strong> Not with a better
+      capacitor, not with more of them, not with perfect placement. If the first droop is out of budget
+      the answers are: more on-die capacitance, more or better-distributed power bumps, lower package
+      inductance, or reduce the di/dt at source with clock gating and staged power-up. That is the whole
+      list.
+    </div>
+
+    <p>
+      The converse is just as useful and much cheaper to act on. If the problem is a third droop —
+      microseconds, a workload transition, a big power-state change — then on-die capacitance is
+      irrelevant to it and the die team has nothing to contribute. It is bulk capacitance and VRM
+      response, and it is a board and regulator conversation.
+    </p>
+
+    <p>
+      Where this gets genuinely hard is that the handoffs between stages are exactly where the
+      impedance peaks are, so a problem can sit in two owners' territory at once. That is the case
+      chip-package-system co-analysis exists for: neither side's model, simulated alone, contains the
+      resonance.
+    </p>
+
+    <h2 class="section-rule"><span>Why this decides how your board behaves</span></h2>
+
+    <ul class="tight">
+      <li><strong>It tells you what cannot possibly help.</strong> This is the highest-value fact in
+        the subject. A first-droop problem cannot be fixed from the board, at any cost, because the
+        package inductance isolates the board from the die on that timescale. Knowing this saves
+        weeks.</li>
+      <li><strong>Each droop has a different owner.</strong> The first belongs to silicon and
+        package design; the second to package and board together; the third to the regulator and
+        bulk capacitors. Those are usually three different teams.</li>
+      <li><strong>The worst one is not always the deepest.</strong> A shallow droop that coincides
+        with a sensitive block's operation can matter more than a deeper one that does not.</li>
+      <li><strong>Load release is its own event.</strong> The rail overshoots when the current stops,
+        because the inductance is still pushing. Droop sets timing margin; overshoot sets the
+        high-rail limit, and they are checked separately.</li>
+    </ul>
+
+    <h2 class="section-rule"><span>What to do about it</span></h2>
+
+    <p>
+      <strong>Measure the timescale first, always.</strong> Everything else follows from it. A
+      nanosecond dip and a microsecond dip look similar on a badly scaled plot and have nothing in
+      common as problems.
+    </p>
+
+    <p>
+      <strong>For the first droop, the only levers are on-die and in-package.</strong> More on-die
+      decoupling capacitance, lower package inductance, or reducing the di/dt itself — staggering
+      clock-gate release so the step is spread over more cycles is often the cheapest fix available
+      and costs no hardware at all.
+    </p>
+
+    <p>
+      <strong>For the second, attack mounting inductance.</strong> This is the band where board
+      ceramics and package capacitance hand over, so the loop inductance of both is what sets it.
+    </p>
+
+    <p>
+      <strong>For the third, look at the regulator's loop.</strong> Its bandwidth decides where it
+      stops being able to help, and bulk capacitance covers the gap between that and the ceramics.
+      See <a href="vrm-loop-bandwidth.html">VRM loop bandwidth</a>.
+    </p>
+
+    <div class="note">
+      <b>Using this to find a fault</b>
+      <ul class="tight">
+        <li><b>Read the dip's width, not its depth, to identify it.</b> Width names the owner;
+          depth only tells you how bad it is.</li>
+        <li><b>A droop that did not change when you added board capacitors.</b> It was the first
+          droop. Stop adding parts.</li>
+        <li><b>Ringing on the recovery rather than a clean settle.</b> There is an anti-resonance
+          between the two stages handing over. Its frequency identifies which two.</li>
+        <li><b>Failures that only happen on a workload transition.</b> Look at power-state exits
+          and clock-gate releases — the largest di/dt on a modern SoC is almost never the steady
+          workload.</li>
+      </ul>
+    </div>
+
+    <details class="deeper">
+      <summary>Go deeper — what sets each timescale, and why this decomposition is a convenience</summary>
+
+      <p>
+        Each handover happens at roughly the resonant frequency of the inductance between two stores
+        and the capacitance of the nearer one:
+      </p>
+
+      <div class="eq">
+        <span class="eq__main"><i class="var">f</i> ≈ 1 / ( 2π √( <i class="var">L</i><sub>between</sub> · <i class="var">C</i><sub>nearer</sub> ) )</span>
+        <span class="eq__note">the first droop is package inductance against on-die capacitance; the second is board and mounting inductance against package capacitance</span>
+      </div>
+
+      <p>
+        That is the same expression as the anti-resonance frequency, and deliberately so: <b>a droop
+        in time and a peak in frequency are the same event seen two ways.</b> If you have an
+        impedance curve and a transient plot of the same PDN, each droop corresponds to a peak, and
+        their frequencies match. Checking that they do is a good way to validate a model.
+      </p>
+
+      <p>
+        <strong>The decomposition is a convenience, not a law.</strong> The three bands describe a
+        common architecture — a board regulator, a package with its own capacitance, a die with
+        on-die decoupling — and the numbers move with every one of those choices. A design with no
+        package capacitance merges two of them. One with an integrated voltage regulator loses the
+        longest. A distributed plane contributes a spread of overlapping resonances rather than a
+        single clean peak, and peaks can appear <em>within</em> a stage rather than only at the
+        boundaries between them.
+      </p>
+
+      <p>
+        What does generalise is the reasoning: charge for a fast transient must come from somewhere
+        electrically close, and series inductance decides how close that has to be. Use the bands as
+        a way to ask which store is supplying your event, not as a set of fixed frequencies.
+      </p>
+
+      <p>
+        One practical consequence of the time-frequency equivalence: a transient measurement is
+        often easier than an impedance measurement and tells you much of the same thing. A step
+        response with a clean scope shot gives you the droop timescales directly, and from those you
+        can infer where the peaks are without ever connecting a VNA.
+      </p>
+    </details>
+
+    <h2 class="section-rule"><span>In the real world</span></h2>
+
+    <p>
+      The three-droop picture is the most useful diagnostic frame in power integrity, and its value
+      is almost entirely in ruling things out. Most PI debugging time is lost to fixing the wrong
+      band — adding board capacitance to a package problem, or re-tuning a regulator for a
+      nanosecond event.
+    </p>
+
+    <p>
+      So the first question on any rail problem is not “how big is it?” but <b>“how long is it?”</b>
+      One measurement, and two thirds of the possible fixes are eliminated before you have opened the
+      layout tool.
+    </p>
+
+    <h3>Related</h3>
+    <ul class="tight">
+      <li><a href="../power-integrity/anti-resonance.html">PDN Anti-Resonance and Impedance Peaks</a></li>
+      <li><a href="../power-integrity/cps-co-analysis.html">Chip-Package-System Power Integrity Co-Analysis</a></li>
+      <li><a href="../power-integrity/vrm-loop-bandwidth.html">VRM Control-Loop Bandwidth and Load Transients</a></li>
+      <li><a href="../power-integrity/what-is-the-pdn.html">Power Delivery Networks: From Regulator to Die</a></li>
+    </ul>
+  </div>
+
+  <!-- pager:start -->
+  <nav class="pager" aria-label="Previous and next topic">
+    <a class="prev" href="../../topics/power-integrity/anti-resonance.html"><span class="dir">Previous</span><span>PDN Anti-Resonance and Impedance Peaks</span></a>
+    <a class="next" href="../../topics/power-integrity/plane-resonance.html"><span class="dir">Next</span><span>Power-Plane Cavity Resonance and Edge Radiation</span></a>
+  </nav>
+  <!-- pager:end -->
+</main>
+
+<footer class="site-foot">
+  <span>SIPI &#8212; signal and power integrity, visualised.</span>
+  <span>Created and directed by Geetansh Arora. <a href="../../colophon.html">About, review &amp; AI assistance</a> &#183; <a href="../../model-contract.html">Model assumptions</a> &#183; <a href="../../docs/claims.md">Claim ledger</a></span>
+</footer>
+
+<script src="../../js/site.js?v=acb47d86"></script>
+<script src="../../js/search.js?v=6c93a285"></script>
+</body>
+</html>

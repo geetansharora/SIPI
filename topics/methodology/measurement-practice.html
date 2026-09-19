@@ -1,0 +1,484 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SI/PI Measurement: Fixtures, Calibration, and Instrument Effects | SIPI</title>
+<meta name="description" content="SI/PI Measurement: Fixtures, Calibration, and Instrument Effects">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<link rel="stylesheet" href="../../css/base.css?v=e4f774de">
+<link rel="stylesheet" href="../../css/components.css?v=295837ab">
+  <!-- meta:start -->
+  <link rel="canonical" href="https://sipi.work/topics/methodology/measurement-practice.html">
+  <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="SIPI">
+  <meta property="og:title" content="SI/PI Measurement: Fixtures, Calibration, and Instrument Effects | SIPI">
+  <meta property="og:description" content="SI/PI Measurement: Fixtures, Calibration, and Instrument Effects">
+  <meta property="og:url" content="https://sipi.work/topics/methodology/measurement-practice.html">
+  <meta property="og:image" content="https://sipi.work/assets/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="SI/PI Measurement: Fixtures, Calibration, and Instrument Effects | SIPI">
+  <meta name="twitter:description" content="SI/PI Measurement: Fixtures, Calibration, and Instrument Effects">
+  <meta name="twitter:image" content="https://sipi.work/assets/og.png">
+  <!-- meta:end -->
+</head>
+<body>
+
+<header class="masthead">
+  <a class="wordmark" href="../../index.html">SIPI</a>
+  <nav>
+    <a href="../../index.html#fundamentals">Fundamentals</a>
+    <a href="../../index.html#power-integrity">Power</a>
+    <a href="../../index.html#interfaces">Interfaces</a>
+    <a href="../../start.html">Start</a>
+    <a href="../../labs.html">Labs</a>
+    <a href="../../reference.html">Reference</a>
+    <button class="theme-toggle" data-act="theme" type="button">System</button>
+  </nav>
+</header>
+
+<main>
+  <div class="page-head">
+    <p class="crumb"><a href="../../index.html#methodology">Methodology</a> / 06</p>
+    <h1>SI/PI Measurement: Fixtures, Calibration, and Instrument Effects</h1>
+    <p class="byline">
+      <!-- review:start --><span>By Geetansh Arora — Principal SI/PI Engineer</span><time datetime="2026-09-18" title="Technical review by Geetansh Arora on this date">18 Sep 2026</time><span>11 min</span><!-- review:end -->
+    </p>
+    <p class="answer">
+      Every instrument adds something to what it measures. A probe loads the
+      node, a TDR's edge sets its own resolution, a VNA's calibration decides
+      where the measurement starts, and a BERT can only run for so long. Knowing
+      what the instrument contributed is most of knowing what the result means.
+    </p>
+  </div>
+
+  <div class="prose">
+    <p>
+      When an engineer connects a coaxial cable to a vector network analyzer (VNA) or clips an oscilloscope probe
+      onto a test point, there is an instinctive tendency to trust the resulting waveform as absolute truth.
+      If the oscilloscope shows a 2 GHz ringing oscillation, the natural assumption is that the transmission line
+      is reflecting. If the VNA displays 4 dB of loss at 10 GHz, it is assumed the board trace attenuated the signal.
+    </p>
+
+    <p>
+      In high-speed hardware, however, an instrument never measures your circuit board in isolation. It measures
+      your circuit board <strong>in series and in parallel with the measurement apparatus itself</strong>. The probe tip
+      adds parasitic capacitance that slows down the rising edge; the three-inch alligator ground wire forms a lumped
+      inductor that resonates violently with that capacitance, generating false ringing that does not exist on the board.
+      The coaxial cables connecting the VNA introduce insertion loss, phase shift, and connector reflections that dwarf
+      the device under test.
+    </p>
+
+    <p>
+      High-speed measurement practice is the art and discipline of <strong>removing the instrument from the data</strong>.
+      It begins with rigorous calibration standards that mathematically subtract cables and fixtures to place the reference
+      plane exactly at the device pins, and extends to specialized topologies — such as two-port shunt-through impedance
+      sensing with common-mode isolation — that make it possible to measure sub-milliohm power distribution networks
+      without being blinded by ground loops.
+    </p>
+
+    <h2>The measurement is part of the circuit</h2>
+
+    <p>
+      A scope probe participates in the circuit. Its input capacitance loads the
+      node and its ground path adds inductance; on a fast or high-impedance node,
+      that loading can materially change the waveform being measured.
+    </p>
+
+    <p>
+      Read the displayed value together with a second question: <b>"what did the
+      instrument and connection contribute, and how large is that effect relative
+      to the behavior under investigation?"</b>
+    </p>
+
+    <h2 class="section-rule"><span>Probe loading</span></h2>
+
+    <p>
+      Two parasitics matter, and the second is the one that surprises people.
+    </p>
+
+    <ul class="tight">
+      <li><strong>Tip capacitance</strong> loads the node and slows the edge you
+        were trying to measure. A few picofarads on a fast net is a real
+        discontinuity.</li>
+      <li><strong>Ground lead inductance</strong> is worse. The classic
+        alligator-clip ground is tens of nanohenries, and it forms a resonant
+        circuit with the tip capacitance — a resonance that lands squarely in the
+        band you care about. When you see ringing, that is the first thing to rule
+        out, and shortening the ground path is the test: if the frequency moves,
+        it was yours. But it is not the only cause, and deciding it was without
+        checking is how a real problem gets dismissed. The board can genuinely
+        ring from a reflection, the probe can load a high-impedance node enough to
+        create a resonance that is neither purely its own nor purely the board's,
+        an under-damped supply rail can ring at the probe tip because it is
+        ringing everywhere, and an over-driven front end can produce something
+        that looks like ringing and is clipping. The discriminating checks are
+        cheap: change the ground length, move the probe to a second point, halve
+        the vertical scale, and compare against a second probe of a different
+        type.</li>
+    </ul>
+
+    <div class="note">
+      <b>Two quick loading checks</b>
+      Move the probe and see whether the waveform changes. Probe a known-quiet
+      node and see whether it is quiet. A change does not identify the whole cause,
+      but it shows that the probe, connection, or reference path is part of the result.
+    </div>
+
+    <h2 class="section-rule"><span>TDR: resolution is set by the edge</span></h2>
+
+    <p>
+      A TDR launches a step and watches what comes back. Its ability to separate
+      two features is set by how fast that step is:
+    </p>
+
+    <div class="eq">
+      <span class="eq__main">resolution ≈ <i class="var">t</i><sub>r</sub> · <i class="var">v</i> / 2</span>
+      <span class="eq__note">the /2 is the round trip — and v depends on your assumed D_k, so every distance inherits that assumption</span>
+    </div>
+
+    <p>
+      A slow TDR merges features a fast one separates, and reports their combined
+      impedance as if it were one structure. So a "clean" TDR trace from a
+      50 ps instrument may simply be one that cannot see the problem.
+    </p>
+
+    <p>
+      Report the measured <b>delay</b> and, when distance is useful, the converted
+      length together with the propagation velocity or dielectric assumption. This
+      keeps the instrument observation separate from the material-based conversion.
+    </p>
+
+    <h2 class="section-rule"><span>VNA: calibration decides where the measurement starts</span></h2>
+
+    <p>
+      Calibrating moves the <strong>reference plane</strong> — the place the
+      instrument believes its measurement begins. Everything between that plane
+      and your device is included in the answer.
+    </p>
+
+    <ul class="tight">
+      <li><strong>SOLT</strong> uses known short, open, load and thru standards.
+        Convenient, and only as good as the standards' models — which degrade at
+        high frequency.</li>
+      <li><strong>TRL</strong> uses thru, reflect and line standards fabricated on
+        the same board as the device, so they share its manufacturing. It shifts
+        the accuracy question from "how good is the standards model" to "how well
+        did this coupon come out", and that is usually the better trade at high
+        frequency — but not always, and not by default. TRL needs the line
+        standards to be uniform and their lengths known, it has band gaps where a
+        line is a multiple of a half wavelength, and a coupon that etched
+        differently from the device carries that difference straight into the
+        result. A well-characterised electronic calibration unit can beat a poor
+        coupon comfortably. Costs coupon area, and needs several line lengths to
+        cover a broad band.</li>
+    </ul>
+
+    <p>
+      Then there is de-embedding, which moves the plane further — onto the device
+      itself. That is a separate operation with its own error, and its signature
+      is ripple rather than offset. See
+      <a href="../signal-integrity/de-embedding.html">de-embedding</a>.
+    </p>
+
+    <h2 class="section-rule"><span>Measuring a PDN: why a one-port setup loses sensitivity</span></h2>
+
+    <p>
+      A PDN's impedance is milliohms. A one-port VNA measurement of a milliohm
+      load is dominated by the cable and connector resistance, which is also
+      milliohms — so the instrument is mostly measuring itself.
+    </p>
+
+    <p>
+      A common solution is <strong>two-port shunt-through</strong>: drive
+      through one port, sense with the other, both connected across the same
+      point, and compute the impedance from S₂₁ rather than S₁₁. The sense path
+      carries much less current than the drive path in the low-impedance limit,
+      which greatly reduces its series-resistance contribution.
+    </p>
+
+    <div class="eq">
+      <span class="eq__main"><i class="var">Z</i> ≈ ( <i class="var">Z</i><sub>0</sub> / 2 ) · <i class="var">S</i><sub>21</sub> / (1 − <i class="var">S</i><sub>21</sub>)</span>
+      <span class="eq__note">valid while Z is far below Z₀/2, which is exactly the regime a PDN lives in</span>
+    </div>
+
+    <p>
+      One practical catch: with both ports grounded at the same place, a
+      <em>ground loop</em> through the instrument can dominate the reading at low
+      frequency. A common-mode choke on one cable is the usual fix, and its
+      absence is the usual reason a PDN measurement looks wrong below a megahertz.
+    </p>
+
+    <h2 class="section-rule"><span>BERT: what a run of a given length can support</span></h2>
+
+    <p>
+      A bit error rate tester directly observes error events under its configured
+      pattern, receiver, and sampling conditions. Its limit is arithmetic: observing no
+      errors in <i>N</i> bits supports a bound of about 3/<i>N</i>, and nothing
+      stronger.
+    </p>
+
+    <p>
+      At 16 GT/s, a 95% bound near 10⁻¹² takes about three minutes of error-free
+      traffic <em>at one sampling position</em>. A bathtub has dozens of positions
+      and sign-off wants every corner, which is how three minutes becomes days.
+      See <a href="../fundamentals/bathtub-curves.html">bathtub curves</a>.
+    </p>
+
+    <h2 class="section-rule"><span>Repeatability comes before accuracy</span></h2>
+
+    <p>
+      Before comparing a measurement to anything, find out how much it varies
+      when nothing has changed. Three levels, cheapest first:
+    </p>
+
+    <ul class="tight">
+      <li><strong>Same fixture, reconnected.</strong> Catches connector
+        repeatability, which at high frequency is often the largest term.</li>
+      <li><strong>Different fixture, same board.</strong> Catches fixture-to-fixture
+        variation and de-embedding error.</li>
+      <li><strong>Different board, same design.</strong> Catches manufacturing
+        spread — which is a property of the design, not the measurement.</li>
+    </ul>
+
+    <p>
+      That spread is a practical repeatability floor: differences below it cannot
+      be distinguished confidently without more repetitions or a better uncertainty
+      model. Establishing it prevents ordinary setup variation from being assigned
+      to the simulation or hardware.
+    </p>
+
+    <div class="note">
+      <b>Using this to find a fault</b>
+      <ul class="tight">
+        <li><b>Ringing that changes when you move the probe.</b> The probe's ground
+          lead. Use a short spring tip before believing anything.</li>
+        <li><b>A PDN impedance that looks flat and too high at low frequency.</b>
+          Ground loop through the instrument. Add the choke.</li>
+        <li><b>A TDR trace with no features where you expected one.</b> Check the
+          instrument's rise time against the feature's size before concluding it
+          is not there.</li>
+        <li><b>A de-embedded S₂₁ above 0 dB.</b> A passive fixture-plus-device
+          cannot have gain, so something in the de-embedding is wrong — but
+          "removed it twice" is only the most common of several explanations, and
+          they are distinguishable. Over-de-embedding gives an excess that
+          <em>grows with frequency</em>, because it is the fixture's own loss
+          applied twice. A fixture model whose impedance is wrong gives a ripple
+          that oscillates with frequency at the fixture's electrical length. A
+          calibration plane in the wrong place gives an excess that tracks the
+          phase error. And a noise floor problem gives something that is above
+          0 dB only where the raw measurement was already near the floor. Plot
+          the excess against frequency before concluding which one you have.</li>
+        <li><b>Results that differ between two runs.</b> Establish repeatability
+          before anything else. It is the cheapest measurement on this page and
+          it decides whether the rest are worth doing.</li>
+      </ul>
+    </div>
+
+    <details class="deeper">
+      <summary>Go deeper — why shunt-through works, and what each instrument cannot see</summary>
+
+      <p>
+        <strong>The shunt-through trick, and what port 2 actually is.</strong> In a
+        one-port measurement the cable's series resistance sits in the same path as
+        the current through the device, so the two are indistinguishable. Two-port
+        shunt-through separates them: port 1 drives current through the device and
+        port 2 measures across it, so the resistance of port 1's cable is no longer
+        in the sensing path.
+      </p>
+
+      <p>
+        Port 2, though, is <strong>terminated in 50 Ω like any VNA port</strong> —
+        it is not a high-impedance voltmeter and it does carry current. The reason
+        the method works on a low impedance is a ratio, not an open circuit: when
+        the device under test is a few milliohms and the port is 50 Ω, the current
+        into port 2 is four orders of magnitude below the current through the
+        device, so port 2's cable resistance contributes negligibly to the voltage
+        it reports. Raise the device impedance towards 50 Ω and that stops being
+        true, which is why shunt-through is a <em>low-impedance</em> technique
+        rather than a general one. The exact relation for the ideal shunt topology
+        with equal real reference impedances is:
+      </p>
+
+      <div class="eq">
+        <span class="eq__main">Z = Z₀ · S₂₁ ⁄ [2 · (1 − S₂₁)]</span>
+        <span class="eq__note">and for |Z| ≪ Z₀ this simplifies to Z ≈ Z₀ · S₂₁ ⁄ 2, which is the form usually quoted — but it is the approximation, not the definition</span>
+      </div>
+
+      <p>
+        How far the approximation can be trusted is a question with a number
+        attached, rather than a matter of intuition — and the useful range is relatively narrow.
+        To first order the simplified form overstates |Z| by 2|Z| ⁄ Z₀, so on a
+        50 Ω instrument the error reaches <b>1% at 0.253 Ω</b> and <b>10% at
+        2.78 Ω</b>. At 1 Ω it is already <b>3.85%</b> wrong. Below a few hundred
+        milliohms — the range a PDN actually lives in — the two agree to 0.4% or
+        better and the choice genuinely does not matter. Above about a quarter of
+        an ohm, use the full expression; it costs one division.
+      </p>
+
+      <p>
+        Two further things the simplification hides. The exact relation is
+        <em>complex</em>: S₂₁ has phase, and an impedance that is part inductive —
+        which every real capacitor mounting is above its self-resonance — needs
+        the complex division to recover both the magnitude and the sign of the
+        reactance. Taking |S₂₁| and scaling it gives a magnitude and throws the
+        reactance away, which is exactly the information you were measuring for.
+        And the relation assumes the <em>ideal</em> shunt topology with equal real
+        reference impedances at both ports; a fixture with a series element, or
+        ports at different reference impedances, needs its own algebra.
+      </p>
+
+      <p>
+        It is a genuine four-terminal arrangement in the sense that matters — the
+        drive and sense paths are separate — but calling it a Kelvin measurement
+        invites the wrong mental model, because a Kelvin voltmeter draws no current
+        by construction and this one draws little by circumstance. A
+        <em>high-impedance</em> receiver configuration is a different setup with
+        different error terms, and the two should not be conflated. And none of
+        this removes the need to think about the ground return between the two
+        ports: the semi-floating differential amplifiers and common-mode chokes
+        that appear in low-impedance fixtures exist because the port-to-port
+        ground loop is the dominant error at low frequency, not the cable
+        resistance.
+      </p>
+
+      <p>
+        <strong>What each instrument structurally cannot see.</strong>
+      </p>
+
+      <ul class="tight">
+        <li><strong>A VNA</strong> measures small-signal, steady-state, linear
+          behaviour. It cannot see non-linearity, and it cannot see anything that
+          only happens while the circuit is switching.</li>
+        <li><strong>A TDR</strong> is most sensitive to impedance changes. Distributed
+          loss changes amplitude and edge shape but is difficult to localise as one
+          feature. A large early discontinuity can also mask smaller structures behind it.</li>
+        <li><strong>A scope</strong> sees a voltage against its own ground
+          reference. If that reference is moving —
+          <a href="../power-integrity/ssn-ground-bounce.html">ground bounce</a> —
+          the scope cannot tell that from a signal change.</li>
+        <li><strong>A BERT</strong> counts errors under a defined stimulus and receiver
+          configuration. It establishes performance for that run but needs other
+          measurements to identify the mechanism.</li>
+      </ul>
+
+      <p>
+        The redundancy between them is what makes correlation possible. A TDR
+        trace is related to the step response of S₁₁, so a TDR and a VNA can be
+        transformed into comparable views when their bandwidth, reference plane,
+        impedance, windowing, and fixture treatment match. A disagreement first
+        prompts a check of those conditions.
+      </p>
+
+      <p>
+        <strong>VNA calibration standards: SOLT vs. TRL vs. E-Cal.</strong> The quality of any VNA measurement
+        is strictly limited by its calibration method, which defines where the mathematical reference plane sits:
+      </p>
+
+      <ul class="tight">
+        <li><strong>SOLT (Short, Open, Load, Thru):</strong> The classical coaxial calibration standard.
+          Relies on a known precision 50 &Omega; termination resistor, an open circuit with calibrated fringing
+          capacitance coefficients, and a short circuit with known residual inductance.
+          <em>Best for:</em> Coaxial test fixtures with SMA, 2.92 mm, or 1.85 mm precision connectors.
+          <em>Limitation:</em> Fails on printed circuit boards and wafer probes because fabricating an ideal, pure
+          <span class="num">50 &Omega;</span> surface-mount resistor standard that remains parasitic-free up to 40 GHz is
+          physically impossible.</li>
+        <li><strong>TRL (Thru, Reflect, Line):</strong> The gold standard for planar PCB and substrate fixtures.
+          Instead of requiring an impossible 50 &Omega; load, TRL uses a non-zero length transmission line (&ldquo;Line&rdquo;)
+          fabricated on the exact same board layer as the device under test. The characteristic impedance of this line
+          becomes the VNA's reference impedance, and the phase difference between the Thru and Line establishes the frequency
+          scale.
+          <em>Best for:</em> Moving the calibration reference plane directly onto the PCB surface, directly at the pins of
+          a chip or connector launch.
+          <em>Limitation:</em> Each Line standard is only valid over an <span class="num">8:1</span> frequency span (where
+          phase delay is between 20&deg; and 160&deg;); covering 100 MHz to 40 GHz requires fabricating multiple lines of
+          different lengths.</li>
+        <li><strong>E-Cal (Electronic Calibration):</strong> A USB-controlled solid-state calibration module containing
+          PIN diodes or FET switches that cycle through precision internal impedance states.
+          <em>Best for:</em> Speed, repeatability, and bench productivity. A full 4-port calibration completes in seconds
+          with a single connection, eliminating operator torque-wrench errors and physical standard wear.</li>
+      </ul>
+
+      <p>
+        <strong>Breaking the PDN ground loop: why common-mode chokes are mandatory.</strong> In two-port
+        shunt-through measurements below 1 MHz, engineers frequently observe that the measured impedance flattens out
+        into a completely false resistive floor of <span class="num">10 to 50 m&Omega;</span>, hiding true milliohm
+        PDN behavior.
+      </p>
+
+      <p>
+        This error is not caused by the VNA's internal noise floor. It is caused by a <strong>ground loop</strong> formed
+        by the braided outer shields of the two coaxial cables and the VNA's chassis ground. Because the shield resistance
+        of a typical 1-metre RG-142 cable is around <span class="num">10 to 20 m&Omega;</span>, return current from Port 1
+        splits between the device under test and the outer shield of Port 2.
+      </p>
+
+      <p>
+        To eliminate this floor and accurately measure sub-milliohm power planes down to 10 kHz, you must insert a
+        <strong>common-mode coaxial choke</strong> (or a high-bandwidth RF isolation transformer) in series with the
+        sensing cable on Port 2. By wrapping the coaxial cable around a high-permeability toroidal ferrite core, the
+        choke adds several microhenries of common-mode inductance to the outer shield without affecting the differential
+        TEM signal inside the cable. This forces all return current to flow through the device under test, lowering the
+        measurement floor down to <span class="num">100 &mu;&Omega;</span>.
+      </p>
+    </details>
+
+    <h2 class="section-rule"><span>In the real world</span></h2>
+
+    <p>
+      The most expensive measurement errors are not wrong numbers; they are right
+      numbers about the wrong thing. A perfectly calibrated VNA measuring to an
+      undocumented plane can produce a file that is difficult to compare with
+      simulation because the two reference planes may differ.
+    </p>
+
+    <p>
+      Package the data with what was measured, the reference plane, calibration and
+      de-embedding, instrument settings and bandwidth, fixture and probe connection,
+      environmental conditions, and observed repeatability. That compact record lets
+      another engineer reproduce the setup and decide which comparisons are valid.
+    </p>
+
+    <h3>Related</h3>
+    <ul class="tight">
+      <li><a href="correlation.html">Correlating Simulation and Measurement</a> — what a disagreement can mean</li>
+      <li><a href="../signal-integrity/de-embedding.html">S-Parameter De-Embedding and Fixture Removal</a> — moving the reference plane</li>
+      <li><a href="../fundamentals/s-parameters.html">S-Parameters: Insertion Loss, Return Loss, and Mixed Mode</a> — what the VNA produces</li>
+      <li><a href="../power-integrity/target-impedance.html">Target impedance</a> — the milliohms shunt-through exists to measure</li>
+      <li><a href="../groundwork/units-and-conventions.html">Units and conventions</a> — the three questions to ask of any number</li>
+      <li><a href="../labs/adc-interference.html">Lab D: ADC Interference, Aliasing and Reference Noise</a> — what a noisy or offset reading means when the instrument is doing the sampling</li>
+    </ul>
+  </div>
+
+<!-- sources:start -->
+    <section class="sources">
+      <h2 class="section-rule"><span>Sources</span></h2>
+      <ul class="sources__list">
+      <li><a href="https://helpfiles.keysight.com/csg/e5061b/measurement_with_options/option_005_impedance_analysis/setting_up_measurement/setting_measurement_condition/setting_measurement_parameters_and_display_formats.htm" rel="noopener">Keysight — impedance measurement parameter definitions</a></li>
+      <li><a href="https://www.keysight.com/us/en/assets/7018-03423/application-notes/5991-0213.pdf" rel="noopener">Keysight 5991-0213EN — low-impedance measurement</a></li>
+      </ul>
+      <p class="sources__note">Rows marked with a claim id are tracked in <a href="../../docs/claims.md">the claim ledger</a>, which records what each source can and cannot establish.</p>
+    </section>
+    <!-- sources:end -->
+  <!-- pager:start -->
+  <nav class="pager" aria-label="Previous and next topic">
+    <a class="prev" href="../../topics/methodology/debug-playbook.html"><span class="dir">Previous</span><span>SI/PI Debugging: From Symptom to Cause</span></a>
+    <a class="next" href="../../topics/labs/travelling-waves.html"><span class="dir">Next</span><span>Lab A: Transmission-Line Reflections and Energy Flow</span></a>
+  </nav>
+  <!-- pager:end -->
+</main>
+
+<footer class="site-foot">
+  <span>SIPI &#8212; signal and power integrity, visualised.</span>
+  <span>Created and directed by Geetansh Arora. <a href="../../colophon.html">About, review &amp; AI assistance</a> &#183; <a href="../../model-contract.html">Model assumptions</a> &#183; <a href="../../docs/claims.md">Claim ledger</a></span>
+</footer>
+
+<script src="../../js/site.js?v=acb47d86"></script>
+<script src="../../js/search.js?v=6c93a285"></script>
+</body>
+</html>

@@ -1,0 +1,617 @@
+{
+  "claims": [
+    {
+      "id": "C-1",
+      "statement": "Data bus inversion reduces the number of simultaneously switching outputs on an LPDDR5X data byte.",
+      "pages": [
+        "power-integrity/ssn-ground-bounce"
+      ],
+      "source_type": "normative",
+      "source": "JESD209-5x, DBI mode definitions",
+      "conditions": "Per byte lane, DBI enabled",
+      "status": "scoped",
+      "note": "Wording now distinguishes transition-minimising from level-minimising inversion and claims no universal 50% bound.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5",
+      "sourceCheckedOn": "2026-09-11",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null
+    },
+    {
+      "id": "C-2a",
+      "statement": "LPDDR5X reaches 8533 MT/s.",
+      "pages": [
+        "interfaces/lpddr5x"
+      ],
+      "source_type": "normative",
+      "source": "JESD209-5x speed bin tables",
+      "conditions": "A specific edition and speed bin",
+      "status": "awaiting",
+      "note": "Needs an edition. 8533 is not a timeless family maximum — later editions raise it, so the claim has to carry its edition.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": null,
+      "sourceCheckedOn": null,
+      "humanReviewedBy": null,
+      "humanReviewedOn": null
+    },
+    {
+      "id": "C-2b",
+      "statement": "LPDDR5 reaches 6400 MT/s.",
+      "pages": [
+        "interfaces/lpddr5x"
+      ],
+      "source_type": "normative",
+      "source": "JESD209-5 speed bin tables",
+      "conditions": "A specific edition and speed bin",
+      "status": "awaiting",
+      "note": "Split from C-2: a different standard from LPDDR5X, so verifying one says nothing about the other.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": null,
+      "sourceCheckedOn": null,
+      "humanReviewedBy": null,
+      "humanReviewedOn": null
+    },
+    {
+      "id": "C-3",
+      "statement": "An LPDDR5X channel is point-to-point rather than multidrop.",
+      "pages": [
+        "interfaces/lpddr5x"
+      ],
+      "source_type": "normative",
+      "source": "JEDEC topology definitions, plus a controller/PHY implementation guide",
+      "conditions": "Single rank; dual rank changes the loading",
+      "status": "awaiting",
+      "note": "'No multidrop' is too categorical — rank count changes it.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": null,
+      "sourceCheckedOn": null,
+      "humanReviewedBy": null,
+      "humanReviewedOn": null
+    },
+    {
+      "id": "C-4a",
+      "statement": "WCK is the write data clock on LPDDR5X.",
+      "pages": [
+        "interfaces/lpddr5x"
+      ],
+      "source_type": "normative",
+      "source": "JESD209-5x clocking architecture",
+      "conditions": "Write direction",
+      "status": "awaiting",
+      "note": "Split from C-4. WCK and RDQS have distinct roles and the page must not blur them.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": null,
+      "sourceCheckedOn": null,
+      "humanReviewedBy": null,
+      "humanReviewedOn": null
+    },
+    {
+      "id": "C-4b",
+      "statement": "RDQS is returned by the memory with read data on LPDDR5X.",
+      "pages": [
+        "interfaces/lpddr5x"
+      ],
+      "source_type": "normative",
+      "source": "JESD209-5x clocking architecture",
+      "conditions": "Read direction",
+      "status": "awaiting",
+      "note": "Split from C-4.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": null,
+      "sourceCheckedOn": null,
+      "humanReviewedBy": null,
+      "humanReviewedOn": null
+    },
+    {
+      "id": "C-5",
+      "statement": "Read and write training centre the strobe in the data eye.",
+      "pages": [
+        "interfaces/lpddr5x"
+      ],
+      "source_type": "normative",
+      "source": "JESD209-5x training sequences",
+      "conditions": "The training steps a controller actually runs",
+      "status": "scoped",
+      "note": "Narrowed: training also adjusts ODT, drive strength and reference levels, so 'training centres the eye' is one of several things it does. The panel labels its training model illustrative.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5",
+      "sourceCheckedOn": "2026-09-12",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null
+    },
+    {
+      "id": "C-6a",
+      "statement": "A PCIe Gen 4 channel budget is about 28 dB.",
+      "pages": [
+        "interfaces/pcie-gen4-gen5",
+        "signal-integrity/channel-budgeting"
+      ],
+      "source_type": "normative",
+      "source": "PCIe Base and CEM, Gen 4, with the reference plane for the figure",
+      "conditions": "Reference plane and frequency must both be named",
+      "status": "awaiting",
+      "note": "Split from C-6. Currently labelled 'commonly quoted', which is honest but not sourced.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": null,
+      "sourceCheckedOn": null,
+      "humanReviewedBy": null,
+      "humanReviewedOn": null
+    },
+    {
+      "id": "C-6b",
+      "statement": "A PCIe Gen 5 channel budget is about 36 dB.",
+      "pages": [
+        "interfaces/pcie-gen4-gen5",
+        "signal-integrity/channel-budgeting"
+      ],
+      "source_type": "normative",
+      "source": "PCIe Base and CEM, Gen 5, with the reference plane for the figure",
+      "conditions": "Reference plane and frequency must both be named",
+      "status": "awaiting",
+      "note": "Split from C-6: a different edition, so it needs its own reading.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": null,
+      "sourceCheckedOn": null,
+      "humanReviewedBy": null,
+      "humanReviewedOn": null
+    },
+    {
+      "id": "C-7",
+      "statement": "Gen 5 designs commonly backdrill long via stubs.",
+      "pages": [
+        "interfaces/pcie-gen4-gen5"
+      ],
+      "source_type": "commercial",
+      "source": "none — channel-dependent practice",
+      "conditions": "Stub length relative to the Nyquist quarter-wave",
+      "status": "scoped",
+      "note": "Treated as an implementation remedy, never a specification requirement.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5",
+      "sourceCheckedOn": "2026-09-11",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null
+    },
+    {
+      "id": "C-8a",
+      "statement": "PCIe 6.0 uses FLIT mode.",
+      "pages": [
+        "interfaces/pcie-gen6"
+      ],
+      "source_type": "normative",
+      "source": "PCIe 6.0 Base, FLIT mode",
+      "conditions": "All rates once negotiated",
+      "status": "awaiting",
+      "note": "Split from C-8, which bundled four separate mechanisms into one row.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": null,
+      "sourceCheckedOn": null,
+      "humanReviewedBy": null,
+      "humanReviewedOn": null
+    },
+    {
+      "id": "C-8b",
+      "statement": "PCIe 6.0 applies forward error correction.",
+      "pages": [
+        "interfaces/pcie-gen6"
+      ],
+      "source_type": "normative",
+      "source": "PCIe 6.0 Base, FEC",
+      "conditions": "Per FLIT",
+      "status": "awaiting",
+      "note": "Split from C-8.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": null,
+      "sourceCheckedOn": null,
+      "humanReviewedBy": null,
+      "humanReviewedOn": null
+    },
+    {
+      "id": "C-8c",
+      "statement": "PCIe 6.0 applies a CRC with link-level replay.",
+      "pages": [
+        "interfaces/pcie-gen6"
+      ],
+      "source_type": "normative",
+      "source": "PCIe 6.0 Base, CRC and replay",
+      "conditions": "Per FLIT",
+      "status": "awaiting",
+      "note": "Split from C-8. FEC and CRC-with-replay are different mechanisms doing different jobs.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": null,
+      "sourceCheckedOn": null,
+      "humanReviewedBy": null,
+      "humanReviewedOn": null
+    },
+    {
+      "id": "C-9",
+      "statement": "PCIe 6.0 tolerates a raw error rate near 1e-6 and delivers about 1e-12 after correction.",
+      "pages": [
+        "interfaces/pcie-gen6"
+      ],
+      "source_type": "normative",
+      "source": "PCIe 6.0 Base, raw versus post-correction error metrics",
+      "conditions": "Which metric — BER, FLIT error rate, or post-FEC — must be named",
+      "status": "awaiting",
+      "note": "The two numbers are different quantities, not one before and after.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": null,
+      "sourceCheckedOn": null,
+      "humanReviewedBy": null,
+      "humanReviewedOn": null
+    },
+    {
+      "id": "C-10",
+      "statement": "A Gen 6-capable link uses FLIT mode at lower rates as well.",
+      "pages": [
+        "interfaces/pcie-gen6"
+      ],
+      "source_type": "normative",
+      "source": "PCIe 6.0 Base, negotiation rules",
+      "conditions": "After training completes",
+      "status": "awaiting",
+      "note": "Lower-rate behaviour must not be inferred from Gen 6 capability.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": null,
+      "sourceCheckedOn": null,
+      "humanReviewedBy": null,
+      "humanReviewedOn": null
+    },
+    {
+      "id": "C-18",
+      "statement": "PCIe Gen 4 and Gen 5 define eleven transmitter presets, P0 to P10.",
+      "pages": [
+        "interfaces/pcie-gen4-gen5"
+      ],
+      "source_type": "normative",
+      "source": "PCIe Base, per edition",
+      "conditions": "Per edition; the preset table is edition-specific",
+      "status": "awaiting",
+      "note": "",
+      "owner": "Geetansh",
+      "sourceCheckedBy": null,
+      "sourceCheckedOn": null,
+      "humanReviewedBy": null,
+      "humanReviewedOn": null
+    },
+    {
+      "id": "C-11",
+      "statement": "The PAM4 links in common use pair it with forward error correction.",
+      "pages": [
+        "signal-integrity/nrz-vs-pam4"
+      ],
+      "source_type": "normative",
+      "source": "would need the standards set defined and each one checked",
+      "conditions": "'In common use' is doing the work here",
+      "status": "scoped",
+      "note": "Narrowed from 'PAM4 standards mandate FEC', which would need every such standard read.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5",
+      "sourceCheckedOn": "2026-09-11",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null
+    },
+    {
+      "id": "C-12a",
+      "statement": "MIPI M-PHY v5.0 defines HS-GEAR5.",
+      "pages": [
+        "interfaces/ufs4"
+      ],
+      "source_type": "public-rate",
+      "source": "MIPI press release, M-PHY v5.0",
+      "conditions": "The announcement names the gear; the electricals are in the specification",
+      "status": "verified",
+      "note": "Public fact from the standards body's own announcement. Verifies the existence of the gear and nothing about its electricals.",
+      "source_title": "MIPI Alliance — M-PHY v5.0 announcement",
+      "source_url": "https://www.mipi.org/press-releases/m-phy-update-doubles-peak-data-rate-for-next-generation-flash-memory-storage-applications",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5",
+      "sourceCheckedOn": "2026-09-12",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null
+    },
+    {
+      "id": "C-12b",
+      "statement": "M-PHY HS-GEAR5 runs at 23.32 Gb/s per lane.",
+      "pages": [
+        "interfaces/ufs4"
+      ],
+      "source_type": "public-rate",
+      "source": "MIPI press release, M-PHY v5.0",
+      "conditions": "Raw lane rate, before 128b/132b encoding overhead",
+      "status": "scoped",
+      "note": "The page said 23.2 Gb/s; the announcement says 23.32. Neither figure is wrong for a different quantity — raw versus post-encoding differ — so the page now states the raw rate and names it as raw. The discrepancy is why this is split from C-12a.",
+      "source_title": "MIPI Alliance — M-PHY v5.0 announcement",
+      "source_url": "https://www.mipi.org/press-releases/m-phy-update-doubles-peak-data-rate-for-next-generation-flash-memory-storage-applications",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5",
+      "sourceCheckedOn": "2026-09-12",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null
+    },
+    {
+      "id": "C-12c",
+      "statement": "UFS 4.0 binds M-PHY HS-GEAR5.",
+      "pages": [
+        "interfaces/ufs4"
+      ],
+      "source_type": "normative",
+      "source": "JESD220E and the M-PHY revision it references",
+      "conditions": "Which M-PHY revision UFS 4.0 cites",
+      "status": "awaiting",
+      "note": "A rate announcement says nothing about which revision UFS binds.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": null,
+      "sourceCheckedOn": null,
+      "humanReviewedBy": null,
+      "humanReviewedOn": null
+    },
+    {
+      "id": "C-13",
+      "statement": "UFS over M-PHY uses spread-spectrum clocking.",
+      "pages": [
+        "interfaces/ufs4"
+      ],
+      "source_type": "normative",
+      "source": "MIPI M-PHY",
+      "conditions": "Whether it is required or optional, and its profile",
+      "status": "awaiting",
+      "note": "Do not carry USB's SSC behaviour across to another PHY.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": null,
+      "sourceCheckedOn": null,
+      "humanReviewedBy": null,
+      "humanReviewedOn": null
+    },
+    {
+      "id": "C-14",
+      "statement": "An M-PHY burst requires re-acquisition from a preamble.",
+      "pages": [
+        "interfaces/ufs4"
+      ],
+      "source_type": "normative",
+      "source": "MIPI M-PHY burst and power-state definitions",
+      "conditions": "Which power state the link is leaving",
+      "status": "awaiting",
+      "note": "",
+      "owner": "Geetansh",
+      "sourceCheckedBy": null,
+      "sourceCheckedOn": null,
+      "humanReviewedBy": null,
+      "humanReviewedOn": null
+    },
+    {
+      "id": "C-15",
+      "statement": "USB 3.2 spread-spectrum clocking is down-spread, 0 to -5000 ppm, at roughly 30 to 33 kHz.",
+      "pages": [
+        "interfaces/usb-3x"
+      ],
+      "source_type": "normative",
+      "source": "USB 3.2 specification, SSC section",
+      "conditions": "Modulation profile and rate",
+      "status": "awaiting",
+      "note": "",
+      "owner": "Geetansh",
+      "sourceCheckedBy": null,
+      "sourceCheckedOn": null,
+      "humanReviewedBy": null,
+      "humanReviewedOn": null
+    },
+    {
+      "id": "C-16a",
+      "statement": "USB 3.2 Gen 1 operates at 5 Gb/s.",
+      "pages": [
+        "interfaces/usb-3x"
+      ],
+      "source_type": "public-rate",
+      "source": "USB-IF, usb.org/usb-32-0",
+      "conditions": "Per lane, raw rate",
+      "status": "verified",
+      "note": "Public rate fact from the standards body. Says nothing about electrical requirements.",
+      "source_title": "USB-IF — USB 3.2 specification page",
+      "source_url": "https://www.usb.org/usb-32-0",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5",
+      "sourceCheckedOn": "2026-09-12",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null
+    },
+    {
+      "id": "C-16b",
+      "statement": "USB 3.2 Gen 2 operates at 10 Gb/s.",
+      "pages": [
+        "interfaces/usb-3x"
+      ],
+      "source_type": "public-rate",
+      "source": "USB-IF, usb.org/usb-32-0",
+      "conditions": "Per lane, raw rate",
+      "status": "verified",
+      "note": "Public rate fact from the standards body.",
+      "source_title": "USB-IF — USB 3.2 specification page",
+      "source_url": "https://www.usb.org/usb-32-0",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5",
+      "sourceCheckedOn": "2026-09-12",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null
+    },
+    {
+      "id": "C-16c",
+      "statement": "USB 3.2 Gen 2x2 operates at 20 Gb/s.",
+      "pages": [
+        "interfaces/usb-3x"
+      ],
+      "source_type": "public-rate",
+      "source": "USB-IF, usb.org/usb-32-0",
+      "conditions": "Two lanes, raw aggregate",
+      "status": "verified",
+      "note": "Public rate fact from the standards body. Two lanes, which is why it is split from Gen 2.",
+      "source_title": "USB-IF — USB 3.2 specification page",
+      "source_url": "https://www.usb.org/usb-32-0",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5",
+      "sourceCheckedOn": "2026-09-12",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null
+    },
+    {
+      "id": "C-17",
+      "statement": "Controlled impedance is typically specified to +/-10%, with +/-7% available at a premium.",
+      "pages": [
+        "package-board/manufacturing-tolerance"
+      ],
+      "source_type": "commercial",
+      "source": "fabricator capability statements, not a standard",
+      "conditions": "Varies by fabricator, stackup and volume",
+      "status": "scoped",
+      "note": "Presented as typical fabricator capability rather than a specification.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5",
+      "sourceCheckedOn": "2026-09-11",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null
+    },
+    {
+      "id": "C-19",
+      "statement": "The DC bias dependence of the same nominal MLCC part differs markedly between vendors, and X7R is not reliably less bias-sensitive than X5R.",
+      "pages": [
+        "power-integrity/real-capacitors"
+      ],
+      "source_type": "measured",
+      "source": "I. Novak, B. Williams, J. R. Miller, G. J. Blando, N. Shannon, 'DC and AC Bias Dependence of MLCC Capacitors and its Temperature Dependence', DesignCon East 2011",
+      "conditions": "1 uF 0603 16 V parts from six vendors in X5R and X7R; DC stepped 0.2 V over -20 to +20 V; AC 10 mVrms and 500 mVrms",
+      "status": "verified",
+      "note": "Read from the paper's own conclusions, not from its plotted curves. The authors anonymise the vendors, which is why this site names no part's derating curve. This claim is the reason the panel takes the retained fraction as an input. Retrieved 12 September 2026 from the authors' paper archive. The link is http, not https: the https endpoint on that host returns 404, so an upgraded URL silently fails.",
+      "source_title": "Novak et al. — DC and AC Bias Dependence of MLCC Capacitors, DesignCon East 2011",
+      "source_url": "http://electrical-integrity.com/Paper_download_files/DCE11_200.pdf",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5",
+      "sourceCheckedOn": "2026-09-13",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null
+    },
+    {
+      "id": "C-20",
+      "statement": "MLCC DC bias sensitivity does not depend on temperature, so bias and temperature derating multiply as separable factors.",
+      "pages": [
+        "power-integrity/real-capacitors"
+      ],
+      "source_type": "measured",
+      "source": "Novak et al., DesignCon East 2011, conclusions",
+      "conditions": "Measured -5 degC to +70 degC. The same paper finds ESR DOES depend on temperature at high frequency and near the piezoelectric resonance, so the separability is a statement about capacitance only.",
+      "status": "verified",
+      "note": "This is what lets docs/real-capacitor-model.md carry bias and temperature in one retained scalar rather than a two-dimensional surface. Recorded because it is a measured finding being used as a modelling licence. Retrieved 12 September 2026 from the authors' paper archive. The link is http, not https: the https endpoint on that host returns 404, so an upgraded URL silently fails.",
+      "source_title": "Novak et al. — DC and AC Bias Dependence of MLCC Capacitors, DesignCon East 2011",
+      "source_url": "http://electrical-integrity.com/Paper_download_files/DCE11_200.pdf",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5",
+      "sourceCheckedOn": "2026-09-13",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null
+    },
+    {
+      "id": "C-21",
+      "statement": "Beyond the immediate capacitance change when DC bias is applied, MLCCs show a slower settling that can move capacitance by as much as a further 25% over a few minutes.",
+      "pages": [
+        "power-integrity/real-capacitors"
+      ],
+      "source_type": "measured",
+      "source": "Novak et al., DesignCon East 2011, conclusions",
+      "conditions": "Depends on dwell time and preconditioning; the paper treats measurement procedure as part of the result",
+      "status": "verified",
+      "note": "Quoted on the page as a reason the retained fraction is a band rather than a number. The figure is the paper's stated bound, not one read off a curve. Retrieved 12 September 2026 from the authors' paper archive. The link is http, not https: the https endpoint on that host returns 404, so an upgraded URL silently fails.",
+      "source_title": "Novak et al. — DC and AC Bias Dependence of MLCC Capacitors, DesignCon East 2011",
+      "source_url": "http://electrical-integrity.com/Paper_download_files/DCE11_200.pdf",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5",
+      "sourceCheckedOn": "2026-09-13",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null
+    },
+    {
+      "id": "C-22",
+      "statement": "A successive-approximation converter compares against its reference once per bit trial, so a reference that moves during a conversion weighs the early bits differently from the late ones.",
+      "pages": [
+        "labs/adc-interference"
+      ],
+      "source_type": "commercial",
+      "source": "SAR converter datasheets and application notes describing reference settling and bit-trial timing",
+      "conditions": "Charge-redistribution SAR with a single reference node; trial timing within one sample period",
+      "status": "awaiting",
+      "note": "The mechanism is what this lab models and it follows from the architecture, but the claim as written is about SAR converters in general and has no primary source recorded yet. The page already states that its own converter is ideal and that trial times are a modelling choice.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": null,
+      "sourceCheckedOn": null,
+      "humanReviewedBy": null,
+      "humanReviewedOn": null
+    },
+    {
+      "id": "C-23",
+      "statement": "A one-bit delta-sigma modulator's feedback DAC is scaled by the reference, so reference ripple multiplies the bitstream rather than adding to the signal.",
+      "pages": [
+        "labs/adc-interference"
+      ],
+      "source_type": "commercial",
+      "source": "Delta-sigma converter datasheets and texts on oversampling converters, for the reference path of a switched-capacitor feedback DAC",
+      "conditions": "Discrete-time, second order, one bit, single reference; not a continuous-time or multi-bit loop",
+      "status": "awaiting",
+      "note": "The page now bounds this to the loop it simulates and says explicitly that a continuous-time or multi-bit modulator will move the result. The derivation for this loop is in the model contract. Status is awaiting rather than scoped because narrowing the wording is not the same as reading a source.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": null,
+      "sourceCheckedOn": null,
+      "humanReviewedBy": null,
+      "humanReviewedOn": null
+    },
+    {
+      "id": "C-24",
+      "statement": "Counting interference as noise, with the fundamental, DC and harmonics 2 to 6 excluded, is the usual convention for a converter dynamic test.",
+      "pages": [
+        "labs/adc-interference"
+      ],
+      "source_type": "normative",
+      "source": "IEEE Std 1241, terminology and test methods for analog-to-digital converters",
+      "conditions": "A coherent single-tone test with a windowed FFT; exclusion widths depend on the window",
+      "status": "awaiting",
+      "note": "Stated as this lab’s declared convention rather than as a standard it complies with. No licensed source has been read, and the page makes no compliance claim. The exclusion widths, the window and the masking limitation are published in the result contract.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": null,
+      "sourceCheckedOn": null,
+      "humanReviewedBy": null,
+      "humanReviewedOn": null
+    },
+    {
+      "id": "C-25",
+      "statement": "Input-referred coupling appears as an offset error, a constant reference error as a gain error, and a reference that changes during the bit trials as a linearity error.",
+      "pages": [
+        "labs/adc-interference"
+      ],
+      "source_type": "measured",
+      "source": "Derived on this page from the converter model, and measured with it: offset 0.90 mV, gain −0.318 dBFS implying a 2.41 V effective reference, and THD rising to −53.5 dB",
+      "conditions": "Ideal SAR, shared converter clock so the disturbance repeats per conversion",
+      "status": "scoped",
+      "note": "Narrowed in this batch: DNL and INL are named as the mechanism and explicitly not measured, because the lab runs no static ramp or histogram test and THD is not a substitute for one. The resemblance to a static nonlinearity holds only while the disturbance repeats in step with the conversions, which the page now says.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5",
+      "sourceCheckedOn": "2026-09-18",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null
+    },
+    {
+      "id": "C-26",
+      "statement": "A sinc-cubed decimator is the usual filter after a second-order modulator, and it nulls exactly at multiples of the output data rate.",
+      "pages": [
+        "labs/adc-interference"
+      ],
+      "source_type": "commercial",
+      "source": "Delta-sigma converter datasheets describing sinc-filter order and notch placement",
+      "conditions": "Three cascaded length-OSR moving averages, decimating by OSR",
+      "status": "awaiting",
+      "note": "The null positions and the 3·OSR−2 length are first principles and are asserted in the ADC decimation suite. What has no source recorded is the claim that this is the usual choice in commercial parts; the page describes it as what this lab does.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": null,
+      "sourceCheckedOn": null,
+      "humanReviewedBy": null,
+      "humanReviewedOn": null
+    }
+  ]
+}

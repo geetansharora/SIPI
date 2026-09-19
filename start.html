@@ -1,0 +1,350 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Signal and Power Integrity Learning Paths | SIPI</title>
+<meta name="description" content="Four routes through the site, for someone new to signal integrity, a practising SI engineer, a practising PI engineer, and someone debugging a board right now.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<link rel="stylesheet" href="css/base.css?v=e4f774de">
+<link rel="stylesheet" href="css/components.css?v=295837ab">
+  <!-- meta:start -->
+  <link rel="canonical" href="https://sipi.work/start.html">
+  <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="SIPI">
+  <meta property="og:title" content="Signal and Power Integrity Learning Paths | SIPI">
+  <meta property="og:description" content="Four routes through the site, for someone new to signal integrity, a practising SI engineer, a practising PI engineer, and someone debugging a board right now.">
+  <meta property="og:url" content="https://sipi.work/start.html">
+  <meta property="og:image" content="https://sipi.work/assets/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Signal and Power Integrity Learning Paths | SIPI">
+  <meta name="twitter:description" content="Four routes through the site, for someone new to signal integrity, a practising SI engineer, a practising PI engineer, and someone debugging a board right now.">
+  <meta name="twitter:image" content="https://sipi.work/assets/og.png">
+  <!-- meta:end -->
+</head>
+<body>
+
+<header class="masthead">
+  <a class="wordmark" href="index.html">SIPI</a>
+  <nav>
+    <a href="index.html#fundamentals">Fundamentals</a>
+    <a href="index.html#power-integrity">Power</a>
+    <a href="index.html#interfaces">Interfaces</a>
+    <a href="start.html">Start</a>
+    <a href="labs.html">Labs</a>
+    <a href="reference.html">Reference</a>
+    <button class="theme-toggle" data-act="theme" type="button">System</button>
+  </nav>
+</header>
+
+<main>
+  <div class="page-head">
+    <p class="crumb"><a href="index.html">SIPI</a> / where to start</p>
+    <h1>Choose a signal or power integrity learning path</h1>
+    <p class="byline"><span>59 pages</span><span>Pick a route, or ignore all of them</span></p>
+    <p class="answer">
+      Every page here stands on its own and links to what it leans on, so you can
+      start anywhere and follow your nose. But if you would rather be given an
+      order, these are four routes that make sense &#8212; one for someone new to
+      the subject, one each for a practising SI or PI engineer, and one for
+      somebody with a board on the bench right now.
+    </p>
+  </div>
+
+  <div class="prose">
+    <p>
+      <strong>These are suggestions, not prerequisites.</strong> Nothing is locked,
+      nothing tracks your progress, and skipping ahead breaks nothing. Each page
+      links to what it assumes, so if a page loses you, the thing it lost you on is
+      one click away.
+    </p>
+    <p>
+      If you want to work a model instead of follow a route, the
+      <a href="labs.html">interactive lab directory</a> groups the existing labs by
+      the question you are trying to answer.
+    </p>
+  </div>
+
+  <section class="path" id="new">
+    <h2>Both disciplines, in eight steps</h2>
+    <p class="path__who">You know basic electronics — Ohm&#8217;s law, capacitors, a bit of AC theory — and you have just been handed a high-speed board.</p>
+    <p class="path__note">
+      This path deliberately crosses from signal integrity into power integrity and back,
+      because the two are one problem and the place they meet is where real designs fail.
+      Each step names what it assumes, the one thing it will change your mind about, a
+      five-minute experiment, and a question you can only answer by applying the idea
+      somewhere it was not demonstrated. Experienced engineers should skip straight to the
+      lab or the diagnosis at step 8.
+    </p>
+
+    <ol class="path__steps path__steps--full">
+      <li>
+        <a href="topics/groundwork/units-and-conventions.html">Units, edges, and time of flight</a>
+        <span class="path__why">A picosecond is a distance. Everything after this depends on being able to convert between the two without thinking.</span>
+        <dl class="step">
+          <dt>assumes</dt><dd>nothing</dd>
+          <dt>you will be able to</dt><dd>turn a rise time into a bandwidth and a length into a delay, and say which rise-time convention you used</dd>
+          <dt>corrects</dt><dd>that there is a single factor between 20–80% and 10–90% rise times. There is not: it is 0.631 for an exponential edge, 0.750 for a ramp</dd>
+          <dt>five minutes</dt><dd>take the fastest edge on your current design and compute the length at which it stops being a wire</dd>
+          <dt>transfer check</dt><dd>a datasheet quotes 45 ps 20–80%. What is the knee frequency, and what did you have to assume to get it?</dd>
+        </dl>
+      </li>
+
+      <li>
+        <a href="topics/fundamentals/reflections.html">Source, line, load: launch and reflection</a>
+        <span class="path__why">A wave leaves the driver before information from the load can return. The returning wave and its timing explain the observed response.</span>
+        <dl class="step">
+          <dt>assumes</dt><dd>step 1</dd>
+          <dt>you will be able to</dt><dd>predict the launched voltage from the source divider, and the settled voltage from the terminations, before running anything</dd>
+          <dt>corrects</dt><dd>that a matched load absorbs half the power. It absorbs <em>all</em> of the incident wave — the half is a property of the source divider, and they are different facts</dd>
+          <dt>five minutes</dt><dd><a href="topics/labs/travelling-waves.html">Lab A</a>: set the far end open, then short, and predict the far-end voltage and current <em>separately</em> before you look</dd>
+          <dt>transfer check</dt><dd>the source is 50 Ω and the far end is open. Why does the ringing stop after one round trip rather than continuing?</dd>
+        </dl>
+      </li>
+
+      <li>
+        <a href="topics/fundamentals/return-current-paths.html">Return current and reference continuity</a>
+        <span class="path__why">The other half of every circuit, and the half that is not on the schematic.</span>
+        <dl class="step">
+          <dt>assumes</dt><dd>step 2</dd>
+          <dt>you will be able to</dt><dd>look at a layer transition and say where the return current goes and what it costs</dd>
+          <dt>corrects</dt><dd>that return current takes the shortest path. Above a few megahertz it takes the lowest-<em>inductance</em> path, which is directly under the signal</dd>
+          <dt>five minutes</dt><dd>find a net on your board that changes reference plane, and locate the nearest return via</dd>
+          <dt>transfer check</dt><dd>a trace crosses a gap in its reference plane. The signal is 100 MHz and clean; at 2 GHz it is not. What changed, given the gap did not?</dd>
+        </dl>
+      </li>
+
+      <li>
+        <a href="topics/fundamentals/isi.html">Channel memory and sampling</a>
+        <span class="path__why">A channel remembers. The bit you are trying to read is competing with the ones before it.</span>
+        <dl class="step">
+          <dt>assumes</dt><dd>steps 1–3</dd>
+          <dt>you will be able to</dt><dd>read a pulse response, name the cursor and the post-cursors, and connect a closed eye to a specific earlier bit</dd>
+          <dt>corrects</dt><dd>that a loss number predicts an eye. <a href="topics/labs/one-channel.html">Lab B</a>'s stub preset has the same 14 dB and the same rate as the baseline and a fifth the opening</dd>
+          <dt>five minutes</dt><dd>Lab B: press <em>rate only</em>. The board is bit-identical — the S-parameters do not move at any frequency. Predict what closes the eye before reading the answer</dd>
+          <dt>transfer check</dt><dd>two channels have identical insertion loss at Nyquist. One has a notch at 7 GHz. Which eye is worse, and which panel would show you that?</dd>
+        </dl>
+      </li>
+
+      <li>
+        <a href="topics/power-integrity/what-is-the-pdn.html">Load current to voltage excursion</a>
+        <span class="path__why">Here the subject changes. A processor's current step has to come from somewhere, and the rail moves while it arrives.</span>
+        <dl class="step">
+          <dt>assumes</dt><dd>step 1. Nothing from 2–4 — this is the other discipline, starting again</dd>
+          <dt>you will be able to</dt><dd>turn a current step and an impedance into a voltage droop, and say which part of the network supplied it</dd>
+          <dt>corrects</dt><dd>that a power rail is a node. It is a network with a different impedance at every frequency and every position</dd>
+          <dt>five minutes</dt><dd><a href="topics/power-integrity/target-impedance.html">Target impedance</a>: compute the impedance your own rail needs from its current step and its tolerance</dd>
+          <dt>transfer check</dt><dd>the rail meets its target impedance at every frequency you swept, and still droops too far. What did the sweep not cover?</dd>
+        </dl>
+      </li>
+
+      <li>
+        <a href="topics/power-integrity/anti-resonance.html">Decoupling, and why more capacitance can fail</a>
+        <span class="path__why">The one result in power integrity that is genuinely counter-intuitive, and it is measurable.</span>
+        <dl class="step">
+          <dt>assumes</dt><dd>step 5</dd>
+          <dt>you will be able to</dt><dd>look at two capacitor banks and predict where they will fight, and know which knob damps it</dd>
+          <dt>corrects</dt><dd>that adding decoupling always helps. In <a href="topics/labs/pdn-chain.html">Lab C</a>, quadrupling the board capacitors raises the mid-band peak from 57 to 61 mΩ, because parts in parallel divide the ESR that was damping it</dd>
+          <dt>five minutes</dt><dd>Lab C: predict the direction before you change the capacitor count, then use the result to refine your reasoning</dd>
+          <dt>transfer check</dt><dd>you need to lower a 60 mΩ peak at 7 MHz. You may add parts, change their ESR, or move them. Which helps, and why do the other two not?</dd>
+        </dl>
+      </li>
+
+      <li>
+        <a href="topics/power-integrity/pdn-induced-jitter.html">Where the two disciplines meet</a>
+        <span class="path__why">Supply noise moves a receiver's sampling instant. This is the case that cannot be assigned to either discipline, and it is where real escapes live.</span>
+        <dl class="step">
+          <dt>assumes</dt><dd>steps 4 and 6 — you need both halves for this one</dd>
+          <dt>you will be able to</dt><dd>explain how a PDN resonance becomes a timing failure, and say which of three injection points a given noise frequency reaches</dd>
+          <dt>corrects</dt><dd>that supply noise and timing are separate budgets. The same millivolts of ripple cost you nothing or everything depending on where in the clock path they enter, and on the loop bandwidth</dd>
+          <dt>five minutes</dt><dd>set the ripple to 1 MHz at the VCO, then at the reference. Same amplitude, and the loop corrects one and follows the other</dd>
+          <dt>transfer check</dt><dd>an eye closes only when a nearby core is busy. The channel is unchanged. Name two mechanisms that could do this and one measurement that separates them</dd>
+        </dl>
+      </li>
+
+      <li>
+        <a href="topics/methodology/debug-playbook.html">An unseen diagnosis</a>
+        <span class="path__why">Apply the ideas above to a diagnosis whose cause has not been given in advance.</span>
+        <dl class="step">
+          <dt>assumes</dt><dd>steps 1–7</dd>
+          <dt>you will be able to</dt><dd>choose which domain to look in first, and say what each measurement would rule out</dd>
+          <dt>corrects</dt><dd>that debugging is about finding the problem. It is about eliminating explanations, which is why the order of measurements matters more than their precision</dd>
+          <dt>five minutes</dt><dd>Lab B: press <em>hide a discontinuity</em>, read its position off the TDR panel, and commit to a number before checking</dd>
+          <dt>transfer check</dt><dd>a link fails at 32 GT/s and passes at 16. Write down three candidate causes and the single cheapest measurement that separates them</dd>
+        </dl>
+      </li>
+    </ol>
+
+    <p class="path__note">
+      <strong>What this path does not give you.</strong> Compliance numbers, a sign-off
+      procedure, or a substitute for a field solver and a measurement. Every model here says
+      what it computes and what it is known not to do — the <em>verify</em> tab on any panel,
+      and <a href="model-contract.html">the model contracts</a> for all of them at once.
+    </p>
+  </section>
+
+  <section class="path" id="si">
+    <h2>Practising signal integrity</h2>
+    <p class="path__who">You work in signal integrity and want to examine conventions, assumptions, and subtle failure mechanisms.</p>
+    <p class="path__note">Weighted towards the things that cause disagreements: conventions, what models assume, and where equalisation stops helping.</p>
+    <ol class="path__steps">
+      <li>
+        <a href="topics/groundwork/domain-bridges.html">Time-Domain and Frequency-Domain Analysis</a>
+        <span class="path__why">what each transform assumes, and where it breaks</span>
+      </li>
+      <li>
+        <a href="topics/fundamentals/s-parameters.html">S-Parameters: Insertion Loss, Return Loss, and Mixed Mode</a>
+        <span class="path__why">passivity, reciprocity and causality as three separate claims</span>
+      </li>
+      <li>
+        <a href="topics/fundamentals/isi.html">ISI</a>
+        <span class="path__why">why a DFE can be exact and a CTLE cannot</span>
+      </li>
+      <li>
+        <a href="topics/signal-integrity/what-closes-the-eye.html">What closes the eye</a>
+        <span class="path__why">four impairments, four signatures, four different fixes</span>
+      </li>
+      <li>
+        <a href="topics/labs/one-channel.html">Lab B: Channel Response, ISI, and Eye Diagrams</a>
+        <span class="path__why">click a post-cursor and see the bit that caused it</span>
+      </li>
+      <li>
+        <a href="topics/signal-integrity/equalization.html">Equalisation</a>
+        <span class="path__why">which cursor each block can reach, and why</span>
+      </li>
+      <li>
+        <a href="topics/signal-integrity/receiver-and-clock.html">Receiver Sampling, Clock Recovery, and Jitter Tolerance</a>
+        <span class="path__why">where the margin is created on a modern link</span>
+      </li>
+      <li>
+        <a href="topics/fundamentals/vias.html">Vias</a>
+        <span class="path__why">the impairment no equaliser can undo</span>
+      </li>
+      <li>
+        <a href="topics/signal-integrity/statistical-vs-time-domain.html">Statistical vs time-domain</a>
+        <span class="path__why">two methods, opposite blind spots</span>
+      </li>
+      <li>
+        <a href="topics/methodology/reporting-margin.html">Reporting margin</a>
+        <span class="path__why">why two correct analyses differ by a factor of two</span>
+      </li>
+    </ol>
+  </section>
+
+  <section class="path" id="pi">
+    <h2>Practising power integrity</h2>
+    <p class="path__who">You own a rail, and you want the parts that are counter-intuitive.</p>
+    <p class="path__note">Built around the results that surprise people: adding capacitance making things worse, and fixes that cannot reach the problem.</p>
+    <ol class="path__steps">
+      <li>
+        <a href="topics/power-integrity/what-is-the-pdn.html">What is the PDN?</a>
+        <span class="path__why">a chain of sources, each useless above its own band</span>
+      </li>
+      <li>
+        <a href="topics/power-integrity/three-frequency-domains.html">Three droops, three owners</a>
+        <span class="path__why">read the dip&#8217;s width, not its depth</span>
+      </li>
+      <li>
+        <a href="topics/power-integrity/anti-resonance.html">Anti-resonance</a>
+        <span class="path__why">parallel LC is a maximum — every peak is this</span>
+      </li>
+      <li>
+        <a href="topics/power-integrity/real-capacitors.html">Real capacitors</a>
+        <span class="path__why">the marked value is not the value you get</span>
+      </li>
+      <li>
+        <a href="topics/labs/pdn-chain.html">Lab C — regulator to die</a>
+        <span class="path__why">which bank supplies the current, in amps, at every frequency</span>
+      </li>
+      <li>
+        <a href="topics/power-integrity/target-impedance.html">Target impedance</a>
+        <span class="path__why">a useful line, and what the single number hides</span>
+      </li>
+      <li>
+        <a href="topics/power-integrity/ssn-ground-bounce.html">Simultaneous Switching Noise and Ground Bounce</a>
+        <span class="path__why">v = L·di/dt across a shared return</span>
+      </li>
+      <li>
+        <a href="topics/power-integrity/pdn-induced-jitter.html">PDN-induced jitter</a>
+        <span class="path__why">where a power problem becomes a timing problem</span>
+      </li>
+      <li>
+        <a href="topics/package-board/package-and-system.html">Package Interconnects as Transmission Lines</a>
+        <span class="path__why">transfer impedance, and the limits of lumped</span>
+      </li>
+    </ol>
+  </section>
+
+  <section class="path" id="debug">
+    <h2>Debugging something right now</h2>
+    <p class="path__who">You have hardware, a symptom, and not much time.</p>
+    <p class="path__note">Read the first one, then jump to whichever symptom matches. Every page in this route ends with a fault-finding list keyed to what you are seeing rather than to what is causing it.</p>
+    <ol class="path__steps">
+      <li>
+        <a href="topics/methodology/debug-playbook.html">Debug playbook</a>
+        <span class="path__why">start here — how to pick a measurement that actually discriminates</span>
+      </li>
+      <li>
+        <a href="topics/methodology/measurement-practice.html">Measuring it</a>
+        <span class="path__why">before you trust the instrument, check what it added</span>
+      </li>
+      <li>
+        <a href="topics/signal-integrity/what-closes-the-eye.html">What closes the eye</a>
+        <span class="path__why">a closed or noisy eye: which of four impairments</span>
+      </li>
+      <li>
+        <a href="topics/fundamentals/jitter-taxonomy.html">Jitter taxonomy</a>
+        <span class="path__why">jitter: bounded or unbounded, and what that implies</span>
+      </li>
+      <li>
+        <a href="topics/power-integrity/three-frequency-domains.html">Three droops</a>
+        <span class="path__why">a rail moving: measure how long, not how big</span>
+      </li>
+      <li>
+        <a href="topics/fundamentals/crosstalk.html">Crosstalk</a>
+        <span class="path__why">noise that appears only when neighbours are active</span>
+      </li>
+      <li>
+        <a href="topics/fundamentals/return-current-paths.html">Return current paths</a>
+        <span class="path__why">coupling between nets that never run near each other</span>
+      </li>
+      <li>
+        <a href="topics/labs/adc-interference.html">Lab D — ADC interference</a>
+        <span class="path__why">a measured value that is noisy or offset, with something switching nearby</span>
+      </li>
+      <li>
+        <a href="topics/methodology/correlation.html">Correlation</a>
+        <span class="path__why">when simulation and measurement disagree, what that can mean</span>
+      </li>
+    </ol>
+  </section>
+
+  <div class="prose">
+    <h2 class="section-rule"><span>If you would rather not follow a path</span></h2>
+    <p>
+      The <a href="index.html">topic map</a> lists all 59 pages by section, and the
+      search (press <kbd>/</kbd>) matches titles, slugs and keywords — including
+      jargon the titles do not contain, so <code>decap</code>, <code>SSO</code>,
+      <code>Zt</code> and <code>backdrill</code> all find their pages.
+    </p>
+    <p>
+      And if you want to know what a model assumes before trusting anything it
+      shows you, that is published at
+      <a href="model-contract.html">model contracts</a>.
+    </p>
+  </div>
+</main>
+
+<footer class="site-foot">
+  <span>SIPI &#8212; signal and power integrity, visualised.</span>
+  <span>Created and directed by Geetansh Arora. <a href="colophon.html">About, review &amp; AI assistance</a> &#183; <a href="model-contract.html">Model assumptions</a> &#183; <a href="docs/claims.md">Claim ledger</a></span>
+</footer>
+
+<script src="js/site.js?v=acb47d86"></script>
+</body>
+</html>

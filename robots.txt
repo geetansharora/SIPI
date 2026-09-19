@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+
+# Permit search indexing and query-time AI retrieval; reserve model-training use.
+Content-Signal: search=yes, ai-input=yes, ai-train=no
+
+Sitemap: https://sipi.work/sitemap.xml

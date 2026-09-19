@@ -1,0 +1,313 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SI/PI Debugging: From Symptom to Cause | SIPI</title>
+<meta name="description" content="A lookup table from what you observe to what is probably wrong, and the ordering rule that stops a debug becoming a random walk.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<link rel="stylesheet" href="../../css/base.css?v=e4f774de">
+<link rel="stylesheet" href="../../css/components.css?v=295837ab">
+  <!-- meta:start -->
+  <link rel="canonical" href="https://sipi.work/topics/methodology/debug-playbook.html">
+  <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="SIPI">
+  <meta property="og:title" content="SI/PI Debugging: From Symptom to Cause | SIPI">
+  <meta property="og:description" content="A lookup table from what you observe to what is probably wrong, and the ordering rule that stops a debug becoming a random walk.">
+  <meta property="og:url" content="https://sipi.work/topics/methodology/debug-playbook.html">
+  <meta property="og:image" content="https://sipi.work/assets/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="SI/PI Debugging: From Symptom to Cause | SIPI">
+  <meta name="twitter:description" content="A lookup table from what you observe to what is probably wrong, and the ordering rule that stops a debug becoming a random walk.">
+  <meta name="twitter:image" content="https://sipi.work/assets/og.png">
+  <!-- meta:end -->
+</head>
+<body>
+
+<header class="masthead">
+  <a class="wordmark" href="../../index.html">SIPI</a>
+  <nav>
+    <a href="../../index.html#fundamentals">Fundamentals</a>
+    <a href="../../index.html#power-integrity">Power</a>
+    <a href="../../index.html#interfaces">Interfaces</a>
+    <a href="../../start.html">Start</a>
+    <a href="../../labs.html">Labs</a>
+    <a href="../../reference.html">Reference</a>
+    <button class="theme-toggle" data-act="theme" type="button">System</button>
+  </nav>
+</header>
+
+<main>
+  <div class="page-head">
+    <p class="crumb"><a href="../../index.html#methodology">Methodology</a> / 05</p>
+    <h1>SI/PI Debugging: From Symptom to Cause</h1>
+    <p class="byline">
+      <!-- review:start --><span>By Geetansh Arora — Principal SI/PI Engineer</span><time datetime="2026-09-18" title="Technical review by Geetansh Arora on this date">18 Sep 2026</time><span>9 min</span><!-- review:end -->
+    </p>
+    <p class="answer">
+      Every SI symptom is consistent with several causes, so the useful move is never to guess
+      better &#8212; it is to pick the measurement whose outcome <em>differs</em> between the
+      candidates. This page is a set of hypotheses and the experiments that separate them, not a
+      list of answers.
+    </p>
+  </div>
+
+  <!-- ───────────── the picture ───────────── -->
+  <figure class="figure">
+    <div class="figure__bar"><span>Four questions that eliminate most of the table</span></div>
+    <div class="figure__body"><svg viewBox="-4 14 680 300" role="img" aria-label="A decision tree for narrowing a high-speed failure: one instance or all of them, is it data dependent, does it move with corner, and is the eye closed or clean with rare errors.">
+  <text class="lbl-hi" x="0" y="32">narrow the space before you reach for the symptom table</text>
+  <rect class="edge" x="220" y="46" width="240" height="30" rx="3" fill="var(--surface-2)"/><text class="lbl-hi" x="340.0" y="65" text-anchor="middle">One instance, or all of them?</text>
+  <path class="edge" d="M280,76 L280,91.0 L90,91.0 L90,106" fill="none"/><text class="lbl" x="185.0" y="87.0" text-anchor="middle">one</text><path class="edge" d="M400,76 L400,91.0 L590,91.0 L590,106" fill="none"/><text class="lbl" x="495.0" y="87.0" text-anchor="middle">all</text>
+  <rect x="10" y="106" width="160" height="26" rx="3" fill="var(--alarm)" opacity=".35"/><text class="lbl-hi" x="90.0" y="123" text-anchor="middle">a physical defect</text>
+  <rect class="edge" x="480" y="106" width="200" height="30" rx="3" fill="var(--surface-2)"/><text class="lbl-hi" x="580.0" y="125" text-anchor="middle">Data dependent?</text>
+  <path class="edge" d="M530,136 L530,151.0 L400,151.0 L400,166" fill="none"/><text class="lbl" x="465.0" y="147.0" text-anchor="middle">yes</text><path class="edge" d="M630,136 L630,151.0 L640,151.0 L640,166" fill="none"/><text class="lbl" x="635.0" y="147.0" text-anchor="middle">no</text>
+  <rect x="300" y="166" width="200" height="26" rx="3" fill="var(--reflect)" opacity=".35"/><text class="lbl-hi" x="400.0" y="183" text-anchor="middle">ISI · crosstalk · SSN</text>
+  <rect class="edge" x="540" y="166" width="140" height="30" rx="3" fill="var(--surface-2)"/><text class="lbl-hi" x="610.0" y="185" text-anchor="middle">Moves with corner?</text>
+  <path class="edge" d="M580,196 L580,211.0 L470,211.0 L470,226" fill="none"/><text class="lbl" x="525.0" y="207.0" text-anchor="middle">yes</text><path class="edge" d="M650,196 L650,211.0 L640,211.0 L640,226" fill="none"/><text class="lbl" x="645.0" y="207.0" text-anchor="middle">no</text>
+  <rect x="370" y="226" width="200" height="26" rx="3" fill="var(--reflect)" opacity=".35"/><text class="lbl-hi" x="470.0" y="243" text-anchor="middle">timing drift · training</text>
+  <rect class="edge" x="560" y="226" width="120" height="30" rx="3" fill="var(--surface-2)"/><text class="lbl-hi" x="620.0" y="245" text-anchor="middle">Eye closed?</text>
+  <path class="edge" d="M590,256 L590,271.0 L500,271.0 L500,286" fill="none"/><text class="lbl" x="545.0" y="267.0" text-anchor="middle">yes</text><path class="edge" d="M660,256 L660,271.0 L650,271.0 L650,286" fill="none"/><text class="lbl" x="655.0" y="267.0" text-anchor="middle">no</text>
+  <rect x="400" y="286" width="200" height="26" rx="3" fill="var(--signal)" opacity=".35"/><text class="lbl-hi" x="500.0" y="303" text-anchor="middle">channel problem</text>
+  <rect x="560" y="286" width="120" height="26" rx="3" fill="var(--alarm)" opacity=".35"/><text class="lbl-hi" x="620.0" y="303" text-anchor="middle">tails — noise</text>
+  <g transform="translate(0,150)">
+    <text class="lbl-bad" x="0" y="0">change ONE thing</text>
+    <text class="lbl" x="0" y="18">changing three at once is almost always</text>
+    <text class="lbl" x="0" y="34">slower: if it improves you have learned</text>
+    <text class="lbl" x="0" y="50">nothing about which change did it</text>
+    <text class="lbl-sig" x="0" y="76">and keep the log — the log is what</text>
+    <text class="lbl-sig" x="0" y="92">makes the next occurrence take an hour</text>
+    <text class="lbl-sig" x="0" y="108">instead of a week</text>
+  </g>
+</svg></div>
+    <figcaption><b>Most high-speed debugging is pattern matching, and the table on this page is the shortcut.</b> But before reaching for it, four questions eliminate most of the possibilities, and they are ordered by how cheap they are to answer. <b>One instance or all of them?</b> One board or one lane means a defect; every board means a design margin problem &#8212; and these two have almost no overlap in cause. <b>Is it data dependent?</b> If a pattern change moves it, the mechanism is ISI, crosstalk or SSN. <b>Does it move with corner?</b> Voltage and temperature dependence points at timing, drift and training. <b>Is the eye closed, or clean with occasional errors?</b> A visibly closed eye is a channel problem. A clean eye with rare errors is a <em>tail</em> problem &#8212; noise, supply, or something rare &#8212; and no amount of channel work will touch it. The strongest temptation in a bring-up lab is to change three things at once because the schedule is tight. It is almost always slower, and you carry two modifications of unknown value into production.</figcaption>
+  </figure>
+
+  <div class="prose">
+    <p>
+      When a brand-new prototype board arrives in the bring-up lab and refuses to work — an LPDDR5X bus fails
+      training, or a PCIe Gen 5 link drops packets every few minutes — the immediate human impulse is panic.
+      Under intense schedule pressure, engineers instinctively reach for the soldering iron: tacking extra decoupling
+      capacitors onto voltage rails, tweaking transmitter drive strength registers, changing termination resistors,
+      and cutting traces with an X-Acto knife.
+    </p>
+
+    <p>
+      This chaotic approach, known on the bench as &ldquo;shotgun debugging,&rdquo; almost never works. If you change
+      three physical variables simultaneously and the board starts working, you have not solved the problem — you have
+      merely masked it. You now have no idea which change fixed the fault, and you have introduced uncharacterized
+      modifications that will inevitably cause intermittent failures across high-volume production.
+    </p>
+
+    <p>
+      Debugging high-speed signal and power integrity is not an exercise in trial-and-error; it is an
+      <strong>exercise in ruthless physical isolation</strong>. A symptom on an oscilloscope (such as a closed eye
+      or excessive jitter) is rarely unique — it can be caused by excessive dielectric loss, via stub reflections,
+      power supply ground bounce, or simply an inductive oscilloscope ground lead. The professional debug process
+      centers on designing <em>discriminating experiments</em> that bisect the failure space, eliminating entire
+      categories of physics before a single component is touched.
+    </p>
+
+    <h2>Why a symptom is not a diagnosis</h2>
+
+    <p>
+      A closed eye is consistent with loss, reflections, crosstalk, supply noise and a bad
+      measurement. So is jitter. So is a bit error rate that is worse than predicted. Almost nothing
+      you observe points at one cause.
+    </p>
+
+    <p>
+      That means the skill being exercised is not pattern-matching a symptom to a fix — it is
+      <strong>designing a discriminating experiment</strong>. A measurement that would look the same
+      whichever hypothesis is true has told you nothing, however much effort it took.
+    </p>
+
+    <p>
+      So the structure below is deliberately not symptom → cause. It is symptom → leading
+      hypothesis → <em>the experiment that would rule it out</em>. The third column is the one that
+      matters.
+    </p>
+
+    <h2 class="section-rule"><span>The table</span></h2>
+
+    <div class="note">
+      <b>These are hypotheses, not diagnoses</b>
+      Every row names the <em>most likely</em> cause and an experiment that would separate it from the
+      alternatives. That second column is the one that matters: a symptom is consistent with several
+      mechanisms, and the value of the table is in narrowing quickly, not in being right immediately.
+      A measurement that would look the same whichever hypothesis is true has not told you anything —
+      pick the one whose outcome differs between them.
+    </div>
+
+    <div class="table-scroll">
+      <table class="data">
+        <thead><tr><th>Symptom</th><th>Leading hypothesis</th><th>Experiment that discriminates it</th></tr></thead>
+        <tbody>
+          <tr><td>Fails at fast-strong corner, passes at typical</td><td>reflections — lower R<sub>s</sub> and faster edge together</td><td>TDR the net; sweep driver strength</td></tr>
+          <tr><td>Periodic jitter at a specific frequency</td><td>PDN resonance, or a coupled tone</td><td>PDN impedance plot; look for a peak at that frequency</td></tr>
+          <tr><td>Fails only with neighbours active</td><td>crosstalk</td><td>run the aggressors quiet, then at worst-case pattern</td></tr>
+          <tr><td>Fails only on specific data patterns</td><td>ISI, or a termination that is pattern-dependent</td><td>compare isolated bit vs long run amplitude</td></tr>
+          <tr><td>Deep narrow notch in S<sub>21</sub></td><td>via stub or cavity resonance</td><td>compute λ/4 for the stub; check plane modes</td></tr>
+          <tr><td>Eye fine, occasional bit errors</td><td>SSN, supply droop, or a rare pattern</td><td>scope the rail during the failing traffic</td></tr>
+          <tr><td>Fails after the board warms up</td><td>timing drift, or training that has not repeated</td><td>retrain at temperature; check corner assumptions</td></tr>
+          <tr><td>One lane of many fails</td><td>a physical defect on that lane — via, escape, solder</td><td>TDR that lane against a working one</td></tr>
+          <tr><td>Failure moves when you probe it</td><td>the probe, not the board</td><td>shorten the ground lead; probe elsewhere</td></tr>
+          <tr><td>Emissions peak with no matching clock harmonic</td><td>plane cavity mode or common-mode on a cable</td><td>compute plane modes; measure S<sub>CD21</sub></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2 class="section-rule"><span>The ordering rule</span></h2>
+
+    <p>
+      Before reaching for the table, narrow the space. Each of these questions eliminates most of the
+      remaining possibilities, and they are ordered by how cheap they are to answer:
+    </p>
+
+    <ol class="tight">
+      <li><strong>Is it one instance or all of them?</strong> One board or one lane means a defect;
+        every board means a design margin problem. These have almost no overlap in cause.</li>
+      <li><strong>Is it data-dependent?</strong> If a pattern change moves it, the mechanism is ISI,
+        crosstalk or SSN. If it does not, look at noise, supply and clocking.</li>
+      <li><strong>Does it move with corner?</strong> Voltage and temperature dependence points at
+        timing, drift and training. Independence points at the channel.</li>
+      <li><strong>Is it in the eye or outside it?</strong> A visibly closed eye is a channel problem. A
+        clean eye with occasional errors is a tail problem — noise, supply, or a rare event — and no
+        amount of channel work will touch it.</li>
+    </ol>
+
+    <div class="note">
+      <b>Change one thing</b>
+      The strongest temptation in a bring-up lab is to change three things at once because the schedule
+      is tight. It is almost always slower: if the symptom improves you have learned nothing about which
+      change did it, and you now carry two modifications of unknown value into production. Change one
+      thing, record what happened, and keep the log — the log is what makes the next occurrence take an
+      hour instead of a week.
+    </div>
+
+    <h2 class="section-rule"><span>Why this decides how your board behaves</span></h2>
+
+    <ul class="tight">
+      <li><strong>Most debugging time is spent on the wrong hypothesis.</strong> Not on doing the
+        wrong analysis well — on doing a competent analysis of something that was never the
+        cause.</li>
+      <li><strong>Cheap discriminators exist for almost everything.</strong> Turning a neighbour's
+        lane off separates crosstalk from everything else in one measurement.</li>
+      <li><strong>Changing two things at once destroys the information.</strong> If a fix works and
+        you changed three things, you have solved this board and learned nothing transferable.</li>
+      <li><strong>The measurement can be the fault.</strong> A probe's ground lead is an inductor
+        and its tip is a capacitor, and on a fast net that is not a small perturbation.</li>
+    </ul>
+
+    <h2 class="section-rule"><span>What to do about it</span></h2>
+
+    <p>
+      <strong>Write the hypotheses down before measuring.</strong> Three or four, ranked. It takes
+      two minutes and it prevents the commonest failure mode, which is pursuing the first idea until
+      it is disproven rather than choosing between ideas.
+    </p>
+
+    <p>
+      <strong>Choose the experiment by how much it separates, not by how easy it is.</strong> A
+      difficult measurement that eliminates two hypotheses beats an easy one that eliminates none.
+    </p>
+
+    <p>
+      <strong>Change one thing.</strong> Always.
+    </p>
+
+    <p>
+      <strong>Prove the measurement before trusting it.</strong> Probe a known-good net. Check that
+      removing the probe changes the failure. Verify the instrument against a reference.
+    </p>
+
+    <div class="note">
+      <b>The ordering rule</b>
+      Work from cheap and broad to expensive and narrow. In practice that means: confirm the
+      symptom is real and reproducible; rule out the measurement; separate channel from
+      supply; separate this net from its neighbours; and only then start characterising
+      structures. Every one of those steps eliminates a class of cause, and each is cheaper
+      than the one after it.
+    </div>
+
+    <details class="deeper">
+      <summary>Go deeper — the discriminators worth memorising</summary>
+
+      <p>
+        A handful of experiments separate most of the common confusions, and they are worth knowing
+        by reflex:
+      </p>
+
+      <ul class="tight">
+        <li><strong>Turn the neighbours off.</strong> Separates crosstalk from everything else,
+          conclusively, in one measurement.</li>
+        <li><strong>Change the data pattern.</strong> Separates ISI and data-dependent jitter
+          (which track the pattern) from noise and supply effects (which do not).</li>
+        <li><strong>Change the workload without changing the link.</strong> Separates supply-induced
+          effects from channel effects.</li>
+        <li><strong>Measure how long, not how big.</strong> On a PDN, the droop's <em>duration</em>
+          names the responsible stage. See
+          <a href="../power-integrity/three-frequency-domains.html">the three droops</a>.</li>
+        <li><strong>Capture for longer.</strong> Separates random jitter (keeps growing) from
+          deterministic (plateaus).</li>
+        <li><strong>Compare the two walls of a bathtub.</strong> Unequal slopes mean asymmetric
+          jitter — duty-cycle distortion or a threshold offset.</li>
+        <li><strong>Look at ripple period in S<sub>21</sub>.</strong> Δf = 1/(2T<sub>d</sub>) gives
+          the distance between the two reflecting structures, which usually identifies them.</li>
+      </ul>
+
+      <p>
+        What these have in common is that each one's <em>outcome differs</em> between the hypotheses
+        it is meant to separate. That is the property to look for when inventing a new one: before
+        running a measurement, ask what each candidate cause predicts it will show. If they all
+        predict the same thing, do something else.
+      </p>
+    </details>
+
+    <h2 class="section-rule"><span>In the real world</span></h2>
+
+    <p>
+      The most expensive debugging mistake is not a wrong conclusion — it is a right conclusion
+      reached without evidence, which then cannot be defended when it matters. If the mechanism
+      behind a successful fix is not established, the next similar failure may require the
+      investigation to start again.
+    </p>
+
+    <p>
+      So the deliverable from a debug is not the fix. It is the <b>evidence chain</b>: what was
+      observed, which hypotheses it was consistent with, which experiment eliminated which, and what
+      remained. That is what makes the conclusion survive a review.
+    </p>
+
+    <h3>Related</h3>
+    <ul class="tight">
+      <li><a href="../methodology/correlation.html">Correlating Simulation and Measurement</a></li>
+      <li><a href="../power-integrity/pdn-induced-jitter.html">Power-Supply-Induced Jitter: Connecting PI and SI</a></li>
+      <li><a href="../fundamentals/reflections.html">Transmission-Line Reflections and Ringing</a></li>
+      <li><a href="../methodology/reporting-margin.html">Reporting Signal and Power Integrity Margin</a></li>
+      <li><a href="../labs/adc-interference.html">Lab D: ADC Interference, Aliasing and Reference Noise</a> — a worked case: a reading moves, and the aggressor is a GPIO next door</li>
+    </ul>
+  </div>
+
+  <!-- pager:start -->
+  <nav class="pager" aria-label="Previous and next topic">
+    <a class="prev" href="../../topics/methodology/reporting-margin.html"><span class="dir">Previous</span><span>Reporting Signal and Power Integrity Margin</span></a>
+    <a class="next" href="../../topics/methodology/measurement-practice.html"><span class="dir">Next</span><span>SI/PI Measurement: Fixtures, Calibration, and Instrument Effects</span></a>
+  </nav>
+  <!-- pager:end -->
+</main>
+
+<footer class="site-foot">
+  <span>SIPI &#8212; signal and power integrity, visualised.</span>
+  <span>Created and directed by Geetansh Arora. <a href="../../colophon.html">About, review &amp; AI assistance</a> &#183; <a href="../../model-contract.html">Model assumptions</a> &#183; <a href="../../docs/claims.md">Claim ledger</a></span>
+</footer>
+
+<script src="../../js/site.js?v=acb47d86"></script>
+<script src="../../js/search.js?v=6c93a285"></script>
+</body>
+</html>

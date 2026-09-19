@@ -1,0 +1,357 @@
+{
+  "generated": "scaffold.py panels",
+  "pages": [
+    {
+      "url": "topics/fundamentals/bathtub-curves.html",
+      "panels": [
+        "bathtub"
+      ],
+      "presets": [
+        "clean",
+        "deep",
+        "noisy",
+        "typical"
+      ]
+    },
+    {
+      "url": "topics/fundamentals/crosstalk.html",
+      "panels": [
+        "crosstalk"
+      ],
+      "presets": [
+        "fastedge",
+        "long",
+        "microstrip",
+        "stripline",
+        "tight"
+      ]
+    },
+    {
+      "url": "topics/fundamentals/edge-rate-not-clock-rate.html",
+      "panels": [
+        "spectrum"
+      ],
+      "presets": [
+        "fastclk",
+        "serial",
+        "slowfast",
+        "slowslow"
+      ]
+    },
+    {
+      "url": "topics/fundamentals/eye-diagram.html",
+      "panels": [
+        "eye"
+      ],
+      "presets": [
+        "clean",
+        "closed",
+        "jitter",
+        "lossy",
+        "typical"
+      ]
+    },
+    {
+      "url": "topics/fundamentals/isi.html",
+      "panels": [
+        "isi"
+      ],
+      "presets": [
+        "fast",
+        "heavy",
+        "light",
+        "medium"
+      ]
+    },
+    {
+      "url": "topics/fundamentals/jitter-taxonomy.html",
+      "panels": [
+        "jitter"
+      ],
+      "presets": [
+        "lowdj",
+        "lowrj",
+        "strict",
+        "typical"
+      ]
+    },
+    {
+      "url": "topics/fundamentals/loss-mechanisms.html",
+      "panels": [
+        "loss"
+      ],
+      "presets": [
+        "fr4",
+        "low",
+        "mid",
+        "rough",
+        "wide"
+      ]
+    },
+    {
+      "url": "topics/fundamentals/reflections.html",
+      "panels": [
+        "reflection"
+      ],
+      "presets": [
+        "mismatch",
+        "parallel",
+        "series",
+        "short",
+        "unterminated"
+      ]
+    },
+    {
+      "url": "topics/fundamentals/s-parameters.html",
+      "panels": [
+        "sparams"
+      ],
+      "presets": [
+        "backpl",
+        "clean",
+        "drilled",
+        "lowloss",
+        "thin"
+      ]
+    },
+    {
+      "url": "topics/fundamentals/when-is-a-trace-a-transmission-line.html",
+      "panels": [
+        "criticalLength"
+      ],
+      "presets": [
+        "ddr",
+        "edge",
+        "reset",
+        "short"
+      ]
+    },
+    {
+      "url": "topics/interfaces/lpddr5x.html",
+      "panels": [
+        "lpddrBudget"
+      ],
+      "presets": [
+        "dense",
+        "hot",
+        "slow",
+        "typ",
+        "untr"
+      ]
+    },
+    {
+      "url": "topics/labs/adc-interference.html",
+      "panels": [
+        "adcLab"
+      ],
+      "presets": [
+        "ds-clean",
+        "ds-clock",
+        "ds-notch",
+        "ds-offnotch",
+        "ds-ref",
+        "sar-clean",
+        "sar-fast",
+        "sar-fold",
+        "sar-gpio",
+        "sar-locked",
+        "sar-ref",
+        "sar-slow"
+      ]
+    },
+    {
+      "url": "topics/labs/one-channel.html",
+      "panels": [
+        "labChannel",
+        "touchstone"
+      ],
+      "presets": [
+        "matched",
+        "pcie4",
+        "pcie5",
+        "rateonly",
+        "reachonly",
+        "stubby",
+        "ufs4"
+      ]
+    },
+    {
+      "url": "topics/labs/pdn-chain.html",
+      "panels": [
+        "labPdn"
+      ],
+      "presets": [
+        "lossy",
+        "nodie",
+        "soc",
+        "thin"
+      ]
+    },
+    {
+      "url": "topics/labs/travelling-waves.html",
+      "panels": [
+        "labWaves"
+      ],
+      "presets": [
+        "mismatch",
+        "parallel",
+        "series",
+        "shorted",
+        "unterminated"
+      ]
+    },
+    {
+      "url": "topics/power-integrity/anti-resonance.html",
+      "panels": [
+        "antiResonance"
+      ],
+      "presets": [
+        "close",
+        "damped",
+        "lowesr",
+        "two"
+      ]
+    },
+    {
+      "url": "topics/power-integrity/decoupling-capacitors.html",
+      "panels": [
+        "pdnImpedance"
+      ],
+      "presets": [
+        "badmount",
+        "damped",
+        "lowesr",
+        "one",
+        "two"
+      ]
+    },
+    {
+      "url": "topics/power-integrity/pdn-induced-jitter.html",
+      "panels": [
+        "pdnJitter"
+      ],
+      "presets": [
+        "firstdroop",
+        "outside",
+        "refnoise",
+        "sensitive",
+        "vrm"
+      ]
+    },
+    {
+      "url": "topics/power-integrity/plane-resonance.html",
+      "panels": [
+        "planeResonance"
+      ],
+      "presets": [
+        "big",
+        "board",
+        "lowdk",
+        "small"
+      ]
+    },
+    {
+      "url": "topics/power-integrity/real-capacitors.html",
+      "panels": [
+        "realCaps"
+      ],
+      "presets": [
+        "badmount",
+        "classII",
+        "marked",
+        "today"
+      ]
+    },
+    {
+      "url": "topics/power-integrity/ssn-ground-bounce.html",
+      "panels": [
+        "ssn"
+      ],
+      "presets": [
+        "dbi",
+        "gnd",
+        "slow",
+        "x16"
+      ]
+    },
+    {
+      "url": "topics/power-integrity/target-impedance.html",
+      "panels": [
+        "targetZ"
+      ],
+      "presets": [
+        "big",
+        "io",
+        "soc",
+        "tight"
+      ]
+    },
+    {
+      "url": "topics/power-integrity/vrm-loop-bandwidth.html",
+      "panels": [
+        "vrmStep"
+      ],
+      "presets": [
+        "avp",
+        "base",
+        "fast",
+        "morec"
+      ]
+    },
+    {
+      "url": "topics/signal-integrity/equalization.html",
+      "panels": [
+        "equalizer"
+      ],
+      "presets": [
+        "ctle",
+        "dfeonly",
+        "hard",
+        "noeq",
+        "typical"
+      ]
+    },
+    {
+      "url": "topics/signal-integrity/nrz-vs-pam4.html",
+      "panels": [
+        "pam4"
+      ],
+      "presets": [
+        "clean",
+        "gen6",
+        "lossy",
+        "slow"
+      ]
+    },
+    {
+      "url": "topics/signal-integrity/receiver-and-clock.html",
+      "panels": [
+        "cdr"
+      ],
+      "presets": [
+        "peaky",
+        "tight",
+        "typical",
+        "wide"
+      ]
+    },
+    {
+      "url": "topics/signal-integrity/what-closes-the-eye.html",
+      "panels": [
+        "impairments"
+      ],
+      "presets": [
+        "lpddr5x",
+        "pcie4",
+        "pcie5",
+        "ufs4",
+        "usb32"
+      ]
+    }
+  ],
+  "totals": {
+    "pages": 27,
+    "panels": 28,
+    "presets": 130
+  }
+}

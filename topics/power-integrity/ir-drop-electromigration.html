@@ -1,0 +1,324 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DC IR Drop and Electromigration | SIPI</title>
+<meta name="description" content="The static half of power integrity — where the DC budget goes before any AC noise appears, and why current density limits are a reliability spec rather than a performance one.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<link rel="stylesheet" href="../../css/base.css?v=e4f774de">
+<link rel="stylesheet" href="../../css/components.css?v=295837ab">
+  <!-- meta:start -->
+  <link rel="canonical" href="https://sipi.work/topics/power-integrity/ir-drop-electromigration.html">
+  <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="SIPI">
+  <meta property="og:title" content="DC IR Drop and Electromigration | SIPI">
+  <meta property="og:description" content="The static half of power integrity — where the DC budget goes before any AC noise appears, and why current density limits are a reliability spec rather than a performance one.">
+  <meta property="og:url" content="https://sipi.work/topics/power-integrity/ir-drop-electromigration.html">
+  <meta property="og:image" content="https://sipi.work/assets/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="DC IR Drop and Electromigration | SIPI">
+  <meta name="twitter:description" content="The static half of power integrity — where the DC budget goes before any AC noise appears, and why current density limits are a reliability spec rather than a performance one.">
+  <meta name="twitter:image" content="https://sipi.work/assets/og.png">
+  <!-- meta:end -->
+</head>
+<body>
+
+<header class="masthead">
+  <a class="wordmark" href="../../index.html">SIPI</a>
+  <nav>
+    <a href="../../index.html#fundamentals">Fundamentals</a>
+    <a href="../../index.html#power-integrity">Power</a>
+    <a href="../../index.html#interfaces">Interfaces</a>
+    <a href="../../start.html">Start</a>
+    <a href="../../labs.html">Labs</a>
+    <a href="../../reference.html">Reference</a>
+    <button class="theme-toggle" data-act="theme" type="button">System</button>
+  </nav>
+</header>
+
+<main>
+  <div class="page-head">
+    <p class="crumb"><a href="../../index.html#power-integrity">Power Integrity</a> / 07</p>
+    <h1>DC IR Drop and Electromigration</h1>
+    <p class="byline">
+      <!-- review:start --><span>By Geetansh Arora — Principal SI/PI Engineer</span><time datetime="2026-09-14" title="Technical review by Geetansh Arora on this date">14 Sep 2026</time><span>9 min</span><!-- review:end -->
+    </p>
+    <p class="answer">
+      Before any of the interesting dynamic behaviour happens, plain DC resistance has already
+      taken a slice of your voltage budget &#8212; and it takes it permanently. The same current
+      density that causes it also, over years, physically moves metal atoms and opens the
+      conductor. Two failures, one cause, very different timescales.
+    </p>
+  </div>
+
+  <!-- ───────────── the picture ───────────── -->
+  <figure class="figure">
+    <div class="figure__bar"><span>Current does not distribute evenly &#183; and DC drop comes off the top</span></div>
+    <div class="figure__body"><svg viewBox="0 20 640 210" role="img" aria-label="A ball grid seen from above, shaded by current density: the balls nearest the die hotspot carry several times their nominal share while the outer balls carry very little.">
+  <rect class="edge" x="42" y="26" width="216" height="150" rx="3" fill="var(--surface-2)"/>
+  <circle cx="60" cy="44" r="8" fill="var(--signal)" opacity=".35"/><circle cx="90" cy="44" r="8" fill="var(--signal)" opacity=".35"/><circle cx="120" cy="44" r="8" fill="var(--signal)" opacity=".35"/><circle cx="150" cy="44" r="8" fill="var(--signal)" opacity=".35"/><circle cx="180" cy="44" r="8" fill="var(--signal)" opacity=".35"/><circle cx="210" cy="44" r="8" fill="var(--signal)" opacity=".35"/><circle cx="240" cy="44" r="8" fill="var(--signal)" opacity=".35"/><circle cx="60" cy="72" r="8" fill="var(--signal)" opacity=".35"/><circle cx="90" cy="72" r="8" fill="var(--signal)" opacity=".35"/><circle cx="120" cy="72" r="8" fill="var(--reflect)" opacity=".7"/><circle cx="150" cy="72" r="8" fill="var(--reflect)" opacity=".7"/><circle cx="180" cy="72" r="8" fill="var(--reflect)" opacity=".7"/><circle cx="210" cy="72" r="8" fill="var(--signal)" opacity=".35"/><circle cx="240" cy="72" r="8" fill="var(--signal)" opacity=".35"/><circle cx="60" cy="100" r="8" fill="var(--signal)" opacity=".35"/><circle cx="90" cy="100" r="8" fill="var(--reflect)" opacity=".7"/><circle cx="120" cy="100" r="8" fill="var(--alarm)" opacity=".95"/><circle cx="150" cy="100" r="8" fill="var(--alarm)" opacity=".95"/><circle cx="180" cy="100" r="8" fill="var(--alarm)" opacity=".95"/><circle cx="210" cy="100" r="8" fill="var(--reflect)" opacity=".7"/><circle cx="240" cy="100" r="8" fill="var(--signal)" opacity=".35"/><circle cx="60" cy="128" r="8" fill="var(--signal)" opacity=".35"/><circle cx="90" cy="128" r="8" fill="var(--reflect)" opacity=".7"/><circle cx="120" cy="128" r="8" fill="var(--alarm)" opacity=".95"/><circle cx="150" cy="128" r="8" fill="var(--alarm)" opacity=".95"/><circle cx="180" cy="128" r="8" fill="var(--alarm)" opacity=".95"/><circle cx="210" cy="128" r="8" fill="var(--reflect)" opacity=".7"/><circle cx="240" cy="128" r="8" fill="var(--signal)" opacity=".35"/><circle cx="60" cy="156" r="8" fill="var(--signal)" opacity=".35"/><circle cx="90" cy="156" r="8" fill="var(--signal)" opacity=".35"/><circle cx="120" cy="156" r="8" fill="var(--reflect)" opacity=".7"/><circle cx="150" cy="156" r="8" fill="var(--reflect)" opacity=".7"/><circle cx="180" cy="156" r="8" fill="var(--reflect)" opacity=".7"/><circle cx="210" cy="156" r="8" fill="var(--signal)" opacity=".35"/><circle cx="240" cy="156" r="8" fill="var(--signal)" opacity=".35"/>
+  <text class="lbl" x="150" y="194" text-anchor="middle">power balls, seen from above</text>
+  <g transform="translate(310,0)">
+    <text class="lbl-hi" x="0" y="40">Where the budget goes</text>
+    <rect x="0" y="52" width="300" height="18" rx="2" fill="var(--muted)" opacity=".30"/>
+    <rect x="0" y="52" width="46" height="18" rx="2" fill="var(--signal)" opacity=".8"/>
+    <text class="lbl" x="306" y="64" text-anchor="end">board planes</text>
+    <rect x="0" y="76" width="300" height="18" rx="2" fill="var(--muted)" opacity=".30"/>
+    <rect x="0" y="76" width="92" height="18" rx="2" fill="var(--signal)" opacity=".8"/>
+    <text class="lbl" x="306" y="88" text-anchor="end">vias and balls</text>
+    <rect x="0" y="100" width="300" height="18" rx="2" fill="var(--muted)" opacity=".30"/>
+    <rect x="0" y="100" width="70" height="18" rx="2" fill="var(--signal)" opacity=".8"/>
+    <text class="lbl" x="306" y="112" text-anchor="end">package</text>
+    <rect x="0" y="124" width="300" height="18" rx="2" fill="var(--muted)" opacity=".30"/>
+    <rect x="0" y="124" width="150" height="18" rx="2" fill="var(--alarm)" opacity=".8"/>
+    <text class="lbl-bad" x="306" y="136" text-anchor="end">on-die power grid</text>
+    <text class="lbl" x="0" y="164">37.5 mV of budget, and the DC drop takes a slice</text>
+    <text class="lbl-bad" x="0" y="180">before any transient noise has happened at all</text>
+  </g>
+  <text class="lbl-bad" x="150" y="212" text-anchor="middle">the average is not the check &#8212; the map is</text>
+</svg></div>
+    <figcaption><b>IR drop can consume rail margin before any dynamic event occurs.</b> On a 0.75 V rail at 5% ripple the entire budget is 37.5 mV; if the DC path from the regulator's sense point to the transistor takes 20 mV, less remains for droop, resonances, and SSN. Current crowds toward balls on the lower-resistance path to a hotspot, so a rail can meet its average current-density limit while a smaller set of balls carries several times the average. The same density affects electromigration, which is a <em>lifetime</em> specification rather than an immediate functional measurement. Because lifetime depends exponentially on temperature, the relevant check includes the hot operating corner rather than nominal junction temperature alone.</figcaption>
+  </figure>
+
+  <div class="prose">
+    <h2>Ohm's law, before anything else happens</h2>
+
+    <p>
+      Before high-speed clock trees ever start switching and before nanosecond transients, package anti-resonances,
+      or cavity modes can develop, the most fundamental law of electronics is already taking its cut:
+      Ohm's law (<span class="num">V = I &#215; R</span>). Copper is a superb conductor, but it is not a
+      superconductor. Every milliohm of resistance across board copper planes, via barrels, solder balls, and
+      dense on-die power grids drops voltage whenever DC current flows.
+    </p>
+
+    <p>
+      When modern low-voltage processors demand tens or hundreds of amperes of current, that static
+      <span class="num">I &#215; R</span> drop permanently steals a massive fraction of your allowable voltage window
+      before dynamic AC noise even enters the picture. Furthermore, when that immense current is forced through
+      microscopic solder balls or narrow metal necks, extreme current density does something far more permanent:
+      billions of energetic electrons physically collide with metal atoms, knocking them out of position and migrating
+      them downstream. Over months or years, this electromigration carves voids that eventually snap the conductor
+      into a permanent open circuit.
+    </p>
+
+    <p>
+      Every conductor between the regulator and the transistor has resistance: plane copper, vias,
+      BGA balls, package traces, and the metal grid on the die itself. Push current through
+      resistance and you drop voltage. That is all IR drop is.
+    </p>
+
+    <p>
+      What makes it consequential is that it is <em>static</em>. It is not a transient you can ride
+      out or a resonance you can damp. It is simply gone, before the rail has done anything
+      interesting, and everything dynamic has to fit in what is left.
+    </p>
+
+    <h2 class="section-rule"><span>The budget is spent before the AC arrives</span></h2>
+
+    <p>
+      IR drop is the least interesting mechanism in power integrity and one of the most consequential,
+      because it comes off the top. A 5% ripple budget on a 0.75 V rail is 37.5 mV total. If DC drop
+      from the regulator sense point to the transistor takes 20 mV of that, everything dynamic —
+      droops, resonances, SSN — is fighting over the remaining 17.5 mV.
+    </p>
+
+    <p>
+      The resistance is distributed across the whole chain, and the share is rarely where people expect:
+      board planes contribute least per unit length because they are wide, while vias, BGA balls,
+      package traces and the on-die power grid contribute most. On a high-current rail the on-die grid
+      is frequently the single largest term, which makes it a floorplanning problem before it is a board
+      problem.
+    </p>
+
+    <div class="note">
+      <b>Current crowding is where the surprises are</b>
+      Current does not distribute evenly. It crowds at the edges of plane cutouts, around via arrays,
+      and into whichever few balls happen to sit on the low-resistance path. A rail can meet its average
+      current density everywhere and still have a handful of balls carrying several times their share.
+      The average is not the check; the map is.
+    </div>
+
+    <h2 class="section-rule"><span>Electromigration: the same current, a different failure</span></h2>
+
+    <p>
+      Push enough current density through a metal conductor and momentum transfer from the electrons
+      physically displaces metal atoms. Material migrates downstream, voids open upstream, and
+      eventually the conductor fails open. The rate is captured by Black's equation:
+    </p>
+
+    <div class="eq">
+      MTTF ∝ ( 1 / <i class="var">J</i><sup>n</sup> ) · exp( <i class="var">E</i><sub>a</sub> / <i class="var">kT</i> )
+      <span class="cap">J is current density, n is typically around 2, and E_a is the activation energy. The exponential in temperature is the term that dominates in practice — the same current at a higher junction temperature can shorten life by an order of magnitude.</span>
+    </div>
+
+    <p>
+      Two consequences follow. First, EM is a <em>lifetime</em> specification, not a pass/fail
+      measurement — you cannot see it at bring-up, and the part that fails EM works perfectly for
+      months. It is enforced by design rules: a maximum current density per metal layer, per
+      temperature, per bump or ball, checked by rule rather than observed.
+    </p>
+
+    <p>
+      Second, the temperature term ties EM to thermal design in a way that catches people out. A layout
+      that passes at the nominal junction temperature can fail at the thermal corner, and a rail that is
+      fine in isolation can be marginal once a neighbouring block heats it. Signing off EM at typical
+      temperature is not a conservative simplification; it is the wrong corner.
+    </p>
+
+    <h2 class="section-rule"><span>Why this decides how your board behaves</span></h2>
+
+    <ul class="tight">
+      <li><strong>It comes off the top of the budget.</strong> Whatever DC drop takes, the AC
+        analysis never sees. A design that allocated its full ripple budget to dynamic impedance and
+        then discovered 20 mV of DC drop has lost half of it after the fact.</li>
+      <li><strong>The worst point is not the average.</strong> Current crowds — at plane cutouts,
+        around via arrays, into whichever balls sit on the lowest-resistance path. A rail can meet
+        its average current density everywhere and still have individual balls carrying several
+        times their share.</li>
+      <li><strong>It is usually a die and package problem, not a board one.</strong> Board planes
+        are wide and contribute least per unit length. The on-die power grid is frequently the
+        single largest term, which makes it a floorplanning question before it is a layout one.</li>
+      <li><strong>It interacts with timing.</strong> A gate at the far end of a grid runs at a lower
+        supply than one near the pins, so it is slower. Static IR drop becomes a systematic timing
+        skew across the die.</li>
+    </ul>
+
+    <h2 class="section-rule"><span>What to do about it</span></h2>
+
+    <p>
+      <strong>Allocate the DC drop explicitly, at the start.</strong> Decide what fraction of the
+      tolerance belongs to static drop before the dynamic analysis begins, and hold that line. This
+      is a budgeting decision, not a measurement.
+    </p>
+
+    <p>
+      <strong>Check the map, not the average.</strong> A current-density plot with a colour scale
+      hides exactly the hot spots that matter. Look at the maximum, and look at where it is.
+    </p>
+
+    <p>
+      <strong>Put the sense point where the specification means.</strong> A regulator regulates
+      what it senses. Sensing at its own output regulates the output and lets all the drop fall on
+      the load; sensing at the load moves the drop inside the loop where the regulator corrects it,
+      at the cost of loop stability margin. Remote sense is the single highest-leverage decision
+      here.
+    </p>
+
+    <p>
+      <strong>Fix crowding with geometry, not with more copper overall.</strong> Widening a plane
+      that is already wide does little; adding vias where the current is being forced through a
+      narrow path does a great deal.
+    </p>
+
+    <div class="note">
+      <b>Using this to find a fault</b>
+      <ul class="tight">
+        <li><b>Voltage measured at the load lower than at the regulator.</b> That difference is
+          your IR drop, directly. Measure it under load, not at idle — it scales with current.</li>
+        <li><b>A rail that fails only at high load and recovers instantly.</b> Static drop, not a
+          transient. A transient would show a settling shape; drop simply tracks the current.</li>
+        <li><b>Timing failures that correlate with physical position on the die.</b> Grid drop.
+          The far end of the grid is running slower because it is running lower.</li>
+        <li><b>A device that fails after months in the field with no visible damage.</b> Consider
+          electromigration on a via or ball array, especially one that a current-density check
+          passed on average.</li>
+      </ul>
+    </div>
+
+    <details class="deeper">
+      <summary>Go deeper — Black's equation and what it does not license</summary>
+
+      <p>
+        Electromigration is the long-term failure driven by the same current density. Electrons
+        transfer momentum to metal ions; over time, material migrates downstream, voids open
+        upstream, and the conductor eventually fails open. Black's equation captures the rate:
+      </p>
+
+      <div class="eq">
+        <span class="eq__main">MTTF ∝ ( 1 / <i class="var">J</i><sup>n</sup> ) · e<sup><i class="var">E</i>a / <i class="var">kT</i></sup></span>
+        <span class="eq__note">J is current density, n is typically 1–2, Ea an activation energy for the specific metallurgy</span>
+      </div>
+
+      <p>
+        Two things about that expression are worth stating carefully, because it is routinely
+        over-applied.
+      </p>
+
+      <p>
+        <strong>The exponential in temperature is the dominant term.</strong> A modest temperature
+        rise shortens life far more than a modest current increase does. Which means an
+        electromigration assessment without a thermal analysis behind it is not an assessment — the
+        T in that exponent is the junction or conductor temperature under real operating conditions,
+        not ambient.
+      </p>
+
+      <p>
+        <strong>n and Ea belong to a specific metallurgy.</strong> They are fitted constants for a
+        particular metal, barrier, grain structure and geometry, measured by accelerated test. They
+        are not universal, and a lifetime number computed with borrowed constants is not a
+        prediction. The honest use of Black's equation is comparative — this via array is worse than
+        that one — rather than absolute.
+      </p>
+
+      <p>
+        This is also why the reliability rules you are given are stated as current-density limits
+        rather than as lifetimes. The limit already encodes somebody's metallurgy, temperature
+        assumption and target life. Applying it is sound; back-calculating a lifetime from it is not.
+      </p>
+
+      <p>
+        <strong>Why DC matters and AC mostly does not.</strong> Electromigration is driven by net
+        atomic transport, so a current that reverses direction largely undoes its own damage — there
+        is a partial self-healing effect. A rail carrying steady DC is the classic case; a signal
+        line carrying balanced AC is largely exempt at the same RMS density. That asymmetry is why
+        power delivery gets the reliability scrutiny and signal routing usually does not.
+      </p>
+    </details>
+
+    <h2 class="section-rule"><span>In the real world</span></h2>
+
+    <p>
+      IR drop can quietly consume a meaningful part of a power-integrity budget. It may not cause a
+      dramatic failure by itself; instead, the design can lose margin across many conditions when
+      dynamic analysis begins from a rail budget already partly consumed by DC drop.
+    </p>
+
+    <p>
+      The habit worth building is to write the allocation down: so many millivolts to set-point
+      error, so many to static drop, so many to dynamic. It takes five minutes at the start of a
+      project and it makes every later argument about the PDN a conversation about numbers instead
+      of instincts.
+    </p>
+
+    <h3>Related</h3>
+    <ul class="tight">
+      <li><a href="../power-integrity/what-is-the-pdn.html">Power Delivery Networks: From Regulator to Die</a></li>
+      <li><a href="../power-integrity/cps-co-analysis.html">Chip-Package-System Power Integrity Co-Analysis</a></li>
+      <li><a href="../package-board/bga-escape-routing.html">BGA Escape Routing and Breakout Congestion</a></li>
+      <li><a href="../methodology/reporting-margin.html">Reporting Signal and Power Integrity Margin</a></li>
+    </ul>
+  </div>
+
+  <!-- pager:start -->
+  <nav class="pager" aria-label="Previous and next topic">
+    <a class="prev" href="../../topics/power-integrity/plane-resonance.html"><span class="dir">Previous</span><span>Power-Plane Cavity Resonance and Edge Radiation</span></a>
+    <a class="next" href="../../topics/power-integrity/ssn-ground-bounce.html"><span class="dir">Next</span><span>Simultaneous Switching Noise and Ground Bounce</span></a>
+  </nav>
+  <!-- pager:end -->
+</main>
+
+<footer class="site-foot">
+  <span>SIPI &#8212; signal and power integrity, visualised.</span>
+  <span>Created and directed by Geetansh Arora. <a href="../../colophon.html">About, review &amp; AI assistance</a> &#183; <a href="../../model-contract.html">Model assumptions</a> &#183; <a href="../../docs/claims.md">Claim ledger</a></span>
+</footer>
+
+<script src="../../js/site.js?v=acb47d86"></script>
+<script src="../../js/search.js?v=6c93a285"></script>
+</body>
+</html>

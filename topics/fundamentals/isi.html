@@ -1,0 +1,400 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Intersymbol Interference (ISI) and Channel Memory | SIPI</title>
+<meta name="description" content="Why frequency-dependent loss makes each bit depend on the bits before it, and how that becomes data-dependent jitter.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<link rel="stylesheet" href="../../css/base.css?v=e4f774de">
+<link rel="stylesheet" href="../../css/components.css?v=295837ab">
+  <!-- meta:start -->
+  <link rel="canonical" href="https://sipi.work/topics/fundamentals/isi.html">
+  <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="SIPI">
+  <meta property="og:title" content="Intersymbol Interference (ISI) and Channel Memory | SIPI">
+  <meta property="og:description" content="Why frequency-dependent loss makes each bit depend on the bits before it, and how that becomes data-dependent jitter.">
+  <meta property="og:url" content="https://sipi.work/topics/fundamentals/isi.html">
+  <meta property="og:image" content="https://sipi.work/assets/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Intersymbol Interference (ISI) and Channel Memory | SIPI">
+  <meta name="twitter:description" content="Why frequency-dependent loss makes each bit depend on the bits before it, and how that becomes data-dependent jitter.">
+  <meta name="twitter:image" content="https://sipi.work/assets/og.png">
+  <!-- meta:end -->
+</head>
+<body>
+
+<header class="masthead">
+  <a class="wordmark" href="../../index.html">SIPI</a>
+  <nav>
+    <a href="../../index.html#fundamentals">Fundamentals</a>
+    <a href="../../index.html#power-integrity">Power</a>
+    <a href="../../index.html#interfaces">Interfaces</a>
+    <a href="../../start.html">Start</a>
+    <a href="../../labs.html">Labs</a>
+    <a href="../../reference.html">Reference</a>
+    <button class="theme-toggle" data-act="theme" type="button">System</button>
+  </nav>
+</header>
+
+<main>
+  <div class="page-head">
+    <p class="crumb"><a href="../../index.html#fundamentals">Fundamentals</a> / 09</p>
+    <h1>Intersymbol Interference (ISI) and Channel Memory</h1>
+    <p class="byline">
+      <!-- review:start --><span>By Geetansh Arora — Principal SI/PI Engineer</span><time datetime="2026-09-13" title="Technical review by Geetansh Arora on this date">13 Sep 2026</time><span>10 min</span><!-- review:end -->
+    </p>
+    <p class="answer">
+      A channel has memory. Because loss smears every bit out in time, the voltage the receiver
+      sees at one sampling instant is not just this bit &#8212; it is this bit plus the leftover
+      tails of the bits that came before. That makes the error depend on the <em>data</em>, which
+      is why a perfectly fixed, perfectly linear piece of copper produces something that looks
+      for all the world like random noise.
+    </p>
+  </div>
+
+  <!-- ───────────── the picture ───────────── -->
+  <section class="instrument" data-viz="isi" aria-label="Interactive plot of a single bit response through a lossy channel and the different voltages two data patterns produce at the sampling instant">
+    <script type="application/json" data-contract>{"kind":"numerical","evidence":"independent","purpose":"Show a channel's memory as specific earlier bits.","equations":["y[n]=h0*a[n] + sum h[k]*a[n-k]"],"units":"UI, mV","validity":"Linear time-invariant channel; no equaliser unless stated.","numerics":"Shared kit channel; cursor at the single-bit peak.","limitations":"Linear time-invariant channel; no equaliser unless stated.","suites":["Convergence","DFE"],"version":"2.0","reviewed":"2026-09-12","panel":"isi"}</script>
+    <div class="instrument__bar">
+      <span class="instrument__title">One bit's response &#183; and what it does to its neighbours</span>
+        <span data-evidence="independent" data-model-version="2.0" class="model-tag model-tag--numerical" title="Same channel model as the eye lab, single-bit response decomposition.">numerical</span>
+      <span class="instrument__readout" role="status" aria-live="polite" aria-label="Current values">
+        <span>cursor <b data-out="cursor">—</b></span>
+        <span>worst post-cursor <b data-out="post">—</b></span>
+        <span>isolated 1 <b data-out="iso">—</b></span>
+        <span>end of a run <b data-out="run">—</b></span>
+        <span>isolated bit <b data-out="ratio">—</b></span>
+      </span>
+    </div>
+    <div class="panels two-up">
+      <div class="panel">
+        <span class="panel__label">The single-bit response, sampled once per UI</span>
+        <canvas data-cv="pulse" role="img" aria-label="Stem plot of the single-bit response sampled once per unit interval, showing the cursor, small pre-cursor taps before it and a decaying tail of post-cursors after it."></canvas>
+        <div class="legend"><span><i style="background:var(--signal)"></i>cursor</span><span><i style="background:var(--reflect)"></i>post-cursors</span><span><i style="background:var(--muted)"></i>pre-cursors</span></div>
+      </div>
+      <div class="panel">
+        <span class="panel__label">Two patterns, same channel, different voltages</span>
+        <canvas data-cv="pattern" role="img" aria-label="Two waveforms overlaid: an isolated one after a run of zeros, and the last one of a long run, sampled at the same instant and arriving at different amplitudes."></canvas>
+        <div class="legend"><span><i style="background:var(--signal)"></i>isolated 1 after zeros</span><span><i style="background:var(--reflect)"></i>last 1 of a long run</span></div>
+      </div>
+    </div>
+    <div class="controls">
+      <div class="ctl">
+        <div class="ctl__head"><label for="isi-loss">Channel loss at Nyquist</label><output id="isi-loss-out" for="isi-loss">14 dB</output></div>
+        <input type="range" id="isi-loss" min="0" max="32" step="1" value="14">
+        <span class="ctl__note">Drag it up and watch the tail grow</span>
+      </div>
+      <div class="ctl">
+        <div class="ctl__head"><label for="isi-rate">Data rate</label><output id="isi-rate-out" for="isi-rate">16 GT/s</output></div>
+        <input type="range" id="isi-rate" min="4" max="32" step="1" value="16">
+        <span class="ctl__note">Everything scales in UI, not in ps</span>
+      </div>
+    </div>
+    <div class="presets">
+      <button class="preset" type="button" data-preset="medium" aria-pressed="true">Real board</button>
+      <button class="preset" type="button" data-preset="light" aria-pressed="false">Short channel</button>
+      <button class="preset" type="button" data-preset="heavy" aria-pressed="false">Long channel</button>
+      <button class="preset" type="button" data-preset="fast" aria-pressed="false">Twice the rate</button>
+    </div>
+    <div class="transport"><span data-out="note">—</span></div>
+  
+    <script type="application/json" data-guide>
+{
+  "title": "Where the tail comes from",
+  "steps": [
+    {
+      "say": "A lossless channel first. One bit in, one bit out, and the neighbouring sample points sit at zero — no bit interferes with any other.",
+      "set": {
+        "isi-loss": "0",
+        "isi-rate": "16"
+      }
+    },
+    {
+      "say": "Now 14 dB at Nyquist, a plain FR-4 trace of ordinary length. Watch the stems either side of the cursor lift off the axis.",
+      "set": {
+        "isi-loss": "14"
+      },
+      "ask": "The post-cursors are taller than the pre-cursors. Why is the response not symmetric?",
+      "answer": "Because the channel is causal. Energy cannot arrive before the edge that launched it, so the response has to be one-sided in origin; the small pre-cursor that does exist comes from the phase the loss law forces on a minimum-phase channel, not from anything arriving early."
+    },
+    {
+      "say": "Push to 28 dB. The cursor is now smaller than the sum of everything sitting on top of it.",
+      "set": {
+        "isi-loss": "28"
+      },
+      "ask": "The isolated bit fails. Does a long run of ones also fail?",
+      "answer": "No. A long run settles near the channel's DC level and therefore reaches nearly full amplitude. The isolated bit after a run of zeros is more vulnerable because it starts from the previous level and may not reach the threshold in time. The resulting error depends on the bit pattern rather than occurring randomly."
+    },
+    {
+      "say": "Put the loss back to 14 dB and double the data rate instead.",
+      "set": {
+        "isi-loss": "14",
+        "isi-rate": "32"
+      },
+      "ask": "Same channel, same loss number. Why did the eye close anyway?",
+      "answer": "Because the loss is quoted at Nyquist, and Nyquist moved. Doubling the rate halves the bit period while the tail keeps its length in picoseconds, so the same physical tail now covers twice as many bits. ISI scales in UI, not in time."
+    }
+  ],
+  "transfer": "Two channels have the same insertion loss at Nyquist. One rolls off smoothly; the other is flat until a sharp notch just below Nyquist. Predict which has the worse eye, and name the feature of the pulse response that would tell you before you built either.",
+  "transferNote": "The question is how long the response remembers, not how much it attenuates."
+}
+  </script>
+  </section>
+
+  <div class="prose">
+    <h2>Why a piece of copper has a memory</h2>
+
+    <p>
+      Imagine shouting into a long corridor and then immediately shouting
+      again. By the time the second shout leaves your mouth, the echo of
+      the first is still bouncing around. Anyone standing at the far end
+      hears a muddle — the second shout arrives on top of the first
+      shout's tail. That is intersymbol interference, and a PCB trace does
+      exactly the same thing to digital bits.
+    </p>
+
+    <p>
+      A fast, sharp bit enters the channel. Loss rounds its edges and
+      stretches it out in time — the high-frequency content that made the
+      bit sharp has been selectively attenuated. By the time it arrives at
+      the receiver, it is wider and lower than what was sent. If the next
+      bit arrives before that stretched-out tail has fully decayed, the
+      receiver sees the new bit plus the leftover energy from the old one.
+      That leftover is ISI — voltage from a bit that has already passed,
+      sitting on top of the bit being decided right now.
+    </p>
+
+    <p>
+      Start from something already established: a channel attenuates high frequencies more than
+      low ones. The sharp parts of a signal are made of high frequencies, so a sharp edge that goes
+      in comes out rounded — it takes longer to get where it is going.
+    </p>
+
+    <p>
+      Now notice what "takes longer" means for a stream of bits. If one bit's energy is still
+      arriving when the next bit's sampling instant comes round, then that earlier bit is
+      contributing voltage to a decision it has nothing to do with. The channel is, in a completely
+      literal sense, remembering it.
+    </p>
+
+    <p>
+      That is the whole of intersymbol interference. No nonlinearity, no noise source, no
+      randomness — just a linear filter whose response is longer than one bit period.
+    </p>
+
+    <h2 class="section-rule"><span>One bit in, a long tail out</span></h2>
+
+    <p>
+      Drive a single bit into a lossy channel and what comes out is not a bit. It is a rounded pulse
+      with a tail that can run for several bit periods. Split that response into three parts: the
+      <strong>cursor</strong> — the sample you actually want — plus <strong>pre-cursor</strong> energy
+      arriving early and <strong>post-cursor</strong> energy arriving late.
+    </p>
+
+    <p>
+      Now send real data. At any sampling instant the receiver sees the cursor of the current bit plus
+      the tails of every neighbouring bit, added together. That sum is different for every data pattern.
+      A long run of ones lets the channel fully charge, so the last bit of the run arrives at full
+      amplitude; an isolated one after that run has no help from its neighbours and may not get close.
+      Same channel, same driver, two very different voltages.
+    </p>
+
+    <div class="note">
+      <b>Why it looks like jitter</b>
+      Because the level at the edge is pattern-dependent, the moment the waveform crosses the receiver's
+      threshold moves. That is data-dependent jitter — a purely deterministic effect, fully repeatable,
+      that shows up in the jitter budget alongside genuinely random noise. Change the pattern and it
+      changes; it never averages away.
+    </div>
+
+    <h2 class="section-rule"><span>What makes it worse</span></h2>
+
+    <p>
+      ISI is worst where the loss slope is steepest across the signal's band. Two channels with the
+      same insertion loss at Nyquist can behave very differently if one is flat and the other is falling
+      hard — and a resonance in the middle of the band, from a via stub or a connector, does more damage
+      than the same number of decibels spread evenly. A notch removes a specific frequency and there is
+      no equaliser setting that puts it back.
+    </p>
+
+    <p>
+      This is why compliance patterns exist. A PRBS sequence is chosen so that, over its length, it
+      contains the run lengths and transition densities that stress the channel — and interface specs
+      add explicit worst-case patterns on top, because a random sequence may not produce the exact
+      neighbour combination that closes the eye. Signing off on a pattern that never generates a long
+      run followed by an isolated bit is how a channel passes simulation and fails in the field.
+    </p>
+
+    <p>
+      The fix is equalisation, and it is worth being precise about which kind. A decision-feedback
+      equaliser cancels post-cursor ISI exactly, because by then the offending bits are already known —
+      but it cannot touch pre-cursor, which has not been decided yet, and it amplifies any error it
+      makes. Pre-cursor is the transmitter's problem, handled by feed-forward taps before launch.
+    </p>
+
+    <h2 class="section-rule"><span>Why this decides how your board behaves</span></h2>
+
+    <ul class="tight">
+      <li><strong>It closes the eye vertically and horizontally.</strong> The tails add to or
+        subtract from the sample, which eats height; and because the level at the crossing is
+        pattern-dependent, the crossing moves, which eats width. One mechanism, both budgets.</li>
+      <li><strong>It is deterministic, and that is good news.</strong> ISI is fully repeatable —
+        the same data pattern always produces the same error. That is what makes it correctable
+        in a way random noise never is.</li>
+      <li><strong>It scales with rate faster than you expect.</strong> Doubling the data rate
+        raises the loss at Nyquist <em>and</em> halves the bit period, so the same tail in
+        picoseconds now covers twice as many bits. Both effects push the same way. See
+        <a href="edge-rate-not-clock-rate.html">edge rate, not clock rate</a>.</li>
+      <li><strong>It interacts with everything else in your budget.</strong> Crosstalk and supply
+        noise land on an eye that ISI has already narrowed, so the margin that absorbs them is
+        whatever ISI left behind.</li>
+    </ul>
+
+    <h2 class="section-rule"><span>What to do about it</span></h2>
+
+    <p>
+      <strong>First, reduce the loss slope rather than the loss.</strong> ISI comes from loss that
+      <em>varies</em> across the band, not from loss itself. A flat 20 dB channel is far kinder
+      than one that falls from 5 dB to 20 dB across the same band. That is why a resonance does so
+      much more damage than its decibels suggest, and why via stubs matter out of proportion to
+      their size.
+    </p>
+
+    <p>
+      <strong>Then equalise, and pick the right tool for the right cursor.</strong> A
+      <b>DFE</b> subtracts post-cursors exactly, because those bits have already been decided and
+      are therefore known — that is the strongest thing you can do and it adds no noise. A
+      <b>CTLE</b> boosts high frequency to sharpen the pulse, which shortens both pre- and
+      post-cursors, but it amplifies crosstalk and noise along with the signal. An <b>FFE</b> at
+      the transmitter is the only one that helps with pre-cursors, because the receiver cannot
+      subtract a bit it has not seen yet.</p>
+
+    <p>
+      <strong>Watch the interaction with crosstalk.</strong> Reaching for more CTLE boost to fix
+      ISI is the standard move and it has a cost: crosstalk lives at high frequency too. On a
+      dense bus you can equalise your way into a worse eye. See
+      <a href="../signal-integrity/what-closes-the-eye.html">what closes the eye</a>.
+    </p>
+
+    <div class="note">
+      <b>Using this to find a fault</b>
+      <ul class="tight">
+        <li><b>Errors that correlate with the data pattern.</b> That is ISI by definition. If the
+          failures move when you change the test pattern, stop looking for a noise source.</li>
+        <li><b>The isolated bit after a long run is the one that fails.</b> Classic ISI signature.
+          A run charges the channel to its DC level; the lone opposite bit that follows starts from
+          the wrong place and never arrives. If your failing pattern has this shape, the fix is
+          equalisation or loss, not shielding.</li>
+        <li><b>An eye that improves dramatically with a short PRBS and fails on a long one.</b>
+          Longer patterns contain longer runs. If PRBS7 passes and PRBS31 fails, the channel's
+          memory is longer than PRBS7 exercises.</li>
+        <li><b>Equalisation that helps less than expected.</b> Look for a notch. A DFE can cancel
+          a post-cursor but nothing can restore a frequency the channel has removed — check the
+          return loss and S<sub>21</sub> for a resonance before adding taps.</li>
+      </ul>
+    </div>
+
+    <details class="deeper">
+      <summary>Go deeper — cursors as convolution, and why the DFE can be exact</summary>
+
+      <p>
+        The received waveform is the transmitted symbols convolved with the channel's pulse
+        response. Sample that at the decision instants and the convolution becomes a sum:
+      </p>
+
+      <div class="eq">
+        <span class="eq__main"><i class="var">y</i><sub>n</sub> = <i class="var">h</i><sub>0</sub><i class="var">a</i><sub>n</sub> + Σ<sub>k≠0</sub> <i class="var">h</i><sub>k</sub> <i class="var">a</i><sub>n−k</sub></span>
+        <span class="eq__note">h₀ is the cursor; k &gt; 0 are post-cursors from earlier bits, k &lt; 0 pre-cursors from later ones</span>
+      </div>
+
+      <p>
+        Everything about ISI is in that second term. Note what it is made of: known filter
+        coefficients h<sub>k</sub> multiplied by <em>actual data symbols</em> a<sub>n−k</sub>. It
+        is not noise — it is a deterministic function of the bit stream.
+      </p>
+
+      <p>
+        Which is exactly why a decision-feedback equaliser can be exact rather than approximate.
+        By the time the receiver is deciding bit <i>n</i>, it has already decided
+        a<sub>n−1</sub>, a<sub>n−2</sub> and so on. Those values are known, not estimated. So the
+        post-cursor sum can be computed and subtracted with no residual and, crucially, without
+        amplifying anything — a DFE adds no noise gain, which is what distinguishes it from every
+        linear equaliser.
+      </p>
+
+      <p>
+        The catch is in the word "decided". If a decision is wrong, the DFE subtracts the wrong
+        correction from the next few bits and can make them wrong too. That is error propagation,
+        and it is the reason a DFE is not simply strictly better than a CTLE.
+      </p>
+
+      <p>
+        <strong>Why pre-cursors exist at all.</strong> They look like a violation of causality —
+        energy arriving before the bit that caused it. It is not. The cursor is defined at the
+        <em>peak</em> of the pulse response, and the pulse has a leading shoulder before that peak.
+        Energy labelled "pre-cursor" arrives after the edge that launched it; it merely arrives
+        before the moment we chose to call time zero. A physical, minimum-phase channel produces a
+        small pre-cursor and a large post-cursor tail, which is exactly the asymmetry the panel
+        above shows.
+      </p>
+
+      <p>
+        <strong>Where the cursor should be sampled.</strong> Not at the peak of the pulse response
+        — at the point that maximises the <em>eye</em>. Those are usually close and are not the
+        same, because shifting the sampling instant trades pre-cursor against post-cursor. This is
+        what a receiver's clock-recovery loop is converging on, and it is why an eye measured at a
+        fixed phase understates what an adaptive receiver achieves.
+      </p>
+    </details>
+
+    <h2 class="section-rule"><span>In the real world</span></h2>
+
+    <p>
+      ISI is the impairment that most repays being understood rather than measured. Because it is
+      deterministic, it can be predicted before hardware exists, budgeted precisely, and removed by
+      design. That is why channel simulation is worth doing at all — the dominant impairment on a
+      long link is the one you can calculate.
+    </p>
+
+    <p>
+      The trap is treating the resulting jitter number as if it were random. Data-dependent jitter
+      does not average out, does not improve with longer capture, and does not add in quadrature
+      with random jitter the way two Gaussians do. Put it in the deterministic column of the budget
+      and keep it there. See <a href="jitter-taxonomy.html">jitter taxonomy</a>.
+    </p>
+
+    <h3>Related</h3>
+    <ul class="tight">
+      <li><a href="../fundamentals/loss-mechanisms.html">PCB Transmission-Line Loss Mechanisms</a></li>
+      <li><a href="../fundamentals/eye-diagram.html">Eye Diagrams: Construction and Interpretation</a></li>
+      <li><a href="../fundamentals/jitter-taxonomy.html">Jitter Components: RJ, DJ, DCD, PJ, and TJ</a></li>
+      <li><a href="../signal-integrity/equalization.html">Equalization and Clock Recovery: CTLE, FFE, DFE, and CDR</a></li>
+    </ul>
+  </div>
+
+  <!-- pager:start -->
+  <nav class="pager" aria-label="Previous and next topic">
+    <a class="prev" href="../../topics/fundamentals/loss-mechanisms.html"><span class="dir">Previous</span><span>PCB Transmission-Line Loss Mechanisms</span></a>
+    <a class="next" href="../../topics/fundamentals/eye-diagram.html"><span class="dir">Next</span><span>Eye Diagrams: Construction and Interpretation</span></a>
+  </nav>
+  <!-- pager:end -->
+</main>
+
+<footer class="site-foot">
+  <span>SIPI &#8212; signal and power integrity, visualised.</span>
+  <span>Created and directed by Geetansh Arora. <a href="../../colophon.html">About, review &amp; AI assistance</a> &#183; <a href="../../model-contract.html">Model assumptions</a> &#183; <a href="../../docs/claims.md">Claim ledger</a></span>
+</footer>
+
+<script src="../../js/site.js?v=acb47d86"></script>
+<script src="../../js/viz-kit.js?v=a53e49c3"></script>
+<script src="../../js/viz/isi.js?v=95ac8575"></script>
+<script src="../../js/viz-loader.js?v=89d5884d"></script>
+<script src="../../js/search.js?v=6c93a285"></script>
+</body>
+</html>

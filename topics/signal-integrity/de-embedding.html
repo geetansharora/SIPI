@@ -1,0 +1,380 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>S-Parameter De-Embedding and Fixture Removal | SIPI</title>
+<meta name="description" content="Getting the device out of the measurement: TRL, AFR and 2x-thru, and how to tell when de-embedding has gone wrong.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<link rel="stylesheet" href="../../css/base.css?v=e4f774de">
+<link rel="stylesheet" href="../../css/components.css?v=295837ab">
+  <!-- meta:start -->
+  <link rel="canonical" href="https://sipi.work/topics/signal-integrity/de-embedding.html">
+  <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="SIPI">
+  <meta property="og:title" content="S-Parameter De-Embedding and Fixture Removal | SIPI">
+  <meta property="og:description" content="Getting the device out of the measurement: TRL, AFR and 2x-thru, and how to tell when de-embedding has gone wrong.">
+  <meta property="og:url" content="https://sipi.work/topics/signal-integrity/de-embedding.html">
+  <meta property="og:image" content="https://sipi.work/assets/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="S-Parameter De-Embedding and Fixture Removal | SIPI">
+  <meta name="twitter:description" content="Getting the device out of the measurement: TRL, AFR and 2x-thru, and how to tell when de-embedding has gone wrong.">
+  <meta name="twitter:image" content="https://sipi.work/assets/og.png">
+  <!-- meta:end -->
+</head>
+<body>
+
+<header class="masthead">
+  <a class="wordmark" href="../../index.html">SIPI</a>
+  <nav>
+    <a href="../../index.html#fundamentals">Fundamentals</a>
+    <a href="../../index.html#power-integrity">Power</a>
+    <a href="../../index.html#interfaces">Interfaces</a>
+    <a href="../../start.html">Start</a>
+    <a href="../../labs.html">Labs</a>
+    <a href="../../reference.html">Reference</a>
+    <button class="theme-toggle" data-act="theme" type="button">System</button>
+  </nav>
+</header>
+
+<main>
+  <div class="page-head">
+    <p class="crumb"><a href="../../index.html#signal-integrity">SI in practice</a> / 06</p>
+    <h1>S-Parameter De-Embedding and Fixture Removal</h1>
+    <p class="byline">
+      <!-- review:start --><span>By Geetansh Arora — Principal SI/PI Engineer</span><time datetime="2026-09-16" title="Technical review by Geetansh Arora on this date">16 Sep 2026</time><span>9 min</span><!-- review:end -->
+    </p>
+    <p class="answer">
+      A network analyser measures from the end of its cables, not from the thing you care about.
+      Everything in between &#8212; connector, launch, fixture trace &#8212; is included in the
+      answer, and at high frequency it can contribute more loss than the device itself.
+      De-embedding is the arithmetic that removes it, and the arithmetic is the easy part.
+    </p>
+  </div>
+
+  <!-- ───────────── the picture ───────────── -->
+  <figure class="figure">
+    <div class="figure__bar"><span>Getting the device out of the measurement</span></div>
+    <div class="figure__body"><svg viewBox="-4 20 660 250" role="img" aria-label="Three rows showing what a VNA measures, the two-times-thru structure used to characterise the fixture, and the device that remains after de-embedding.">
+  <text class="lbl" x="0" y="38">what the VNA measures</text>
+  <rect x="0" y="48" width="140" height="30" rx="2" fill="var(--reflect)" opacity=".75"/><text class="lbl-hi" x="70.0" y="67" text-anchor="middle">launch + fixture</text><rect x="140" y="48" width="340" height="30" rx="2" fill="var(--signal)" opacity=".75"/><text class="lbl-hi" x="310.0" y="67" text-anchor="middle">device under test</text><rect x="480" y="48" width="140" height="30" rx="2" fill="var(--reflect)" opacity=".75"/><text class="lbl-hi" x="550.0" y="67" text-anchor="middle">fixture + launch</text>
+  <path class="edge" d="M0,44 L0,86 M620,44 L620,86" stroke="var(--muted)"/>
+  <text class="lbl" x="660" y="66" text-anchor="end">cal plane</text>
+
+  <text class="lbl" x="0" y="118">the 2x-thru: two fixture halves, back to back</text>
+  <rect x="0" y="128" width="140" height="30" rx="2" fill="var(--reflect)" opacity=".75"/><text class="lbl-hi" x="70.0" y="147" text-anchor="middle">fixture</text><rect x="140" y="128" width="140" height="30" rx="2" fill="var(--reflect)" opacity=".75"/><text class="lbl-hi" x="210.0" y="147" text-anchor="middle">fixture</text>
+  <text class="lbl" x="292" y="147">measure it, split it, subtract one half from each side</text>
+
+  <text class="lbl" x="0" y="198">what you report</text>
+  <rect x="140" y="208" width="340" height="30" rx="2" fill="var(--signal)" opacity=".75"/><text class="lbl-hi" x="310.0" y="227" text-anchor="middle">device under test</text>
+  <path class="edge dash" d="M140,204 L140,244 M480,204 L480,244" stroke="var(--signal)"/>
+  <text class="lbl-bad" x="660" y="222" text-anchor="end">check passivity and normalisation when</text>
+  <text class="lbl-bad" x="660" y="238" text-anchor="end">a passive path appears above 0 dB</text>
+</svg></div>
+    <figcaption><b>A measurement includes everything between its reference planes.</b> A VNA calibrated at the cable ends also measures the connector, launch, and fixture trace leading to the structure of interest. A 2x-thru estimates the two fixture halves so their complex networks can be removed; its accuracy depends on symmetry and the split method. TRL instead uses fabricated standards and can move the calibration plane directly when those standards are well designed. Passivity and causality checks identify important nonphysical results, while re-embedding the extracted DUT between the fixture models tests whether the process reconstructs the raw measurement.</figcaption>
+  </figure>
+
+  <div class="prose">
+    <p>
+      When measuring a high-speed component on a Vector Network Analyzer (VNA) &#8212; whether it is a
+      backplane connector, an IC package substrate, an AC coupling capacitor mounting pad, or a test socket &#8212;
+      you cannot connect precision coaxial cables directly to the microscopic internal pins. You must route
+      the test signals through a physical test fixture: coaxial SMA or RF probe launches, board breakout vias,
+      and PCB lead-in traces.
+    </p>
+
+    <p>
+      The VNA measures everything between its reference planes as a single monolithic network: the instrument
+      cables, the PCB launch transitions, the lead-in traces, the device under test (DUT), the lead-out traces,
+      and the return connectors. At 25 or 50 GHz, the fixture's dielectric loss, skin-effect attenuation, and
+      via reflections can easily contribute more loss and ringing than the component being measured. If you
+      simply hand that raw S-parameter file to a system team, you will severely mischaracterize the component,
+      falsely failing a good connector because of a poorly designed board launch.
+    </p>
+
+    <p>
+      De-embedding is the mathematical matrix operation that strips away the fixture's electrical parasitics,
+      shifting the VNA's calibration reference planes from the physical cable ends directly to the input and output
+      boundaries of the DUT. When executed properly, it isolates the true, uncorrupted behavior of the component.
+      When executed poorly, it injects non-physical gain spikes, artificial ripple, and causality violations
+      that corrupt channel simulations.
+    </p>
+
+    <h2>What a measurement actually includes</h2>
+
+    <p>
+      Calibrating a VNA establishes a <strong>reference plane</strong> — the place where the
+      instrument believes its measurement starts. A standard calibration puts that plane at the end
+      of the cables, because that is where the calibration standards were connected.
+    </p>
+
+    <p>
+      Your device under test is not there. Between the cable end and the structure you care about
+      sit a connector, a launch into the board, and some length of fixture trace. The measurement
+      faithfully reports all of it, as though it were one device.
+    </p>
+
+    <p>
+      At 20 GHz those fixture elements can contribute more loss and worse return loss than the
+      device does. Reporting them as part of the device changes the quantity being described, while
+      ignoring them leaves the result without a defensible reference plane. De-embedding moves the
+      reference plane to the structure of interest.
+    </p>
+
+    <h2 class="section-rule"><span>The problem</span></h2>
+
+    <p>
+      A VNA measures from its calibration plane, which is the end of its cables. Between there and the
+      structure you care about sit a connector, a launch, and some length of fixture trace. At 20 GHz
+      those contribute more loss and worse return loss than the device under test. Reporting them as
+      part of the device combines fixture and device behavior; ignoring them makes the result difficult
+      to interpret or compare.
+    </p>
+
+    <h2 class="section-rule"><span>Three ways to remove them</span></h2>
+
+    <ul class="tight">
+      <li><strong>TRL — thru, reflect, line.</strong> A calibration using fabricated standards on the
+        same board as the device, so the reference plane moves onto the fixture itself. It can be highly
+        accurate because the standards share the device's manufacturing. It costs board area for
+        the coupons and needs several line lengths to cover a broad band.</li>
+      <li><strong>2x-thru.</strong> Fabricate a structure that is exactly two fixture halves back to
+        back, measure it, split it, and subtract one half from each side of the device measurement.
+        Simple, cheap, and the industry workhorse. It assumes the two halves are identical and that
+        splitting the measured thru is valid.</li>
+      <li><strong>AFR — automatic fixture removal.</strong> Algorithmic, deriving the fixture's
+        characteristics from the measurement itself, often with a 2x-thru as input. Convenient and
+        widely implemented; how well it works depends on how well the fixture matches its assumptions.</li>
+    </ul>
+
+    <div class="note">
+      <b>Checks that expose an invalid result</b>
+      Test the full power-normalised matrix for <strong>passivity</strong>, then inspect
+      <strong>causality</strong> with the same extrapolation and window used by the time-domain flow.
+      These checks catch nonphysical results, but passing them does not prove fixture accuracy.
+      Re-embed the extracted DUT between the fixture halves and compare that cascade with the raw
+      measurement; the residual shows what the extraction failed to reconstruct.
+    </div>
+
+    <h2 class="section-rule"><span>Where the error comes from</span></h2>
+
+    <p>
+      From confusing three different operations that all get called &ldquo;de-embedding&rdquo;.
+    </p>
+    <ul class="tight">
+      <li><strong>Subtracting decibels</strong> removes magnitude and nothing else. It ignores phase and
+        every reflection, so any mismatch at the interface is simply mis-assigned.</li>
+      <li><strong>Port extension</strong> rotates the reference plane in phase — it moves where you are
+        looking, but removes no loss and no reflection.</li>
+      <li><strong>Full network de-embedding</strong> is the real operation, and it <em>does</em> account
+        for mismatch. Convert each network to its cascade (T) form and the fixture halves divide out:
+        <span class="num">T<sub>DUT</sub> = T<sub>left</sub><sup>−1</sup> · T<sub>meas</sub> ·
+        T<sub>right</sub><sup>−1</sup></span>. Multiple reflections between fixture and device are
+        handled by the algebra, not assumed away.</li>
+    </ul>
+    <p>
+      So mismatch is not what breaks it. What breaks it is not knowing the fixture halves accurately —
+      the correction can only be as good as the model you divide out, and a poorly characterised launch
+      or an asymmetry between the two halves puts its error straight into the result. The symptom is a
+      ripple in the de-embedded insertion loss with a period set by the fixture length, which is a
+      useful fingerprint because a genuine device rarely produces one.
+    </p>
+
+    <p>
+      Two habits make this manageable. Keep the fixture as short and as well-matched as the launch
+      allows, so there is less to remove and less to get wrong. Keep the raw measurement
+      alongside the de-embedded one: when a result is questioned, the ability to show what was actually
+      measured before any arithmetic makes the result reproducible and easier to challenge constructively.
+    </p>
+
+    <h2 class="section-rule"><span>Why this decides how your board behaves</span></h2>
+
+    <ul class="tight">
+      <li><strong>It decides whether a measurement and a simulation are comparable at all.</strong>
+        A simulation from the board and a measurement including the launch are answering different
+        questions, and the difference looks like a modelling error.</li>
+      <li><strong>The error it introduces is frequency-dependent.</strong> A de-embedding that is
+        slightly wrong produces ripple, not a constant offset — which reads as a discontinuity in
+        the device that is not there.</li>
+      <li><strong>Over-de-embedding is possible and produces impossible results.</strong> Remove a
+        little too much and the device appears to have gain. That is a useful alarm, because it is
+        unambiguous.</li>
+      <li><strong>It is where most correlation arguments actually live.</strong> When simulation
+        and measurement disagree, the reference plane is a more common culprit than the physics.</li>
+    </ul>
+
+    <h2 class="section-rule"><span>What to do about it</span></h2>
+
+    <p>
+      <strong>Design the fixture at the same time as the device.</strong> De-embedding quality is
+      decided at layout: coupon area for standards, identical launches, and enough separation that
+      the fixture and the device are not coupled. Retrofitting good de-embedding onto a board
+      designed without it is not possible.
+    </p>
+
+    <p>
+      <strong>Check the de-embedded result for physicality.</strong> Passivity is the cheapest test
+      there is — a passive device cannot have gain — and it catches over-de-embedding immediately.
+      Causality catches a different class of error.
+    </p>
+
+    <p>
+      <strong>Close the loop by re-embedding.</strong> Cascade the extracted DUT back between the
+      left and right fixture models. Agreement with the raw measurement does not establish a unique
+      DUT, but disagreement directly quantifies an inconsistency in the extraction, port mapping, or
+      fixture models.
+    </p>
+
+    <p>
+      <strong>Match the simulation's ports to the measurement's reference plane.</strong> A plane
+      mismatch is a common source of apparent disagreement, so compare the two definitions before
+      changing the physical model.
+    </p>
+
+    <p>
+      <strong>Prefer removing a full network to shifting a phase.</strong> Port extension only
+      rotates phase; it does not remove loss or the mismatch at the launch. It is quick and it is
+      not de-embedding.
+    </p>
+
+    <div class="note">
+      <b>Using this to find a fault</b>
+      <ul class="tight">
+        <li><b>Ripple on a de-embedded S<sub>21</sub> that was not in the raw data.</b> The
+          de-embedding is introducing it — usually a mismatch between the assumed fixture and the
+          real one, leaving a reflection behind.</li>
+        <li><b>|S<sub>21</sub>| above 0 dB anywhere.</b> For a passive, consistently power-normalised
+          two-port this is nonphysical. Check normalization, calibration, and fixture removal before
+          concluding which step introduced the excess.</li>
+        <li><b>Results that differ between two nominally identical fixtures.</b> The 2x-thru
+          assumption that the halves are identical has failed. Check the launches and the
+          manufacturing.</li>
+        <li><b>Good agreement below a few GHz, divergence above.</b> The fixture model is running
+          out of validity, or the standards do not cover the band.</li>
+      </ul>
+    </div>
+
+    <details class="deeper">
+      <summary>Go deeper — matrix inversion, IEEE 370 2X-Thru mechanics, and non-physical artifacts</summary>
+
+      <p>
+        The intuitive idea — "measure the fixture, subtract it" — is a useful start, but scalar
+        subtraction omits the phase and mismatch interactions that the full network contains.
+      </p>
+
+      <p>
+        Decibels of insertion loss do subtract along a cascade, but only when each stage is matched
+        to the next. The fixture and the device are <em>not</em> matched: there is a mismatch at
+        their junction, energy bounces between it and the connector, and those multiple reflections
+        are part of the raw measurement. Scalar subtraction leaves them in, and they show up as
+        ripple.
+      </p>
+
+      <p>
+        Proper de-embedding converts S-parameters into cascading transmission matrices (T-matrices or ABCD parameters).
+        Because cascading networks multiply in T-matrix form (<span class="num">[T<sub>Total</sub>] = [T<sub>FixA</sub>] &middot; [T<sub>DUT</sub>] &middot; [T<sub>FixB</sub>]</span>),
+        the device under test is isolated by inverting the fixture matrices:
+        <span class="num">[T<sub>DUT</sub>] = [T<sub>FixA</sub>]<sup>-1</sup> &middot; [T<sub>Total</sub>] &middot; [T<sub>FixB</sub>]<sup>-1</sup></span>.
+        Inverting complex matrices removes mismatch interactions and standing waves alongside insertion loss.
+      </p>
+
+      <p>
+        <strong>The IEEE 370 2X-Thru methodology.</strong> Modern multi-gigabit engineering relies heavily on the
+        IEEE 370 standard for de-embedding PCB fixtures up to 50 GHz and beyond. The workhorse method is the
+        <strong>2X-Thru</strong>: fabricating a representative calibration trace that represents two identical fixture
+        halves placed back-to-back (<span class="num">Fixture A + Fixture B</span>) without the DUT in the middle.
+      </p>
+
+      <ul class="tight">
+        <li><strong>Time-Domain Splitting:</strong> The algorithm measures the 2X-Thru coupon in the frequency domain,
+          transforms it to the time domain via Inverse FFT, identifies the exact physical symmetry midpoint via
+          time-domain reflectometry (TDR), and splits the response into two 1X fixture models.</li>
+        <li><strong>Impedance Correction:</strong> IEEE 370 incorporates time-domain peel-back algorithms to account
+          for localized impedance variations along the lead-in traces, preventing residual launch reflections from
+          leaking into the extracted DUT model.</li>
+      </ul>
+
+      <p>
+        <strong>When 2X-Thru de-embedding fails.</strong> The 2X-Thru approach is computationally robust, but its
+        accuracy is strictly bound to physical assumptions:
+      </p>
+
+      <ul class="tight">
+        <li><strong>Fixture Asymmetry:</strong> If local PCB etching tolerances, copper thickness variations, or
+          fiber-weave glass bundles cause the left fixture half to differ from the right half, the mathematical split
+          distributes errors unequally, leaving false ripples in the DUT S-parameters.</li>
+        <li><strong>Mode Conversion:</strong> In differential channels, any geometrical asymmetry in the launch vias
+          generates common-mode noise (<span class="num">S<sub>CD21</sub></span>). A standard single-ended or uncoupled
+          de-embedding algorithm cannot account for cross-modal energy transfer.</li>
+        <li><strong>Near-Field Evanescent Coupling:</strong> Matrix cascading assumes networks are separable and interact
+          only via propagating TEM transmission-line modes. If the fixture launch via is placed within a couple of
+          substrate heights of the DUT solder pads, non-propagating reactive fields couple directly between fixture
+          and DUT, invalidating the cascade model entirely.</li>
+      </ul>
+
+      <p>
+        <strong>Diagnosing non-physical artifacts in de-embedded data.</strong> Always inspect de-embedded S-parameters
+        before importing them into channel simulators:
+      </p>
+
+      <ul class="tight">
+        <li><strong>Passivity Violations:</strong> If insertion loss curves ever rise above
+          <span class="num">0 dB</span> (<span class="num">|S<sub>21</sub>| &gt; 1.0</span>) or total scattered energy
+          exceeds unity (<span class="num">&Sigma; |S<sub>ij</sub>|<sup>2</sup> &gt; 1.0</span>), the matrix inversion has
+          over-compensated for fixture loss. In a transient simulator, an un-passive S-parameter model acts as an active
+          amplifier and causes the solver to diverge or oscillate uncontrollably.</li>
+        <li><strong>Causality Violations:</strong> When transformed to the time domain, a physical passive device cannot
+          output energy before the input pulse arrives (<span class="num">t &lt; 0</span>). Truncating high-frequency
+          measurement data or poor phase unwrapping generates unphysical pre-cursor ripples that violate Kramers-Kronig
+          relations.</li>
+        <li><strong>Periodic Ripple in S<sub>21</sub>:</strong> Regular periodic undulations across frequency indicate
+          un-cancelled standing wave reflections caused by an impedance mismatch between the 2X-Thru calibration coupon
+          and the actual test board launch.</li>
+      </ul>
+    </details>
+
+    <h2 class="section-rule"><span>In the real world</span></h2>
+
+    <p>
+      De-embedding does not change the raw observation; it changes the network assigned to the DUT.
+      Two competent engineers can report different S-parameters from the same structure when they
+      choose different reference planes or fixture models, so those choices belong with the data.
+    </p>
+
+    <p>
+      Which is why any S-parameter file worth using carries its provenance: what was measured, what
+      was removed, by which method, and where the plane ended up. Without that provenance, another
+      engineer cannot reconstruct what the numbers represent.
+    </p>
+
+    <h3>Related</h3>
+    <ul class="tight">
+      <li><a href="../fundamentals/s-parameters.html">S-Parameters: Insertion Loss, Return Loss, and Mixed Mode</a></li>
+      <li><a href="../methodology/correlation.html">Correlating Simulation and Measurement</a></li>
+      <li><a href="../package-board/connectors-cables.html">High-Speed Connectors and Cables</a></li>
+      <li><a href="../signal-integrity/compliance-masks.html">Transmitter Compliance Masks and Receiver Eye Masks</a></li>
+    </ul>
+  </div>
+
+  <!-- pager:start -->
+  <nav class="pager" aria-label="Previous and next topic">
+    <a class="prev" href="../../topics/signal-integrity/ibis-ami-spice.html"><span class="dir">Previous</span><span>IBIS, IBIS-AMI, and SPICE Model Selection</span></a>
+    <a class="next" href="../../topics/signal-integrity/compliance-masks.html"><span class="dir">Next</span><span>Transmitter Compliance Masks and Receiver Eye Masks</span></a>
+  </nav>
+  <!-- pager:end -->
+</main>
+
+<footer class="site-foot">
+  <span>SIPI &#8212; signal and power integrity, visualised.</span>
+  <span>Created and directed by Geetansh Arora. <a href="../../colophon.html">About, review &amp; AI assistance</a> &#183; <a href="../../model-contract.html">Model assumptions</a> &#183; <a href="../../docs/claims.md">Claim ledger</a></span>
+</footer>
+
+<script src="../../js/site.js?v=acb47d86"></script>
+<script src="../../js/search.js?v=6c93a285"></script>
+</body>
+</html>

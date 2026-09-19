@@ -1,0 +1,442 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Eye Diagrams: Construction and Interpretation | SIPI</title>
+<meta name="description" content="How an eye is assembled from overlaid bits, what eye height and width actually measure, and what an eye cannot tell you.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<link rel="stylesheet" href="../../css/base.css?v=e4f774de">
+<link rel="stylesheet" href="../../css/components.css?v=295837ab">
+  <!-- meta:start -->
+  <link rel="canonical" href="https://sipi.work/topics/fundamentals/eye-diagram.html">
+  <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="SIPI">
+  <meta property="og:title" content="Eye Diagrams: Construction and Interpretation | SIPI">
+  <meta property="og:description" content="How an eye is assembled from overlaid bits, what eye height and width actually measure, and what an eye cannot tell you.">
+  <meta property="og:url" content="https://sipi.work/topics/fundamentals/eye-diagram.html">
+  <meta property="og:image" content="https://sipi.work/assets/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Eye Diagrams: Construction and Interpretation | SIPI">
+  <meta name="twitter:description" content="How an eye is assembled from overlaid bits, what eye height and width actually measure, and what an eye cannot tell you.">
+  <meta name="twitter:image" content="https://sipi.work/assets/og.png">
+  <!-- meta:end -->
+</head>
+<body>
+
+<header class="masthead">
+  <a class="wordmark" href="../../index.html">SIPI</a>
+  <nav>
+    <a href="../../index.html#fundamentals">Fundamentals</a>
+    <a href="../../index.html#power-integrity">Power</a>
+    <a href="../../index.html#interfaces">Interfaces</a>
+    <a href="../../start.html">Start</a>
+    <a href="../../labs.html">Labs</a>
+    <a href="../../reference.html">Reference</a>
+    <button class="theme-toggle" data-act="theme" type="button">System</button>
+  </nav>
+</header>
+
+<main>
+  <div class="page-head">
+    <p class="crumb"><a href="../../index.html#fundamentals">Fundamentals</a> / 10</p>
+    <h1>Eye Diagrams: Construction and Interpretation</h1>
+    <p class="byline">
+      <!-- review:start --><span>By Geetansh Arora — Principal SI/PI Engineer</span><time datetime="2026-09-13" title="Technical review by Geetansh Arora on this date">13 Sep 2026</time><span>10 min</span><!-- review:end -->
+    </p>
+    <p class="answer">
+      An eye diagram is every bit in a capture, drawn on top of every other bit. It is not a
+      measurement so much as a way of looking at thousands of them at once &#8212; and the empty
+      space in the middle is the margin your receiver has to work with, in both voltage and
+      time simultaneously.
+    </p>
+  </div>
+
+  <!-- ───────────── the picture ───────────── -->
+  <section class="instrument" data-viz="eye" aria-label="Interactive eye diagram built from real bits through a lossy channel">
+    <script type="application/json" data-contract>{"kind":"numerical","evidence":"independent","purpose":"Build an eye from bits and state what the run supports.","equations":["superposition of 858 symbols; rule of three for the evidence floor"],"units":"ps, mV","validity":"Fixed sampling phase; no adaptation. 858 symbols evidences 3.5e-3, not a compliance BER.","numerics":"Seeded LFSR and seeded Gaussians — reproducible.","limitations":"Fixed sampling phase; no adaptation. 858 symbols evidences 3.5e-3, not a compliance BER.","suites":["Evidence","Convergence","Bathtub"],"version":"2.0","reviewed":"2026-09-12","panel":"eye"}</script>
+    <div class="instrument__bar">
+      <span class="instrument__title">Eye built from a PRBS through a lossy channel</span>
+        <span data-evidence="independent" data-model-version="2.0" class="model-tag model-tag--numerical" title="Two-term loss law, causal minimum-phase channel, PRBS convolution. Noiseless.">numerical</span>
+      <span class="instrument__readout" role="status" aria-live="polite" aria-label="Current values">
+        <span>UI <b data-out="ui">—</b></span>
+        <span>eye height <b data-out="eh">—</b></span>
+        <span>eye width <b data-out="ew">—</b></span>
+        <span class="evidence" data-out="evidence">—</span>
+      </span>
+    </div>
+    <div class="panels">
+      <div class="panel">
+        <span class="panel__label">One unit interval, every bit overlaid</span>
+        <canvas data-cv="eye" role="img"
+          aria-label="Eye diagram: hundreds of overlaid unit intervals forming an opening in the centre, with the measured eye height and width marked."></canvas>
+        <div class="legend">
+          <span><i style="background:var(--signal)"></i>overlaid bit traces</span>
+          <span><i class="dash" style="color:var(--reflect)"></i>measured opening</span>
+        </div>
+      </div>
+    </div>
+    <div class="controls">
+      <div class="ctl">
+        <div class="ctl__head"><label for="eye-loss">Channel loss at Nyquist</label><output id="eye-loss-out" for="eye-loss">12 dB</output></div>
+        <input type="range" id="eye-loss" min="0" max="36" step="1" value="12">
+        <span class="ctl__note">Drag it up and watch the traces separate into ISI bands</span>
+      </div>
+      <div class="ctl">
+        <div class="ctl__head"><label for="eye-rate">Data rate</label><output id="eye-rate-out" for="eye-rate">16 GT/s</output></div>
+        <input type="range" id="eye-rate" min="2" max="32" step="1" value="16">
+        <span class="ctl__note">Sets the UI — the whole horizontal axis</span>
+      </div>
+      <div class="ctl">
+        <div class="ctl__head"><label for="eye-rj">Random jitter</label><output id="eye-rj-out" for="eye-rj">0.5 ps</output></div>
+        <input type="range" id="eye-rj" min="0" max="40" step="1" value="5">
+        <span class="ctl__note">Closes the eye sideways, not downwards</span>
+      </div>
+    </div>
+    <div class="presets">
+      <button class="preset" type="button" data-preset="clean" aria-pressed="false">Short channel</button>
+      <button class="preset" type="button" data-preset="typical" aria-pressed="false">Gen 4, real board</button>
+      <button class="preset" type="button" data-preset="lossy" aria-pressed="false">Long channel</button>
+      <button class="preset" type="button" data-preset="closed" aria-pressed="false">Gen 5, closed</button>
+      <button class="preset" type="button" data-preset="jitter" aria-pressed="false">Jitter-limited</button>
+    </div>
+    <div class="transport">
+      <button type="button" data-act="play" aria-pressed="false">▶ Rebuild</button>
+      <span data-out="note">—</span>
+    </div>
+  </section>
+
+  <div class="prose">
+    <h2>Why overlay the bits at all</h2>
+
+    <p>
+      If you have never seen an eye diagram before, the shape can look
+      mysterious. It is not. The construction is mechanical, and once you
+      see the three steps, the diagram stops being abstract and becomes
+      the single most useful picture in signal integrity.
+    </p>
+
+    <p>
+      <strong>Step 1: transmit a long sequence of bits</strong> through
+      the channel — a pseudo-random pattern that exercises every
+      combination of ones and zeros. <strong>Step 2: at the receiver,
+      chop the resulting waveform</strong> into slices exactly one bit
+      period (one UI) wide. <strong>Step 3: stack all the slices on top
+      of each other.</strong> Every possible transition — rising, falling,
+      staying high, staying low — now overlaps in one picture. Where no
+      trace enters, an opening appears. That opening is the eye, and it
+      represents the room your receiver has to make a correct decision.
+    </p>
+
+    <p>
+      The vertical opening — the <strong>eye height</strong> — is the
+      voltage margin. If noise, ISI, or crosstalk shrinks it below the
+      receiver's sensitivity, bit errors follow. The horizontal opening —
+      the <strong>eye width</strong> — is the timing margin. If jitter
+      moves the sampling instant past that opening, the receiver samples
+      the wrong bit. A good channel keeps both margins large; a bad one
+      closes the eye from one direction or both.
+    </p>
+
+    <p>
+      A scope trace of a data stream is not much use. It is a long, irregular waveform, and the
+      thing you actually want to know — will the receiver read every bit correctly? — is buried in
+      it. You could check each bit individually, but there are billions of them.
+    </p>
+
+    <p>
+      So instead: cut the waveform into bit-length slices, line the slices up, and draw them all in
+      the same place. Any transition that is going to happen has now happened somewhere in that
+      picture. The region no captured trace enters is the observed opening for that population and
+      those measurement settings. It estimates the voltage and timing room around the receiver's
+      sampling decision; rare events outside the capture still need statistical treatment.
+    </p>
+
+    <p>
+      That is the whole idea. The eye is a way of asking one question about a whole population at
+      once, and its power and its limits both come from that.
+    </p>
+
+    <h2 class="section-rule"><span>How it gets built</span></h2>
+
+    <p>
+      Take the waveform, recover the clock from it, chop it into unit intervals, and overlay them. Every
+      possible transition — rising, falling, staying high, staying low — lands on the same picture.
+      Where the traces avoid, an opening appears. That opening is the eye.
+    </p>
+
+    <p>
+      The unit interval is the whole horizontal axis, and it is short. At PCIe Gen 5's 32 GT/s a UI is
+      31.25 ps; at 16 GT/s it is 62.5 ps; an LPDDR5X data bit at 8533 MT/s occupies about 117 ps. Every
+      picosecond of jitter is being spent out of a budget that small, which is why the horizontal axis is
+      usually normalised to UI rather than quoted in absolute time.
+    </p>
+
+    <ul class="tight">
+      <li><strong>Eye height</strong> — vertical opening at the sampling instant. Voltage margin against
+        receiver sensitivity and noise. Closed by loss, ISI, crosstalk and supply noise.</li>
+      <li><strong>Eye width</strong> — horizontal opening at the decision threshold. Timing margin.
+        Closed by jitter of every flavour.</li>
+      <li><strong>The mask</strong> — a keep-out polygon in the middle. Compliance is binary: no trace
+        may enter it. It encodes the receiver's real requirement, which is a combination of both margins
+        rather than either one alone.</li>
+      <li><strong>Rise/fall and crossing level</strong> — asymmetry between the two crossings is duty
+        cycle distortion, and it shows up directly as a narrower eye on one side.</li>
+    </ul>
+
+    <div class="note">
+      <b>What an eye cannot show you</b>
+      A scope capturing a million unit intervals has sampled 10⁻⁶ of the population. A spec written at
+      BER 10⁻¹² is asking about events six orders of magnitude rarer than anything in that picture. The
+      visible eye edges are the <em>common</em> cases; the tails that actually cause errors are not in
+      the plot at all. That gap is what bathtub curves and statistical simulation exist to close.
+    </div>
+
+    <h2 class="section-rule"><span>Reading one in anger</span></h2>
+
+    <p>
+      The shape suggests where to look next. A symmetric reduction in opening is consistent with
+      channel loss, but bandwidth, filtering, and noise must be checked as well. Distinct bands within the trace thickness are ISI, one band per pattern
+      family, and counting them tells you how many bits of memory the channel has. A blurred, fuzzy edge
+      with no structure is random noise. A periodic wobble in the crossing point is periodic jitter, and
+      its frequency usually names its source — a switching regulator, a neighbouring clock, a PLL
+      reference spur.
+    </p>
+
+    <p>
+      One habit worth keeping: always ask where the eye was measured. An eye at the transmitter pin, at
+      the receiver pad, and after the receiver's equaliser are three different pictures of the same link,
+      and modern serial standards deliberately allow the eye to be fully closed at the pad. A closed eye
+      there is not a failure — it is the reason the receiver has a DFE.
+    </p>
+
+    <h2 class="section-rule"><span>Why this decides how your board behaves</span></h2>
+
+    <p>
+      The eye is where every other topic on this site arrives. It is the common currency, which is
+      why it is worth knowing which impairment does what to it:
+    </p>
+
+    <ul class="tight">
+      <li><strong>Loss and ISI</strong> close it vertically <em>and</em> horizontally, and leave
+        visible structure — distinct bands within the trace thickness. See
+        <a href="isi.html">ISI</a>.</li>
+      <li><strong>Crosstalk</strong> adds a fuzzy, pattern-uncorrelated thickening that gets worse
+        when neighbours are active and vanishes when they are quiet.</li>
+      <li><strong>Random jitter</strong> blurs the crossings with no structure, and it never stops
+        getting worse with more samples — that is what makes it the reason the eye alone cannot
+        answer a BER question.</li>
+      <li><strong>Supply noise</strong> moves the whole eye up and down, or modulates the crossing
+        at the noise frequency. See
+        <a href="../power-integrity/pdn-induced-jitter.html">PDN-induced jitter</a>.</li>
+      <li><strong>Duty-cycle distortion</strong> makes alternate eyes different widths — an
+        asymmetry between rising and falling crossings.</li>
+    </ul>
+
+    <h2 class="section-rule"><span>What to do about it</span></h2>
+
+    <p>
+      <strong>State where the eye was measured.</strong> An eye at the transmitter pin, at
+      the receiver pad, and after the receiver's equaliser are three different pictures of the same
+      link. Modern serial standards deliberately allow the eye at the pad to be completely closed —
+      a closed eye there is not a failure, it is the reason the receiver has a DFE. An eye plot
+      needs its reference plane stated before it can support an engineering conclusion.
+    </p>
+
+    <p>
+      <strong>Say how many symbols it contains.</strong> Margin read off an eye is margin at
+      roughly the rate that eye can support, and no lower. See the note above — and the readout
+      beside the panel, which states exactly that for the eye it just drew.
+    </p>
+
+    <p>
+      <strong>Use the shape to choose your next measurement, not to conclude.</strong> The eye is a
+      diagnostic that points somewhere; it is rarely the last step. Structure says ISI, so go look
+      at S<sub>21</sub>. Fuzz that tracks neighbour activity says crosstalk, so go turn the
+      neighbours off. A periodic wobble says something is modulating you, so go find its frequency.
+    </p>
+
+    <p>
+      <strong>Match clock-recovery conditions before comparing eyes.</strong> The CDR's loop
+      bandwidth decides how much low-frequency jitter it tracks out. Two eyes of the same signal
+      with different recovery settings can differ by more than the design change being evaluated.
+    </p>
+
+    <div class="note">
+      <b>A comparison checklist</b>
+      Before treating two eyes as an A/B result, match the measurement reference plane, instrument
+      bandwidth and filtering, clock-recovery method and loop bandwidth, equalisation state, pattern
+      and captured population, vertical scale, and threshold definition. Record any difference that
+      cannot be matched; it becomes part of the interpretation rather than hidden measurement context.
+    </div>
+
+    <div class="note">
+      <b>Using this to find a fault</b>
+      <ul class="tight">
+        <li><b>Distinct bands inside the trace thickness.</b> ISI, and the number of bands tells
+          you how many bit periods of channel memory there are — two bands is one significant
+          post-cursor, four is two.</li>
+        <li><b>Fuzz that appears only when the neighbouring lanes are active.</b> Crosstalk. It
+          is the quickest discriminator there is: switch the aggressors off and watch it go.</li>
+        <li><b>A periodic wobble in the crossing.</b> Measure its frequency, then go looking for
+          it — a switching regulator, a spread-spectrum clock, a PLL reference spur. Periodic
+          its frequency can narrow the search to a switching regulator, spread-spectrum clock, or
+          PLL reference spur.</li>
+        <li><b>One eye wider than the next, alternating.</b> Duty-cycle distortion, usually in
+          the transmitter or the clock path rather than the channel.</li>
+        <li><b>An eye that looks fine and a link that errors.</b> Treat the observed errors as
+          evidence that the visible eye has not captured the relevant tail or burst behavior. The
+          eye mainly shows common cases; rare events may not appear in the plotted population.</li>
+      </ul>
+    </div>
+
+    <details class="deeper">
+      <summary>Go deeper — what "eye height" actually measures, and the population problem</summary>
+
+      <p>
+        Eye height and width sound like properties of a picture, but every measurement of them
+        rests on choices that must be stated before results from different measurements can be
+        compared meaningfully.
+      </p>
+
+      <ul class="tight">
+        <li><strong>At which phase?</strong> Eye height is the vertical opening at one sampling
+          instant, and moving that instant changes the answer. The usual convention is the phase
+          that maximises the opening, which is what an adaptive receiver converges on — but a
+          fixed-phase measurement will report less.</li>
+        <li><strong>At which threshold?</strong> Eye width is the horizontal opening at the
+          decision level, and for an eye that is not vertically symmetric, the level you choose
+          changes the width you get.</li>
+        <li><strong>Over what population?</strong> The opening is defined by the most extreme
+          trace in the capture, so it depends on how long you captured for. This is the one that
+          causes real trouble — see below.</li>
+      </ul>
+
+      <p>
+        <strong>The population problem.</strong> A capture of a million unit intervals has sampled
+        10<sup>−6</sup> of the population that a BER 10<sup>−12</sup> specification is asking
+        about. The events that cause errors at that rate are six orders of magnitude rarer than
+        anything in the picture. The visible eye edges are the <em>common</em> cases.
+      </p>
+
+      <p>
+        There is a clean way to state what a run does support. With zero errors observed in
+        <i>n</i> symbols, the 95% upper confidence bound on the error rate is −ln(0.05)/<i>n</i>,
+        or about 3/<i>n</i> — the rule of three. A million symbols evidences a BER better than
+        about 3×10<sup>−6</sup>, and nothing stronger. To evidence 10<sup>−12</sup> directly you
+        need around 3×10<sup>12</sup> symbols, which at 16 GT/s is several minutes per point and
+        days for a curve.
+      </p>
+
+      <p>
+        That gap is why <a href="bathtub-curves.html">bathtub curves</a> exist: measure where you
+        can measure, fit a model whose tail behaviour you believe, and extrapolate — being explicit
+        about which part is measured and which part is extrapolated. It is also why statistical
+        channel simulation exists, which sidesteps the population question by computing the
+        distribution directly rather than sampling it.
+      </p>
+
+      <p>
+        <strong>One more thing the eye cannot show.</strong> An overlay discards time order. Two
+        channels with identical eyes can behave differently if one's errors are independent and the
+        other's arrive in bursts, because forward error correction cares enormously about that
+        distinction. The eye has thrown away exactly the information a FEC budget needs.
+      </p>
+    </details>
+
+    <h2 class="section-rule"><span>In the real world</span></h2>
+
+    <p>
+      The eye's real value is as a <em>shared</em> picture. It is the one artefact a signal
+      integrity engineer, a validation engineer and a silicon architect all read the same way, and
+      most of its use in practice is communication rather than measurement.
+    </p>
+
+    <p>
+      Which is also the reason to be disciplined about labelling it. An eye passed between teams
+      without its reference plane, its symbol count and its clock-recovery settings is an image
+      that different people will read as different claims — and the disagreements that follow are
+      genuinely hard to unpick, because everyone is looking at the same picture and meaning
+      different things by it.
+    </p>
+
+    <h3>Related</h3>
+    <ul class="tight">
+      <li><a href="../fundamentals/isi.html">Intersymbol Interference (ISI) and Channel Memory</a></li>
+      <li><a href="../fundamentals/jitter-taxonomy.html">Jitter Components: RJ, DJ, DCD, PJ, and TJ</a></li>
+      <li><a href="../fundamentals/bathtub-curves.html">Bathtub curves and BER extrapolation</a></li>
+      <li><a href="../signal-integrity/compliance-masks.html">Transmitter Compliance Masks and Receiver Eye Masks</a></li>
+    </ul>
+  </div>
+
+
+  <script type="application/json" data-exercises>
+{
+  "title": "Check yourself",
+  "items": [
+    {
+      "ask": "You capture 2 million unit intervals and see no errors. What bit error rate does that support, at 95% confidence?",
+      "unit": "×10⁻⁶",
+      "answer": 1.5,
+      "tolerance": 0.2,
+      "hint": "The rule of three: with zero errors in N symbols, the 95% upper bound is about 3/N.",
+      "misreads": [
+        {
+          "value": 0.5,
+          "note": "That is 1/N. The rule of three is 3/N — seeing nothing in N trials is weaker evidence than 1/N suggests, because you might simply have been lucky."
+        }
+      ],
+      "why": "3 / 2×10⁶ = 1.5×10⁻⁶. Observing nothing is a bound, not a measurement, and the bound is −ln(0.05)/N ≈ 3/N. A specification written at 10⁻¹² is asking about events six orders of magnitude rarer than anything in that capture, which is why bathtub curves and statistical simulation exist."
+    },
+    {
+      "ask": "An eye measured at the receiver pad is completely closed, and the link runs with no errors. What is the most likely explanation?",
+      "options": [
+        {
+          "label": "The measurement is wrong",
+          "note": "Possible, but this is normal behaviour on a modern serial link, not an instrument fault."
+        },
+        {
+          "label": "The eye was measured before the receiver's equaliser",
+          "correct": true,
+          "note": "Yes. Modern standards deliberately allow the eye at the pad to be closed."
+        },
+        {
+          "label": "The BER tester is misconfigured",
+          "note": "If it were, you would expect errors rather than their absence."
+        },
+        {
+          "label": "The channel has a resonance",
+          "note": "A resonance would close the eye AND cause errors. The absence of errors is the clue here."
+        }
+      ],
+      "why": "A closed eye at the pad can be expected on a link whose specification assumes a reference receiver with a CTLE and a DFE. The eye therefore needs its reference plane and equalisation state stated before it can support a margin conclusion."
+    }
+  ]
+}
+  </script>
+
+  <!-- pager:start -->
+  <nav class="pager" aria-label="Previous and next topic">
+    <a class="prev" href="../../topics/fundamentals/isi.html"><span class="dir">Previous</span><span>Intersymbol Interference (ISI) and Channel Memory</span></a>
+    <a class="next" href="../../topics/fundamentals/jitter-taxonomy.html"><span class="dir">Next</span><span>Jitter Components: RJ, DJ, DCD, PJ, and TJ</span></a>
+  </nav>
+  <!-- pager:end -->
+</main>
+
+<footer class="site-foot">
+  <span>SIPI &#8212; signal and power integrity, visualised.</span>
+  <span>Created and directed by Geetansh Arora. <a href="../../colophon.html">About, review &amp; AI assistance</a> &#183; <a href="../../model-contract.html">Model assumptions</a> &#183; <a href="../../docs/claims.md">Claim ledger</a></span>
+</footer>
+
+<script src="../../js/site.js?v=acb47d86"></script>
+<script src="../../js/viz-kit.js?v=a53e49c3"></script>
+<script src="../../js/viz/eye.js?v=64665e1b"></script>
+<script src="../../js/viz-loader.js?v=89d5884d"></script>
+<script src="../../js/search.js?v=6c93a285"></script>
+</body>
+</html>

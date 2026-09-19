@@ -1,0 +1,328 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>High-Speed Connectors and Cables | SIPI</title>
+<meta name="description" content="Why the footprint is usually worse than the connector, what a cable adds beyond loss, and why mated-pair variation belongs in the budget.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<link rel="stylesheet" href="../../css/base.css?v=e4f774de">
+<link rel="stylesheet" href="../../css/components.css?v=295837ab">
+  <!-- meta:start -->
+  <link rel="canonical" href="https://sipi.work/topics/package-board/connectors-cables.html">
+  <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="SIPI">
+  <meta property="og:title" content="High-Speed Connectors and Cables | SIPI">
+  <meta property="og:description" content="Why the footprint is usually worse than the connector, what a cable adds beyond loss, and why mated-pair variation belongs in the budget.">
+  <meta property="og:url" content="https://sipi.work/topics/package-board/connectors-cables.html">
+  <meta property="og:image" content="https://sipi.work/assets/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="High-Speed Connectors and Cables | SIPI">
+  <meta name="twitter:description" content="Why the footprint is usually worse than the connector, what a cable adds beyond loss, and why mated-pair variation belongs in the budget.">
+  <meta name="twitter:image" content="https://sipi.work/assets/og.png">
+  <!-- meta:end -->
+</head>
+<body>
+
+<header class="masthead">
+  <a class="wordmark" href="../../index.html">SIPI</a>
+  <nav>
+    <a href="../../index.html#fundamentals">Fundamentals</a>
+    <a href="../../index.html#power-integrity">Power</a>
+    <a href="../../index.html#interfaces">Interfaces</a>
+    <a href="../../start.html">Start</a>
+    <a href="../../labs.html">Labs</a>
+    <a href="../../reference.html">Reference</a>
+    <button class="theme-toggle" data-act="theme" type="button">System</button>
+  </nav>
+</header>
+
+<main>
+  <div class="page-head">
+    <p class="crumb"><a href="../../index.html#package-board">Package & board</a> / 05</p>
+    <h1>High-Speed Connectors and Cables</h1>
+    <p class="byline">
+      <!-- review:start --><span>By Geetansh Arora — Principal SI/PI Engineer</span><time datetime="2026-09-17" title="Technical review by Geetansh Arora on this date">17 Sep 2026</time><span>8 min</span><!-- review:end -->
+    </p>
+    <p class="answer">
+      A connector vendor characterises their part carefully and publishes S-parameters for it. What
+      they cannot characterise is your footprint &#8212; the pads, the via pattern behind them, the
+      antipads those vias cut in your planes. That region is typically a worse discontinuity than
+      the connector itself, and it is entirely yours.
+    </p>
+  </div>
+
+  <!-- ───────────── the picture ───────────── -->
+  <figure class="figure">
+    <div class="figure__bar"><span>The footprint is worse than the connector</span></div>
+    <div class="figure__body"><svg viewBox="-4 14 680 250" role="img" aria-label="A connector launch region in cross-section showing pads, vias, antipads cut in the planes and the approaching trace, alongside the full cabled channel with two boards, two connectors and a cable.">
+  <g>
+    <text class="lbl-hi" x="0" y="28">the launch — the part the vendor cannot characterise</text>
+    <rect class="dielectric" x="0" y="42" width="300" height="96"/>
+    <rect class="plane" x="0" y="70" width="96" height="6"/>
+    <rect class="plane" x="150" y="70" width="150" height="6"/>
+    <rect class="plane" x="0" y="112" width="96" height="6"/>
+    <rect class="plane" x="150" y="112" width="150" height="6"/>
+    <rect class="copper" x="150" y="50" width="150" height="5"/>
+    <rect class="copper" x="112" y="42" width="12" height="96" rx="1"/>
+    <rect class="copper" x="112" y="34" width="30" height="10" rx="2"/>
+    <path class="edge dash" d="M96,70 L150,70 M96,112 L150,112" stroke="var(--alarm)"/>
+    <text class="lbl-bad" x="123" y="66" text-anchor="middle">antipad</text>
+    <text class="lbl-bad" x="123" y="154" text-anchor="middle">stub below the exit layer</text>
+    <text class="lbl-sig" x="230" y="46" text-anchor="middle">trace</text>
+    <text class="lbl" x="0" y="176">pads · vias · antipads · approach geometry — all yours</text>
+  </g>
+  <g transform="translate(360,0)">
+    <text class="lbl-hi" x="0" y="28">and half the channel belongs to somebody else</text>
+    <rect class="edge" x="0" y="48" width="60" height="30" rx="2" fill="var(--surface-2)"/>
+    <text class="lbl" x="30" y="67" text-anchor="middle">board</text>
+    <rect class="copper-2" x="60" y="52" width="16" height="22" rx="2"/>
+    <rect x="76" y="54" width="140" height="18" rx="9" fill="var(--alarm)" opacity=".35"/>
+    <text class="lbl-bad" x="146" y="67" text-anchor="middle">cable — worst compliant</text>
+    <rect class="copper-2" x="216" y="52" width="16" height="22" rx="2"/>
+    <rect class="edge" x="232" y="48" width="60" height="30" rx="2" fill="var(--surface-2)"/>
+    <text class="lbl" x="262" y="67" text-anchor="middle">board</text>
+    <text class="lbl-ref" x="68" y="94" text-anchor="middle">launch</text>
+    <text class="lbl-ref" x="224" y="94" text-anchor="middle">launch</text>
+    <text class="lbl" x="0" y="124">beyond loss, a cable brings:</text>
+    <text class="lbl" x="0" y="140">· intra-pair skew &#8594; mode conversion</text>
+    <text class="lbl" x="0" y="156">· sample-to-sample variation</text>
+    <text class="lbl" x="0" y="172">· bend radius, temperature, mating cycles</text>
+  </g>
+</svg></div>
+    <figcaption><b>Connector vendors characterise the part, while the board design determines the footprint and launch.</b> The pad geometry, via pattern, plane antipads, and approaching trace can form a larger discontinuity than the connector itself. Because the launch is three-dimensional, use a 3D model for it, then cascade that result with the vendor's connector model and a 2D model of the uniform trace. For a cabled interface, close the budget against the <em>worst compliant</em> cable and include mated-pair variation, since assemblies built from identical parts do not measure identically.</figcaption>
+  </figure>
+
+  <div class="prose">
+    <p>
+      On an engineered circuit board, maintaining signal integrity discipline is largely a planar problem.
+      Stripline differential pairs maintain uniform conductor widths, consistent dielectric spacing, and solid,
+      unbroken reference planes across many inches of board real estate. But the moment a signal must leave the
+      board — plugging into a card-edge slot, mating with a backplane, or transitioning into a twinaxial cable
+      assembly — that tidy two-dimensional planar discipline violently breaks down.
+    </p>
+
+    <p>
+      A connector is an inherently three-dimensional mechanical structure. Within a physical volume of only a few
+      cubic millimetres, planar PCB traces must neck down onto surface-mount pads or press-fit compliant pins,
+      transition into stamped metal spring contacts, pass through molded liquid-crystal polymer (LCP) plastic
+      housings, and mate with the opposing pins of another subsystem.
+    </p>
+
+    <p>
+      Because of this radical geometric transformation, connectors and their cable assemblies represent the
+      single largest impedance discontinuity in almost every high-speed channel. The critical engineering trap
+      is treating a connector as a standalone, modular component that can be judged purely by a vendor's Touchstone
+      S-parameter file. In live hardware, the vendor's model only represents the middle of a complex mechanical
+      sandwich. The worst part of the discontinuity — the surface breakout pads, the ground-perforating via field,
+      and the antipad tuning — is completely owned by your board layout.
+    </p>
+
+    <h2>Where a connector actually begins and ends</h2>
+
+    <p>
+      It is tempting to think of a connector as a component: it has a part number, a datasheet and a
+      set of S-parameters, so it should drop into a channel model like any other block.
+    </p>
+
+    <p>
+      Electrically it does not, because the discontinuity does not start at the connector's contacts.
+      It starts where your trace geometry changes to approach the pads, continues through the vias
+      behind them, and only then reaches anything the vendor modelled. The vendor's file describes
+      the middle of a structure whose ends you built.
+    </p>
+
+    <p>
+      So the useful mental model is not "connector plus board" but <b>a launch, a connector, and
+      another launch</b> — three things in series, of which you own two.
+    </p>
+
+    <h2 class="section-rule"><span>The footprint, not the part</span></h2>
+
+    <p>
+      Connector vendors characterise their parts carefully and publish S-parameters for them. What they
+      cannot characterise is your footprint: the pad geometry, the via pattern behind it, the antipads
+      those vias cut in your planes, and the trace geometry approaching the launch. That region is
+      typically a worse discontinuity than the connector itself, and it is entirely yours.
+    </p>
+
+    <p>
+      Three things dominate it. The <strong>via pattern</strong> behind the pads — through-hole
+      connector pins leave stubs, and a dense pin field perforates the planes. The <strong>antipad
+      geometry</strong>, which sets the capacitance at the launch and is the main tuning knob available.
+      And the <strong>ground provision</strong>: whether each signal pin has a return pin adjacent, and
+      whether that return actually connects to the plane the trace references.
+    </p>
+
+    <div class="note">
+      <b>Simulate the launch region in 3D</b>
+      A 2D cross-section solve cannot represent this launch because it is a genuinely
+      three-dimensional structure — vias, antipads, pads and plane cutouts interacting within a few
+      millimetres — and its behaviour cannot be inferred from the trace geometry on either side. Cascade
+      a 3D model of the launch with the vendor's connector model and a 2D model of the trace; that
+      partition matches where each solver is accurate.
+    </div>
+
+    <h2 class="section-rule"><span>What a cable adds</span></h2>
+
+    <p>
+      Beyond insertion loss, which is usually the largest single term in any cabled budget, a cable
+      brings impairments a board trace does not:
+    </p>
+
+    <ul class="tight">
+      <li><strong>Intra-pair skew</strong> from manufacturing differences between the two conductors,
+        converting differential energy to common mode along the whole length.</li>
+      <li><strong>Variation between samples.</strong> A cable is a compliance-limit component chosen by
+        somebody else, so the budget must close against the worst legal one rather than a measured one.</li>
+      <li><strong>Two more connector interfaces</strong>, each with its own launch and its own mating
+        variability.</li>
+      <li><strong>Mechanical dependence.</strong> Bend radius, temperature and mating cycles all move
+        the electrical performance, and none of them appear in a nominal model.</li>
+    </ul>
+
+    <p>
+      That last point is why mated-pair variation deserves its own line in a budget rather than being
+      folded into the connector's nominal loss. Two assemblies built from identical parts do not measure
+      identically, and a channel that closes only at nominal will fail somewhere in a production
+      population. Where the specification defines a worst-case connector or cable model, use it — it
+      exists precisely because the nominal one is not the design case.
+    </p>
+
+    <h2 class="section-rule"><span>Why this decides how your board behaves</span></h2>
+
+    <ul class="tight">
+      <li><strong>The launch usually dominates.</strong> It is where impedance changes abruptly,
+        where vias add stubs, and where the return path is most disrupted. A good connector with a
+        poor launch measures as a poor connector.</li>
+      <li><strong>Return loss here costs twice.</strong> Energy that reflects is missing from the
+        signal and comes back as an echo — and a connector sits at a well-defined distance, so its
+        echo arrives at a well-defined delay.</li>
+      <li><strong>It is the usual home of mode conversion.</strong> Connectors are mechanical
+        structures, and mechanical symmetry is not electrical symmetry. Pins that differ in their
+        ground neighbours convert differential to common mode.</li>
+      <li><strong>A cable is a channel with its own everything</strong> — loss, skew, shield
+        behaviour and a second launch at the far end.</li>
+    </ul>
+
+    <h2 class="section-rule"><span>What to do about it</span></h2>
+
+    <p>
+      <strong>Model the launch, not just the connector.</strong> A channel simulation that inserts a
+      vendor file between two ideal traces is missing the worst part of the structure.
+    </p>
+
+    <p>
+      <strong>Tune the antipad at the launch.</strong> It is the main knob you have: it sets the
+      capacitance at the transition, and it can compensate a via that is otherwise too capacitive.
+      Measure the direction of the error before turning it.
+    </p>
+
+    <p>
+      <strong>Give every signal pin a usable ground neighbour.</strong> Ground provision in the pin
+      map is what decides both the return path and the symmetry of a pair through the connector.</p>
+
+    <p>
+      <strong>Backdrill through-hole connector pins if the board is thick.</strong> A connector pin
+      field in a thick board is a field of stubs, and they are all the same length, so their
+      resonances coincide.
+    </p>
+
+    <div class="note">
+      <b>Using this to find a fault</b>
+      <ul class="tight">
+        <li><b>Measured channel worse than the vendor's file plus your traces.</b> The launch. It is
+          the part not in either model.</li>
+        <li><b>Regular ripple in S<sub>21</sub>.</b> A reflection pair — often the two launches at
+          each end of a connector. The ripple period gives the delay between them, which identifies
+          them.</li>
+        <li><b>Mode conversion that appears only through the connector.</b> Measure the connector
+          region alone if you can. Pin asymmetry and unequal ground neighbours are the usual
+          causes.</li>
+        <li><b>A cable assembly that performs differently between units.</b> Cable skew and
+          termination quality vary far more than board features do.</li>
+      </ul>
+    </div>
+
+    <details class="deeper">
+      <summary>Go deeper — what a cable adds, and why shields are a return-path question</summary>
+
+      <p>
+        A cable is not a longer trace. Three things behave differently:
+      </p>
+
+      <ul class="tight">
+        <li><strong>Loss is lower per unit length but the lengths are longer.</strong> A cable's
+          dielectric is usually better than laminate, so dB per metre is favourable — and then
+          somebody uses three metres of it.</li>
+        <li><strong>Skew accumulates.</strong> Two conductors in a twisted or parallel pair have
+          slightly different lengths and slightly different surroundings over metres, which is
+          enough to matter. Cable skew is often larger than anything on a board.</li>
+        <li><strong>The shield is part of the circuit.</strong> How it is terminated at each end
+          decides where common-mode current flows, and therefore what radiates.</li>
+      </ul>
+
+      <p>
+        <strong>Shield termination is a return-path question in disguise.</strong> A shield bonded
+        360° to the connector shell at both ends gives common-mode current a defined, low-inductance
+        path. A shield connected through a single wire — a pigtail — gives it a high-inductance one,
+        and the shield stops being a shield above the frequency where that inductance dominates.
+        This is the same reasoning as
+        <a href="../fundamentals/return-current-paths.html">return current paths</a>, applied to a
+        structure that leaves the board.
+      </p>
+
+      <p>
+        <strong>And a note on where the model ends.</strong> Cable assemblies are usually
+        characterised as a whole — connector, cable, connector — which is convenient and hides the
+        boundary you care about. When such a file disagrees with your channel, the first question is
+        what reference plane it was measured to, and whether your board's launch is inside it or
+        outside it. See <a href="../signal-integrity/de-embedding.html">de-embedding</a>.
+      </p>
+    </details>
+
+    <h2 class="section-rule"><span>In the real world</span></h2>
+
+    <p>
+      Connectors are where a channel crosses an organisational boundary, and the electrical problems
+      cluster there for the same reason the organisational ones do: two parties may each model up to
+      their own edge while leaving the interface region without a clearly assigned owner.
+    </p>
+
+    <p>
+      The practical remedy is to own the launch explicitly — model it, simulate it with the vendor's
+      file in place, and treat it as part of your design rather than as part of the connector. It is
+      a few hundred mils of board that routinely costs more margin than several inches of trace.
+    </p>
+
+    <h3>Related</h3>
+    <ul class="tight">
+      <li><a href="../interfaces/usb-3x.html">USB 3.1 and 3.2 Signal Integrity: SSC and Compliance</a></li>
+      <li><a href="../signal-integrity/de-embedding.html">S-Parameter De-Embedding and Fixture Removal</a></li>
+      <li><a href="../fundamentals/differential-signalling.html">Differential Signaling and Mode Conversion</a></li>
+      <li><a href="../methodology/field-solvers.html">Field Solvers for SI/PI: 2D, 2.5D, and 3D</a></li>
+    </ul>
+  </div>
+
+  <!-- pager:start -->
+  <nav class="pager" aria-label="Previous and next topic">
+    <a class="prev" href="../../topics/package-board/layer-transitions.html"><span class="dir">Previous</span><span>PCB Layer Transitions and Return-Path Stitching</span></a>
+    <a class="next" href="../../topics/package-board/manufacturing-tolerance.html"><span class="dir">Next</span><span>PCB Manufacturing Variation: Etch, Glass Weave, and Impedance</span></a>
+  </nav>
+  <!-- pager:end -->
+</main>
+
+<footer class="site-foot">
+  <span>SIPI &#8212; signal and power integrity, visualised.</span>
+  <span>Created and directed by Geetansh Arora. <a href="../../colophon.html">About, review &amp; AI assistance</a> &#183; <a href="../../model-contract.html">Model assumptions</a> &#183; <a href="../../docs/claims.md">Claim ledger</a></span>
+</footer>
+
+<script src="../../js/site.js?v=acb47d86"></script>
+<script src="../../js/search.js?v=6c93a285"></script>
+</body>
+</html>

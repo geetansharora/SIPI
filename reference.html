@@ -1,0 +1,762 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SI/PI Reference: Formulas, Units, and Experiments | SIPI</title>
+<meta name="description" content="Signal and power integrity glossary, formulas, unit tools, and downloadable analytical reference experiments with assumptions and tolerances.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&amp;family=IBM+Plex+Mono:wght@400;500;600&amp;family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&amp;display=swap">
+<link rel="stylesheet" href="css/base.css?v=e4f774de">
+<link rel="stylesheet" href="css/components.css?v=295837ab">
+  <!-- meta:start -->
+  <link rel="canonical" href="https://sipi.work/reference.html">
+  <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="SIPI">
+  <meta property="og:title" content="SI/PI Reference: Formulas, Units, and Experiments | SIPI">
+  <meta property="og:description" content="Signal and power integrity glossary, formulas, unit tools, and downloadable analytical reference experiments with assumptions and tolerances.">
+  <meta property="og:url" content="https://sipi.work/reference.html">
+  <meta property="og:image" content="https://sipi.work/assets/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="SI/PI Reference: Formulas, Units, and Experiments | SIPI">
+  <meta name="twitter:description" content="Signal and power integrity glossary, formulas, unit tools, and downloadable analytical reference experiments with assumptions and tolerances.">
+  <meta name="twitter:image" content="https://sipi.work/assets/og.png">
+  <!-- meta:end -->
+</head>
+<body>
+<header class="masthead">
+  <a class="wordmark" href="index.html">SIPI</a>
+  <nav>
+    <a href="index.html#fundamentals">Fundamentals</a><a href="index.html#power-integrity">Power</a>
+    <a href="index.html#interfaces">Interfaces</a><a href="start.html">Start</a><a href="labs.html">Labs</a>
+    <a href="reference.html">Reference</a>
+    <button class="theme-toggle" data-act="theme" type="button">System</button>
+  </nav>
+</header>
+<main>
+  <div class="page-head">
+    <p class="crumb"><a href="index.html">SIPI</a> / reference</p>
+    <h1>Signal and power integrity reference and experiments</h1>
+    <p class="byline"><span>Glossary and formulas</span><span>Verified analytical examples</span></p>
+    <p class="answer">Look up a symbol or formula, convert units, or open a worked reference experiment whose settings, expected values, tolerances, and limits are available together.</p>
+  </div>
+
+  <div class="prose">
+    <h2 class="section-rule"><span>Core glossary</span></h2>
+    <dl>
+      <dt><b>Z<sub>0</sub></b> · characteristic impedance</dt><dd>The voltage-to-current ratio of one travelling wave on a uniform line. <a href="topics/fundamentals/characteristic-impedance.html">Full lesson</a>.</dd>
+      <dt><b>Z</b> · impedance</dt><dd>The complex ratio V/I at a stated frequency; resistance is its real part.</dd>
+      <dt><b>Γ</b> · reflection coefficient</dt><dd>Reflected wave amplitude divided by incident wave amplitude at a discontinuity. <a href="topics/fundamentals/reflections.html">Reflections</a>.</dd>
+      <dt><b>S<sub>11</sub></b> · input reflection</dt><dd>The complex reflected-to-incident wave ratio at port 1, with all other ports matched to their reference impedances. Return loss is its negative logarithmic magnitude. <a href="topics/fundamentals/s-parameters.html">S-parameters</a>.</dd>
+      <dt><b>S<sub>21</sub></b> · forward transmission</dt><dd>The complex ratio of the wave leaving port 2 to the wave incident at port 1, with all other incident waves zero.</dd>
+      <dt><b>PDN</b> · power delivery network</dt><dd>The regulator, planes, package, die and capacitors that deliver rail current. <a href="topics/power-integrity/what-is-the-pdn.html">PDN overview</a>.</dd>
+      <dt><b>ESR</b></dt><dd>Equivalent series resistance: a capacitor's modeled series loss. In a simple series RLC model, it sets impedance at resonance and provides damping.</dd>
+      <dt><b>ESL</b></dt><dd>Equivalent series inductance: connection and internal inductance. A simple series RLC model becomes inductive above self-resonance. <a href="topics/power-integrity/decoupling-capacitors.html">Decoupling</a>.</dd>
+      <dt><b>SRF</b></dt><dd>Self-resonant frequency, where a capacitor's inductive and capacitive reactances cancel.</dd>
+      <dt><b>UI</b> · unit interval</dt><dd>One symbol period. For one symbol per transfer, it is the reciprocal of the transfer rate.</dd>
+      <dt><b>TDR</b></dt><dd>Time-domain reflectometry: launch an edge and use reflection time and sign to locate impedance changes.</dd>
+      <dt><b>CDR</b></dt><dd>Clock and data recovery: the receiver loop that chooses sampling phase. <a href="topics/signal-integrity/receiver-and-clock.html">Receiver and clock</a>.</dd>
+    </dl>
+
+    <h2 class="section-rule"><span>Formula index</span></h2>
+    <p>Each relation is useful only under its stated assumptions.</p>
+    <div class="table-scroll"><table>
+      <thead><tr><th>Relation</th><th>Assumptions</th><th>Read more</th></tr></thead>
+      <tbody>
+        <tr><td>V = I R</td><td>Lumped, linear resistance at the operating point.</td><td><a href="topics/power-integrity/ir-drop-electromigration.html">DC resistance</a></td></tr>
+        <tr><td>Z = V / I</td><td>Voltage and current are phasors at the same frequency and reference plane.</td><td><a href="topics/fundamentals/characteristic-impedance.html">Impedance</a></td></tr>
+        <tr><td>X<sub>L</sub> = 2πfL</td><td>Ideal lumped inductor; parasitics neglected.</td><td><a href="topics/power-integrity/decoupling-capacitors.html">Real components</a></td></tr>
+        <tr><td>X<sub>C</sub> = −1 / (2πfC)</td><td>Ideal lumped capacitor; the sign denotes capacitive imaginary impedance.</td><td><a href="topics/power-integrity/decoupling-capacitors.html">Decoupling</a></td></tr>
+        <tr><td>Γ = (Z<sub>L</sub> − Z<sub>0</sub>) / (Z<sub>L</sub> + Z<sub>0</sub>)</td><td>One uniform line and a lumped load at its reference plane.</td><td><a href="topics/fundamentals/reflections.html">Reflections</a></td></tr>
+        <tr><td>return loss = −20 log<sub>10</sub>|S<sub>11</sub>|</td><td>Same reference impedance and plane; magnitude ratio, not power ratio.</td><td><a href="topics/fundamentals/s-parameters.html">S-parameters</a></td></tr>
+        <tr><td>f<sub>0</sub> = 1 / (2π√LC)</td><td>Ideal lumped LC resonance; damping and distributed effects omitted.</td><td><a href="topics/power-integrity/anti-resonance.html">Anti-resonance</a></td></tr>
+        <tr><td>UI = 1 / symbol rate</td><td>One symbol per transfer; distinguish symbol rate from bit rate for multilevel signalling.</td><td><a href="topics/groundwork/units-and-conventions.html">Units and conventions</a></td></tr>
+      </tbody>
+    </table></div>
+
+    <h2 class="section-rule"><span>Unit helpers</span></h2>
+    <p>Choose prefixes for the same base unit, such as nanofarads to picofarads.</p>
+    <form class="instrument" data-reference-tools onsubmit="return false">
+      <div class="instrument__bar"><span class="instrument__title">Convert before calculating</span></div>
+      <div class="controls">
+        <div class="ctl">
+          <div class="ctl__head"><label for="prefix-value">Positive value</label></div>
+          <input id="prefix-value" type="number" min="0" step="any" value="1" inputmode="decimal">
+        </div>
+        <div class="ctl"><label for="prefix-from">From prefix</label><select id="prefix-from"><option value="p">pico</option><option value="n" selected>nano</option><option value="u">micro</option><option value="m">milli</option><option value="">none</option><option value="k">kilo</option><option value="M">mega</option><option value="G">giga</option></select></div>
+        <div class="ctl"><label for="prefix-to">To prefix</label><select id="prefix-to"><option value="p" selected>pico</option><option value="n">nano</option><option value="u">micro</option><option value="m">milli</option><option value="">none</option><option value="k">kilo</option><option value="M">mega</option><option value="G">giga</option></select></div>
+      </div>
+      <p role="status" aria-live="polite">Converted value: <strong id="prefix-result">—</strong></p>
+      <div class="controls"><div class="ctl"><div class="ctl__head"><label for="ui-rate">Transfer rate (GT/s)</label></div><input id="ui-rate" type="number" min="0" step="any" value="8" inputmode="decimal"></div></div>
+      <p>Assuming one symbol per transfer, one UI is <strong id="ui-result" role="status" aria-live="polite">—</strong>.</p>
+      <noscript><p>Enable JavaScript for the calculators. The glossary and formula index remain available above.</p></noscript>
+    </form>
+  </div>
+
+  <section class="reference-library" id="reference-experiments" aria-labelledby="reference-experiments-title">
+    <div class="prose">
+      <h2 class="section-rule" id="reference-experiments-title"><span>Reference experiments</span></h2>
+      <p>
+        These examples connect analytical results to either saved lab scenarios or checked
+        numerical helpers. Predict first, explore the linked scenario when one is available,
+        and then reveal the expected values and their derivations. Each
+        downloadable JSON file contains both the settings and the answers, so it is a transparent
+        reference rather than a blind test. Helper-only cards link to a related lesson, which
+        does not run the exact reference case.
+      </p>
+      <p>
+        The values below come from boundary conditions, circuit laws, or the declared teaching-loop
+        equation and are checked against the public model entry points. They are analytical fixtures,
+        not measurements, standards-compliance evidence, or a new human-review claim. Version pins
+        make model or contract changes require an explicit fixture review.
+      </p>
+    </div>
+  <!-- reference-experiments:start -->
+    <article class="reference-card" id="experiment-matched-line">
+      <header class="reference-card__head">
+        <div><p class="reference-card__eyebrow">Reference matched-line</p><h3>Matched load: no returning wave</h3></div>
+        <div class="reference-tags" aria-label="Categories"><span class="reference-tag">SI</span><span class="reference-tag">reflections</span></div>
+      </header>
+      <div class="reference-card__actions">
+        <a class="tool-btn" href="topics/labs/travelling-waves.html#lab=labWaves;v=2.2;lw-z0=50;lw-rs=10;lw-rl=50;lw-open=0;lw-len=3;lw-tr=60;lw-xp=100;lw-t=1020">Open experiment</a>
+        <a class="tool-btn" href="tests/fixtures/experiments/matched-line.json" download>Download reference JSON</a>
+      </div>
+      <dl class="reference-card__meta">
+        <div><dt>Model pin</dt><dd><code>labWaves</code> 1.2; contract 2.2</dd></div>
+        <div><dt>Stimulus</dt><dd>1 V source step; cubic smoothstep centred at zero; timePs specifies observation.</dd></div>
+        <div><dt>Observation</dt><dd>Load at x=L. Observation is after the first edge has finished; source-matched case is after the return reaches the source.</dd></div>
+        <div><dt>Evidence</dt><dd>analytical; First-principles boundary conditions, linear circuit laws or the declared teaching-loop equation; no measured or licensed data.</dd></div>
+      </dl>
+      <div class="experiment-flow" aria-label="Learning sequence">
+        <div class="experiment-step"><strong>Predict</strong><p>Predict the signs of the reflected voltage and load current before opening the result.</p></div>
+        <div class="experiment-step"><strong>Experiment</strong><p>Open the scenario, keep its network and stimulus fixed, and inspect the stated observation. Compare with the derived answer before changing one variable.</p></div>
+        <div class="experiment-step"><strong>Explain</strong><p>Forward current is +V/Z0; backward current is −V/Z0. Sum the waves at the same boundary. The launch divider matters: the incident wave is not generally the full source voltage.</p></div>
+        <div class="experiment-step"><strong>Transfer</strong><p>If the source resistance changes, does the load reflection coefficient change?</p></div>
+      </div>
+      <details class="reference-result">
+        <summary>Expected results, derivations, and limits</summary>
+        <p><strong>Transfer answer:</strong> No, ΓL depends on the line and load. Source resistance changes the launched amplitude and the later source reflection.</p>
+        <div class="table-scroll"><table>
+          <thead><tr><th>Metric</th><th>Expected</th><th>Absolute tolerance</th><th>Derivation</th></tr></thead>
+          <tbody>
+              <tr><th scope="row"><code>gammaLoad</code></th><td>0 dimensionless</td><td>± 1e-10 dimensionless</td><td>Open: ΓL=+1; otherwise ΓL=(RL−Z0)/(RL+Z0).</td></tr>
+              <tr><th scope="row"><code>gammaSource</code></th><td>-0.666666666667 dimensionless</td><td>± 1e-10 dimensionless</td><td>ΓS=(Rs−Z0)/(Rs+Z0).</td></tr>
+              <tr><th scope="row"><code>launchedVoltage</code></th><td>0.833333333333 V</td><td>± 1e-10 V</td><td>A 1 V source launches Z0/(Rs+Z0) volts.</td></tr>
+              <tr><th scope="row"><code>loadVoltage</code></th><td>0.833333333333 V</td><td>± 1e-10 V</td><td>Before a later nonzero return reaches the load, VL=a(1+ΓL). With source matching ΓS=0, no further return is launched.</td></tr>
+              <tr><th scope="row"><code>loadCurrent</code></th><td>0.0166666666667 A</td><td>± 1e-10 A</td><td>IL=a(1−ΓL)/Z0, positive toward the load.</td></tr>
+          </tbody>
+        </table></div>
+        <h4>Limits</h4><ul class="tight"><li>Uniform lossless line; ideal source/load; no parasitic package or connector.</li><li>The stated time is a settled first-arrival observation, not a finite-edge midpoint.</li><li>No lossless-line result is a hardware compliance verdict.</li></ul>
+      </details>
+    </article>
+    <article class="reference-card" id="experiment-open-line">
+      <header class="reference-card__head">
+        <div><p class="reference-card__eyebrow">Reference open-line</p><h3>Open load: voltage adds, current cancels</h3></div>
+        <div class="reference-tags" aria-label="Categories"><span class="reference-tag">SI</span><span class="reference-tag">reflections</span></div>
+      </header>
+      <div class="reference-card__actions">
+        <a class="tool-btn" href="topics/labs/travelling-waves.html#lab=labWaves;v=2.2;lw-z0=50;lw-rs=10;lw-rl=50;lw-open=1;lw-len=3;lw-tr=60;lw-xp=100;lw-t=1020">Open experiment</a>
+        <a class="tool-btn" href="tests/fixtures/experiments/open-line.json" download>Download reference JSON</a>
+      </div>
+      <dl class="reference-card__meta">
+        <div><dt>Model pin</dt><dd><code>labWaves</code> 1.2; contract 2.2</dd></div>
+        <div><dt>Stimulus</dt><dd>1 V source step; cubic smoothstep centred at zero; timePs specifies observation.</dd></div>
+        <div><dt>Observation</dt><dd>Load at x=L. Observation is after the first edge has finished; source-matched case is after the return reaches the source.</dd></div>
+        <div><dt>Evidence</dt><dd>analytical; First-principles boundary conditions, linear circuit laws or the declared teaching-loop equation; no measured or licensed data.</dd></div>
+      </dl>
+      <div class="experiment-flow" aria-label="Learning sequence">
+        <div class="experiment-step"><strong>Predict</strong><p>Predict the signs of the reflected voltage and load current before opening the result.</p></div>
+        <div class="experiment-step"><strong>Experiment</strong><p>Open the scenario, keep its network and stimulus fixed, and inspect the stated observation. Compare with the derived answer before changing one variable.</p></div>
+        <div class="experiment-step"><strong>Explain</strong><p>Forward current is +V/Z0; backward current is −V/Z0. Sum the waves at the same boundary. The launch divider matters: the incident wave is not generally the full source voltage.</p></div>
+        <div class="experiment-step"><strong>Transfer</strong><p>If the source resistance changes, does the load reflection coefficient change?</p></div>
+      </div>
+      <details class="reference-result">
+        <summary>Expected results, derivations, and limits</summary>
+        <p><strong>Transfer answer:</strong> No, ΓL depends on the line and load. Source resistance changes the launched amplitude and the later source reflection.</p>
+        <div class="table-scroll"><table>
+          <thead><tr><th>Metric</th><th>Expected</th><th>Absolute tolerance</th><th>Derivation</th></tr></thead>
+          <tbody>
+              <tr><th scope="row"><code>gammaLoad</code></th><td>1 dimensionless</td><td>± 1e-10 dimensionless</td><td>Open: ΓL=+1; otherwise ΓL=(RL−Z0)/(RL+Z0).</td></tr>
+              <tr><th scope="row"><code>gammaSource</code></th><td>-0.666666666667 dimensionless</td><td>± 1e-10 dimensionless</td><td>ΓS=(Rs−Z0)/(Rs+Z0).</td></tr>
+              <tr><th scope="row"><code>launchedVoltage</code></th><td>0.833333333333 V</td><td>± 1e-10 V</td><td>A 1 V source launches Z0/(Rs+Z0) volts.</td></tr>
+              <tr><th scope="row"><code>loadVoltage</code></th><td>1.66666666667 V</td><td>± 1e-10 V</td><td>Before a later nonzero return reaches the load, VL=a(1+ΓL). With source matching ΓS=0, no further return is launched.</td></tr>
+              <tr><th scope="row"><code>loadCurrent</code></th><td>0 A</td><td>± 1e-10 A</td><td>IL=a(1−ΓL)/Z0, positive toward the load.</td></tr>
+          </tbody>
+        </table></div>
+        <h4>Limits</h4><ul class="tight"><li>Uniform lossless line; ideal source/load; no parasitic package or connector.</li><li>The stated time is a settled first-arrival observation, not a finite-edge midpoint.</li><li>No lossless-line result is a hardware compliance verdict.</li></ul>
+      </details>
+    </article>
+    <article class="reference-card" id="experiment-shorted-line">
+      <header class="reference-card__head">
+        <div><p class="reference-card__eyebrow">Reference shorted-line</p><h3>Shorted load: voltage cancels, current adds</h3></div>
+        <div class="reference-tags" aria-label="Categories"><span class="reference-tag">SI</span><span class="reference-tag">reflections</span></div>
+      </header>
+      <div class="reference-card__actions">
+        <a class="tool-btn" href="topics/labs/travelling-waves.html#lab=labWaves;v=2.2;lw-z0=50;lw-rs=10;lw-rl=0;lw-open=0;lw-len=3;lw-tr=60;lw-xp=100;lw-t=1020">Open experiment</a>
+        <a class="tool-btn" href="tests/fixtures/experiments/shorted-line.json" download>Download reference JSON</a>
+      </div>
+      <dl class="reference-card__meta">
+        <div><dt>Model pin</dt><dd><code>labWaves</code> 1.2; contract 2.2</dd></div>
+        <div><dt>Stimulus</dt><dd>1 V source step; cubic smoothstep centred at zero; timePs specifies observation.</dd></div>
+        <div><dt>Observation</dt><dd>Load at x=L. Observation is after the first edge has finished; source-matched case is after the return reaches the source.</dd></div>
+        <div><dt>Evidence</dt><dd>analytical; First-principles boundary conditions, linear circuit laws or the declared teaching-loop equation; no measured or licensed data.</dd></div>
+      </dl>
+      <div class="experiment-flow" aria-label="Learning sequence">
+        <div class="experiment-step"><strong>Predict</strong><p>Predict the signs of the reflected voltage and load current before opening the result.</p></div>
+        <div class="experiment-step"><strong>Experiment</strong><p>Open the scenario, keep its network and stimulus fixed, and inspect the stated observation. Compare with the derived answer before changing one variable.</p></div>
+        <div class="experiment-step"><strong>Explain</strong><p>Forward current is +V/Z0; backward current is −V/Z0. Sum the waves at the same boundary. The launch divider matters: the incident wave is not generally the full source voltage.</p></div>
+        <div class="experiment-step"><strong>Transfer</strong><p>If the source resistance changes, does the load reflection coefficient change?</p></div>
+      </div>
+      <details class="reference-result">
+        <summary>Expected results, derivations, and limits</summary>
+        <p><strong>Transfer answer:</strong> No, ΓL depends on the line and load. Source resistance changes the launched amplitude and the later source reflection.</p>
+        <div class="table-scroll"><table>
+          <thead><tr><th>Metric</th><th>Expected</th><th>Absolute tolerance</th><th>Derivation</th></tr></thead>
+          <tbody>
+              <tr><th scope="row"><code>gammaLoad</code></th><td>-1 dimensionless</td><td>± 1e-10 dimensionless</td><td>Open: ΓL=+1; otherwise ΓL=(RL−Z0)/(RL+Z0).</td></tr>
+              <tr><th scope="row"><code>gammaSource</code></th><td>-0.666666666667 dimensionless</td><td>± 1e-10 dimensionless</td><td>ΓS=(Rs−Z0)/(Rs+Z0).</td></tr>
+              <tr><th scope="row"><code>launchedVoltage</code></th><td>0.833333333333 V</td><td>± 1e-10 V</td><td>A 1 V source launches Z0/(Rs+Z0) volts.</td></tr>
+              <tr><th scope="row"><code>loadVoltage</code></th><td>0 V</td><td>± 1e-10 V</td><td>Before a later nonzero return reaches the load, VL=a(1+ΓL). With source matching ΓS=0, no further return is launched.</td></tr>
+              <tr><th scope="row"><code>loadCurrent</code></th><td>0.0333333333333 A</td><td>± 1e-10 A</td><td>IL=a(1−ΓL)/Z0, positive toward the load.</td></tr>
+          </tbody>
+        </table></div>
+        <h4>Limits</h4><ul class="tight"><li>Uniform lossless line; ideal source/load; no parasitic package or connector.</li><li>The stated time is a settled first-arrival observation, not a finite-edge midpoint.</li><li>No lossless-line result is a hardware compliance verdict.</li></ul>
+      </details>
+    </article>
+    <article class="reference-card" id="experiment-source-terminated-line">
+      <header class="reference-card__head">
+        <div><p class="reference-card__eyebrow">Reference source-terminated-line</p><h3>Source termination absorbs the return</h3></div>
+        <div class="reference-tags" aria-label="Categories"><span class="reference-tag">SI</span><span class="reference-tag">reflections</span></div>
+      </header>
+      <div class="reference-card__actions">
+        <a class="tool-btn" href="topics/labs/travelling-waves.html#lab=labWaves;v=2.2;lw-z0=50;lw-rs=50;lw-rl=50;lw-open=1;lw-len=3;lw-tr=60;lw-xp=100;lw-t=1530">Open experiment</a>
+        <a class="tool-btn" href="tests/fixtures/experiments/source-terminated-line.json" download>Download reference JSON</a>
+      </div>
+      <dl class="reference-card__meta">
+        <div><dt>Model pin</dt><dd><code>labWaves</code> 1.2; contract 2.2</dd></div>
+        <div><dt>Stimulus</dt><dd>1 V source step; cubic smoothstep centred at zero; timePs specifies observation.</dd></div>
+        <div><dt>Observation</dt><dd>Load at x=L. Observation is after the first edge has finished; source-matched case is after the return reaches the source.</dd></div>
+        <div><dt>Evidence</dt><dd>analytical; First-principles boundary conditions, linear circuit laws or the declared teaching-loop equation; no measured or licensed data.</dd></div>
+      </dl>
+      <div class="experiment-flow" aria-label="Learning sequence">
+        <div class="experiment-step"><strong>Predict</strong><p>Predict the signs of the reflected voltage and load current before opening the result.</p></div>
+        <div class="experiment-step"><strong>Experiment</strong><p>Open the scenario, keep its network and stimulus fixed, and inspect the stated observation. Compare with the derived answer before changing one variable.</p></div>
+        <div class="experiment-step"><strong>Explain</strong><p>Forward current is +V/Z0; backward current is −V/Z0. Sum the waves at the same boundary. The launch divider matters: the incident wave is not generally the full source voltage.</p></div>
+        <div class="experiment-step"><strong>Transfer</strong><p>If the source resistance changes, does the load reflection coefficient change?</p></div>
+      </div>
+      <details class="reference-result">
+        <summary>Expected results, derivations, and limits</summary>
+        <p><strong>Transfer answer:</strong> No, ΓL depends on the line and load. Source resistance changes the launched amplitude and the later source reflection.</p>
+        <div class="table-scroll"><table>
+          <thead><tr><th>Metric</th><th>Expected</th><th>Absolute tolerance</th><th>Derivation</th></tr></thead>
+          <tbody>
+              <tr><th scope="row"><code>gammaLoad</code></th><td>1 dimensionless</td><td>± 1e-10 dimensionless</td><td>Open: ΓL=+1; otherwise ΓL=(RL−Z0)/(RL+Z0).</td></tr>
+              <tr><th scope="row"><code>gammaSource</code></th><td>0 dimensionless</td><td>± 1e-10 dimensionless</td><td>ΓS=(Rs−Z0)/(Rs+Z0).</td></tr>
+              <tr><th scope="row"><code>launchedVoltage</code></th><td>0.5 V</td><td>± 1e-10 V</td><td>A 1 V source launches Z0/(Rs+Z0) volts.</td></tr>
+              <tr><th scope="row"><code>loadVoltage</code></th><td>1 V</td><td>± 1e-10 V</td><td>Before a later nonzero return reaches the load, VL=a(1+ΓL). With source matching ΓS=0, no further return is launched.</td></tr>
+              <tr><th scope="row"><code>loadCurrent</code></th><td>0 A</td><td>± 1e-10 A</td><td>IL=a(1−ΓL)/Z0, positive toward the load.</td></tr>
+          </tbody>
+        </table></div>
+        <h4>Limits</h4><ul class="tight"><li>Uniform lossless line; ideal source/load; no parasitic package or connector.</li><li>The stated time is a settled first-arrival observation, not a finite-edge midpoint.</li><li>No lossless-line result is a hardware compliance verdict.</li></ul>
+      </details>
+    </article>
+    <article class="reference-card" id="experiment-resistive-step">
+      <header class="reference-card__head">
+        <div><p class="reference-card__eyebrow">Reference resistive-step</p><h3>A 75-ohm load on a 50-ohm line</h3></div>
+        <div class="reference-tags" aria-label="Categories"><span class="reference-tag">SI</span><span class="reference-tag">reflections</span></div>
+      </header>
+      <div class="reference-card__actions">
+        <a class="tool-btn" href="topics/labs/travelling-waves.html#lab=labWaves;v=2.2;lw-z0=50;lw-rs=50;lw-rl=75;lw-open=0;lw-len=3;lw-tr=60;lw-xp=100;lw-t=1020">Open experiment</a>
+        <a class="tool-btn" href="tests/fixtures/experiments/resistive-step.json" download>Download reference JSON</a>
+      </div>
+      <dl class="reference-card__meta">
+        <div><dt>Model pin</dt><dd><code>labWaves</code> 1.2; contract 2.2</dd></div>
+        <div><dt>Stimulus</dt><dd>1 V source step; cubic smoothstep centred at zero; timePs specifies observation.</dd></div>
+        <div><dt>Observation</dt><dd>Load at x=L. Observation is after the first edge has finished; source-matched case is after the return reaches the source.</dd></div>
+        <div><dt>Evidence</dt><dd>analytical; First-principles boundary conditions, linear circuit laws or the declared teaching-loop equation; no measured or licensed data.</dd></div>
+      </dl>
+      <div class="experiment-flow" aria-label="Learning sequence">
+        <div class="experiment-step"><strong>Predict</strong><p>Predict the signs of the reflected voltage and load current before opening the result.</p></div>
+        <div class="experiment-step"><strong>Experiment</strong><p>Open the scenario, keep its network and stimulus fixed, and inspect the stated observation. Compare with the derived answer before changing one variable.</p></div>
+        <div class="experiment-step"><strong>Explain</strong><p>Forward current is +V/Z0; backward current is −V/Z0. Sum the waves at the same boundary. The launch divider matters: the incident wave is not generally the full source voltage.</p></div>
+        <div class="experiment-step"><strong>Transfer</strong><p>If the source resistance changes, does the load reflection coefficient change?</p></div>
+      </div>
+      <details class="reference-result">
+        <summary>Expected results, derivations, and limits</summary>
+        <p><strong>Transfer answer:</strong> No, ΓL depends on the line and load. Source resistance changes the launched amplitude and the later source reflection.</p>
+        <div class="table-scroll"><table>
+          <thead><tr><th>Metric</th><th>Expected</th><th>Absolute tolerance</th><th>Derivation</th></tr></thead>
+          <tbody>
+              <tr><th scope="row"><code>gammaLoad</code></th><td>0.2 dimensionless</td><td>± 1e-10 dimensionless</td><td>Open: ΓL=+1; otherwise ΓL=(RL−Z0)/(RL+Z0).</td></tr>
+              <tr><th scope="row"><code>gammaSource</code></th><td>0 dimensionless</td><td>± 1e-10 dimensionless</td><td>ΓS=(Rs−Z0)/(Rs+Z0).</td></tr>
+              <tr><th scope="row"><code>launchedVoltage</code></th><td>0.5 V</td><td>± 1e-10 V</td><td>A 1 V source launches Z0/(Rs+Z0) volts.</td></tr>
+              <tr><th scope="row"><code>loadVoltage</code></th><td>0.6 V</td><td>± 1e-10 V</td><td>Before a later nonzero return reaches the load, VL=a(1+ΓL). With source matching ΓS=0, no further return is launched.</td></tr>
+              <tr><th scope="row"><code>loadCurrent</code></th><td>0.008 A</td><td>± 1e-10 A</td><td>IL=a(1−ΓL)/Z0, positive toward the load.</td></tr>
+          </tbody>
+        </table></div>
+        <h4>Limits</h4><ul class="tight"><li>Uniform lossless line; ideal source/load; no parasitic package or connector.</li><li>The stated time is a settled first-arrival observation, not a finite-edge midpoint.</li><li>No lossless-line result is a hardware compliance verdict.</li></ul>
+      </details>
+    </article>
+    <article class="reference-card" id="experiment-matched-channel-delay">
+      <header class="reference-card__head">
+        <div><p class="reference-card__eyebrow">Reference matched-channel-delay</p><h3>A matched lossless channel preserves amplitude and adds delay</h3></div>
+        <div class="reference-tags" aria-label="Categories"><span class="reference-tag">SI</span><span class="reference-tag">channel</span></div>
+      </header>
+      <div class="reference-card__actions">
+        <a class="tool-btn" href="topics/labs/one-channel.html#lab=labChannel;v=3.2;lc-reach=8;lc-loss=0;lc-rate=16;lc-dz=50;lc-dpos=45;lc-dlen=0;lc-stub=0;lc-tr=12;lc-trtdr=12;lc-eq=0">Open experiment</a>
+        <a class="tool-btn" href="tests/fixtures/experiments/matched-channel-delay.json" download>Download reference JSON</a>
+      </div>
+      <dl class="reference-card__meta">
+        <div><dt>Model pin</dt><dd><code>labChannel</code> 1.2; contract 3.2</dd></div>
+        <div><dt>Stimulus</dt><dd>Frequency sweep and discrete impulse of a matched lossless channel; fixed PRBS/edge pipeline retained by the lab.</dd></div>
+        <div><dt>Observation</dt><dd>50 Ω input/output wave-reference planes; group delay before CTLE.</dd></div>
+        <div><dt>Evidence</dt><dd>analytical; First-principles boundary conditions, linear circuit laws or the declared teaching-loop equation; no measured or licensed data.</dd></div>
+      </dl>
+      <div class="experiment-flow" aria-label="Learning sequence">
+        <div class="experiment-step"><strong>Predict</strong><p>Can a channel have zero insertion loss while still delaying the signal?</p></div>
+        <div class="experiment-step"><strong>Experiment</strong><p>Open the scenario, keep its network and stimulus fixed, and inspect the stated observation. Compare with the derived answer before changing one variable.</p></div>
+        <div class="experiment-step"><strong>Explain</strong><p>Yes. The ideal transfer is exp(−jωτ): magnitude is unity and group delay is τ. Bulk-delay removal changes the impulse time reference, not the input/output group delay.</p></div>
+        <div class="experiment-step"><strong>Transfer</strong><p>Does changing symbol rate change the physical delay of this fixed lossless line?</p></div>
+      </div>
+      <details class="reference-result">
+        <summary>Expected results, derivations, and limits</summary>
+        <p><strong>Transfer answer:</strong> No. The delay in seconds is unchanged; its length in unit intervals changes.</p>
+        <div class="table-scroll"><table>
+          <thead><tr><th>Metric</th><th>Expected</th><th>Absolute tolerance</th><th>Derivation</th></tr></thead>
+          <tbody>
+              <tr><th scope="row"><code>maxInsertionDeviationDb</code></th><td>0 dB</td><td>± 1e-08 dB</td><td>A matched lossless two-port has |S21|=1, so 20 log10|S21|=0.</td></tr>
+              <tr><th scope="row"><code>groupDelay</code></th><td>1.36e-09 s (1360 ps)</td><td>± 5e-15 s</td><td>Eight inches × the declared 170 ps/in propagation delay = 1360 ps.</td></tr>
+              <tr><th scope="row"><code>impulseSum</code></th><td>1 dimensionless</td><td>± 1e-08 dimensionless</td><td>The discrete impulse weights sum to the unity DC transfer under this FFT convention.</td></tr>
+          </tbody>
+        </table></div>
+        <h4>Limits</h4><ul class="tight"><li>Ideal matched lossless model, not a real copper channel.</li><li>Group delay is checked at every exported frequency, not only its mean.</li><li>Do not compare the peak of individual discrete impulse weights with unity gain.</li></ul>
+      </details>
+    </article>
+    <article class="reference-card" id="experiment-pdn-shared-dc">
+      <header class="reference-card__head">
+        <div><p class="reference-card__eyebrow">Reference pdn-shared-dc</p><h3>Two DC loads: shared resistance and different observation nodes</h3></div>
+        <div class="reference-tags" aria-label="Categories"><span class="reference-tag">PI</span><span class="reference-tag">DC</span><span class="reference-tag">transfer impedance</span></div>
+      </header>
+      <div class="reference-card__actions">
+        <a class="tool-btn" href="topics/labs/pdn-chain.html#lab=labPdn;v=2.3;pd-fbw=120;pd-lplane=900;pd-lpkg=350;pd-nboard=20;pd-esr=20;pd-esl=1100;pd-cdie=200;pd-imax=8;pd-tr=800;pd-zt=10;pd-imax2=3;pd-tr2=800;pd-startNs=786.4;pd-widthNs=1835;pd-start2Ns=786.4;pd-width2Ns=1835">Open experiment</a>
+        <a class="tool-btn" href="tests/fixtures/experiments/pdn-shared-dc.json" download>Download reference JSON</a>
+      </div>
+      <dl class="reference-card__meta">
+        <div><dt>Model pin</dt><dd><code>labPdn</code> 1.3; contract 2.3</dd></div>
+        <div><dt>Stimulus</dt><dd>Constant 8 A die and 3 A board withdrawals for the DC reference. Scenario opens the separate finite-pulse comparison.</dd></div>
+        <div><dt>Observation</dt><dd>Observe board and die relative to the ideal regulator reference; withdrawals are positive and rail deviation is negative.</dd></div>
+        <div><dt>Evidence</dt><dd>analytical; First-principles boundary conditions, linear circuit laws or the declared teaching-loop equation; no measured or licensed data.</dd></div>
+      </dl>
+      <div class="experiment-flow" aria-label="Learning sequence">
+        <div class="experiment-step"><strong>Predict</strong><p>Why do the board and die have different DC voltage drops on the same rail?</p></div>
+        <div class="experiment-step"><strong>Experiment</strong><p>Open the scenario, keep its network and stimulus fixed, and inspect the stated observation. Compare with the derived answer before changing one variable.</p></div>
+        <div class="experiment-step"><strong>Explain</strong><p>Only the source-to-board resistances are shared by both currents. Die current also crosses package and die series resistances. Capacitor banks do not conduct steady DC in this small-signal circuit.</p></div>
+        <div class="experiment-step"><strong>Transfer</strong><p>Can adding ideal capacitors remove this steady DC drop?</p></div>
+      </div>
+      <details class="reference-result">
+        <summary>Expected results, derivations, and limits</summary>
+        <p><strong>Transfer answer:</strong> No. Capacitors are open at DC; resistance or operating current must change. Capacitors can still improve finite-time excursions.</p>
+        <div class="table-scroll"><table>
+          <thead><tr><th>Metric</th><th>Expected</th><th>Absolute tolerance</th><th>Derivation</th></tr></thead>
+          <tbody>
+              <tr><th scope="row"><code>zDieDie</code></th><td>0.0078 ohm</td><td>± 1e-10 ohm</td><td>DC capacitors open, inductors short: .004+.0004+.0006+.0008+.002 Ω.</td></tr>
+              <tr><th scope="row"><code>zBoardBoard</code></th><td>0.005 ohm</td><td>± 1e-10 ohm</td><td>Shared source-to-board DC path: .004+.0004+.0006 Ω.</td></tr>
+              <tr><th scope="row"><code>zDieBoard</code></th><td>0.005 ohm</td><td>± 1e-10 ohm</td><td>A board injection creates voltage across the shared source-to-board resistance; downstream DC current is zero.</td></tr>
+              <tr><th scope="row"><code>zBoardDie</code></th><td>0.005 ohm</td><td>± 1e-10 ohm</td><td>A die injection flows through the same source-to-board resistance.</td></tr>
+              <tr><th scope="row"><code>dieDeviation</code></th><td>-0.0774 V</td><td>± 1e-10 V</td><td>−(8 A × .0078 Ω + 3 A × .005 Ω).</td></tr>
+              <tr><th scope="row"><code>boardDeviation</code></th><td>-0.055 V</td><td>± 1e-10 V</td><td>−((8 A + 3 A) × .005 Ω).</td></tr>
+          </tbody>
+        </table></div>
+        <h4>Limits</h4><ul class="tight"><li>The runner evaluates exactly 0 Hz and constant currents.</li><li>The linked lab shows finite pulses and starts its frequency sweep above DC. Its droop peaks are not these DC values.</li><li>VRM is a teaching approximation; no regulator-control-loop or thermal model.</li></ul>
+      </details>
+    </article>
+    <article class="reference-card" id="experiment-cdr-natural-frequency">
+      <header class="reference-card__head">
+        <div><p class="reference-card__eyebrow">Reference cdr-natural-frequency</p><h3>At the CDR natural frequency, phase matters</h3></div>
+        <div class="reference-tags" aria-label="Categories"><span class="reference-tag">SI</span><span class="reference-tag">clock recovery</span></div>
+      </header>
+      <div class="reference-card__actions">
+        <a class="tool-btn" href="topics/signal-integrity/receiver-and-clock.html#lab=cdr;v=2.1;cdr-fn=4;cdr-zeta=50;cdr-margin=30;cdr-jitter-f=4;cdr-jitter-a=40">Open experiment</a>
+        <a class="tool-btn" href="tests/fixtures/experiments/cdr-natural-frequency.json" download>Download reference JSON</a>
+      </div>
+      <dl class="reference-card__meta">
+        <div><dt>Model pin</dt><dd><code>cdr</code> 1.1; contract 2.1</dd></div>
+        <div><dt>Stimulus</dt><dd>Steady-state sinusoidal input phase, 0.4 UI peak-to-peak at 4 MHz.</dd></div>
+        <div><dt>Observation</dt><dd>Input phase, recovered phase and residual phase at the same time; phase measured in UI.</dd></div>
+        <div><dt>Evidence</dt><dd>analytical; First-principles boundary conditions, linear circuit laws or the declared teaching-loop equation; no measured or licensed data.</dd></div>
+      </dl>
+      <div class="experiment-flow" aria-label="Learning sequence">
+        <div class="experiment-step"><strong>Predict</strong><p>If the recovered phase amplitude exceeds the input amplitude, can the residual still be found by subtracting magnitudes?</p></div>
+        <div class="experiment-step"><strong>Experiment</strong><p>Open the scenario, keep its network and stimulus fixed, and inspect the stated observation. Compare with the derived answer before changing one variable.</p></div>
+        <div class="experiment-step"><strong>Explain</strong><p>No. At f=fn the real part of the denominator vanishes; the declared loop reduces to H=1−j/(2ζ). At ζ=.5 the residual transfer is j, so the phase relation determines instantaneous error.</p></div>
+        <div class="experiment-step"><strong>Transfer</strong><p>Does this frequency equal the closed-loop −3 dB bandwidth?</p></div>
+      </div>
+      <details class="reference-result">
+        <summary>Expected results, derivations, and limits</summary>
+        <p><strong>Transfer answer:</strong> No. It is the natural frequency of the declared denominator; the closed-loop bandwidth depends on damping and the numerator.</p>
+        <div class="table-scroll"><table>
+          <thead><tr><th>Metric</th><th>Expected</th><th>Absolute tolerance</th><th>Derivation</th></tr></thead>
+          <tbody>
+              <tr><th scope="row"><code>inputAtZero</code></th><td>0 UI</td><td>± 1e-10 UI</td><td>Input is a sine with zero phase at t=0.</td></tr>
+              <tr><th scope="row"><code>recoveredAtZero</code></th><td>-0.2 UI</td><td>± 1e-10 UI</td><td>At f=fn and ζ=.5, H=1−j. A .4 UI peak-to-peak sine has .2 UI amplitude; the quadrature term at t=0 is −.2 UI.</td></tr>
+              <tr><th scope="row"><code>residualAtZero</code></th><td>0.2 UI</td><td>± 1e-10 UI</td><td>Residual=input−recovered=0−(−.2) UI.</td></tr>
+              <tr><th scope="row"><code>recoveredAtQuarter</code></th><td>0.2 UI</td><td>± 1e-10 UI</td><td>At a quarter period, sin=1 and cos=0; Re(H)=1 gives .2 UI.</td></tr>
+              <tr><th scope="row"><code>residualAtQuarter</code></th><td>0 UI</td><td>± 1e-10 UI</td><td>Input and recovered phase coincide at a quarter period in this example.</td></tr>
+          </tbody>
+        </table></div>
+        <h4>Limits</h4><ul class="tight"><li>Steady-state linear teaching loop, not acquisition, cycle slips, noise, or a BER-qualified tolerance mask.</li><li>Peak-to-peak input amplitude is twice its sine amplitude.</li><li>Quarter-period sample is checked against its exported time coordinate.</li></ul>
+      </details>
+    </article>
+    <article class="reference-card" id="experiment-matched-t-pad">
+      <header class="reference-card__head">
+        <div><p class="reference-card__eyebrow">Reference matched-t-pad</p><h3>A matched resistive pad halves the wave amplitude</h3></div>
+        <div class="reference-tags" aria-label="Categories"><span class="reference-tag">SI</span><span class="reference-tag">analytical helper</span></div>
+      </header>
+      <div class="reference-card__actions">
+        <a class="tool-btn" href="topics/fundamentals/s-parameters.html">Read related lesson</a>
+        <a class="tool-btn" href="tests/fixtures/reference-next/matched-t-pad.json" download>Download reference JSON</a>
+      </div>
+      <dl class="reference-card__meta">
+        <div><dt>Execution</dt><dd>Helper-only reference: use the downloadable inputs with the checked numerical helper. The related lesson does not run this exact case.</dd></div>
+        <div><dt>Model pin</dt><dd>viz-kit numerical helper; no interactive scenario</dd></div>
+        <div><dt>Inputs</dt><dd>referenceOhms = 50 ohm, seriesOhms = 16.6666666667 ohm, shuntOhms = 66.6666666667 ohm, frequencyHz = 1000000000 Hz</dd></div>
+        <div><dt>Evidence</dt><dd>analytical; First-principles network limits or algebraic reduction of the declared teaching loop, independent of production numerical output.</dd></div>
+      </dl>
+      <div class="experiment-flow" aria-label="Learning sequence">
+        <div class="experiment-step"><strong>Predict</strong><p>If voltage-wave amplitude halves, is half the incident power transmitted?</p></div>
+        <div class="experiment-step"><strong>Experiment</strong><p>Helper-only reference: use the downloadable inputs with the checked numerical helper. The related lesson does not run this exact case.</p></div>
+        <div class="experiment-step"><strong>Explain</strong><p>No. With matched equal real references, transmitted power is one quarter; the resistors dissipate the remaining three quarters.</p></div>
+      </div>
+      <details class="reference-result">
+        <summary>Expected results, derivations, and limits</summary>
+        <div class="table-scroll"><table>
+          <thead><tr><th>Metric</th><th>Expected</th><th>Absolute tolerance</th><th>Derivation</th></tr></thead>
+          <tbody>
+              <tr><th scope="row"><code>s21Real</code></th><td>0.5 dimensionless</td><td>± 1e-10 dimensionless</td><td>Symmetric matched T pad: series arms Z0(K−1)/(K+1), shunt 2Z0K/(K²−1), K=2.</td></tr>
+              <tr><th scope="row"><code>s21Imag</code></th><td>0 dimensionless</td><td>± 1e-10 dimensionless</td><td>Pure resistors introduce no reactive phase.</td></tr>
+              <tr><th scope="row"><code>reflectionMagnitude</code></th><td>0 dimensionless</td><td>± 1e-10 dimensionless</td><td>The T-pad input is Z0 when the output is terminated in Z0.</td></tr>
+              <tr><th scope="row"><code>transmittedPower</code></th><td>0.25 dimensionless</td><td>± 1e-10 dimensionless</td><td>Equal real reference impedances: normalized transmitted power is |S21|²=.25.</td></tr>
+          </tbody>
+        </table></div>
+        <h4>Limits</h4><ul class="tight"><li>Ideal resistors, equal real reference impedances.</li><li>This is a known-attenuation network benchmark, not a lossy transmission-line material model.</li><li>The related lesson does not instantiate this exact T pad.</li></ul>
+      </details>
+    </article>
+    <article class="reference-card" id="experiment-quarter-wave-open-stub">
+      <header class="reference-card__head">
+        <div><p class="reference-card__eyebrow">Reference quarter-wave-open-stub</p><h3>An open stub transforms into a shunt short at quarter wave</h3></div>
+        <div class="reference-tags" aria-label="Categories"><span class="reference-tag">SI</span><span class="reference-tag">analytical helper</span></div>
+      </header>
+      <div class="reference-card__actions">
+        <a class="tool-btn" href="topics/labs/one-channel.html">Read related lesson</a>
+        <a class="tool-btn" href="tests/fixtures/reference-next/quarter-wave-open-stub.json" download>Download reference JSON</a>
+      </div>
+      <dl class="reference-card__meta">
+        <div><dt>Execution</dt><dd>Helper-only reference: use the downloadable inputs with the checked numerical helper. The related lesson does not run this exact case.</dd></div>
+        <div><dt>Model pin</dt><dd>viz-kit numerical helper; no interactive scenario</dd></div>
+        <div><dt>Inputs</dt><dd>referenceOhms = 50 ohm, stubOhms = 50 ohm, delaySeconds = 2.5e-11 s</dd></div>
+        <div><dt>Evidence</dt><dd>analytical; First-principles network limits or algebraic reduction of the declared teaching loop, independent of production numerical output.</dd></div>
+      </dl>
+      <div class="experiment-flow" aria-label="Learning sequence">
+        <div class="experiment-step"><strong>Predict</strong><p>Can an open-ended branch suppress transmission on the through path?</p></div>
+        <div class="experiment-step"><strong>Experiment</strong><p>Helper-only reference: use the downloadable inputs with the checked numerical helper. The related lesson does not run this exact case.</p></div>
+        <div class="experiment-step"><strong>Explain</strong><p>Yes. The impedance seen at the junction depends on electrical length. At quarter wave the open end transforms into a short; at half wave it transforms back to an open.</p></div>
+      </div>
+      <details class="reference-result">
+        <summary>Expected results, derivations, and limits</summary>
+        <div class="table-scroll"><table>
+          <thead><tr><th>Metric</th><th>Expected</th><th>Absolute tolerance</th><th>Derivation</th></tr></thead>
+          <tbody>
+              <tr><th scope="row"><code>quarterWaveTransmission</code></th><td>0 dimensionless</td><td>± 1e-12 dimensionless</td><td>An open stub is a short at f=1/(4td), nulling transmission.</td></tr>
+              <tr><th scope="row"><code>halfWaveTransmission</code></th><td>1 dimensionless</td><td>± 1e-12 dimensionless</td><td>At f=1/(2td), the open stub is open again.</td></tr>
+              <tr><th scope="row"><code>eighthWaveTransmission</code></th><td>0.894427191 dimensionless</td><td>± 1e-10 dimensionless</td><td>At f=1/(8td), normalized shunt admittance is j; S21=2/(2+j).</td></tr>
+              <tr><th scope="row"><code>quarterWaveReflection</code></th><td>1 dimensionless</td><td>± 1e-10 dimensionless</td><td>A lossless shunt short reflects all incident power.</td></tr>
+          </tbody>
+        </table></div>
+        <h4>Limits</h4><ul class="tight"><li>Ideal lossless open stub.</li><li>Exact-null evaluation is a floating-point approximation to a singular tangent.</li><li>No finite-bandwidth impulse reconstruction is inferred.</li></ul>
+      </details>
+    </article>
+    <article class="reference-card" id="experiment-series-rlc-cancellation">
+      <header class="reference-card__head">
+        <div><p class="reference-card__eyebrow">Reference series-rlc-cancellation</p><h3>Series RLC reactance changes sign through resonance</h3></div>
+        <div class="reference-tags" aria-label="Categories"><span class="reference-tag">PI</span><span class="reference-tag">analytical helper</span></div>
+      </header>
+      <div class="reference-card__actions">
+        <a class="tool-btn" href="topics/power-integrity/real-capacitors.html">Read related lesson</a>
+        <a class="tool-btn" href="tests/fixtures/reference-next/series-rlc-cancellation.json" download>Download reference JSON</a>
+      </div>
+      <dl class="reference-card__meta">
+        <div><dt>Execution</dt><dd>Helper-only reference: use the downloadable inputs with the checked numerical helper. The related lesson does not run this exact case.</dd></div>
+        <div><dt>Model pin</dt><dd>viz-kit numerical helper; no interactive scenario</dd></div>
+        <div><dt>Inputs</dt><dd>r = 0.02 ohm, l = 1e-09 H, c = 1e-07 F</dd></div>
+        <div><dt>Evidence</dt><dd>analytical; First-principles network limits or algebraic reduction of the declared teaching loop, independent of production numerical output.</dd></div>
+      </dl>
+      <div class="experiment-flow" aria-label="Learning sequence">
+        <div class="experiment-step"><strong>Predict</strong><p>Does the capacitor branch remain capacitive above self-resonance?</p></div>
+        <div class="experiment-step"><strong>Experiment</strong><p>Helper-only reference: use the downloadable inputs with the checked numerical helper. The related lesson does not run this exact case.</p></div>
+        <div class="experiment-step"><strong>Explain</strong><p>No. The series branch is capacitive below resonance, resistive at resonance, and inductive above it.</p></div>
+      </div>
+      <details class="reference-result">
+        <summary>Expected results, derivations, and limits</summary>
+        <div class="table-scroll"><table>
+          <thead><tr><th>Metric</th><th>Expected</th><th>Absolute tolerance</th><th>Derivation</th></tr></thead>
+          <tbody>
+              <tr><th scope="row"><code>resonantReal</code></th><td>0.02 ohm</td><td>± 1e-10 ohm</td><td>At ω0=1/sqrt(LC), reactive terms cancel and Z=R.</td></tr>
+              <tr><th scope="row"><code>resonantImag</code></th><td>0 ohm</td><td>± 1e-10 ohm</td><td>Inductor and capacitor reactances are equal and opposite.</td></tr>
+              <tr><th scope="row"><code>halfFrequencyImag</code></th><td>-0.15 ohm</td><td>± 1e-10 ohm</td><td>sqrt(L/C)=.1 Ω; at half resonance X=.1(.5−2)=−.15 Ω.</td></tr>
+              <tr><th scope="row"><code>doubleFrequencyImag</code></th><td>0.15 ohm</td><td>± 1e-10 ohm</td><td>At twice resonance X=.1(2−.5)=+.15 Ω.</td></tr>
+          </tbody>
+        </table></div>
+        <h4>Limits</h4><ul class="tight"><li>Lumped series RLC; no bias, temperature, aging or distributed behavior.</li><li>This is a branch-level reference rather than a named-part capacitor model.</li></ul>
+      </details>
+    </article>
+    <article class="reference-card" id="experiment-parallel-reactance-cancellation">
+      <header class="reference-card__head">
+        <div><p class="reference-card__eyebrow">Reference parallel-reactance-cancellation</p><h3>Parallel branches can raise impedance while their currents oppose</h3></div>
+        <div class="reference-tags" aria-label="Categories"><span class="reference-tag">PI</span><span class="reference-tag">analytical helper</span></div>
+      </header>
+      <div class="reference-card__actions">
+        <a class="tool-btn" href="topics/power-integrity/anti-resonance.html">Read related lesson</a>
+        <a class="tool-btn" href="tests/fixtures/reference-next/parallel-reactance-cancellation.json" download>Download reference JSON</a>
+      </div>
+      <dl class="reference-card__meta">
+        <div><dt>Execution</dt><dd>Helper-only reference: use the downloadable inputs with the checked numerical helper. The related lesson does not run this exact case.</dd></div>
+        <div><dt>Model pin</dt><dd>viz-kit numerical helper; no interactive scenario</dd></div>
+        <div><dt>Inputs</dt><dd>r = 0.001 ohm per branch, l = 1e-09 H, c = 1e-06 F</dd></div>
+        <div><dt>Evidence</dt><dd>analytical; First-principles network limits or algebraic reduction of the declared teaching loop, independent of production numerical output.</dd></div>
+      </dl>
+      <div class="experiment-flow" aria-label="Learning sequence">
+        <div class="experiment-step"><strong>Predict</strong><p>Can adding branch resistance lower the impedance at a parallel cancellation point?</p></div>
+        <div class="experiment-step"><strong>Experiment</strong><p>Helper-only reference: use the downloadable inputs with the checked numerical helper. The related lesson does not run this exact case.</p></div>
+        <div class="experiment-step"><strong>Explain</strong><p>Yes in this example. Loss limits the circulating currents and lowers impedance at the stated cancellation frequency. This is not a claim that more ESR improves every frequency.</p></div>
+      </div>
+      <details class="reference-result">
+        <summary>Expected results, derivations, and limits</summary>
+        <div class="table-scroll"><table>
+          <thead><tr><th>Metric</th><th>Expected</th><th>Absolute tolerance</th><th>Derivation</th></tr></thead>
+          <tbody>
+              <tr><th scope="row"><code>impedanceReal</code></th><td>0.5005 ohm</td><td>± 1e-10 ohm</td><td>At X=ωL=1/(ωC)=sqrt(L/C), 1/(R+jX)+1/(R−jX)=2R/(R²+X²); Z=(R²+X²)/(2R)=.5005 Ω.</td></tr>
+              <tr><th scope="row"><code>impedanceImag</code></th><td>0 ohm</td><td>± 1e-10 ohm</td><td>Equal and opposite branch susceptances cancel.</td></tr>
+              <tr><th scope="row"><code>doubledResistanceReal</code></th><td>0.251 ohm</td><td>± 1e-10 ohm</td><td>With R=.002 Ω in each branch and the same X, Z=(.002²+.001)/(.004)=.251 Ω.</td></tr>
+          </tbody>
+        </table></div>
+        <h4>Limits</h4><ul class="tight"><li>One series RL branch in parallel with one series RC branch.</li><li>The reference frequency is the susceptance-cancellation point, not a claimed numerical global-peak location.</li><li>A board capacitor-bank anti-resonance is more complex than this ideal two-branch limit.</li></ul>
+      </details>
+    </article>
+    <article class="reference-card" id="experiment-cdr-low-frequency">
+      <header class="reference-card__head">
+        <div><p class="reference-card__eyebrow">Reference cdr-low-frequency</p><h3>Low-frequency CDR tracking retains a small phase residual</h3></div>
+        <div class="reference-tags" aria-label="Categories"><span class="reference-tag">SI</span><span class="reference-tag">clock recovery</span></div>
+      </header>
+      <div class="reference-card__actions">
+        <a class="tool-btn" href="topics/signal-integrity/receiver-and-clock.html#lab=cdr;v=2.1;cdr-fn=40;cdr-zeta=50;cdr-margin=30;cdr-jitter-f=1;cdr-jitter-a=40">Open experiment</a>
+        <a class="tool-btn" href="tests/fixtures/reference-next/cdr-low-frequency.json" download>Download reference JSON</a>
+      </div>
+      <dl class="reference-card__meta">
+        <div><dt>Execution</dt><dd>Saved lab scenario: the published traces can be compared with the analytical answer.</dd></div>
+        <div><dt>Model pin</dt><dd>cdr 1.1; contract 2.1</dd></div>
+        <div><dt>Inputs</dt><dd>fn = 40 MHz, zeta = 0.5 -, margin = 0.3 UI pp, ceiling = 20 UI pp, jitterFrequency = 1 MHz, jitterAmplitude = 0.4 UI pp</dd></div>
+        <div><dt>Evidence</dt><dd>analytical; First-principles network limits or algebraic reduction of the declared teaching loop, independent of production numerical output.</dd></div>
+      </dl>
+      <div class="experiment-flow" aria-label="Learning sequence">
+        <div class="experiment-step"><strong>Predict</strong><p>Does residual phase equal one minus the recovered-phase magnitude?</p></div>
+        <div class="experiment-step"><strong>Experiment</strong><p>Saved lab scenario: the published traces can be compared with the analytical answer.</p></div>
+        <div class="experiment-step"><strong>Explain</strong><p>No. Residual is the complex difference 1−H. These finite low/high frequency cases approach tracking/no-tracking limits while preserving the nonzero phase terms.</p></div>
+      </div>
+      <details class="reference-result">
+        <summary>Expected results, derivations, and limits</summary>
+        <div class="table-scroll"><table>
+          <thead><tr><th>Metric</th><th>Expected</th><th>Absolute tolerance</th><th>Derivation</th></tr></thead>
+          <tbody>
+              <tr><th scope="row"><code>hReal</code></th><td>1.00062499976 dimensionless</td><td>± 1e-12 dimensionless</td><td>For ζ=.5 and r=f/fn, H=(1+jr)/(1−r²+jr). Rationalizing gives Re(H)=1/(1−r²+r⁴).</td></tr>
+              <tr><th scope="row"><code>hImag</code></th><td>-1.56347656212e-05 dimensionless</td><td>± 1e-12 dimensionless</td><td>The same reduced expression gives Im(H)=−r³/(1−r²+r⁴).</td></tr>
+              <tr><th scope="row"><code>eReal</code></th><td>-0.000624999755707 dimensionless</td><td>± 1e-12 dimensionless</td><td>Residual transfer E=1−H, as complex quantities.</td></tr>
+              <tr><th scope="row"><code>eImag</code></th><td>1.56347656212e-05 dimensionless</td><td>± 1e-12 dimensionless</td><td>Im(E)=−Im(H); subtracting magnitudes loses this term.</td></tr>
+          </tbody>
+        </table></div>
+        <h4>Limits</h4><ul class="tight"><li>Linear, steady-state declared teaching loop.</li><li>Finite ratios f/fn, not exact zero/infinite frequency.</li><li>No acquisition, cycle-slip, hardware-mask or BER claim.</li></ul>
+      </details>
+    </article>
+    <article class="reference-card" id="experiment-cdr-high-frequency">
+      <header class="reference-card__head">
+        <div><p class="reference-card__eyebrow">Reference cdr-high-frequency</p><h3>High-frequency CDR input mostly becomes residual error</h3></div>
+        <div class="reference-tags" aria-label="Categories"><span class="reference-tag">SI</span><span class="reference-tag">clock recovery</span></div>
+      </header>
+      <div class="reference-card__actions">
+        <a class="tool-btn" href="topics/signal-integrity/receiver-and-clock.html#lab=cdr;v=2.1;cdr-fn=1;cdr-zeta=50;cdr-margin=30;cdr-jitter-f=80;cdr-jitter-a=40">Open experiment</a>
+        <a class="tool-btn" href="tests/fixtures/reference-next/cdr-high-frequency.json" download>Download reference JSON</a>
+      </div>
+      <dl class="reference-card__meta">
+        <div><dt>Execution</dt><dd>Saved lab scenario: the published traces can be compared with the analytical answer.</dd></div>
+        <div><dt>Model pin</dt><dd>cdr 1.1; contract 2.1</dd></div>
+        <div><dt>Inputs</dt><dd>fn = 1 MHz, zeta = 0.5 -, margin = 0.3 UI pp, ceiling = 20 UI pp, jitterFrequency = 80 MHz, jitterAmplitude = 0.4 UI pp</dd></div>
+        <div><dt>Evidence</dt><dd>analytical; First-principles network limits or algebraic reduction of the declared teaching loop, independent of production numerical output.</dd></div>
+      </dl>
+      <div class="experiment-flow" aria-label="Learning sequence">
+        <div class="experiment-step"><strong>Predict</strong><p>Does residual phase equal one minus the recovered-phase magnitude?</p></div>
+        <div class="experiment-step"><strong>Experiment</strong><p>Saved lab scenario: the published traces can be compared with the analytical answer.</p></div>
+        <div class="experiment-step"><strong>Explain</strong><p>No. Residual is the complex difference 1−H. These finite low/high frequency cases approach tracking/no-tracking limits while preserving the nonzero phase terms.</p></div>
+      </div>
+      <details class="reference-result">
+        <summary>Expected results, derivations, and limits</summary>
+        <div class="table-scroll"><table>
+          <thead><tr><th>Metric</th><th>Expected</th><th>Absolute tolerance</th><th>Derivation</th></tr></thead>
+          <tbody>
+              <tr><th scope="row"><code>hReal</code></th><td>2.44178771972e-08 dimensionless</td><td>± 1e-12 dimensionless</td><td>For ζ=.5 and r=f/fn, H=(1+jr)/(1−r²+jr). Rationalizing gives Re(H)=1/(1−r²+r⁴).</td></tr>
+              <tr><th scope="row"><code>hImag</code></th><td>-0.012501953125 dimensionless</td><td>± 1e-12 dimensionless</td><td>The same reduced expression gives Im(H)=−r³/(1−r²+r⁴).</td></tr>
+              <tr><th scope="row"><code>eReal</code></th><td>0.999999975582 dimensionless</td><td>± 1e-12 dimensionless</td><td>Residual transfer E=1−H, as complex quantities.</td></tr>
+              <tr><th scope="row"><code>eImag</code></th><td>0.012501953125 dimensionless</td><td>± 1e-12 dimensionless</td><td>Im(E)=−Im(H); subtracting magnitudes loses this term.</td></tr>
+          </tbody>
+        </table></div>
+        <h4>Limits</h4><ul class="tight"><li>Linear, steady-state declared teaching loop.</li><li>Finite ratios f/fn, not exact zero/infinite frequency.</li><li>No acquisition, cycle-slip, hardware-mask or BER claim.</li></ul>
+      </details>
+    </article>
+    <article class="reference-card" id="experiment-asymmetric-two-port-passivity">
+      <header class="reference-card__head">
+        <div><p class="reference-card__eyebrow">Reference asymmetric-two-port-passivity</p><h3>Passivity is the largest singular value, not the largest element</h3></div>
+        <div class="reference-tags" aria-label="Categories"><span class="reference-tag">PI</span><span class="reference-tag">analytical helper</span></div>
+      </header>
+      <div class="reference-card__actions">
+        <a class="tool-btn" href="topics/fundamentals/s-parameters.html">Read related lesson</a>
+        <a class="tool-btn" href="tests/fixtures/reference-next/asymmetric-two-port-passivity.json" download>Download reference JSON</a>
+      </div>
+      <dl class="reference-card__meta">
+        <div><dt>Execution</dt><dd>Helper-only reference: use the downloadable inputs with the checked numerical helper. The related lesson does not run this exact case.</dd></div>
+        <div><dt>Model pin</dt><dd>viz-kit numerical helper; no interactive scenario</dd></div>
+        <div><dt>Inputs</dt><dd>referenceOhms = 50 ohm, entryMagnitude = 0.707106781187 -, ports = 2 -</dd></div>
+        <div><dt>Evidence</dt><dd>analytical; S^H S = I by construction for this matrix, so every singular value is exactly 1. The fixture and its counterexample come from Astra’s review of 12 September 2026, appendix A; the comparison values here are computed from the same matrix.</dd></div>
+      </dl>
+      <div class="experiment-flow" aria-label="Learning sequence">
+        <div class="experiment-step"><strong>Predict</strong><p>This two-port is passive and lossless. Before looking: which of the three common tests — the largest matrix element, the column norm, or |S11 ± S21| — will agree with that, and which will not?</p></div>
+        <div class="experiment-step"><strong>Experiment</strong><p>Helper-only reference: use the downloadable inputs with the checked numerical helper. The related lesson does not run this exact case.</p></div>
+        <div class="experiment-step"><strong>Explain</strong><p>A two-port is passive when the largest singular value of S is at most one, because that is the largest possible ratio of reflected-plus-transmitted power to incident power over every combination of incident waves. For a RECIPROCAL and PORT-SYMMETRIC two-port the singular values happen to be |S11 + S21| and |S11 − S21|, which is where that shortcut comes from. This network is reciprocal but not port-symmetric — S22 = −S11 — so the shortcut does not apply, and applied anyway it reports 1.414 and calls a lossless network active. The largest element is 0.707, which passes everything and therefore discriminates nothing. The column norm reaches 1 and cannot separate this case from a marginal one.</p></div>
+      </div>
+      <details class="reference-result">
+        <summary>Expected results, derivations, and limits</summary>
+        <div class="table-scroll"><table>
+          <thead><tr><th>Metric</th><th>Expected</th><th>Absolute tolerance</th><th>Derivation</th></tr></thead>
+          <tbody>
+              <tr><th scope="row"><code>sigmaMax</code></th><td>1 dimensionless</td><td>± 1e-12 dimensionless</td><td>S^H S = I, so all singular values are 1.</td></tr>
+              <tr><th scope="row"><code>symmetricShortcut</code></th><td>1.41421356237 dimensionless</td><td>± 1e-12 dimensionless</td><td>max(|S11+S21|, |S11-S21|) with S11 = S21 = 1/sqrt(2) gives sqrt(2); the shortcut is only valid when S22 = S11, which it is not here.</td></tr>
+              <tr><th scope="row"><code>largestElement</code></th><td>0.707106781187 dimensionless</td><td>± 1e-12 dimensionless</td><td>Every entry has magnitude 1/sqrt(2).</td></tr>
+              <tr><th scope="row"><code>columnNorm</code></th><td>1 dimensionless</td><td>± 1e-12 dimensionless</td><td>Each column has two entries of 1/sqrt(2), so its 2-norm is 1 — equal to the true bound here, which is why it cannot discriminate.</td></tr>
+          </tbody>
+        </table></div>
+        <h4>Limits</h4><ul class="tight"><li>One frequency-independent matrix, two ports, 50 ohm reference.</li><li>The singular value bound is a necessary condition for passivity at each frequency; it is not a statement about causality or about stability under feedback.</li></ul>
+      </details>
+    </article>
+    <article class="reference-card" id="experiment-two-bank-anti-resonance">
+      <header class="reference-card__head">
+        <div><p class="reference-card__eyebrow">Reference two-bank-anti-resonance</p><h3>Two capacitor banks: the reactance cancellation and the impedance peak are not the same frequency</h3></div>
+        <div class="reference-tags" aria-label="Categories"><span class="reference-tag">PI</span><span class="reference-tag">analytical helper</span></div>
+      </header>
+      <div class="reference-card__actions">
+        <a class="tool-btn" href="topics/power-integrity/anti-resonance.html">Read related lesson</a>
+        <a class="tool-btn" href="tests/fixtures/reference-next/two-bank-anti-resonance.json" download>Download reference JSON</a>
+      </div>
+      <dl class="reference-card__meta">
+        <div><dt>Execution</dt><dd>Helper-only reference: use the downloadable inputs with the checked numerical helper. The related lesson does not run this exact case.</dd></div>
+        <div><dt>Model pin</dt><dd>viz-kit numerical helper; no interactive scenario</dd></div>
+        <div><dt>Inputs</dt><dd>bigCapacitance = 1e-05 F, bigEsr = 0.01 ohm, bigEsl = 1.2e-09 H, smallCapacitance = 1e-07 F, smallEsr = 0.008 ohm, smallEsl = 1.2e-09 H, sweepFrom = 10000 Hz, sweepTo = 1000000000 Hz</dd></div>
+        <div><dt>Evidence</dt><dd>analytical; Y(w) = SUM 1/(R + jwL + 1/(jwC)) summed here from the branch values, with the susceptance zero found by bisection strictly between the two self-resonances. Independent of the model’s peak search, which is a golden-section refinement of a swept magnitude.</dd></div>
+      </dl>
+      <div class="experiment-flow" aria-label="Learning sequence">
+        <div class="experiment-step"><strong>Predict</strong><p>Two banks self-resonate a decade apart. Between them one is inductive and the other still capacitive, so there is an impedance peak. Predict whether that peak sits exactly where the two reactances cancel.</p></div>
+        <div class="experiment-step"><strong>Experiment</strong><p>Helper-only reference: use the downloadable inputs with the checked numerical helper. The related lesson does not run this exact case.</p></div>
+        <div class="experiment-step"><strong>Explain</strong><p>It does not, and the difference is the loss. Where the total susceptance crosses zero the two reactive currents cancel exactly and the pair looks purely resistive; that frequency is set by L and C alone. The |Z| MAXIMUM is set by the whole admittance including the conductances, so it sits slightly below. With these values the cancellation is at 10.309 MHz and the peak at 10.257 MHz, half a percent apart. Reduce the ESR and the two converge, which is the sense in which the susceptance zero is the lossless answer.</p></div>
+      </div>
+      <details class="reference-result">
+        <summary>Expected results, derivations, and limits</summary>
+        <div class="table-scroll"><table>
+          <thead><tr><th>Metric</th><th>Expected</th><th>Absolute tolerance</th><th>Derivation</th></tr></thead>
+          <tbody>
+              <tr><th scope="row"><code>selfResonanceBig</code></th><td>1452879.20783 Hz</td><td>± 1 Hz</td><td>1/(2*pi*sqrt(L*C)) with L = 1.2 nH and C = 10 uF.</td></tr>
+              <tr><th scope="row"><code>selfResonanceSmall</code></th><td>14528792.0783 Hz</td><td>± 10 Hz</td><td>1/(2*pi*sqrt(L*C)) with L = 1.2 nH and C = 100 nF.</td></tr>
+              <tr><th scope="row"><code>susceptanceZero</code></th><td>10308816.8095 Hz</td><td>± 100 Hz</td><td>Im(Y) = 0, bisected between the two self-resonances.</td></tr>
+              <tr><th scope="row"><code>peakFrequency</code></th><td>10257319.8442 Hz</td><td>± 1000 Hz</td><td>The |Z| maximum from the model’s own swept search; deliberately compared with, and not equated to, the susceptance zero.</td></tr>
+              <tr><th scope="row"><code>resistanceAtCancellation</code></th><td>0.328900786734 ohm</td><td>± 1e-09 ohm</td><td>1/G at the susceptance zero, where B = 0 so |Z| = 1/G.</td></tr>
+          </tbody>
+        </table></div>
+        <h4>Limits</h4><ul class="tight"><li>Two ideal series R-L-C branches in parallel, no plane inductance, no VRM, no spatial distribution.</li><li>The peak height scales as 1/ESR only while the tank is underdamped; that relation is asserted where it holds and its breakdown is asserted separately in check-models.js.</li></ul>
+      </details>
+    </article>
+    <article class="reference-card" id="experiment-fractional-delay-phase">
+      <header class="reference-card__head">
+        <div><p class="reference-card__eyebrow">Reference fractional-delay-phase</p><h3>An off-grid delay is exact in phase and rounded in the impulse</h3></div>
+        <div class="reference-tags" aria-label="Categories"><span class="reference-tag">PI</span><span class="reference-tag">analytical helper</span></div>
+      </header>
+      <div class="reference-card__actions">
+        <a class="tool-btn" href="topics/labs/one-channel.html">Read related lesson</a>
+        <a class="tool-btn" href="tests/fixtures/reference-next/fractional-delay-phase.json" download>Download reference JSON</a>
+      </div>
+      <dl class="reference-card__meta">
+        <div><dt>Execution</dt><dd>Helper-only reference: use the downloadable inputs with the checked numerical helper. The related lesson does not run this exact case.</dd></div>
+        <div><dt>Model pin</dt><dd>viz-kit numerical helper; no interactive scenario</dd></div>
+        <div><dt>Inputs</dt><dd>reach = 8 inch, propagationDelay = 1.7e-10 s/inch, loss = 0 dB, rate = 16 GT/s</dd></div>
+        <div><dt>Evidence</dt><dd>analytical; A matched lossless line has unity gain and exp(-jw*td) phase exactly. The expected values here are the removed-integer fraction of reach * 170 ps/inch against the record timestep, and the DFT phase slope of the published impulse, both computed outside the model.</dd></div>
+      </dl>
+      <div class="experiment-flow" aria-label="Learning sequence">
+        <div class="experiment-step"><strong>Predict</strong><p>A matched lossless line of 8 inches at 170 ps/inch delays by 1.36 ns, which is 696.32 samples of this record. Predict what the impulse response looks like, and where its peak sits.</p></div>
+        <div class="experiment-step"><strong>Experiment</strong><p>Helper-only reference: use the downloadable inputs with the checked numerical helper. The related lesson does not run this exact case.</p></div>
+        <div class="experiment-step"><strong>Explain</strong><p>The integer part is removed and carried separately, so what remains is 0.32 of a sample. There is no sample at 0.32, so the impulse cannot have its peak there: it peaks at sample 0, the nearest grid point, and spreads the rest across its neighbours as the band-limited interpolation of an off-grid impulse. Read the same record in frequency and the phase slope gives 0.32 samples to fourteen digits, because phase is continuous where the impulse is sampled. The two are different estimators of the same delay and must not be held to the same tolerance.</p></div>
+      </div>
+      <details class="reference-result">
+        <summary>Expected results, derivations, and limits</summary>
+        <div class="table-scroll"><table>
+          <thead><tr><th>Metric</th><th>Expected</th><th>Absolute tolerance</th><th>Derivation</th></tr></thead>
+          <tbody>
+              <tr><th scope="row"><code>unitDcGain</code></th><td>1 dimensionless</td><td>± 1e-08 dimensionless</td><td>A matched lossless line passes DC unchanged, so the impulse weights sum to 1.</td></tr>
+              <tr><th scope="row"><code>fractionInSamples</code></th><td>0.32 sample</td><td>± 1e-09 sample</td><td>1.36 ns modulo the 1.953125 ps timestep, divided by that timestep.</td></tr>
+              <tr><th scope="row"><code>peakSample</code></th><td>0 sample</td><td>± 0.5 sample</td><td>The nearest grid point to 0.32 is 0. This is the estimator that CANNOT be exact, and the card exists to say so.</td></tr>
+              <tr><th scope="row"><code>phaseSlopeSamples</code></th><td>0.32 sample</td><td>± 1e-09 sample</td><td>Least-squares slope of -arg(H) against bin index over bins 1 to 8, scaled to samples. Exact for a pure delay.</td></tr>
+          </tbody>
+        </table></div>
+        <h4>Limits</h4><ul class="tight"><li>Matched, uniform, lossless line with no discontinuity, so the only feature in the record is the delay itself.</li><li>The phase slope is fitted over the lowest eight bins, where the response is flat; over a band where loss and dispersion matter, group delay varies with frequency and a single slope is no longer the whole story.</li></ul>
+      </details>
+    </article>
+    <article class="reference-card" id="experiment-pdn-shared-rl-dc-limit">
+      <header class="reference-card__head">
+        <div><p class="reference-card__eyebrow">Reference pdn-shared-rl-dc-limit</p><h3>Two loads on a shared R-L path: the DC limit is resistance only</h3></div>
+        <div class="reference-tags" aria-label="Categories"><span class="reference-tag">PI</span><span class="reference-tag">analytical helper</span></div>
+      </header>
+      <div class="reference-card__actions">
+        <a class="tool-btn" href="topics/labs/pdn-chain.html">Read related lesson</a>
+        <a class="tool-btn" href="tests/fixtures/reference-next/pdn-shared-rl-dc-limit.json" download>Download reference JSON</a>
+      </div>
+      <dl class="reference-card__meta">
+        <div><dt>Execution</dt><dd>Helper-only reference: use the downloadable inputs with the checked numerical helper. The related lesson does not run this exact case.</dd></div>
+        <div><dt>Model pin</dt><dd>viz-kit numerical helper; no interactive scenario</dd></div>
+        <div><dt>Inputs</dt><dd>node2Current = 2 A, node1Current = 1 A, sharedResistance = 0.3 ohm, finalLinkResistance = 0.3 ohm</dd></div>
+        <div><dt>Evidence</dt><dd>analytical; KCL and KVL on the shared paths recorded in tests/fixtures/pdn/shared-rl-tone.json, whose derivation field states them. Evaluated here through the public K.pdnMultiTransient path with the currents held constant, so the inductive terms vanish.</dd></div>
+      </dl>
+      <div class="experiment-flow" aria-label="Learning sequence">
+        <div class="experiment-step"><strong>Predict</strong><p>Two loads draw 2 A and 1 A from different nodes of one R-L chain. Predict each node’s steady rail deviation before the inductances are considered.</p></div>
+        <div class="experiment-step"><strong>Experiment</strong><p>Helper-only reference: use the downloadable inputs with the checked numerical helper. The related lesson does not run this exact case.</p></div>
+        <div class="experiment-step"><strong>Explain</strong><p>At DC the inductances carry no voltage, so each observation is minus the sum of R*I along the paths the two currents actually share. Both currents pass through the source-to-node-1 link; only the node-2 current traverses the final one. That gives -1.5 V at node 2 and -0.9 V at node 1 — numbers that depend on which path is shared, which is the whole point of a two-load model and is invisible in a single-load one.</p></div>
+      </div>
+      <details class="reference-result">
+        <summary>Expected results, derivations, and limits</summary>
+        <div class="table-scroll"><table>
+          <thead><tr><th>Metric</th><th>Expected</th><th>Absolute tolerance</th><th>Derivation</th></tr></thead>
+          <tbody>
+              <tr><th scope="row"><code>dcNode2</code></th><td>-1.5 V</td><td>± 1e-09 V</td><td>-(0.6*2 + 0.3*1) = -1.5 V: both currents through 0.3 ohm, node-2 current also through the 0.3 ohm final link, counted as the fixture records it.</td></tr>
+              <tr><th scope="row"><code>dcNode1</code></th><td>-0.9 V</td><td>± 1e-09 V</td><td>-(0.3*2 + 0.3*1) = -0.9 V: only the shared 0.3 ohm link carries both.</td></tr>
+          </tbody>
+        </table></div>
+        <h4>Limits</h4><ul class="tight"><li>Helper only: there is no exact Lab C scenario that reproduces this network, and inventing one would imply a replay the page cannot perform.</li><li>The DC limit says nothing about the transient, which is checked separately against a causal reference in tests/check-pdn-multi.js.</li></ul>
+      </details>
+    </article>
+  <!-- reference-experiments:end -->
+  </section>
+</main>
+<footer class="site-foot">
+  <span>SIPI &#8212; signal and power integrity, visualised.</span>
+  <span>Created and directed by Geetansh Arora. <a href="colophon.html">About, review &amp; AI assistance</a> &#183; <a href="model-contract.html">Model assumptions</a> &#183; <a href="docs/claims.md">Claim ledger</a></span>
+</footer>
+<script src="js/site.js?v=acb47d86"></script>
+<script src="js/reference-tools.js?v=dbdb3774"></script>
+</body>
+</html>

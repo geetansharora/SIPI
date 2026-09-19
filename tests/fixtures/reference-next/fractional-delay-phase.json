@@ -1,0 +1,60 @@
+{
+  "schemaVersion": 1,
+  "id": "fractional-delay-phase",
+  "title": "An off-grid delay is exact in phase and rounded in the impulse",
+  "kind": "fractional-delay",
+  "availability": "helper-only",
+  "inputs": {
+    "reach": 8,
+    "propagationDelay": 1.7e-10,
+    "loss": 0,
+    "rate": 16
+  },
+  "inputUnits": {
+    "reach": "inch",
+    "propagationDelay": "s/inch",
+    "loss": "dB",
+    "rate": "GT/s"
+  },
+  "prediction": "A matched lossless line of 8 inches at 170 ps/inch delays by 1.36 ns, which is 696.32 samples of this record. Predict what the impulse response looks like, and where its peak sits.",
+  "explanation": "The integer part is removed and carried separately, so what remains is 0.32 of a sample. There is no sample at 0.32, so the impulse cannot have its peak there: it peaks at sample 0, the nearest grid point, and spreads the rest across its neighbours as the band-limited interpolation of an off-grid impulse. Read the same record in frequency and the phase slope gives 0.32 samples to fourteen digits, because phase is continuous where the impulse is sampled. The two are different estimators of the same delay and must not be held to the same tolerance.",
+  "limitations": [
+    "Matched, uniform, lossless line with no discontinuity, so the only feature in the record is the delay itself.",
+    "The phase slope is fitted over the lowest eight bins, where the response is flat; over a band where loss and dispersion matter, group delay varies with frequency and a single slope is no longer the whole story."
+  ],
+  "evidence": {
+    "type": "analytical",
+    "provenance": "A matched lossless line has unity gain and exp(-jw*td) phase exactly. The expected values here are the removed-integer fraction of reach * 170 ps/inch against the record timestep, and the DFT phase slope of the published impulse, both computed outside the model."
+  },
+  "relatedPage": "/topics/labs/one-channel.html",
+  "checks": [
+    {
+      "metric": "unitDcGain",
+      "expected": 1.0,
+      "absoluteTolerance": 1e-08,
+      "unit": "-",
+      "derivation": "A matched lossless line passes DC unchanged, so the impulse weights sum to 1."
+    },
+    {
+      "metric": "fractionInSamples",
+      "expected": 0.31999999999993933,
+      "absoluteTolerance": 1e-09,
+      "unit": "sample",
+      "derivation": "1.36 ns modulo the 1.953125 ps timestep, divided by that timestep."
+    },
+    {
+      "metric": "peakSample",
+      "expected": 0,
+      "absoluteTolerance": 0.5,
+      "unit": "sample",
+      "derivation": "The nearest grid point to 0.32 is 0. This is the estimator that CANNOT be exact, and the card exists to say so."
+    },
+    {
+      "metric": "phaseSlopeSamples",
+      "expected": 0.31999999999999706,
+      "absoluteTolerance": 1e-09,
+      "unit": "sample",
+      "derivation": "Least-squares slope of -arg(H) against bin index over bins 1 to 8, scaled to samples. Exact for a pure delay."
+    }
+  ]
+}

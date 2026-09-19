@@ -1,0 +1,1224 @@
+{
+  "topics/labs/travelling-waves.html": {
+    "viz": "labWaves",
+    "ids": [
+      "lab-left-0",
+      "lab-left-1",
+      "lab-left-2",
+      "lab-left-3",
+      "lab-right-0",
+      "lab-right-1",
+      "lab-tab-energy",
+      "lab-tab-events",
+      "lab-tab-values",
+      "lab-view-energy",
+      "lab-view-events",
+      "lab-view-values",
+      "lw-len",
+      "lw-len-note",
+      "lw-len-out",
+      "lw-open",
+      "lw-predict-title",
+      "lw-prediction",
+      "lw-rl",
+      "lw-rl-out",
+      "lw-rs",
+      "lw-rs-note",
+      "lw-rs-out",
+      "lw-t",
+      "lw-t-note",
+      "lw-t-out",
+      "lw-tr",
+      "lw-tr-note",
+      "lw-tr-out",
+      "lw-xp",
+      "lw-xp-note",
+      "lw-xp-out",
+      "lw-z0",
+      "lw-z0-note",
+      "lw-z0-out"
+    ],
+    "outs": [
+      "energy-history",
+      "ev",
+      "event-detail",
+      "gl",
+      "gs",
+      "ip",
+      "note",
+      "prediction",
+      "td",
+      "vp",
+      "zp"
+    ],
+    "acts": [
+      "next",
+      "play",
+      "predict-arrival",
+      "prev",
+      "reveal-arrival"
+    ],
+    "plots": [
+      "current",
+      "energy",
+      "lattice",
+      "line",
+      "probe"
+    ],
+    "presets": [
+      "mismatch",
+      "parallel",
+      "series",
+      "shorted",
+      "unterminated"
+    ],
+    "controls": {
+      "lw-rs": {
+        "tag": "input",
+        "type": "range",
+        "name": null,
+        "min": "2",
+        "max": "150",
+        "step": "1",
+        "value": "10"
+      },
+      "lw-tr": {
+        "tag": "input",
+        "type": "range",
+        "name": null,
+        "min": "10",
+        "max": "500",
+        "step": "10",
+        "value": "60"
+      },
+      "lw-z0": {
+        "tag": "input",
+        "type": "range",
+        "name": null,
+        "min": "25",
+        "max": "100",
+        "step": "1",
+        "value": "50"
+      },
+      "lw-len": {
+        "tag": "input",
+        "type": "range",
+        "name": null,
+        "min": "1",
+        "max": "12",
+        "step": "1",
+        "value": "3"
+      },
+      "lw-t": {
+        "tag": "input",
+        "type": "range",
+        "name": null,
+        "min": "0",
+        "max": "3060",
+        "step": "1",
+        "value": "0"
+      },
+      "lw-rl": {
+        "tag": "input",
+        "type": "range",
+        "name": null,
+        "min": "0",
+        "max": "200",
+        "step": "1",
+        "value": "50"
+      },
+      "lw-open": {
+        "tag": "input",
+        "type": "checkbox",
+        "name": null,
+        "min": null,
+        "max": null,
+        "step": null,
+        "value": null,
+        "checked": true
+      },
+      "lw-xp": {
+        "tag": "input",
+        "type": "range",
+        "name": null,
+        "min": "0",
+        "max": "100",
+        "step": "1",
+        "value": "50"
+      },
+      "lw-prediction": {
+        "tag": "select",
+        "type": null,
+        "name": null,
+        "min": null,
+        "max": null,
+        "step": null,
+        "value": null,
+        "options": [
+          "positive",
+          "negative",
+          "zero"
+        ]
+      }
+    },
+    "scripts": [
+      "site.js",
+      "viz-kit.js",
+      "lab-waves.js",
+      "viz-loader.js",
+      "lab-workspace.js",
+      "search.js"
+    ]
+  },
+  "topics/labs/one-channel.html": {
+    "viz": "labChannel",
+    "ids": [
+      "lab-left-0",
+      "lab-left-1",
+      "lab-left-2",
+      "lab-left-3",
+      "lab-right-0",
+      "lab-right-1",
+      "lab-right-2",
+      "lab-tab-decisions",
+      "lab-tab-delay",
+      "lab-tab-hist",
+      "lab-tab-impulse",
+      "lab-tab-map",
+      "lab-tab-pulse",
+      "lab-tab-sweep",
+      "lab-tab-values",
+      "lab-view-decisions",
+      "lab-view-delay",
+      "lab-view-hist",
+      "lab-view-impulse",
+      "lab-view-map",
+      "lab-view-pulse",
+      "lab-view-sweep",
+      "lab-view-values",
+      "lc-decision",
+      "lc-dlen",
+      "lc-dlen-note",
+      "lc-dlen-out",
+      "lc-dpos",
+      "lc-dpos-note",
+      "lc-dpos-out",
+      "lc-dz",
+      "lc-dz-note",
+      "lc-dz-out",
+      "lc-eq",
+      "lc-eq-note",
+      "lc-frequency",
+      "lc-frequency-fit",
+      "lc-frequency-go",
+      "lc-frequency-help",
+      "lc-frequency-next",
+      "lc-frequency-prev",
+      "lc-frequency-title",
+      "lc-guess",
+      "lc-impulse-index",
+      "lc-impulse-span",
+      "lc-impulse-time",
+      "lc-impulse-title",
+      "lc-loss",
+      "lc-loss-note",
+      "lc-loss-out",
+      "lc-rate",
+      "lc-rate-note",
+      "lc-rate-out",
+      "lc-raw",
+      "lc-reach",
+      "lc-reach-note",
+      "lc-reach-out",
+      "lc-stub",
+      "lc-stub-note",
+      "lc-stub-out",
+      "lc-topology-title",
+      "lc-tr",
+      "lc-tr-out",
+      "lc-trtdr",
+      "lc-trtdr-note",
+      "lc-trtdr-out",
+      "lc-verdict"
+    ],
+    "outs": [
+      "channel-topology",
+      "decision-detail",
+      "decision-remainder",
+      "decision-terms",
+      "eh",
+      "eq",
+      "evidence",
+      "frequency-detail",
+      "il",
+      "impulse-detail",
+      "note",
+      "nyq",
+      "rl",
+      "sweep-selection",
+      "tap",
+      "ui",
+      "verdict"
+    ],
+    "acts": [
+      "check",
+      "decision-next",
+      "decision-prev",
+      "decision-worst",
+      "hide",
+      "load-cell",
+      "sweep"
+    ],
+    "plots": [
+      "bits",
+      "delay",
+      "eye",
+      "freq",
+      "hist",
+      "impulse",
+      "pulse",
+      "sweep",
+      "tdr"
+    ],
+    "presets": [
+      "matched",
+      "pcie4",
+      "pcie5",
+      "rateonly",
+      "reachonly",
+      "stubby",
+      "ufs4"
+    ],
+    "controls": {
+      "lc-rate": {
+        "tag": "input",
+        "type": "range",
+        "name": null,
+        "min": "4",
+        "max": "64",
+        "step": "1",
+        "value": "16"
+      },
+      "lc-tr": {
+        "tag": "input",
+        "type": "range",
+        "name": null,
+        "min": "4",
+        "max": "60",
+        "step": "1",
+        "value": "12"
+      },
+      "lc-reach": {
+        "tag": "input",
+        "type": "range",
+        "name": null,
+        "min": "1",
+        "max": "24",
+        "step": "1",
+        "value": "8"
+      },
+      "lc-loss": {
+        "tag": "input",
+        "type": "range",
+        "name": null,
+        "min": "0",
+        "max": "34",
+        "step": "1",
+        "value": "14"
+      },
+      "lc-dz": {
+        "tag": "input",
+        "type": "range",
+        "name": null,
+        "min": "20",
+        "max": "80",
+        "step": "1",
+        "value": "38"
+      },
+      "lc-dpos": {
+        "tag": "input",
+        "type": "range",
+        "name": null,
+        "min": "5",
+        "max": "95",
+        "step": "1",
+        "value": "45"
+      },
+      "lc-dlen": {
+        "tag": "input",
+        "type": "range",
+        "name": null,
+        "min": "0",
+        "max": "80",
+        "step": "1",
+        "value": "24"
+      },
+      "lc-stub": {
+        "tag": "input",
+        "type": "range",
+        "name": null,
+        "min": "0",
+        "max": "60",
+        "step": "1",
+        "value": "0"
+      },
+      "lc-guess": {
+        "tag": "input",
+        "type": "number",
+        "name": null,
+        "min": "0",
+        "max": "24",
+        "step": "0.1",
+        "value": null
+      },
+      "lc-decision": {
+        "tag": "input",
+        "type": "number",
+        "name": null,
+        "min": null,
+        "max": null,
+        "step": "1",
+        "value": "68"
+      },
+      "lc-impulse-index": {
+        "tag": "input",
+        "type": "number",
+        "name": null,
+        "min": "0",
+        "max": null,
+        "step": "1",
+        "value": "0"
+      },
+      "lc-impulse-time": {
+        "tag": "select",
+        "type": null,
+        "name": null,
+        "min": null,
+        "max": null,
+        "step": null,
+        "value": null,
+        "options": [
+          "relative",
+          "absolute"
+        ]
+      },
+      "lc-impulse-span": {
+        "tag": "select",
+        "type": null,
+        "name": null,
+        "min": null,
+        "max": null,
+        "step": null,
+        "value": null,
+        "options": [
+          "early",
+          "full"
+        ]
+      },
+      "lc-frequency": {
+        "tag": "input",
+        "type": "number",
+        "name": null,
+        "min": null,
+        "max": null,
+        "step": "any",
+        "value": "1"
+      },
+      "lc-eq": {
+        "tag": "input",
+        "type": "checkbox",
+        "name": null,
+        "min": null,
+        "max": null,
+        "step": null,
+        "value": null,
+        "checked": true
+      },
+      "lc-raw": {
+        "tag": "input",
+        "type": "checkbox",
+        "name": null,
+        "min": null,
+        "max": null,
+        "step": null,
+        "value": null,
+        "checked": true
+      },
+      "lc-trtdr": {
+        "tag": "input",
+        "type": "range",
+        "name": null,
+        "min": "4",
+        "max": "60",
+        "step": "1",
+        "value": "12"
+      }
+    },
+    "scripts": [
+      "site.js",
+      "viz-kit.js",
+      "touchstone.js",
+      "lab-channel.js",
+      "viz-loader.js",
+      "lab-workspace.js",
+      "search.js"
+    ]
+  },
+  "topics/labs/pdn-chain.html": {
+    "viz": "labPdn",
+    "ids": [
+      "lab-left-0",
+      "lab-left-1",
+      "lab-left-2",
+      "lab-left-3",
+      "lab-right-0",
+      "lab-right-1",
+      "lab-right-2",
+      "lab-right-3",
+      "lab-tab-phase",
+      "lab-tab-time",
+      "lab-tab-transfer",
+      "lab-tab-two",
+      "lab-tab-values",
+      "lab-view-phase",
+      "lab-view-time",
+      "lab-view-transfer",
+      "lab-view-two",
+      "lab-view-values",
+      "pd-cdie",
+      "pd-cdie-note",
+      "pd-cdie-out",
+      "pd-compare",
+      "pd-esl",
+      "pd-esl-note",
+      "pd-esl-out",
+      "pd-esr",
+      "pd-esr-note",
+      "pd-esr-out",
+      "pd-excite",
+      "pd-fbw",
+      "pd-fbw-note",
+      "pd-fbw-out",
+      "pd-frequency",
+      "pd-frequency-fit",
+      "pd-frequency-go",
+      "pd-frequency-help",
+      "pd-frequency-next",
+      "pd-frequency-prev",
+      "pd-imax",
+      "pd-imax-out",
+      "pd-imax2",
+      "pd-lpkg",
+      "pd-lpkg-note",
+      "pd-lpkg-out",
+      "pd-lplane",
+      "pd-lplane-out",
+      "pd-multi-title",
+      "pd-nboard",
+      "pd-nboard-note",
+      "pd-nboard-out",
+      "pd-observe",
+      "pd-start2Ns",
+      "pd-startNs",
+      "pd-tr",
+      "pd-tr-note",
+      "pd-tr-out",
+      "pd-tr2",
+      "pd-transfer-excite",
+      "pd-transfer-observe",
+      "pd-transfer-title",
+      "pd-width2Ns",
+      "pd-widthNs",
+      "pd-zt",
+      "pd-zt-out"
+    ],
+    "outs": [
+      "droop",
+      "fsel",
+      "knee",
+      "multi-detail",
+      "note",
+      "overshoot",
+      "ph",
+      "quality",
+      "transfer-detail",
+      "zpk",
+      "zsel",
+      "zt"
+    ],
+    "acts": [],
+    "plots": [
+      "branch",
+      "loads",
+      "multi",
+      "phase",
+      "spec",
+      "topo",
+      "transferZ",
+      "vt",
+      "z"
+    ],
+    "presets": [
+      "lossy",
+      "nodie",
+      "soc",
+      "thin"
+    ],
+    "controls": {
+      "pd-fbw": {
+        "tag": "input",
+        "type": "range",
+        "name": null,
+        "min": "10",
+        "max": "800",
+        "step": "10",
+        "value": "120"
+      },
+      "pd-lplane": {
+        "tag": "input",
+        "type": "range",
+        "name": null,
+        "min": "100",
+        "max": "3000",
+        "step": "50",
+        "value": "900"
+      },
+      "pd-nboard": {
+        "tag": "input",
+        "type": "range",
+        "name": null,
+        "min": "1",
+        "max": "60",
+        "step": "1",
+        "value": "20"
+      },
+      "pd-esr": {
+        "tag": "input",
+        "type": "range",
+        "name": null,
+        "min": "2",
+        "max": "150",
+        "step": "2",
+        "value": "20"
+      },
+      "pd-esl": {
+        "tag": "input",
+        "type": "range",
+        "name": null,
+        "min": "200",
+        "max": "3000",
+        "step": "50",
+        "value": "1100"
+      },
+      "pd-imax2": {
+        "tag": "input",
+        "type": "number",
+        "name": null,
+        "min": "0",
+        "max": "40",
+        "step": "1",
+        "value": "0"
+      },
+      "pd-tr2": {
+        "tag": "input",
+        "type": "number",
+        "name": null,
+        "min": "200",
+        "max": "20000",
+        "step": "200",
+        "value": "800"
+      },
+      "pd-start2Ns": {
+        "tag": "input",
+        "type": "number",
+        "name": null,
+        "min": "100",
+        "max": "1500",
+        "step": "0.1",
+        "value": "786.4"
+      },
+      "pd-width2Ns": {
+        "tag": "input",
+        "type": "number",
+        "name": null,
+        "min": "100",
+        "max": "2500",
+        "step": "1",
+        "value": "1835"
+      },
+      "pd-observe": {
+        "tag": "select",
+        "type": null,
+        "name": null,
+        "min": null,
+        "max": null,
+        "step": null,
+        "value": null,
+        "options": [
+          "0",
+          "1"
+        ]
+      },
+      "pd-compare": {
+        "tag": "select",
+        "type": null,
+        "name": null,
+        "min": null,
+        "max": null,
+        "step": null,
+        "value": null,
+        "options": [
+          "2",
+          "0",
+          "1"
+        ]
+      },
+      "pd-excite": {
+        "tag": "select",
+        "type": null,
+        "name": null,
+        "min": null,
+        "max": null,
+        "step": null,
+        "value": null,
+        "options": [
+          "0",
+          "1"
+        ]
+      },
+      "pd-transfer-observe": {
+        "tag": "select",
+        "type": null,
+        "name": null,
+        "min": null,
+        "max": null,
+        "step": null,
+        "value": null,
+        "options": [
+          "0",
+          "1"
+        ]
+      },
+      "pd-transfer-excite": {
+        "tag": "select",
+        "type": null,
+        "name": null,
+        "min": null,
+        "max": null,
+        "step": null,
+        "value": null,
+        "options": [
+          "0",
+          "1"
+        ]
+      },
+      "pd-frequency": {
+        "tag": "input",
+        "type": "number",
+        "name": null,
+        "min": "1000",
+        "max": "5000000000",
+        "step": "any",
+        "value": "1000"
+      },
+      "pd-lpkg": {
+        "tag": "input",
+        "type": "range",
+        "name": null,
+        "min": "50",
+        "max": "1200",
+        "step": "25",
+        "value": "350"
+      },
+      "pd-cdie": {
+        "tag": "input",
+        "type": "range",
+        "name": null,
+        "min": "10",
+        "max": "600",
+        "step": "10",
+        "value": "200"
+      },
+      "pd-imax": {
+        "tag": "input",
+        "type": "range",
+        "name": null,
+        "min": "0",
+        "max": "40",
+        "step": "1",
+        "value": "8"
+      },
+      "pd-tr": {
+        "tag": "input",
+        "type": "range",
+        "name": null,
+        "min": "200",
+        "max": "20000",
+        "step": "200",
+        "value": "800"
+      },
+      "pd-startNs": {
+        "tag": "input",
+        "type": "number",
+        "name": null,
+        "min": "100",
+        "max": "1500",
+        "step": "0.1",
+        "value": "786.4"
+      },
+      "pd-widthNs": {
+        "tag": "input",
+        "type": "number",
+        "name": null,
+        "min": "100",
+        "max": "2500",
+        "step": "1",
+        "value": "1835"
+      },
+      "pd-zt": {
+        "tag": "input",
+        "type": "range",
+        "name": null,
+        "min": "1",
+        "max": "80",
+        "step": "1",
+        "value": "10"
+      }
+    },
+    "scripts": [
+      "site.js",
+      "viz-kit.js",
+      "lab-pdn.js",
+      "viz-loader.js",
+      "lab-workspace.js",
+      "search.js"
+    ]
+  },
+  "topics/signal-integrity/receiver-and-clock.html": {
+    "viz": "cdr",
+    "ids": [
+      "cdr-fn",
+      "cdr-fn-out",
+      "cdr-jitter-a",
+      "cdr-jitter-a-out",
+      "cdr-jitter-f",
+      "cdr-jitter-f-out",
+      "cdr-margin",
+      "cdr-margin-out",
+      "cdr-zeta",
+      "cdr-zeta-out",
+      "lab-left-0",
+      "lab-left-1",
+      "lab-right-0",
+      "lab-right-1",
+      "lab-tab-tolerance",
+      "lab-tab-values",
+      "lab-view-tolerance",
+      "lab-view-values"
+    ],
+    "outs": [
+      "cross",
+      "floor",
+      "low",
+      "note",
+      "peak"
+    ],
+    "acts": [],
+    "plots": [
+      "phase",
+      "residual",
+      "tolerance",
+      "transfer"
+    ],
+    "presets": [
+      "peaky",
+      "tight",
+      "typical",
+      "wide"
+    ],
+    "controls": {
+      "cdr-jitter-f": {
+        "tag": "input",
+        "type": "range",
+        "name": null,
+        "min": "1",
+        "max": "80",
+        "step": "1",
+        "value": "4"
+      },
+      "cdr-jitter-a": {
+        "tag": "input",
+        "type": "range",
+        "name": null,
+        "min": "5",
+        "max": "100",
+        "step": "5",
+        "value": "40"
+      },
+      "cdr-fn": {
+        "tag": "input",
+        "type": "range",
+        "name": null,
+        "min": "1",
+        "max": "40",
+        "step": "1",
+        "value": "4"
+      },
+      "cdr-zeta": {
+        "tag": "input",
+        "type": "range",
+        "name": null,
+        "min": "15",
+        "max": "150",
+        "step": "5",
+        "value": "70"
+      },
+      "cdr-margin": {
+        "tag": "input",
+        "type": "range",
+        "name": null,
+        "min": "5",
+        "max": "60",
+        "step": "1",
+        "value": "30"
+      }
+    },
+    "scripts": [
+      "site.js",
+      "viz-kit.js",
+      "cdr.js",
+      "viz-loader.js",
+      "lab-workspace.js",
+      "search.js"
+    ]
+  },
+  "topics/labs/adc-interference.html": {
+    "viz": "adcLab",
+    "ids": [
+      "adc-agg-amp",
+      "adc-agg-base",
+      "adc-agg-f",
+      "adc-agg-k",
+      "adc-agg-phase",
+      "adc-agg-ppm",
+      "adc-agg-sync",
+      "adc-arch",
+      "adc-axis",
+      "adc-bits",
+      "adc-coupling",
+      "adc-coupling-type",
+      "adc-edge",
+      "adc-fmod",
+      "adc-fs",
+      "adc-in-a",
+      "adc-in-f",
+      "adc-left-0",
+      "adc-left-1",
+      "adc-left-2",
+      "adc-noise",
+      "adc-osr",
+      "adc-path",
+      "adc-path-bw",
+      "adc-right-0",
+      "adc-right-1",
+      "adc-sweep-range",
+      "adc-vref",
+      "lab-tab-band",
+      "lab-tab-sweep",
+      "lab-tab-time",
+      "lab-tab-values",
+      "lab-view-band",
+      "lab-view-sweep",
+      "lab-view-time",
+      "lab-view-values"
+    ],
+    "outs": [
+      "agg-derived",
+      "arch-name",
+      "in-derived",
+      "loss",
+      "note",
+      "offset",
+      "rate-derived",
+      "sfdr",
+      "snr"
+    ],
+    "acts": [],
+    "plots": [
+      "band",
+      "fold",
+      "spectrum",
+      "sweep",
+      "time"
+    ],
+    "presets": [
+      "ds-clean",
+      "ds-clock",
+      "ds-notch",
+      "ds-offnotch",
+      "ds-ref",
+      "sar-clean",
+      "sar-fast",
+      "sar-fold",
+      "sar-gpio",
+      "sar-locked",
+      "sar-ref",
+      "sar-slow"
+    ],
+    "controls": {
+      "adc-agg-sync": {
+        "tag": "input",
+        "type": "checkbox",
+        "name": null,
+        "min": null,
+        "max": null,
+        "step": null,
+        "value": null
+      },
+      "adc-agg-f": {
+        "tag": "input",
+        "type": "range",
+        "name": null,
+        "min": "0",
+        "max": "1000",
+        "step": "1",
+        "value": "733"
+      },
+      "adc-agg-ppm": {
+        "tag": "input",
+        "type": "range",
+        "name": null,
+        "min": "-200",
+        "max": "200",
+        "step": "1",
+        "value": "20"
+      },
+      "adc-agg-base": {
+        "tag": "select",
+        "type": null,
+        "name": null,
+        "min": null,
+        "max": null,
+        "step": null,
+        "value": null,
+        "options": [
+          "clock",
+          "odr"
+        ]
+      },
+      "adc-agg-k": {
+        "tag": "input",
+        "type": "range",
+        "name": null,
+        "min": "1",
+        "max": "64",
+        "step": "1",
+        "value": "4"
+      },
+      "adc-agg-phase": {
+        "tag": "input",
+        "type": "range",
+        "name": null,
+        "min": "0",
+        "max": "355",
+        "step": "5",
+        "value": "90"
+      },
+      "adc-agg-amp": {
+        "tag": "input",
+        "type": "range",
+        "name": null,
+        "min": "1",
+        "max": "50",
+        "step": "1",
+        "value": "18"
+      },
+      "adc-edge": {
+        "tag": "input",
+        "type": "range",
+        "name": null,
+        "min": "0",
+        "max": "1000",
+        "step": "1",
+        "value": "125"
+      },
+      "adc-path": {
+        "tag": "select",
+        "type": null,
+        "name": null,
+        "min": null,
+        "max": null,
+        "step": null,
+        "value": null,
+        "options": [
+          "none",
+          "input",
+          "reference"
+        ]
+      },
+      "adc-coupling-type": {
+        "tag": "select",
+        "type": null,
+        "name": null,
+        "min": null,
+        "max": null,
+        "step": null,
+        "value": null,
+        "options": [
+          "flat",
+          "capacitive"
+        ]
+      },
+      "adc-coupling": {
+        "tag": "input",
+        "type": "range",
+        "name": null,
+        "min": "-140",
+        "max": "-20",
+        "step": "1",
+        "value": "-80"
+      },
+      "adc-path-bw": {
+        "tag": "input",
+        "type": "range",
+        "name": null,
+        "min": "0",
+        "max": "1000",
+        "step": "1",
+        "value": "610"
+      },
+      "adc-axis": {
+        "tag": "select",
+        "type": null,
+        "name": null,
+        "min": null,
+        "max": null,
+        "step": null,
+        "value": null,
+        "options": [
+          "log",
+          "linear"
+        ]
+      },
+      "adc-sweep-range": {
+        "tag": "select",
+        "type": null,
+        "name": null,
+        "min": null,
+        "max": null,
+        "step": null,
+        "value": null,
+        "options": [
+          "sar",
+          "ds-odr",
+          "ds-clock"
+        ]
+      },
+      "adc-arch": {
+        "tag": "select",
+        "type": null,
+        "name": null,
+        "min": null,
+        "max": null,
+        "step": null,
+        "value": null,
+        "options": [
+          "sar",
+          "ds"
+        ]
+      },
+      "adc-bits": {
+        "tag": "input",
+        "type": "range",
+        "name": null,
+        "min": "10",
+        "max": "18",
+        "step": "1",
+        "value": "16"
+      },
+      "adc-fs": {
+        "tag": "input",
+        "type": "range",
+        "name": null,
+        "min": "0",
+        "max": "1000",
+        "step": "1",
+        "value": "750"
+      },
+      "adc-fmod": {
+        "tag": "input",
+        "type": "range",
+        "name": null,
+        "min": "0",
+        "max": "1000",
+        "step": "1",
+        "value": "602"
+      },
+      "adc-osr": {
+        "tag": "select",
+        "type": null,
+        "name": null,
+        "min": null,
+        "max": null,
+        "step": null,
+        "value": null,
+        "options": [
+          "32",
+          "64",
+          "128",
+          "256"
+        ]
+      },
+      "adc-vref": {
+        "tag": "select",
+        "type": null,
+        "name": null,
+        "min": null,
+        "max": null,
+        "step": null,
+        "value": null,
+        "options": [
+          "1.25",
+          "2.5",
+          "5"
+        ]
+      },
+      "adc-noise": {
+        "tag": "input",
+        "type": "range",
+        "name": null,
+        "min": "0",
+        "max": "300",
+        "step": "1",
+        "value": "0"
+      },
+      "adc-in-f": {
+        "tag": "input",
+        "type": "range",
+        "name": null,
+        "min": "0",
+        "max": "1000",
+        "step": "1",
+        "value": "400"
+      },
+      "adc-in-a": {
+        "tag": "input",
+        "type": "range",
+        "name": null,
+        "min": "-600",
+        "max": "-5",
+        "step": "5",
+        "value": "-10"
+      }
+    },
+    "scripts": [
+      "site.js",
+      "viz-kit.js",
+      "adc-model.js",
+      "adc-lab.js",
+      "viz-loader.js",
+      "lab-workspace.js",
+      "search.js"
+    ]
+  }
+}

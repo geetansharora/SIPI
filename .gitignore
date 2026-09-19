@@ -1,0 +1,10 @@
+.DS_Store
+node_modules/
+*.log
+/preview.html
+__pycache__/
+*.pyc
+.venv/
+/.claude/
+/docs/release-checklist.md
+/docs/deployment.md

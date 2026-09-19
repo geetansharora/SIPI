@@ -1,0 +1,48 @@
+#!/bin/sh
+# The pre-commit gate. Four independent checks, four different kinds of defect.
+#
+#   scaffold.py check   structure — dead links, tag balance, headings vs topics.json,
+#                       viz wiring, model badges, contract islands, the claim
+#                       ledger's own rules, review attribution, corrected
+#                       phrasings that must not return, placeholder text
+#   check-numbers.py    prose — every derivable number recomputed from first principles
+#                       and compared against what the page says
+#   check-models.js     physics — analytical limits, conservation laws and closed-form
+#                       cases, independent of the implementation under test
+#   mutate.js           whether the gate above can FAIL — plants each known defect in
+#                       an isolated copy of the tree and requires the assertion that
+#                       claims it to be the one that fails
+#
+# Why the fourth exists: check-models.js reached 276 passing assertions while a
+# 6.02 dB CTLE gain error went undetected by all fourteen of its CTLE assertions.
+# An assertion count is not a quality measure; sensitivity to a consequential
+# fault is, and that has to be demonstrated rather than assumed.
+#
+# The full mutation set runs on every check. Runtime depends on the numerical
+# reference cases; use focused model suites while editing and the full gate
+# before delivery. Browser tests are run separately via tests/README.md.
+#
+# Any one failing fails the whole run. Usage: ./check [-v]
+set -e
+cd "$(dirname "$0")"
+echo "── structure ─────────────────────────────────────────"
+python3 scaffold.py contract && python3 scaffold.py claims && python3 scaffold.py check
+echo ""
+echo "── models ────────────────────────────────────────────"
+node check-models.js "$@"
+node tests/check-plot-layout.js
+node tests/check-domain.js
+node tests/check-pdn-multi.js
+node tests/check-reference.js
+node tests/check-experiments.js
+node tests/check-reference-next.js
+node tests/check-load-order.js
+node tests/check-numeric-entry.js
+node tests/check-adc-integration.js
+node tests/check-lab-parity.js
+echo ""
+echo "── can the gate fail? ────────────────────────────────"
+node mutate.js --selftest
+node mutate.js
+echo ""
+echo "All gates passed."

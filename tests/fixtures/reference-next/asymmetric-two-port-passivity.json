@@ -1,0 +1,59 @@
+{
+  "schemaVersion": 1,
+  "id": "asymmetric-two-port-passivity",
+  "title": "Passivity is the largest singular value, not the largest element",
+  "kind": "two-port-sigma",
+  "availability": "helper-only",
+  "inputs": {
+    "referenceOhms": 50,
+    "entryMagnitude": 0.7071067811865476,
+    "ports": 2
+  },
+  "inputUnits": {
+    "referenceOhms": "ohm",
+    "entryMagnitude": "-",
+    "ports": "-"
+  },
+  "prediction": "This two-port is passive and lossless. Before looking: which of the three common tests — the largest matrix element, the column norm, or |S11 ± S21| — will agree with that, and which will not?",
+  "explanation": "A two-port is passive when the largest singular value of S is at most one, because that is the largest possible ratio of reflected-plus-transmitted power to incident power over every combination of incident waves. For a RECIPROCAL and PORT-SYMMETRIC two-port the singular values happen to be |S11 + S21| and |S11 − S21|, which is where that shortcut comes from. This network is reciprocal but not port-symmetric — S22 = −S11 — so the shortcut does not apply, and applied anyway it reports 1.414 and calls a lossless network active. The largest element is 0.707, which passes everything and therefore discriminates nothing. The column norm reaches 1 and cannot separate this case from a marginal one.",
+  "limitations": [
+    "One frequency-independent matrix, two ports, 50 ohm reference.",
+    "The singular value bound is a necessary condition for passivity at each frequency; it is not a statement about causality or about stability under feedback."
+  ],
+  "evidence": {
+    "type": "analytical",
+    "provenance": "S^H S = I by construction for this matrix, so every singular value is exactly 1. The fixture and its counterexample come from Astra’s review of 12 September 2026, appendix A; the comparison values here are computed from the same matrix."
+  },
+  "relatedPage": "/topics/fundamentals/s-parameters.html",
+  "checks": [
+    {
+      "metric": "sigmaMax",
+      "expected": 1.0,
+      "absoluteTolerance": 1e-12,
+      "unit": "-",
+      "derivation": "S^H S = I, so all singular values are 1."
+    },
+    {
+      "metric": "symmetricShortcut",
+      "expected": 1.4142135623730951,
+      "absoluteTolerance": 1e-12,
+      "unit": "-",
+      "derivation": "max(|S11+S21|, |S11-S21|) with S11 = S21 = 1/sqrt(2) gives sqrt(2); the shortcut is only valid when S22 = S11, which it is not here."
+    },
+    {
+      "metric": "largestElement",
+      "expected": 0.7071067811865476,
+      "absoluteTolerance": 1e-12,
+      "unit": "-",
+      "derivation": "Every entry has magnitude 1/sqrt(2)."
+    },
+    {
+      "metric": "columnNorm",
+      "expected": 1.0,
+      "absoluteTolerance": 1e-12,
+      "unit": "-",
+      "derivation": "Each column has two entries of 1/sqrt(2), so its 2-norm is 1 — equal to the true bound here, which is why it cannot discriminate."
+    }
+  ],
+  "sourceFile": "tests/fixtures/passive-unitary-asymmetric.s2p"
+}

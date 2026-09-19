@@ -1,0 +1,458 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Time-Domain and Frequency-Domain Analysis | SIPI</title>
+<meta name="description" content="Time-Domain and Frequency-Domain Analysis">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<link rel="stylesheet" href="../../css/base.css?v=e4f774de">
+<link rel="stylesheet" href="../../css/components.css?v=295837ab">
+  <!-- meta:start -->
+  <link rel="canonical" href="https://sipi.work/topics/groundwork/domain-bridges.html">
+  <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="SIPI">
+  <meta property="og:title" content="Time-Domain and Frequency-Domain Analysis | SIPI">
+  <meta property="og:description" content="Time-Domain and Frequency-Domain Analysis">
+  <meta property="og:url" content="https://sipi.work/topics/groundwork/domain-bridges.html">
+  <meta property="og:image" content="https://sipi.work/assets/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Time-Domain and Frequency-Domain Analysis | SIPI">
+  <meta name="twitter:description" content="Time-Domain and Frequency-Domain Analysis">
+  <meta name="twitter:image" content="https://sipi.work/assets/og.png">
+  <!-- meta:end -->
+</head>
+<body>
+
+<header class="masthead">
+  <a class="wordmark" href="../../index.html">SIPI</a>
+  <nav>
+    <a href="../../index.html#fundamentals">Fundamentals</a>
+    <a href="../../index.html#power-integrity">Power</a>
+    <a href="../../index.html#interfaces">Interfaces</a>
+    <a href="../../start.html">Start</a>
+    <a href="../../labs.html">Labs</a>
+    <a href="../../reference.html">Reference</a>
+    <button class="theme-toggle" data-act="theme" type="button">System</button>
+  </nav>
+</header>
+
+<main>
+  <div class="page-head">
+    <p class="crumb"><a href="../../index.html#groundwork">Groundwork</a> / 02</p>
+    <h1>Time-Domain and Frequency-Domain Analysis</h1>
+    <p class="byline">
+      <!-- review:start --><span>By Geetansh Arora — Principal SI/PI Engineer</span><time datetime="2026-09-12" title="Technical review by Geetansh Arora on this date">12 Sep 2026</time><span>12 min</span><!-- review:end -->
+    </p>
+    <p class="answer">
+      Signal integrity is the same physics described three ways &#8212; as a
+      waveform in time, as a spectrum in frequency, and as an impedance profile
+      in space. Nothing is lost moving between them, which means a channel
+      cannot be good in one and bad in another. This page is the set of bridges.
+    </p>
+  </div>
+
+  <div class="prose">
+    <h2>Why two domains?</h2>
+
+    <p>
+      Every signal you will ever see on a scope is a waveform in time — voltage
+      changing moment by moment. That is the time domain, and it is the natural
+      language of oscilloscopes, TDR, and eye diagrams. But the same signal can
+      also be described as a recipe of sine waves at different frequencies, each
+      with its own amplitude and timing. That is the frequency domain, and it is
+      the natural language of S-parameters, impedance plots, and channel budgets.
+    </p>
+
+    <p>
+      Think of a chord struck on a guitar. What you hear is a single sound —
+      that is the time-domain waveform your ear receives. But a spectrum analyser
+      would show you the individual notes and their harmonics — the
+      frequency-domain decomposition of the same sound. Neither description is
+      more "real" than the other; they are two views of one physical event.
+    </p>
+
+    <p>
+      The reason signal integrity uses both is that different problems are
+      obvious in different domains. Loss rises smoothly with frequency and is
+      easiest to see in S₂₁. A via stub resonance shows up as a sharp null in
+      frequency but is nearly invisible on a TDR. A ground-bounce spike is
+      obvious on a scope and hides inside a broadband impedance curve. Fluency
+      in both domains — and knowing which bridges connect them — is what lets you
+      pick the right instrument and the right simulation for each question.
+    </p>
+
+    <h2 class="section-rule"><span>One object, three descriptions</span></h2>
+
+    <p>
+      A channel is a single physical thing. S-parameters, an impulse response and
+      a TDR trace are not three models of it — they are three questions put to the
+      same object. Fix the network, the source, the receiver, the excitation, the
+      reference planes and the bandwidth you compute over, and every one of those
+      views has to agree, because they are all consequences of the same network.
+    </p>
+
+    <p>
+      What does <em>not</em> follow is that each view can be recovered from any
+      other. Some can; several cannot, and the difference is practical rather than
+      pedantic — it decides which measurement you have to go and take.
+    </p>
+
+    <ul>
+      <li>
+        <strong>Complex S₂₁ and the impulse response are the same information.</strong>
+        One is the Fourier transform of the other. Nothing is lost either way, and
+        that pair is the reason the time and frequency panels on this site can never
+        disagree.
+      </li>
+      <li>
+        <strong>A magnitude alone is not.</strong> |S₂₁| without its phase does not
+        determine an impulse response. Two channels with identical loss curves and
+        different phase behave differently, which is why this site's line model
+        derives loss and phase from one material rather than choosing them
+        separately.
+      </li>
+      <li>
+        <strong>S₁₁ does not determine S₂₁.</strong> A matched through-line and a
+        matched attenuator both have zero reflection; they transmit completely
+        differently. Put a 6 dB matched attenuator in a 50 Ω line and a TDR reads
+        a flat 50 Ω from end to end while exactly 50.0% of the launched voltage
+        never arrives. A one-port TDR sees only what comes back, so it can find a
+        discontinuity and still tell you nothing about how much signal gets there.
+      </li>
+      <li>
+        <strong>An eye diagram is not invertible at all.</strong> It is thousands
+        of symbol histories drawn on top of each other. You cannot recover the
+        channel from it, or even the pattern that made it.
+      </li>
+    </ul>
+
+    <p>
+      So the useful version of "it settles arguments" is narrower. A channel cannot
+      have good <em>complex</em> S-parameters and a bad pulse response over the same
+      band — those two really are one fact in two notations. But good insertion loss
+      with a closed eye is entirely possible: a notch, a reflection, or a phase
+      distortion at the wrong frequency does not have to move the loss number that
+      a budget looks at. That is exactly the case a scalar loss budget cannot catch,
+      and it is why this site keeps six views of one network rather than one.
+    </p>
+
+    <h2 class="section-rule"><span>Fourier: why frequencies exist at all</span></h2>
+
+    <p>
+      Back to the guitar chord: you hear one sound, but it is made of individual
+      notes at specific frequencies. Fourier's insight is that <em>any</em>
+      waveform — not just a musical chord — can be broken down this way. Any
+      repeating signal can be built by adding sine waves at multiples of its
+      repetition rate. And any non-repeating signal (like a single digital edge)
+      can be represented as a continuous spread of sine waves across all
+      frequencies.
+    </p>
+
+    <p>
+      The useful consequence is the reverse reading: <b>a system's response to
+      sine waves tells you its response to everything.</b> If you know how much
+      a channel attenuates and delays each frequency — which is exactly what
+      S₂₁(f) tells you — you can predict what comes out for any input, because
+      any input is just a sum of those same sine waves.
+    </p>
+
+    <p>
+      This is only true because the systems here are <strong>linear</strong> —
+      double the input and the output doubles; add two inputs and the outputs
+      add. Copper is linear. A driver at its limits is not, which is exactly why
+      a statistical channel simulation stops being exact there.
+    </p>
+
+    <div class="eq">
+      <span class="eq__main"><i class="var">h</i>(<i class="var">t</i>) = 𝓕<sup>−1</sup>{ <i class="var">S</i><sub>21</sub>(<i class="var">f</i>) }</span>
+      <span class="eq__note">the impulse response and the insertion loss are the same fact — nothing is lost either way</span>
+    </div>
+
+    <h2 class="section-rule"><span>Convolution: what a channel does to a signal</span></h2>
+
+    <p>
+      Imagine dropping a pebble into a still pond and watching the ripple
+      spread and fade. That ripple pattern is the pond's "impulse response" — what
+      it does to a single disturbance. Now imagine dropping pebbles one after
+      another, each a bit different. The resulting pattern on the water is the
+      sum of all those overlapping ripples, each shifted in time. That
+      superposition is convolution.
+    </p>
+
+    <p>
+      If you know how a channel responds to a single impulse, you know how it
+      responds to anything — because any signal is a sum of scaled, delayed
+      impulses, and a linear system's response to a sum is the sum of the
+      responses.
+    </p>
+
+    <p>
+      That operation is convolution, and it is the whole of what a channel does:
+    </p>
+
+    <div class="eq">
+      <span class="eq__main"><i class="var">y</i>(<i class="var">t</i>) = ∫ <i class="var">x</i>(<i class="var">τ</i>) <i class="var">h</i>(<i class="var">t</i>−<i class="var">τ</i>) d<i class="var">τ</i></span>
+      <span class="eq__note">and convolution in time is multiplication in frequency, which is why cascading channels is easy in one domain and awkward in the other</span>
+    </div>
+
+    <p>
+      That last note is worth pausing on. In the frequency domain, passing a
+      signal through a channel is just multiplication: Y(f) = X(f) · H(f).
+      Cascading two channels is multiplying their transfer functions. In the time
+      domain, the same operation requires the full convolution integral. This
+      asymmetry is why channel budgets are written in dB (where multiplication
+      becomes addition) and why frequency-domain thinking dominates link design.
+    </p>
+
+    <p>
+      Sampled once per bit, that integral becomes a sum — and that sum is
+      <a href="../fundamentals/isi.html">ISI</a>. There is no separate mechanism:
+      ISI <em>is</em> convolution, read at the decision instants.
+    </p>
+
+    <h2 class="section-rule"><span>Impulse, step and pulse: three responses, one system</span></h2>
+
+    <p>
+      Three different inputs, and knowing which one you are looking at matters
+      because they have different shapes and different uses.
+    </p>
+
+    <div class="table-scroll">
+      <table class="data">
+        <thead><tr><th>Response</th><th>To what input</th><th>Used for</th></tr></thead>
+        <tbody>
+          <tr><td>Impulse, h(t)</td><td>an infinitely narrow spike</td><td>the fundamental description; convolve with anything</td></tr>
+          <tr><td>Step</td><td>a transition that stays</td><td>TDR, and PDN droop</td></tr>
+          <tr><td>Pulse (single-bit)</td><td>one bit, with a real edge</td><td>cursor and ISI taps</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>
+      The step response is the <em>integral</em> of the impulse response, and the
+      pulse response is the difference of two steps one UI apart. So all three
+      carry the same information — but the cursor and the ISI taps must be read
+      off the <b>pulse</b> response, not the impulse, because a real transmitter
+      sends a pulse with a finite edge and taps taken from an idealised impulse do
+      not cancel the waveform a receiver actually sees.
+    </p>
+
+    <h2 class="section-rule"><span>Complex impedance: phase is not decoration</span></h2>
+
+    <p>
+      Impedance has a magnitude and a phase, and the phase says <em>what kind</em>
+      of thing you are looking at. +90° is an inductor, −90° a capacitor, 0° a
+      resistor.
+    </p>
+
+    <p>
+      On a PDN that is the whole diagnosis. An impedance peak happens where one
+      branch has become inductive while its neighbour is still capacitive — and
+      the phase plot is where you see that handover happening. A magnitude plot
+      alone tells you there is a peak; the phase tells you what made it.
+    </p>
+
+    <h2 class="section-rule"><span>Propagation delay and group delay</span></h2>
+
+    <p>
+      Two different delays, and the difference is the whole of dispersion.
+    </p>
+
+    <ul class="tight">
+      <li><strong>Propagation delay</strong> is how long the signal takes to get
+        there: length divided by velocity. One number.</li>
+      <li><strong>Group delay</strong> is the delay of the <em>envelope</em> at each
+        frequency, τ<sub>g</sub> = −dφ/dω. It is a curve.</li>
+    </ul>
+
+    <p>
+      For a uniform lossless line they are equal and flat — every frequency
+      arrives together. Structure in the group delay means different frequencies
+      arrive at different times, which smears an edge. That is dispersion, and
+      dispersion is ISI by another name.
+    </p>
+
+    <div class="note">
+      <b>A useful check</b>
+      A uniform line's group delay must equal its own T<sub>d</sub> at every
+      frequency. If a model or a measurement does not do that, something is wrong
+      with it — and this site's model gate asserts exactly that, to within a
+      femtosecond.
+    </div>
+
+    <h2 class="section-rule"><span>Sampling and aliasing</span></h2>
+
+    <p>
+      Everything discussed so far assumes continuous signals — smooth curves
+      defined at every instant. In practice, both simulations and instruments
+      work with <em>samples</em>: discrete snapshots taken at regular intervals.
+      Sampling introduces a fundamental limit.
+    </p>
+
+    <p>
+      Sampling a continuous signal at rate f<sub>s</sub> can only represent
+      frequencies below f<sub>s</sub>/2 (the Nyquist frequency). Anything above
+      that limit folds back and appears as a lower frequency that was never
+      there — an alias. You cannot tell the alias from the real signal after the
+      fact, which is why the damage is permanent.
+    </p>
+
+    <p>
+      This matters in four places on this site, and they are easy to miss:
+    </p>
+
+    <ul class="tight">
+      <li><strong>A simulation's grid.</strong> Too few samples per UI and the
+        model aliases its own channel.</li>
+      <li><strong>An S-parameter file's frequency step.</strong> The step sets the
+        time window before the response wraps around onto itself. A 10 MHz step
+        gives 100 ns — fine for a board, marginal for a long cable.</li>
+      <li><strong>A scope.</strong> An equivalent-time sampling scope reconstructs
+        a repetitive waveform from many triggers, which is exact for repetitive
+        signals and silently wrong for anything that is not.</li>
+      <li><strong>A converter in a working system.</strong> An analog-to-digital
+        converter samples whatever reaches its input or its reference at the
+        instants its clock defines, so a clock switching at 4.1 MHz beside a
+        1 MS/s converter arrives as something near 127 kHz — inside the band, and
+        indistinguishable from signal.
+        <a href="../labs/adc-interference.html">Lab D</a> lets you move the
+        aggressor and watch where it lands.</li>
+    </ul>
+
+    <h2 class="section-rule"><span>Statistical confidence</span></h2>
+
+    <p>
+      The last bridge is between what you observed and what you can claim. If you
+      see no errors in <i>N</i> symbols, the honest statement is a bound, not a
+      value:
+    </p>
+
+    <div class="eq">
+      <span class="eq__main">BER<sub>95%</sub> ≤ −ln(0.05) / <i class="var">N</i> ≈ 3 / <i class="var">N</i></span>
+      <span class="eq__note">the rule of three — a million clean symbols evidences 3×10⁻⁶, and nothing stronger</span>
+    </div>
+
+    <p>
+      Which is why reaching 10⁻¹² directly needs about 3×10¹² symbols, and why
+      every published bathtub curve is part measurement and part extrapolation.
+      The arithmetic is easy; the discipline is saying which part is which.
+    </p>
+
+    <details class="deeper">
+      <summary>Go deeper — what the transforms assume, and where each one breaks</summary>
+
+      <p>
+        Every bridge on this page rests on assumptions, and knowing which one
+        fails tells you which result to distrust.
+      </p>
+
+      <p>
+        <strong>Linearity and time-invariance.</strong> Fourier and convolution
+        both need them. A DFE is non-linear by construction — it makes a decision
+        — and an adapting receiver is time-varying. So a statistical simulation
+        built on superposition is an approximation whose <em>error is in the
+        tail</em>, which is an uncomfortable place for it to be. See
+        <a href="../signal-integrity/statistical-vs-time-domain.html">statistical
+        versus time-domain</a>.
+      </p>
+
+      <p>
+        <strong>Causality.</strong> A magnitude response alone does not define a
+        physical channel. Attenuation and phase belong to each other, and a
+        filter given magnitude without the corresponding phase produces output
+        before its input. This is not a technicality: a magnitude-only channel
+        model makes equalisation look better than it is, which is precisely the
+        direction that hurts. This site's channel model builds a minimum-phase
+        response for that reason.
+      </p>
+
+      <p>
+        <strong>Finite records.</strong> A discrete Fourier transform treats its
+        record as <em>periodic</em>. A signal that ends somewhere other than where
+        it began has a discontinuity at the wrap point, and the energy that
+        injects lands everywhere — including before the event, where it reads as
+        an acausal response that is really circular convolution. The PDN lab uses
+        a current <em>pulse</em> rather than a step for exactly this reason.
+      </p>
+
+      <p>
+        <strong>What a sampled grid cannot hold.</strong> A PDN's impedance rises
+        like jωL at high frequency, so Z(f) on its own transforms to L·δ′(t) — a
+        doublet. The mathematics is fine: the derivative of a delta is a perfectly
+        good distribution, and a transient solver handles the L·di/dt term
+        directly without ever forming it. What fails is the <em>numerical</em>
+        step of putting it on a sampled grid, where a doublet has no finite
+        representation. The fix is to transform the <em>product</em> Z(f)·I(f),
+        because a real current has a finite rise time and supplies the roll-off.
+        The lesson generalises, and it is about the grid rather than about the
+        transform: if a transform is misbehaving, ask whether the thing you are
+        sampling is bounded.
+      </p>
+
+      <p>
+        <strong>And one that is purely bookkeeping.</strong> Cascading networks by
+        adding decibels assumes each stage is matched to the next. Real stages are
+        not, energy bounces between their mismatches, and the error appears as
+        ripple rather than as an offset. Cascade the full complex networks and the
+        ripple is handled correctly.
+      </p>
+    </details>
+
+    <h2 class="section-rule"><span>In the real world</span></h2>
+
+    <p>
+      The practical value of knowing these bridges is that it tells you which
+      instrument to reach for. A smooth loss slope is obvious in S₂₁ and invisible
+      on a TDR. A 30 Ω via field is obvious on a TDR and shows up in S₂₁ only as
+      gentle ripple. A stub resonance is a spike in group delay, a null in S₂₁,
+      and almost nothing on a TDR at all.
+    </p>
+
+    <p>
+      So the habit is to look in more than one domain before concluding — and,
+      when a simulation and a measurement disagree, to find the domain where the
+      disagreement is largest, because that is where the wrong assumption lives.
+    </p>
+
+    <h3>Related</h3>
+    <ul class="tight">
+      <li><a href="units-and-conventions.html">SI/PI Units, Conventions, and Reference Planes</a> — the vocabulary these transforms use</li>
+      <li><a href="../fundamentals/isi.html">Intersymbol Interference (ISI) and Channel Memory</a> — convolution read at the sampling instants</li>
+      <li><a href="../fundamentals/s-parameters.html">S-Parameters: Insertion Loss, Return Loss, and Mixed Mode</a> — the frequency-domain description</li>
+      <li><a href="../fundamentals/bathtub-curves.html">Bathtub curves and BER extrapolation</a> — where the confidence arithmetic lands</li>
+      <li><a href="../labs/one-channel.html">Lab B: Channel Response, ISI, and Eye Diagrams</a> — all of these bridges on one network, moving together</li>
+    </ul>
+  </div>
+
+<!-- sources:start -->
+    <section class="sources">
+      <h2 class="section-rule"><span>Sources</span></h2>
+      <ul class="sources__list">
+      <li><a href="https://www.keysight.com/zz/en/assets/7018-02435/white-papers/5990-5266.pdf" rel="noopener">Keysight 5990-5266EN — causality and Kramers-Kronig in S-parameter models</a></li>
+      </ul>
+      <p class="sources__note">Rows marked with a claim id are tracked in <a href="../../docs/claims.md">the claim ledger</a>, which records what each source can and cannot establish.</p>
+    </section>
+    <!-- sources:end -->
+  <!-- pager:start -->
+  <nav class="pager" aria-label="Previous and next topic">
+    <a class="prev" href="../../topics/groundwork/units-and-conventions.html"><span class="dir">Previous</span><span>SI/PI Units, Conventions, and Reference Planes</span></a>
+    <a class="next" href="../../topics/fundamentals/edge-rate-not-clock-rate.html"><span class="dir">Next</span><span>Signal Bandwidth: Why Edge Rate Matters</span></a>
+  </nav>
+  <!-- pager:end -->
+</main>
+
+<footer class="site-foot">
+  <span>SIPI &#8212; signal and power integrity, visualised.</span>
+  <span>Created and directed by Geetansh Arora. <a href="../../colophon.html">About, review &amp; AI assistance</a> &#183; <a href="../../model-contract.html">Model assumptions</a> &#183; <a href="../../docs/claims.md">Claim ledger</a></span>
+</footer>
+
+<script src="../../js/site.js?v=acb47d86"></script>
+<script src="../../js/search.js?v=6c93a285"></script>
+</body>
+</html>

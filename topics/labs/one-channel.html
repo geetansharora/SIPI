@@ -1,0 +1,615 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lab B: Channel Response, ISI, and Eye Diagrams | SIPI</title>
+<meta name="description" content="One network definition, shown in six domains at once: S-parameters and group delay, impulse and single-bit response, a TDR impedance profile, the bit sequence, the eye, and the histogram at the sampling instant.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<link rel="stylesheet" href="../../css/base.css?v=e4f774de">
+<link rel="stylesheet" href="../../css/components.css?v=295837ab">
+  <!-- meta:start -->
+  <link rel="canonical" href="https://sipi.work/topics/labs/one-channel.html">
+  <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="SIPI">
+  <meta property="og:title" content="Lab B: Channel Response, ISI, and Eye Diagrams | SIPI">
+  <meta property="og:description" content="One network definition, shown in six domains at once: S-parameters and group delay, impulse and single-bit response, a TDR impedance profile, the bit sequence, the eye, and the histogram at the sampling instant.">
+  <meta property="og:url" content="https://sipi.work/topics/labs/one-channel.html">
+  <meta property="og:image" content="https://sipi.work/assets/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Lab B: Channel Response, ISI, and Eye Diagrams | SIPI">
+  <meta name="twitter:description" content="One network definition, shown in six domains at once: S-parameters and group delay, impulse and single-bit response, a TDR impedance profile, the bit sequence, the eye, and the histogram at the sampling instant.">
+  <meta name="twitter:image" content="https://sipi.work/assets/og.png">
+  <!-- meta:end -->
+</head>
+<body>
+
+<header class="masthead">
+  <a class="wordmark" href="../../index.html">SIPI</a>
+  <nav>
+    <a href="../../index.html#fundamentals">Fundamentals</a>
+    <a href="../../index.html#power-integrity">Power</a>
+    <a href="../../index.html#interfaces">Interfaces</a>
+    <a href="../../start.html">Start</a>
+    <a href="../../labs.html">Labs</a>
+    <a href="../../reference.html">Reference</a>
+    <button class="theme-toggle" data-act="theme" type="button">System</button>
+  </nav>
+</header>
+
+<main>
+  <div class="page-head">
+    <p class="crumb"><a href="../../index.html#labs">Labs</a> / 02</p>
+    <h1>Lab B: Channel Response, ISI, and Eye Diagrams</h1>
+    <p class="byline">
+      <!-- review:start --><span>By Geetansh Arora — Principal SI/PI Engineer</span><time datetime="2026-09-18" title="Technical review by Geetansh Arora on this date">18 Sep 2026</time><span>15 min</span><!-- review:end -->
+    </p>
+    <p class="answer">
+      A channel is one object. S-parameters, an impulse response, a TDR trace and an eye diagram
+      are not four models of it — they are four questions put to the same network, and every
+      answer comes from the same definition. This lab defines the channel once, as a cascade
+      of sections, and derives each linked view from it.
+    </p>
+    <p>
+      They are not all <em>equivalent</em>, though, and it matters which direction you are
+      going. S<sub>21</sub> as a complex function of frequency and the impulse response are
+      the same linear response when their complex data, bandwidth, grid, window and reference
+      plane are retained. Other views answer more specific questions and discard information:
+      a loss curve in dB has discarded the phase,
+      a sampled TDR trace has discarded whatever lies outside its band, an eye is a
+      <em>projection</em> in which many different waveforms land on top of each other, and
+      a receiver's decisions are the output of a slicer, which is not a linear operation at
+      all. You can go from the complete complex description to any of them. You cannot come
+      back.
+    </p>
+  </div>
+
+
+  <!-- ───────────── the lab ───────────── -->
+  <section class="instrument lab" data-viz="labChannel" aria-label="Interactive channel lab: S-parameters, group delay, impulse response, TDR, bit sequence, eye diagram and sampling histogram, all from one cascaded network">
+<script type="application/json" data-contract>{"kind":"analytical","evidence":"independent","purpose":"Show one network in six domains at once, and link a post-cursor back to the bit that caused it.","equations":["z'(f)=Rs(f)(1+j)+jwL, y'(f)=jw*Cvac*eps_r(f)","gamma=sqrt(z'y'), Zc=sqrt(z'/y')","eps_r(f) = Djordjevic-Sarkar wideband Debye, decades 1e4 to 1e13","A=D=cosh(gamma*l), B=Zc*sinh(gamma*l), C=sinh(gamma*l)/Zc","S21=2/(A+B/Z0+C*Z0+D)"],"units":"Hz, s, ohm, V. Loss referenced to a FIXED 8 GHz belonging to the board, not to the symbol rate.","validity":"Single-ended, no crosstalk, CTLE only, ideal terminations. Loss is a budget at one frequency split between two mechanisms, not an arbitrary measured curve. Validity is per measurement, not per page: an impulse response that has not decayed inside its record marks the IMPULSE and PULSE panels and names them; it does not invalidate the S-parameters, and it is not used to infer the eye's accuracy. The eye's accuracy is measured directly instead - every released preset is within 0.35 mV of its value at four times the record.","numerics":"4096-point FFT at 32 samples/UI. Pre-wavefront energy below 1e-5 of the total and falling as the record is refined at fixed bandwidth. Propagation loss meets its budget to 1e-6 dB; |S21| differs from it by up to 5e-3 dB, which is the port mismatch of a lossy line whose Zc is not its nominal z. The tail diagnostic measures |h| at a quarter-record or more from the response PEAK. Measuring a fixed last eighth of the circular record instead reported 3.8462% on a matched lossless line with no reflector anywhere — the sidelobes of a band-limited fractional delay, falling as 1/n, wrapping in behind a peak that sits at sample 0. Impulse exports are dimensionless discrete convolution weights; normalized SBR exports are dimensionless too. The panel converts SBR weights to volts using its transmitted amplitude. Raw and active impulse records share dt and removed transport delay tdBulk; absolute display labels add tdBulk without changing the samples. The early view is a display window, and the full FFT record remains available. Frequency inspection selects the nearest native sample in linear Hz and links S21, S11 and group delay; exported group delay is in seconds. It does not interpolate wrapped phase or rebuild the model.","limitations":"Not a field solver, not coupled-line, not correlated against measurement. The eye height is the extremal gap between the two transmitted populations over one PRBS7 period at the decision instant — not a percentile, not a BER contour, and not comparable with a compliance eye height.","suites":["Causal line","Lab B assembled","Cascade","Lab result contract"],"version":"3.2","reviewed":"2026-09-13","panel":"labChannel"}</script>
+<div class="lab-frame">
+<div class="instrument__bar">
+      <span class="instrument__title">One cascade · linked domains</span>
+      <span data-evidence="independent" data-model-version="3.2" class="model-tag model-tag--analytical" title="ABCD cascade of causal lossy line sections, an optional mismatched section and an optional open stub, referenced to a real 50 ohm. Every internal re-reflection is exact; the line itself is a wideband-Debye material model with loss referenced to a fixed 8 GHz. Transport delay is de-embedded and reported separately. Single-ended; no crosstalk; CTLE only, no DFE; ideal terminations. See docs/channel-model.md for the full contract.">analytical</span>
+      <span class="instrument__readout" role="status" aria-live="polite" aria-label="Current values">
+        <span>UI <b data-out="ui">—</b></span>
+        <span>Nyquist <b data-out="nyq">—</b></span>
+        <span>IL at Nyquist <b data-out="il">—</b></span>
+        <span>eye height <b data-out="eh">—</b></span>
+        <span>worst RL <b data-out="rl">—</b></span>
+        <span>CTLE <b data-out="eq">—</b></span>
+        <span>inspecting <b data-out="tap">—</b></span>
+        <span class="evidence" data-out="evidence">—</span>
+      </span>
+    <button type="button" class="tool-btn lab-full" data-lab-full aria-pressed="false">full screen</button>
+</div>
+<aside class="lab-rail lab-rail--left" aria-label="Transmitter and channel controls">
+<p class="lab-rail__side">Transmitter and channel <span>source end</span></p>
+<details class="control-group lab-group" open><summary class="lab-group__title" id="lab-left-0">Transmitter</summary><div class="control-group__grid lab-group__body"><div class="ctl">
+        <div class="ctl__head"><label for="lc-rate">Data rate</label><output id="lc-rate-out" for="lc-rate">16 GT/s</output></div>
+        <input type="range" id="lc-rate" aria-describedby="lc-rate-note" min="4" max="64" step="1" value="16">
+        <span class="ctl__note" id="lc-rate-note">Moves Nyquist, so it moves the loss too</span>
+      </div>
+<div class="ctl">
+        <div class="ctl__head"><label for="lc-tr">Transmitter edge (10–90%)</label><output id="lc-tr-out" for="lc-tr">12 ps</output></div>
+        <input type="range" id="lc-tr" min="4" max="60" step="1" value="12">
+      </div></div></details>
+<details class="control-group lab-group" open><summary class="lab-group__title" id="lab-left-1">Line</summary><div class="control-group__grid lab-group__body"><div class="ctl">
+        <div class="ctl__head"><label for="lc-reach">Reach</label><output id="lc-reach-out" for="lc-reach">8 in</output></div>
+        <input type="range" id="lc-reach" aria-describedby="lc-reach-note" min="1" max="24" step="1" value="8">
+        <span class="ctl__note" id="lc-reach-note">Sets the delay; loss is set separately below</span>
+      </div>
+<div class="ctl">
+        <div class="ctl__head"><label for="lc-loss">Loss at 8 GHz</label><output id="lc-loss-out" for="lc-loss">14 dB</output></div>
+        <input type="range" id="lc-loss" aria-describedby="lc-loss-note" min="0" max="34" step="1" value="14">
+        <span class="ctl__note" id="lc-loss-note">Split √f skin and linear dielectric</span>
+      </div></div></details>
+<details class="control-group lab-group" open><summary class="lab-group__title" id="lab-left-2">Discontinuity</summary><div class="control-group__grid lab-group__body"><div class="ctl">
+        <div class="ctl__head"><label for="lc-dz">Discontinuity Z</label><output id="lc-dz-out" for="lc-dz">38 Ω</output></div>
+        <input type="range" id="lc-dz" aria-describedby="lc-dz-note" min="20" max="80" step="1" value="38">
+        <span class="ctl__note" id="lc-dz-note">A via field, a connector, a run under a pad</span>
+      </div>
+<div class="ctl">
+        <div class="ctl__head"><label for="lc-dpos">…its position</label><output id="lc-dpos-out" for="lc-dpos">45 %</output></div>
+        <input type="range" id="lc-dpos" aria-describedby="lc-dpos-note" min="5" max="95" step="1" value="45">
+        <span class="ctl__note" id="lc-dpos-note">Watch where it lands on the TDR</span>
+      </div>
+<div class="ctl">
+        <div class="ctl__head"><label for="lc-dlen">…and its length</label><output id="lc-dlen-out" for="lc-dlen">24 ps</output></div>
+        <input type="range" id="lc-dlen" aria-describedby="lc-dlen-note" min="0" max="80" step="1" value="24">
+        <span class="ctl__note" id="lc-dlen-note">Length decides the notch frequency</span>
+      </div></div></details>
+<details class="control-group lab-group" open><summary class="lab-group__title" id="lab-left-3">Via stub</summary><div class="control-group__grid lab-group__body"><div class="ctl">
+        <div class="ctl__head"><label for="lc-stub">Via stub</label><output id="lc-stub-out" for="lc-stub">0 ps</output></div>
+        <input type="range" id="lc-stub" aria-describedby="lc-stub-note" min="0" max="60" step="1" value="0">
+        <span class="ctl__note" id="lc-stub-note">Resonates at 1/(4·t<sub>stub</sub>) — a hard null</span>
+      </div></div></details>
+<p class="lab-help" aria-hidden="true">Point at or focus a control to see what it changes.</p>
+</aside>
+<div class="lab-stage">
+<div class="lab-row lab-row--anchor" style="--anchor-columns: minmax(0, 1fr) minmax(0, 1fr)">
+<div data-lab-unit="freq" data-lab-name="S21 and S11" class="panel">
+        <div class="lab-panel-head"><span class="panel__label">Frequency — insertion and return loss</span><button type="button" class="tool-btn lab-expand" data-lab-expand aria-pressed="false" aria-label="Expand S21 and S11">expand</button></div>
+        <canvas data-inspection="native" data-cv="freq" role="img" aria-label="Insertion loss and return loss in decibels against frequency, with the Nyquist frequency marked."></canvas>
+        <div class="legend"><span><i style="background:var(--signal)"></i>S21</span><span><i class="dash" style="color:var(--reflect)"></i>S11</span></div>
+      </div>
+<div data-lab-unit="eye" data-lab-name="Eye" class="panel" data-summary-host>
+        <div class="lab-panel-head"><span class="panel__label">The eye it builds</span><button type="button" class="tool-btn lab-expand" data-lab-expand aria-pressed="false" aria-label="Expand Eye">expand</button></div>
+        <canvas data-cv="eye" role="img" aria-label="Eye diagram built from the received waveform, with the vertical opening and selected symbol trajectory marked."></canvas>
+      </div>
+</div>
+<div class="lab-tabs" role="tablist" aria-label="Linked views">
+<button type="button" role="tab" id="lab-tab-pulse" aria-controls="lab-view-pulse" aria-selected="true" tabindex="0" data-view="pulse">Pulse and TDR</button>
+<button type="button" role="tab" id="lab-tab-decisions" aria-controls="lab-view-decisions" aria-selected="false" tabindex="-1" data-view="decisions">Decisions</button>
+<button type="button" role="tab" id="lab-tab-hist" aria-controls="lab-view-hist" aria-selected="false" tabindex="-1" data-view="hist">Histogram</button>
+<button type="button" role="tab" id="lab-tab-impulse" aria-controls="lab-view-impulse" aria-selected="false" tabindex="-1" data-view="impulse">Impulse</button>
+<button type="button" role="tab" id="lab-tab-delay" aria-controls="lab-view-delay" aria-selected="false" tabindex="-1" data-view="delay">Group delay</button>
+<button type="button" role="tab" id="lab-tab-sweep" aria-controls="lab-view-sweep" aria-selected="false" tabindex="-1" data-view="sweep">Sweep</button>
+<button type="button" role="tab" id="lab-tab-map" aria-controls="lab-view-map" aria-selected="false" tabindex="-1" data-view="map">Channel map</button>
+<button type="button" role="tab" id="lab-tab-values" aria-controls="lab-view-values" aria-selected="false" tabindex="-1" data-view="values">Values as text</button>
+</div>
+<div class="lab-view is-active" id="lab-view-pulse" role="tabpanel" aria-labelledby="lab-tab-pulse" data-view="pulse" data-count="3">
+<div data-lab-unit="pulse" data-lab-name="Single-bit response" class="panel">
+        <div class="lab-panel-head"><span class="panel__label">One bit, sampled once per UI</span><button type="button" class="tool-btn lab-expand" data-lab-expand aria-pressed="false" aria-label="Expand Single-bit response">expand</button></div>
+        
+        <canvas data-cv="pulse" tabindex="0" role="img" aria-label="The single-bit response sampled once per unit interval: the cursor and its pre- and post-cursors. Click or use the arrow keys to inspect one tap."></canvas>
+        <div class="legend"><span><i style="background:var(--signal)"></i>cursor</span><span><i style="background:var(--reflect)"></i>post-cursors</span><span><i style="background:var(--muted)"></i>pre-cursors</span></div>
+      <details class="lab-notes"><summary>Notes</summary>
+<p class="panel__hint">Select a stem, or focus the plot and use the arrow keys, to trace its contribution to an earlier bit.</p>
+</details>
+</div>
+<div data-lab-unit="tdr" data-lab-name="TDR" class="panel">
+        <div class="lab-panel-head"><span class="panel__label">Space — the same S11, read as impedance</span><button type="button" class="tool-btn lab-expand" data-lab-expand aria-pressed="false" aria-label="Expand TDR">expand</button></div>
+        <canvas data-cv="tdr" role="img" aria-label="Impedance against distance, recovered from the step response of S11, band-limited by the instrument rise time."></canvas>
+        <div class="legend"><span><i style="background:var(--signal)"></i>Z(x)</span><span><i class="dash" style="color:var(--muted)"></i>50 Ω</span></div>
+      </div>
+<details class="lab-locate"><summary>Find the discontinuity: read its position off the TDR</summary>
+<div class="locate">
+      <button type="button" class="tool-btn" data-act="hide">hide a discontinuity</button>
+      <label for="lc-guess">your estimate</label>
+      <input type="number" id="lc-guess" step="0.1" min="0" max="24" inputmode="decimal" aria-describedby="lc-verdict">
+      <span class="locate__unit">in</span>
+      <button type="button" class="tool-btn" data-act="check">check</button>
+      <span class="locate__verdict" id="lc-verdict" data-out="verdict" role="status" aria-live="polite">Read a position off the TDR panel — press “hide a discontinuity” to be given one.</span>
+    </div>
+</details>
+</div>
+<div class="lab-view" id="lab-view-decisions" role="tabpanel" aria-labelledby="lab-tab-decisions" data-view="decisions" data-count="1">
+<div data-lab-unit="bits" data-lab-name="Data and decisions" class="panel lab-split"><div class="lab-panel-head"><span class="panel__label">Data — and the bit behind the error</span><button type="button" class="tool-btn lab-expand" data-lab-expand aria-pressed="false" aria-label="Expand Data and decisions">expand</button></div><canvas data-cv="bits" role="img" aria-label="A short run of the received waveform against the transmitted bits, with the sampling instant marked and the bit responsible for the inspected tap highlighted."></canvas><div class="legend"><span><i style="background:var(--signal)"></i>received</span><span><i class="dash" style="color:var(--muted)"></i>transmitted</span></div><div class="lab-side"><div class="decision-controls">
+          <label for="lc-decision">Inspect symbol</label><input id="lc-decision" type="number" step="1" value="68">
+          <button type="button" data-act="decision-prev" aria-label="Previous symbol">Previous</button>
+          <button type="button" data-act="decision-next" aria-label="Next symbol">Next</button>
+          <button type="button" data-act="decision-worst">Find worst margin</button>
+        </div><p class="panel__hint" data-out="decision-detail" role="status" aria-live="polite"></p><div class="decision-table table-scroll"><table>
+          <caption>Contributions to this decision</caption>
+          <thead><tr><th scope="col">Source symbol</th><th scope="col">Sent</th><th scope="col">Weight</th><th scope="col">Contribution</th></tr></thead>
+          <tbody data-out="decision-terms"></tbody>
+        </table></div><p class="panel__hint" data-out="decision-remainder"></p><details class="lab-notes"><summary>Learning sequence and notes</summary>
+<p class="panel__hint">Select a sample on the plot or use its arrow keys. The selected trajectory is highlighted in the eye view.</p>
+<div class="experiment-flow" aria-label="Decision investigation learning sequence">
+          <div class="experiment-step"><strong>Predict</strong><p>Does a negative post-cursor always push a decision toward the wrong symbol?</p></div>
+          <div class="experiment-step"><strong>Experiment</strong><p>Find the worst margin, then inspect the source symbols, weights, contributions, and omitted remainder. Compare raw and active values at this same sampling instant.</p></div>
+          <div class="experiment-step"><strong>Explain</strong><p>Each contribution is the source symbol multiplied by its amplitude and tap weight. Its effect therefore depends on both signs. The worst-margin sample is closest to the wrong decision in the transmitted symbol’s direction; it can still be detected correctly.</p></div>
+          <div class="experiment-step"><strong>Transfer</strong><p>Use the table sum and the zero threshold to explain the decision. In this model, values above zero map to +1; zero and negative values map to −1.</p></div>
+        </div>
+</details></div></div>
+</div>
+<div class="lab-view" id="lab-view-hist" role="tabpanel" aria-labelledby="lab-tab-hist" data-view="hist" data-count="1">
+<div data-lab-unit="hist" data-lab-name="Histogram" class="panel">
+        <div class="lab-panel-head"><span class="panel__label">Histogram at the sampling instant</span><button type="button" class="tool-btn lab-expand" data-lab-expand aria-pressed="false" aria-label="Expand Histogram">expand</button></div>
+        <canvas data-cv="hist" role="img" aria-label="Histogram of the sampled voltages at the centre of the eye, split by transmitted symbol. A horizontal marker identifies the selected decision."></canvas>
+        <div class="legend"><span><i style="background:var(--signal)"></i>ones</span><span><i style="background:var(--reflect)"></i>zeros</span></div>
+      </div>
+</div>
+<div class="lab-view" id="lab-view-impulse" role="tabpanel" aria-labelledby="lab-tab-impulse" data-view="impulse" data-count="1">
+<section data-lab-unit="lc-impulse-title" data-lab-name="Impulse" class="panel lab-split" aria-labelledby="lc-impulse-title"><div class="lab-panel-head"><h3 id="lc-impulse-title">Impulse response: how the channel spreads a sample</h3><button type="button" class="tool-btn lab-expand" data-lab-expand aria-pressed="false" aria-label="Expand Impulse">expand</button></div><canvas data-cv="impulse" role="img" aria-label="Raw and active channel discrete impulse weights over time. Arrow keys inspect adjacent samples."></canvas><div class="legend"><span><i class="dash" style="color:var(--muted)"></i>Raw channel</span><span><i style="background:var(--signal)"></i>Active path: raw or CTLE</span></div><div class="lab-side"><div class="decision-controls">
+        <label for="lc-impulse-index">Sample index</label><input id="lc-impulse-index" type="number" min="0" step="1" value="0">
+        <label for="lc-impulse-time">Time labels</label><select id="lc-impulse-time"><option value="relative">After removed delay</option><option value="absolute">From input reference</option></select>
+        <label for="lc-impulse-span">Record view</label><select id="lc-impulse-span"><option value="early">Early response</option><option value="full">Full FFT record</option></select>
+      </div><p class="panel__hint" data-out="impulse-detail" role="status" aria-live="polite"></p><details class="lab-notes"><summary>Learning sequence and notes</summary>
+<p class="panel__hint">Each dimensionless weight multiplies an input voltage sample in the discrete convolution. This is different from a response to a finite-width bit, which also includes the transmitter edge. Both paths use the same sample interval and time reference.</p>
+<div class="experiment-flow" aria-label="Impulse-response learning sequence">
+        <div class="experiment-step"><strong>Predict</strong><p>With CTLE switched off, should the raw and active impulse traces differ?</p></div>
+        <div class="experiment-step"><strong>Experiment</strong><p>Compare the early and full records, then switch the time labels. Keep the channel fixed while you compare CTLE off and on, and check the decay diagnostic before interpreting the tail.</p></div>
+        <div class="experiment-step"><strong>Explain</strong><p>With CTLE off, both traces use the raw channel weights and should agree. “From input reference” restores the removed integer transport delay to the labels; it does not change the weights. Fractional delay remains.</p></div>
+        <div class="experiment-step"><strong>Transfer</strong><p>If the sample rate doubles, can individual weight heights be compared without also checking sample spacing and normalization?</p></div>
+      </div>
+</details></div></section>
+</div>
+<div class="lab-view" id="lab-view-delay" role="tabpanel" aria-labelledby="lab-tab-delay" data-view="delay" data-count="1">
+<div data-lab-unit="delay" data-lab-name="Group delay" class="panel lab-split"><div class="lab-panel-head"><span class="panel__label">Group delay — the phase, differentiated</span><button type="button" class="tool-btn lab-expand" data-lab-expand aria-pressed="false" aria-label="Expand Group delay">expand</button></div><canvas data-inspection="native" data-cv="delay" role="img" aria-label="Group delay in picoseconds against frequency, against the flat-line delay of an ideal channel of the same length."></canvas><div class="legend"><span><i style="background:var(--signal)"></i>group delay</span><span><i class="dash" style="color:var(--muted)"></i>ideal, flat</span></div><div class="lab-side"><section class="frequency-inspector" aria-labelledby="lc-frequency-title">
+      <h3 id="lc-frequency-title">Inspect loss and delay at the same frequency</h3>
+      <div class="decision-controls frequency-controls">
+        <div class="inspection-entry">
+          <label for="lc-frequency">Requested frequency (GHz)</label><input type="number" id="lc-frequency" step="any" value="1" inputmode="decimal" aria-describedby="lc-frequency-help">
+          <button type="button" id="lc-frequency-go">Inspect nearest sample</button>
+        </div>
+        <div class="inspection-actions" role="group" aria-label="Move through native frequency samples">
+          <button type="button" id="lc-frequency-prev">Previous sample</button><button type="button" id="lc-frequency-next">Next sample</button>
+        </div>
+        <button type="button" id="lc-frequency-fit">Reset frequency plot zoom</button>
+      </div>
+      <p data-out="frequency-detail" role="status" aria-live="polite"></p>
+      
+    <details class="lab-notes"><summary>Notes</summary>
+<p class="panel__hint" id="lc-frequency-help">Click either frequency plot, use its left/right arrow keys, or enter a frequency in GHz. Both markers select the nearest computed sample by distance in physical Hz. The readout reports that sample’s actual frequency; it is not an interpolated value or a new simulation. Group delay is displayed in ps and exported in seconds.</p>
+</details>
+</section></div></div>
+</div>
+<div class="lab-view" id="lab-view-sweep" role="tabpanel" aria-labelledby="lab-tab-sweep" data-view="sweep" data-count="1">
+<figure data-lab-unit="sweep" data-lab-name="Sweep" class="panel panel--wide lab-split"><div class="lab-panel-head"><span class="panel__label">The surface — why one loss number is not enough</span><button type="button" class="tool-btn lab-expand" data-lab-expand aria-pressed="false" aria-label="Expand Sweep">expand</button></div><canvas data-cv="sweep" role="img" aria-label="A surface of eye height against via stub length and channel loss. Each cell is a full model build. Cells outside the model domain are hatched and never coloured; cells whose impulse tail has not decayed keep their measured eye and carry a small dot, because the tail affects the impulse and pulse panels rather than this one."></canvas><div class="lab-side"><figcaption>
+          One model build per cell on a grid aligned to the controls. The dashed cross is where
+          the controls below are set. <b>Two cells with the same loss <em>setting</em> can be
+          on opposite sides of the closed contour</b> — because the setting is a budget
+          applied to the trace, and a stub adds a notch the budget never sees.
+        </figcaption><p class="panel__hint" data-out="sweep-selection" role="status" aria-live="polite"></p><button class="preset preset--act" type="button" data-act="load-cell" disabled>Load selected cell and compare</button><div class="presets">
+      <button class="preset preset--act" type="button" data-act="sweep">sweep the surface</button>
+      <p class="presets__note">About a second and a half. Moving any control abandons a
+        running sweep rather than letting it finish into a different scenario.</p>
+    </div><details class="lab-notes"><summary>Notes</summary>
+<p class="panel__hint">Select a cell with a click or the plot’s arrow keys, then load it to compare with the full-resolution channel. Completed cells can be inspected while the remaining sweep runs.</p>
+</details></div></figure>
+</div>
+<div class="lab-view" id="lab-view-map" role="tabpanel" aria-labelledby="lab-tab-map" data-view="map" data-count="1">
+<section class="panel" aria-labelledby="lc-topology-title">
+      <h3 id="lc-topology-title">The channel being measured</h3>
+      <div class="channel-topology" data-out="channel-topology"></div>
+      
+    <details class="lab-notes"><summary>Notes</summary>
+<p class="panel__hint">Select a block to reach its controls. Line sections form the through path; the open stub is a shunt branch at its junction, not another series line. S11 and S21 use the input/output reference planes shown, both referenced to 50 Ω. CTLE is downstream of that channel measurement. This diagram does not de-embed individual sections.</p>
+</details>
+</section>
+</div>
+<div class="lab-view" id="lab-view-values" role="tabpanel" aria-labelledby="lab-tab-values" data-view="values" data-count="1">
+<dl data-summary class="viz-summary" aria-label="Current values"></dl>
+</div>
+</div>
+<aside class="lab-rail lab-rail--right" aria-label="Receiver and measurement controls">
+<p class="lab-rail__side">Receiver and measurement <span>receiver end</span></p>
+<details class="control-group lab-group" open><summary class="lab-group__title" id="lab-right-0">Scenarios</summary><div class="control-group__grid lab-group__body"><div class="presets">
+      <span class="presets__group">baseline</span>
+      <button class="preset" type="button" data-preset="pcie4" aria-pressed="true">PCIe Gen 4</button>
+      <span class="presets__group">change one thing</span>
+      <button class="preset" type="button" data-preset="rateonly" aria-pressed="false">…rate only</button>
+      <button class="preset" type="button" data-preset="reachonly" aria-pressed="false">…reach only</button>
+      <button class="preset" type="button" data-preset="stubby" aria-pressed="false">…same budget, a stub</button>
+      <button class="preset" type="button" data-preset="matched" aria-pressed="false">…no step at all</button>
+      <span class="presets__group">protocol examples</span>
+      <button class="preset" type="button" data-preset="pcie5" aria-pressed="false">PCIe Gen 5</button>
+      <button class="preset" type="button" data-preset="ufs4" aria-pressed="false">UFS 4.0</button>
+    </div>
+<div class="transport"><span data-out="note">—</span></div></div></details>
+<details class="control-group lab-group" open><summary class="lab-group__title" id="lab-right-1">Receiver</summary><div class="control-group__grid lab-group__body"><div class="ctl">
+        <div class="ctl__head"><label for="lc-eq">Receiver</label><output for="lc-eq">fixed, not adaptive</output></div>
+        <label class="check" for="lc-eq"><input type="checkbox" id="lc-eq" aria-describedby="lc-eq-note" checked> CTLE, boost fixed at the loss <em>setting</em>, capped at 18&nbsp;dB</label>
+        <label class="check" for="lc-raw"><input type="checkbox" id="lc-raw" checked> show the response before the equaliser too</label>
+        <span class="ctl__note" id="lc-eq-note">Fixes loss. Cannot fill in a notch.</span>
+      </div></div></details>
+<details class="control-group lab-group" open><summary class="lab-group__title" id="lab-right-2">TDR instrument</summary><div class="control-group__grid lab-group__body"><div class="ctl">
+        <div class="ctl__head"><label for="lc-trtdr">TDR instrument aperture</label><output id="lc-trtdr-out" for="lc-trtdr">12 ps</output></div>
+        <input type="range" id="lc-trtdr" aria-describedby="lc-trtdr-note" min="4" max="60" step="1" value="12">
+        <span class="ctl__note" id="lc-trtdr-note">Sets how sharply the TDR can resolve</span>
+      </div></div></details>
+<p class="lab-help" aria-hidden="true">Point at or focus a control to see what it changes.</p>
+</aside>
+</div>
+<script type="application/json" data-guide>
+{
+  "title": "Follow one channel across its views",
+  "steps": [
+    {
+      "say": "Start on PCIe Gen 4 with the equaliser off. Look at the frequency panel and the single-bit panel together — they are the same information.",
+      "set": {
+        "_p": "pcie4",
+        "lc-eq": "0",
+        "lc-dlen": "0",
+        "lc-stub": "0"
+      },
+      "ask": "S21 falls smoothly with frequency and the pulse grows a long tail. Which of those is the cause?",
+      "answer": "They are two representations of the same linear channel. The complex S21 response transforms into the impulse response, so high-frequency attenuation appears as spreading in time. Interpreting the result still requires the same finite bandwidth, sampling and record-length assumptions shown by the model."
+    },
+    {
+      "say": "Now click the +1 stem on the single-bit panel, then +2, then +3, and watch the data panel below.",
+      "ask": "What is a post-cursor, physically?",
+      "answer": "It is the remaining contribution from an earlier bit at the current sampling instant. The highlighted source symbol was sent one, two or three UI earlier, and its tail is still adding voltage. A decision-feedback equaliser can cancel modeled post-cursors when its prior decisions and tap estimates are correct; decision errors and model mismatch limit that cancellation in practice."
+    },
+    {
+      "say": "Turn the receiver on.",
+      "set": {
+        "lc-eq": "1"
+      },
+      "ask": "The eye opens. Look at the post-cursor stems — what did the CTLE actually do to them?",
+      "answer": "It shortened them by boosting frequencies that the channel attenuated, which sharpens the pulse. It does not remove every post-cursor: a CTLE is a linear filter with a smooth response, and its boost also affects high-frequency noise and crosstalk. A DFE instead subtracts estimated post-cursor contributions using prior decisions, with performance limited by decision errors and tap accuracy."
+    },
+    {
+      "say": "Now add a 40 ps via stub and look at the frequency panel.",
+      "set": {
+        "lc-stub": "40"
+      },
+      "ask": "There is a deep null. At what frequency, and can the equaliser fill it in?",
+      "answer": "At 6.25 GHz — a quarter-wave resonance, 1/(4 × 40 ps). At that frequency the open stub is a quarter wavelength long, so it transforms its open end into a short circuit right across the signal path. No equaliser can undo it: a CTLE applies a smooth rising gain and has no mechanism to restore energy at one specific frequency the channel has cancelled. The fix is physical — backdrill the stub, or move the resonance out of band."
+    },
+    {
+      "say": "Clear the stub, put a 30 Ω discontinuity back in, and drag its position while watching the TDR panel.",
+      "set": {
+        "lc-stub": "0",
+        "lc-dz": "30",
+        "lc-dlen": "30",
+        "lc-dpos": "25"
+      },
+      "ask": "The dip on the TDR moves. What is the axis really measuring?",
+      "answer": "Time, halved. A TDR sees a reflection after the round trip, so a feature at 2 inches appears after 4 inches' worth of propagation delay and the instrument divides by two to report distance. The horizontal scale is therefore only as accurate as the assumed propagation velocity: an error in Dk scales every reported distance by the corresponding ratio. Reporting the measured delay in picoseconds preserves the direct observation; converting it to inches requires the velocity assumption."
+    },
+    {
+      "say": "Now try it blind. Press “hide a discontinuity” under the controls: one is placed somewhere on the line and the controls that would tell you where are locked. Read the position off the TDR panel and type it in.",
+      "ask": "Before you look — what limits how precisely you can call it?",
+      "answer": "The instrument rise time, halved. A TDR resolves features about tr·v/2 apart, because the round trip doubles the distance the edge travels. At a 12 ps edge and 170 ps/inch that is roughly 0.035 inches in principle — but reading a position off a plot is worth perhaps a tenth of an inch in practice, and every distance also carries the error in your assumed Dk. Try the same hunt again with the instrument rise time at 50 ps and watch the feature smear."
+    },
+    {
+      "say": "Last one. Leave everything alone and raise the data rate from 16 to 32 GT/s.",
+      "set": {
+        "lc-rate": "32"
+      },
+      "ask": "The channel did not change. Why did the eye?",
+      "answer": "Because Nyquist moved, and the channel's loss is a function of frequency rather than data rate. Doubling the rate asks the same copper to carry twice the bandwidth, so loss at the new Nyquist is higher. The tail keeps roughly the same duration in picoseconds while spanning twice as many bit periods. Both effects reduce the opening."
+    }
+  ],
+  "transfer": "A link passes at 16 GT/s and fails at 32 on the same board. Someone proposes a lower-loss stackup. Using nothing but this lab, decide whether that will help — and name a channel for which it would NOT, even though its loss number improves.",
+  "transferNote": "The rate-only preset is the controlled half of this. The stub preset is the counter-example."
+}
+  </script>
+</section>
+
+  <!-- ───────────── the intuition ───────────── -->
+  <div class="prose">
+    <p>
+      In high-speed digital engineering, different specialists speak entirely different mathematical dialects.
+      An RF microwave engineer evaluates a high-speed channel in the frequency domain, looking at <span class="num">S<sub>21</sub></span>
+      insertion loss curves and return loss nulls. A SerDes DSP designer analyzes the time domain, measuring cursor
+      and post-cursor voltages on a single-bit pulse response (<span class="num">h(t)</span>). A system validation
+      engineer looks only at the final receiver eye diagram, measuring eye height in millivolts and eye width in picoseconds.
+    </p>
+
+    <p>
+      It is easy to treat these as disconnected views from separate disciplines. In reality, they are
+      <strong>four simultaneous mathematical projections of the exact same physical channel</strong>. The frequency
+      response (<span class="num">S<sub>21</sub></span>) and the impulse response (<span class="num">h(t)</span>) form
+      a strict Fourier transform pair; the pulse response is the convolution of that impulse response with the driver's
+      unit step; and the eye diagram is simply the folding of hundreds of thousands of those overlapping pulse responses
+      under a pseudo-random bit sequence (PRBS).
+    </p>
+
+    <p>
+      This interactive laboratory binds all four representations together. When you adjust a physical trace length,
+      introduce an impedance mismatch, or attach an unterminated via stub, every panel updates instantaneously from
+      the same underlying ABCD transmission matrix.
+    </p>
+
+    <h2>Linked views of one channel</h2>
+    <p>
+      The panels above come from one network: a cascade of line sections with an
+      optional mismatched piece and an optional stub. Changing a physical control
+      updates every view from that definition. Complex S<sub>21</sub> and the discrete
+      impulse response form a transform pair when the bandwidth, sampling grid,
+      window and reference planes are kept consistent; the other views are projections
+      that answer narrower questions.
+    </p>
+    <div class="eq">
+      <span class="eq__main">h(t) = 𝓕<sup>−1</sup>{ S<sub>21</sub>(f) }</span>
+      <span class="eq__note">the impulse response and the insertion loss are the same fact</span>
+    </div>
+    <p>
+      This connection helps with diagnosis. Pulse spreading and ringing must be
+      consistent with the complex frequency response over the band used to construct
+      it. A magnitude-only plot, an insufficient frequency span, or a different
+      reference plane can hide the feature that matters, so preserve those conditions
+      when comparing frequency- and time-domain results.
+    </p>
+
+    <h2>Why the cascade is a matrix product</h2>
+    <p>
+      Each section is described by an ABCD matrix relating the voltage and current
+      at its input to those at its output. Because the output of one section is
+      literally the input of the next, cascading is matrix multiplication — and
+      because matrix multiplication is exact, every internal re-reflection between
+      the discontinuity and the two ends is included automatically.
+    </p>
+    <div class="eq">
+      <span class="eq__main">[A B; C D]<sub>total</sub> = [A B; C D]<sub>1</sub> · [A B; C D]<sub>2</sub> ⋯</span>
+      <span class="eq__note">then S<sub>21</sub> = 2 / (A + B/Z<sub>0</sub> + C·Z<sub>0</sub> + D)</span>
+    </div>
+    <p>
+      That matters more than it sounds. A first-order treatment — "the discontinuity
+      reflects this much, and the load echo comes back through the channel twice" —
+      gets the main features right and the ripple either side of a notch wrong,
+      because the ripple <em>is</em> the higher-order terms interfering.
+    </p>
+
+    <details class="deeper">
+      <summary>Go deeper — group delay, and what this model still leaves out</summary>
+      <p>
+        The group delay panel is the derivative of the S<sub>21</sub> phase:
+      </p>
+      <div class="eq">
+        <span class="eq__main">τ<sub>g</sub>(ω) = −dφ/dω</span>
+        <span class="eq__note">flat means every frequency arrives together; structure means dispersion</span>
+      </div>
+      <p>
+        A uniform lossless line has a group delay exactly equal to its own
+        T<sub>d</sub>, flat at every frequency — the model gate asserts this to
+        within a femtosecond. Anything that is not flat is a frequency-dependent
+        arrival time, which is dispersion, which is ISI by another name. The peaks
+        you see around a stub resonance are the sharpest form of it.
+      </p>
+      <p>
+        What the model deliberately leaves out:
+      </p>
+      <ul>
+        <li><b>Crosstalk.</b> Single-ended, single-net. The neighbours that would
+          sit either side of this trace in a real escape are not here — see
+          <a href="../signal-integrity/what-closes-the-eye.html">what closes the eye</a>,
+          which adds them.</li>
+        <li><b>The DFE.</b> The receiver here is a CTLE only, so the post-cursors
+          shorten but never vanish. A four-tap DFE would zero the first four
+          exactly, which is a different and much stronger claim.</li>
+        <li><b>Package and die.</b> The source and load are ideal 50 Ω. Real
+          terminations are a resistor in parallel with a pad capacitance and a
+          bond inductance, which is itself a discontinuity at both ends.</li>
+        <li><b>Mode conversion.</b> Everything here is single-ended. A differential
+          pair with skew converts part of the differential signal into common mode,
+          and no single-ended S<sub>21</sub> can show that.</li>
+      </ul>
+      <p>
+        <strong>What the eye height on this panel actually is.</strong> At the
+        decision instant, every sample is sorted by <em>the symbol that was
+        transmitted</em> — not by which side of zero it landed on. The number is
+        the gap between the lowest sample of the ones and the highest sample of
+        the zeros, over one period of the PRBS7 pattern. Three consequences worth
+        knowing before you compare it with anything:
+      </p>
+      <ul>
+        <li>
+          It is a <b>worst case over this pattern</b>, not a percentile and not a
+          BER contour. A compliance eye height is a different quantity measured a
+          different way, and the two are not interchangeable.
+        </li>
+        <li>
+          It <b>goes negative</b> when the two populations overlap, and the panel
+          says "closed by" and how much. Sorting by sign instead would have folded
+          every wrong sample into the other population and reported a positive
+          opening no matter how bad the channel was.
+        </li>
+        <li>
+          It is built from <b>393 symbols</b>, with convolution edges removed by a
+          fixed number of unit intervals for every preset. That finite population is
+          useful for exploring the eye shape and selected decisions; it is not large
+          enough to support a compliance claim. The readout
+          beside it counts the wrong decisions and refuses to quote a bit error
+          rate: a repeating deterministic pattern gives reproducible samples, not
+          independent trials, so its length is not evidence about a real link.
+        </li>
+      </ul>
+
+      <p>
+        <strong>Asymmetric invertibility: the one-way diagnostic trap.</strong> The relationship between
+        these four views is strictly directional in diagnostic utility. Moving forward is deterministic:
+      </p>
+
+      <div class="eq">
+        <span class="eq__main">Geometry &rarr; S-Parameters &rarr; Impulse Response h(t) &rarr; Eye Diagram</span>
+        <span class="eq__note">every forward arrow is an exact mathematical projection (ABCD product &rarr; 𝓕⁻¹ &rarr; PRBS folding)</span>
+      </div>
+
+      <p>
+        However, attempting to invert this chain backwards — <strong>Eye Diagram &rarr; Geometry</strong> — is
+        fundamentally ill-posed and non-unique. A completely closed eye diagram can be produced by three radically
+        different physical impairments:
+      </p>
+
+      <ul class="tight">
+        <li>Severe, smooth dielectric absorption along a uniform 20-inch trace (wide, smeared pulse response; linear loss slope in S<sub>21</sub>).</li>
+        <li>An un-backdrilled 150-mil via stub acting as a quarter-wave notch filter (sharp oscillatory ringing in h(t); deep localized dip in S<sub>21</sub>).</li>
+        <li>A severe driver impedance mismatch producing a succession of round-trip reflections (discrete echo steps in h(t); periodic ripple in S<sub>21</sub>).</li>
+      </ul>
+
+      <p>
+        Looking at the receiver eye diagram tells you only <em>that</em> the channel has failed; it cannot tell you
+        <em>why</em>. Effective signal integrity triage requires moving backward through the chain one step at a time:
+        using the single-bit pulse response to identify whether the eye closure is driven by main cursor attenuation,
+        precursor dispersion, or post-cursor ringing, and using the frequency-domain S-parameters and group delay to
+        isolate the specific physical discontinuity responsible.
+      </p>
+    </details>
+
+    <h2 class="section-rule"><span>Bring your own file</span></h2>
+
+    <p>
+      The parser behind this is a small, strict reader for one shape of Touchstone
+      file, and it is deliberately an <strong>inspector rather than an importer</strong>.
+      It will tell you what a file contains and whether it can be trusted — and it will
+      not offer to load it into the lab above, because doing that honestly needs
+      renormalisation to a different reference impedance, interpolation onto a different
+      frequency grid, and a DC extrapolation. Three pieces of numerical work, each with
+      its own error budget, none of which is written yet. A button that skipped them
+      would produce numbers, and they would be wrong in a way nothing downstream could
+      detect.
+    </p>
+
+    <section class="instrument" id="touchstone-inspector" data-viz="touchstone" aria-label="Touchstone file inspector: what a .s2p file contains, and whether this reader can trust it">
+    <script type="application/json" data-contract>{"kind":"exact","evidence":"independent","purpose":"Report what a Touchstone 1.0 two-port file contains, and whether this reader can trust it.","equations":["sigma_max(S) = sqrt( largest eigenvalue of S^H S ), over the FULL complex 2x2","T = sum |Sij|^2,  D = |det S|^2,  sigma_max = sqrt( (T + sqrt(max(0, T^2 - 4D))) / 2 )","IL = -20*log10(|S21|)","reflection in dB = 20*log10(|S11|);  return loss = -20*log10(|S11|)"],"units":"Hz after conversion from the file's own unit; dB; linear S","validity":"Touchstone 1.0, two-port, S-parameters, MA/DB/RI format, Hz through GHz. Strictly ascending non-negative frequencies. Values validated AFTER unit and format conversion, because a finite 1e308 becomes infinite once multiplied by 1e9.","numerics":"Exact arithmetic on the file's own numbers. No interpolation, no renormalisation, no extrapolation.","limitations":"An INSPECTOR, not an importer. It cannot feed the channel lab, because that needs renormalisation to the model's reference impedance, interpolation onto its frequency grid and a DC extrapolation — three pieces of numerical work with three error budgets, none written. Does not support Touchstone 2.0 keywords, noise data, ports other than two, Y/Z/H/G parameters, per-port reference impedances, or any repair of a malformed file. Passivity is evaluated only at the frequencies the file contains: it establishes nothing about the gaps between samples, about causality, about measurement quality, or about fitness for a transient transform.","suites":["Touchstone","Passivity"],"version":"2.0","reviewed":"2026-09-13","panel":"touchstone"}</script>
+      <div class="instrument__bar">
+        <span class="instrument__title">.s2p inspector</span>
+        <span data-evidence="independent" data-model-version="2.0" class="model-tag model-tag--exact" title="placeholder, stamped from docs/model-types.json">exact</span>
+      </div>
+
+      <div class="ts-drop" data-ts-drop>
+        <p>
+          <label class="ts-label" for="ts-file">Choose a <code>.s2p</code> file</label>
+          <input type="file" id="ts-file" accept=".s2p,.txt">
+          <span class="ts-or">or drop one here, or</span>
+          <button class="preset preset--act" type="button" data-act="ts-demo">inspect a generated example</button>
+        </p>
+        <div class="ts-out" data-out="ts-report" role="status" aria-live="polite">
+          <p class="ts-note">Nothing loaded. The example is generated from this site's own
+            causal line model, so it describes a channel the lab above can also compute
+            from first principles — which makes it a check on the reader rather than a
+            demonstration of it.</p>
+        </div>
+      </div>
+    </section>
+
+    <h2>In the real world</h2>
+    <p>
+      The reason this lab links several panels on one page is that channel debug is often
+      always a question of which domain shows the problem most clearly. A smooth loss
+      slope is obvious in S<sub>21</sub> and invisible on a TDR. A 30 Ω via field is
+      obvious on a TDR and shows up in S<sub>21</sub> only as gentle ripple. A stub
+      resonance is a spike in group delay, a null in S<sub>21</sub>, and almost nothing
+      on a TDR at all.
+    </p>
+    <p>
+      So the practical habit is to look at all of them before concluding anything —
+      and, when a simulation and a measurement disagree, to find the domain where the
+      disagreement is largest, because that is where the wrong assumption lives.
+    </p>
+  </div>
+
+
+<!-- sources:start -->
+    <section class="sources">
+      <h2 class="section-rule"><span>Sources</span></h2>
+      <ul class="sources__list">
+      <li><a href="https://ansyshelp.ansys.com/public/Views/Secured/Electronics/v242/en/Subsystems/HFSS/Content/HFSS/DjordjevicSarkarCausalDielectricModel.htm" rel="noopener">Ansys — the Djordjevic-Sarkar causal dielectric model</a></li>
+      <li><a href="https://ibis.org/touchstone_ver2.1/touchstone_ver2_1.pdf" rel="noopener">Touchstone 2.1 specification</a></li>
+      </ul>
+      <p class="sources__note">Rows marked with a claim id are tracked in <a href="../../docs/claims.md">the claim ledger</a>, which records what each source can and cannot establish.</p>
+    </section>
+    <!-- sources:end -->
+  <!-- pager:start -->
+  <nav class="pager" aria-label="Previous and next topic">
+    <a class="prev" href="../../topics/labs/travelling-waves.html"><span class="dir">Previous</span><span>Lab A: Transmission-Line Reflections and Energy Flow</span></a>
+    <a class="next" href="../../topics/labs/pdn-chain.html"><span class="dir">Next</span><span>Lab C: PDN Impedance, Current Sharing, and Transient Droop</span></a>
+  </nav>
+  <!-- pager:end -->
+</main>
+
+<footer class="site-foot">
+  <span>SIPI &#8212; signal and power integrity, visualised.</span>
+  <span>Created and directed by Geetansh Arora. <a href="../../colophon.html">About, review &amp; AI assistance</a> &#183; <a href="../../model-contract.html">Model assumptions</a> &#183; <a href="../../docs/claims.md">Claim ledger</a></span>
+</footer>
+
+<script src="../../js/site.js?v=acb47d86"></script>
+<script src="../../js/viz-kit.js?v=a53e49c3"></script>
+<script src="../../js/viz/touchstone.js?v=85cc60d7"></script>
+<script src="../../js/viz/lab-channel.js?v=1b5c49ba"></script>
+<script src="../../js/viz-loader.js?v=89d5884d"></script>
+<script src="../../js/lab-workspace.js?v=49b1d309"></script>
+<script src="../../js/search.js?v=6c93a285"></script>
+</body>
+</html>

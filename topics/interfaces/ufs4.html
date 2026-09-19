@@ -1,0 +1,347 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>UFS 4.0 Signal Integrity: M-PHY Gear 5 | SIPI</title>
+<meta name="description" content="23.2 Gbps per lane on a phone board: what burst-mode signalling changes, and why the hard part is the escape rather than the channel.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<link rel="stylesheet" href="../../css/base.css?v=e4f774de">
+<link rel="stylesheet" href="../../css/components.css?v=295837ab">
+  <!-- meta:start -->
+  <link rel="canonical" href="https://sipi.work/topics/interfaces/ufs4.html">
+  <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="SIPI">
+  <meta property="og:title" content="UFS 4.0 Signal Integrity: M-PHY Gear 5 | SIPI">
+  <meta property="og:description" content="23.2 Gbps per lane on a phone board: what burst-mode signalling changes, and why the hard part is the escape rather than the channel.">
+  <meta property="og:url" content="https://sipi.work/topics/interfaces/ufs4.html">
+  <meta property="og:image" content="https://sipi.work/assets/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="UFS 4.0 Signal Integrity: M-PHY Gear 5 | SIPI">
+  <meta name="twitter:description" content="23.2 Gbps per lane on a phone board: what burst-mode signalling changes, and why the hard part is the escape rather than the channel.">
+  <meta name="twitter:image" content="https://sipi.work/assets/og.png">
+  <!-- meta:end -->
+</head>
+<body>
+
+<header class="masthead">
+  <a class="wordmark" href="../../index.html">SIPI</a>
+  <nav>
+    <a href="../../index.html#fundamentals">Fundamentals</a>
+    <a href="../../index.html#power-integrity">Power</a>
+    <a href="../../index.html#interfaces">Interfaces</a>
+    <a href="../../start.html">Start</a>
+    <a href="../../labs.html">Labs</a>
+    <a href="../../reference.html">Reference</a>
+    <button class="theme-toggle" data-act="theme" type="button">System</button>
+  </nav>
+</header>
+
+<main>
+  <div class="page-head">
+    <p class="crumb"><a href="../../index.html#interfaces">Interface sign-off</a> / 05</p>
+    <h1>UFS 4.0 Signal Integrity: M-PHY Gear 5</h1>
+    <p class="byline">
+      <!-- review:start --><span>By Geetansh Arora — Principal SI/PI Engineer</span><time datetime="2026-09-18" title="Technical review by Geetansh Arora on this date">18 Sep 2026</time><span>9 min</span><!-- review:end -->
+    </p>
+    <p class="answer">
+      UFS is a serial storage link that lives entirely inside a handset &#8212; a few centimetres
+      of channel, which makes loss nearly a non-issue. What makes it distinctive is that it does
+      not run continuously. It powers down between bursts to save battery, and the consequences of
+      waking up repeatedly are the interesting part.
+    </p>
+  </div>
+
+  <!-- ───────────── the picture ───────────── -->
+  <figure class="figure">
+    <div class="figure__bar"><span>A burst, from cold &#183; every time</span></div>
+    <div class="figure__body"><svg viewBox="-4 14 680 230" role="img" aria-label="An M-PHY burst: the line sits powered down, wakes, sends a short preamble during which the receiver must acquire lock, transfers a burst, then powers down again.">
+  <text class="lbl-hi" x="0" y="34">M-PHY does not run continuously — and that is the whole problem</text>
+  <g transform="translate(0,50)">
+    <rect x="0" y="0" width="90" height="34" rx="2" fill="var(--muted)" opacity=".25"/>
+    <text class="lbl" x="45" y="21" text-anchor="middle">powered down</text>
+    <rect x="90" y="0" width="46" height="34" rx="2" fill="var(--reflect)" opacity=".55"/>
+    <text class="lbl-hi" x="113" y="21" text-anchor="middle">wake</text>
+    <rect x="136" y="0" width="86" height="34" rx="2" fill="var(--alarm)" opacity=".55"/>
+    <text class="lbl-hi" x="179" y="21" text-anchor="middle">preamble</text>
+    <rect x="222" y="0" width="300" height="34" rx="2" fill="var(--signal)" opacity=".55"/>
+    <text class="lbl-hi" x="372" y="21" text-anchor="middle">HS burst — 23.2 Gbps per lane</text>
+    <rect x="522" y="0" width="140" height="34" rx="2" fill="var(--muted)" opacity=".25"/>
+    <text class="lbl" x="592" y="21" text-anchor="middle">powered down</text>
+    <path class="edge dash" d="M136,40 L136,66 M222,40 L222,66" stroke="var(--alarm)"/>
+    <path class="flow-bad" d="M136,58 L222,58"/>
+    <text class="lbl-bad" x="179" y="82" text-anchor="middle">the CDR must lock inside this</text>
+  </g>
+  <g transform="translate(0,160)">
+    <text class="lbl-hi" x="0" y="0">so the requirements shift to things a continuous link ignores</text>
+    <text class="lbl" x="0" y="20">· squelch threshold vs the noise floor</text>
+    <text class="lbl" x="0" y="36">· how fast the eye is usable after turn-on</text>
+    <text class="lbl" x="340" y="20">· supply noise from whatever else woke up</text>
+    <text class="lbl" x="340" y="36">· behaviour through power-state transitions</text>
+    <text class="lbl-bad" x="0" y="62">a link that is stable once running but drops the odd burst is an acquisition problem, not a channel one</text>
+  </g>
+</svg></div>
+    <figcaption><b>M-PHY is built for battery-powered systems, so it powers down between transfers.</b> That saves substantial energy and creates the interface's characteristic problem: the receiver must acquire from nothing, every burst. A continuously-running link's CDR has effectively unlimited time to settle; an M-PHY receiver gets a short preamble, and if it has not locked by the end of it the burst is lost. So the requirements move to things a continuous link barely cares about &#8212; squelch detection thresholds, wake timing, how quickly the eye is usable after the driver turns on, and how much residual noise is left on the rail by whatever else woke at the same moment. The margin itself mostly goes to the <b>escape</b> rather than the trace: 23.2 Gbps across a few centimetres is a modest loss budget, but getting four differential pairs out of a fine-pitch ball field through a thin phone stackup, without breaking pair symmetry, is where the discontinuities are. And a link that is stable once running but occasionally drops a burst is almost never a channel problem &#8212; simulate the burst <em>start</em>, not the steady-state eye.</figcaption>
+  </figure>
+
+  <div class="prose">
+    <p>
+      Whenever a modern flagship smartphone launches an application, captures 8K video, or loads an on-device
+      AI model, it transfers data through Universal Flash Storage (UFS). In UFS 4.0, the underlying physical layer
+      is driven by MIPI M-PHY Gear 5, delivering data rates up to an astonishing <span class="num">23.2 Gbps per lane</span>.
+      Across two dual-simplex differential lanes, the interface provides up to <span class="num">46.4 Gbps</span> of
+      raw throughput — matching enterprise server NVMe speeds, but engineered entirely within the tight battery and
+      thermal envelope of a handheld mobile device.
+    </p>
+
+    <p>
+      At first glance, routing UFS looks like a trivial signal integrity problem: the flash memory package typically
+      sits immediately adjacent to the application processor (AP) SoC, spanning only 15 to 30 millimetres of board
+      trace. Over a one-inch trace, smooth dielectric insertion loss is barely 2 to 3 dB at Nyquist.
+    </p>
+
+    <p>
+      However, UFS 4.0 operates under extreme mobile constraints that invert standard enterprise SerDes assumptions.
+      To preserve battery life, the PHY cannot run continuously: it powers down completely between data transfers,
+      waking up in bursts thousands of times every second. This means the receiver's Clock and Data Recovery (CDR)
+      cannot afford hundreds of thousands of bits to settle; it must achieve bit lock from a dead stop within a
+      microscopic preamble lasting only a few hundred nanoseconds. Combined with dense smartphone BGA breakout
+      vias and severe transient power supply droop when adjacent compute blocks wake simultaneously, UFS 4.0 turns
+      a short, simple trace into one of the most demanding transient acquisition challenges in hardware.
+    </p>
+
+    <h2>A short channel with a power-management problem</h2>
+
+    <p>
+      Most of this site's signal integrity concerns scale with distance. UFS sits a few centimetres
+      from the SoC inside a phone, so loss is small, the channel is simple, and the reach questions
+      that dominate PCIe barely arise.
+    </p>
+
+    <p>
+      What dominates instead is power. A phone cannot afford a link that draws current continuously
+      when it is idle, so the PHY is built to power down between bursts and wake for each transfer.
+    </p>
+
+    <p>
+      That single design choice is where the engineering is. A link that is always on settles once.
+      A link that wakes thousands of times a second has to settle correctly <em>every time</em>, and
+      settling involves references, biases, clock recovery and equaliser adaptation — none of which
+      are instantaneous.
+    </p>
+
+    <h2 class="section-rule"><span>What it is</span></h2>
+
+    <p>
+      JEDEC's storage interface, layered on MIPI's M-PHY. UFS 4.0 adds HS-Gear5, roughly
+      <strong>23.2 Gbps per lane</strong>, with two lanes in each direction. UniPro sits above the PHY
+      as the link layer. Unlike LPDDR this is a serial, embedded-clock link; unlike PCIe it lives
+      entirely inside a handset, a few centimetres from the SoC.
+    </p>
+
+    <h2 class="section-rule"><span>Burst mode is the distinctive part</span></h2>
+
+    <p>
+      M-PHY does not run continuously. It is built for battery-powered systems, so it powers down
+      between transfers and wakes into a burst when there is data. It also has low-power PWM modes for
+      slow traffic alongside the high-speed gears.
+    </p>
+
+    <p>
+      That saves substantial power and creates the interface's characteristic SI problem: <strong>the
+      receiver must acquire from nothing, every burst.</strong> A continuously-running link's CDR has
+      effectively unlimited time to settle. An M-PHY receiver gets a short preamble, and if it has not
+      locked by the end of it the burst is lost. So the requirements shift toward things a
+      continuously-running link barely cares about — squelch detection thresholds, wake timing, how
+      quickly the eye is usable after the driver turns on, and how much residual noise is left on the
+      rail from whatever else woke up at the same moment.
+    </p>
+
+    <div class="note">
+      <b>Where this bites in practice</b>
+      A link that is stable once running but occasionally drops a burst is almost never a channel
+      problem. It is an acquisition problem: preamble too short after the real turn-on transient,
+      squelch threshold too close to the noise floor, or supply noise correlated with the wake event
+      itself. Time-domain simulation of the burst start — not the steady-state eye — is what finds it.
+    </div>
+
+    <h2 class="section-rule"><span>Where the margin goes</span></h2>
+
+    <ul class="tight">
+      <li><strong>The escape, not the trace.</strong> Twenty-three gigabits per second across a few
+        centimetres is a modest loss budget. Getting four differential pairs out of a fine-pitch SoC
+        ball field, through the layer transitions a thin phone stackup allows, without breaking pair
+        symmetry — that is where the discontinuities are.</li>
+      <li><strong>Crosstalk from everything else on the board.</strong> A handset routes this link
+        alongside LPDDR, camera and display interfaces, RF and the PDN, with no spare space to separate
+        them. Aggressors are unrelated to the data, so the coupling appears as bounded uncorrelated
+        jitter.</li>
+      <li><strong>Mode conversion</strong> from asymmetric escape routing, which the receiver does not
+        reject and which couples into neighbouring nets.</li>
+      <li><strong>Spread spectrum</strong>, where the PHY configuration uses it &#8212; do not assume USB's parameters carry across to M-PHY without checking the MIPI revision &#8212; taking its share of the CDR's
+        tracking budget.</li>
+    </ul>
+
+    <h2 class="section-rule"><span>Sign-off</span></h2>
+
+    <p>
+      An eye mask at the receiver across corners, plus a jitter tolerance test — the receiver must hold
+      its error rate against a signal stressed with defined jitter components. Add to that the
+      burst-specific checks that have no equivalent on a continuous link: acquisition within the
+      preamble, and correct behaviour through the power-state transitions, at the temperature and
+      voltage corners where the PHY is slowest to wake.
+    </p>
+
+    <h3>Sources</h3>
+    <ul class="tight refs">
+      <li><strong>JEDEC JESD220E (UFS 4.0), and the MIPI M-PHY revision it references</strong> &#8212; lane rate, burst and power-state behaviour, spread spectrum &#8212; ledger claims C-12 to C-14</li>
+    </ul>
+      <h2 class="section-rule"><span>Why this decides how your board behaves</span></h2>
+
+    <ul class="tight">
+      <li><strong>Transient behaviour matters more than steady-state.</strong> The first bits after
+        a wake are the ones at risk, and they are the ones a steady-state eye measurement never
+        shows.</li>
+      <li><strong>The PDN sees a repeating load step.</strong> Waking and sleeping is a current
+        transient at a rate the system controls, and if that rate lands on a PDN resonance it is
+        excited repeatedly rather than once. See
+        <a href="../power-integrity/anti-resonance.html">anti-resonance</a>.</li>
+      <li><strong>AC coupling has to survive the gaps.</strong> A link that goes quiet and returns
+        has to re-establish its DC operating point, and the coupling capacitors' time constants are
+        part of that.</li>
+      <li><strong>Loss is not the constraint, so effort spent there is wasted.</strong> On a
+        centimetres-long channel, crosstalk, return paths and supply noise are where the margin
+        goes.</li>
+    </ul>
+
+    <h2 class="section-rule"><span>What to do about it</span></h2>
+
+    <p>
+      <strong>Test at the burst boundaries, not in the middle.</strong> A long steady capture
+      measures the easy case. The interesting question is what the first symbols after a wake look
+      like.
+    </p>
+
+    <p>
+      <strong>Check the PDN at the burst repetition rate.</strong> This is the one interface on the
+      site where the load's spectrum is genuinely under system control, and where a resonance can be
+      hit deliberately by accident.
+    </p>
+
+    <p>
+      <strong>Give the pair a clean, continuous reference through the routing.</strong> In a phone
+      the routing is dense, flexible-circuit transitions are common, and the return path is where
+      the surprises are.
+    </p>
+
+    <p>
+      <strong>Keep the pair symmetric through every transition.</strong> Short channel or not, mode
+      conversion still converts, and a handset has plenty of asymmetric structures to convert at.
+    </p>
+
+    <div class="note">
+      <b>Using this to find a fault</b>
+      <ul class="tight">
+        <li><b>Errors clustered at the start of a burst.</b> Settling — references, bias, CDR lock
+          or equaliser adaptation. Steady-state measurements will look clean.</li>
+        <li><b>Failures that depend on the traffic pattern rather than the data.</b> Look at the
+          burst rate against the PDN impedance curve.</li>
+        <li><b>A link that works on a rigid board and fails through a flex.</b> Impedance and return
+          path through the flex and its connectors, which are rarely modelled.</li>
+        <li><b>Mode conversion on a very short channel.</b> Check the transitions, not the length —
+          on a few centimetres, structures dominate completely.</li>
+      </ul>
+    </div>
+
+    <details class="deeper">
+      <summary>Go deeper — what a wake actually has to do, and what is not sourced here</summary>
+
+      <p>
+        Powering a PHY back up is not one event. Several things have to happen, in order, and each
+        takes time:
+      </p>
+
+      <ul class="tight">
+        <li>Bias currents and references settle, which is analogue and sets a floor on how fast a
+          wake can be.</li>
+        <li>The clock recovery loop acquires lock, which needs enough transitions to pull in.</li>
+        <li>Any adaptive equalisation converges, or restores previously stored settings.</li>
+        <li>The DC operating point across the AC coupling re-establishes.</li>
+      </ul>
+
+      <p>
+        Those steps are why a burst-mode link's specification includes wake timings at all, and why
+        the trade between deeper sleep states and faster wake is a real one: the more completely you
+        power down, the more of that list has to be redone.
+      </p>
+
+      <p>
+        It also explains a diagnostic asymmetry worth remembering. A steady-state eye on a burst-mode
+        link is measuring the part of operation that was never in doubt, and the errors — if there
+        are any — are at the boundaries that the eye's own averaging discards.
+      </p>
+
+      <p>
+        <strong>On sourcing.</strong> The gear rates and lane counts on this page come from the
+        published interface family, and the detailed M-PHY claims — power-state definitions, wake
+        timings, the exact revision each applies to — are recorded in the
+        <a href="../../docs/claims.md">claim ledger</a> as awaiting verification against primary
+        sources. The engineering reasoning above does not depend on the exact numbers; a sign-off
+        does, so read the specification for those.
+      </p>
+    </details>
+
+    <h2 class="section-rule"><span>In the real world</span></h2>
+
+    <p>
+      UFS is a useful reminder that "high-speed" and "hard" are not the same thing. The channel is
+      short and forgiving; the difficulty lives in power management, in a mechanical environment full
+      of flexes and connectors, and in a system that spends most of its time asleep.
+    </p>
+
+    <p>
+      Which means the instincts built on long-channel links mislead here. The question is rarely how
+      much loss there is. It is usually what happens in the first microsecond after something woke
+      up.
+    </p>
+
+    <h3>Related</h3>
+    <ul class="tight">
+      <li><a href="../fundamentals/differential-signalling.html">Differential Signaling and Mode Conversion</a></li>
+      <li><a href="../package-board/bga-escape-routing.html">BGA Escape Routing and Breakout Congestion</a></li>
+      <li><a href="../signal-integrity/equalization.html">Equalization and Clock Recovery: CTLE, FFE, DFE, and CDR</a></li>
+      <li><a href="../fundamentals/crosstalk.html">PCB Crosstalk: NEXT, FEXT, and Mutual Coupling</a></li>
+    </ul>
+  </div>
+
+<!-- sources:start -->
+    <section class="sources">
+      <h2 class="section-rule"><span>Sources</span></h2>
+      <ul class="sources__list">
+      <li><a href="https://www.mipi.org/press-releases/m-phy-update-doubles-peak-data-rate-for-next-generation-flash-memory-storage-applications" rel="noopener">MIPI Alliance — M-PHY v5.0 announcement</a> <span class="src__for">C-12a</span></li>
+      </ul>
+      <p class="sources__note">Rows marked with a claim id are tracked in <a href="../../docs/claims.md">the claim ledger</a>, which records what each source can and cannot establish.</p>
+    </section>
+    <!-- sources:end -->
+  <!-- pager:start -->
+  <nav class="pager" aria-label="Previous and next topic">
+    <a class="prev" href="../../topics/interfaces/usb-3x.html"><span class="dir">Previous</span><span>USB 3.1 and 3.2 Signal Integrity: SSC and Compliance</span></a>
+    <a class="next" href="../../topics/methodology/simulation-flow.html"><span class="dir">Next</span><span>Signal Integrity Simulation Workflow</span></a>
+  </nav>
+  <!-- pager:end -->
+</main>
+
+<footer class="site-foot">
+  <span>SIPI &#8212; signal and power integrity, visualised.</span>
+  <span>Created and directed by Geetansh Arora. <a href="../../colophon.html">About, review &amp; AI assistance</a> &#183; <a href="../../model-contract.html">Model assumptions</a> &#183; <a href="../../docs/claims.md">Claim ledger</a></span>
+</footer>
+
+<script src="../../js/site.js?v=acb47d86"></script>
+<script src="../../js/search.js?v=6c93a285"></script>
+</body>
+</html>

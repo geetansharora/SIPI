@@ -1,0 +1,380 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Statistical and Time-Domain Channel Simulation | SIPI</title>
+<meta name="description" content="Two channel simulation methods with opposite blind spots — one cannot represent non-linearity, the other cannot reach the target BER.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<link rel="stylesheet" href="../../css/base.css?v=e4f774de">
+<link rel="stylesheet" href="../../css/components.css?v=295837ab">
+  <!-- meta:start -->
+  <link rel="canonical" href="https://sipi.work/topics/signal-integrity/statistical-vs-time-domain.html">
+  <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="SIPI">
+  <meta property="og:title" content="Statistical and Time-Domain Channel Simulation | SIPI">
+  <meta property="og:description" content="Two channel simulation methods with opposite blind spots — one cannot represent non-linearity, the other cannot reach the target BER.">
+  <meta property="og:url" content="https://sipi.work/topics/signal-integrity/statistical-vs-time-domain.html">
+  <meta property="og:image" content="https://sipi.work/assets/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Statistical and Time-Domain Channel Simulation | SIPI">
+  <meta name="twitter:description" content="Two channel simulation methods with opposite blind spots — one cannot represent non-linearity, the other cannot reach the target BER.">
+  <meta name="twitter:image" content="https://sipi.work/assets/og.png">
+  <!-- meta:end -->
+</head>
+<body>
+
+<header class="masthead">
+  <a class="wordmark" href="../../index.html">SIPI</a>
+  <nav>
+    <a href="../../index.html#fundamentals">Fundamentals</a>
+    <a href="../../index.html#power-integrity">Power</a>
+    <a href="../../index.html#interfaces">Interfaces</a>
+    <a href="../../start.html">Start</a>
+    <a href="../../labs.html">Labs</a>
+    <a href="../../reference.html">Reference</a>
+    <button class="theme-toggle" data-act="theme" type="button">System</button>
+  </nav>
+</header>
+
+<main>
+  <div class="page-head">
+    <p class="crumb"><a href="../../index.html#signal-integrity">SI in practice</a> / 04</p>
+    <h1>Statistical and Time-Domain Channel Simulation</h1>
+    <p class="byline">
+      <!-- review:start --><span>By Geetansh Arora — Principal SI/PI Engineer</span><time datetime="2026-09-16" title="Technical review by Geetansh Arora on this date">16 Sep 2026</time><span>9 min</span><!-- review:end -->
+    </p>
+    <p class="answer">
+      There are two ways to predict a link's error rate, and they fail at opposite things. One
+      computes the probability distribution directly and reaches 10<sup>&minus;18</sup> as cheaply
+      as 10<sup>&minus;6</sup>, but only works if the link is linear and time-invariant. The other
+      simulates actual bits and handles anything, but cannot run long enough to see a rare event.
+    </p>
+  </div>
+
+  <!-- ───────────── the picture ───────────── -->
+  <figure class="figure">
+    <div class="figure__bar"><span>Two methods &#183; opposite blind spots</span></div>
+    <div class="figure__body"><svg viewBox="-4 20 680 250" role="img" aria-label="Two simulation methods compared on a bit-error-rate axis: statistical simulation reaches arbitrarily low error rates instantly but assumes linearity, while time-domain simulation handles every non-linearity but stops six decades short.">
+  <g class="tick"><path d="M120,44 L120,214"/></g>
+  <text class="lbl" x="112" y="52" text-anchor="end">1e−2</text>
+  <text class="lbl" x="112" y="96" text-anchor="end">1e−6</text>
+  <text class="lbl" x="112" y="140" text-anchor="end">1e−9</text>
+  <text class="lbl" x="112" y="184" text-anchor="end">1e−12</text>
+  <text class="lbl" x="112" y="212" text-anchor="end">1e−18</text>
+  <text class="lbl" x="112" y="34" text-anchor="end">BER</text>
+
+  <rect x="150" y="44" width="180" height="170" rx="3" fill="var(--signal)" opacity=".16"/>
+  <rect x="150" y="44" width="180" height="170" rx="3" fill="none" stroke="var(--signal)"/>
+  <text class="lbl-sig" x="240" y="34" text-anchor="middle">STATISTICAL</text>
+  <text class="lbl" x="240" y="120" text-anchor="middle">reaches any BER</text>
+  <text class="lbl" x="240" y="136" text-anchor="middle">in seconds</text>
+
+  <rect x="380" y="44" width="180" height="52" rx="3" fill="var(--reflect)" opacity=".22"/>
+  <rect x="380" y="44" width="180" height="52" rx="3" fill="none" stroke="var(--reflect)"/>
+  <rect x="380" y="96" width="180" height="118" rx="3" fill="none" stroke="var(--reflect)" stroke-dasharray="4 3" opacity=".5"/>
+  <text class="lbl-ref" x="470" y="34" text-anchor="middle">TIME DOMAIN</text>
+  <text class="lbl" x="470" y="74" text-anchor="middle">actually simulated</text>
+  <text class="lbl" x="470" y="150" text-anchor="middle">extrapolated —</text>
+  <text class="lbl" x="470" y="166" text-anchor="middle">a fit, not data</text>
+
+  <text class="lbl-bad" x="150" y="238">blind to: DFE error propagation ·</text>
+  <text class="lbl-bad" x="150" y="252">non-linear drivers · CDR dynamics ·</text>
+  <text class="lbl-bad" x="150" y="266">adaptation · burst turn-on</text>
+  <text class="lbl-bad" x="380" y="238">blind to: anything rarer than</text>
+  <text class="lbl-bad" x="380" y="252">the run length — and inherits</text>
+  <text class="lbl-bad" x="380" y="266">every assumption in the fit</text>
+</svg></div>
+    <figcaption><b>Statistical simulation computes a distribution rather than sampling one</b>, so 10<sup>&#8722;12</sup> and 10<sup>&#8722;18</sup> cost exactly the same &#8212; seconds. The price is that its whole method rests on superposition, so anything that violates linearity is either approximated or silently absent. <b>Time-domain simulation</b> drives real bits through the channel, so whatever is in the model happens: DFE error propagation, a non-linear driver, CDR dynamics, a burst-mode turn-on. Its limit is arithmetic &#8212; a million bits samples 10<sup>&#8722;6</sup>, and no run length available in practice reaches 10<sup>&#8722;12</sup>. They are used together: statistical for sweeps, corners and sign-off; time-domain for the specific questions statistical cannot represent. <b>When the two disagree, the disagreement is the finding</b> &#8212; it usually names the non-linearity the statistical model dropped.</figcaption>
+  </figure>
+
+  <div class="prose">
+    <p>
+      When qualifying a high-speed serial link, the single overarching question is always: <em>will this
+      channel achieve its Bit Error Rate (BER) target with positive voltage and timing margin?</em>
+      For modern enterprise standards, that target is typically an uncorrected BER of <span class="num">10<sup>-12</sup></span>
+      for NRZ or <span class="num">10<sup>-4</sup></span> pre-FEC for PAM4. But verifying a BER of
+      <span class="num">10<sup>-12</sup></span> via brute-force transient simulation means driving, sampling,
+      and checking at least <span class="num">10<sup>12</sup></span> individual bits. At 32 Gbps, simulating one
+      trillion bits on SPICE or a standard transient solver would take months of compute time for a single trace.
+    </p>
+
+    <p>
+      To escape this computational barrier, signal integrity methodology divides into two competing
+      philosophies: <strong>time-domain (bit-by-bit)</strong> simulation and <strong>statistical</strong>
+      analysis. Time-domain simulation clocks bits sequentially through the driver, channel, and receiver,
+      faithfully capturing non-linear driver saturation, dynamic adaptation loops, and DFE error propagation &#8212;
+      but it is practically constrained to a few million bits (<span class="num">10<sup>6</sup></span>, sampling down to
+      <span class="num">10<sup>-5</sup></span>).
+    </p>
+
+    <p>
+      Statistical simulation (the mathematical foundation of IBIS-AMI statistical mode and standards-compliance
+      tools like Channel Operating Margin, COM) inverts the problem. By assuming the channel is Linear Time-Invariant
+      (LTI), it captures the channel's single-bit response once, and then uses probability theory and discrete
+      convolutions to calculate the exact probability distribution of ISI and noise across all possible bit sequences.
+      It reaches <span class="num">10<sup>-12</sup></span> or <span class="num">10<sup>-18</sup></span> in seconds.
+      Mastering when statistical assumptions are valid &#8212; and where they fall off a cliff &#8212; is central to
+      trusting link simulation margins.
+    </p>
+
+    <h2>Two ways to answer the same question</h2>
+
+    <p>
+      The question is: at a given sampling point, what is the probability that the voltage is on the
+      wrong side of the threshold? A bit error rate is exactly that probability.
+    </p>
+
+    <p>
+      <strong>You could measure it.</strong> Drive real bits through the channel, sample them,
+      count the mistakes. This is time-domain simulation, and it has one enormous virtue: whatever
+      is in the model actually happens. Non-linear drivers, DFE error propagation, CDR dynamics —
+      all of it, for free, because you are not modelling the behaviour, you are running it.
+    </p>
+
+    <p>
+      <strong>Or you could compute it.</strong> If you know the channel's pulse response, you know
+      how much each neighbouring bit contributes to the sample. Enumerate the possibilities,
+      combine their probability distributions, and you have the distribution of the sampled voltage
+      without ever sending a bit. This is statistical simulation, and its virtue is that a
+      distribution has tails — so 10<sup>−18</sup> costs no more than 10<sup>−6</sup>.
+    </p>
+
+    <p>
+      Neither is better. They are good at different things, and knowing which one you are holding
+      is most of using them well.
+    </p>
+
+    <h2 class="section-rule"><span>Two methods, two blind spots</span></h2>
+
+    <p>
+      <strong>Statistical</strong> simulation starts from the channel's impulse response, decomposes it
+      into cursor and ISI contributions, and convolves their probability distributions to build the
+      complete voltage distribution at the sampling instant. Because it computes a distribution rather
+      than sampling one, it reaches arbitrarily low probabilities immediately — 10<sup>−12</sup> and
+      10<sup>−18</sup> cost the same.
+    </p>
+
+    <p>
+      <strong>Time-domain</strong> simulation drives real bits through the channel and looks at what
+      comes out. Whatever is in the model happens: non-linear drivers, DFE error propagation, CDR
+      dynamics, burst-mode turn-on. The limit is arithmetic — a million bits samples 10<sup>−6</sup>,
+      and no run length available in practice reaches 10<sup>−12</sup>.
+    </p>
+
+    <h2 class="section-rule"><span>When each one lies to you</span></h2>
+
+    <p>
+      <strong>Statistical lies when the channel is not LTI.</strong> Its whole method rests on
+      superposition, so anything that violates it is either approximated or silently absent:
+    </p>
+
+    <ul class="tight">
+      <li>DFE error propagation — a decision error feeding back is fundamentally non-linear.</li>
+      <li>Non-linear or level-dependent drivers, which matters more for PAM4 than NRZ.</li>
+      <li>CDR dynamics and jitter tracking, usually handled by a separate analytical model rather
+        than simulated.</li>
+      <li>Anything that changes with time: adaptive equaliser convergence, burst-mode acquisition,
+        thermal drift.</li>
+    </ul>
+
+    <p>
+      <strong>Time-domain lies by extrapolation.</strong> Its raw result is honest but stops six decades
+      short, so the reported number comes from fitting Gaussian tails to what was observed — which
+      inherits every assumption in that fit, and is optimistic exactly when a jitter component has been
+      mis-classified as random.
+    </p>
+
+    <div class="note">
+      <b>How they are actually used together</b>
+      Statistical for sweeps and sign-off: it is fast enough to explore equaliser settings, corners and
+      topologies, and it is the method the interface specifications' reference flows are built on.
+      Time-domain for the specific questions statistical cannot represent — DFE behaviour on a marginal
+      channel, a non-linear driver, a burst-mode turn-on. When the two disagree, the disagreement is the
+      finding: it usually names the non-linearity the statistical model dropped.
+    </div>
+
+    <p>
+      One practical note: both methods are only as good as the S-parameters underneath them. A
+      non-causal or non-passive file produces confident, well-formatted results in either flow, and
+      neither will warn you.
+    </p>
+
+    <h2 class="section-rule"><span>Why this decides how your board behaves</span></h2>
+
+    <ul class="tight">
+      <li><strong>Only one of them can answer a compliance question directly.</strong> A
+        specification written at 10<sup>−12</sup> is beyond any practical time-domain run, so either
+        you compute the distribution or you extrapolate a measured one. Both are models.</li>
+      <li><strong>Only one of them can see error propagation.</strong> A DFE making a wrong decision
+        and corrupting the next few bits is a sequential, non-linear event. A statistical method
+        built on superposition has no term for it.</li>
+      <li><strong>They disagree in ways that are informative.</strong> When they do, the difference
+        is usually a violation of linearity or time-invariance — which is a finding about the link,
+        not about the tools.</li>
+      <li><strong>Both inherit their channel model.</strong> Neither can rescue a non-causal
+        Touchstone file or a channel measured over the wrong bandwidth.</li>
+    </ul>
+
+    <h2 class="section-rule"><span>What to do about it</span></h2>
+
+    <p>
+      <strong>Use statistical for margin, time-domain for behaviour.</strong> That is the division
+      that works: statistical answers "how much margin at what BER", time-domain answers "what does
+      this receiver actually do".
+    </p>
+
+    <p>
+      <strong>Run both when the answer matters.</strong> Agreement is meaningful evidence.
+      Disagreement tells you where the link is not behaving linearly, which is exactly what you want
+      to know before signing anything.
+    </p>
+
+    <p>
+      <strong>Check that the statistical run's assumptions hold.</strong> Adaptive equalisation, a
+      CDR that moves the sampling point, burst-mode turn-on and any transmitter non-linearity all
+      break the assumptions quietly rather than loudly.
+    </p>
+
+    <p>
+      <strong>Say which one produced any number you report.</strong> A margin from a statistical run
+      and a margin from a time-domain run are different quantities with the same units, and quoting
+      them interchangeably is a common and expensive confusion.
+    </p>
+
+    <div class="note">
+      <b>Using this to find a fault</b>
+      <ul class="tight">
+        <li><b>Statistical much more optimistic than time-domain.</b> Something is non-linear or
+          time-varying. Prime suspects: DFE error propagation, an adapting equaliser, or a driver
+          that is not linear at the swing you are driving.</li>
+        <li><b>Time-domain more optimistic than statistical.</b> Usually the run is too short to
+          have hit the worst pattern. Check the pattern length against the channel's memory.</li>
+        <li><b>Either one disagreeing with hardware in the tails only.</b> Suspect a random
+          contributor neither model has — most often supply noise, which channel simulators exclude
+          unless asked.</li>
+        <li><b>A statistical result that changes a lot with the pattern you specify.</b> It should
+          not, if the method is genuinely enumerating. That sensitivity means it is approximating
+          somewhere.</li>
+      </ul>
+    </div>
+
+    <details class="deeper">
+      <summary>Go deeper — what superposition buys, and where statistical models break down</summary>
+
+      <p>
+        The statistical method works because a linear time-invariant channel obeys superposition:
+        the response to a bit stream is the sum of the responses to each bit individually. So the
+        sampled voltage is
+      </p>
+
+      <div class="eq">
+        <span class="eq__main"><i class="var">y</i> = <i class="var">h</i><sub>0</sub><i class="var">a</i><sub>0</sub> + Σ<sub>k≠0</sub> <i class="var">h</i><sub>k</sub><i class="var">a</i><sub>−k</sub></span>
+        <span class="eq__note">each term is an independent random variable; the distribution of the sum is the convolution of their distributions</span>
+      </div>
+
+      <p>
+        That last step is the whole trick. Convolving distributions gives you the complete
+        distribution of y, tails included, in one calculation — and the tails are precisely what a
+        sampled run cannot reach. You are not estimating a rare event; you are computing its
+        probability.
+      </p>
+
+      <p>
+        <strong>Where the statistical model breaks down.</strong> Everything in that analytical expression
+        hinges on the channel and transceivers behaving as an ideal Linear Time-Invariant (LTI) system with
+        independent, stationary noise. In high-speed hardware, four dominant mechanisms violate this premise:
+      </p>
+
+      <ul class="tight">
+        <li><strong>Non-linear equalization (DFE):</strong> A decision feedback equaliser is fundamentally
+          state-dependent — it slices an analog level to make a hard digital decision, then feeds it back.
+          Statistical engines evaluate an "ideal" DFE by subtracting post-cursor tails under the assumption that
+          past decisions are always 100% correct. But in the extreme tails (the exact region deciding a
+          <span class="num">10<sup>-12</sup></span> BER), an erroneous decision inverts the feedback sign and triggers
+          a burst error event. Statistical convolution cannot model this error propagation; it predicts an
+          artificially clean tail.</li>
+        <li><strong>Silicon non-linearities:</strong> Real CMOS output stages suffer from non-linear driver impedance,
+          voltage-dependent junction capacitance (<span class="num">C<sub>j</sub>(V)</span>), and rail compression.
+          Superposition assumes that doubling the input stimulus doubles the output voltage; in a saturated driver,
+          transitions round off non-linearly.</li>
+        <li><strong>Dynamic adaptation loops:</strong> In live silicon, CTLE peaking gain and DFE tap coefficients
+          adapt continuously using Least Mean Squares (LMS) algorithms. The channel transfer function is therefore
+          time-varying, not static. Statistical models must evaluate a single frozen set of tap weights, obscuring
+          whether the real receiver would converge or wander.</li>
+        <li><strong>Correlated and non-stationary jitter:</strong> Statistical engines convolve uncorrelated Gaussian
+          distributions. They cannot capture Power Supply Induced Jitter (PSIJ) modulated by transient core current,
+          nor can they capture data-dependent jitter (DDJ) where specific multi-byte patterns consistently trigger
+          extreme edge shifts.</li>
+      </ul>
+
+      <p>
+        <strong>When time-domain simulation is unavoidable.</strong> While statistical simulation is unmatched for
+        rapid design-space exploration, sensitivity sweeps, and multi-corner sign-off, time-domain (bit-by-bit)
+        simulation is mandatory for specific engineering sign-off gates:
+      </p>
+
+      <ul class="tight">
+        <li><strong>Clock and Data Recovery (CDR) lock validation:</strong> Verifying phase-lock acquisition time,
+          tracking bandwidth, frequency offset tolerance, and resistance to cycle-slipping during long run-length sequences.</li>
+        <li><strong>Adaptive convergence verification:</strong> Ensuring that auto-negotiation and link training
+          converge reliably to the optimal equalization settings without settling in local sub-optimal minima.</li>
+        <li><strong>Pathological pattern stress:</strong> Driving worst-case compliant test patterns (like CJTPAT,
+          CRPAT, or PRBS31 stress bursts) to evaluate burst error susceptibility and verify that the forward error
+          correction (FEC) architecture can absorb the resulting error distribution.</li>
+      </ul>
+
+      <p>
+        A last point about what "reaching 10<sup>−18</sup>" means. The statistical method computes
+        that number exactly under its assumptions — but the assumptions were never verified at
+        10<sup>−18</sup>, and could not be. The precision is real; the accuracy is inherited from a
+        model validated several decades higher up. That is worth remembering before quoting a
+        number with that many zeros.
+      </p>
+    </details>
+
+    <h2 class="section-rule"><span>In the real world</span></h2>
+
+    <p>
+      The two methods map onto two moments in a project. Statistical belongs early, when you are
+      exploring a design space and want margin numbers for many variants quickly. Time-domain
+      belongs later, when a specific receiver with specific settings has to be shown to work.
+    </p>
+
+    <p>
+      The failure to avoid is using one for the other's job — sweeping a hundred stackup variants in
+      the time domain, or signing off a DFE-heavy link on a statistical margin alone. Both happen,
+      and both waste the strength of the tool being used.
+    </p>
+
+    <h3>Related</h3>
+    <ul class="tight">
+      <li><a href="../fundamentals/bathtub-curves.html">Bathtub curves and BER extrapolation</a></li>
+      <li><a href="../signal-integrity/ibis-ami-spice.html">IBIS, IBIS-AMI, and SPICE Model Selection</a></li>
+      <li><a href="../fundamentals/s-parameters.html">S-Parameters: Insertion Loss, Return Loss, and Mixed Mode</a></li>
+      <li><a href="../methodology/simulation-flow.html">Signal Integrity Simulation Workflow</a></li>
+    </ul>
+  </div>
+
+  <!-- pager:start -->
+  <nav class="pager" aria-label="Previous and next topic">
+    <a class="prev" href="../../topics/signal-integrity/nrz-vs-pam4.html"><span class="dir">Previous</span><span>NRZ and PAM4: Levels, Bandwidth, and SNR</span></a>
+    <a class="next" href="../../topics/signal-integrity/ibis-ami-spice.html"><span class="dir">Next</span><span>IBIS, IBIS-AMI, and SPICE Model Selection</span></a>
+  </nav>
+  <!-- pager:end -->
+</main>
+
+<footer class="site-foot">
+  <span>SIPI &#8212; signal and power integrity, visualised.</span>
+  <span>Created and directed by Geetansh Arora. <a href="../../colophon.html">About, review &amp; AI assistance</a> &#183; <a href="../../model-contract.html">Model assumptions</a> &#183; <a href="../../docs/claims.md">Claim ledger</a></span>
+</footer>
+
+<script src="../../js/site.js?v=acb47d86"></script>
+<script src="../../js/search.js?v=6c93a285"></script>
+</body>
+</html>

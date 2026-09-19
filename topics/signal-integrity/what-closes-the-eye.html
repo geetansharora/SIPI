@@ -1,0 +1,547 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Eye Closure: Loss, Reflections, Discontinuities, and Crosstalk | SIPI</title>
+<meta name="description" content="Four channel impairments on one eye diagram — insertion loss, reflections, an impedance discontinuity and crosstalk — with representative numbers for LPDDR5X, PCIe, USB and UFS.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<link rel="stylesheet" href="../../css/base.css?v=e4f774de">
+<link rel="stylesheet" href="../../css/components.css?v=295837ab">
+  <!-- meta:start -->
+  <link rel="canonical" href="https://sipi.work/topics/signal-integrity/what-closes-the-eye.html">
+  <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="SIPI">
+  <meta property="og:title" content="Eye Closure: Loss, Reflections, Discontinuities, and Crosstalk | SIPI">
+  <meta property="og:description" content="Four channel impairments on one eye diagram — insertion loss, reflections, an impedance discontinuity and crosstalk — with representative numbers for LPDDR5X, PCIe, USB and UFS.">
+  <meta property="og:url" content="https://sipi.work/topics/signal-integrity/what-closes-the-eye.html">
+  <meta property="og:image" content="https://sipi.work/assets/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Eye Closure: Loss, Reflections, Discontinuities, and Crosstalk | SIPI">
+  <meta name="twitter:description" content="Four channel impairments on one eye diagram — insertion loss, reflections, an impedance discontinuity and crosstalk — with representative numbers for LPDDR5X, PCIe, USB and UFS.">
+  <meta name="twitter:image" content="https://sipi.work/assets/og.png">
+  <!-- meta:end -->
+</head>
+<body>
+
+<header class="masthead">
+  <a class="wordmark" href="../../index.html">SIPI</a>
+  <nav>
+    <a href="../../index.html#fundamentals">Fundamentals</a>
+    <a href="../../index.html#power-integrity">Power</a>
+    <a href="../../index.html#interfaces">Interfaces</a>
+    <a href="../../start.html">Start</a>
+    <a href="../../labs.html">Labs</a>
+    <a href="../../reference.html">Reference</a>
+    <button class="theme-toggle" data-act="theme" type="button">System</button>
+  </nav>
+</header>
+
+<main>
+  <div class="page-head">
+    <p class="crumb"><a href="../../index.html#signal-integrity">SI in practice</a> / 02</p>
+    <h1>Eye Closure: Loss, Reflections, Discontinuities, and Crosstalk</h1>
+    <p class="byline">
+      <!-- review:start --><span>By Geetansh Arora — Principal SI/PI Engineer</span><time datetime="2026-09-15" title="Technical review by Geetansh Arora on this date">15 Sep 2026</time><span>12 min</span><!-- review:end -->
+    </p>
+    <p class="answer">
+      Four impairments close an eye, and they do it in four different ways. Insertion loss thins
+      it symmetrically, a reflection lands as an echo whose damage depends on <em>when</em> it
+      arrives, a discontinuity punches a notch no equaliser can undo, and crosstalk adds noise the
+      equaliser amplifies along with the signal. Telling them apart is most of channel debug.
+    </p>
+  </div>
+
+  <!-- ───────────── the picture ───────────── -->
+  <section class="instrument" data-viz="impairments" aria-label="Interactive eye diagram with independent controls for insertion loss, termination mismatch, an impedance discontinuity and crosstalk, plus interface presets and a sensitivity breakdown">
+    <script type="application/json" data-contract>{"kind":"analytical","evidence":"independent","purpose":"Compare four impairments on one consistent channel, as counterfactuals rather than a decomposition.","equations":["S21_disc=2/(2cos+j(r+1/r)sin)","S11_in=S11_disc*e^-j2wTd1 + S21_disc^2*GL*H^2*e^-j2wTd","echo = Gs.GL * H^2 * direct, delayed by 2*Td  (first term of a geometric series in Gs.GL)"],"units":"s, V, ohm, dB","validity":"FIRST ORDER in the reflection coefficients: one source-load round trip is kept and the (Gs.GL)^2 terms and beyond are dropped. The relative size of what is dropped is |Gs.GL|, measured at 0.06% to 0.71% of the retained echo across the released presets and 6.3% at the controls' extremes — so it is accurate here, but it is an expansion and not a cascade. Single-ended; fixed CTLE+DFE, not adapting. For a network with every internal re-reflection included exactly, see labChannel, which cascades ABCD matrices instead.","numerics":"4096-point FFT, 32 samples/UI, 420 symbols.","limitations":"An expansion truncated at first order, not an exact network. It also uses the two-term magnitude loss law with a minimum phase, not the causal material model that labChannel now uses, so its phase is reconstructed rather than derived.","suites":["Networks","Impairment chain"],"version":"2.0","reviewed":"2026-09-12","panel":"impairments"}</script>
+    <div class="instrument__bar">
+      <span class="instrument__title">Four impairments &#183; one eye &#183; pick an interface</span>
+        <span data-evidence="independent" data-model-version="2.0" class="model-tag model-tag--analytical" title="One channel: loss, a through-section discontinuity, source and load mismatch, FEXT. FIRST ORDER in the reflection coefficients — one source-load round trip is kept and the (ΓsΓL)² terms are dropped, which is 0.06% to 0.71% of the retained echo across these presets. For a network with every re-reflection included exactly, see Lab B.">analytical</span>
+      <span class="instrument__readout" role="status" aria-live="polite" aria-label="Current values">
+        <span>UI <b data-out="ui">—</b></span>
+        <span>Nyquist <b data-out="nyq">—</b></span>
+        <span>eye height <b data-out="eh">—</b></span>
+        <span>eye width <b data-out="ew">—</b></span>
+        <span>worst RL <b data-out="rl">—</b></span>
+        <span>echo returns <b data-out="echo">—</b></span>
+        <span class="evidence" data-out="evidence">—</span>
+      </span>
+    </div>
+    <div class="panels">
+      <div class="panel">
+        <span class="panel__label">The eye, with everything applied</span>
+        <canvas data-cv="eye" role="img" aria-label="An eye diagram formed from a pseudo-random bit sequence through a channel carrying insertion loss, reflections, an impedance discontinuity and crosstalk, with the measured opening marked."></canvas>
+        <div class="legend"><span><i style="background:var(--signal)"></i>overlaid bits</span><span><i class="dash" style="color:var(--reflect)"></i>measured opening</span></div>
+      </div>
+    </div>
+    <div class="panels two-up">
+      <div class="panel">
+        <span class="panel__label">TDR &#8212; impedance against round-trip time</span>
+        <canvas data-cv="tdr" role="img" aria-label="A time-domain reflectometry trace showing the line impedance against round-trip time, with a dip at the discontinuity and a step at the termination."></canvas>
+        <div class="legend"><span><i style="background:var(--signal)"></i>impedance profile</span><span><i class="dash" style="color:var(--muted)"></i>50 ohm</span></div>
+      </div>
+      <div class="panel">
+        <span class="panel__label">Sensitivity &#8212; remove one, see what comes back</span>
+        <canvas data-cv="bars" role="img" aria-label="A bar for each impairment showing how much eye height is regained if that impairment alone is removed."></canvas>
+        <div class="legend"><span><i style="background:var(--alarm)"></i>the dominant one</span><span><i style="background:var(--signal)"></i>the others</span></div>
+      </div>
+    </div>
+    <div class="controls">
+      <div class="ctl">
+        <div class="ctl__head"><label for="im-il">Insertion loss at Nyquist</label><output id="im-il-out" for="im-il">18 dB</output></div>
+        <input type="range" id="im-il" min="0" max="36" step="1" value="18">
+        <span class="ctl__note">The one equalisation is for</span>
+      </div>
+      <div class="ctl">
+        <div class="ctl__head"><label for="im-rt">Far-end termination</label><output id="im-rt-out" for="im-rt">48 ohm</output></div>
+        <input type="range" id="im-rt" min="30" max="70" step="1" value="48">
+        <span class="ctl__note">Away from 50 and it reflects &#8212; but a round trip needs BOTH ends</span>
+      </div>
+      <div class="ctl">
+        <div class="ctl__head"><label for="im-rs">Source impedance</label><output id="im-rs-out" for="im-rs">47 ohm</output></div>
+        <input type="range" id="im-rs" min="30" max="70" step="1" value="47">
+        <span class="ctl__note">A matched source cannot re-reflect &#8212; set it to 50 and the echo disappears</span>
+      </div>
+      <div class="ctl">
+        <div class="ctl__head"><label for="im-dz">Discontinuity impedance</label><output id="im-dz-out" for="im-dz">45 ohm</output></div>
+        <input type="range" id="im-dz" min="25" max="75" step="1" value="45">
+        <span class="ctl__note">A via, a footprint, a connector</span>
+      </div>
+      <div class="ctl">
+        <div class="ctl__head"><label for="im-dp">Discontinuity length</label><output id="im-dp-out" for="im-dp">15 ps</output></div>
+        <input type="range" id="im-dp" min="0" max="60" step="1" value="15">
+        <span class="ctl__note">Worst mismatch loss is 2/(r + 1/r) &#8212; a through-section cannot notch</span>
+      </div>
+      <div class="ctl">
+        <div class="ctl__head"><label for="im-na">Aggressors</label><output id="im-na-out" for="im-na">2 aggressors</output></div>
+        <input type="range" id="im-na" min="0" max="4" step="1" value="2">
+        <span class="ctl__note">Independent data, so it reads as noise</span>
+      </div>
+      <div class="ctl">
+        <div class="ctl__head"><label for="im-co">Coupling per aggressor</label><output id="im-co-out" for="im-co">2.0 %</output></div>
+        <input type="range" id="im-co" min="0" max="80" step="1" value="20">
+        <span class="ctl__note">A field solve gives you this</span>
+      </div>
+      <div class="ctl">
+        <div class="ctl__head"><label for="im-eq">Receiver</label></div>
+        <label class="check" for="im-eq"><input type="checkbox" id="im-eq" checked> CTLE + 4-tap DFE</label>
+        <span class="ctl__note">Fixes loss. Does nothing for a notch, and lifts crosstalk with the signal.</span>
+      </div>
+    </div>
+    <div class="presets">
+      <button class="preset" type="button" data-preset="pcie4" aria-pressed="true">PCIe Gen 4</button>
+      <button class="preset" type="button" data-preset="pcie5" aria-pressed="false">PCIe Gen 5</button>
+      <button class="preset" type="button" data-preset="lpddr5x" aria-pressed="false">LPDDR5X 8533</button>
+      <button class="preset" type="button" data-preset="ufs4" aria-pressed="false">UFS 4.0 HS-G5</button>
+      <button class="preset" type="button" data-preset="usb32" aria-pressed="false">USB 3.2 Gen 2</button>
+    </div>
+    <div class="transport"><span data-out="note">—</span></div>
+  
+    <script type="application/json" data-guide>
+{
+  "title": "What actually closes this eye",
+  "steps": [
+    {
+      "say": "Start from a clean PCIe Gen 4 lane: matched terminations, no discontinuity, no neighbours. This is the eye the budget assumes you start with.",
+      "set": {
+        "_p": "pcie4",
+        "im-il": "6",
+        "im-dz": "50",
+        "im-dp": "0",
+        "im-na": "0",
+        "im-co": "0",
+        "im-eq": "0"
+      }
+    },
+    {
+      "say": "Now add loss and nothing else — 6 dB to 24 dB at Nyquist, which is the difference between a short board trace and a long one through two connectors.",
+      "set": {
+        "im-il": "24"
+      },
+      "ask": "Does loss close the eye in height, in width, or in both?",
+      "answer": "Both, but not equally. Loss spreads each bit past its own slot, so the tail from earlier bits lands on the sample — that eats height directly. The width goes because the crossings no longer happen at the same instant: which bits came before decides when this one crosses. That is ISI, and it is fully deterministic."
+    },
+    {
+      "say": "Put the loss back to 12 dB and introduce a 30 Ω section instead — a via field, a connector footprint, a run under a pad.",
+      "set": {
+        "im-il": "12",
+        "im-dz": "30",
+        "im-dp": "20"
+      }
+    },
+    {
+      "say": "Loss and reflection do not fail the same way. Loss is smooth with frequency; a discontinuity puts a notch at the frequency whose round trip equals half a wavelength.",
+      "ask": "Equalisation fixes loss. Will it fix this notch too?",
+      "answer": "No. A CTLE applies a smooth, gently rising gain, so it cannot restore energy at one specific frequency where the channel has cancelled it. Address the notch in the physical channel by shortening the stub, changing the impedance, or moving the resonance out of band."
+    },
+    {
+      "say": "Add four aggressors at 60% coupling — a realistic escape from a dense BGA where the neighbours are switching too.",
+      "set": {
+        "im-na": "4",
+        "im-co": "60"
+      }
+    },
+    {
+      "say": "Finally, switch the receiver on: a CTLE plus a four-tap DFE, the equaliser a real SerDes carries.",
+      "set": {
+        "im-eq": "1"
+      },
+      "ask": "The eye opens. Has the link got better, or has the measurement?",
+      "answer": "Both, with a catch. The DFE genuinely removes post-cursor ISI — those bits are already decided, so their contribution is known and can be subtracted. But the CTLE lifts high frequencies indiscriminately, and crosstalk lives there too. Turn the aggressors up with EQ on and you can watch the equaliser amplify the very thing it cannot cancel."
+    }
+  ],
+  "transfer": "You have 8 dB of margin to find. You may improve the transmitter's equalisation, the receiver's, or the channel's loss — one only. The channel has a strong reflection at 0.4 of Nyquist. Predict which of the three buys the most, and which buys almost nothing.",
+  "transferNote": "Equalisers scale what arrives. Ask what is left to scale at the frequency that is failing."
+}
+  </script>
+  </section>
+
+  <div class="prose">
+    <p>
+      When you bring up a high-speed link in the lab and stare at a collapsed eye diagram on an oscilloscope,
+      the immediate instinct is almost always: <em>the channel has too much loss; we need a stronger equaliser
+      or an ultra-low-loss laminate</em>. But an eye diagram does not close for a single monolithic reason.
+      An eye is simply the persistence display of thousands of successive bits overlapping across one or two unit
+      intervals. If the opening at the center has vanished, it means voltage margin (vertical height) and timing
+      margin (horizontal width) have been eaten by physical imperfections along the physical path.
+    </p>
+
+    <p>
+      The critical trap is treating all link penalties as if decibels were fungible. If an eye closes because smooth
+      dielectric attenuation rounded off the bit edges, a continuous-time linear equaliser (CTLE) or a feed-forward
+      equaliser (FFE) can boost the high-frequency harmonics and pop the eye right back open. But if that exact same
+      eye closes because an un-backdrilled via stub created a sharp resonant notch, or because nearby differential pairs
+      are spraying crosstalk into your lane, cranking up the receiver's high-frequency gain will actually make the eye
+      <em>worse</em> — amplifying the crosstalk and noise floor right alongside the signal.
+    </p>
+
+    <p>
+      Debugging a failing SerDes link comes down to diagnosis before prescription: identifying which specific physical
+      mechanism dominates your eye closure, because each one demands an entirely different engineering remedy.
+    </p>
+
+    <h2>Why four, and why they are not interchangeable</h2>
+
+    <p>
+      A channel budget adds decibels, and decibels are a useful common currency. But they hide
+      something important: <b>the same number of decibels does very different damage depending on
+      what caused it.</b>
+    </p>
+
+    <p>
+      Four mechanisms account for nearly all of it, and each has a distinct signature:
+    </p>
+
+    <ul class="tight">
+      <li><strong>Insertion loss</strong> attenuates high frequencies more than low ones, which
+        rounds edges and spreads each bit into its neighbours. Smooth, predictable, and the one
+        equalisation was designed for.</li>
+      <li><strong>Return loss</strong> sends energy back. It returns later, as an echo, and how much
+        it hurts depends on whether it lands on a sampling instant.</li>
+      <li><strong>A discontinuity with a length</strong> — a stub, a connector footprint — creates a
+        resonance: a frequency the channel cancels entirely. Not attenuation. Removal.</li>
+      <li><strong>Crosstalk</strong> adds energy from elsewhere. Unlike the other three it has
+        nothing to do with your own signal, so no amount of reshaping your waveform removes it.</li>
+    </ul>
+
+    <p>
+      The panel above runs all four on one consistent channel, so the comparison is between
+      impairments rather than between models.
+    </p>
+
+    <h2 class="section-rule"><span>The same eye, four different ways to ruin it</span></h2>
+
+    <p>
+      A budget adds decibels. It does not tell you which impairment is actually costing you margin,
+      and the four in the panel above are not interchangeable — each closes the eye with a different
+      signature and each responds to a different fix. The bars underneath re-run the whole channel
+      with one impairment removed at a time, which is the question worth asking: <strong>if I could
+      delete one of these, how much eye would I get back?</strong>
+    </p>
+    <p>
+      Read them as <em>counterfactuals, not a decomposition</em>. They will not sum to the total,
+      because the impairments interact: loss changes what the equaliser does, which changes how much
+      the crosstalk it amplifies costs you. Occasionally a bar goes <em>negative</em> — removing an
+      impairment makes the eye slightly worse — which is a real result whenever the equaliser was
+      tuned around the thing you deleted. The comparison holds the equaliser settings fixed;
+      retuning after a change is a separate question, and usually a separate answer.
+    </p>
+
+    <h3>Insertion loss thins the eye symmetrically</h3>
+    <p>
+      Loss rises with frequency, so the channel smears every edge and the traces spread into ISI
+      bands. This is the impairment equalisation was designed for, and the one that responds to it: a
+      CTLE flattens the slope, a DFE cancels the post-cursor exactly. It is also the only one of the
+      four that a material change fixes. Turn the equaliser off and on with the loss slider high, and
+      the difference is the whole argument for having a receiver at all.
+    </p>
+
+    <h3>Reflections are an echo, and the delay changes what kind of problem it is</h3>
+    <p>
+      A mismatch sends energy back; a second mismatch sends it forward again. The echo arrives after
+      the round trip, <span class="num">2·T<sub>d</sub></span>, at roughly
+      <span class="num">&Gamma;&sup2;</span> of the original — two reflections, so the coefficient is
+      squared.
+    </p>
+    <div class="note">
+      <b>It is not attenuated the way you would guess</b>
+      The intuition that a lossy channel kills its own echoes is only half right. A transmission line
+      has essentially no loss at DC, so the <em>low-frequency</em> content of an echo — a long run of
+      identical bits — comes back almost unscathed even on a channel with 28 dB at Nyquist. Only the
+      fast edges get crushed. Drag the termination away from 50 &ohm; on PCIe Gen 5 and the eye moves
+      by about the same <em>fraction</em> as it does on LPDDR5X, despite fourteen times the loss.
+    </div>
+    <p>
+      What the delay really changes is <strong>what kind of problem the echo is</strong>:
+    </p>
+    <ul class="tight">
+      <li>Arriving <strong>within a few UI</strong> — select LPDDR5X, where it returns in under 3 —
+        the echo is correlated with bits the receiver has already decided. That makes it ISI, and a
+        DFE with enough taps could in principle cancel it. Usually none were allocated for it.</li>
+      <li>Arriving <strong>tens of UI later</strong> — Gen 5 returns it after 111 — it has no
+        relationship to anything in the DFE's memory. It is uncorrelated noise, and nothing in the
+        receiver can subtract it. Proportionally it costs a Gen 5 eye <em>more</em>, simply because
+        that eye is smaller to begin with.</li>
+    </ul>
+    <p>
+      This is also why <strong>return loss is a symptom, not a control.</strong> The panel
+      deliberately has no RL slider — you set the physical causes, the termination and the
+      discontinuity, and the readout reports the return loss they produce. On the presets the
+      terminations are close to 50 &ohm;, which is exactly why on-die termination earns its place:
+      it is the cheapest way to make &Gamma; small enough that none of this matters.
+    </p>
+
+    <h3>A discontinuity reflects — which is not the same as a notch</h3>
+    <p>
+      The TDR trace shows what a mismatched section looks like from the launch: a dip in impedance
+      lasting twice its own delay. Electrically it is a short mismatched <em>through</em>-line, and
+      both its transmission and its reflection follow exactly from the impedance ratio
+      <span class="num">r = Z₁/Z₀</span> and the electrical length <span class="num">θ = ωτ</span>:
+    </p>
+
+    <div class="eq">
+      <i class="var">S</i><sub>21</sub> = 2 / ( 2cos θ + j(<i class="var">r</i> + 1/<i class="var">r</i>) sin θ )
+      <span class="cap">Worst case is θ = π/2, giving |S₂₁| = 2/(r + 1/r). For a 45 Ω section in a 50 Ω system that is 0.048 dB. Even a brutal 25 Ω section only costs about 1.9 dB. A finite positive impedance ratio has no transmission zero — it cannot produce a notch at all.</span>
+    </div>
+
+    <div class="note">
+      <b>A through-section is not a stub, and the difference matters</b>
+      It is easy to conflate the two, and this page used to. A mismatched <em>through</em>-section
+      passes the signal along; its worst mismatch loss is the number above, and the energy it turns
+      away comes back as a reflection you can see on the TDR. An <em>open shunt stub</em> — the
+      leftover barrel of a via — is a different structure entirely: at the frequency where it is a
+      quarter wavelength it presents a short across the line and produces a genuine transmission zero,
+      tens of decibels deep. <a href="../fundamentals/s-parameters.html">The S-parameters panel</a>
+      models that case properly; the control above does not, because it is not that structure.
+      <br><br>
+      The distinction is practical. A reflection can in principle be cancelled by a long enough DFE,
+      because it is deterministic channel memory. At the bottom of a real stub notch there is nothing
+      to scale and no equaliser recovers it — which is what backdrilling exists to remove.
+    </div>
+
+    <h3>Crosstalk is the one equalisation makes worse</h3>
+    <p>
+      Each aggressor contributes a pulse that arrives with the victim's own edge, and with several
+      neighbours running independent data the sum looks like noise. The DFE has no model of it. The
+      CTLE amplifies it along with the signal, so <em>relative</em> to the wanted signal it does not
+      improve at all — and past the point where a channel is crosstalk-limited, more equaliser boost
+      makes the eye worse rather than better.
+    </p>
+
+    <h2 class="section-rule"><span>Representative numbers</span></h2>
+
+    <p>
+      The presets are starting points rather than spec citations — close enough for the trade-offs to
+      land honestly, and a reasonable place to begin before real models arrive.
+    </p>
+
+    <div class="table-scroll">
+      <table class="data">
+        <thead>
+          <tr><th>Interface</th><th>UI</th><th>Nyquist</th><th>IL at Nyquist</th><th>Echo returns after</th><th>Usually limited by</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>LPDDR5X 8533 MT/s</td><td>117 ps</td><td>4.27 GHz</td><td>~2.5 dB</td><td>2.9 UI</td><td>crosstalk and SSN</td></tr>
+          <tr><td>UFS 4.0 HS-G5</td><td>43 ps</td><td>11.6 GHz</td><td>~8 dB</td><td>12.7 UI</td><td>the escape</td></tr>
+          <tr><td>USB 3.2 Gen 2</td><td>100 ps</td><td>5 GHz</td><td>~12 dB</td><td>100 UI</td><td>connector and cable</td></tr>
+          <tr><td>PCIe Gen 4</td><td>62.5 ps</td><td>8 GHz</td><td>~18 dB</td><td>55.6 UI</td><td>insertion loss</td></tr>
+          <tr><td>PCIe Gen 5</td><td>31.25 ps</td><td>16 GHz</td><td>~28 dB</td><td>111 UI</td><td>loss, then via stubs</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>
+      Read down the last two columns together and the pattern is the useful one. A wide parallel bus
+      is <em>short</em> by construction: barely any loss, echoes that come home inside a handful of
+      UI, and a great many neighbours — so it is limited by crosstalk and by simultaneous switching.
+      A serial link is <em>long</em> by construction: loss dominates, the neighbours are few, and its
+      echoes arrive so far out that they act as noise rather than ISI. Almost everything about how the
+      two are signed off follows from that single difference in length.
+    </p>
+
+    <div class="note">
+      <b>The habit this panel is for</b>
+      When an eye is short of margin, resist reaching for equaliser settings first. Zero each
+      impairment in turn and see which one gives the margin back. If it is loss, equalisation and
+      materials are on the table. If it is the discontinuity, no setting will help and the fix is
+      mechanical. If it is crosstalk, the answer is geometry. If it is the echo, look at what the
+      termination is actually doing at the far end.
+    </div>
+
+    <h2 class="section-rule"><span>Why this decides how your board behaves</span></h2>
+
+    <ul class="tight">
+      <li><strong>The fix depends entirely on the diagnosis.</strong> Loss wants material or length.
+        A reflection wants impedance control. A notch wants a physical change — backdrill, or move
+        the resonance. Crosstalk wants spacing or burial. Applying the wrong one costs weeks.</li>
+      <li><strong>Equalisation helps three of the four, and hurts on the fourth.</strong> It fixes
+        loss well, reflections partly, notches not at all, and it <em>amplifies</em> crosstalk along
+        with the signal.</li>
+      <li><strong>They interact, so they do not simply add.</strong> Loss changes what the equaliser
+        does, which changes how much the crosstalk it amplifies costs you.</li>
+      <li><strong>Only one of them scales with your neighbours.</strong> The other three are
+        properties of your own channel; crosstalk is a property of what is around it, which makes it
+        the one that changes when nothing about your net did.</li>
+    </ul>
+
+    <h2 class="section-rule"><span>What to do about it</span></h2>
+
+    <p>
+      <strong>Diagnose before you fix, and use the frequency domain to do it.</strong> A smooth
+      downward slope is loss. Regular ripple is a reflection between two discontinuities, and its
+      period in frequency tells you how far apart they are. A deep narrow null is a resonance, and
+      its frequency tells you the stub length. Crosstalk does not appear in S<sub>21</sub> at all —
+      it appears when you turn the neighbours on.
+    </p>
+
+    <p>
+      <strong>Fix notches physically and early.</strong> This is the only one of the four with no
+      electrical remedy. It is a stackup and exit-layer decision.
+    </p>
+
+    <p>
+      <strong>Check crosstalk with the equaliser enabled.</strong> Measuring it with the receiver
+      bypassed understates it, because the interaction is the point.
+    </p>
+
+    <p>
+      <strong>Treat the counterfactual bars as guidance, not accounting.</strong> They answer "how
+      much eye would I get back if this one vanished?" — which is the decision-relevant question —
+      but they do not sum to the total, and occasionally one goes negative because the equaliser had
+      tuned around the thing you deleted.
+    </p>
+
+    <div class="note">
+      <b>Using this to find a fault</b>
+      <ul class="tight">
+        <li><b>Eye closes evenly, top and bottom, with visible banding.</b> Loss and the ISI it
+          causes. Check S<sub>21</sub>'s slope across your band.</li>
+        <li><b>A distinct second trace displaced in time.</b> An echo. Measure its delay and halve
+          it to find where the reflecting pair is.</li>
+        <li><b>Equalisation barely helps.</b> Look for a null before adding taps.</li>
+        <li><b>The eye changes when a neighbouring lane is enabled.</b> Crosstalk, conclusively.
+          This is the fastest discriminator available and costs one measurement.</li>
+        <li><b>Worse with more CTLE boost.</b> Crosstalk- or noise-limited, not loss-limited.</li>
+      </ul>
+    </div>
+
+    <details class="deeper">
+      <summary>Go deeper — why a reflection's timing matters, and what this model leaves out</summary>
+
+      <p>
+        <strong>An echo is a delayed copy, and delay decides the damage.</strong> A reflection makes
+        a round trip, so it arrives 2T<sub>d</sub> later than the signal that caused it. If that
+        delay happens to be close to a whole number of unit intervals, the echo lands near a sampling
+        instant and does maximum damage. If it lands between samples it does much less.
+      </p>
+
+      <p>
+        Which means the same return loss can cost very different amounts of eye depending on
+        <em>where</em> the discontinuity is along the channel — and it explains a result that
+        otherwise looks like noise in the data: moving a connector a couple of inches can measurably
+        change an eye without changing any S-parameter magnitude.
+      </p>
+
+      <p>
+        <strong>Why a notch is categorically different.</strong> Loss scales every frequency by
+        something less than one; an equaliser can scale it back up. A resonance multiplies one
+        frequency by approximately zero, and there is nothing to scale. A CTLE's response is smooth
+        by construction — see <a href="equalization.html">equalisation</a> — so it has no mechanism
+        that could act at one frequency and not its neighbours.
+      </p>
+
+      <p>
+        <strong>What the model here leaves out.</strong> Worth stating plainly, because the panel is
+        deliberately a teaching model rather than a sign-off one:
+      </p>
+
+      <ul class="tight">
+        <li><strong>It is single-ended.</strong> No mode conversion, so nothing on this page shows
+          the failure that
+          <a href="../fundamentals/differential-signalling.html">SCD21</a> would catch.</li>
+        <li><strong>The aggressors are identical and evenly skewed.</strong> Real crosstalk comes
+          from neighbours with their own data and their own arrival times.</li>
+        <li><strong>The receiver is a fixed CTLE and DFE, not an adapting one.</strong> A real
+          receiver converges its settings per channel, which generally does better.</li>
+        <li><strong>The eye is a few hundred symbols.</strong> The readout beside it says what that
+          supports, which is nowhere near a compliance rate.</li>
+      </ul>
+
+      <p>
+        For the same four impairments on an exact cascaded network — with group delay, a TDR
+        profile, and the bit-by-bit link between a post-cursor and the symbol that caused it — see
+        <a href="../labs/one-channel.html">Lab B</a>.
+      </p>
+    </details>
+
+    <h2 class="section-rule"><span>In the real world</span></h2>
+
+    <p>
+      The instinct this page is trying to build is to stop asking "how much loss do I have?" and
+      start asking "what kind of damage am I looking at?" Those are different questions, and only
+      the second one has an action attached to it.
+    </p>
+
+    <p>
+      It is also why channel debug usually starts in the frequency domain even though the failure is
+      always reported in the time domain. An eye tells you that something is wrong. S<sub>21</sub>
+      and S<sub>11</sub> together tell you which of the four it is, and therefore who needs to fix
+      it.
+    </p>
+
+    <h3>Related</h3>
+    <ul class="tight">
+      <li><a href="../fundamentals/s-parameters.html">S-Parameters: Insertion Loss, Return Loss, and Mixed Mode</a></li>
+      <li><a href="../fundamentals/eye-diagram.html">Eye Diagrams: Construction and Interpretation</a></li>
+      <li><a href="../fundamentals/crosstalk.html">PCB Crosstalk: NEXT, FEXT, and Mutual Coupling</a></li>
+      <li><a href="../fundamentals/vias.html">High-Speed Vias: Stubs, Resonance, and Backdrilling</a></li>
+      <li><a href="./equalization.html">Equalization and Clock Recovery: CTLE, FFE, DFE, and CDR</a></li>
+    </ul>
+  </div>
+
+  <!-- pager:start -->
+  <nav class="pager" aria-label="Previous and next topic">
+    <a class="prev" href="../../topics/signal-integrity/channel-budgeting.html"><span class="dir">Previous</span><span>Channel Loss Budgeting Across Die, Package, and Board</span></a>
+    <a class="next" href="../../topics/signal-integrity/equalization.html"><span class="dir">Next</span><span>Equalization and Clock Recovery: CTLE, FFE, DFE, and CDR</span></a>
+  </nav>
+  <!-- pager:end -->
+</main>
+
+<footer class="site-foot">
+  <span>SIPI &#8212; signal and power integrity, visualised.</span>
+  <span>Created and directed by Geetansh Arora. <a href="../../colophon.html">About, review &amp; AI assistance</a> &#183; <a href="../../model-contract.html">Model assumptions</a> &#183; <a href="../../docs/claims.md">Claim ledger</a></span>
+</footer>
+
+<script src="../../js/site.js?v=acb47d86"></script>
+<script src="../../js/viz-kit.js?v=a53e49c3"></script>
+<script src="../../js/viz/impairments.js?v=32580c18"></script>
+<script src="../../js/viz-loader.js?v=89d5884d"></script>
+<script src="../../js/search.js?v=6c93a285"></script>
+</body>
+</html>

@@ -1,0 +1,376 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Transmitter Compliance Masks and Receiver Eye Masks | SIPI</title>
+<meta name="description" content="What a mask encodes, why transmitter and receiver masks are different things, and why the measurement point is half the specification.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<link rel="stylesheet" href="../../css/base.css?v=e4f774de">
+<link rel="stylesheet" href="../../css/components.css?v=295837ab">
+  <!-- meta:start -->
+  <link rel="canonical" href="https://sipi.work/topics/signal-integrity/compliance-masks.html">
+  <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="SIPI">
+  <meta property="og:title" content="Transmitter Compliance Masks and Receiver Eye Masks | SIPI">
+  <meta property="og:description" content="What a mask encodes, why transmitter and receiver masks are different things, and why the measurement point is half the specification.">
+  <meta property="og:url" content="https://sipi.work/topics/signal-integrity/compliance-masks.html">
+  <meta property="og:image" content="https://sipi.work/assets/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Transmitter Compliance Masks and Receiver Eye Masks | SIPI">
+  <meta name="twitter:description" content="What a mask encodes, why transmitter and receiver masks are different things, and why the measurement point is half the specification.">
+  <meta name="twitter:image" content="https://sipi.work/assets/og.png">
+  <!-- meta:end -->
+</head>
+<body>
+
+<header class="masthead">
+  <a class="wordmark" href="../../index.html">SIPI</a>
+  <nav>
+    <a href="../../index.html#fundamentals">Fundamentals</a>
+    <a href="../../index.html#power-integrity">Power</a>
+    <a href="../../index.html#interfaces">Interfaces</a>
+    <a href="../../start.html">Start</a>
+    <a href="../../labs.html">Labs</a>
+    <a href="../../reference.html">Reference</a>
+    <button class="theme-toggle" data-act="theme" type="button">System</button>
+  </nav>
+</header>
+
+<main>
+  <div class="page-head">
+    <p class="crumb"><a href="../../index.html#signal-integrity">SI in practice</a> / 07</p>
+    <h1>Transmitter Compliance Masks and Receiver Eye Masks</h1>
+    <p class="byline">
+      <!-- review:start --><span>By Geetansh Arora — Principal SI/PI Engineer</span><time datetime="2026-09-16" title="Technical review by Geetansh Arora on this date">16 Sep 2026</time><span>8 min</span><!-- review:end -->
+    </p>
+    <p class="answer">
+      A compliance mask is a keep-out polygon in the middle of an eye: no trace may enter it. Its
+      shape is not arbitrary &#8212; it encodes the trade between voltage margin and timing margin
+      that a receiver actually makes, which is why it is one test instead of two.
+    </p>
+  </div>
+
+  <!-- ───────────── the picture ───────────── -->
+  <figure class="figure">
+    <div class="figure__bar"><span>One polygon, and the four places you could hold it up</span></div>
+    <div class="figure__body"><svg viewBox="-4 16 700 270" role="img" aria-label="An eye with a hexagonal compliance mask in its centre, alongside four different measurement points along a link, each of which produces a different picture of the same signal.">
+  <g transform="translate(0,30)">
+    <text class="lbl-hi" x="0" y="0">the mask is a keep-out, not a target</text>
+    <rect class="edge" x="0" y="14" width="270" height="160" fill="var(--surface-2)" opacity=".4"/>
+    <path d="M8,26 C60,26 78,86 135,86 C192,86 210,26 262,26" class="flow" opacity=".55"/>
+    <path d="M8,162 C60,162 78,86 135,86 C192,86 210,162 262,162" class="flow" opacity=".55"/>
+    <path d="M8,26 C60,26 78,86 135,86 C192,86 210,162 262,162" class="flow" opacity=".55"/>
+    <path d="M8,162 C60,162 78,86 135,86 C192,86 210,26 262,26" class="flow" opacity=".55"/>
+    <path d="M96,86 L118,56 L152,56 L174,86 L152,116 L118,116 Z" fill="var(--alarm)" opacity=".22" stroke="var(--alarm)"/>
+    <text class="lbl-bad" x="135" y="90" text-anchor="middle">no trace here</text>
+    <path class="edge" d="M118,132 L152,132" stroke="var(--reflect)"/>
+    <text class="lbl-ref" x="135" y="148" text-anchor="middle">width = timing</text>
+    <path class="edge" d="M186,56 L186,116" stroke="var(--reflect)"/>
+    <text class="lbl-ref" x="192" y="88">height = amplitude</text>
+    <text class="lbl" x="0" y="190">sloped corners encode the trade between them</text>
+  </g>
+
+  <g transform="translate(330,30)">
+    <text class="lbl-hi" x="0" y="0">&#8230;and where you measure is half the spec</text>
+    <g class="tick"><path d="M10,46 L330,46"/></g>
+    <circle cx="20" cy="46" r="6" fill="var(--signal)"/>
+    <circle cx="120" cy="46" r="6" fill="var(--signal)"/>
+    <circle cx="230" cy="46" r="6" fill="var(--signal)"/>
+    <circle cx="320" cy="46" r="6" fill="var(--signal)"/>
+    <text class="lbl" x="20" y="34" text-anchor="middle">Tx pin</text>
+    <text class="lbl" x="120" y="34" text-anchor="middle">after ref channel</text>
+    <text class="lbl" x="230" y="34" text-anchor="middle">Rx pad</text>
+    <text class="lbl" x="320" y="34" text-anchor="middle">after Rx EQ</text>
+    <text class="lbl-sig" x="20" y="70" text-anchor="middle">wide open</text>
+    <text class="lbl-sig" x="120" y="70" text-anchor="middle">Tx mask here</text>
+    <text class="lbl-bad" x="230" y="70" text-anchor="middle">often closed</text>
+    <text class="lbl-sig" x="320" y="70" text-anchor="middle">Rx mask here</text>
+    <text class="lbl" x="0" y="106">a closed eye at the pad is not a failure —</text>
+    <text class="lbl" x="0" y="122">it is why the receiver has a DFE</text>
+    <text class="lbl-bad" x="0" y="152">and the mask is judged against the 1e−12</text>
+    <text class="lbl-bad" x="0" y="168">contour, not the traces a scope drew</text>
+  </g>
+</svg></div>
+    <figcaption><b>A mask compresses a multi-dimensional requirement into one binary test</b>, which is its great virtue and the source of every argument about it. A receiver needs enough voltage to resolve a level and enough time to sample it, and the two trade against each other &#8212; so the polygon's width is the timing requirement, its height the amplitude requirement, and its sloped corners the acceptable exchange. &ldquo;Does it meet the mask?&rdquo; is not answerable without saying <em>where</em>, and through what. Modern serial standards deliberately permit a fully closed eye at the receiver pad, because the DFE is expected to open it. A mask quoted without its reference point and reference equaliser is not a specification. And a mask is normally evaluated against a <b>statistical</b> eye &#8212; contours of constant probability &#8212; at the 10<sup>&#8722;12</sup> contour specifically. Which is why a link can visibly clear the mask on a scope and still fail: the visible eye is the 10<sup>&#8722;6</sup> contour, and the one being judged is six decades further out.</figcaption>
+  </figure>
+
+  <div class="prose">
+    <p>
+      When an engineering team prepares a high-speed serial product for commercial release — whether it is a
+      PCIe add-in card, an enterprise server backplane, or a consumer USB-C peripheral — it must pass formal
+      industry compliance testing to earn certification. The centerpiece of physical-layer certification is the
+      <strong>eye diagram compliance mask</strong>: a standardized geometric keep-out polygon drawn directly over
+      the center of the eye. If even a single measured waveform trace or statistical contour penetrates this
+      boundary, the link fails compliance and cannot be shipped.
+    </p>
+
+    <p>
+      At first glance, placing a polygon in the center of an oscilloscope screen looks like a simple pass/fail
+      visual inspection. In reality, an eye mask is a legally binding engineering contract between independent
+      silicon vendors who will never meet. The transmitter vendor guarantees that their launched waveform will
+      never encroach on the TX mask; the receiver vendor guarantees that their equalizer and clock recovery can
+      reliably decode any incoming signal that clears the RX mask. The space between these two boundaries is the
+      allowable channel loss, reflection, and crosstalk budget owned by the PCB system designer.
+    </p>
+
+    <p>
+      However, evaluating an eye mask on a modern real-time oscilloscope requires looking beyond the raw display.
+      Because oscilloscopes do not have physical access to the transmitter's internal clock, they reconstruct
+      timing using software-emulated Clock and Data Recovery (CDR) loops, apply mathematical reference equalizers,
+      and extrapolate millions of captured edges into extreme Bit Error Rate (BER) contours. Understanding how
+      these digital post-processing steps create the eye is essential to passing compliance on the first revision.
+    </p>
+
+    <h2>Why not just two numbers?</h2>
+
+    <p>
+      A receiver needs two things at once: enough voltage to resolve the level, and enough time to
+      sample it. The obvious specification is therefore two numbers — a minimum eye height and a
+      minimum eye width.
+    </p>
+
+    <p>
+      That does not work, because the two trade against each other. A signal with generous amplitude
+      can tolerate worse timing; one arriving exactly on time can tolerate less voltage. Specifying
+      them independently is either too lenient — passing a signal that is marginal in both at once —
+      or too strict, failing signals that are genuinely fine.
+    </p>
+
+    <p>
+      A polygon captures the trade directly. Its width at the vertical centre is the timing
+      requirement, its height at the horizontal centre is the amplitude requirement, and its sloped
+      corners encode the acceptable exchange between them. One shape, one test, pass or fail.
+    </p>
+
+    <h2 class="section-rule"><span>Why a polygon</span></h2>
+
+    <p>
+      A receiver needs enough voltage to resolve a level and enough time to sample it, and the two trade
+      against each other: a bigger signal can tolerate worse timing and vice versa. Specifying them
+      separately as minimum eye height and minimum eye width would either be too lenient — allowing a
+      signal that is marginal in both at once — or too strict.
+    </p>
+
+    <p>
+      A polygon captures the trade directly. Its width at the vertical centre is the timing requirement,
+      its height at the horizontal centre is the amplitude requirement, and its sloped corners encode
+      the acceptable exchange between them. One shape, one test, pass or fail.
+    </p>
+
+    <h2 class="section-rule"><span>Transmitter and receiver masks are opposites</span></h2>
+
+    <ul class="tight">
+      <li>A <strong>transmitter mask</strong> is a floor. Measured at the transmitter's compliance point,
+        usually through a defined reference channel, it asserts the signal is at least this good.</li>
+      <li>A <strong>receiver mask</strong> is a floor on what the receiver must <em>tolerate</em>. It is
+        tested by deliberately generating a signal that only just clears the mask — stressed with
+        calibrated jitter, ISI and noise — and requiring the receiver to hold its error rate. The test
+        equipment is producing the worst legal signal, not a good one.</li>
+    </ul>
+
+    <div class="note">
+      <b>The measurement point is half the spec</b>
+      &ldquo;Does it meet the mask?&rdquo; is not answerable without saying where, and through what. At
+      the transmitter pin, after a reference channel, at the receiver pad, or after the receiver's
+      equaliser are four different pictures of the same link — and modern serial standards deliberately
+      permit a fully closed eye at the pad, because the DFE is expected to open it. A mask quoted
+      without its reference point and reference equaliser is not a specification.
+    </div>
+
+    <h2 class="section-rule"><span>Masks and BER</span></h2>
+
+    <p>
+      An eye drawn from a finite capture shows the common cases, not the tails. A mask evaluated against
+      a million unit intervals is being tested at roughly 10<sup>−6</sup>, while the requirement is
+      usually written at 10<sup>−12</sup>. So compliance masks are normally evaluated against a
+      <em>statistical</em> eye — contours of constant probability rather than overlaid traces — where
+      the mask is checked against the 10<sup>−12</sup> contour specifically.
+    </p>
+
+    <p>
+      This is why a link can visibly clear the mask on a scope and still fail compliance: the visible
+      eye is the 10<sup>−6</sup> contour, and the one being judged is six decades further out.
+    </p>
+
+    <h2 class="section-rule"><span>Why this decides how your board behaves</span></h2>
+
+    <ul class="tight">
+      <li><strong>Interpret a mask at its specified reference plane.</strong> The same signal passes
+        or fails depending on where it is measured, and modern specifications deliberately place
+        transmitter and receiver test points where the signal looks very different.</li>
+      <li><strong>Passing a mask is not the same as having margin.</strong> A mask is a threshold
+        test. It tells you that you cleared it, not by how much, and two designs that both pass can
+        have very different robustness.</li>
+      <li><strong>An illustrative mask is not a specification mask.</strong> Masks drawn for
+        teaching — including on this site — are shaped like the real thing and are not the real
+        thing. Only the published document governs.</li>
+      <li><strong>Receiver masks work backwards from transmitter masks.</strong> Confusing the two
+        leads to testing the wrong thing entirely.</li>
+    </ul>
+
+    <h2 class="section-rule"><span>What to do about it</span></h2>
+
+    <p>
+      <strong>Read the test setup, not just the polygon.</strong> A mask comes with a reference
+      channel, a reference receiver, a clock recovery definition and a measurement plane. All four
+      change the answer, and the polygon is the least of them.
+    </p>
+
+    <p>
+      <strong>Measure margin as well as pass/fail.</strong> Scaling the mask until it just touches
+      gives you a margin number, which is far more useful in a review than a binary result — and it
+      is what tells you whether you are close to an edge.
+    </p>
+
+    <p>
+      <strong>Do not use a transmitter mask to judge a receiver's input.</strong> They are opposite
+      claims. A transmitter mask says the signal is <em>at least</em> this good; a receiver mask
+      says the part must work with a signal only <em>just</em> this good.
+    </p>
+
+    <p>
+      <strong>Treat a closed eye at the receiver pad as normal on a modern link.</strong> The mask
+      that matters there is applied after the reference equaliser, not before it.
+    </p>
+
+    <div class="note">
+      <b>Using this to find a fault</b>
+      <ul class="tight">
+        <li><b>A signal that fails the mask at the corners but not the centre.</b> Jitter, not
+          amplitude — the corners are where the timing requirement lives.</li>
+        <li><b>Fails the centre but clears the corners.</b> Amplitude: loss or an attenuating
+          fixture rather than a timing problem.</li>
+        <li><b>Passes on one instrument and fails on another.</b> Almost always clock recovery.
+          Compare the loop bandwidths before suspecting anything physical.</li>
+        <li><b>Passes the mask and errors in traffic.</b> The mask tested the common cases. Errors
+          come from the tails — go to a <a href="../fundamentals/bathtub-curves.html">bathtub</a>.</li>
+      </ul>
+    </div>
+
+    <details class="deeper">
+      <summary>Go deeper — Golden PLL emulation, BER contour scaling, and compliance reference planes</summary>
+
+      <p>
+        <strong>Why the corners slope.</strong> The polygon is, in effect, a contour of constant
+        error probability. An error happens when noise carries the voltage across the threshold at
+        the sampling instant, and the amount of noise required depends on both how far the signal is
+        from the threshold and how far the sample is from the crossing. Lines of equal risk in that
+        space are not rectangular — they trade voltage against time — and the mask's sloped corners
+        are a piecewise-linear approximation of that contour.
+      </p>
+
+      <p>
+        <strong>What it is standing in for.</strong> The real requirement is a bit error rate, which
+        cannot be tested quickly. A mask is a fast, repeatable proxy: if the signal clears this
+        shape under these conditions, the specification's authors believe the error rate will be met
+        by a conforming receiver. Everything uncomfortable about masks follows from that — the
+        proxy is only as good as the conditions it was defined under, and it says nothing about a
+        non-conforming receiver or an impairment outside the modeled set.
+      </p>
+
+      <p>
+        <strong>Software CDR (The Golden PLL).</strong> When an oscilloscope captures a multi-gigabit waveform,
+        it does not have an external clock reference. To slice the continuous waveform into unit intervals (UI)
+        and overlay them into an eye diagram, the scope executes a software Phase-Locked Loop (PLL), universally
+        referred to as the "Golden PLL". Standards specify the exact loop architecture — typically a Type-II PLL
+        with a precisely calibrated loop bandwidth (e.g. <span class="num">f<sub>Baud</sub> / 1667</span> or
+        <span class="num">f<sub>Baud</sub> / 2500</span>, corresponding to 10 to 20 MHz) and a 20 dB/decade roll-off.
+      </p>
+
+      <p>
+        This software emulation replicates what a conforming silicon receiver does in hardware: it tracks and
+        cancels low-frequency phase wander (such as low-frequency spread-spectrum clock modulation or thermal drift),
+        removing it from the measured eye. Conversely, high-frequency jitter above the loop bandwidth cannot be
+        tracked; it manifests as horizontal eye closure against the mask. If you change the oscilloscope's software
+        CDR bandwidth or damping factor, the eye width changes instantly. Two instruments testing the exact same
+        physical board will disagree if their software CDR settings do not match the standard to the letter.
+      </p>
+
+      <p>
+        <strong>BER contour scaling (10<sup>-6</sup> vs. 10<sup>-12</sup>).</strong> An oscilloscope running on the
+        bench typically acquires <span class="num">10<sup>5</sup></span> to <span class="num">10<sup>6</sup></span>
+        individual bits within a few seconds. The visible boundaries on screen therefore represent an eye opening
+        at a confidence level of roughly <span class="num">10<sup>-6</sup></span>. But industry standards mandate
+        compliance at <span class="num">10<sup>-12</sup></span> or <span class="num">10<sup>-15</sup></span>.
+      </p>
+
+      <p>
+        To bridge this gap without waiting hours for a trillion bits to trigger, compliance test software fits
+        a Dual-Dirac model to the measured jitter distributions, decomposing edge timing into Deterministic Jitter
+        (DJ) and Random Jitter (RJ). The software then mathematically projects the Gaussian tails outward by
+        multiplying the random jitter standard deviation:
+        <span class="num">TJ(10<sup>-12</sup>) = DJ + 14.069 &middot; &sigma;<sub>RJ</sub></span>.
+        The resulting inner boundary — the statistical contour — is plotted against the mask. This is why links
+        frequently fail compliance while looking completely open on the scope screen: the visible persistence eye
+        clears the mask easily, but the heavy Gaussian tails extrapolated to <span class="num">10<sup>-12</sup></span>
+        penetrate deep into the keep-out zone.
+      </p>
+
+      <p>
+        <strong>Transmitter vs. Channel compliance reference planes.</strong> Compliance specifications never judge
+        a signal in isolation; they evaluate it at defined physical and mathematical reference planes:
+      </p>
+
+      <ul class="tight">
+        <li><strong>Transmitter Compliance (Near-End / Far-End):</strong> For plug-in cards, the transmitter is tested
+          through a standard compliance test fixture (such as a PCIe Compliance Base Board, CBB). The signal is
+          captured at the connector boundary and passed through a software-emulated reference equalizer (a standardized
+          CTLE and DFE) defined in the specification before being judged against the TX mask.</li>
+        <li><strong>Channel Compliance (Interconnect S-Parameters):</strong> Rather than measuring an eye, the physical
+          trace and connector are measured on a VNA. Tools like Channel Operating Margin (COM) mathematically drive
+          a synthetic worst-case transmitter through the measured S-parameter matrix and verify that the calculated
+          eye opening meets the required margin.</li>
+        <li><strong>Receiver Tolerance (Stressed Eye):</strong> The receiver is tested under worst-case conditions.
+          A calibrated bit error rate tester (BERT) synthesizes an intentionally degraded signal — dialed in with
+          maximum allowable ISI, sinusoidal jitter, and random noise so that it just touches the compliance mask —
+          and verifies that the receiver's physical silicon still achieves the target BER without dropping packets.</li>
+      </ul>
+    </details>
+
+    <h2 class="section-rule"><span>In the real world</span></h2>
+
+    <p>
+      Masks exist for interoperability, not for design. They are the minimum a specification body
+      could agree on that still guarantees two conforming parts will talk to each other, which means
+      passing one is a floor rather than a target.
+    </p>
+
+    <p>
+      Designing to just clear a mask is therefore a reasonable commercial decision and a poor
+      engineering one, because the mask's conditions are not your conditions. Your channel, your
+      neighbours and your supply noise are not in the reference setup, and the margin between
+      clearing the polygon and clearing it comfortably is where all of those have to fit.
+    </p>
+
+    <h3>Related</h3>
+    <ul class="tight">
+      <li><a href="../fundamentals/eye-diagram.html">Eye Diagrams: Construction and Interpretation</a></li>
+      <li><a href="../fundamentals/bathtub-curves.html">Bathtub curves and BER extrapolation</a></li>
+      <li><a href="../interfaces/usb-3x.html">USB 3.1 and 3.2 Signal Integrity: SSC and Compliance</a></li>
+      <li><a href="../signal-integrity/statistical-vs-time-domain.html">Statistical and Time-Domain Channel Simulation</a></li>
+    </ul>
+  </div>
+
+  <!-- pager:start -->
+  <nav class="pager" aria-label="Previous and next topic">
+    <a class="prev" href="../../topics/signal-integrity/de-embedding.html"><span class="dir">Previous</span><span>S-Parameter De-Embedding and Fixture Removal</span></a>
+    <a class="next" href="../../topics/signal-integrity/receiver-and-clock.html"><span class="dir">Next</span><span>Receiver Sampling, Clock Recovery, and Jitter Tolerance</span></a>
+  </nav>
+  <!-- pager:end -->
+</main>
+
+<footer class="site-foot">
+  <span>SIPI &#8212; signal and power integrity, visualised.</span>
+  <span>Created and directed by Geetansh Arora. <a href="../../colophon.html">About, review &amp; AI assistance</a> &#183; <a href="../../model-contract.html">Model assumptions</a> &#183; <a href="../../docs/claims.md">Claim ledger</a></span>
+</footer>
+
+<script src="../../js/site.js?v=acb47d86"></script>
+<script src="../../js/search.js?v=6c93a285"></script>
+</body>
+</html>

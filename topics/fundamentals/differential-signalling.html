@@ -1,0 +1,367 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Differential Signaling and Mode Conversion | SIPI</title>
+<meta name="description" content="Odd and even mode, why differential impedance is not twice single-ended, and how asymmetry turns a differential signal into common-mode noise.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<link rel="stylesheet" href="../../css/base.css?v=e4f774de">
+<link rel="stylesheet" href="../../css/components.css?v=295837ab">
+  <!-- meta:start -->
+  <link rel="canonical" href="https://sipi.work/topics/fundamentals/differential-signalling.html">
+  <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="SIPI">
+  <meta property="og:title" content="Differential Signaling and Mode Conversion | SIPI">
+  <meta property="og:description" content="Odd and even mode, why differential impedance is not twice single-ended, and how asymmetry turns a differential signal into common-mode noise.">
+  <meta property="og:url" content="https://sipi.work/topics/fundamentals/differential-signalling.html">
+  <meta property="og:image" content="https://sipi.work/assets/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Differential Signaling and Mode Conversion | SIPI">
+  <meta name="twitter:description" content="Odd and even mode, why differential impedance is not twice single-ended, and how asymmetry turns a differential signal into common-mode noise.">
+  <meta name="twitter:image" content="https://sipi.work/assets/og.png">
+  <!-- meta:end -->
+</head>
+<body>
+
+<header class="masthead">
+  <a class="wordmark" href="../../index.html">SIPI</a>
+  <nav>
+    <a href="../../index.html#fundamentals">Fundamentals</a>
+    <a href="../../index.html#power-integrity">Power</a>
+    <a href="../../index.html#interfaces">Interfaces</a>
+    <a href="../../start.html">Start</a>
+    <a href="../../labs.html">Labs</a>
+    <a href="../../reference.html">Reference</a>
+    <button class="theme-toggle" data-act="theme" type="button">System</button>
+  </nav>
+</header>
+
+<main>
+  <div class="page-head">
+    <p class="crumb"><a href="../../index.html#fundamentals">Fundamentals</a> / 13</p>
+    <h1>Differential Signaling and Mode Conversion</h1>
+    <p class="byline">
+      <!-- review:start --><span>By Geetansh Arora — Principal SI/PI Engineer</span><time datetime="2026-09-13" title="Technical review by Geetansh Arora on this date">13 Sep 2026</time><span>10 min</span><!-- review:end -->
+    </p>
+    <p class="answer">
+      Sending a signal on two wires instead of one buys you two things: noise that hits both
+      wires equally cancels out, and the return current has a defined path instead of wandering
+      through a plane. Both benefits depend entirely on the two halves being
+      <em>identical</em> &#8212; and the interesting failures are all about what happens when
+      they are not.
+    </p>
+  </div>
+
+  <!-- ───────────── the picture ───────────── -->
+  <figure class="figure">
+    <div class="figure__bar"><span>One pair, two modes &#183; and why Z<sub>diff</sub> is not 2&#215;Z&#8320;</span></div>
+    <div class="figure__pair">
+      <div><span class="figure__label">Odd mode &#8212; Z<sub>diff</sub> = 2&#183;Z<sub>odd</sub></span><svg viewBox="0 0 400 200" role="img" aria-label="Cross-section of a differential pair in odd mode, showing where the electric field runs between the two conductors and down to the reference plane.">
+  <rect class="dielectric" x="20" y="100" width="360" height="58"/>
+  <rect class="plane" x="20" y="158" width="360" height="9"/>
+  <path d="M150,94 C120,94 96,120 96,158" class="field"/><path d="M250,94 C280,94 304,120 304,158" class="field-2"/><path d="M162,106 L162,158" class="field"/><path d="M238,106 L238,158" class="field-2"/><path d="M186,94 C196,88 204,88 214,94" class="field"/><path d="M186,100 C196,106 204,106 214,100" class="field"/><path d="M188,97 L212,97" class="field"/>
+  <rect class="copper" x="150" y="88" width="26" height="12" rx="1"/>
+  <rect class="copper-2" x="224" y="88" width="26" height="12" rx="1"/>
+  <text class="lbl-sig" x="163" y="80" text-anchor="middle">+</text>
+  <text class="lbl-ref" x="237" y="80" text-anchor="middle">&#8722;</text>
+  <text class="lbl" x="24" y="182">GND</text>
+  <text class="lbl" x="200" y="182" text-anchor="middle">odd mode &#8212; the pair drives against itself</text>
+</svg></div>
+      <div><span class="figure__label">Even mode &#8212; Z<sub>common</sub> = Z<sub>even</sub>/2</span><svg viewBox="0 0 400 200" role="img" aria-label="Cross-section of a differential pair in even mode, showing where the electric field runs between the two conductors and down to the reference plane.">
+  <rect class="dielectric" x="20" y="100" width="360" height="58"/>
+  <rect class="plane" x="20" y="158" width="360" height="9"/>
+  <path d="M150,94 C120,94 96,120 96,158" class="field"/><path d="M250,94 C280,94 304,120 304,158" class="field"/><path d="M162,106 L162,158" class="field"/><path d="M238,106 L238,158" class="field"/>
+  <rect class="copper" x="150" y="88" width="26" height="12" rx="1"/>
+  <rect class="copper" x="224" y="88" width="26" height="12" rx="1"/>
+  <text class="lbl-sig" x="163" y="80" text-anchor="middle">+</text>
+  <text class="lbl-sig" x="237" y="80" text-anchor="middle">+</text>
+  <text class="lbl" x="24" y="182">GND</text>
+  <text class="lbl" x="200" y="182" text-anchor="middle">even mode &#8212; both halves move together</text>
+</svg></div>
+    </div>
+    <figcaption><b>A coupled pair has two impedances, not one.</b> In <b>odd mode</b> the two conductors swing in opposition, so field runs directly between them &#8212; extra coupling capacitance that is not there when they are driven alone. More capacitance means a <em>lower</em> impedance, which is why Z<sub>odd</sub> is below the isolated single-ended Z&#8320; and Z<sub>diff</sub> = 2&#183;Z<sub>odd</sub> always comes out below 2&#215;Z&#8320;. Two 50 &#937; traces routed close together are not a 100 &#937; pair; they are perhaps 85&#8211;90 &#937;. In <b>even mode</b> both halves move together, no field runs between them, and each sees a higher impedance instead. Everything that goes wrong with a pair comes from breaking the symmetry between these two pictures: when the halves stop being identical, differential energy converts into common mode &#8212; measured as S<sub>CD21</sub> &#8212; and common mode is rejected only as far as the receiver's CMRR allows, returns through whatever reference structures happen to be available rather than a controlled path, and radiates.</figcaption>
+  </figure>
+
+  <div class="prose">
+    <h2>Why two wires beat one</h2>
+
+    <p>
+      The idea behind differential signalling is something you already
+      understand from a noisy phone call. If both people hear the same
+      background hum, the listener's brain subtracts it out and hears
+      only the voice. A differential receiver does the same thing
+      electrically: it listens to the <em>difference</em> between two
+      wires, so any disturbance that hits both equally — power supply
+      noise, an external electromagnetic field, a ground shift — cancels
+      when the receiver subtracts one signal from the other.
+    </p>
+
+    <p>
+      That is why every modern high-speed serial link — PCIe, USB,
+      HDMI, MIPI, DDR's data strobe — is differential. As data rates
+      climb and timing margins shrink to single-digit picoseconds, the
+      noise rejection that comes from subtraction is no longer a bonus;
+      it is a requirement. But the cancellation only works when the two
+      halves of the pair are truly identical. Every interesting
+      differential failure — mode conversion, skew-induced EMI, common-
+      mode voltage excursions — traces back to the two halves not being
+      the same.
+    </p>
+
+    <p>
+      A single-ended signal is a voltage measured against a reference plane. That works, and it has
+      two weaknesses. Any noise that appears on the reference appears on the signal, because the
+      receiver cannot tell them apart. And the return current has to find its own way home through
+      the plane, so the loop it takes is whatever the geometry allows rather than something you
+      designed.
+    </p>
+
+    <p>
+      A differential pair sends the signal twice, in opposite polarity, on two adjacent conductors.
+      The receiver subtracts one from the other. Two things follow immediately:
+    </p>
+
+    <ul class="tight">
+      <li><strong>Noise that hits both wires equally cancels.</strong> Subtracting removes anything
+        common to both — plane noise, an external field, a shared ground shift. This is the benefit
+        people quote.</li>
+      <li><strong>The return current has somewhere defined to go.</strong> The current going out on
+        one wire comes back on the other, so the loop is the gap between the pair rather than
+        whatever route the plane offered. A smaller, defined loop radiates less and is less
+        susceptible.</li>
+    </ul>
+
+    <p>
+      Both benefits have the same precondition: the two halves must be the same. Everything below
+      follows from taking that precondition seriously.
+    </p>
+
+    <h2 class="section-rule"><span>Two modes, not two wires</span></h2>
+
+    <p>
+      A coupled pair does not have one impedance, it has two, depending on what the two conductors are
+      doing. Drive them in opposition and each sees the <strong>odd-mode</strong> impedance; drive them
+      together and each sees the <strong>even-mode</strong> impedance. Every differential number in a
+      spec is derived from those:
+    </p>
+
+    <div class="eq">
+      <i class="var">Z</i><sub>diff</sub> = 2 · <i class="var">Z</i><sub>odd</sub> &nbsp;&nbsp;&nbsp; <i class="var">Z</i><sub>common</sub> = <i class="var">Z</i><sub>even</sub> / 2
+      <span class="cap">Z_odd is lower than the isolated single-ended Z₀ and Z_even higher, because in odd mode the neighbour's opposite swing adds coupling capacitance. So Z_diff is always less than 2·Z₀ — the tighter the coupling, the bigger the gap.</span>
+    </div>
+
+    <p>
+      That last point catches people out regularly. Two 50 Ω traces routed close together are not a
+      100 Ω differential pair; they are perhaps 85–90 Ω, and getting to 100 Ω differential means either
+      moving them apart or narrowing them. PCIe signs off at 85 Ω, USB 3.x at 90 Ω, MIPI at 100 Ω — and
+      those numbers come from the receiver's on-die termination, so they are not negotiable at layout.
+    </p>
+
+    <h2 class="section-rule"><span>Tight coupling is a trade, not a virtue</span></h2>
+
+    <p>
+      Tight coupling improves immunity to outside aggressors and shrinks the loop area, so it lowers
+      emissions. It also makes the pair much more sensitive to its own geometry: any width or spacing
+      variation moves Z<sub>diff</sub> more, and the pair becomes harder to escape from a dense BGA
+      without breaking symmetry. Loosely coupled pairs are more tolerant to route around and rely more
+      on the reference plane — which is fine, as long as that plane is continuous.
+    </p>
+
+    <h2 class="section-rule"><span>Mode conversion is the real failure</span></h2>
+
+    <p>
+      Symmetry is the entire mechanism. When the two halves are no longer identical, part of the
+      differential signal converts into common mode — measured as <span class="num">S<sub>CD21</sub></span>
+      — and common mode is bad in three separate ways at once.
+      It is <em>largely</em> rejected — subtracting one wire from the other is exactly what removes it,
+      and an ideal receiver rejects equal common mode completely. But rejection is finite: real parts
+      specify a common-mode rejection ratio, and a level outside the input's common-mode range stops
+      the front end working rather than merely degrading it. Whatever survives eats margin.
+      It has no <em>controlled</em> return path — the current does return, through reference planes, a
+      chassis, a cable shield, whatever parasitic route exists, but none of those were designed for it,
+      so the loop is large and it radiates. That is the usual root cause of a failed emissions scan.
+      And when it meets an asymmetric discontinuity it converts partly back into differential noise at
+      a delay, arriving as an echo the equaliser was not designed for.
+    </p>
+
+    <div class="note">
+      <b>Where the asymmetry comes from</b>
+      Intra-pair skew from length mismatch is the obvious one and the easiest to fix. The one that bites
+      is <em>glass weave skew</em>: the two traces of a pair can sit over different amounts of glass and
+      resin, giving them genuinely different propagation velocities even at identical routed lengths.
+      Serpentine-matching the lengths does not fix it. Routing at an angle to the weave, or specifying a
+      spread-glass style, is what fixes it — and both are stackup decisions made long before layout.
+    </div>
+
+    <h2 class="section-rule"><span>Why this decides how your board behaves</span></h2>
+
+    <ul class="tight">
+      <li><strong>Get Z<sub>diff</sub> wrong and you reflect.</strong> The receiver's on-die
+        termination is a fixed value; if the pair does not match it, part of every edge comes
+        back. See <a href="reflections.html">reflections</a>.</li>
+      <li><strong>Skew becomes common mode, and common mode becomes an EMC problem.</strong> The
+        radiated emissions of a well-matched pair are tiny because the two currents cancel in the
+        far field. Break the match and the cancellation is incomplete in exactly proportion to
+        the skew.</li>
+      <li><strong>Converted common mode comes back as differential noise later.</strong> Any
+        asymmetric discontinuity downstream — a connector, a via pair with unequal antipads —
+        converts some of it back, arriving delayed. It behaves like an echo that the receiver's
+        equaliser was never designed for.</li>
+      <li><strong>Common mode outside the input range stops the receiver working.</strong> Not
+        degrades — stops. Rejection is finite and specified, and beyond the input common-mode
+        range the front end is simply out of its operating region.</li>
+    </ul>
+
+    <h2 class="section-rule"><span>What to do about it</span></h2>
+
+    <p>
+      <strong>Design to the differential impedance the receiver wants, not to 2×50 Ω.</strong> Two
+      50 Ω traces routed close together are about 85–90 Ω differential, not 100. Give the fab the
+      differential target and the tolerance and let them solve for width and spacing together.
+    </p>
+
+    <p>
+      <strong>Match length within the pair far more tightly than between pairs.</strong>
+      Intra-pair skew converts to common mode and is the thing that matters. Inter-pair skew is a
+      timing budget item and is usually allowed to be an order of magnitude larger.
+    </p>
+
+    <p>
+      <strong>Keep the pair symmetric through discontinuities, not just along the straights.</strong>
+      The places symmetry breaks are the places it is hardest to see: a bend where the inner trace
+      is shorter, a via pair with different antipad clearances, a connector where one pin has a
+      neighbour and the other does not, an escape where one trace leaves before the other. Length
+      matching after the fact does not undo an asymmetric discontinuity.
+    </p>
+
+    <p>
+      <strong>Decide tight versus loose coupling deliberately.</strong> Tight coupling improves
+      external immunity and lowers emissions, but makes the pair more sensitive to its own geometry
+      and harder to escape from a dense BGA without breaking symmetry. Loose coupling is more
+      tolerant to route and leans harder on the reference plane being continuous — which is fine
+      right up until it is not.
+    </p>
+
+    <div class="note">
+      <b>Using this to find a fault</b>
+      <ul class="tight">
+        <li><b>A failed radiated emissions scan on a differential interface.</b> Measure
+          S<sub>CD21</sub> if you can, or look for intra-pair skew in the layout. A pair radiating
+          at all means the cancellation is incomplete, and skew is the usual reason.</li>
+        <li><b>An eye with a clean top and bottom but jitter at the crossings.</b> Skew shows up
+          as timing, not amplitude, because the two halves arrive at different moments and the
+          crossing moves.</li>
+        <li><b>Lengths match perfectly and skew is still present.</b> Glass weave. The two traces
+          sit over different amounts of glass and resin and genuinely propagate at different
+          speeds. No amount of serpentine fixes it.</li>
+        <li><b>A pair that works on the bench and fails through a connector.</b> Suspect
+          asymmetry in the connector footprint or the mating structure, and measure the common-mode
+          conversion through the connector alone before blaming the board.</li>
+      </ul>
+    </div>
+
+    <details class="deeper">
+      <summary>Go deeper — where the mode impedances come from, and reading the mixed-mode matrix</summary>
+
+      <p>
+        A coupled pair has two ways to be excited, and each has its own impedance because the
+        coupling between the conductors either helps or hinders depending on what the neighbour is
+        doing.
+      </p>
+
+      <p>
+        In <strong>odd mode</strong> the two conductors swing in opposition. The voltage across the
+        gap between them is twice the single-ended swing, so the mutual capacitance is charged
+        harder — it behaves as a larger effective capacitance to ground. More C means lower
+        impedance, so Z<sub>odd</sub> &lt; Z<sub>0</sub>. In <strong>even mode</strong> both swing
+        together, so there is no voltage across the gap, the mutual capacitance does nothing, and
+        the mutual inductance adds instead: Z<sub>even</sub> &gt; Z<sub>0</sub>.
+      </p>
+
+      <p>
+        The differential impedance a receiver sees is the voltage between the conductors divided by
+        the current in the loop, which is 2·Z<sub>odd</sub>; the common-mode impedance is
+        Z<sub>even</sub>/2 because the two conductors are in parallel for that mode. This is why
+        tighter coupling always drags Z<sub>diff</sub> further below 2·Z<sub>0</sub>.
+      </p>
+
+      <p>
+        <strong>Reading the mixed-mode matrix.</strong> A four-port measurement of a pair gets
+        rearranged into blocks named by mode: SDD, SDC, SCD and SCC. The naming is
+        <em>output mode first</em>. Keeping that order explicit makes the terms easier to read:
+      </p>
+
+      <ul class="tight">
+        <li><b>SDD21</b> — differential in, differential out. Your actual insertion loss.</li>
+        <li><b>SDD11</b> — differential return loss. What the termination match costs you.</li>
+        <li><b>SCD21</b> — differential in, <em>common</em> out. This is mode conversion, and it is
+          the number that predicts an emissions problem.</li>
+        <li><b>SDC21</b> — common in, differential out. Susceptibility: how much external
+          common-mode noise turns into signal-band noise.</li>
+        <li><b>SCC21</b> — common in, common out. How well common mode propagates, which matters
+          for what arrives at the far end to radiate.</li>
+      </ul>
+
+      <p>
+        For a perfectly symmetric structure SCD and SDC are identically zero. They are, in other
+        words, a direct measurement of how good your symmetry is — which makes SCD21 the single
+        most useful plot for diagnosing a differential channel, and the one least often looked at.
+        See <a href="s-parameters.html">S-Parameters: Insertion Loss, Return Loss, and Mixed Mode</a>.
+      </p>
+
+      <p>
+        One caveat about the two-mode picture: it assumes the pair is uniform and isolated. A pair
+        inside a bus has neighbours, and a full treatment needs the whole coupled system rather
+        than two modes. The two-mode description is exact for an isolated pair and a very good
+        approximation for a pair with a guard of empty space either side.
+      </p>
+    </details>
+
+    <h2 class="section-rule"><span>In the real world</span></h2>
+
+    <p>
+      Differential signalling is often described as noise-immune, and that framing causes trouble.
+      It is not immune to noise; it rejects noise that arrives <em>equally on both halves</em>, and
+      the whole discipline is about preserving the conditions under which that is true. A pair that
+      has been routed asymmetrically has thrown away the property it was chosen for while keeping
+      all of its cost.
+    </p>
+
+    <p>
+      It helps to treat the pair as one structure whose symmetry you are protecting, rather than
+      as two unrelated traces. This leads to a useful review question:
+      question — <b>is anything here happening to one half and not the other?</b>
+    </p>
+
+    <h3>Related</h3>
+    <ul class="tight">
+      <li><a href="../fundamentals/characteristic-impedance.html">Transmission-Line Characteristic Impedance</a></li>
+      <li><a href="../fundamentals/s-parameters.html">S-Parameters: Insertion Loss, Return Loss, and Mixed Mode</a></li>
+      <li><a href="../fundamentals/crosstalk.html">PCB Crosstalk: NEXT, FEXT, and Mutual Coupling</a></li>
+      <li><a href="../package-board/manufacturing-tolerance.html">PCB Manufacturing Variation: Etch, Glass Weave, and Impedance</a></li>
+    </ul>
+  </div>
+
+  <!-- pager:start -->
+  <nav class="pager" aria-label="Previous and next topic">
+    <a class="prev" href="../../topics/fundamentals/bathtub-curves.html"><span class="dir">Previous</span><span>Bathtub curves and BER extrapolation</span></a>
+    <a class="next" href="../../topics/fundamentals/s-parameters.html"><span class="dir">Next</span><span>S-Parameters: Insertion Loss, Return Loss, and Mixed Mode</span></a>
+  </nav>
+  <!-- pager:end -->
+</main>
+
+<footer class="site-foot">
+  <span>SIPI &#8212; signal and power integrity, visualised.</span>
+  <span>Created and directed by Geetansh Arora. <a href="../../colophon.html">About, review &amp; AI assistance</a> &#183; <a href="../../model-contract.html">Model assumptions</a> &#183; <a href="../../docs/claims.md">Claim ledger</a></span>
+</footer>
+
+<script src="../../js/site.js?v=acb47d86"></script>
+<script src="../../js/search.js?v=6c93a285"></script>
+</body>
+</html>

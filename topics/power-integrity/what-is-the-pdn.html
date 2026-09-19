@@ -1,0 +1,374 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Power Delivery Networks: From Regulator to Die | SIPI</title>
+<meta name="description" content="The power delivery network from VRM to on-die capacitance — why it is a distributed impedance rather than a wire, and which stage owns which frequency band.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<link rel="stylesheet" href="../../css/base.css?v=e4f774de">
+<link rel="stylesheet" href="../../css/components.css?v=295837ab">
+  <!-- meta:start -->
+  <link rel="canonical" href="https://sipi.work/topics/power-integrity/what-is-the-pdn.html">
+  <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="SIPI">
+  <meta property="og:title" content="Power Delivery Networks: From Regulator to Die | SIPI">
+  <meta property="og:description" content="The power delivery network from VRM to on-die capacitance — why it is a distributed impedance rather than a wire, and which stage owns which frequency band.">
+  <meta property="og:url" content="https://sipi.work/topics/power-integrity/what-is-the-pdn.html">
+  <meta property="og:image" content="https://sipi.work/assets/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Power Delivery Networks: From Regulator to Die | SIPI">
+  <meta name="twitter:description" content="The power delivery network from VRM to on-die capacitance — why it is a distributed impedance rather than a wire, and which stage owns which frequency band.">
+  <meta name="twitter:image" content="https://sipi.work/assets/og.png">
+  <!-- meta:end -->
+</head>
+<body>
+
+<header class="masthead">
+  <a class="wordmark" href="../../index.html">SIPI</a>
+  <nav>
+    <a href="../../index.html#fundamentals">Fundamentals</a>
+    <a href="../../index.html#power-integrity">Power</a>
+    <a href="../../index.html#interfaces">Interfaces</a>
+    <a href="../../start.html">Start</a>
+    <a href="../../labs.html">Labs</a>
+    <a href="../../reference.html">Reference</a>
+    <button class="theme-toggle" data-act="theme" type="button">System</button>
+  </nav>
+</header>
+
+<main>
+  <div class="page-head">
+    <p class="crumb"><a href="../../index.html#power-integrity">Power Integrity</a> / 01</p>
+    <h1>Power Delivery Networks: From Regulator to Die</h1>
+    <p class="byline">
+      <!-- review:start --><span>By Geetansh Arora — Principal SI/PI Engineer</span><time datetime="2026-09-14" title="Technical review by Geetansh Arora on this date">14 Sep 2026</time><span>10 min</span><!-- review:end -->
+    </p>
+    <p class="answer">
+      A chip does not draw a steady current &#8212; it draws a current that jumps every time a
+      clock edge lands. The power delivery network is everything between the regulator and the
+      transistors that has to supply those jumps without the rail voltage moving. It is not a
+      wire; it is a chain of sources, each fast enough for one band of frequencies and useless
+      above it.
+    </p>
+  </div>
+
+  <!-- ───────────── the picture ───────────── -->
+  <figure class="figure">
+    <div class="figure__bar"><span>From regulator to transistor &#183; five stages, four fences</span></div>
+    <div class="figure__body"><svg viewBox="-4 24 720 190" role="img" aria-label="The power delivery chain from regulator to die: five stages separated by series inductance, each owning a band of frequencies, with a note that nothing on the board reaches above a few hundred megahertz.">
+  <rect class="edge" x="0" y="46" width="104" height="44" rx="2" fill="var(--surface-2)"/><text class="lbl-hi" x="52.0" y="64" text-anchor="middle">VRM</text><text class="lbl" x="52.0" y="78" text-anchor="middle">regulator</text><path class="edge" d="M104,68 l6,0 q4,-9 8,0 q4,-9 8,0 q4,-9 8,0 l6,0" fill="none"/><text class="lbl-ref" x="122" y="52" text-anchor="middle">L</text>
+  <rect class="edge" x="140" y="46" width="104" height="44" rx="2" fill="var(--surface-2)"/><text class="lbl-hi" x="192.0" y="64" text-anchor="middle">bulk caps</text><text class="lbl" x="192.0" y="78" text-anchor="middle">100 µF</text><path class="edge" d="M244,68 l6,0 q4,-9 8,0 q4,-9 8,0 q4,-9 8,0 l6,0" fill="none"/><text class="lbl-ref" x="262" y="52" text-anchor="middle">L</text>
+  <rect class="edge" x="280" y="46" width="104" height="44" rx="2" fill="var(--surface-2)"/><text class="lbl-hi" x="332.0" y="64" text-anchor="middle">board ceramics</text><text class="lbl" x="332.0" y="78" text-anchor="middle">100 nF</text><path class="edge" d="M384,68 l6,0 q4,-9 8,0 q4,-9 8,0 q4,-9 8,0 l6,0" fill="none"/><text class="lbl-ref" x="402" y="52" text-anchor="middle">L</text>
+  <rect class="edge" x="420" y="46" width="104" height="44" rx="2" fill="var(--surface-2)"/><text class="lbl-hi" x="472.0" y="64" text-anchor="middle">package</text><text class="lbl" x="472.0" y="78" text-anchor="middle">caps + planes</text><path class="edge" d="M524,68 l6,0 q4,-9 8,0 q4,-9 8,0 q4,-9 8,0 l6,0" fill="none"/><text class="lbl-ref" x="542" y="52" text-anchor="middle">L</text>
+  <rect class="edge" x="560" y="46" width="104" height="44" rx="2" fill="var(--surface-2)"/><text class="lbl-hi" x="612.0" y="64" text-anchor="middle">on-die C</text><text class="lbl" x="612.0" y="78" text-anchor="middle">silicon</text>
+  <rect x="0" y="122" width="104" height="16" rx="2" fill="var(--signal)" opacity=".20"/><text class="lbl-sig" x="52.0" y="134" text-anchor="middle">DC&#8211;100 kHz</text><text class="lbl" x="52.0" y="154" text-anchor="middle">loop bandwidth</text>
+  <rect x="140" y="122" width="104" height="16" rx="2" fill="var(--signal)" opacity=".20"/><text class="lbl-sig" x="192.0" y="134" text-anchor="middle">100 kHz&#8211;1 MHz</text><text class="lbl" x="192.0" y="154" text-anchor="middle">ESR, then ESL</text>
+  <rect x="280" y="122" width="104" height="16" rx="2" fill="var(--signal)" opacity=".20"/><text class="lbl-sig" x="332.0" y="134" text-anchor="middle">1 MHz&#8211;100 MHz</text><text class="lbl" x="332.0" y="154" text-anchor="middle">mounting inductance</text>
+  <rect x="420" y="122" width="104" height="16" rx="2" fill="var(--signal)" opacity=".20"/><text class="lbl-sig" x="472.0" y="134" text-anchor="middle">100 MHz&#8211;~500 MHz</text><text class="lbl" x="472.0" y="154" text-anchor="middle">package inductance</text>
+  <rect x="560" y="122" width="104" height="16" rx="2" fill="var(--signal)" opacity=".20"/><text class="lbl-sig" x="612.0" y="134" text-anchor="middle">above&#8211;that</text><text class="lbl" x="612.0" y="154" text-anchor="middle">silicon area</text>
+  <path class="edge dash" d="M402,36 L402,178" stroke="var(--alarm)"/>
+  <text class="lbl-bad" x="398" y="34" text-anchor="end">nothing left of here reaches the die fast enough</text>
+  <text class="lbl" x="0" y="196">each L is the fence: balls, vias, bumps, plane spreading</text>
+  <text class="lbl-sig" x="716" y="196" text-anchor="end">V(f) = I(f) &#215; Z(f)</text>
+</svg></div>
+    <figcaption><b>The PDN is an impedance, not a supply.</b> A digital circuit draws a broadband transient, and the wobble on the rail is that current multiplied by whatever the network presents at each frequency. What makes it hard is that Z(f) is built from physically separate hardware handing off from one stage to the next &#8212; and every handoff is a series inductance. Read the bands as ceilings rather than assignments: each stage stops working where its own inductance takes over, and past that the next stage down is on its own. The blunt corollary is marked in red. A first-droop problem &#8212; nanoseconds, hundreds of megahertz &#8212; cannot be fixed by a board capacitor, however many you add or however close they sit. The charge physically cannot get there in time.</figcaption>
+  </figure>
+
+  <div class="prose">
+    <h2>Start with what the chip is actually doing</h2>
+
+    <p>
+      On a schematic or a bench multimeter, power distribution looks deceptively simple: a voltage regulator
+      produces 0.85 V, a copper plane carries it across the board, and the chip receives power. If the
+      multimeter reads 0.850 V, it is tempting to assume the job is done. But a multimeter only measures at
+      zero hertz. To the switching transistors inside a modern die, the power delivery network (PDN) is not a
+      static rail &#8212; it is a high-speed electrical supply chain tasked with delivering precise packets of charge
+      on picosecond timescales.
+    </p>
+
+    <p>
+      An ideal PDN would behave like a zero-impedance battery at every conceivable frequency: whether the load
+      draws zero amps or fifty amps, steady-state DC or sub-nanosecond pulses, the rail voltage would not move by
+      a microvolt. In the physical world, every conductor between the regulator and the logic gates &#8212; traces, vias,
+      planes, BGA balls, package substrates, and on-die metal layers &#8212; has inductance. That inductance turns the
+      apparent &ldquo;wire&rdquo; into a frequency-dependent impedance ladder, where drawing sudden current inevitably
+      forces the supply voltage to move.
+    </p>
+
+    <p>
+      Inside a digital chip, almost all the current is drawn in bursts. A clock edge arrives,
+      millions of gates switch at once, each one charging or discharging a tiny capacitance, and for
+      a few tens of picoseconds the chip pulls a great deal of current. Then it goes quiet until the
+      next edge.
+    </p>
+
+    <p>
+      So the load is not a resistor. It is closer to a square wave of current, with a small average
+      and a very large rate of change — the <span class="num">di/dt</span> that causes all the
+      trouble. A core that averages 8 A might swing several amps within a nanosecond when a clock
+      gate opens.
+    </p>
+
+    <p>
+      Now ask where that current comes from. The regulator is centimetres away, and the
+      connection to it has inductance. Inductance opposes a change in current — that is its
+      definition. So the regulator physically <em>cannot</em> supply a nanosecond-scale burst; by
+      the time it responds, the event is long over.
+    </p>
+
+    <p>
+      Everything in power integrity follows from that one problem: the load needs current faster
+      than the source can deliver it, so something closer has to hold a local reserve. Every
+      capacitor in the PDN exists for that reason, and the only question is how close and how fast.
+    </p>
+
+    <h2 class="section-rule"><span>One law, applied at every frequency</span></h2>
+
+    <p>
+      A digital circuit does not draw DC. It draws a current that steps, rings and repeats — a
+      broadband waveform with energy from kilohertz to gigahertz. Ohm's law still applies at every one
+      of those frequencies, so the voltage wobble on the rail is simply
+      <span class="num">V<sub>noise</sub>(f) = I<sub>transient</sub>(f) × Z<sub>PDN</sub>(f)</span>.
+      Everything in power integrity is an attempt to keep that product inside a budget.
+    </p>
+
+    <p>
+      What makes it hard is that Z<sub>PDN</sub> is not one number. It is a curve across eight decades
+      of frequency, and it is built out of physically separate hardware that hands off from one stage
+      to the next.
+    </p>
+
+    <h2 class="section-rule"><span>The chain, and who owns what</span></h2>
+
+    <div class="table-scroll">
+      <table class="data">
+        <thead><tr><th>Stage</th><th>Roughly owns</th><th>Limited by</th></tr></thead>
+        <tbody>
+          <tr><td>VRM control loop</td><td>DC – ~100 kHz</td><td>feedback loop bandwidth</td></tr>
+          <tr><td>Bulk capacitors</td><td>~100 kHz – ~1 MHz</td><td>ESR, then ESL</td></tr>
+          <tr><td>Board ceramics</td><td>~1 – 100 MHz</td><td>mounting inductance</td></tr>
+          <tr><td>Package caps + planes</td><td>~100 MHz – several hundred MHz</td><td>package inductance</td></tr>
+          <tr><td>On-die capacitance</td><td>above that</td><td>silicon area</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>
+      Read that table as a set of ceilings rather than a set of assignments. Each stage stops working
+      where its own series inductance takes over, and past that point the next stage down is on its
+      own. This is the single most consequential fact in PI, and it has a blunt corollary:
+      <strong>nothing you add on the board can help above a few hundred megahertz</strong>, because the
+      inductance of the balls, vias and package planes between the board and the die isolates the two.
+    </p>
+
+    <p>
+      Why does this hierarchy exist in exactly this order? It is an unavoidable trade-off between energy storage
+      and loop inductance dictated by physical distance. A power supply chain works like a bucket brigade:
+    </p>
+
+    <ul class="tight">
+      <li><strong>The VRM and bulk capacitors</strong> sit centimetres away. They can store massive amounts
+        of energy (hundreds of microfarads to millifarads), but their current must travel across long traces,
+        through plane spreading resistance, and around large geometric loops. That path has tens of nanohenries
+        of inductance. By <span class="num">V = L&#183;di/dt</span>, trying to draw nanosecond current bursts through that
+        loop causes an immediate voltage collapse. The VRM feedback loop simply cannot react faster than tens of
+        kilohertz to a few hundred kilohertz.</li>
+      <li><strong>Board ceramic capacitors (MLCCs)</strong> sit millimetres from the chip. Their capacitance is
+        smaller (100 nF to 10 &#181;F), but their mounting loops can achieve an inductance around 1 to 2 nH. They supply
+        charge during the tens-to-hundreds-of-nanoseconds window while the bulk caps and VRM are still ramping up.</li>
+      <li><strong>The package (planes and land-side/die-side capacitors)</strong> sits inside the BGA boundary.
+        The solder balls and vias connecting the board to the package form an inductive fence of roughly 100 to
+        300 pH. Above ~100 MHz, this fence isolates the board. Inside the package, thin dielectrics and tiny geometries
+        drop loop inductance below 50 to 100 pH, maintaining low impedance up to several hundred megahertz.</li>
+      <li><strong>On-die capacitance</strong> sits microns from the transistors. Real estate on silicon is the
+        most expensive conductor on the bill of materials, so on-die capacitance is limited to tens or hundreds
+        of nanofarads (from thin gate oxides and dense metal-fill structures). But its loop inductance is measured in
+        single-digit picohenries. It is the <em>only</em> reservoir fast enough to feed sub-nanosecond switching
+        bursts in the gigahertz regime.</li>
+    </ul>
+
+    <p>
+      Each tier’s sole responsibility is to supply charge long enough for the next slower, larger tier further
+      out to take over. When that handoff fails &#8212; or when the capacitance of one tier rings against the inductance
+      of the tier behind it &#8212; the rail develops an impedance peak.
+    </p>
+
+    <div class="note">
+      <b>The most common wasted afternoon</b>
+      A first-droop problem — nanosecond timescale, hundreds of megahertz — cannot be fixed by adding
+      board capacitors, no matter how many or how close. The current has to come from on-die or
+      in-package capacitance, because those are the only sources inside the inductive fence. Confirm
+      which droop you have before you touch the BOM.
+    </div>
+
+    <p>
+      The flip side is that the handoffs are where the trouble lives. Where one stage runs out of
+      capacitance and the next has not taken over, the network looks inductive against something
+      capacitive, and the impedance curve grows a peak. Those peaks are structural — they come from
+      package and board geometry, not from a component you chose — and they are the reason the PDN gets
+      analysed as a whole rather than stage by stage.
+    </p>
+
+    <h2 class="section-rule"><span>Why this decides how your board behaves</span></h2>
+
+    <p>
+      The rail moving is not, in itself, the failure. What it does downstream is:
+    </p>
+
+    <ul class="tight">
+      <li><strong>Timing moves.</strong> A gate's delay depends on its supply voltage. Drop the rail
+        and every path gets slower — which shows up as jitter at the outputs, not as a power
+        problem. This is the single most under-diagnosed cause of jitter on a link. See
+        <a href="pdn-induced-jitter.html">PDN-induced jitter</a>.</li>
+      <li><strong>Noise margin shrinks.</strong> A receiver's threshold is referenced to its own
+        supply. Rail noise eats directly into the voltage margin your channel budget assumed.</li>
+      <li><strong>Analogue blocks degrade first.</strong> A PLL or a SerDes front end has a finite
+        power-supply rejection ratio, and what gets through becomes phase noise.</li>
+      <li><strong>Emissions.</strong> A PDN with a resonance is a structure that rings, and a
+        ringing plane pair radiates. See <a href="plane-resonance.html">plane resonance</a>.</li>
+    </ul>
+
+    <h2 class="section-rule"><span>What to do about it</span></h2>
+
+    <p>
+      <strong>First, work out which band your problem is in.</strong> This is the whole game, and
+      almost every wasted effort in PI comes from skipping it. A microsecond-scale droop is a VRM or
+      bulk-capacitor problem. A nanosecond-scale one is a package or die problem, and no board
+      component can reach it. Measure the timescale before you touch the BOM.
+    </p>
+
+    <p>
+      <strong>Then fix the thing that owns that band.</strong> The table above is a map of who can
+      help. Adding board ceramics to fix a 300 MHz droop is the classic wasted afternoon; the
+      inductance of the balls and vias between the board and the die isolates the two completely.
+    </p>
+
+    <p>
+      <strong>Treat the peaks as structural, not as component choices.</strong> The handoffs between
+      stages are where impedance peaks live, and they come from package and board geometry rather
+      than from a part number. Moving them usually means changing inductance, not capacitance.
+    </p>
+
+    <p>
+      <strong>Compare the impedance against the load's spectrum, not against a flat line.</strong> A
+      peak where the load has no energy costs nothing. A smaller peak sitting on a clock harmonic
+      dominates. See <a href="target-impedance.html">target impedance</a> for why the single-number
+      version of this is both useful and a simplification.
+    </p>
+
+    <div class="note">
+      <b>Using this to find a fault</b>
+      <ul class="tight">
+        <li><b>Measure the droop's duration first.</b> It names the responsible stage more reliably
+          than anything else. Microseconds is the VRM loop; hundreds of nanoseconds is bulk;
+          tens of nanoseconds is board ceramics; nanoseconds is package; sub-nanosecond is on-die
+          and you cannot reach it from outside.</li>
+        <li><b>Ringing after a load step.</b> Read its frequency. That is an anti-resonance, and
+          the two stages fighting at it are the two whose handoff sits there. See
+          <a href="anti-resonance.html">anti-resonance</a>.</li>
+        <li><b>Noise that appears on a rail nothing on that rail explains.</b> Check what else
+          shares the plane. Transfer impedance means a noisy block can disturb a quiet one
+          without any DC connection between them being at fault.</li>
+        <li><b>A problem that moves when you probe it.</b> A scope probe's ground lead is an
+          inductor and its tip is a capacitor. On a PDN measurement that is not a small
+          perturbation — use a proper low-inductance connection before believing the waveform.</li>
+      </ul>
+    </div>
+
+    <details class="deeper">
+      <summary>Go deeper — why inductance sets every ceiling, and what a single impedance number hides</summary>
+
+      <p>
+        Every ceiling in the table above is an inductance. It is worth seeing why in one line. A
+        capacitor is only a capacitor below its self-resonant frequency:
+      </p>
+
+      <div class="eq">
+        <span class="eq__main"><i class="var">f</i><sub>SRF</sub> = 1 / ( 2π √( <i class="var">L</i> · <i class="var">C</i> ) )</span>
+        <span class="eq__note">above it, |Z| = wL and the capacitance is irrelevant — the part is an inductor with a part number</span>
+      </div>
+
+      <p>
+        The L in that expression is not mostly the capacitor. It is the <em>mounting</em>
+        inductance: the pads, the vias, and the loop the current takes from the plane to the part
+        and back. That is geometry, not a purchasing decision, and it is why moving a capacitor two
+        millimetres can matter more than doubling its value — and why the same part behaves
+        differently on two boards.
+      </p>
+
+      <p>
+        The same argument applies one level up. The package's balls and vias present an inductance
+        between the board's capacitors and the die. Above the frequency where that inductance
+        dominates, the board is simply not connected to the die in any useful sense. That is the
+        "inductive fence", and it is the reason on-die capacitance exists at all despite costing
+        silicon area.
+      </p>
+
+      <p>
+        <strong>What a single impedance number hides.</strong> The product
+        V = I × Z is exact at every frequency, but collapsing it into one target impedance assumes
+        the load draws current at every frequency equally. No real load does. A processor's current
+        spectrum has structure — clock harmonics, workload-dependent envelopes, power-state
+        transitions — and the honest question is whether Z is low <em>where I is large</em>. The
+        <a href="../labs/pdn-chain.html">PDN lab</a> plots the current spectrum on its own axis next
+        to the impedance for exactly this reason.
+      </p>
+
+      <p>
+        One more thing the single number hides: <strong>transfer impedance</strong>. |Z| at the die
+        answers "how much does the rail move when <em>this</em> block draws current?" It does not
+        answer "how much does a noisy block over there disturb me?" That is a different quantity,
+        and on a shared plane it can be the one that matters.
+      </p>
+    </details>
+
+    <h2 class="section-rule"><span>In the real world</span></h2>
+
+    <p>
+      Power integrity is mostly an argument about ownership. The die's capacitance is the silicon
+      team's, the package's is the package team's, the board's is yours, and the current profile that
+      drives all of it belongs to whoever wrote the firmware. Problems surface at the handoffs — both
+      the electrical ones and the organisational ones, which tend to be in the same places.
+    </p>
+
+    <p>
+      Which is why the most valuable thing you can do early is get a model of the whole chain rather
+      than of your part of it. A board-only PDN simulation is not wrong so much as unable to answer
+      the question, because the peak that will hurt you is almost always at a boundary between two
+      pieces that different people own. See
+      <a href="../labs/pdn-chain.html">Lab C</a>, which puts the whole ladder on one page, compares die and board load timing, and says in
+      amps which stage is supplying the load at every frequency.
+    </p>
+
+    <h3>Related</h3>
+    <ul class="tight">
+      <li><a href="../power-integrity/target-impedance.html">PDN Target Impedance: Use and Limitations</a></li>
+      <li><a href="../power-integrity/three-frequency-domains.html">PDN Frequency Regions: Board, Package, and Die</a></li>
+      <li><a href="../power-integrity/decoupling-capacitors.html">Decoupling Capacitors: ESR, ESL, and Placement</a></li>
+      <li><a href="../power-integrity/anti-resonance.html">PDN Anti-Resonance and Impedance Peaks</a></li>
+    </ul>
+  </div>
+
+  <!-- pager:start -->
+  <nav class="pager" aria-label="Previous and next topic">
+    <a class="prev" href="../../topics/fundamentals/vias.html"><span class="dir">Previous</span><span>High-Speed Vias: Stubs, Resonance, and Backdrilling</span></a>
+    <a class="next" href="../../topics/power-integrity/target-impedance.html"><span class="dir">Next</span><span>PDN Target Impedance: Use and Limitations</span></a>
+  </nav>
+  <!-- pager:end -->
+</main>
+
+<footer class="site-foot">
+  <span>SIPI &#8212; signal and power integrity, visualised.</span>
+  <span>Created and directed by Geetansh Arora. <a href="../../colophon.html">About, review &amp; AI assistance</a> &#183; <a href="../../model-contract.html">Model assumptions</a> &#183; <a href="../../docs/claims.md">Claim ledger</a></span>
+</footer>
+
+<script src="../../js/site.js?v=acb47d86"></script>
+<script src="../../js/search.js?v=6c93a285"></script>
+</body>
+</html>

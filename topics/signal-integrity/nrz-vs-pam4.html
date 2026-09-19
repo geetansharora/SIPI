@@ -1,0 +1,386 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NRZ and PAM4: Levels, Bandwidth, and SNR | SIPI</title>
+<meta name="description" content="Why PAM4 halves the Nyquist frequency, what the 9.5 dB amplitude penalty buys and costs, and why FEC stops being optional.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<link rel="stylesheet" href="../../css/base.css?v=e4f774de">
+<link rel="stylesheet" href="../../css/components.css?v=295837ab">
+  <!-- meta:start -->
+  <link rel="canonical" href="https://sipi.work/topics/signal-integrity/nrz-vs-pam4.html">
+  <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="SIPI">
+  <meta property="og:title" content="NRZ and PAM4: Levels, Bandwidth, and SNR | SIPI">
+  <meta property="og:description" content="Why PAM4 halves the Nyquist frequency, what the 9.5 dB amplitude penalty buys and costs, and why FEC stops being optional.">
+  <meta property="og:url" content="https://sipi.work/topics/signal-integrity/nrz-vs-pam4.html">
+  <meta property="og:image" content="https://sipi.work/assets/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="NRZ and PAM4: Levels, Bandwidth, and SNR | SIPI">
+  <meta name="twitter:description" content="Why PAM4 halves the Nyquist frequency, what the 9.5 dB amplitude penalty buys and costs, and why FEC stops being optional.">
+  <meta name="twitter:image" content="https://sipi.work/assets/og.png">
+  <!-- meta:end -->
+</head>
+<body>
+
+<header class="masthead">
+  <a class="wordmark" href="../../index.html">SIPI</a>
+  <nav>
+    <a href="../../index.html#fundamentals">Fundamentals</a>
+    <a href="../../index.html#power-integrity">Power</a>
+    <a href="../../index.html#interfaces">Interfaces</a>
+    <a href="../../start.html">Start</a>
+    <a href="../../labs.html">Labs</a>
+    <a href="../../reference.html">Reference</a>
+    <button class="theme-toggle" data-act="theme" type="button">System</button>
+  </nav>
+</header>
+
+<main>
+  <div class="page-head">
+    <p class="crumb"><a href="../../index.html#signal-integrity">SI in practice</a> / 03</p>
+    <h1>NRZ and PAM4: Levels, Bandwidth, and SNR</h1>
+    <p class="byline">
+      <!-- review:start --><span>By Geetansh Arora — Principal SI/PI Engineer</span><time datetime="2026-09-16" title="Technical review by Geetansh Arora on this date">16 Sep 2026</time><span>10 min</span><!-- review:end -->
+    </p>
+    <p class="answer">
+      PAM4 sends two bits per symbol instead of one, so the same data rate needs only half the
+      symbol rate &#8212; and therefore half the bandwidth. Copper loss rises steeply with
+      frequency, so that halving is worth a great deal. The price is that four levels have to fit
+      in the same voltage swing, and each gap is a third the size.
+    </p>
+  </div>
+
+  <!-- ───────────── the picture ───────────── -->
+  <section class="instrument" data-viz="pam4" aria-label="NRZ and PAM4 eyes side by side at the same bit rate, showing PAM4's lower Nyquist frequency and its three smaller eyes">
+    <script type="application/json" data-contract>{"kind":"numerical","evidence":"independent","purpose":"Compare NRZ and PAM4 on the same channel at the same data rate: PAM4 halves the Nyquist frequency and so meets less loss, and pays for it with a third the eye height.","equations":["loss_NRZ = lossPerGHz * rate/2,   loss_PAM4 = lossPerGHz * rate/4","level spacing penalty = 20*log10(3) = 9.54 dB at equal total swing","h = ctle(channelImpulse(loss, sps, nfft)); y = applyDFE(conv(levels, h), ...)"],"units":"dB, V","validity":"A controlled comparison of two alphabets on one loss law, not a system margin. Fixed CTLE boost and fixed DFE taps for both, deliberately, so the comparison is about the alphabet. No adaptation, no jitter, no crosstalk, ideal terminations.","numerics":"FFT channel at 32 samples/UI, minimum phase by real cepstrum; seeded symbol sequence. The 9.54 dB level-spacing figure is exact arithmetic and is checked separately from the chain.","limitations":"The 20*log10(3) level-spacing penalty is a fact about amplitudes and is exact. Everything else on the panel is the output of a numerical channel, and the two should not be read with the same confidence.","suites":["DFE","DFE slicer","Convergence"],"version":"2.0","reviewed":"2026-09-12","panel":"pam4"}</script>
+    <div class="instrument__bar">
+      <span class="instrument__title">Same bit rate &#183; half the Nyquist, a third the eye</span>
+        <span data-evidence="independent" data-model-version="2.0" class="model-tag model-tag--numerical" title="Level spacing and Gray mapping. Analog margin only — no coding or FEC.">numerical</span>
+      <span class="instrument__readout" role="status" aria-live="polite" aria-label="Current values">
+        <span>NRZ opening <b data-out="nrz">—</b></span>
+        <span>PAM4 opening <b data-out="pam">—</b></span>
+        <span>amplitude penalty <b data-out="penalty">—</b></span>
+        <span> <b data-out="verdict">—</b></span>
+      </span>
+    </div>
+    <div class="panels two-up">
+      <div class="panel">
+        <span class="panel__label">NRZ — one eye, full Nyquist</span>
+        <canvas data-cv="nrz" role="img" aria-label="An NRZ eye diagram at the full Nyquist frequency for the chosen bit rate."></canvas>
+        <div class="legend"><span><i style="background:var(--reflect)"></i>NRZ</span></div>
+      </div>
+      <div class="panel">
+        <span class="panel__label">PAM4 — three eyes, half the Nyquist</span>
+        <canvas data-cv="pam" role="img" aria-label="A PAM4 eye diagram showing three stacked openings at half the Nyquist frequency."></canvas>
+        <div class="legend"><span><i style="background:var(--signal)"></i>PAM4</span></div>
+      </div>
+    </div>
+    <div class="controls">
+      <div class="ctl">
+        <div class="ctl__head"><label for="p4-rate">Bit rate</label><output id="p4-rate-out" for="p4-rate">64 GT/s</output></div>
+        <input type="range" id="p4-rate" min="16" max="96" step="2" value="64">
+        <span class="ctl__note">PAM4 halves the frequency the channel must carry</span>
+      </div>
+      <div class="ctl">
+        <div class="ctl__head"><label for="p4-loss">Channel loss slope</label><output id="p4-loss-out" for="p4-loss">1.1 dB/GHz</output></div>
+        <input type="range" id="p4-loss" min="2" max="25" step="1" value="11">
+        <span class="ctl__note">Steeper channels favour PAM4</span>
+      </div>
+    </div>
+    <div class="presets">
+      <button class="preset" type="button" data-preset="gen6" aria-pressed="true">PCIe Gen 6</button>
+      <button class="preset" type="button" data-preset="slow" aria-pressed="false">32 GT/s</button>
+      <button class="preset" type="button" data-preset="lossy" aria-pressed="false">Lossier channel</button>
+      <button class="preset" type="button" data-preset="clean" aria-pressed="false">Short channel</button>
+    </div>
+    <div class="transport"><span data-out="note">—</span></div>
+  </section>
+
+  <div class="prose">
+    <p>
+      Traditional digital communications rely on Non-Return-to-Zero (NRZ) signalling: two voltage
+      states representing a binary 0 or 1. To transmit more data across an NRZ interconnect, the
+      intuitive approach is to clock the bits faster. But copper transmission lines push back ruthlessly
+      against higher toggle rates: conductor skin-effect and dielectric loss scale aggressively with
+      frequency. Doubling a lane's throughput from 28 Gbps to 56 Gbps under NRZ would require doubling
+      the Nyquist frequency from 14 GHz to 28 GHz, often introducing 15 to 25 dB of additional loss
+      that completely swallows the signal.
+    </p>
+
+    <p>
+      PAM4 (4-level Pulse Amplitude Modulation) escapes this frequency barrier by trading amplitude
+      resolution for spectral efficiency. Instead of transmitting one bit per clock cycle, PAM4 transmits
+      two bits per symbol by establishing four distinct voltage levels. Because each symbol carries twice
+      the payload, a 56 Gbps link operates at 28 GBaud, keeping its Nyquist frequency at 14 GHz. The channel
+      sees a much gentler attenuation curve.
+    </p>
+
+    <p>
+      The engineering catch is that splitting the total supply swing into four levels creates three stacked
+      eyes, each approximately one-third the vertical height of an equivalent NRZ eye. That geometric
+      compression imposes an immediate ~9.54 dB signal-to-noise ratio (SNR) penalty, transforming the link
+      from one dominated by insertion loss to one dominated by noise, linearity, and statistical error rates.
+    </p>
+
+    <h2>Why anyone would want four levels</h2>
+
+    <p>
+      A binary signal carries one bit per symbol: high or low. To send twice as much data you send
+      symbols twice as fast, which doubles the bandwidth the channel has to carry.
+    </p>
+
+    <p>
+      That is the problem. Channel loss climbs steeply with frequency, so doubling the symbol rate
+      does not cost twice the loss — it costs considerably more, and eventually the channel simply
+      cannot carry it over any useful distance.
+    </p>
+
+    <p>
+      PAM4 takes the other route. Instead of sending symbols faster, send <em>more information per
+      symbol</em>: four voltage levels, each encoding two bits. The same data rate now needs half
+      the symbol rate, and therefore half the Nyquist frequency, and the channel gets an easier job
+      at the price of a harder decision at the receiver.
+    </p>
+
+    <h2 class="section-rule"><span>The trade, stated precisely</span></h2>
+
+    <p>
+      NRZ has two levels and one bit per symbol, so the symbol rate equals the bit rate and the Nyquist
+      frequency is half of it. PAM4 has four levels and two bits per symbol, so the same bit rate is
+      carried at half the symbol rate — and therefore <strong>half the Nyquist frequency</strong>.
+    </p>
+
+    <p>
+      Because copper loss rises steeply with frequency, halving Nyquist is worth a great deal. It is the
+      only reason 64 GT/s over a connectorised board channel is possible at all; the NRZ version would
+      need 32 GHz, where the loss is prohibitive over any useful distance.
+    </p>
+
+    <div class="eq">
+      penalty = 20·log<sub>10</sub>(3) ≈ 9.5 dB
+      <span class="cap">Three eyes stacked in the swing that previously held one leaves each a third the height. State the normalisation, because that is what the number depends on: this compares ADJACENT-LEVEL SPACING at EQUAL TOTAL PEAK-TO-PEAK SWING. It is not a complete system penalty &#8212; bandwidth, noise, equaliser behaviour, threshold placement and coding all move the real comparison, and PAM4 halves the Nyquist frequency, which gives a good deal of it back.</span>
+    </div>
+
+    <div class="note">
+      <b>What 9.5 dB is, and what it is not</b>
+      It is the ratio of adjacent-level spacing, at equal total swing:
+      <span class="num">20·log₁₀(3)</span>, because three gaps now occupy the range that held one.
+      Change the normalisation and the number changes — comparing at equal <em>average power</em>, or
+      at equal outer-eye amplitude, gives a different figure.
+      <br><br>
+      It is not the end-to-end penalty. Against it, PAM4 runs at half the symbol rate for the same
+      bit rate, so the channel is worked at half the Nyquist frequency and delivers far less loss —
+      which is the entire reason to do it. Set against it again are level-dependent non-linearity,
+      more transitions, and error statistics that cluster. The net answer is a link-budget question,
+      not a single constant.
+    </div>
+
+    <h2 class="section-rule"><span>What else changes</span></h2>
+
+    <ul class="tight">
+      <li><strong>Three eyes, not one.</strong> They are not identical. Driver non-linearity makes the
+        outer and inner eyes behave differently, so <em>transmitter linearity</em> becomes a specified
+        parameter — measured as level separation — in a way it never was for NRZ.</li>
+      <li><strong>Gray coding.</strong> Adjacent levels differ by one bit, so the most likely symbol
+        error costs one bit error rather than two. It is free and it roughly halves the bit error rate
+        for a given symbol error rate.</li>
+      <li><strong>Error statistics change shape.</strong> Errors cluster by level, and a DFE mistake can
+        produce a burst. This interacts badly with lightweight FEC, which is why precoding is used to
+        break the correlation.</li>
+      <li><strong>Crosstalk hurts three times as much.</strong> The same absolute millivolts of coupled
+        noise eat three times the fraction of a PAM4 eye. Every geometry decision gets stricter.</li>
+    </ul>
+
+    <div class="note">
+      <b>Why FEC becomes mandatory</b>
+      Nine and a half decibels cannot be recovered from the channel, so the standards move the target
+      instead: a raw error rate around 10<sup>−6</sup>, corrected back to 10<sup>−12</sup> and beyond by
+      FEC. That makes error correction part of the electrical budget rather than a protocol layer above
+      it — and, usefully, makes the raw error rate large enough to measure directly instead of
+      extrapolating.
+    </div>
+
+    <p>
+      The rule of thumb worth carrying: PAM4 is the right answer when the channel is <em>loss-limited</em>,
+      because halving Nyquist buys more than the amplitude penalty costs. It is the wrong answer when the
+      channel is noise- or crosstalk-limited, because there the penalty is pure loss and the frequency
+      relief buys nothing.
+    </p>
+
+    <h2 class="section-rule"><span>Why this decides how your board behaves</span></h2>
+
+    <ul class="tight">
+      <li><strong>It changes what limits you.</strong> An NRZ link at the same data rate is usually
+        loss-limited. A PAM4 link, with half the loss to fight and a third the eye height, is far
+        more often noise- and crosstalk-limited. The same board can be adequate for one and not the
+        other.</li>
+      <li><strong>Crosstalk hurts three times as much.</strong> The same coupled millivolts now eat
+        three times the fraction of an eye. Spacing and shielding decisions that were comfortable at
+        NRZ may not survive the transition.</li>
+      <li><strong>Reflections hurt three times as much,</strong> for exactly the same reason — which
+        makes return loss and via design disproportionately more important.</li>
+      <li><strong>Raw error rates are much higher, and that is expected.</strong> PAM4 links are
+        designed to run at a raw BER around 10<sup>−6</sup> and rely on forward error correction to
+        reach the required rate. A raw number that would be alarming on an NRZ link is normal
+        here.</li>
+    </ul>
+
+    <h2 class="section-rule"><span>What to do about it</span></h2>
+
+    <p>
+      <strong>Re-budget noise and crosstalk, not just loss.</strong> The instinct is to celebrate
+      the halved Nyquist and reuse the channel. The eye height penalty means the noise budget has
+      changed by more than the loss budget improved.
+    </p>
+
+    <p>
+      <strong>Attack return loss harder than you would at NRZ.</strong> Backdrilling, via design and
+      connector launches all matter more when a reflection costs three times its previous share.
+    </p>
+
+    <p>
+      <strong>Expect three eyes, and check all three.</strong> They are not identical: the levels
+      are not perfectly evenly spaced in a real transmitter, and the middle eye sees different
+      threshold noise from the outer ones. Reporting one eye height for a PAM4 link is incomplete.
+    </p>
+
+    <p>
+      <strong>Report raw and post-FEC error rates separately,</strong> and never quote one as if it
+      were the other. The gap between them is the entire design.
+    </p>
+
+    <div class="note">
+      <b>Using this to find a fault</b>
+      <ul class="tight">
+        <li><b>One eye much worse than the other two.</b> Level non-linearity in the transmitter,
+          or threshold placement at the receiver. It is a device problem, not a channel one — the
+          channel treats all three the same.</li>
+        <li><b>Errors clustering on particular symbol transitions.</b> Transitions spanning three
+          levels have the largest slew and the most ISI. Gray coding means such a transition is
+          still only one bit in error, which is itself diagnostic.</li>
+        <li><b>Post-FEC errors with an acceptable raw rate.</b> Suspect bursts. FEC has a limited
+          burst-correcting capacity, and DFE error propagation or a periodic aggressor produces
+          exactly the burst structure it copes worst with.</li>
+        <li><b>A channel that was fine at NRZ and marginal at PAM4.</b> Check crosstalk before
+          loss. The loss got better; the sensitivity to everything else got worse.</li>
+      </ul>
+    </div>
+
+    <details class="deeper">
+      <summary>Go deeper — Gray coding, the 9.5 dB trade, and why PAM4 requires FEC</summary>
+
+      <p>
+        <strong>Gray coding and error mapping.</strong> The four PAM4 voltage levels (conventionally denoted
+        -3, -1, +1, +3, or L0, L1, L2, L3) are labelled so that adjacent levels differ in only a single bit:
+        00 &rarr; 01 &rarr; 11 &rarr; 10. In any real transmission line contaminated by Gaussian thermal noise
+        or minor residual ISI, the vast majority of slicer mistakes occur between immediately <em>adjacent</em>
+        thresholds (e.g. mistaking an L1 for an L2). With Gray coding, that single-level mistake flips exactly
+        one bit in the decoded stream rather than two. In the adjacent-error-dominated regime, this coding trick
+        halves the raw Bit Error Rate (BER &asymp; SER / 2) at zero hardware cost.
+      </p>
+
+      <p>
+        <strong>Why PAM4 links fundamentally require FEC.</strong> In the NRZ era, high-speed standards
+        demanded an "error-free" raw physical layer, mandating an uncorrected BER of <span class="num">10<sup>-12</sup></span>
+        or <span class="num">10<sup>-15</sup></span>. With PAM4's 9.5 dB SNR penalty, building a receiver front end
+        capable of achieving an uncorrected <span class="num">10<sup>-12</sup></span> BER across a 30 dB copper
+        backplane is economically and physically unfeasible — it would demand unsustainable transmit power and
+        impractically low receiver noise floors.
+      </p>
+
+      <p>
+        The architectural solution is Forward Error Correction (FEC). Standards like PCIe Gen 6 and 100G/400G
+        Ethernet intentionally relax the target raw (pre-FEC) BER to <span class="num">10<sup>-4</sup></span> or
+        <span class="num">10<sup>-5</sup></span>. At this relaxed threshold, the eyes do not need to be wide open;
+        they only need to yield a manageable trickle of random errors. Powerful digital logic at the receiver —
+        typically Reed-Solomon codes like RS(544, 514) — then consumes the raw symbol stream, detects the errors,
+        and mathematically reconstructs the original bits to deliver a post-FEC BER below <span class="num">10<sup>-12</sup></span>.
+        The trade-off is algorithmic processing latency (several tens of nanoseconds) and roughly 3% to 6% of channel
+        bandwidth consumed by parity overhead.
+      </p>
+
+      <p>
+        <strong>DFE error bursts and FEC interleaving.</strong> The vulnerability of this architecture is burst errors.
+        Reed-Solomon FEC can correct up to a fixed number of corrupted symbol blocks per codeword (for RS(544, 514),
+        up to 15 ten-bit symbols per 544-symbol codeword). But if a receiver DFE makes an error on an inner PAM4 eye,
+        feedback tap propagation causes the decision slicer to misfire on successive unit intervals, producing a
+        concentrated burst of consecutive bit errors. If a single burst corrupts more symbols than the FEC's correction
+        budget, the entire codeword fails, causing a catastrophic packet drop. To mitigate this, modern protocols
+        use 1-to-2 or 1-to-4 symbol interleaving, distributing adjacent temporal bits across distinct FEC codewords
+        so no single burst overwhelms a single decoder block.
+      </p>
+
+      <p>
+        <strong>What the 9.5 dB is not.</strong> It is a clean statement about one thing: adjacent
+        level spacing at equal total swing. Three system effects move the real comparison, and two
+        of them favour PAM4:
+      </p>
+
+      <ul class="tight">
+        <li><strong>Half the Nyquist frequency</strong> gives back a large part of the penalty on a
+          lossy channel — often more than all of it, which is the whole reason PAM4 exists.</li>
+        <li><strong>Noise bandwidth halves too,</strong> because the receiver's front end only needs
+          half the bandwidth. That is worth about 3 dB of noise on its own.</li>
+        <li><strong>Threshold placement and level linearity</strong> cost something the ideal
+          calculation does not include: three decision thresholds have to be placed accurately, and
+          real transmitters do not produce perfectly even levels.</li>
+      </ul>
+
+      <p>
+        So quoting 9.5 dB as "the PAM4 penalty" without saying what it is a penalty <em>in</em> is
+        the most common error on this topic. It is an amplitude ratio at equal swing, not a system
+        margin comparison.
+      </p>
+    </details>
+
+    <h2 class="section-rule"><span>In the real world</span></h2>
+
+    <p>
+      The move to PAM4 changes the character of signal integrity work more than any other transition
+      on this site. NRZ debugging is mostly about loss and reflections — things you fix with
+      geometry and materials. PAM4 debugging is mostly about noise, linearity and error statistics —
+      things you fix with silicon settings, shielding and coding.
+    </p>
+
+    <p>
+      Which means the useful instinct changes too. On an NRZ link, a marginal channel is usually
+      asking for less loss. On a PAM4 link, it is usually asking for less noise, and reaching for
+      the loss lever first is how a week disappears.
+    </p>
+
+    <h3>Related</h3>
+    <ul class="tight">
+      <li><a href="../interfaces/pcie-gen6.html">PCIe 6.0 Signal Integrity: PAM4, FLIT, and FEC</a></li>
+      <li><a href="../fundamentals/eye-diagram.html">Eye Diagrams: Construction and Interpretation</a></li>
+      <li><a href="../fundamentals/loss-mechanisms.html">PCB Transmission-Line Loss Mechanisms</a></li>
+      <li><a href="../signal-integrity/equalization.html">Equalization and Clock Recovery: CTLE, FFE, DFE, and CDR</a></li>
+    </ul>
+  </div>
+
+  <!-- pager:start -->
+  <nav class="pager" aria-label="Previous and next topic">
+    <a class="prev" href="../../topics/signal-integrity/equalization.html"><span class="dir">Previous</span><span>Equalization and Clock Recovery: CTLE, FFE, DFE, and CDR</span></a>
+    <a class="next" href="../../topics/signal-integrity/statistical-vs-time-domain.html"><span class="dir">Next</span><span>Statistical and Time-Domain Channel Simulation</span></a>
+  </nav>
+  <!-- pager:end -->
+</main>
+
+<footer class="site-foot">
+  <span>SIPI &#8212; signal and power integrity, visualised.</span>
+  <span>Created and directed by Geetansh Arora. <a href="../../colophon.html">About, review &amp; AI assistance</a> &#183; <a href="../../model-contract.html">Model assumptions</a> &#183; <a href="../../docs/claims.md">Claim ledger</a></span>
+</footer>
+
+<script src="../../js/site.js?v=acb47d86"></script>
+<script src="../../js/viz-kit.js?v=a53e49c3"></script>
+<script src="../../js/viz/eq.js?v=526af488"></script>
+<script src="../../js/viz-loader.js?v=89d5884d"></script>
+<script src="../../js/search.js?v=6c93a285"></script>
+</body>
+</html>

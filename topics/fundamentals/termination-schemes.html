@@ -1,0 +1,383 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Transmission-Line Termination Schemes | SIPI</title>
+<meta name="description" content="Series, parallel, Thevenin, AC and on-die termination — what each one kills, what it costs in power, and where each belongs.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<link rel="stylesheet" href="../../css/base.css?v=e4f774de">
+<link rel="stylesheet" href="../../css/components.css?v=295837ab">
+  <!-- meta:start -->
+  <link rel="canonical" href="https://sipi.work/topics/fundamentals/termination-schemes.html">
+  <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="SIPI">
+  <meta property="og:title" content="Transmission-Line Termination Schemes | SIPI">
+  <meta property="og:description" content="Series, parallel, Thevenin, AC and on-die termination — what each one kills, what it costs in power, and where each belongs.">
+  <meta property="og:url" content="https://sipi.work/topics/fundamentals/termination-schemes.html">
+  <meta property="og:image" content="https://sipi.work/assets/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Transmission-Line Termination Schemes | SIPI">
+  <meta name="twitter:description" content="Series, parallel, Thevenin, AC and on-die termination — what each one kills, what it costs in power, and where each belongs.">
+  <meta name="twitter:image" content="https://sipi.work/assets/og.png">
+  <!-- meta:end -->
+</head>
+<body>
+
+<header class="masthead">
+  <a class="wordmark" href="../../index.html">SIPI</a>
+  <nav>
+    <a href="../../index.html#fundamentals">Fundamentals</a>
+    <a href="../../index.html#power-integrity">Power</a>
+    <a href="../../index.html#interfaces">Interfaces</a>
+    <a href="../../start.html">Start</a>
+    <a href="../../labs.html">Labs</a>
+    <a href="../../reference.html">Reference</a>
+    <button class="theme-toggle" data-act="theme" type="button">System</button>
+  </nav>
+</header>
+
+<main>
+  <div class="page-head">
+    <p class="crumb"><a href="../../index.html#fundamentals">Fundamentals</a> / 05</p>
+    <h1>Transmission-Line Termination Schemes</h1>
+    <p class="byline">
+      <!-- review:start --><span>By Geetansh Arora — Principal SI/PI Engineer</span><time datetime="2026-09-12" title="Technical review by Geetansh Arora on this date">12 Sep 2026</time><span>11 min</span><!-- review:end -->
+    </p>
+    <p class="answer">
+      A reflection needs two mismatched ends to keep bouncing. Kill either one and the ringing
+      stops. Which end you kill decides what it costs you &#8212; in power, in signal swing, in
+      board area, and in whether the net can have more than one receiver on it.
+    </p>
+  </div>
+
+  <!-- ───────────── the picture ───────────── -->
+  <figure class="figure">
+    <div class="figure__bar"><span>Four ways to make one end look like the line</span></div>
+    <div class="figure__body"><svg viewBox="-6 -10 748 330" role="img" aria-label="Four termination schemes drawn as circuits: series resistance at the driver, parallel resistance to ground at the load, a Thevenin pair to the supply and ground, and on-die termination inside the receiver.">
+
+  <g transform="translate(0,0)">
+    <text class="lbl-hi" x="0" y="12">SERIES &#8212; at the driver</text>
+    <path class="copper" d="M6,54 L30,68 L6,82 Z"/>
+    <path class="edge" d="M30,68 L46,68"/>
+    <rect class="edge" x="46" y="60" width="30" height="16" fill="var(--surface-2)"/><text class="lbl-ref" x="61" y="52" text-anchor="middle">R<tspan dy="2" font-size="8">s</tspan></text><path class="edge" d="M76,68 L92,68"/>
+    <path d="M92,68 L236,68" stroke="var(--signal)" stroke-width="3" fill="none"/>
+    <text class="lbl" x="164" y="60" text-anchor="middle">Z&#8320; = 50 &#937;</text>
+    <path class="edge" d="M236,68 L258,68"/><path class="copper" d="M258,54 L282,68 L258,82 Z"/><text class="lbl" x="270" y="98" text-anchor="middle">open</text>
+    <text class="lbl" x="0" y="128">R&#8347; + R&#8342;&#8341;&#8339;&#8342;&#8337; = Z&#8320; &#183; no DC power &#183; point-to-point only</text>
+  </g>
+  <g transform="translate(370,0)">
+    <text class="lbl-hi" x="0" y="12">PARALLEL &#8212; at the load</text>
+    <path class="copper" d="M6,54 L30,68 L6,82 Z"/>
+    <path class="edge" d="M30,68 L46,68"/>
+    <path class="edge" d="M46,68 L92,68"/>
+    <path d="M92,68 L236,68" stroke="var(--signal)" stroke-width="3" fill="none"/>
+    <text class="lbl" x="164" y="60" text-anchor="middle">Z&#8320; = 50 &#937;</text>
+    <path class="edge" d="M236,68 L266,68"/><path class="copper" d="M266,54 L290,68 L266,82 Z"/><path class="edge" d="M248,68 L248,86"/><rect class="edge" x="236" y="86" width="24" height="28" fill="var(--surface-2)"/><text class="lbl-ref" x="266" y="102">Z&#8320;</text><path class="edge" d="M248,114 m0,0 l0,9 m-8,0 l16,0 m-11,4 l6,0" fill="none"/>
+    <text class="lbl" x="0" y="128">&#915;&#8343; &#8594; 0 &#183; burns V&#8343;&#178;/Z&#8320; while high &#183; divider: V&#8347;&#183;R&#8343;/(R&#8347;+R&#8343;)</text>
+  </g>
+  <g transform="translate(0,178)">
+    <text class="lbl-hi" x="0" y="12">THEVENIN &#8212; split, biased</text>
+    <path class="copper" d="M6,54 L30,68 L6,82 Z"/>
+    <path class="edge" d="M30,68 L46,68"/>
+    <path class="edge" d="M46,68 L92,68"/>
+    <path d="M92,68 L236,68" stroke="var(--signal)" stroke-width="3" fill="none"/>
+    <text class="lbl" x="164" y="60" text-anchor="middle">Z&#8320; = 50 &#937;</text>
+    <path class="edge" d="M236,68 L266,68"/><path class="copper" d="M266,54 L290,68 L266,82 Z"/><path class="edge" d="M248,68 L248,50"/><rect class="edge" x="236" y="22" width="24" height="28" fill="var(--surface-2)"/><path class="edge" d="M248,22 L248,12 m-8,0 l16,0"/><text class="lbl-ref" x="266" y="38">R&#8321;</text><text class="lbl" x="248" y="6" text-anchor="middle">V&#8340;&#8340;</text><path class="edge" d="M248,68 L248,86"/><rect class="edge" x="236" y="86" width="24" height="28" fill="var(--surface-2)"/><text class="lbl-ref" x="266" y="102">R&#8322;</text><path class="edge" d="M248,114 m0,0 l0,9 m-8,0 l16,0 m-11,4 l6,0" fill="none"/>
+    <text class="lbl" x="0" y="128">R&#8321;&#8741;R&#8322; = Z&#8320; &#183; draws current in both states &#183; legacy DDR C/A</text>
+  </g>
+  <g transform="translate(370,178)">
+    <text class="lbl-hi" x="0" y="12">ON-DIE &#8212; inside the receiver</text>
+    <path class="copper" d="M6,54 L30,68 L6,82 Z"/>
+    <path class="edge" d="M30,68 L46,68"/>
+    <path class="edge" d="M46,68 L92,68"/>
+    <path d="M92,68 L236,68" stroke="var(--signal)" stroke-width="3" fill="none"/>
+    <text class="lbl" x="164" y="60" text-anchor="middle">Z&#8320; = 50 &#937;</text>
+    <path class="edge" d="M236,68 L246,68"/><rect x="246" y="34" width="72" height="72" rx="2" fill="var(--surface-2)" stroke="var(--signal)" stroke-dasharray="3 3"/><text class="lbl-sig" x="282" y="28" text-anchor="middle">receiver die</text><path class="copper" d="M288,54 L310,68 L288,82 Z"/><path class="edge" d="M260,68 L260,82"/><rect class="copper-2" x="252" y="82" width="16" height="16" rx="1"/><text class="lbl-ref" x="228" y="94" text-anchor="end">ODT</text>
+    <text class="lbl" x="0" y="128">no stub &#183; value trained at runtime &#183; gated per burst</text>
+  </g>
+</svg></div>
+    <figcaption><b>Every scheme is the same idea in different packaging.</b> A reflection needs two mismatched ends to keep bouncing, so killing either coefficient is enough &#8212; and the choice between them is almost never about signal quality. <b>Series</b> costs one resistor and no DC current, but the far end is deliberately left unmatched, so anything tapped off the middle sees half amplitude for a round trip. <b>Parallel</b> and <b>Thevenin</b> both draw real current, which is why they disappeared from anything battery-powered. <b>On-die</b> wins on the thing the drawings make obvious: every board-mounted resistor sits a via and a stub away from the actual receiver, and at 8533 MT/s that parasitic inductance undoes most of what the termination was for. Putting it inside the pad removes the stub &#8212; and lets the controller switch it on only during a burst.</figcaption>
+  </figure>
+
+  <div class="prose">
+    <h2>Why a resistor stops a reflection at all</h2>
+
+    <p>
+      If you have read the <a href="reflections.html">reflections</a> page,
+      you know that a signal bounces back and forth between two mismatched
+      ends of a trace until the energy dies out. The natural follow-up
+      question is: <em>how do I make it stop?</em> The answer is almost
+      always a resistor — but which resistor, placed where, and at what cost,
+      is where the real engineering lives.
+    </p>
+
+    <p>
+      The core idea is simple. A reflection exists because the load’s V/I
+      relationship disagrees with the wave’s V/I relationship (which is
+      Z<sub>0</sub>). A termination resistor is a component whose V/I ratio
+      already matches Z<sub>0</sub>, so there is nothing left to argue about
+      and no reflected wave is generated. Every scheme on this page is a
+      variation on that one idea — differing only in <em>which end</em>
+      gets the match, <em>how much power</em> the match costs, and
+      <em>whether the net can have more than one receiver</em>.
+    </p>
+
+    <p>
+      A wave travelling down a line carries a fixed ratio of voltage to current, set by
+      Z<sub>0</sub>. When it reaches the end, whatever is there imposes its own relationship
+      between voltage and current — Ohm's law, for a resistor. If the two disagree, the only way
+      to satisfy both is to launch a second wave back the other way, and that second wave is the
+      reflection.
+    </p>
+
+    <p>
+      So a terminator is not absorbing anything clever. It is simply a resistor whose V/I ratio
+      already matches the line's, so there is nothing left to reconcile and no second wave is
+      needed. That is the whole mechanism, and it is why the <em>value</em> matters so much more
+      than the part.
+    </p>
+
+    <div class="eq">
+      <span class="eq__main">Γ = ( <i class="var">R</i> &minus; <i class="var">Z</i><sub>0</sub> ) / ( <i class="var">R</i> + <i class="var">Z</i><sub>0</sub> )</span>
+      <span class="eq__note">0 at a match, +1 at an open, −1 at a short. A 50 Ω resistor on a 60 Ω line still reflects 9%.</span>
+    </div>
+
+    <h2 class="section-rule"><span>Kill either end &#8212; and what each end costs</span></h2>
+
+    <p>
+      A reflection needs two mismatched ends to keep bouncing. Match the source and the echo is
+      absorbed when it gets home; match the load and there is no echo in the first place. Both give a
+      clean waveform, and they cost completely different things.
+    </p>
+
+    <div class="table-scroll">
+      <table class="data">
+        <thead>
+          <tr><th>Scheme</th><th>Where</th><th>DC power</th><th>Swing at receiver</th><th>Typical use</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Series</td><td>at the driver</td><td>none</td><td>full, after one T<sub>d</sub></td><td>point-to-point control nets</td></tr>
+          <tr><td>Parallel to GND</td><td>at the load</td><td>V<sub>load</sub>²/Z₀ while high</td><td>V<sub>s</sub>·R<sub>L</sub>/(R<sub>s</sub>+R<sub>L</sub>)</td><td>rare on its own</td></tr>
+          <tr><td>Thevenin split</td><td>at the load</td><td>continuous, both states</td><td>full, biased</td><td>legacy DDR command/address</td></tr>
+          <tr><td>AC (R + C)</td><td>at the load</td><td>none DC; C·V²·f AC</td><td>full</td><td>clocks with a fixed duty cycle</td></tr>
+          <tr><td>On-die (ODT)</td><td>inside the receiver</td><td>gated per burst</td><td>full</td><td>LPDDR5X, PCIe, USB, UFS</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2 class="section-rule"><span>Reading the table</span></h2>
+
+    <p>
+      <strong>Series termination</strong> is the bargain of the group: one resistor, zero DC
+      current, and the receiver still sees the full rail. It works by matching the
+      <em>source</em> instead of the load — the driver's own output impedance plus the series
+      resistor add up to Z<sub>0</sub>, so when the echo comes back from the unterminated far end
+      it finds a match and is absorbed.
+    </p>
+
+    <p>
+      That mechanism has a consequence people get caught by. On the way out, the driver and the
+      resistor form a divider with the line, so only <em>half</em> the swing sets off down the
+      trace. The full amplitude only appears at the far end, where the open circuit doubles it.
+      For one round trip, the middle of the line sits at half rail. A receiver tapped off the
+      middle sees that half-amplitude step and may well decide it is a valid logic level.
+      <b>Series termination and multi-drop do not mix</b>, and this is why.
+    </p>
+
+    <p>
+      <strong>Parallel to ground</strong> costs real current, and it is worth doing the divider
+      rather than assuming a half. Once the line has settled, the driver and the terminator are
+      simply a resistive divider:
+      <span class="num">V<sub>load</sub> = V<sub>s</sub>·R<sub>L</sub>/(R<sub>s</sub> + R<sub>L</sub>)</span>.
+      You get exactly half the swing only when the source impedance equals the terminator — a
+      10 Ω driver into 50 Ω delivers 83% of the rail, not 50%.
+    </p>
+
+    <p>
+      The power follows from the voltage actually across the resistor, not from the rail. With an
+      ideal low-impedance driver on a 1.2 V rail, 50 Ω draws 24 mA and dissipates about 29 mW
+      <em>per net, while high</em>; with a realistic 10 Ω driver the load sees 1.0 V and the
+      terminator burns about 20 mW, with the rest in the driver. Either way, on a 32-bit bus it is
+      most of a watt of pure termination loss — which is why it rarely appears alone, and why the
+      <strong>Thevenin</strong> variant — two resistors whose parallel combination equals
+      Z<sub>0</sub>, biased to mid-rail — draws current in <em>both</em> states and was abandoned
+      for anything battery-powered.
+    </p>
+
+    <p>
+      <strong>AC termination</strong> puts a capacitor in series with the resistor so the DC path
+      disappears. It works well on a clock, where the duty cycle is fixed; it does badly on data,
+      because a long run of identical bits lets the capacitor charge and the termination stops
+      terminating. Size the capacitor so RC is several times the round trip — a few tens of pF is
+      typical — and remember you have traded DC power for switching power.
+    </p>
+
+    <div class="note">
+      <b>Why everything moved on-die</b>
+      A resistor on the board is a via and a stub away from the receiver pad. At 8533 MT/s that
+      parasitic inductance undoes most of what the termination was supposed to buy. Putting it
+      inside the pad removes the stub — and lets the controller enable it only during a burst,
+      which is the only reason the power budget survives. LPDDR5X and the serial interfaces all
+      take this route, with the value selected during training rather than fixed at layout.
+    </div>
+
+    <h2 class="section-rule"><span>How to choose</span></h2>
+
+    <p>
+      The decision is usually made for you by two questions, in this order.
+    </p>
+
+    <p>
+      <strong>Is the net point-to-point?</strong> If yes, series termination is almost always the
+      right answer: no DC power, full swing at the receiver, one cheap part. If no — if there is
+      more than one receiver — series is off the table and you need the termination at the far
+      end, or at each end.
+    </p>
+
+    <p>
+      <strong>Can you afford the DC current?</strong> Parallel and Thevenin both burn power
+      continuously, which on a wide bus is watts. If the answer is no and the net is not
+      point-to-point, you are into AC termination or on-die termination, and on anything modern
+      it is on-die.
+    </p>
+
+    <p>
+      Then get the value right. A terminator that is 20% off is not 80% effective — it leaves a
+      reflection of about 10%, which is small but not nothing, and it is small in a way that
+      compounds with everything else in your budget. Resistor tolerance, on-die termination
+      calibration accuracy and the impedance tolerance of the trace all stack here, which is why
+      controlled-impedance boards and calibrated ODT exist at all.
+    </p>
+
+    <p>
+      <strong>A quick decision tree.</strong> For most modern designs the
+      path is short: (1) if the interface spec defines the termination — as
+      DDR, PCIe, USB, and UFS all do — follow it exactly; (2) for custom or
+      legacy nets, ask whether it is point-to-point and whether you can
+      afford DC current, and the table above gives the answer; (3) on anything
+      running above ~3 GT/s, assume ODT unless the spec says otherwise,
+      because the stub inductance of a board-mounted resistor at those rates
+      costs more signal quality than the termination buys.
+    </p>
+
+    <div class="note">
+      <b>Using this to find a fault</b>
+      <ul class="tight">
+        <li><b>A step at half amplitude, lasting one round trip.</b> That signature is series
+          termination seen from the middle of a line. Either a receiver is tapped where it should
+          not be, or you are probing the middle of a net and mistaking the normal behaviour for a
+          fault.</li>
+        <li><b>Ringing that termination did not fix.</b> Check what the termination is actually
+          connected to before changing its value. A parallel terminator whose ground return is a
+          long way from the signal's return path is not terminating into Z<sub>0</sub>; it is
+          terminating into Z<sub>0</sub> plus the inductance of that detour.</li>
+        <li><b>A net that works with ODT on and fails with it off, or vice versa.</b> Read the
+          ODT calibration result, not the configuration register. Training picks a value; if the
+          calibration reference is wrong, the register says 40 Ω and the silicon is not.</li>
+        <li><b>Overshoot only on the first edge after an idle period.</b> Look for AC termination
+          with too small a capacitor, or a gated ODT that enables a beat late.</li>
+      </ul>
+    </div>
+
+    <details class="deeper">
+      <summary>Go deeper — why series termination gives full swing, and what a stub costs</summary>
+
+      <p>
+        Series termination looks like it should lose half the signal, and the reason it does not
+        is worth following once properly. Take a 1 V driver with 10 Ω output impedance, a 40 Ω
+        series resistor and a 50 Ω line with an open far end.
+      </p>
+
+      <ul class="tight">
+        <li>At the instant of switching, the line looks like a 50 Ω resistor — the far end has not
+          been heard from. The divider is 50/(10 + 40 + 50), so <b>500 mV</b> sets off down the
+          trace.</li>
+        <li>After one T<sub>d</sub> it reaches the open end, where Γ = +1. The reflected wave is
+          another 500 mV, and the far end sits at the sum: <b>1 V</b>, the full rail.</li>
+        <li>After another T<sub>d</sub> the reflection arrives back at the driver, which now
+          presents 10 + 40 = 50 Ω — a match. Γ<sub>s</sub> = 0, nothing is sent back out, and the
+          whole line settles at 1 V.</li>
+      </ul>
+
+      <p>
+        So the receiver gets full amplitude, and it gets it in two steps rather than one. The cost
+        is that extra T<sub>d</sub> of delay before the level is valid, and the half-amplitude
+        plateau in between — which is invisible at a single far-end receiver and fatal to anything
+        tapped off the middle.
+      </p>
+
+      <p>
+        The other thing worth quantifying is the stub. A board-mounted terminator sits at the end
+        of a short piece of trace and a via, and that path is not part of the matched line. Call it
+        2 nH of loop inductance. At the knee frequency of a 50 ps edge — 10 GHz — that is
+        <span class="num">ωL ≈ 126 Ω</span>, which is comfortably larger than the 50 Ω you were
+        trying to match to. The terminator is still there at DC and has largely stopped working at
+        the frequencies where reflections happen.
+      </p>
+
+      <p>
+        That calculation is the entire argument for on-die termination, and it is also the reason a
+        board terminator's <em>placement</em> matters more than its tolerance. A 1% resistor 5 mm
+        from the pad is worse than a 5% resistor at the pad.
+      </p>
+
+      <p>
+        One more subtlety on Thevenin termination. The two resistors do two jobs: their parallel
+        combination sets the AC impedance, and their ratio sets the DC bias point. Those are
+        independent, which is useful — you can bias a net to 0.7 V for a receiver that wants it while
+        still presenting 50 Ω — and it is also a trap, because getting the parallel combination
+        right while getting the ratio wrong gives you a perfectly terminated net sitting at the wrong
+        common-mode voltage.
+      </p>
+    </details>
+
+    <h2 class="section-rule"><span>In the real world</span></h2>
+
+    <p>
+      The most common termination failure is not a wrong value. It is a terminator that is present,
+      correct and connected to the wrong reference — a parallel terminator pulled to a ground that
+      is not the plane the signal is referenced to, or an AC terminator whose capacitor returns
+      through a via to a different plane. In both cases the schematic is right and the net rings
+      anyway, because the termination's return current has to travel a loop that the line does not
+      have.
+    </p>
+
+    <p>
+      The habit worth building: when you place a terminator, look at where its return goes, not just
+      what it connects to. A terminator is part of the transmission line, and a transmission line is
+      a signal path <em>and a return path</em>.
+    </p>
+
+    <h3>Related</h3>
+    <ul class="tight">
+      <li><a href="reflections.html">Transmission-Line Reflections and Ringing</a> — what you are fixing</li>
+      <li><a href="when-is-a-trace-a-transmission-line.html">When does a trace become a transmission line?</a> — whether you need to fix it</li>
+      <li><a href="return-current-paths.html">Return-Current Paths and Reference Continuity</a> — why a terminator's ground matters</li>
+      <li><a href="characteristic-impedance.html">Transmission-Line Characteristic Impedance</a> — the number you are matching to</li>
+      <li><a href="../labs/travelling-waves.html">Lab A — travelling waves</a> — step through each scheme and watch the energy account</li>
+    </ul>
+  </div>
+
+  <!-- pager:start -->
+  <nav class="pager" aria-label="Previous and next topic">
+    <a class="prev" href="../../topics/fundamentals/reflections.html"><span class="dir">Previous</span><span>Transmission-Line Reflections and Ringing</span></a>
+    <a class="next" href="../../topics/fundamentals/return-current-paths.html"><span class="dir">Next</span><span>Return-Current Paths and Reference Continuity</span></a>
+  </nav>
+  <!-- pager:end -->
+</main>
+
+<footer class="site-foot">
+  <span>SIPI &#8212; signal and power integrity, visualised.</span>
+  <span>Created and directed by Geetansh Arora. <a href="../../colophon.html">About, review &amp; AI assistance</a> &#183; <a href="../../model-contract.html">Model assumptions</a> &#183; <a href="../../docs/claims.md">Claim ledger</a></span>
+</footer>
+
+<script src="../../js/site.js?v=acb47d86"></script>
+<script src="../../js/search.js?v=6c93a285"></script>
+</body>
+</html>

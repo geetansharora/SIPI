@@ -1,0 +1,382 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Package Interconnects as Transmission Lines | SIPI</title>
+<meta name="description" content="Package Interconnects as Transmission Lines">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<link rel="stylesheet" href="../../css/base.css?v=e4f774de">
+<link rel="stylesheet" href="../../css/components.css?v=295837ab">
+  <!-- meta:start -->
+  <link rel="canonical" href="https://sipi.work/topics/package-board/package-and-system.html">
+  <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="SIPI">
+  <meta property="og:title" content="Package Interconnects as Transmission Lines | SIPI">
+  <meta property="og:description" content="Package Interconnects as Transmission Lines">
+  <meta property="og:url" content="https://sipi.work/topics/package-board/package-and-system.html">
+  <meta property="og:image" content="https://sipi.work/assets/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Package Interconnects as Transmission Lines | SIPI">
+  <meta name="twitter:description" content="Package Interconnects as Transmission Lines">
+  <meta name="twitter:image" content="https://sipi.work/assets/og.png">
+  <!-- meta:end -->
+</head>
+<body>
+
+<header class="masthead">
+  <a class="wordmark" href="../../index.html">SIPI</a>
+  <nav>
+    <a href="../../index.html#fundamentals">Fundamentals</a>
+    <a href="../../index.html#power-integrity">Power</a>
+    <a href="../../index.html#interfaces">Interfaces</a>
+    <a href="../../start.html">Start</a>
+    <a href="../../labs.html">Labs</a>
+    <a href="../../reference.html">Reference</a>
+    <button class="theme-toggle" data-act="theme" type="button">System</button>
+  </nav>
+</header>
+
+<main>
+  <div class="page-head">
+    <p class="crumb"><a href="../../index.html#package-board">Package & board</a> / 07</p>
+    <h1>Package Interconnects as Transmission Lines</h1>
+    <p class="byline">
+      <!-- review:start --><span>By Geetansh Arora — Principal SI/PI Engineer</span><time datetime="2026-09-17" title="Technical review by Geetansh Arora on this date">17 Sep 2026</time><span>10 min</span><!-- review:end -->
+    </p>
+    <p class="answer">
+      A package is drawn as a set of connections and behaves as a network of
+      coupled inductances. The point at which that distinction starts to matter
+      &#8212; where a lumped model stops describing what the hardware does
+      &#8212; is where most late-surfacing problems live, because it is also
+      where one organisation's model ends and another's begins.
+    </p>
+  </div>
+
+  <div class="prose">
+    <p>
+      In traditional circuit board design, engineers often treat an IC package as a transparent electrical conduit:
+      signals enter through a BGA solder ball and are assumed to arrive instantaneously at the silicon die.
+      For low-speed microcontroller buses with microsecond rise times, this simplification is harmless — a
+      <span class="num">10 mm</span> package trace is so short relative to the electrical wavelength that it
+      behaves as a simple lumped node with a fraction of an ohm of resistance.
+    </p>
+
+    <p>
+      Modern high-speed SerDes and memory interfaces, however, operate on sub-50-picosecond edge rates.
+      In a package dielectric, electromagnetic signals propagate at approximately 6 inches per nanosecond
+      (about <span class="num">150 &mu;m/ps</span>). For a 25 ps rise time, the spatial extent of the rising edge
+      is under <span class="num">4 mm</span>. The moment a signal's physical rise length becomes comparable to or
+      shorter than the package trace length, the lumped-element wire assumption evaporates completely.
+    </p>
+
+    <p>
+      A <span class="num">10 mm</span> trace inside a package substrate is not a wire; it is a full distributed
+      transmission line subject to impedance mismatches, high-frequency attenuation, and standing wave reflections.
+      Worse, this electromagnetic boundary coincides exactly with an organizational fissure: the package substrate
+      is designed by the semiconductor packaging group, while the printed circuit board is designed by the system
+      hardware team. Critical signal and power integrity failures cluster disproportionately at this interface,
+      where model handoffs, unaligned reference planes, and mutual coupling fall between engineering silos.
+    </p>
+
+    <h2>Two boundaries in the same place</h2>
+
+    <p>
+      A package sits at two boundaries at once, and they coincide unhelpfully.
+    </p>
+
+    <p>
+      <strong>The electrical boundary</strong> is where a lumped description stops
+      working: where the connections are long enough, or coupled enough, that
+      calling them "an inductance" hides what matters.
+    </p>
+
+    <p>
+      <strong>The organisational boundary</strong> is where the board team's model
+      ends and the package team's begins — and, one level further in, the silicon
+      team's.
+    </p>
+
+    <p>
+      Problems cluster where these two coincide, which they do by construction.
+      Every significant PDN resonance sits at a handoff, and every handoff is
+      somebody else's model.
+    </p>
+
+    <h2 class="section-rule"><span>Mutual inductance: the term that is usually dropped</span></h2>
+
+    <p>
+      Self-inductance is the familiar term: a current changing in a loop develops
+      a voltage across that loop. <strong>Mutual</strong> inductance is the same
+      effect between two loops — a current changing in one develops a voltage in
+      the other.
+    </p>
+
+    <p>
+      In a package, adjacent signal returns are close together and therefore
+      coupled. So the usual first-order picture of
+      <a href="../power-integrity/ssn-ground-bounce.html">SSN</a> — N drivers
+      sharing one self-inductance — understates it, because each driver also
+      induces voltage in its neighbours' loops directly.
+    </p>
+
+    <div class="eq">
+      <span class="eq__main"><i class="var">v</i><sub>1</sub> = <i class="var">L</i><sub>11</sub> d<i class="var">i</i><sub>1</sub>/d<i class="var">t</i> + <i class="var">L</i><sub>12</sub> d<i class="var">i</i><sub>2</sub>/d<i class="var">t</i> + …</span>
+      <span class="eq__note">the off-diagonal terms are why measured SSN often exceeds a simple L·di/dt estimate</span>
+    </div>
+
+    <p>
+      This is also why pin <em>assignment</em> is an electrical decision.
+      Distributing power and ground among the signals rather than clustering them
+      reduces both the shared self-inductance and the mutual coupling, and it is
+      nearly free at the moment it is decided.
+    </p>
+
+    <h2 class="section-rule"><span>Return via placement, quantified</span></h2>
+
+    <p>
+      When a signal changes reference plane, its return has to change too. The
+      cost of not providing a path is an inductance, and it is worth turning that
+      from a judgement into arithmetic.
+    </p>
+
+    <p>
+      A useful field estimate is about <b>1 nH per millimetre</b> of extra return
+      loop. Compare its reactance at your knee frequency against the line
+      impedance:
+    </p>
+
+    <div class="eq">
+      <span class="eq__main"><i class="var">X</i><sub>L</sub> = 2π<i class="var">f</i><sub>knee</sub><i class="var">L</i> &nbsp;&nbsp;vs&nbsp;&nbsp; <i class="var">Z</i><sub>0</sub></span>
+      <span class="eq__note">2 nH at a 10 GHz knee is 126 Ω against 50 Ω — not a perturbation, and expressible at a review</span>
+    </div>
+
+    <p>
+      "There is no return via here" sounds like a style comment until it is stated
+      in ohms. See <a href="layer-transitions.html">layer transitions</a>.
+    </p>
+
+    <h2 class="section-rule"><span>Transfer impedance: the question one port cannot answer</span></h2>
+
+    <p>
+      A driving-point impedance answers "how much does the rail move when
+      <em>this</em> block draws current?" It says nothing about "how much does a
+      noisy block over there disturb me?"
+    </p>
+
+    <p>
+      That second question is a <strong>transfer</strong> impedance, and it is how
+      two circuits with no shared net end up coupled — through a shared plane,
+      a shared package layer, or a cavity resonance. It has two consequences worth
+      carrying:
+    </p>
+
+    <ul class="tight">
+      <li>A rail can meet its own target impedance everywhere and still be
+        disturbed by a neighbour.</li>
+      <li>Fixing a peak seen at one port can move it to another, because the
+        currents circulating in a resonance are local.</li>
+    </ul>
+
+    <h2 class="section-rule"><span>Where the lumped abstraction stops</span></h2>
+
+    <p>
+      Calling something "an inductance" is an abstraction with a validity range —
+      and it is worth being precise about <em>which</em> abstraction expires,
+      because two different ones get confused here. A <strong>single</strong>
+      lumped value is a much weaker claim than <strong>lumped modelling</strong>,
+      and most of what people call "the lumped model breaking down" is the first
+      one failing while the second is still perfectly serviceable.
+    </p>
+
+    <ul class="tight">
+      <li><strong>Coupling to neighbours does not break lumped modelling.</strong>
+        A two-terminal inductor has no awareness of what is beside it, but a
+        <em>coupled</em> inductor pair does: mutual inductance is an ordinary
+        lumped element, written as an off-diagonal term in an inductance matrix,
+        and every circuit simulator handles it. What fails is the
+        <em>uncoupled</em> approximation. That is a modelling choice you made, not
+        a limit of the method — and the fix is to extract the matrix rather than
+        to abandon circuits.</li>
+      <li><strong>Nor does a position-dependent voltage.</strong> "A plane is not
+        a node" is true, and the answer is more nodes: a plane meshed into a grid
+        of lumped inductances and capacitances reproduces its impedance and its
+        cavity modes, which is how most commercial PDN tools work. What fails is
+        the <em>single-node</em> approximation. This site's own PDN lab is a
+        five-node ladder for exactly that reason, and each node has a different
+        impedance.</li>
+      <li><strong>What genuinely sets the boundary is the discretisation against
+        the electrical size.</strong> A lumped element assumes the voltage across
+        it and the current through it are one number each, which requires it to be
+        small compared with a wavelength at the highest frequency you care about.
+        So the real question is not "is there coupling" or "does position matter"
+        but: <em>is my mesh fine enough for the bandwidth and the error I need?</em>
+        A tenth of a wavelength per cell is the usual working figure. Below that
+        bandwidth a lumped mesh is not an approximation to a field solution — it
+        converges to one.</li>
+      <li><strong>Frequency dependence is a separate axis.</strong> Skin effect
+        makes resistance rise as √f, so a single R is a value at one frequency.
+        That is fixed by making the element frequency-dependent, not by leaving
+        the lumped world — which is exactly what the causal line model on the
+        channel lab does.</li>
+      <li><strong>And what actually cannot be lumped</strong> is radiation, and
+        propagation you need to resolve rather than approximate: a structure
+        carrying a travelling wave whose phase across it matters, an antenna, a
+        cavity above its first mode where you want the field pattern and not just
+        the terminal impedance. At that point you want a field solver because you
+        are asking a field question.</li>
+    </ul>
+
+    <p>
+      The practical consequence is that "the lumped model has expired" is almost
+      never the right diagnosis on its own. Ask which simplification expired —
+      uncoupled, single-node, single-frequency, or too coarse — because three of
+      those four are fixed inside the circuit description, and only the fourth
+      sends you to a field solver.
+    </p>
+
+    <p>
+      This site's own PDN lab is explicitly lumped, and its model contract says
+      so: no cavity modes, no spatial distribution, everything in a bank at the
+      same place. That is a useful model with a stated edge, which is the only
+      honest way to use an abstraction.
+    </p>
+
+    <h2 class="section-rule"><span>What to do about it</span></h2>
+
+    <p>
+      <strong>Get a package model early, even a crude one.</strong> A single
+      lumped inductance and capacitance is far better than an ideal source,
+      because it at least puts a resonance near the right frequency. Precision can
+      come later; the <em>existence</em> of the peak cannot be added later.
+    </p>
+
+    <p>
+      <strong>Write down the partition.</strong> Where does each model end, where
+      does the next begin, are the ports at the same physical plane with the same
+      reference? Most co-analysis failures are bookkeeping failures.
+    </p>
+
+    <p>
+      <strong>Treat a result's sensitivity to the boundary condition as the
+      finding.</strong> If changing the termination changes the answer a lot, the
+      boundary is electrically active and needs a real model — not a better
+      guess.
+    </p>
+
+    <p>
+      <strong>Ask for transfer impedance, not just self impedance,</strong> on any
+      rail shared between a noisy block and a sensitive one.
+    </p>
+
+    <div class="note">
+      <b>Using this to find a fault</b>
+      <ul class="tight">
+        <li><b>SSN worse than L·di/dt predicts.</b> Mutual inductance between
+          adjacent returns. A first-order model will always understate it.</li>
+        <li><b>Simulation and measurement agree below ~100 MHz and diverge
+          above.</b> Classic truncation signature: the board dominates below, the
+          package and die above.</li>
+        <li><b>A measured peak the simulation does not have.</b> Check whether the
+          model stops at the boundary where that peak lives, then compare against
+          1/(2π√LC) for the package inductance and die capacitance.</li>
+        <li><b>Noise at one block caused by another with no shared net.</b>
+          Transfer impedance. A single-port analysis cannot show it.</li>
+        <li><b>A model that behaves differently depending on where you probe
+          it.</b> The lumped abstraction has expired — you need a distributed
+          model.</li>
+      </ul>
+    </div>
+
+    <details class="deeper">
+      <summary>Go deeper — partition coupling, and why crude-but-early beats exact-but-late</summary>
+
+      <p>
+        <strong>Splitting a structure is only valid where the fields are quiet.</strong>
+        Two vias solved independently and cascaded is not the same as two vias
+        solved together, and the difference is exactly the coupling you cut
+        through. So a partition boundary should be placed somewhere the fields
+        have decayed — several dielectric heights from anything interesting —
+        rather than wherever the organisational boundary happens to fall.
+      </p>
+
+      <p>
+        Those two criteria rarely coincide, which is the deep reason co-analysis
+        is hard. The electrically correct place to cut is not the place the
+        contracts cut.
+      </p>
+
+      <p>
+        <strong>Why crude-and-early wins.</strong> The value of an analysis is
+        entirely in what it lets you change. A package inductance target, an
+        on-die capacitance budget and a bump map are all decided early, and a
+        rough co-analysis at that moment informs all three. An exact one after
+        tape-out can only confirm or alarm.
+      </p>
+
+      <p>
+        So the practical sequence is staged: start with crude terminations and
+        refine them. The first version answers "is there a peak near here?"; only
+        the last answers "how tall is it?". Doing it in that order means the
+        structural decisions are informed at the point they can still be made.
+      </p>
+
+      <p>
+        <strong>And one boundary people forget entirely.</strong> Signal and power
+        share the same physical structures — a driver's return current flows
+        through the same package and board network the PDN analysis covers. So the
+        boundary between an SI model and a PI model is itself a partition with all
+        the same problems, and it is usually drawn without anyone noticing they
+        drew it.
+      </p>
+    </details>
+
+    <h2 class="section-rule"><span>In the real world</span></h2>
+
+    <p>
+      The package is the part of the chain most likely to be missing when the
+      first serious simulation runs, and its absence hides exactly the resonances
+      that matter. That is a scheduling problem as much as a technical one — the
+      models come from three organisations with different timelines and different
+      confidentiality constraints.
+    </p>
+
+    <p>
+      Which makes the useful move a procurement one: ask for the models at the
+      start, accept rough ones, and say clearly what decision each version is
+      meant to inform. A crude model at the right moment beats an exact one after
+      the decision has been made.
+    </p>
+
+    <h3>Related</h3>
+    <ul class="tight">
+      <li><a href="package-families.html">Package families</a> — where the inductance comes from</li>
+      <li><a href="layer-transitions.html">PCB Layer Transitions and Return-Path Stitching</a> — the return via, in detail</li>
+      <li><a href="../power-integrity/cps-co-analysis.html">Chip-Package-System Power Integrity Co-Analysis</a> — the partition problem</li>
+      <li><a href="../power-integrity/ssn-ground-bounce.html">Simultaneous Switching Noise and Ground Bounce</a> — what mutual inductance does</li>
+      <li><a href="../power-integrity/plane-resonance.html">Plane resonance</a> — where lumped stops working</li>
+    </ul>
+  </div>
+
+  <!-- pager:start -->
+  <nav class="pager" aria-label="Previous and next topic">
+    <a class="prev" href="../../topics/package-board/manufacturing-tolerance.html"><span class="dir">Previous</span><span>PCB Manufacturing Variation: Etch, Glass Weave, and Impedance</span></a>
+    <a class="next" href="../../topics/interfaces/lpddr5x.html"><span class="dir">Next</span><span>LPDDR5 and LPDDR5X Signal Integrity: Timing, ODT, and Training</span></a>
+  </nav>
+  <!-- pager:end -->
+</main>
+
+<footer class="site-foot">
+  <span>SIPI &#8212; signal and power integrity, visualised.</span>
+  <span>Created and directed by Geetansh Arora. <a href="../../colophon.html">About, review &amp; AI assistance</a> &#183; <a href="../../model-contract.html">Model assumptions</a> &#183; <a href="../../docs/claims.md">Claim ledger</a></span>
+</footer>
+
+<script src="../../js/site.js?v=acb47d86"></script>
+<script src="../../js/search.js?v=6c93a285"></script>
+</body>
+</html>

@@ -1,0 +1,150 @@
+/* SI & PI — base.css
+   Design tokens, reset, typography.
+   Dark-first: the bare :root block is the complete DARK palette.
+   Light is redefined at token level only, in both the media query and the stamp. */
+
+/* ---------- tokens: DARK is the default ---------- */
+:root {
+  --ground:      #0B1015;
+  --surface:     #121B23;
+  --surface-2:   #18242E;
+  --border:      #22323E;
+  --border-soft: #1A2831;
+
+  --ink:         #DDE7EE;
+  --ink-2:       #A7BAC7;
+  --muted:       #7D93A2;
+
+  --signal:      #2E9BD2;  /* validated: OKLCH L .61 on #0B1015 */
+  --reflect:     #BE8722;  /* validated: adjacent-pair ΔE 24.9 normal / 22.3 tritan */
+  --alarm:       #C4574F;
+  /* Text-only variants. WCAG holds small text to 4.5:1 and graphical objects to
+     3:1, and two of the series colours sat between the two. The trace palette is
+     CVD-validated and must not change, so these are used ONLY where the colour is
+     applied to text — a readout, a label — never to a stroke. */
+  --signal-text: #2E9BD2;
+  --alarm-text:  #D96A60;
+  --grid:        #1B2833;
+  --glow:        rgba(46,155,210,.30);
+
+  --font-display: "Archivo", "Helvetica Neue", Arial, sans-serif;
+  --font-body:    "Source Serif 4", Georgia, "Times New Roman", serif;
+  --font-mono:    "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+  --measure: 66ch;
+  --wide: 60rem;
+
+  --s1: .25rem; --s2: .5rem;  --s3: .75rem; --s4: 1rem;
+  --s5: 1.5rem; --s6: 2rem;   --s7: 3rem;   --s8: 4.5rem;
+
+  --radius: 3px;
+  color-scheme: dark;
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --ground:      #F7F8FA;
+    --surface:     #FFFFFF;
+    --surface-2:   #EFF3F6;
+    --border:      #D5DEE5;
+    --border-soft: #E4EAEF;
+    --ink:         #0E171F;
+    --ink-2:       #33454F;
+    --muted:       #5A6B78;
+    --signal:      #0284C7;
+    --reflect:     #B45309;
+    --alarm:       #B3392F;
+    --grid:        #E2E8ED;
+    --glow:        rgba(2,132,199,.16);
+    color-scheme: light;
+  }
+}
+
+:root[data-theme="light"] {
+  --ground:      #F7F8FA;
+  --surface:     #FFFFFF;
+  --surface-2:   #EFF3F6;
+  --border:      #D5DEE5;
+  --border-soft: #E4EAEF;
+  --ink:         #0E171F;
+  --ink-2:       #33454F;
+  --muted:       #5A6B78;
+  --signal:      #0284C7;
+  --reflect:     #B45309;
+  --alarm:       #B3392F;
+  --signal-text: #0369A1;
+  --alarm-text:  #B3392F;
+  --grid:        #E2E8ED;
+  --glow:        rgba(2,132,199,.16);
+  color-scheme: light;
+}
+
+/* ---------- reset ---------- */
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation-duration: .001ms !important; transition-duration: .001ms !important; }
+}
+
+body {
+  margin: 0;
+  padding-block: 0;
+  padding-inline: max(20px, env(safe-area-inset-left));
+  background: var(--ground);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 1.0625rem;
+  line-height: 1.68;
+  -webkit-font-smoothing: antialiased;
+}
+
+img, svg, canvas { max-width: 100%; }
+:where(a):focus-visible, :where(button):focus-visible,
+:where(input):focus-visible, :where(select):focus-visible,
+:where(summary):focus-visible {
+  outline: 2px solid var(--signal);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* ---------- typography ---------- */
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  line-height: 1.15;
+  text-wrap: balance;
+  margin: 0;
+  letter-spacing: -.015em;
+}
+h1 { font-size: clamp(2rem, 5.2vw, 2.9rem); }
+h2 { font-size: clamp(1.35rem, 3vw, 1.65rem); letter-spacing: -.01em; }
+h3 { font-size: 1.1rem; letter-spacing: 0; }
+
+p { margin: 0; }
+strong { font-weight: 600; color: var(--ink); }
+
+a { color: var(--signal); text-decoration-thickness: 1px; text-underline-offset: 2px; }
+a:hover { text-decoration-thickness: 2px; }
+
+code, .num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+code {
+  font-size: .875em;
+  background: var(--surface-2);
+  border: 1px solid var(--border-soft);
+  border-radius: 2px;
+  padding: .08em .34em;
+}
+
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: .7rem;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* ---------- layout ---------- */
+.wrap  { max-width: var(--wide); margin-inline: auto; }
+.prose { max-width: var(--measure); margin-inline: auto; display: flex; flex-direction: column; gap: var(--s4); }
+.stack { display: flex; flex-direction: column; }

@@ -1,0 +1,122 @@
+{
+  "schemaVersion": 1,
+  "version": "1.0",
+  "date": "2026-09-15",
+  "scope": "First analytical tranche. Expected values are derived independently of production outputs. Not measured data or compliance evidence.",
+  "experiments": [
+    {
+      "id": "matched-line",
+      "title": "Matched load: no returning wave",
+      "question": "Predict the signs of the reflected voltage and load current before opening the result.",
+      "input": "/tests/fixtures/experiments/matched-line.json",
+      "scenario": "/topics/labs/travelling-waves.html#lab=labWaves;v=2.2;lw-z0=50;lw-rs=10;lw-rl=50;lw-open=0;lw-len=3;lw-tr=60;lw-xp=100;lw-t=1020",
+      "model": "labWaves",
+      "modelVersion": "1.2",
+      "evidence": "analytical",
+      "tags": [
+        "SI",
+        "reflections"
+      ]
+    },
+    {
+      "id": "open-line",
+      "title": "Open load: voltage adds, current cancels",
+      "question": "Predict the signs of the reflected voltage and load current before opening the result.",
+      "input": "/tests/fixtures/experiments/open-line.json",
+      "scenario": "/topics/labs/travelling-waves.html#lab=labWaves;v=2.2;lw-z0=50;lw-rs=10;lw-rl=50;lw-open=1;lw-len=3;lw-tr=60;lw-xp=100;lw-t=1020",
+      "model": "labWaves",
+      "modelVersion": "1.2",
+      "evidence": "analytical",
+      "tags": [
+        "SI",
+        "reflections"
+      ]
+    },
+    {
+      "id": "shorted-line",
+      "title": "Shorted load: voltage cancels, current adds",
+      "question": "Predict the signs of the reflected voltage and load current before opening the result.",
+      "input": "/tests/fixtures/experiments/shorted-line.json",
+      "scenario": "/topics/labs/travelling-waves.html#lab=labWaves;v=2.2;lw-z0=50;lw-rs=10;lw-rl=0;lw-open=0;lw-len=3;lw-tr=60;lw-xp=100;lw-t=1020",
+      "model": "labWaves",
+      "modelVersion": "1.2",
+      "evidence": "analytical",
+      "tags": [
+        "SI",
+        "reflections"
+      ]
+    },
+    {
+      "id": "source-terminated-line",
+      "title": "Source termination absorbs the return",
+      "question": "Predict the signs of the reflected voltage and load current before opening the result.",
+      "input": "/tests/fixtures/experiments/source-terminated-line.json",
+      "scenario": "/topics/labs/travelling-waves.html#lab=labWaves;v=2.2;lw-z0=50;lw-rs=50;lw-rl=50;lw-open=1;lw-len=3;lw-tr=60;lw-xp=100;lw-t=1530",
+      "model": "labWaves",
+      "modelVersion": "1.2",
+      "evidence": "analytical",
+      "tags": [
+        "SI",
+        "reflections"
+      ]
+    },
+    {
+      "id": "resistive-step",
+      "title": "A 75-ohm load on a 50-ohm line",
+      "question": "Predict the signs of the reflected voltage and load current before opening the result.",
+      "input": "/tests/fixtures/experiments/resistive-step.json",
+      "scenario": "/topics/labs/travelling-waves.html#lab=labWaves;v=2.2;lw-z0=50;lw-rs=50;lw-rl=75;lw-open=0;lw-len=3;lw-tr=60;lw-xp=100;lw-t=1020",
+      "model": "labWaves",
+      "modelVersion": "1.2",
+      "evidence": "analytical",
+      "tags": [
+        "SI",
+        "reflections"
+      ]
+    },
+    {
+      "id": "matched-channel-delay",
+      "title": "A matched lossless channel preserves amplitude and adds delay",
+      "question": "Can a channel have zero insertion loss while still delaying the signal?",
+      "input": "/tests/fixtures/experiments/matched-channel-delay.json",
+      "scenario": "/topics/labs/one-channel.html#lab=labChannel;v=3.2;lc-reach=8;lc-loss=0;lc-rate=16;lc-dz=50;lc-dpos=45;lc-dlen=0;lc-stub=0;lc-tr=12;lc-trtdr=12;lc-eq=0",
+      "model": "labChannel",
+      "modelVersion": "1.2",
+      "evidence": "analytical",
+      "tags": [
+        "SI",
+        "channel"
+      ]
+    },
+    {
+      "id": "pdn-shared-dc",
+      "title": "Two DC loads: shared resistance and different observation nodes",
+      "question": "Why do the board and die have different DC voltage drops on the same rail?",
+      "input": "/tests/fixtures/experiments/pdn-shared-dc.json",
+      "scenario": "/topics/labs/pdn-chain.html#lab=labPdn;v=2.3;pd-fbw=120;pd-lplane=900;pd-lpkg=350;pd-nboard=20;pd-esr=20;pd-esl=1100;pd-cdie=200;pd-imax=8;pd-tr=800;pd-zt=10;pd-imax2=3;pd-tr2=800;pd-startNs=786.4;pd-widthNs=1835;pd-start2Ns=786.4;pd-width2Ns=1835",
+      "model": "labPdn",
+      "modelVersion": "1.3",
+      "evidence": "analytical",
+      "tags": [
+        "PI",
+        "DC",
+        "transfer impedance"
+      ],
+      "contractVersion": "2.3"
+    },
+    {
+      "id": "cdr-natural-frequency",
+      "title": "At the CDR natural frequency, phase matters",
+      "question": "If the recovered phase amplitude exceeds the input amplitude, can the residual still be found by subtracting magnitudes?",
+      "input": "/tests/fixtures/experiments/cdr-natural-frequency.json",
+      "scenario": "/topics/signal-integrity/receiver-and-clock.html#lab=cdr;v=2.1;cdr-fn=4;cdr-zeta=50;cdr-margin=30;cdr-jitter-f=4;cdr-jitter-a=40",
+      "model": "cdr",
+      "modelVersion": "1.1",
+      "evidence": "analytical",
+      "tags": [
+        "SI",
+        "clock recovery"
+      ]
+    }
+  ]
+}

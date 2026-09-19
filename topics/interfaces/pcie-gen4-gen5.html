@@ -1,0 +1,368 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PCIe 4.0 and 5.0 Signal Integrity: Loss and Equalization | SIPI</title>
+<meta name="description" content="16 and 32 GT/s NRZ: where the channel budget goes, how link equalisation negotiates presets, and why backdrilling stops being optional.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<link rel="stylesheet" href="../../css/base.css?v=e4f774de">
+<link rel="stylesheet" href="../../css/components.css?v=295837ab">
+  <!-- meta:start -->
+  <link rel="canonical" href="https://sipi.work/topics/interfaces/pcie-gen4-gen5.html">
+  <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="SIPI">
+  <meta property="og:title" content="PCIe 4.0 and 5.0 Signal Integrity: Loss and Equalization | SIPI">
+  <meta property="og:description" content="16 and 32 GT/s NRZ: where the channel budget goes, how link equalisation negotiates presets, and why backdrilling stops being optional.">
+  <meta property="og:url" content="https://sipi.work/topics/interfaces/pcie-gen4-gen5.html">
+  <meta property="og:image" content="https://sipi.work/assets/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="PCIe 4.0 and 5.0 Signal Integrity: Loss and Equalization | SIPI">
+  <meta name="twitter:description" content="16 and 32 GT/s NRZ: where the channel budget goes, how link equalisation negotiates presets, and why backdrilling stops being optional.">
+  <meta name="twitter:image" content="https://sipi.work/assets/og.png">
+  <!-- meta:end -->
+</head>
+<body>
+
+<header class="masthead">
+  <a class="wordmark" href="../../index.html">SIPI</a>
+  <nav>
+    <a href="../../index.html#fundamentals">Fundamentals</a>
+    <a href="../../index.html#power-integrity">Power</a>
+    <a href="../../index.html#interfaces">Interfaces</a>
+    <a href="../../start.html">Start</a>
+    <a href="../../labs.html">Labs</a>
+    <a href="../../reference.html">Reference</a>
+    <button class="theme-toggle" data-act="theme" type="button">System</button>
+  </nav>
+</header>
+
+<main>
+  <div class="page-head">
+    <p class="crumb"><a href="../../index.html#interfaces">Interface sign-off</a> / 02</p>
+    <h1>PCIe 4.0 and 5.0 Signal Integrity: Loss and Equalization</h1>
+    <p class="byline">
+      <!-- review:start --><span>By Geetansh Arora — Principal SI/PI Engineer</span><time datetime="2026-09-17" title="Technical review by Geetansh Arora on this date">17 Sep 2026</time><span>10 min</span><!-- review:end -->
+    </p>
+    <p class="answer">
+      PCIe is the serial link the rest of the site's machinery was built for: one differential pair
+      per lane, clock embedded in the data, and a receiver with real equalisation. Each generation
+      doubles the rate, which doubles the frequency the channel must survive &#8212; and because
+      loss climbs steeply with frequency, each step has been harder than a factor of two.
+    </p>
+  </div>
+
+  <!-- ───────────── the picture ───────────── -->
+  <figure class="figure">
+    <div class="figure__bar"><span>Link equalisation &#183; negotiated, not designed</span></div>
+    <div class="figure__body"><svg viewBox="-4 14 680 240" role="img" aria-label="The PCIe link equalisation procedure in four phases, followed by the eleven transmitter presets and the receiver equaliser blocks that share the work.">
+  <text class="lbl-hi" x="0" y="34">the channel is characterised at run time, not at design time</text>
+  <rect class="edge" x="0" y="52" width="140" height="66" rx="3" fill="var(--surface-2)"/><text class="lbl-hi" x="70" y="72" text-anchor="middle">Phase 0</text><text class="lbl-sig" x="70" y="90" text-anchor="middle">both</text><text class="lbl" x="70" y="106" text-anchor="middle">enter at 8 GT/s</text><path class="flow" d="M140,85 L164,85"/><rect class="edge" x="164" y="52" width="140" height="66" rx="3" fill="var(--surface-2)"/><text class="lbl-hi" x="234" y="72" text-anchor="middle">Phase 1</text><text class="lbl-sig" x="234" y="90" text-anchor="middle">upstream</text><text class="lbl" x="234" y="106" text-anchor="middle">set safe presets</text><path class="flow" d="M304,85 L328,85"/>
+  <rect class="edge" x="328" y="52" width="140" height="66" rx="3" fill="var(--surface-2)"/><text class="lbl-hi" x="398" y="72" text-anchor="middle">Phase 2</text><text class="lbl-sig" x="398" y="90" text-anchor="middle">downstream</text><text class="lbl" x="398" y="106" text-anchor="middle">sweeps Tx presets</text><path class="flow" d="M468,85 L492,85"/><rect class="edge" x="492" y="52" width="140" height="66" rx="3" fill="var(--surface-2)"/><text class="lbl-hi" x="562" y="72" text-anchor="middle">Phase 3</text><text class="lbl-sig" x="562" y="90" text-anchor="middle">upstream</text><text class="lbl" x="562" y="106" text-anchor="middle">sweeps back</text><path class="flow" d="M632,85 L656,85"/>
+  <g transform="translate(0,150)">
+    <text class="lbl-hi" x="0" y="0">who does what</text>
+    <rect x="0" y="10" width="150" height="26" rx="2" fill="var(--reflect)" opacity=".55"/>
+    <text class="lbl-hi" x="75" y="28" text-anchor="middle">Tx: 11 presets</text>
+    <text class="lbl" x="75" y="52" text-anchor="middle">pre-shoot + de-emphasis</text>
+    <text class="lbl-ref" x="75" y="68" text-anchor="middle">handles PRE-cursor</text>
+    <rect x="200" y="10" width="150" height="26" rx="2" fill="var(--signal)" opacity=".55"/>
+    <text class="lbl-hi" x="275" y="28" text-anchor="middle">Rx: CTLE</text>
+    <text class="lbl" x="275" y="52" text-anchor="middle">analogue peaking</text>
+    <text class="lbl-bad" x="275" y="68" text-anchor="middle">lifts crosstalk too</text>
+    <rect x="400" y="10" width="150" height="26" rx="2" fill="var(--signal)" opacity=".55"/>
+    <text class="lbl-hi" x="475" y="28" text-anchor="middle">Rx: DFE</text>
+    <text class="lbl" x="475" y="52" text-anchor="middle">exact cancellation</text>
+    <text class="lbl-ref" x="475" y="68" text-anchor="middle">handles POST-cursor</text>
+    <text class="lbl-bad" x="676" y="88" text-anchor="end">none of them can fix a via-stub notch — the energy is gone, not attenuated</text>
+  </g>
+</svg></div>
+    <figcaption><b>At 32 GT/s the eye is fully closed at the receiver pad, and that is the design point.</b> With roughly 36 dB end to end at 16 GHz, the <em>16 GHz content</em> of the signal arrives at about one part in sixty. That is a statement about one frequency, not about the waveform: the low-frequency content is barely attenuated, so what reaches the pad is not a small copy of what was launched but a smeared one, and the eye closes from dispersion rather than from uniform shrinkage. Whether it closes at all depends on the full complex channel, the transmitted spectrum and the receiver &#8212; which is exactly why a single loss number cannot predict an eye, and why the link is built around reconstructing the waveform rather than preserving it. The work is split deliberately. Pre-cursor is the transmitter's problem, because only the transmitter knows the future; post-cursor belongs to the receiver's DFE, because it can cancel exactly rather than amplify. And rather than fixing any of it at design time, the two ends run a defined negotiation at link-up, sweeping presets and reporting back until they converge on a combination that works for the channel actually present. Where the margin really goes at Gen 5 is via stubs. A 200 mil stub on a thick board resonates near 7.4 GHz &#8212; inside the band &#8212; and no equaliser setting recovers it, because at the bottom of a notch there is nothing left to scale.</figcaption>
+  </figure>
+
+  <div class="prose">
+    <p>
+      PCI Express (PCIe) is the universal computational fabric connecting server processors to graphics
+      processing units (GPUs), NVMe solid-state storage, and high-speed network interfaces. For earlier
+      generations, standard PCB design practices and modest FR-4 laminates were sufficient. But with PCIe Gen 4
+      (<span class="num">16 GT/s</span>) and Gen 5 (<span class="num">32 GT/s</span>), NRZ signalling was pushed
+      to its absolute physical limits over copper.
+    </p>
+
+    <p>
+      At Gen 5's 32 GT/s, the unit interval shrinks to an astonishing <span class="num">31.25 picoseconds</span>,
+      establishing a Nyquist frequency of <span class="num">16 GHz</span>. Across an enterprise motherboard —
+      spanning CPU package BGA vias, 12 to 14 inches of PCB trace, a standard Card Electromechanical (CEM) card-edge
+      connector, and an add-in card — total insertion loss reaches <span class="num">36 dB</span>. At 16 GHz,
+      less than one part in sixty of the launched signal amplitude reaches the receiver pins. The eye diagram at
+      the receiver pad is not just degraded; it is completely, 100% closed shut.
+    </p>
+
+    <p>
+      To make a 36 dB channel functional, PCIe does not rely on passive routing margin alone. It operates as an
+      actively negotiated, co-optimized communication system: an automated hardware state machine sweeps transmitter
+      equalization presets, tunes receiver continuous-time filters (CTLE), and trains multi-tap decision feedback
+      equalizers (DFE) at boot. Understanding how this equalization negotiation works and how the 36 dB budget is
+      partitioned across real system form factors is the foundation of high-speed PCIe board design.
+    </p>
+
+    <h2>What "serial with an embedded clock" buys and costs</h2>
+
+    <p>
+      A parallel bus sends a clock alongside the data. A serial link does not — the receiver
+      recovers timing from the data's own transitions, using a clock-and-data-recovery loop.
+    </p>
+
+    <p>
+      That removes the hardest problem a wide bus has: skew between a clock and many data wires.
+      With one pair, there is nothing to skew against. It is why serial links scale to rates a
+      parallel bus cannot reach on the same copper.
+    </p>
+
+    <p>
+      The cost is that everything now has to survive on one pair. There is no strobe to cancel
+      common-mode delay, the data must contain enough transitions for the loop to track — which is
+      what the encoding is for — and the receiver has to do real work to recover a signal the
+      channel has badly degraded.
+    </p>
+
+    <h2 class="section-rule"><span>What it is</span></h2>
+
+    <p>
+      A differential serial link, NRZ, at 16 GT/s for Gen 4 and 32 GT/s for Gen 5, with 128b/130b
+      encoding and an embedded clock. The unit interval is <strong>62.5 ps</strong> at Gen 4 and
+      <strong>31.25 ps</strong> at Gen 5, and the Nyquist frequencies that matter are 8 GHz and 16 GHz.
+      Each doubling of rate doubles the frequency at which the channel has to behave, which is why each
+      generation has been harder than the last by more than a factor of two.
+    </p>
+
+    <h2 class="section-rule"><span>The channel</span></h2>
+
+    <p>
+      A realistic system channel is a package, a board escape, several inches of trace, at least one
+      connector, an add-in card, and another package. Every one of those contributes loss and at least
+      one discontinuity. The commonly quoted end-to-end budgets are roughly <strong>28 dB</strong> at
+      Gen 4's 8 GHz and <strong>36 dB</strong> at Gen 5's 16 GHz, with the split between system board,
+      connector and add-in card set by the CEM specification rather than by the base spec — the base
+      spec defines the electrical layer, CEM defines the form factor's share of it.
+    </p>
+    <p>
+      Treat those two numbers as sizing figures, not as quotations. Each belongs to a particular
+      specification edition and a particular reference plane, and they are repeated widely enough that
+      the qualifications fall off in transit. Before one goes into a budget you are going to defend,
+      take it from the base or CEM document for the revision you are building to — and note that a
+      single number at Nyquist is a screening check, not a description of what the whole waveform
+      experiences.
+    </p>
+
+    <p>
+      Thirty-six decibels means the signal at the receiver pad is roughly one part in sixty of what was
+      launched. The eye there is fully, unambiguously closed. That is not a failure; it is the design
+      point.
+    </p>
+
+    <h2 class="section-rule"><span>How the link recovers it</span></h2>
+
+    <p>
+      Equalisation is split across both ends and negotiated at link-up rather than fixed:
+    </p>
+
+    <ul class="tight">
+      <li><strong>Transmitter presets.</strong> Eleven defined combinations of de-emphasis and preshoot
+        (P0–P10), pre-distorting the launched signal to compensate for the channel's slope.</li>
+      <li><strong>Receiver CTLE</strong> — a continuous-time filter that boosts high frequencies to
+        flatten the channel, and which amplifies noise and crosstalk along with the signal.</li>
+      <li><strong>Receiver DFE</strong> — cancels post-cursor ISI exactly, using bits already decided.
+        It cannot touch pre-cursor, and it propagates its own errors.</li>
+      <li><strong>Link equalisation.</strong> The two ends run a defined negotiation at link-up, sweeping
+        presets and reporting back, converging on a combination that works for the channel actually
+        present. The channel is characterised at run time, not at design time.</li>
+    </ul>
+
+    <div class="note">
+      <b>Where the margin actually goes at Gen 5</b>
+      Via stubs. At 16 GHz Nyquist, a 200 mil stub on a thick board resonates at around 7.4 GHz — inside
+      the band — and puts a notch in the channel that no equaliser can undo, because the energy at that
+      frequency is gone rather than attenuated. Backdrilling moves from optional to near-universal practice across these generations &#8212; but it is an implementation remedy for a particular stackup and stub length, not something a specification mandates. A thin board may need none of it; a thick backplane may need it at Gen 3. The other large terms are connector footprint discontinuities and
+      crosstalk from neighbouring lanes in the escape.
+    </div>
+
+    <h2 class="section-rule"><span>Sign-off</span></h2>
+
+    <p>
+      Channel compliance is statistical rather than time-domain. PCI-SIG's reference flow takes the
+      channel's S-parameters, applies a defined reference transmitter and receiver equaliser, and
+      computes an eye at a target bit error rate of 10<sup>−12</sup> — far below anything a
+      bit-by-bit simulation could reach in reasonable time. The output is an eye height and width at
+      that BER, checked against a mask.
+    </p>
+
+    <p>
+      Two habits matter here. Check the S-parameter file for passivity and causality before trusting any
+      of it — a non-causal file produces eye openings that do not exist. And when the budget will not
+      close, the honest options are a lower-loss laminate, a shorter channel, or a retimer; adding
+      equaliser strength past the reference model is a way of passing a simulation rather than a link.
+    </p>
+
+    <h3>Sources</h3>
+    <ul class="tight refs">
+      <li><strong>PCI-SIG Base and CEM specifications</strong> &#8212; per-edition loss budgets, reference planes and transmitter presets &#8212; ledger claims C-6, C-18</li>
+    </ul>
+      <h2 class="section-rule"><span>Why this decides how your board behaves</span></h2>
+
+    <ul class="tight">
+      <li><strong>Loss is the headline constraint, and it sets reach.</strong> The budget is a
+        subtraction and what is left is inches of trace. See
+        <a href="../signal-integrity/channel-budgeting.html">channel budgeting</a>.</li>
+      <li><strong>Return loss matters more than its decibels suggest.</strong> An echo arriving near
+        a sampling instant costs far more than the same energy arriving between samples.</li>
+      <li><strong>A resonance is fatal in a way loss is not.</strong> The reference equaliser can
+        undo smooth attenuation and cannot restore a cancelled frequency, which is why via stubs and
+        backdrilling get the attention they do on thick boards.</li>
+      <li><strong>The eye at the receiver pad may be closed, by design.</strong> Judging a modern
+        link on an analogue eye photograph at the pad is judging the wrong thing.</li>
+    </ul>
+
+    <h2 class="section-rule"><span>What to do about it</span></h2>
+
+    <p>
+      <strong>Budget by row and name the owner of each.</strong> Package, breakout, board, connector,
+      add-in card, far package. The breakout is the row people forget.
+    </p>
+
+    <p>
+      <strong>Attack discontinuities before attacking loss.</strong> Loss is equalisable and
+      predictable; reflections and resonances are neither. Vias, launches and connector footprints
+      first.
+    </p>
+
+    <p>
+      <strong>Design the stackup for the stub, not just the impedance.</strong> Board thickness
+      decides whether a stub resonance lands in band, and exit-layer choice is free where
+      backdrilling is not.
+    </p>
+
+    <p>
+      <strong>Report adapted equaliser settings, not eye photographs.</strong> What the receiver
+      converged to, and how much range it had left, is the margin information.
+    </p>
+
+    <div class="note">
+      <b>Using this to find a fault</b>
+      <ul class="tight">
+        <li><b>A link that trains but reports poor margin.</b> Read the adapted settings. Coefficients
+          sitting at their limits mean the channel is outside what the reference equaliser was
+          defined against.</li>
+        <li><b>Deep narrow null in S<sub>21</sub>.</b> Invert the stub formula and compare with the
+          board's thickness and the exit layer. See <a href="../fundamentals/vias.html">vias</a>.</li>
+        <li><b>Regular ripple in S<sub>21</sub>.</b> Two reflecting structures; the ripple period
+          gives their separation.</li>
+        <li><b>Works on one slot and not another.</b> Compare the breakout and the connector launch,
+          not the trace lengths.</li>
+      </ul>
+    </div>
+
+    <details class="deeper">
+      <summary>Go deeper — what doubling the rate actually costs, and where the sourced numbers stop</summary>
+
+      <p>
+        <strong>LTSSM link equalization training and presets (P0–P10).</strong> Because high-speed channels
+        vary widely in trace length and materials, PCIe does not hardcode transmitter settings. Instead, the
+        Link Training and Status State Machine (LTSSM) executes an automated four-phase hardware handshake at
+        link-up (<span class="num">Recovery.Equalization</span>):
+      </p>
+
+      <ul class="tight">
+        <li><strong>Phase 0 &amp; 1:</strong> Downstream and upstream ports establish basic bit lock at 32 GT/s
+          and advertise starting transmitter presets (typically Preset 4, 5, or 7).</li>
+        <li><strong>Phase 2:</strong> The downstream port (e.g. the add-in card) fine-tunes the upstream port's
+          transmitter (the CPU/host). The card's receiver measures incoming eye quality (using eye height/width
+          monitors or internal BER counters) and commands the host to step through different FFE coefficients until
+          the optimal setting is locked.</li>
+        <li><strong>Phase 3:</strong> The host repeats the identical optimization process in reverse, tuning the
+          add-in card's transmitter.</li>
+      </ul>
+
+      <p>
+        The specification standardizes 11 discrete FIR coefficient presets:
+      </p>
+
+      <ul class="tight">
+        <li><strong>Preset 0 (P0):</strong> Flat output, 0 dB preshoot, 0 dB de-emphasis. Useful only for ultra-short
+          chip-to-chip connections.</li>
+        <li><strong>Preset 4 (P4):</strong> <span class="num">0 dB preshoot, -2.2 dB de-emphasis</span>. The universal
+          starting point for link training.</li>
+        <li><strong>Preset 7 (P7) &amp; Preset 8 (P8):</strong> Aggressive equalization
+          (<span class="num">P7: -6.0 dB de-emphasis, 3.5 dB preshoot</span>;
+          <span class="num">P8: -3.5 dB de-emphasis, 3.5 dB preshoot</span>). Mandatory for long-reach 36 dB
+          channels to boost high-frequency transitions before entering the lossy board.</li>
+      </ul>
+
+      <p>
+        <strong>Loss budget partitioning: CEM vs. OCP/EDSFF topologies.</strong> The PCIe Base Specification defines
+        the total 36 dB electrical envelope at 16 GHz, but the physical form factor determines how those decibels
+        are divided:
+      </p>
+
+      <ul class="tight">
+        <li><strong>Standard PCIe CEM (Desktop/Server Expansion Slot):</strong>
+          <span class="num">36.0 dB</span> total budget. Allocated as: TX package (<span class="num">3.5 dB</span>),
+          motherboard trace + breakout vias (<span class="num">17.0 dB</span>), PCIe CEM card-edge connector
+          (<span class="num">1.5 dB</span>), Add-in Card trace (<span class="num">9.5 dB</span>), RX package
+          (<span class="num">3.5 dB</span>), and AC coupling / board parasitics (<span class="num">1.0 dB</span>).
+          This leaves roughly 12 to 14 inches of motherboard routing on mid-loss laminates.</li>
+        <li><strong>OCP NIC 3.0 / EDSFF Enterprise Storage Form Factors:</strong>
+          These high-density enterprise form factors replace the bulky legacy CEM connector with high-performance
+          mezzanine connectors (such as 4C+ or EDSFF E1/E3 interfaces). These connectors exhibit lower parasitic
+          inductance and lower reflection loss (<span class="num">&approx; 1.0 dB</span>), and daughtercards are
+          physically much shorter (consuming only <span class="num">4 to 6 dB</span>). This frees up an additional
+          3 to 5 dB of budget, allowing motherboard designers to route longer server traces or utilize more
+          cost-effective PCB dielectric materials without compromising the 36 dB ceiling.</li>
+      </ul>
+    </details>
+
+    <h2 class="section-rule"><span>In the real world</span></h2>
+
+    <p>
+      PCIe is the interface where the whole toolchain gets exercised: S-parameters, channel
+      simulation, AMI models, compliance masks and a receiver that adapts. It is also where the gap
+      between a channel that meets its budget and a link that works is smallest, because the
+      specification's assumptions are unusually explicit.
+    </p>
+
+    <p>
+      The part that still surprises people is how much of the margin lives in structures rather than
+      in trace length — the breakout, the vias, the connector launch. Inches are easy to count and
+      discontinuities are easy to overlook, and the budget is usually lost to the second.
+    </p>
+
+    <h3>Related</h3>
+    <ul class="tight">
+      <li><a href="../signal-integrity/equalization.html">Equalization and Clock Recovery: CTLE, FFE, DFE, and CDR</a></li>
+      <li><a href="../fundamentals/vias.html">High-Speed Vias: Stubs, Resonance, and Backdrilling</a></li>
+      <li><a href="../signal-integrity/channel-budgeting.html">Channel Loss Budgeting Across Die, Package, and Board</a></li>
+      <li><a href="../signal-integrity/statistical-vs-time-domain.html">Statistical and Time-Domain Channel Simulation</a></li>
+    </ul>
+  </div>
+
+  <!-- pager:start -->
+  <nav class="pager" aria-label="Previous and next topic">
+    <a class="prev" href="../../topics/interfaces/lpddr5x.html"><span class="dir">Previous</span><span>LPDDR5 and LPDDR5X Signal Integrity: Timing, ODT, and Training</span></a>
+    <a class="next" href="../../topics/interfaces/pcie-gen6.html"><span class="dir">Next</span><span>PCIe 6.0 Signal Integrity: PAM4, FLIT, and FEC</span></a>
+  </nav>
+  <!-- pager:end -->
+</main>
+
+<footer class="site-foot">
+  <span>SIPI &#8212; signal and power integrity, visualised.</span>
+  <span>Created and directed by Geetansh Arora. <a href="../../colophon.html">About, review &amp; AI assistance</a> &#183; <a href="../../model-contract.html">Model assumptions</a> &#183; <a href="../../docs/claims.md">Claim ledger</a></span>
+</footer>
+
+<script src="../../js/site.js?v=acb47d86"></script>
+<script src="../../js/search.js?v=6c93a285"></script>
+</body>
+</html>

@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>About: Authorship, Review, and Sources | SIPI</title>
+<meta name="description" content="How this site is made and checked, how to report an error, who reviews it, and what counts as a source.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<link rel="stylesheet" href="css/base.css?v=e4f774de">
+<link rel="stylesheet" href="css/components.css?v=295837ab">
+  <!-- meta:start -->
+  <link rel="canonical" href="https://sipi.work/colophon.html">
+  <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="SIPI">
+  <meta property="og:title" content="About: Authorship, Review, and Sources | SIPI">
+  <meta property="og:description" content="How this site is made and checked, how to report an error, who reviews it, and what counts as a source.">
+  <meta property="og:url" content="https://sipi.work/colophon.html">
+  <meta property="og:image" content="https://sipi.work/assets/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="About: Authorship, Review, and Sources | SIPI">
+  <meta name="twitter:description" content="How this site is made and checked, how to report an error, who reviews it, and what counts as a source.">
+  <meta name="twitter:image" content="https://sipi.work/assets/og.png">
+  <!-- meta:end -->
+</head>
+<body>
+
+<header class="masthead">
+  <a class="wordmark" href="index.html">SIPI</a>
+  <nav>
+    <a href="index.html#fundamentals">Fundamentals</a>
+    <a href="index.html#power-integrity">Power</a>
+    <a href="index.html#interfaces">Interfaces</a>
+    <a href="start.html">Start</a>
+    <a href="labs.html">Labs</a>
+    <a href="reference.html">Reference</a>
+    <button class="theme-toggle" data-act="theme" type="button">System</button>
+  </nav>
+</header>
+
+<main>
+  <div class="page-head">
+    <p class="crumb"><a href="index.html">SIPI</a> / colophon</p>
+    <h1>About SIPI</h1>
+    <p class="byline"><span>Geetansh &#8212; Principal SI/PI Engineer</span><span>Updated Sep 2026</span></p>
+    <p class="answer">
+      SIPI is an educational project created and directed by Geetansh Arora. This page explains
+      the authorship, technical review, model evidence, source policy, AI assistance, and the
+      process for reporting a correction.
+    </p>
+  </div>
+
+  <div class="prose">
+    <h2>Report a correction or question</h2>
+
+    <p>
+      Open an issue at
+      <a href="https://github.com/geetansharora/SIPI/issues">github.com/geetansharora/SIPI/issues</a>.
+      A public issue keeps the discussion and any correction connected to the relevant page.
+    </p>
+
+    <p>
+      The following details help reproduce and assess the issue:
+    </p>
+
+    <ul class="tight">
+      <li><strong>The page and the exact sentence.</strong> A scenario link from a panel
+        (the <code>link</code> button) is ideal for anything interactive, because it reproduces
+        the state you were looking at.</li>
+      <li><strong>What you expected instead, and why.</strong> A number, a formula, or a
+        source.</li>
+      <li><strong>Which kind of claim it is</strong> &#8212; arithmetic, model behaviour, or a
+        specification statement. The three are corrected differently and the fix routes
+        differently.</li>
+    </ul>
+
+    <p>
+      Arithmetic and model-behavior corrections can often be checked with the automated gates.
+      Specification questions require the relevant primary source, so they may take longer to resolve.
+    </p>
+
+    <h2 class="section-rule"><span>What counts as a source</span></h2>
+
+    <p>
+      Everything on this site is meant to be derivable from public sources &#8212; JEDEC,
+      PCI-SIG, USB-IF, MIPI, published papers, or first principles. No employer data, no
+      internal numbers, no unreleased silicon.
+    </p>
+
+    <p>
+      The source policy uses three additional rules:
+    </p>
+
+    <ul class="tight">
+      <li><strong>A vendor application note does not stand in for a specification.</strong>
+        Vendor guidance can explain an implementation; it cannot establish what a standard
+        requires.</li>
+      <li><strong>An unverified claim is labelled, not quietly asserted.</strong> Where a
+        standard is not publicly accessible, the identifier is cited anyway and the claim is
+        recorded as awaiting verification in the
+        <a href="docs/claims.md">claim ledger</a>.</li>
+      <li><strong>Arithmetic is not sourcing.</strong> A number computed from a formula is
+        checked by recomputing it, which is a different and stronger thing than citing
+        somebody. Those numbers live in <code>check-numbers.py</code>.</li>
+    </ul>
+
+    <h2 class="section-rule"><span>How each kind of claim is checked</span></h2>
+
+    <div class="table-scroll">
+      <table class="data">
+        <thead><tr><th>Kind of claim</th><th>Checked by</th><th>What that catches</th></tr></thead>
+        <tbody>
+          <tr><td>A number in the prose</td><td><code>check-numbers.py</code></td><td>a number that disagrees with its own formula, or that drifted when a page was edited</td></tr>
+          <tr><td>Model behaviour</td><td><code>check-models.js</code></td><td>physics: a non-causal filter, a lost echo, a sentinel that reads as &ldquo;wide open&rdquo;</td></tr>
+          <tr><td>Page structure</td><td><code>scaffold.py check</code></td><td>dead links, unbalanced tags, a panel whose model contract is missing or stale</td></tr>
+          <tr><td>Whether a gate can fail</td><td><code>mutate.js</code></td><td>a known defect that no assertion detects, and a run that went red for the wrong reason</td></tr>
+          <tr><td>A specification statement</td><td>a human, reading the specification</td><td>nothing automatic. The ledger records what each source type <em>can</em> establish, and refuses to mark a standard's requirement verified from a press release — but it cannot read the standard for you. This is the weakest link.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>
+      The strongest model assertions are designed to be <em>independent</em> of the code they test.
+      Re-running the same formula in a second file can catch a typo but does not provide an independent check, so the
+      assertions use analytical limits, conservation laws and closed-form special cases
+      instead — and monotonicity only where a precondition is stated, because "more loss
+      never opens an eye" is true for a reflectionless channel and false once a reflection
+      can be damped.
+    </p>
+
+    <p>
+      <strong>Mutation checks confirm that the relevant assertion detects each recorded defect.</strong>
+      <code>mutate.js</code> holds every known defect this project has shipped, applies one at a
+      time to an isolated copy of the tree, and requires <em>the assertion that claims to catch
+      it</em> to be the one that fails — a syntax error or an unrelated failure counts as a
+      harness error, not as detection. It exists because the model gate once reached 276 passing
+      assertions while a 6 dB error in the equaliser's applied gain went unnoticed by all
+      fourteen of its equaliser assertions, one of which compared a quantity to itself. An
+      assertion count is not a quality measure. <code>node mutate.js --selftest</code> checks the
+      harness the same way, by requiring a behaviour-preserving edit to be reported as
+      <em>surviving</em>.
+    </p>
+
+    <p>
+      What each individual model assumes, and how well it has been checked, is published at
+      <a href="model-contract.html">model contracts</a>.
+    </p>
+
+    <p>
+      What is not established is stated as plainly as what is. The gaps that remain
+      are human rather than computational: sessions on a physical phone and with a
+      screen reader, short observed learner tasks, and a small number of
+      specification claims still waiting on a primary source. The claim ledger marks
+      those individually, and no model page claims evidence it does not have.
+    </p>
+
+    <h2 class="section-rule"><span>Creator and technical review</span></h2>
+
+    <p>
+      <strong>Geetansh Arora</strong>, Principal SI/PI Engineer, is the creator, project lead,
+      editorial director, and principal technical reviewer. On 14 September 2026 he completed a
+      technical read of every currently published page and explored the labs hands-on. That review
+      covers the educational content as published on that date; it does not independently validate
+      every numerical result, standards requirement, or use outside the stated model limits.
+    </p>
+
+    <p>
+      Automated gates complement that review by checking arithmetic, structural invariants,
+      model limits, and known regression cases. They do not establish standards compliance,
+      measurement correlation, behavior outside the stated model range, or suitability for sign-off.
+    </p>
+
+    <h2 class="section-rule"><span>Development and AI assistance</span></h2>
+
+    <p>
+      Plain HTML, CSS and JavaScript. No framework, no build step, no dependencies. Every
+      visualisation is hand-written Canvas or inline SVG, and the maths is hand-set rather
+      than rendered by a library. You can read any page's source and see everything it does.
+    </p>
+
+    <p>
+      Created and directed by Geetansh Arora, with technical review and hands-on lab exploration by him.
+      Developed with assistance from Claude Opus and OpenAI Codex models Astra and Sol. These tools
+      supported drafting, implementation, testing, and editorial work; they do not provide independent
+      human judgement or endorsement by Anthropic or OpenAI. Responsibility for the published project
+      remains with Geetansh.
+    </p>
+
+    <p>
+      Source: <a href="https://github.com/geetansharora/SIPI">github.com/geetansharora/SIPI</a>.
+      Prose and diagrams are CC BY 4.0; the code is MIT. See
+      <a href="LICENSE-CONTENT">LICENSE-CONTENT</a> and <a href="LICENSE-CODE">LICENSE-CODE</a>.
+    </p>
+
+    <h2 class="section-rule"><span>Change log</span></h2>
+
+    <p>
+      Substantive changes &#8212; corrections, new models, changed claims &#8212; are recorded
+      in <a href="CHANGELOG.md">CHANGELOG.md</a>. The full history is in the repository; the
+      changelog is the subset that would change what a reader believes.
+    </p>
+  </div>
+</main>
+
+<footer class="site-foot">
+  <span>SIPI &#8212; signal and power integrity, visualised.</span>
+  <span>Created and directed by Geetansh Arora. <a href="colophon.html">About, review &amp; AI assistance</a> &#183; <a href="model-contract.html">Model assumptions</a> &#183; <a href="docs/claims.md">Claim ledger</a></span>
+</footer>
+
+<script src="js/site.js?v=acb47d86"></script>
+</body>
+</html>

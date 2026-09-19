@@ -1,0 +1,352 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>USB 3.1 and 3.2 Signal Integrity: SSC and Compliance | SIPI</title>
+<meta name="description" content="5, 10 and 20 Gbps over a channel that includes a cable you did not design — spread spectrum, Type-C orientation, and what compliance actually tests.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<link rel="stylesheet" href="../../css/base.css?v=e4f774de">
+<link rel="stylesheet" href="../../css/components.css?v=295837ab">
+  <!-- meta:start -->
+  <link rel="canonical" href="https://sipi.work/topics/interfaces/usb-3x.html">
+  <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="SIPI">
+  <meta property="og:title" content="USB 3.1 and 3.2 Signal Integrity: SSC and Compliance | SIPI">
+  <meta property="og:description" content="5, 10 and 20 Gbps over a channel that includes a cable you did not design — spread spectrum, Type-C orientation, and what compliance actually tests.">
+  <meta property="og:url" content="https://sipi.work/topics/interfaces/usb-3x.html">
+  <meta property="og:image" content="https://sipi.work/assets/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="USB 3.1 and 3.2 Signal Integrity: SSC and Compliance | SIPI">
+  <meta name="twitter:description" content="5, 10 and 20 Gbps over a channel that includes a cable you did not design — spread spectrum, Type-C orientation, and what compliance actually tests.">
+  <meta name="twitter:image" content="https://sipi.work/assets/og.png">
+  <!-- meta:end -->
+</head>
+<body>
+
+<header class="masthead">
+  <a class="wordmark" href="../../index.html">SIPI</a>
+  <nav>
+    <a href="../../index.html#fundamentals">Fundamentals</a>
+    <a href="../../index.html#power-integrity">Power</a>
+    <a href="../../index.html#interfaces">Interfaces</a>
+    <a href="../../start.html">Start</a>
+    <a href="../../labs.html">Labs</a>
+    <a href="../../reference.html">Reference</a>
+    <button class="theme-toggle" data-act="theme" type="button">System</button>
+  </nav>
+</header>
+
+<main>
+  <div class="page-head">
+    <p class="crumb"><a href="../../index.html#interfaces">Interface sign-off</a> / 04</p>
+    <h1>USB 3.1 and 3.2 Signal Integrity: SSC and Compliance</h1>
+    <p class="byline">
+      <!-- review:start --><span>By Geetansh Arora — Principal SI/PI Engineer</span><time datetime="2026-09-18" title="Technical review by Geetansh Arora on this date">18 Sep 2026</time><span>9 min</span><!-- review:end -->
+    </p>
+    <p class="answer">
+      USB is the interface where you do not own the channel. The board is yours; the connector, the
+      cable and whatever is at the far end are not. That inverts the usual priorities &#8212; the
+      rates are undemanding, and the engineering is about tolerating variation you cannot
+      characterise.
+    </p>
+  </div>
+
+  <!-- ───────────── the picture ───────────── -->
+  <figure class="figure">
+    <div class="figure__bar"><span>Two problems PCIe does not have</span></div>
+    <div class="figure__body"><svg viewBox="-4 14 680 260" role="img" aria-label="Spread spectrum clocking shown as a slowly modulated clock frequency, alongside a USB channel made of two boards, two Type-C connectors and a user-supplied cable.">
+  <g>
+    <text class="lbl-hi" x="0" y="34">SSC is mandatory — and the receiver pays for it</text>
+    <path class="edge dash" d="M0,86 L300,86" stroke="var(--muted)"/>
+    <text class="lbl" x="306" y="88">nominal</text>
+    <polyline points="0,112.0 4,109.1 8,106.3 12,103.8 16,101.6 20,99.9 24,98.7 28,98.1 32,98.1 36,98.7 40,99.9 44,101.6 48,103.8 52,106.3 56,109.1 60,112.0 64,114.9 68,117.7 72,120.2 76,122.4 80,124.1 84,125.3 88,125.9 92,125.9 96,125.3 100,124.1 104,122.4 108,120.2 112,117.7 116,114.9 120,112.0 124,109.1 128,106.3 132,103.8 136,101.6 140,99.9 144,98.7 148,98.1 152,98.1 156,98.7 160,99.9 164,101.6 168,103.8 172,106.3 176,109.1 180,112.0 184,114.9 188,117.7 192,120.2 196,122.4 200,124.1 204,125.3 208,125.9 212,125.9 216,125.3 220,124.1 224,122.4 228,120.2 232,117.7 236,114.9 240,112.0 244,109.1 248,106.3 252,103.8 256,101.6 260,99.9 264,98.7 268,98.1 272,98.1 276,98.7 280,99.9 284,101.6 288,103.8 292,106.3 296,109.1 300,112.0" class="flow" fill="none"/>
+    <path class="edge dash" d="M0,126 L300,126" stroke="var(--alarm)"/>
+    <text class="lbl-bad" x="306" y="128">&#8722;5000 ppm</text>
+    <text class="lbl-sig" x="0" y="152">clock wanders down-spread at tens of kHz</text>
+    <text class="lbl" x="0" y="168">emissions energy spread instead of a narrow spike</text>
+    <text class="lbl-bad" x="0" y="190">so the CDR must track a moving clock —</text>
+    <text class="lbl-bad" x="0" y="206">simulating with a fixed clock omits a real term</text>
+  </g>
+  <g transform="translate(400,0)">
+    <text class="lbl-hi" x="0" y="34">and half the channel ships with the user</text>
+    <rect class="edge" x="0" y="48" width="52" height="28" rx="2" fill="var(--surface-2)"/>
+    <text class="lbl" x="26" y="66" text-anchor="middle">host</text>
+    <rect class="copper-2" x="52" y="52" width="14" height="20" rx="2"/>
+    <rect x="66" y="54" width="120" height="16" rx="8" fill="var(--alarm)" opacity=".35"/>
+    <rect class="copper-2" x="186" y="52" width="14" height="20" rx="2"/>
+    <rect class="edge" x="200" y="48" width="52" height="28" rx="2" fill="var(--surface-2)"/>
+    <text class="lbl" x="226" y="66" text-anchor="middle">device</text>
+    <text class="lbl-bad" x="126" y="92" text-anchor="middle">unknown length and quality</text>
+    <text class="lbl-ref" x="59" y="110" text-anchor="middle">Type-C</text>
+    <text class="lbl-ref" x="193" y="110" text-anchor="middle">Type-C</text>
+    <text class="lbl" x="0" y="140">reversible — so a mux or redriver sits</text>
+    <text class="lbl" x="0" y="156">in the signal path, adding its own loss</text>
+    <text class="lbl-bad" x="0" y="182">design against the worst compliant cable,</text>
+    <text class="lbl-bad" x="0" y="198">not a typical one</text>
+  </g>
+</svg></div>
+    <figcaption><b>USB's distinguishing SI problem is not its data rate.</b> At 5 and 10 Gbps the unit intervals are 200 and 100 ps &#8212; undemanding next to Gen 5. It is that half the channel is a cable the user bought and plugged in either way up. <b>Spread spectrum</b> is mandatory: the clock is modulated roughly 0 to &#8722;5000 ppm at a rate in the low tens of kilohertz, which spreads emissions energy across a band instead of concentrating it in a spike. The cost lands on the receiver &#8212; the CDR must track a continuously moving clock, so SSC tracking is a real part of the jitter budget, and a simulation with a fixed-frequency clock has omitted a term the specification assumes is there. <b>Type-C reversibility</b> is a signal-integrity cost paid for a usability feature: the SuperSpeed pairs land on either of two pin sets, and whatever resolves that sits directly in the path. Compliance is a defined test, not an in-house flow &#8212; the transmitter is measured through a reference channel, and the receiver is fed a deliberately stressed signal and must hold its error rate.</figcaption>
+  </figure>
+
+  <div class="prose">
+    <p>
+      Universal Serial Bus (USB) is by far the most ubiquitous high-speed digital interface on the planet.
+      Whether connecting a workstation to an external NVMe drive, an ultra-HD webcam, or a mobile phone,
+      USB 3.x (<span class="num">5 Gbps</span> Gen 1, <span class="num">10 Gbps</span> Gen 2, and
+      <span class="num">20 Gbps</span> Gen 2&times;2) is the multi-gigabit interconnect that almost every
+      hardware engineer is tasked with routing and certifying.
+    </p>
+
+    <p>
+      Yet USB presents a brutal design reality that internal enterprise links (like PCIe server backplanes or
+      LPDDR memory buses) never face: <strong>you do not own the channel</strong>. In a closed-box system, the
+      entire physical path between transmitter and receiver is modeled, routed, and bounded within your chassis.
+      With USB, your circuit board terminates abruptly at a surface-mount Type-C receptacle. The remaining
+      two-thirds of the channel is a cheap, twisted, two-metre cable bought by an end-user from an unknown vendor,
+      plugged in upside-down, and connected to an uncharacterized peripheral.
+    </p>
+
+    <p>
+      To make true plug-and-play interoperability possible across billions of devices, the USB Implementers
+      Forum (USB-IF) established the industry's most rigorous, publicly standardized compliance framework.
+      A USB 3.x port cannot assume clean conditions: it must survive mandatory Spread-Spectrum Clocking (SSC) to
+      pass FCC emissions, absorb the parasitic losses of reversible Type-C crossbar switches, and prove receiver
+      jitter tolerance against standardized "worst-compliant" test fixtures.
+    </p>
+
+    <h2>Designing for a channel you have never seen</h2>
+
+    <p>
+      Every other interface on this site is a channel you can measure. A PCIe link lives entirely
+      inside a product; an LPDDR bus is a few centimetres of your own board. You can build it,
+      characterise it, and sign it off.
+    </p>
+
+    <p>
+      A USB channel is your board, then a connector, then a cable of unknown length and quality made
+      by someone you have never met, then a device you have never seen. Two thirds of it is outside
+      your control and outside your knowledge.
+    </p>
+
+    <p>
+      So the design target is different. It is not "make this channel good" — you cannot. It is
+      <b>"leave as much margin as possible for the part you do not control"</b>, and that reframing
+      drives every decision below.
+    </p>
+
+    <h2 class="section-rule"><span>What it is</span></h2>
+
+    <p>
+      A differential serial link with an embedded clock, defined by USB-IF at 5 Gbps (Gen 1, 8b/10b),
+      10 Gbps (Gen 2, 128b/132b) and 20 Gbps as two 10 Gbps lanes (Gen 2×2). Unit intervals of 200 ps
+      and 100 ps respectively — undemanding next to PCIe Gen 5, which is fortunate, because the channel
+      is much less controlled.
+    </p>
+
+    <h2 class="section-rule"><span>The channel you don't own</span></h2>
+
+    <p>
+      A PCIe channel is entirely inside a product. A USB channel is a board, a connector, <em>a cable of
+      unknown length and quality</em>, another connector, and another board. The cable is frequently the
+      largest single term in the loss budget and it is chosen by the user after the product ships. Design
+      has to close against the worst compliant cable, not a typical one.
+    </p>
+
+    <p>
+      Type-C adds a second complication that is easy to underestimate. The connector is reversible, so
+      the SuperSpeed pairs appear on either of two pin sets depending on orientation. Something has to
+      resolve that — a mux, a redriver, or a device with both pairs wired — and whatever it is sits
+      directly in the signal path adding its own loss and discontinuity. Reversibility is a
+      signal-integrity cost paid for a usability feature.
+    </p>
+
+    <div class="note">
+      <b>Spread spectrum is not optional</b>
+      USB mandates down-spread SSC — the clock is modulated roughly 0 to −5000 ppm at a modulation rate
+      in the low tens of kilohertz. It spreads the emissions energy across a band instead of
+      concentrating it in a narrow spike, which is what makes the emissions scan pass. The cost lands on
+      the receiver: the CDR must track a continuously moving clock, so SSC tracking is a real part of the
+      jitter budget and a real part of receiver testing. Simulating a USB link with a fixed-frequency
+      clock omits a term that the specification assumes is there.
+    </div>
+
+    <h2 class="section-rule"><span>Where the margin goes</span></h2>
+
+    <ul class="tight">
+      <li><strong>The connector footprint.</strong> A Type-C footprint is a dense, fine-pitch
+        discontinuity right where the signal launches. It is usually the worst return-loss feature on
+        the whole board and it is fixed by the mechanical part, so the only lever is the launch geometry
+        around it.</li>
+      <li><strong>The cable.</strong> Loss, skew between the two conductors of a pair, and mode
+        conversion — all outside your control and all budgeted at the worst compliant limit.</li>
+      <li><strong>Mode conversion on the board.</strong> Intra-pair skew from routing asymmetry converts
+        differential energy to common mode, which the receiver does not reject and which then radiates
+        from the cable — turning an SI mistake into an EMI failure.</li>
+    </ul>
+
+    <h2 class="section-rule"><span>Sign-off</span></h2>
+
+    <p>
+      USB compliance is a defined test rather than an in-house simulation flow. The transmitter is
+      measured through a specified reference channel with a specified reference equaliser and must
+      produce an eye that clears the compliance mask. The receiver is tested the other way round: a
+      deliberately stressed signal — calibrated amounts of random jitter, sinusoidal jitter, ISI and
+      SSC — is applied, and the receiver must maintain the specified error rate. Passing your own
+      simulation is not the deliverable; passing the compliance fixture is.
+    </p>
+
+    <h3>Sources</h3>
+    <ul class="tight refs">
+      <li><strong>USB-IF USB 3.2 specification</strong> &#8212; SSC parameters and per-generation rates &#8212; ledger claims C-15, C-16</li>
+    </ul>
+      <h2 class="section-rule"><span>Why this decides how your board behaves</span></h2>
+
+    <ul class="tight">
+      <li><strong>Your board's budget share should be small on purpose.</strong> Spending your
+        allocation because the specification permits it leaves nothing for a poor cable.</li>
+      <li><strong>The connector launch is the part you own and the part that fails.</strong> It is
+        a mechanical structure with an electrical footprint you designed.</li>
+      <li><strong>Compliance is the mechanism, not a formality.</strong> It is the only thing
+        guaranteeing the far end behaves, so the test conditions are the contract.</li>
+      <li><strong>The common-mode path leaves the product.</strong> A cable is an antenna attached
+        to your board, which makes mode conversion an emissions problem rather than only a signal
+        one.</li>
+    </ul>
+
+    <h2 class="section-rule"><span>What to do about it</span></h2>
+
+    <p>
+      <strong>Spend less than your allocation.</strong> Shorter routes, fewer vias, better launches
+      than the budget strictly requires. The remaining margin helps accommodate cable variation
+      that was not included in the original test set.
+    </p>
+
+    <p>
+      <strong>Design the connector footprint deliberately.</strong> Ground provision, antipad
+      geometry, via stubs on through-hole pins. It is the highest-leverage part of the channel you
+      own. See <a href="../package-board/connectors-cables.html">connectors and cables</a>.
+    </p>
+
+    <p>
+      <strong>Treat shield termination as a return-path decision.</strong> A 360° bond gives
+      common-mode current a defined low-inductance path; a pigtail does not, and the shield stops
+      working above the frequency where its inductance dominates.
+    </p>
+
+    <p>
+      <strong>Keep the pair symmetric right up to the connector.</strong> Mode conversion on your
+      board becomes common-mode current on someone's cable, and that is what fails an emissions
+      scan.
+    </p>
+
+    <div class="note">
+      <b>Using this to find a fault</b>
+      <ul class="tight">
+        <li><b>Works with one cable and not another.</b> Expected, and informative: it tells you the
+          margin is thin, not that the design is wrong. Measure with a known-good cable to separate
+          your board from the cable.</li>
+        <li><b>Emissions failure that appears only with a cable attached.</b> Common-mode current
+          leaving on the cable. Look at pair symmetry and shield termination before filtering
+          anything.</li>
+        <li><b>Compliance passes and real devices fail.</b> The reference setup is not your setup.
+          Compare what the compliance channel assumed against what your product has.</li>
+        <li><b>Marginal only at the far end of a long cable.</b> Loss, which you cannot fix — so
+          the question becomes how much of your own budget you can hand back.</li>
+      </ul>
+    </div>
+
+    <details class="deeper">
+      <summary>Go deeper — what AC coupling and common mode really do here</summary>
+
+      <p>
+        USB links are AC-coupled, with series capacitors in each line of the pair. That serves a
+        practical purpose: two devices designed independently need not agree on a common-mode
+        voltage, and the capacitors let each end set its own.
+      </p>
+
+      <p>
+        It has two consequences worth knowing. Low-frequency content is blocked, which is why the
+        encoding must guarantee enough transitions — a long run of identical bits would drift. And
+        the capacitors are a discontinuity: real parts have package inductance and a footprint, and
+        at the top of the band they are not the short circuit the schematic implies.
+      </p>
+
+      <p>
+        <strong>Common mode is the part that leaves the product.</strong> Differential current on a
+        well-matched pair largely cancels in the far field. Common-mode current does not — it flows
+        out along the cable, using the shield and whatever else it can find as a return, and radiates
+        from a structure the size of the cable.
+      </p>
+
+      <p>
+        That makes the chain worth stating explicitly, because it crosses three topics that are
+        usually treated separately: <b>asymmetry on your board → mode conversion → common-mode
+        current → an emissions failure caused by a cable you did not design.</b> See
+        <a href="../fundamentals/differential-signalling.html">differential signalling</a> for the
+        conversion mechanism and SCD21 as the measurement that predicts it.
+      </p>
+
+      <p>
+        <strong>On sourcing.</strong> The rates and unit intervals here are arithmetic. The
+        revision-specific details — which test points apply, what the compliance channel is defined
+        as, the exact encoding per generation — are recorded in the
+        <a href="../../docs/claims.md">claim ledger</a> and should be read from the USB-IF
+        specification for the revision you are designing to.
+      </p>
+    </details>
+
+    <h2 class="section-rule"><span>In the real world</span></h2>
+
+    <p>
+      USB is the interface most likely to be treated as solved and most likely to produce a late
+      surprise, because the failure usually arrives from outside: a cable, a hub, a device, or an
+      emissions scan with something plugged in that was not there during development.
+    </p>
+
+    <p>
+      The defence is margin rather than analysis. You cannot simulate a channel you have never seen,
+      so the engineering move is to make your third of it as good as you reasonably can and leave the
+      rest of the budget for whatever turns up.
+    </p>
+
+    <h3>Related</h3>
+    <ul class="tight">
+      <li><a href="../fundamentals/differential-signalling.html">Differential Signaling and Mode Conversion</a></li>
+      <li><a href="../signal-integrity/compliance-masks.html">Transmitter Compliance Masks and Receiver Eye Masks</a></li>
+      <li><a href="../package-board/connectors-cables.html">High-Speed Connectors and Cables</a></li>
+      <li><a href="../fundamentals/jitter-taxonomy.html">Jitter Components: RJ, DJ, DCD, PJ, and TJ</a></li>
+    </ul>
+  </div>
+
+<!-- sources:start -->
+    <section class="sources">
+      <h2 class="section-rule"><span>Sources</span></h2>
+      <ul class="sources__list">
+      <li><a href="https://www.usb.org/usb-32-0" rel="noopener">USB-IF — USB 3.2 specification page</a> <span class="src__for">C-16a</span></li>
+      </ul>
+      <p class="sources__note">Rows marked with a claim id are tracked in <a href="../../docs/claims.md">the claim ledger</a>, which records what each source can and cannot establish.</p>
+    </section>
+    <!-- sources:end -->
+  <!-- pager:start -->
+  <nav class="pager" aria-label="Previous and next topic">
+    <a class="prev" href="../../topics/interfaces/pcie-gen6.html"><span class="dir">Previous</span><span>PCIe 6.0 Signal Integrity: PAM4, FLIT, and FEC</span></a>
+    <a class="next" href="../../topics/interfaces/ufs4.html"><span class="dir">Next</span><span>UFS 4.0 Signal Integrity: M-PHY Gear 5</span></a>
+  </nav>
+  <!-- pager:end -->
+</main>
+
+<footer class="site-foot">
+  <span>SIPI &#8212; signal and power integrity, visualised.</span>
+  <span>Created and directed by Geetansh Arora. <a href="../../colophon.html">About, review &amp; AI assistance</a> &#183; <a href="../../model-contract.html">Model assumptions</a> &#183; <a href="../../docs/claims.md">Claim ledger</a></span>
+</footer>
+
+<script src="../../js/site.js?v=acb47d86"></script>
+<script src="../../js/search.js?v=6c93a285"></script>
+</body>
+</html>

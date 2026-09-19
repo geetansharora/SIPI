@@ -1,0 +1,329 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Signal Integrity Simulation Workflow | SIPI</title>
+<meta name="description" content="How a stackup becomes a margin number — the six stages, what each hands to the next, and where the flow usually breaks.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<link rel="stylesheet" href="../../css/base.css?v=e4f774de">
+<link rel="stylesheet" href="../../css/components.css?v=295837ab">
+  <!-- meta:start -->
+  <link rel="canonical" href="https://sipi.work/topics/methodology/simulation-flow.html">
+  <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="SIPI">
+  <meta property="og:title" content="Signal Integrity Simulation Workflow | SIPI">
+  <meta property="og:description" content="How a stackup becomes a margin number — the six stages, what each hands to the next, and where the flow usually breaks.">
+  <meta property="og:url" content="https://sipi.work/topics/methodology/simulation-flow.html">
+  <meta property="og:image" content="https://sipi.work/assets/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Signal Integrity Simulation Workflow | SIPI">
+  <meta name="twitter:description" content="How a stackup becomes a margin number — the six stages, what each hands to the next, and where the flow usually breaks.">
+  <meta name="twitter:image" content="https://sipi.work/assets/og.png">
+  <!-- meta:end -->
+</head>
+<body>
+
+<header class="masthead">
+  <a class="wordmark" href="../../index.html">SIPI</a>
+  <nav>
+    <a href="../../index.html#fundamentals">Fundamentals</a>
+    <a href="../../index.html#power-integrity">Power</a>
+    <a href="../../index.html#interfaces">Interfaces</a>
+    <a href="../../start.html">Start</a>
+    <a href="../../labs.html">Labs</a>
+    <a href="../../reference.html">Reference</a>
+    <button class="theme-toggle" data-act="theme" type="button">System</button>
+  </nav>
+</header>
+
+<main>
+  <div class="page-head">
+    <p class="crumb"><a href="../../index.html#methodology">Methodology</a> / 01</p>
+    <h1>Signal Integrity Simulation Workflow</h1>
+    <p class="byline">
+      <!-- review:start --><span>By Geetansh Arora — Principal SI/PI Engineer</span><time datetime="2026-09-18" title="Technical review by Geetansh Arora on this date">18 Sep 2026</time><span>8 min</span><!-- review:end -->
+    </p>
+    <p class="answer">
+      Channel simulation is a chain, and each stage inherits everything the one before it got
+      wrong. What makes the flow worth understanding is not the tools &#8212; it is knowing which
+      stage a given question belongs to, and which errors are recoverable later.
+    </p>
+  </div>
+
+  <!-- ───────────── the picture ───────────── -->
+  <figure class="figure">
+    <div class="figure__bar"><span>Six stages, five handoffs</span></div>
+    <div class="figure__body"><svg viewBox="-4 14 680 250" role="img" aria-label="A six stage channel simulation pipeline from stackup through field solving, cascading and channel simulation to a margin report, annotated with the handoffs where it usually breaks.">
+  <text class="lbl-hi" x="0" y="34">every stage hands the next one a file — and that is where it breaks</text>
+  <rect class="edge" x="0" y="52" width="98" height="60" rx="3" fill="var(--surface-2)"/><text class="lbl-sig" x="49" y="70" text-anchor="middle">1</text><text class="lbl-hi" x="49" y="86" text-anchor="middle">stackup</text><text class="lbl" x="49" y="102" text-anchor="middle">geometry</text><path class="flow" d="M98,82 L112,82"/><rect class="edge" x="112" y="52" width="98" height="60" rx="3" fill="var(--surface-2)"/><text class="lbl-sig" x="161" y="70" text-anchor="middle">2</text><text class="lbl-hi" x="161" y="86" text-anchor="middle">2D solve</text><text class="lbl" x="161" y="102" text-anchor="middle">RLGC, Z₀</text><path class="flow" d="M210,82 L224,82"/><rect class="edge" x="224" y="52" width="98" height="60" rx="3" fill="var(--surface-2)"/><text class="lbl-sig" x="273" y="70" text-anchor="middle">3</text><text class="lbl-hi" x="273" y="86" text-anchor="middle">3D solve</text><text class="lbl" x="273" y="102" text-anchor="middle">vias, launches</text><path class="flow" d="M322,82 L336,82"/>
+  <rect class="edge" x="336" y="52" width="98" height="60" rx="3" fill="var(--surface-2)"/><text class="lbl-sig" x="385" y="70" text-anchor="middle">4</text><text class="lbl-hi" x="385" y="86" text-anchor="middle">cascade</text><text class="lbl" x="385" y="102" text-anchor="middle">one channel</text><path class="flow" d="M434,82 L448,82"/><rect class="edge" x="448" y="52" width="98" height="60" rx="3" fill="var(--surface-2)"/><text class="lbl-sig" x="497" y="70" text-anchor="middle">5</text><text class="lbl-hi" x="497" y="86" text-anchor="middle">channel sim</text><text class="lbl" x="497" y="102" text-anchor="middle">an eye</text><path class="flow" d="M546,82 L560,82"/><rect class="edge" x="560" y="52" width="98" height="60" rx="3" fill="var(--surface-2)"/><text class="lbl-sig" x="609" y="70" text-anchor="middle">6</text><text class="lbl-hi" x="609" y="86" text-anchor="middle">report</text><text class="lbl" x="609" y="102" text-anchor="middle">margin</text>
+  <g transform="translate(0,140)">
+    <text class="lbl-bad" x="0" y="0">rarely inside a solver. Almost always at a handoff:</text>
+    <text class="lbl" x="0" y="20">· package parasitics counted twice — by IBIS and by the extracted S-parameters</text>
+    <text class="lbl" x="0" y="36">· port order scrambled in the cascade, so lanes are silently swapped</text>
+    <text class="lbl" x="0" y="52">· different reference impedances between blocks</text>
+    <text class="lbl" x="0" y="68">· an S-parameter file with no DC point, so the simulator extrapolates one badly</text>
+    <text class="lbl-bad" x="0" y="92">each produces a plausible number</text>
+  </g>
+  <path class="edge dash" d="M0,128 L672,128" stroke="var(--border)"/>
+  <text class="lbl-sig" x="672" y="236" text-anchor="end">every stage has a cheap early version — run those instead of running this once, late</text>
+</svg></div>
+    <figcaption><b>Channel simulation is a pipeline, and its interfaces deserve the same care as its solvers.</b> Geometry becomes field-solver models, models cascade into a channel, the channel meets a buffer model, and each stage passes the next a file whose conventions must agree. Run inexpensive versions early, while stackup, layout, and topology choices remain open: a 2D solve on an estimated stackup can bound trace length before layout, while a lumped die model can locate major PDN resonances before substrate design. State which model version and omissions produced each result. &ldquo;Estimated stackup, vendor connector model, no crosstalk&rdquo; can support an early decision, but it does not establish sign-off margin.</figcaption>
+  </figure>
+
+  <div class="prose">
+    <p>
+      Engineers new to high-speed design often imagine that simulation involves opening a complete CAD layout,
+      clicking a single &ldquo;Simulate&rdquo; button, and waiting for an oscilloscope eye diagram to appear.
+      In reality, no electromagnetic solver on Earth can directly solve Maxwell's equations across an entire
+      printed circuit board. The physical scale spans ten orders of magnitude — from sub-micron transistors and
+      millimetre BGA solder balls to thirty-centimetre motherboard traces. Attempting to mesh an entire system
+      at once would require petabytes of RAM and run for months.
+    </p>
+
+    <p>
+      Instead, modern high-speed engineering relies on a <strong>modular simulation flow</strong>. The physical
+      channel is systematically partitioned into manageable segments: uniform traces are solved with fast 2D boundary
+      solvers, complex 3D transitions (vias, package balls, and connectors) are solved with full-wave field solvers,
+      and non-linear silicon drivers are modeled with compiled algorithmic executables (IBIS-AMI). These disparate
+      pieces are then cascaded together into a unified network to evaluate bit error rates and timing margins.
+    </p>
+
+    <p>
+      The critical insight of this methodology is that simulation failures rarely occur inside the electromagnetic
+      solvers themselves. Modern field solvers solve Maxwell's equations with remarkable mathematical fidelity.
+      Instead, catastrophic simulation errors almost always happen at the <strong>handoff boundaries</strong> — where
+      one tool's output file is ingested as another tool's input assumption. Understanding this pipeline, and
+      learning where the handoffs secretly break, is the foundation of high-speed verification.
+    </p>
+
+    <h2>Why a flow rather than a simulation</h2>
+
+    <p>
+      You cannot solve a whole channel at once. The structures involved span ten orders of magnitude
+      in size — a die bump is micrometres, a board trace is centimetres — and the physics needed
+      differs: a uniform trace wants a two-dimensional cross-section solve, a via wants full
+      three-dimensional fields, a receiver wants an algorithm.
+    </p>
+
+    <p>
+      So the work is split into stages, each using the cheapest method that is still correct for its
+      part, and the results are joined. That joining is where most errors live, because each stage's
+      output becomes the next stage's assumption.
+    </p>
+
+    <h2 class="section-rule"><span>The six stages</span></h2>
+
+    <ol class="tight">
+      <li><strong>Stackup and geometry.</strong> Layers, dielectric heights, materials, trace widths.
+        Everything downstream inherits this, so an error here is invisible and total.</li>
+      <li><strong>2D field solve.</strong> The uniform cross-sections — trace over plane, coupled pairs
+        — giving RLGC per unit length, and from that Z<sub>0</sub>, propagation delay and coupling
+        coefficients. Fast enough to sweep.</li>
+      <li><strong>3D field solve.</strong> The parts that are not uniform: vias, breakout regions,
+        connector launches, plane cutouts. Slow, and worth the time only where geometry genuinely
+        varies in all three dimensions.</li>
+      <li><strong>Cascade.</strong> Join the blocks into one channel S-parameter set — package,
+        breakout, trace, via, connector, trace, breakout, package. This is where port definitions and
+        reference impedances have to agree, and where they frequently do not.</li>
+      <li><strong>Channel simulation.</strong> Drive the cascaded channel with a buffer model, apply
+        equalisation, and produce an eye — statistically for sign-off, in the time domain for the
+        non-linear questions.</li>
+      <li><strong>Margin report.</strong> Eye height and width against the mask, across corners, with
+        the assumptions stated.</li>
+    </ol>
+
+    <div class="note">
+      <b>Where the flow actually breaks</b>
+      Rarely inside a solver. Almost always at a handoff: package parasitics counted twice because both
+      the IBIS model and the extracted package include them; port ordering scrambled in a cascade so
+      lanes are swapped; different reference impedances between blocks; an S-parameter file with no DC
+      point, leaving the simulator to extrapolate one. Each produces a plausible number.
+    </div>
+
+    <h2 class="section-rule"><span>Use early models at the right fidelity</span></h2>
+
+    <p>
+      The flow as described can support sign-off, but its first use should come much earlier. Once the
+      stackup and layout are fixed, the remaining changes may be limited to the bill of materials.
+    </p>
+
+    <p>
+      Every stage has a cheap early version that answers the question that matters at that point in the
+      schedule. A 2D solve with an estimated stackup answers &ldquo;what trace width and how long can
+      it be?&rdquo; before layout starts. A cascade of estimated blocks answers &ldquo;does this
+      topology close at all?&rdquo; before a connector is chosen. A lumped package model finds the PDN
+      resonances before the substrate is designed. Those answers are worth more, per hour spent, than
+      anything the full flow produces later.
+    </p>
+
+    <p>
+      The corresponding discipline is to state which version a result came from. &ldquo;Estimated
+      stackup, vendor connector model, no crosstalk&rdquo; can support an early decision when labelled
+      with that scope. It does not establish sign-off margin.
+    </p>
+
+    <h2 class="section-rule"><span>Why this decides how your board behaves</span></h2>
+
+    <ul class="tight">
+      <li><strong>Errors early are invisible and total.</strong> A wrong dielectric height changes
+        every impedance, every coupling and every delay downstream, and nothing later in the flow
+        will look wrong.</li>
+      <li><strong>The joins are where models disagree.</strong> Two stages meeting at different
+        reference planes or different port definitions produce a plausible result that is wrong by
+        a discontinuity.</li>
+      <li><strong>The slowest stage is not the most important one.</strong> 3D solves dominate
+        runtime and rarely dominate the answer — the stackup and the buffer models usually do.</li>
+      <li><strong>Run the flow while design choices remain open.</strong> Results that arrive
+        after layout is committed can identify risk but cannot guide the layout that produced it.</li>
+    </ul>
+
+    <h2 class="section-rule"><span>What to do about it</span></h2>
+
+    <p>
+      <strong>Begin early with an appropriately simple model.</strong> A preliminary end-to-end result at the concept stage —
+      estimated stackup, generic buffer models, a guessed connector — answers the question that
+      actually matters early: is this reach plausible at all? A precise result after layout answers
+      a question whose answer can no longer change anything.
+    </p>
+
+    <p>
+      <strong>Write down the port definitions at every join.</strong> Where does the board model
+      end, where does the package begin, what is the reference impedance, and are the planes the
+      same? Most flow failures are bookkeeping.
+    </p>
+
+    <p>
+      <strong>Sanity-check each stage against something independent.</strong> Does the 2D solve give
+      the impedance the stackup was designed for? Does the S-parameter file pass passivity? Does the
+      buffer model's rise time match the datasheet? Each takes minutes.
+    </p>
+
+    <p>
+      <strong>Escalate accuracy only where it changes a decision.</strong> A 3D solve of a via field
+      is worth days if the result decides a stackup; it is worth nothing if the answer is the same
+      either way.
+    </p>
+
+    <div class="note">
+      <b>Using this to find a fault</b>
+      <ul class="tight">
+        <li><b>Results that change a lot with a small input change.</b> Find which stage is
+          sensitive. Sensitivity is information: it says where accuracy is worth buying.</li>
+        <li><b>Good agreement with measurement at low frequency, bad at high.</b> The uniform parts
+          are right and the discrete ones are not — vias, launches, connectors.</li>
+        <li><b>An answer that looks right and disagrees with hardware everywhere.</b> Go back to
+          stage one. A stackup error is the only thing that shifts everything at once.</li>
+        <li><b>Two engineers getting different answers from the same inputs.</b> Compare port
+          definitions before comparing physics.</li>
+      </ul>
+    </div>
+
+    <details class="deeper">
+      <summary>Go deeper — a checklist for the joins</summary>
+
+      <p>
+        Most of what goes wrong in a flow is not physics. It is one of these, and all of them are
+        checkable in minutes:
+      </p>
+
+      <ul class="tight">
+        <li><strong>Reference planes.</strong> Does each model start and stop where the next one
+          expects? Overlap double-counts; a gap omits.</li>
+        <li><strong>Port order and polarity.</strong> A four-port differential file with ports
+          numbered 1-2-3-4 versus 1-3-2-4 is a different network. Mixed-mode conversion assumes a
+          convention.</li>
+        <li><strong>Reference impedance.</strong> Files at different normalisations must be
+          renormalised, not concatenated.</li>
+        <li><strong>Frequency extent and step.</strong> The extent must cover the knee; the step
+          sets the time window before wraparound. See
+          <a href="../fundamentals/s-parameters.html">S-parameters</a>.</li>
+        <li><strong>DC point.</strong> Present, or the simulator invents one.</li>
+        <li><strong>Corners.</strong> Fast-strong for reflections and crosstalk, slow-weak for
+          timing. A typical-only run covers neither.</li>
+      </ul>
+
+      <p>
+        The last one is worth a sentence on its own. It is common to run a careful nominal flow and
+        treat the corners as a later refinement — but the corners are not a refinement, they are
+        different questions, and the worst case for one impairment is frequently the best case for
+        another.
+      </p>
+
+      <p>
+        <strong>An end-to-end walkthrough: signing off a 16 GT/s PCIe Gen 4 lane.</strong> To see how the
+        six stages connect in a real project, consider qualifying a differential PCIe lane running from a CPU BGA
+        across a 10-inch motherboard, through a card-edge connector, to an add-in card ASIC:
+      </p>
+
+      <ol class="tight">
+        <li><strong>Stackup &amp; 2D Solver:</strong> The stackup specifies an ultra-low-loss laminate
+          (<span class="num">D<sub>k</sub> = 3.6, D<sub>f</sub> = 0.004</span> at 8 GHz) with 1 oz copper foils.
+          A 2D field solver sweeps trace widths and differential spacing to synthesize an <span class="num">85 &Omega;</span>
+          odd-mode target, generating frequency-dependent RLGC matrices including copper roughness models (Huray snow-ball).</li>
+        <li><strong>3D Full-Wave Via &amp; Launch Extraction:</strong> The layout engineer provides the BGA breakout
+          geometry, AC coupling capacitor mounting pads (0201 reverse-geometry), and CEM connector footprint.
+          A full-wave 3D FEM solver meshes these localised 3D transitions, exporting multi-port Touchstone files
+          (<span class="num">.s4p</span>) swept from DC up to <span class="num">30 GHz</span> (well beyond the 8 GHz Nyquist).
+          Before cascading, each file is verified for mathematical passivity (<span class="num">&Sigma;|S|<sup>2</sup> &le; 1</span>)
+          and causality using Hilbert transform checks.</li>
+        <li><strong>Channel Cascade &amp; Passivity Sign-off:</strong> The system integrator imports the vendor connector
+          S-parameters, the extracted via blocks, and the 2D transmission lines into a circuit simulator schematic.
+          The simulator stitches the blocks together in order: CPU Package &rarr; Breakout Via &rarr; Motherboard Trace &rarr;
+          AC Caps &rarr; CEM Connector &rarr; Add-in Card Trace &rarr; RX Breakout &rarr; RX Package. The cascaded composite
+          yields an end-to-end channel insertion loss curve (<span class="num">S<sub>dd21</sub> = -24.5 dB at 8 GHz</span>),
+          well within the PCIe Gen 4 28 dB budget.</li>
+        <li><strong>IBIS-AMI Statistical &amp; Time-Domain Sign-off:</strong> The composite S-parameter network is handed
+          to the channel simulator alongside the CPU's transmitter AMI model and the ASIC's receiver AMI model.
+          The simulator runs statistical analysis across millions of bit transitions, automatically tuning TX equalization
+          (Preset 7: <span class="num">-6 dB de-emphasis</span>) and receiver CTLE peaking. The resulting eye diagram is
+          evaluated against the PCI-SIG compliance mask: verifying that the eye height exceeds <span class="num">15 mV</span>
+          and eye width exceeds <span class="num">0.30 UI</span> at a Bit Error Rate of <span class="num">10<sup>-12</sup></span>.</li>
+      </ol>
+    </details>
+
+    <h2 class="section-rule"><span>In the real world</span></h2>
+
+    <p>
+      The most valuable property of a simulation flow is not its accuracy but its
+      <em>turnaround</em>. A flow that answers in a day gets asked ten questions; one that answers in
+      three weeks gets asked one, and usually too late to matter.
+    </p>
+
+    <p>
+      Which argues for building the crude version first and keeping it — so that when somebody asks
+      "what if we moved this two inches?", the answer arrives while the decision is still open.
+    </p>
+
+    <h3>Related</h3>
+    <ul class="tight">
+      <li><a href="../methodology/field-solvers.html">Field Solvers for SI/PI: 2D, 2.5D, and 3D</a></li>
+      <li><a href="../signal-integrity/statistical-vs-time-domain.html">Statistical and Time-Domain Channel Simulation</a></li>
+      <li><a href="../signal-integrity/ibis-ami-spice.html">IBIS, IBIS-AMI, and SPICE Model Selection</a></li>
+      <li><a href="../methodology/reporting-margin.html">Reporting Signal and Power Integrity Margin</a></li>
+    </ul>
+  </div>
+
+  <!-- pager:start -->
+  <nav class="pager" aria-label="Previous and next topic">
+    <a class="prev" href="../../topics/interfaces/ufs4.html"><span class="dir">Previous</span><span>UFS 4.0 Signal Integrity: M-PHY Gear 5</span></a>
+    <a class="next" href="../../topics/methodology/field-solvers.html"><span class="dir">Next</span><span>Field Solvers for SI/PI: 2D, 2.5D, and 3D</span></a>
+  </nav>
+  <!-- pager:end -->
+</main>
+
+<footer class="site-foot">
+  <span>SIPI &#8212; signal and power integrity, visualised.</span>
+  <span>Created and directed by Geetansh Arora. <a href="../../colophon.html">About, review &amp; AI assistance</a> &#183; <a href="../../model-contract.html">Model assumptions</a> &#183; <a href="../../docs/claims.md">Claim ledger</a></span>
+</footer>
+
+<script src="../../js/site.js?v=acb47d86"></script>
+<script src="../../js/search.js?v=6c93a285"></script>
+</body>
+</html>

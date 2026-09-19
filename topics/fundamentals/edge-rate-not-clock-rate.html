@@ -1,0 +1,436 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Signal Bandwidth: Why Edge Rate Matters | SIPI</title>
+<meta name="description" content="Why a 10 MHz bus can be a high-speed design problem: the spectrum that causes reflections, crosstalk and loss is set by the edge, not the clock.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<link rel="stylesheet" href="../../css/base.css?v=e4f774de">
+<link rel="stylesheet" href="../../css/components.css?v=295837ab">
+  <!-- meta:start -->
+  <link rel="canonical" href="https://sipi.work/topics/fundamentals/edge-rate-not-clock-rate.html">
+  <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="SIPI">
+  <meta property="og:title" content="Signal Bandwidth: Why Edge Rate Matters | SIPI">
+  <meta property="og:description" content="Why a 10 MHz bus can be a high-speed design problem: the spectrum that causes reflections, crosstalk and loss is set by the edge, not the clock.">
+  <meta property="og:url" content="https://sipi.work/topics/fundamentals/edge-rate-not-clock-rate.html">
+  <meta property="og:image" content="https://sipi.work/assets/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Signal Bandwidth: Why Edge Rate Matters | SIPI">
+  <meta name="twitter:description" content="Why a 10 MHz bus can be a high-speed design problem: the spectrum that causes reflections, crosstalk and loss is set by the edge, not the clock.">
+  <meta name="twitter:image" content="https://sipi.work/assets/og.png">
+  <!-- meta:end -->
+</head>
+<body>
+
+<header class="masthead">
+  <a class="wordmark" href="../../index.html">SIPI</a>
+  <nav>
+    <a href="../../index.html#fundamentals">Fundamentals</a>
+    <a href="../../index.html#power-integrity">Power</a>
+    <a href="../../index.html#interfaces">Interfaces</a>
+    <a href="../../start.html">Start</a>
+    <a href="../../labs.html">Labs</a>
+    <a href="../../reference.html">Reference</a>
+    <button class="theme-toggle" data-act="theme" type="button">System</button>
+  </nav>
+</header>
+
+<main>
+  <div class="page-head">
+    <p class="crumb"><a href="../../index.html#fundamentals">Fundamentals</a> / 01</p>
+    <h1>Signal Bandwidth: Why Edge Rate Matters</h1>
+    <p class="byline">
+      <!-- review:start --><span>By Geetansh Arora — Principal SI/PI Engineer</span><time datetime="2026-09-12" title="Technical review by Geetansh Arora on this date">12 Sep 2026</time><span>9 min</span><!-- review:end -->
+    </p>
+    <p class="answer">
+      Copper has no idea what your clock rate is. It reacts to how <em>fast the voltage
+      changes</em>, not to how often. That means a 10 MHz reset line driven by a modern
+      output buffer can excite the same high-frequency mechanisms as a gigabit serial link.
+      This is why even a low-rate control net deserves an edge-rate check.
+    </p>
+  </div>
+
+  <!-- ───────────── the picture ───────────── -->
+  <section class="instrument" data-viz="spectrum" aria-label="Interactive spectrum of a trapezoidal clock, showing that the knee frequency follows the edge rate rather than the clock rate">
+    <script type="application/json" data-contract>{"kind":"exact","evidence":"independent","purpose":"Tie the edge in time to the envelope in frequency.","equations":["|An| proportional to |sinc(n*pi*tau/T)|*|sinc(n*pi*tr/T)|"],"units":"Hz, s, dB","validity":"Ideal trapezoid; no channel.","numerics":"Closed form harmonics.","limitations":"Ideal trapezoid; no channel.","suites":["Spectrum"],"version":"2.0","reviewed":"2026-09-12","panel":"spectrum"}</script>
+    <div class="instrument__bar">
+      <span class="instrument__title">A trapezoidal clock, in time and in frequency</span>
+        <span data-evidence="independent" data-model-version="2.0" class="model-tag model-tag--exact" title="Trapezoid Fourier series, closed form. Ideal source, no channel.">exact</span>
+      <span class="instrument__readout" role="status" aria-live="polite" aria-label="Current values">
+        <span>clock <b data-out="fclk">—</b></span>
+        <span>knee <b data-out="knee">—</b></span>
+        <span>−3 dB BW <b data-out="bw">—</b></span>
+        <span>harmonics <b data-out="nh">—</b></span>
+      </span>
+    </div>
+    <div class="panels">
+      <div class="panel">
+        <span class="panel__label">The waveform — two and a half cycles</span>
+        <canvas data-cv="time" role="img" aria-label="A trapezoidal clock waveform plotted against time, with a finite rise and fall."></canvas>
+        <div class="legend"><span><i style="background:var(--signal)"></i>clock</span></div>
+      </div>
+      <div class="panel">
+        <span class="panel__label">Its spectrum — drag the clock and watch the knee stay put</span>
+        <canvas data-cv="spec" role="img" aria-label="Harmonic amplitudes relative to the swing, against frequency on a logarithmic axis, with the two-slope envelope and the knee frequency marked."></canvas>
+        <div class="legend"><span><i style="background:var(--signal)"></i>harmonics</span><span><i class="dash" style="color:var(--muted)"></i>envelope</span><span><i class="dash" style="color:var(--reflect)"></i>knee = 0.5 / tr</span></div>
+      </div>
+    </div>
+    <div class="controls">
+      <div class="ctl">
+        <div class="ctl__head"><label for="sp-f">Clock rate</label><output id="sp-f-out" for="sp-f">10 MHz</output></div>
+        <input type="range" id="sp-f" min="0" max="350" step="5" value="100">
+        <span class="ctl__note">Moves the harmonics. Not the knee.</span>
+      </div>
+      <div class="ctl">
+        <div class="ctl__head"><label for="sp-tr">Rise time t<sub>r</sub></label><output id="sp-tr-out" for="sp-tr">100 ps</output></div>
+        <input type="range" id="sp-tr" min="20" max="2000" step="10" value="100">
+        <span class="ctl__note">This is the one that moves the knee</span>
+      </div>
+    </div>
+    <div class="presets">
+      <button class="preset" type="button" data-preset="slowfast" aria-pressed="true">Slow clock, fast buffer</button>
+      <button class="preset" type="button" data-preset="slowslow" aria-pressed="false">Slow clock, slow edge</button>
+      <button class="preset" type="button" data-preset="fastclk" aria-pressed="false">100× the clock rate</button>
+      <button class="preset" type="button" data-preset="serial" aria-pressed="false">Serial link</button>
+    </div>
+    <div class="transport"><span data-out="note">—</span></div>
+  </section>
+
+  <div class="prose">
+    <h2>Start with what a digital signal really looks like</h2>
+
+    <p>
+      Picture a 10 MHz reset line on a board. The clock rate is low, the net is
+      short, and nothing in the schematic review suggests it needs attention. Then
+      the prototype arrives and an oscilloscope shows 800 mV of ringing on every
+      edge — enough to false-trigger the downstream logic. The clock frequency is
+      only 10 MHz, but the output buffer driving that reset has a 200 ps rise
+      time. That edge carries energy up past 2.5 GHz, and the trace is responding
+      to <em>that</em>, not to the 10 MHz repetition rate.
+    </p>
+
+    <p>
+      This scenario is the single most common surprise in board bring-up,
+      and it comes from a natural but wrong assumption: that a slow clock means a
+      slow signal. The rest of this page explains why edge rate — not clock
+      rate — decides which frequencies your interconnect must handle.
+    </p>
+
+    <p>
+      On a timing diagram a logic signal is drawn as a rectangle: it is low, then it is
+      high, and the change between them is a vertical line. Real electronics cannot do
+      that. Charging the capacitance of a trace and the input it drives takes time, so
+      every real transition is a ramp. The time that ramp takes is the
+      <strong>rise time</strong>, usually written t<sub>r</sub>, and by convention it is
+      measured between the 10% and 90% points rather than end to end.
+    </p>
+
+    <p>
+      Rise time connects the waveform to the frequency range that the interconnect, package,
+      probe, and receiver must preserve. Fourier analysis makes that connection explicit.
+    </p>
+
+    <h2 class="section-rule"><span>Any signal is a sum of sine waves</span></h2>
+
+    <p>
+      Fourier's result is that any repeating waveform can be built by adding together sine
+      waves at multiples of its repetition rate. Those multiples are called
+      <strong>harmonics</strong>. A 100 MHz square wave is a 100 MHz sine, plus a smaller
+      300 MHz sine, plus a smaller-still 500 MHz sine, and so on upward forever.
+    </p>
+
+    <p>
+      Forever, that is, if the wave is perfectly square. The corners are what need the very
+      high harmonics — a sharp corner is exactly the thing a slow sine wave cannot make. So
+      when you round the corners by giving the edge a finite rise time, the high harmonics
+      stop being needed and their amplitudes collapse. <strong>How square the corner is
+      decides how high the frequency content goes.</strong>
+    </p>
+
+    <p>
+      Turn that around and you have the whole page. The repetition rate sets the
+      <em>lowest</em> frequency in the signal and the spacing of the harmonics. The rise
+      time sets the <em>highest</em> one worth worrying about. They are two independent
+      knobs. Many signal-integrity surprises begin when a review uses repetition rate to set
+      the analysis bandwidth even though the interconnect is responding to the edge spectrum.
+    </p>
+
+    <div class="eq">
+      <i class="var">f</i><sub>knee</sub> &nbsp;≈&nbsp; 0.5 / <i class="var">t</i><sub>r</sub>
+      <span class="cap">The knee is where the harmonics start falling off much faster. A 300 ps edge puts the knee at 1.7 GHz — whether that edge happens once a second or a billion times a second.</span>
+    </div>
+
+    <p>
+      Drag the rise-time slider on the panel above and watch the envelope. Below the knee the
+      harmonics fall off gently, at 20 dB per decade. Above it they fall off at 40 dB per
+      decade — twice as steeply — which makes the knee a useful starting point for setting an
+      analysis band. It is not a cutoff: content continues above it, and a sharp resonance there
+      can still matter. Extend the model far enough to show that omitted content and out-of-band
+      discontinuities no longer change the result you care about.
+    </p>
+
+    <h2 class="section-rule"><span>Why this decides how your board behaves</span></h2>
+
+    <p>
+      Interconnect loss, reflection, and coupling are frequency-dependent, while data rate sets
+      the timing and pattern context in which those effects accumulate. Keeping those roles
+      separate makes the consequences easier to predict:
+    </p>
+
+    <ul class="tight">
+      <li><strong>Reflections.</strong> A trace rings when the round trip down it and back is
+        long compared with the edge. It is the <em>edge</em> in that comparison — so slowing
+        the edge is a real fix, and slowing the clock is not.
+        <a href="when-is-a-trace-a-transmission-line.html">Critical length</a> is built
+        entirely out of t<sub>r</sub>.</li>
+      <li><strong>Crosstalk.</strong> A neighbouring trace picks up a voltage proportional to
+        how fast yours is changing, not to how often. Halving the rise time doubles the
+        crosstalk, at any clock rate at all. See
+        <a href="crosstalk.html">crosstalk</a>.</li>
+      <li><strong>Loss.</strong> Copper and dielectric both attenuate more at high
+        frequencies. A faster edge puts more energy up where the loss is worst, so it is the
+        part of your signal that gets damaged first — which is why a long trace makes edges
+        slower, and slower edges make timing worse. See
+        <a href="loss-mechanisms.html">loss mechanisms</a>.</li>
+      <li><strong>Emissions.</strong> Radiated energy climbs steeply with frequency. Boards
+        that fail EMC may be improved by slowing an edge that is faster than the timing requirement needs.</li>
+    </ul>
+
+    <div class="note">
+      <b>What the clock rate still decides</b>
+      This is not a claim that the data rate is irrelevant — it decides how much room you have
+      to survive all of the above. The unit interval comes straight from the rate, and every
+      timing budget is measured in UI. The rate also decides how many bit periods the
+      channel's memory stretches across, which is what turns loss into
+      <a href="isi.html">ISI</a>.
+      <br><br>
+      Put simply: <b>the edge decides what frequencies exist; the rate decides how much time
+      you have to recover from them.</b> A 10 MHz bus with a 300 ps edge has a genuine 1.7 GHz
+      problem — and a 100 ns bit period to absorb it, which is exactly why it usually gets
+      away with it and occasionally does not.
+    </div>
+
+    <h2 class="section-rule"><span>What to do about it</span></h2>
+
+    <p>
+      Three things, in the order you should reach for them.
+    </p>
+
+    <p>
+      <strong>First, establish the edge and its conditions.</strong> A datasheet value may be a
+      limit, a typical measurement, or a value at one load and voltage. For reflection and
+      coupling analysis, inspect the fastest relevant voltage-temperature-process corner and
+      package/load condition in the available I/O model. Record whether the value is 10–90% or
+      20–80% before using it in a bandwidth or electrical-length calculation.
+    </p>
+
+    <p>
+      <strong>Second, slow the edge deliberately where the timing budget permits.</strong> A series
+      resistor at the driver, or a supported slew-rate control setting, can reduce reflections,
+      crosstalk, and emissions together because it reduces the high-frequency
+      content that all three feed on. The constraint is timing: a slower edge eats setup margin
+      and adds jitter on a slow-moving crossing. On a control net with nanoseconds to spare,
+      it is often an efficient option after checking the receiver thresholds and timing corners.
+    </p>
+
+    <p>
+      <strong>Third, check which convention you are being given.</strong> Rise time is quoted two
+      ways. 10–90% is the signal-integrity convention; 20–80% is common in serial-link
+      specifications because it is easier to measure cleanly once loss has rounded the ends of
+      the edge. For a roughly Gaussian edge the 20–80% figure is about 0.6× the 10–90% one, so
+      mixing them makes an edge look almost twice as slow as it is — and every critical-length
+      and knee calculation built on it comes out wrong in the dangerous direction.
+    </p>
+
+    <div class="note">
+      <b>Using this to find a fault</b>
+      When a slow bus misbehaves, the instinct is to look at the clock. Look at the edge instead.
+      <ul class="tight">
+        <li><b>Ringing on a slow control net.</b> Measure t<sub>r</sub>, not the period. Compare it
+          with twice the trace delay. If 2·T<sub>d</sub> is more than about a third of
+          t<sub>r</sub>, treat the net as a transmission line and evaluate its termination.</li>
+        <li><b>Crosstalk that appears only on some nets.</b> Look for which driver library they
+          share. A single fast buffer type reused for chip selects will light up every victim
+          around it.</li>
+        <li><b>An EMC failure at a frequency with no obvious source.</b> Divide 0.5 by your fastest
+          edge. If the failing frequency is below that number, the edge is a candidate. Where timing
+          allows, source damping may be more efficient than containing radiation after it is created.</li>
+      </ul>
+    </div>
+
+    <details class="deeper">
+      <summary>Go deeper — where the two corner frequencies come from, and the third number</summary>
+
+      <p>
+        The panel draws the exact envelope, and the two corner frequencies are a summary of it
+        rather than a replacement. The waveform is a trapezoid: a pulse of width τ with edges of
+        duration t<sub>r</sub>. Its spectrum is the product of two sinc functions, one from the
+        pulse width and one from the ramp, and each sinc contributes a corner.
+      </p>
+
+      <div class="eq">
+        <span class="eq__main">|<i class="var">A</i><sub>n</sub>| ∝ |sinc(<i class="var">n</i>π<i class="var">τ</i>/<i class="var">T</i>)| · |sinc(<i class="var">n</i>π<i class="var">t</i><sub>r</sub>/<i class="var">T</i>)|</span>
+        <span class="eq__note">the first corner at 1/(πτ) takes the envelope from flat to −20 dB/decade; the second at 1/(πt_r) takes it to −40</span>
+      </div>
+
+      <p>
+        So the −40 dB/decade region really begins near 1/(πt<sub>r</sub>) ≈ 0.32/t<sub>r</sub>,
+        and 0.5/t<sub>r</sub> is a deliberately conservative round-up of it. That is the honest
+        status of the knee: a rule of thumb chosen to err on the safe side, not a derived
+        constant.
+      </p>
+
+      <p>
+        Three numbers get quoted interchangeably here and they answer different questions. None
+        of them is a spectral cutoff — the spectrum above has no cutoff anywhere, it just falls
+        off faster past the second corner.
+      </p>
+
+      <ul class="tight">
+        <li><span class="num">0.35 / t<sub>r</sub></span> is the −3 dB bandwidth of a
+          <em>single-pole</em> low-pass filter that would produce that rise time. It answers
+          “what analogue bandwidth do I need so this edge comes through without being noticeably
+          slowed?” It is the right number for sizing a probe, an amplifier or a scope.</li>
+        <li><span class="num">0.5 / t<sub>r</sub></span> is the <em>knee</em>. It answers “above
+          what frequency does the channel stop mattering much?” It is the right number for
+          deciding how far up you need a model to be accurate.</li>
+        <li>The <em>ramp envelope</em> is the exact answer and it is a curve, not a number. When
+          the two disagree by enough to matter, believe the curve.</li>
+      </ul>
+
+      <p>
+        A useful sanity check on all of this: a 50% duty-cycle square wave has no even harmonics
+        at all, because the first sinc goes to zero exactly there. Set the duty to 50% on the
+        panel and the 2nd, 4th and 6th harmonics disappear. Nudge it off 50% and they come back.
+        That is a closed-form result the model has no special case for, so it is a good way to
+        convince yourself the spectrum on screen is real.
+      </p>
+
+      <p>
+        One more consequence worth internalising. Because loss rises with frequency and the edge
+        is where the high frequencies live, a channel <em>slows its own edges down</em> as the
+        signal travels. The edge that arrives is not the edge that left. So “the rise time” is
+        not one number for a net — it is fast at the driver, where reflections and crosstalk are
+        generated, and slow at the receiver, where timing is judged. Both matter, and they are
+        not the same problem.
+      </p>
+    </details>
+
+    <h2 class="section-rule"><span>In the real world</span></h2>
+
+    <p>
+      The classic version of this failure is a memory interface that passes every simulation and
+      then shows marginal failures on hardware, traced to a chip-select or reset line routed as an
+      afterthought because “it is only switching at a few megahertz”. It is unterminated, it is
+      long, it runs beside something that matters, and it is driven by the same fast buffer as
+      everything else on the die. The clock rate said it was harmless. The edge rate said
+      otherwise.
+    </p>
+
+    <p>
+      Ask both <b>“how fast is this edge?”</b> and <b>“how long is this trace compared with the
+      edge?”</b> alongside the bus rate. Together they determine whether distributed behavior must
+      be included; the data rate then sets the available timing margin and pattern memory.
+    </p>
+
+    <h3>Related</h3>
+    <ul class="tight">
+      <li><a href="when-is-a-trace-a-transmission-line.html">When does a trace become a transmission line?</a> — the rule built directly on t<sub>r</sub></li>
+      <li><a href="loss-mechanisms.html">PCB Transmission-Line Loss Mechanisms</a> — why the edge arrives slower than it left</li>
+      <li><a href="reflections.html">Transmission-Line Reflections and Ringing</a> — what a fast edge does to an unterminated net</li>
+      <li><a href="crosstalk.html">PCB Crosstalk: NEXT, FEXT, and Mutual Coupling</a> — coupling scales with dV/dt</li>
+      <li><a href="../labs/adc-interference.html">Lab D: ADC Interference, Aliasing and Reference Noise</a> — the same edge rate decides how much of a switching line reaches a converter, and how far up the spectrum it goes</li>
+    </ul>
+  </div>
+
+
+  <script type="application/json" data-exercises>
+{
+  "title": "Check yourself",
+  "items": [
+    {
+      "ask": "A control line switches at 10 MHz. Its driver has a 250 ps rise time (10–90%). Roughly what is the highest frequency the trace has to carry honestly?",
+      "unit": "GHz",
+      "answer": 2.0,
+      "tolerance": 0.2,
+      "hint": "The knee is 0.5 / tr. Notice that the 10 MHz does not appear in it.",
+      "misreads": [
+        {
+          "value": 0.01,
+          "note": "That is the clock rate. The clock rate sets the spacing of the harmonics; the edge sets how far up they go."
+        },
+        {
+          "value": 4.0,
+          "note": "That looks like 1/tr. The knee is 0.5/tr — half that."
+        }
+      ],
+      "why": "0.5 / 250 ps = 2 GHz. The repetition rate sets the lowest frequency and the harmonic spacing; the rise time sets the highest frequency worth worrying about. Copper responds to frequencies, not to bit rates, which is why a slow bus driven by a fast buffer has a genuine 2 GHz problem."
+    },
+    {
+      "ask": "A datasheet quotes a 400 ps rise time measured 20–80%. What is the roughly equivalent 10–90% figure?",
+      "unit": "ps",
+      "answer": 667,
+      "tolerance": 0.15,
+      "hint": "For a roughly Gaussian edge, the 20–80% number is about 0.6× the 10–90% one.",
+      "misreads": [
+        {
+          "value": 240,
+          "note": "You multiplied by 0.6 instead of dividing. The 20–80% figure is the SMALLER of the two, so converting to 10–90% makes it larger."
+        }
+      ],
+      "why": "400 / 0.6 ≈ 667 ps. Getting this backwards makes an edge look almost twice as fast as it is, and every knee and critical-length calculation built on it comes out optimistic — which is the dangerous direction."
+    },
+    {
+      "ask": "You add a series resistor at a driver to slow its edge. Which of these does it NOT help?",
+      "options": [
+        {
+          "label": "Reflections on an unterminated net",
+          "note": "It does help. A slower edge relative to 2·Td means the echo folds into the edge instead of landing as a separate step."
+        },
+        {
+          "label": "Crosstalk into a neighbour",
+          "note": "It does help. Coupling is proportional to dV/dt, so halving the slew halves the coupled voltage."
+        },
+        {
+          "label": "Radiated emissions",
+          "note": "It does help. Radiated energy climbs steeply with frequency, and the edge is where the high frequencies live."
+        },
+        {
+          "label": "Setup margin at the receiver",
+          "correct": true,
+          "note": "Right — and this is the cost, not a benefit. A slower edge arrives later and spends setup margin."
+        }
+      ],
+      "why": "Slowing the edge attacks reflections, crosstalk and emissions at once, because all three feed on high-frequency content. What it costs is timing: the edge arrives later and crosses the threshold more slowly, which adds jitter on a slow-moving crossing. That is why it is nearly free on a control net with nanoseconds to spare and unavailable on a link that is already timing-limited."
+    }
+  ]
+}
+  </script>
+
+  <!-- pager:start -->
+  <nav class="pager" aria-label="Previous and next topic">
+    <a class="prev" href="../../topics/groundwork/domain-bridges.html"><span class="dir">Previous</span><span>Time-Domain and Frequency-Domain Analysis</span></a>
+    <a class="next" href="../../topics/fundamentals/when-is-a-trace-a-transmission-line.html"><span class="dir">Next</span><span>When does a trace become a transmission line?</span></a>
+  </nav>
+  <!-- pager:end -->
+</main>
+
+<footer class="site-foot">
+  <span>SIPI &#8212; signal and power integrity, visualised.</span>
+  <span>Created and directed by Geetansh Arora. <a href="../../colophon.html">About, review &amp; AI assistance</a> &#183; <a href="../../model-contract.html">Model assumptions</a> &#183; <a href="../../docs/claims.md">Claim ledger</a></span>
+</footer>
+
+<script src="../../js/site.js?v=acb47d86"></script>
+<script src="../../js/viz-kit.js?v=a53e49c3"></script>
+<script src="../../js/viz/spectrum.js?v=69b1d448"></script>
+<script src="../../js/viz-loader.js?v=89d5884d"></script>
+<script src="../../js/search.js?v=6c93a285"></script>
+</body>
+</html>

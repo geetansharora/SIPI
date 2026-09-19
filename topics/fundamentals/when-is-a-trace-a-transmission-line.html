@@ -1,0 +1,357 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>When does a trace become a transmission line? | SIPI</title>
+<meta name="description" content="The critical-length rule, where the numbers come from, and why the answer is in picoseconds rather than inches.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<link rel="stylesheet" href="../../css/base.css?v=e4f774de">
+<link rel="stylesheet" href="../../css/components.css?v=295837ab">
+  <!-- meta:start -->
+  <link rel="canonical" href="https://sipi.work/topics/fundamentals/when-is-a-trace-a-transmission-line.html">
+  <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="SIPI">
+  <meta property="og:title" content="When does a trace become a transmission line? | SIPI">
+  <meta property="og:description" content="The critical-length rule, where the numbers come from, and why the answer is in picoseconds rather than inches.">
+  <meta property="og:url" content="https://sipi.work/topics/fundamentals/when-is-a-trace-a-transmission-line.html">
+  <meta property="og:image" content="https://sipi.work/assets/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="When does a trace become a transmission line? | SIPI">
+  <meta name="twitter:description" content="The critical-length rule, where the numbers come from, and why the answer is in picoseconds rather than inches.">
+  <meta name="twitter:image" content="https://sipi.work/assets/og.png">
+  <!-- meta:end -->
+</head>
+<body>
+
+<header class="masthead">
+  <a class="wordmark" href="../../index.html">SIPI</a>
+  <nav>
+    <a href="../../index.html#fundamentals">Fundamentals</a>
+    <a href="../../index.html#power-integrity">Power</a>
+    <a href="../../index.html#interfaces">Interfaces</a>
+    <a href="../../start.html">Start</a>
+    <a href="../../labs.html">Labs</a>
+    <a href="../../reference.html">Reference</a>
+    <button class="theme-toggle" data-act="theme" type="button">System</button>
+  </nav>
+</header>
+
+<main>
+  <div class="page-head">
+    <p class="crumb"><a href="../../index.html#fundamentals">Fundamentals</a> / 02</p>
+    <h1>When does a trace become a transmission line?</h1>
+    <p class="byline">
+      <!-- review:start --><span>By Geetansh Arora — Principal SI/PI Engineer</span><time datetime="2026-09-12" title="Technical review by Geetansh Arora on this date">12 Sep 2026</time><span>9 min</span><!-- review:end -->
+    </p>
+    <p class="answer">
+      A wire becomes a transmission line when the signal comes back before the driver has
+      finished sending it. That is a race between two times &#8212; how long the round trip
+      takes, and how long the edge lasts &#8212; and it has nothing to do with how many
+      inches long the trace is until you convert those inches into picoseconds.
+    </p>
+  </div>
+
+  <!-- ───────────── the picture ───────────── -->
+  <section class="instrument" data-viz="criticalLength" aria-label="Interactive map of trace length against rise time, showing where a trace stops being a lumped wire and becomes a transmission line">
+    <script type="application/json" data-contract>{"kind":"exact","evidence":"computed","purpose":"Compare the round trip against the edge.","equations":["2*Td > tr/3","tpd=84.7*sqrt(Dk_eff) ps/in"],"units":"ps, in","validity":"One driver, one receiver, uniform line, lossless.","numerics":"Exact arithmetic.","limitations":"One driver, one receiver, uniform line, lossless.","suites":["Reflections","Units"],"version":"2.0","reviewed":"2026-09-12","panel":"criticalLength"}</script>
+    <div class="instrument__bar">
+      <span class="instrument__title">Is this trace electrically long?</span>
+        <span data-evidence="computed" data-model-version="2.0" class="model-tag model-tag--exact" title="Arithmetic on the stated rule of thumb. The /3 is a convention, not physics.">exact</span>
+      <span class="instrument__readout" role="status" aria-live="polite" aria-label="Current values">
+        <span>T_d <b data-out="td">—</b></span>
+        <span>critical length <b data-out="lcrit">—</b></span>
+        <span>you are at <b data-out="ratio">—</b></span>
+        <span>verdict <b data-out="verdict">—</b></span>
+      </span>
+    </div>
+    <div class="panels two-up">
+      <div class="panel">
+        <span class="panel__label">Length vs rise time — the boundary, and where you are</span>
+        <canvas data-cv="map" role="img" aria-label="Trace length plotted against rise time on logarithmic axes. A boundary line separates the lumped region below from the transmission-line region above, with the current setting marked."></canvas>
+        <div class="legend"><span><i class="dash" style="color:var(--reflect)"></i>critical length</span><span><i style="background:var(--reflect)"></i>transmission-line region</span><span><i style="background:var(--signal)"></i>your trace</span></div>
+      </div>
+      <div class="panel">
+        <span class="panel__label">The same rule as two times, side by side</span>
+        <canvas data-cv="bars" role="img" aria-label="Three horizontal bars on a common time axis: the edge duration, one third of it, and the round-trip delay of the line."></canvas>
+        <div class="legend"><span><i style="background:var(--signal)"></i>the edge</span><span><i style="background:var(--reflect)"></i>round trip 2T_d</span></div>
+      </div>
+    </div>
+    <div class="controls">
+      <div class="ctl">
+        <div class="ctl__head"><label for="cl-len">Trace length</label><output id="cl-len-out" for="cl-len">25 mm</output></div>
+        <input type="range" id="cl-len" min="0" max="300" step="1" value="170">
+        <span class="ctl__note">0.5 mm to 500 mm, logarithmic</span>
+      </div>
+      <div class="ctl">
+        <div class="ctl__head"><label for="cl-tr">Rise time t<sub>r</sub></label><output id="cl-tr-out" for="cl-tr">100 ps</output></div>
+        <input type="range" id="cl-tr" min="0" max="270" step="1" value="100">
+        <span class="ctl__note">Ask for the fast-strong corner, not typical</span>
+      </div>
+      <div class="ctl">
+        <div class="ctl__head"><label for="cl-strip">Stackup</label></div>
+        <label class="check" for="cl-strip"><input type="checkbox" id="cl-strip" checked> stripline (173 ps/in)</label>
+        <span class="ctl__note">Unchecked: microstrip, 147 ps/in — air makes it faster</span>
+      </div>
+    </div>
+    <div class="presets">
+      <button class="preset" type="button" data-preset="ddr" aria-pressed="true">DDR net</button>
+      <button class="preset" type="button" data-preset="reset" aria-pressed="false">The forgotten reset line</button>
+      <button class="preset" type="button" data-preset="short" aria-pressed="false">Short microstrip stub</button>
+      <button class="preset" type="button" data-preset="edge" aria-pressed="false">Right at the boundary</button>
+    </div>
+    <div class="transport"><span data-out="note">—</span></div>
+  </section>
+
+  <div class="prose">
+    <h2>Two different pictures of the same wire</h2>
+
+    <p>
+      In every introductory circuits class, wires are perfect. Connect a
+      resistor to a battery with two wires, and Kirchhoff's laws assume the
+      voltage at every point along each wire is the same — instantaneously,
+      everywhere. That is the <strong>lumped</strong> model, and for DC circuits
+      and low-frequency signals it works beautifully. It is what every
+      schematic implicitly assumes.
+    </p>
+
+    <p>
+      But voltage changes do not teleport. A transition at one end of a
+      copper trace travels as an electromagnetic wave at a finite speed —
+      roughly 6 inches per nanosecond in a typical PCB. Until that wave
+      reaches the far end, the far end does not know the driver has
+      switched. For a 10 ns edge on a 1-inch trace, the delay is about
+      170 ps — negligible. For a 100 ps edge on the same trace, the delay
+      is a significant fraction of the edge itself, and the voltage is
+      measurably different at the two ends of the wire at the same instant.
+    </p>
+
+    <p>
+      When that happens, the wire is no longer acting like an ideal
+      connection. It has become a <strong>transmission line</strong> — a
+      structure with its own impedance, its own propagation delay, and
+      reflections at every point where the impedance changes. The question
+      this page answers is: <em>for your trace length and your edge rate,
+      which picture do you need?</em>
+    </p>
+
+    <h2 class="section-rule"><span>The race that decides it</span></h2>
+
+    <p>
+      When the driver switches, an edge sets off down the line. It reaches the far end after one
+      trip time, T<sub>d</sub>. If the far end is not terminated, it reflects, and arrives back
+      at the driver after 2T<sub>d</sub> — the round trip.
+    </p>
+
+    <p>
+      Now the important part. The driver is not switching instantaneously either; it takes
+      t<sub>r</sub> to get from low to high. So there are two possibilities:
+    </p>
+
+    <ul class="tight">
+      <li><strong>The echo comes back while the driver is still switching.</strong> It blends
+        into the edge that is still being produced. The waveform looks slightly distorted, and
+        nothing about it reads as ringing. You can treat the wire as a wire.</li>
+      <li><strong>The echo comes back after the driver has finished.</strong> It lands on a
+        waveform that had already settled, so it shows up as a distinct step — overshoot, then
+        a reflection off the driver, then another step, and so on. That is ringing, and it is
+        unmistakable.</li>
+    </ul>
+
+    <p>
+      So the test is a comparison between 2T<sub>d</sub> and t<sub>r</sub>. The usual form of it:
+    </p>
+
+    <div class="eq">
+      <span class="eq__main">treat it as a transmission line when &nbsp; 2<i class="var">T</i><sub>d</sub> &gt; <i class="var">t</i><sub>r</sub> / 3</span>
+      <span class="eq__note">T_d is the one-way delay. Rearranged for length: l_crit = t_r / (6 · t_pd), where t_pd is the propagation delay per unit length.</span>
+    </div>
+
+    <p>
+      Note that nothing in that expression is a length until you convert it. The same six inches
+      is a plain wire for a 20 ns edge and a badly behaved transmission line for a 100 ps one.
+      A rule quoted in inches with no rise time attached is a rule that happens to be right for
+      one era of silicon.
+    </p>
+
+    <h2 class="section-rule"><span>Putting numbers on it</span></h2>
+
+    <p>
+      Propagation delay comes straight from the dielectric the wave travels through:
+      <span class="num">t<sub>pd</sub> ≈ 84.7 · √D<sub>k,eff</sub></span> ps/inch. A stripline is
+      fully buried, so it sees the laminate's full D<sub>k</sub> — around 4.2 for standard FR-4,
+      giving roughly <strong>173 ps/inch</strong>. A microstrip has air above it, so its effective
+      D<sub>k</sub> is lower, around 3.0, and it runs faster at about <strong>147 ps/inch</strong>.
+      Surface traces genuinely are quicker, which is why clock nets sometimes end up on an outer
+      layer.
+    </p>
+
+    <p>
+      Feed a 100 ps edge into that: l<sub>crit</sub> = 100 / (6 × 173) ≈ <strong>0.1 inch</strong>.
+      Two and a half millimetres. Essentially every routed connection on a modern board is
+      electrically long, and the useful question is no longer “is this a transmission line?” — it
+      is <b>“which of these hundreds of transmission lines can I afford not to control?”</b>
+    </p>
+
+    <h2 class="section-rule"><span>Why this decides how your board behaves</span></h2>
+
+    <p>
+      Crossing the threshold does not break anything by itself. What it changes is which
+      failures become possible:
+    </p>
+
+    <ul class="tight">
+      <li><strong>Overshoot and undershoot.</strong> An unterminated line can drive a receiver
+        pin well above the rail. That is a reliability question as much as a signal one — most
+        input structures have an absolute-maximum spec that repeated overshoot eats into.</li>
+      <li><strong>Double clocking.</strong> If the ringing crosses the receiver's threshold on
+        the way back down, a single edge is seen as two. On a clock or a strobe this is a hard
+        functional failure, not a margin one.</li>
+      <li><strong>Settling time eating your setup budget.</strong> Even ringing that never
+        crosses a threshold has to decay before the receiver samples. On a slow bus there is
+        usually time; on a fast one the ringing <em>is</em> the timing failure.</li>
+      <li><strong>Crosstalk with a long tail.</strong> A ringing aggressor keeps coupling into
+        its neighbour for as long as it rings, well after the edge that caused it.</li>
+    </ul>
+
+    <h2 class="section-rule"><span>What to do about it</span></h2>
+
+    <p>
+      <strong>Work in picoseconds, not inches.</strong> Convert every net's length to delay once,
+      early, and keep the number. 2T<sub>d</sub> against t<sub>r</sub> is a comparison you can do
+      in your head; inches against a remembered rule of thumb is not.
+    </p>
+
+    <p>
+      <strong>Decide by consequence, not by rule.</strong> Almost every net is electrically long,
+      so the threshold cannot be your filter. Sort instead by what a reflection would cost: clocks
+      and strobes first, because double clocking is functional; then anything sampled near the edge;
+      then everything with slack to spare. A reset line that rings for 3 ns and is read once at
+      power-up needs nothing.
+    </p>
+
+    <p>
+      <strong>If it is marginal, slow the edge rather than adding a resistor.</strong> Reducing
+      t<sub>r</sub> is the only lever that moves the threshold itself, and on a control net it is
+      free. See <a href="edge-rate-not-clock-rate.html">edge rate, not clock rate</a>.
+    </p>
+
+    <div class="note">
+      <b>Using this to find a fault</b>
+      <ul class="tight">
+        <li><b>Ringing you did not expect.</b> Measure the period of the ringing, not its
+          amplitude. It should be 2T<sub>d</sub> — twice the one-way delay. Divide by
+          170 ps/inch and you get a length; if it matches a trace you know, that is the guilty
+          net. If it matches nothing, the resonance is somewhere you have not modelled — a
+          connector, a cable, a package lead.</li>
+        <li><b>A net that fails only on fast silicon.</b> The board did not change; the edge did.
+          Compare t<sub>r</sub> between the working and failing parts before looking anywhere
+          else.</li>
+        <li><b>Ringing that gets worse when you lengthen a trace.</b> Expected, up to a point,
+          then it stops getting worse — because once 2T<sub>d</sub> is comfortably longer than
+          t<sub>r</sub>, the overshoot amplitude is set by the reflection coefficients and not by
+          the length at all. If yours keeps getting worse, something else is going on.</li>
+      </ul>
+    </div>
+
+    <details class="deeper">
+      <summary>Go deeper — where the /3 comes from, and when the rule stops applying</summary>
+
+      <p>
+        The divisor is a convention, not physics. Some houses use /2, some /6, and the tighter
+        your overshoot specification the more conservative it needs to be. What sets it is how
+        much of the reflected step lands on a settled waveform rather than on a moving one.
+      </p>
+
+      <p>
+        If the round trip is a fraction <i>k</i> of the rise time, then the echo arrives when the
+        edge is a fraction <i>k</i> of the way through its transition, and roughly (1 − <i>k</i>)
+        of the reflected amplitude adds to a waveform that is still moving. With
+        2T<sub>d</sub> = t<sub>r</sub>/3, about a third of the echo is absorbed into the edge and
+        two thirds appears as overshoot — which for a typical CMOS driver into an open end is
+        enough to be visible but usually not enough to be a problem. Tighten the rule to /6 and
+        you are asking for the overshoot to be barely visible at all.
+      </p>
+
+      <p>
+        Three cases where the rule quietly stops applying:
+      </p>
+
+      <ul class="tight">
+        <li><strong>Multi-drop nets.</strong> The rule assumes one driver and one receiver on a
+          uniform line. Add taps and every stub becomes its own reflection site with its own
+          round trip. The relevant delay is no longer the end-to-end one.</li>
+        <li><strong>Capacitive loading.</strong> A receiver pin is not an open circuit; it is a
+          few picofarads. That capacitance slows the edge locally and lowers the effective
+          impedance of the line near it, which both changes the reflection and makes the
+          measured T<sub>d</sub> longer than the geometric one.</li>
+        <li><strong>Lossy lines.</strong> The rule assumes the echo comes back at full strength.
+          On a long, lossy channel it does not — loss attenuates the round trip twice over, and a
+          16-inch backplane trace can be electrically very long and still barely ring. This is
+          why loss and reflection trade against each other, and why the worst ringing is usually
+          on <em>short</em> mismatched nets rather than long ones.</li>
+      </ul>
+
+      <p>
+        A last point about what the threshold does <em>not</em> tell you. Crossing it says
+        reflections are now visible as distinct events. It says nothing about whether they are
+        large. Amplitude is set by the reflection coefficients at the two ends, and those depend
+        on impedances, not on length. A well-matched 20-inch trace is electrically enormous and
+        perfectly quiet; a badly matched half-inch stub at the wrong frequency is short and
+        catastrophic. Length decides whether you <em>see</em> the reflection separately; impedance
+        decides how big it is.
+      </p>
+    </details>
+
+    <h2 class="section-rule"><span>In the real world</span></h2>
+
+    <p>
+      The rule's practical value today is not in deciding which nets are transmission lines — they
+      all are — but in giving you a defensible way to say which ones you have chosen not to worry
+      about. That distinction matters at review time. A fixed length rule is easy to state, while
+      “we terminated the nets where a reflection could double-clock a receiver, and here is the list”
+      connects the decision to an observable failure mechanism.
+    </p>
+
+    <p>
+      The failure mode to watch for is an unclassified net: a strap, a jumper, a
+      test point, a route to a connector that was added late. Those are the ones that get routed
+      without a reference plane underneath, and they are electrically long for the same reason
+      everything else is.
+    </p>
+
+    <h3>Related</h3>
+    <ul class="tight">
+      <li><a href="edge-rate-not-clock-rate.html">Signal Bandwidth: Why Edge Rate Matters</a> — where t<sub>r</sub> comes from and how to slow it</li>
+      <li><a href="reflections.html">Transmission-Line Reflections and Ringing</a> — what happens once you are over the threshold</li>
+      <li><a href="termination-schemes.html">Transmission-Line Termination Schemes</a> — the fixes, and their price</li>
+      <li><a href="characteristic-impedance.html">Transmission-Line Characteristic Impedance</a> — what decides the size of the reflection</li>
+      <li><a href="../labs/travelling-waves.html">Lab A — travelling waves</a> — watch the round trip happen</li>
+    </ul>
+  </div>
+
+  <!-- pager:start -->
+  <nav class="pager" aria-label="Previous and next topic">
+    <a class="prev" href="../../topics/fundamentals/edge-rate-not-clock-rate.html"><span class="dir">Previous</span><span>Signal Bandwidth: Why Edge Rate Matters</span></a>
+    <a class="next" href="../../topics/fundamentals/characteristic-impedance.html"><span class="dir">Next</span><span>Transmission-Line Characteristic Impedance</span></a>
+  </nav>
+  <!-- pager:end -->
+</main>
+
+<footer class="site-foot">
+  <span>SIPI &#8212; signal and power integrity, visualised.</span>
+  <span>Created and directed by Geetansh Arora. <a href="../../colophon.html">About, review &amp; AI assistance</a> &#183; <a href="../../model-contract.html">Model assumptions</a> &#183; <a href="../../docs/claims.md">Claim ledger</a></span>
+</footer>
+
+<script src="../../js/site.js?v=acb47d86"></script>
+<script src="../../js/viz-kit.js?v=a53e49c3"></script>
+<script src="../../js/viz/critical-length.js?v=5e0eb568"></script>
+<script src="../../js/viz-loader.js?v=89d5884d"></script>
+<script src="../../js/search.js?v=6c93a285"></script>
+</body>
+</html>

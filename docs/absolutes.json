@@ -1,0 +1,91 @@
+{
+  "banned": [
+    {
+      "phrase": "tolerance is high-pass",
+      "why": "Recovered-clock transfer is low-pass and the residual carries 1-H(f). Tolerance is margin over that residual, so it RISES at low frequency - it is one over a high-pass, not a high-pass.",
+      "instead": "name all three functions; see receiver-and-clock"
+    },
+    {
+      "phrase": "ESR is the only",
+      "why": "Plane and via resistance, the regulator's output resistance and the die's own losses all damp as well. ESR is the term a part number changes, which is not the same as the only term.",
+      "instead": "say which resistance is in series with the circulating current"
+    },
+    {
+      "phrase": "can be computed from any other",
+      "why": "Complex S21 and the impulse response are mutually invertible; a magnitude, a one-port TDR and an aggregated eye are not.",
+      "instead": "one network generates mutually CONSISTENT views, some lossy"
+    },
+    {
+      "phrase": "every significant PDN resonance is a handoff",
+      "why": "The converse holds - a peak between two stages is such a pair - but a handoff can be damped enough to show no peak at all.",
+      "instead": "a PDN's significant resonances SIT AT handoffs"
+    },
+    {
+      "phrase": "burns half the launched power",
+      "why": "A matched load absorbs ALL the incident travelling-wave power. The half is a property of the source divider, not of the load.",
+      "instead": "state the divider separately from the absorption"
+    },
+    {
+      "phrase": "scrambling all bound",
+      "why": "Scrambling improves transition density statistically. Only a constrained code such as 8b/10b bounds run length for arbitrary payloads.",
+      "instead": "distinguish constrained codes from scrambling"
+    },
+    {
+      "phrase": "Mutual inductance breaks that",
+      "why": "A coupled inductor pair is an ordinary lumped element. What fails is the UNCOUPLED approximation.",
+      "instead": "name the simplification that expired, not the method"
+    },
+    {
+      "phrase": "port 2 is a high-impedance measurement",
+      "why": "A VNA port 2 is terminated in 50 ohm and does carry current. The method works on a ratio, not an open circuit.",
+      "instead": "state the ratio and the impedance range it holds over"
+    },
+    {
+      "phrase": "20-80% number is about 0.6",
+      "why": "Waveform-dependent: 0.657 Gaussian, 0.750 ramp, 0.631 exponential, 0.700 cubic smoothstep. 0.6 is wrong for all of them.",
+      "instead": "identify the shape before converting"
+    },
+    {
+      "phrase": "340 ps round trip",
+      "why": "Two inches at 170 ps/in is 340 ps ONE WAY and 680 ps per round trip.",
+      "instead": "state both, and which is which"
+    },
+    {
+      "phrase": "reflections settle well within",
+      "why": "A 10-30 mm LPDDR net has a 134-402 ps round trip against a 117 ps UI. They do not settle inside a bit; they are simply small.",
+      "instead": "say why they are survivable, not that they are fast"
+    },
+    {
+      "phrase": "more loss must never open an eye",
+      "why": "True for a reflectionless channel, false once a reflection can be damped - a series resistor at a 150 ohm mismatch drops the cursor 20% and opens the eye 42%.",
+      "instead": "state the precondition"
+    }
+  ],
+  "reviewed": [
+    {
+      "page": "labs/travelling-waves",
+      "absolute": "an ideal open dissipates nothing",
+      "condition": "true by definition of an ideal open; a real one has leakage and radiation, both negligible at these frequencies"
+    },
+    {
+      "page": "fundamentals/reflections",
+      "absolute": "a matched load does not reflect",
+      "condition": "exactly true for a real load equal to a real Z0; a complex Zc needs a conjugate match, which is a different condition"
+    },
+    {
+      "page": "groundwork/domain-bridges",
+      "absolute": "complex S21 and the impulse response are the same information",
+      "condition": "true for the full complex spectrum over the band computed; the band limit is the loss, not the transform"
+    },
+    {
+      "page": "power-integrity/anti-resonance",
+      "absolute": "resonances are killed by loss",
+      "condition": "true for the loss in series with the circulating current; loss elsewhere in the network does not damp this loop"
+    },
+    {
+      "page": "signal-integrity/receiver-and-clock",
+      "absolute": "a passive fixture cannot have gain",
+      "condition": "true for a passive network with real positive reference impedances, which is the sigma_max(S) <= 1 criterion"
+    }
+  ]
+}

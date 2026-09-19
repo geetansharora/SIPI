@@ -1,0 +1,7 @@
+! Active, reciprocal, NOT port-symmetric: sigma_max = 1 + sqrt(1.25) = 2.118033988749895.
+! The |S11 +/- S21| shortcut reports 0.5 here and calls it passive, while the
+! parser separately warns about an element of magnitude 2 -- a visible self-
+! contradiction on one screen. From Astra's review, appendix A.
+# Hz S RI R 50
+0 0 0 0.5 0 0.5 0 2 0
+1000000000 0 0 0.5 0 0.5 0 2 0

@@ -1,0 +1,55 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Reference experiment replay checks</title>
+<style>body{font:14px/1.5 system-ui;margin:2rem;max-width:65rem}table{border-collapse:collapse}td,th{padding:.5rem;text-align:left;border-bottom:1px solid #aaa}iframe{position:absolute;left:-9999px;width:390px;height:844px;border:0}.fail{color:#a11}</style>
+<h1>Reference experiment replay</h1>
+<p>Loads the downloadable inputs and public scenario links, verifies restored controls, then checks public model outputs against the analytical answers. The four helper-only references are checked in the Node gate and are not counted as UI replays. The PDN DC reference uses the restored ladder with constant currents; its answers do not describe the finite-pulse display.</p>
+<p id="sum">running…</p>
+<table><thead><tr><th>Experiment</th><th>Outcome</th></tr></thead><tbody id="rows"></tbody></table>
+<iframe id="frame" title="Scenario under test"></iframe>
+<script src="reference-experiment-runner.js"></script>
+<script>
+(async()=>{
+  const manifest=await (await fetch('../docs/reference-experiments.json')).json();
+  const staged=await (await fetch('../docs/reference-experiments-next.json')).json();
+  const replay=[...manifest.experiments.map(entry=>({...entry,staged:false})),
+    ...staged.experiments.filter(entry=>entry.availability==='lab-scenario').map(entry=>({...entry,staged:true}))];
+  const frame=document.querySelector('#frame');let passed=0,failed=0;
+  const sleep=ms=>new Promise(resolve=>setTimeout(resolve,ms));
+  for(const entry of replay){
+    const row=document.createElement('tr'),label=document.createElement('td'),out=document.createElement('td');
+    label.textContent=entry.title;row.append(label,out);document.querySelector('#rows').append(row);
+    try{
+      const response=await fetch(entry.input);if(!response.ok)throw new Error('download unavailable');
+      const fixture=await response.json();
+      if(entry.staged)entry.scenario=fixture.scenario;
+      await new Promise((resolve,reject)=>{
+        const timer=setTimeout(()=>reject(new Error('scenario load timeout')),10000);
+        frame.onload=()=>{clearTimeout(timer);resolve();};
+        const target=new URL(entry.scenario,location.origin);target.searchParams.set('referenceCase',entry.id);
+        frame.src=target.href;
+      });
+      let api,root,result,ready=false;const deadline=performance.now()+10000;
+      while(performance.now()<deadline){
+        api=frame.contentWindow.SIPI;root=frame.contentDocument.querySelector('[data-viz="'+(entry.staged?'cdr':entry.model)+'"]');
+        if(api&&api.kit&&root){
+          result=api.kit.published(root);
+          const wanted=api.kit.parseHash(new URL(entry.scenario,location.origin).hash).vals;
+          const got=api.kit.readScenario(root);
+          ready=result&&Object.keys(wanted).every(key=>got[key]===wanted[key])
+            &&!(result.diagnostics.energyHistory&&result.diagnostics.energyHistory.status==='pending');
+          if(ready)break;
+        }
+        await sleep(25);
+      }
+      if(!ready)throw new Error('scenario controls/result did not settle');
+      if(entry.staged&&!frame.contentDocument.querySelector('[data-viz="cdr"] canvas[data-cv="phase"]'))
+        throw new Error('CDR phase plot missing');
+      const checks=entry.staged?ReferenceExperiments.runStagedCdr(fixture,api,result):
+        ReferenceExperiments.run(fixture,api,result);
+      out.textContent='PASS — download, restored controls and '+checks.length+' analytical checks';passed++;
+    }catch(error){out.textContent='FAIL — '+error.message;row.className='fail';failed++;}
+    document.querySelector('#sum').textContent=JSON.stringify({passed,failed,total:replay.length});
+  }
+})().catch(error=>document.querySelector('#sum').textContent='FAIL — '+error.message);
+</script>

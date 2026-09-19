@@ -1,0 +1,427 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PCB Transmission-Line Loss Mechanisms | SIPI</title>
+<meta name="description" content="Skin effect, dielectric loss and copper roughness — the three loss terms, how each scales with frequency, and where the crossover sits.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<link rel="stylesheet" href="../../css/base.css?v=e4f774de">
+<link rel="stylesheet" href="../../css/components.css?v=295837ab">
+  <!-- meta:start -->
+  <link rel="canonical" href="https://sipi.work/topics/fundamentals/loss-mechanisms.html">
+  <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="SIPI">
+  <meta property="og:title" content="PCB Transmission-Line Loss Mechanisms | SIPI">
+  <meta property="og:description" content="Skin effect, dielectric loss and copper roughness — the three loss terms, how each scales with frequency, and where the crossover sits.">
+  <meta property="og:url" content="https://sipi.work/topics/fundamentals/loss-mechanisms.html">
+  <meta property="og:image" content="https://sipi.work/assets/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="PCB Transmission-Line Loss Mechanisms | SIPI">
+  <meta name="twitter:description" content="Skin effect, dielectric loss and copper roughness — the three loss terms, how each scales with frequency, and where the crossover sits.">
+  <meta name="twitter:image" content="https://sipi.work/assets/og.png">
+  <!-- meta:end -->
+</head>
+<body>
+
+<header class="masthead">
+  <a class="wordmark" href="../../index.html">SIPI</a>
+  <nav>
+    <a href="../../index.html#fundamentals">Fundamentals</a>
+    <a href="../../index.html#power-integrity">Power</a>
+    <a href="../../index.html#interfaces">Interfaces</a>
+    <a href="../../start.html">Start</a>
+    <a href="../../labs.html">Labs</a>
+    <a href="../../reference.html">Reference</a>
+    <button class="theme-toggle" data-act="theme" type="button">System</button>
+  </nav>
+</header>
+
+<main>
+  <div class="page-head">
+    <p class="crumb"><a href="../../index.html#fundamentals">Fundamentals</a> / 08</p>
+    <h1>PCB Transmission-Line Loss Mechanisms</h1>
+    <p class="byline">
+      <!-- review:start --><span>By Geetansh Arora — Principal SI/PI Engineer</span><time datetime="2026-09-13" title="Technical review by Geetansh Arora on this date">13 Sep 2026</time><span>11 min</span><!-- review:end -->
+    </p>
+    <p class="answer">
+      A long trace does not attenuate every frequency equally &#8212; it attenuates the high ones
+      much harder. That is what makes loss a signal-integrity problem rather than an amplitude
+      problem: the edges of your signal live at high frequency, so what arrives is not a smaller
+      copy of what you sent, it is a <em>slower</em> one. Two separate mechanisms cause it, they
+      scale differently with frequency, and which one dominates decides whether the fix is a
+      wider trace or a better laminate.
+    </p>
+  </div>
+
+  <!-- ───────────── the picture ───────────── -->
+  <section class="instrument" data-viz="loss" aria-label="Interactive plot of the three loss mechanisms against frequency, showing conductor loss rising as the square root of frequency, dielectric loss rising linearly, and the roughness multiplier">
+    <script type="application/json" data-contract>{"kind":"illustrative","evidence":"computed","purpose":"Show the two loss terms crossing, and where the crossover moves.","equations":["a = kc*sqrt(f) + kd*f","delta=sqrt(rho/(pi*f*mu))"],"units":"Hz, dB/in, um","validity":"A FIT, not a geometry solve. Roughness shown as shape, not a calibrated prediction.","numerics":"Direct evaluation.","limitations":"A FIT, not a geometry solve. Roughness shown as shape, not a calibrated prediction.","suites":["Convergence","Units"],"version":"2.0","reviewed":"2026-09-12","panel":"loss"}</script>
+    <div class="instrument__bar">
+      <span class="instrument__title">Three loss terms &#183; and where they cross</span>
+        <span data-evidence="computed" data-model-version="2.0" class="model-tag model-tag--illustrative" title="Two-term loss law with a roughness multiplier. Parameters are yours to supply.">illustrative</span>
+      <span class="instrument__readout" role="status" aria-live="polite" aria-label="Current values">
+        <span>at Nyquist <b data-out="perin">—</b></span>
+        <span>over the run <b data-out="total">—</b></span>
+        <span>crossover <b data-out="cross">—</b></span>
+        <span>roughness <b data-out="krough">—</b></span>
+        <span>skin depth <b data-out="delta">—</b></span>
+      </span>
+    </div>
+    <div class="panels">
+      <div class="panel">
+        <span class="panel__label">Loss per inch against frequency</span>
+        <canvas data-cv="loss" role="img" aria-label="Loss in decibels per inch plotted against frequency on a logarithmic axis: conductor loss rising as the square root of frequency, dielectric loss rising linearly, and their total."></canvas>
+        <div class="legend"><span><i style="background:var(--ink)"></i>total</span><span><i style="background:var(--reflect)"></i>conductor &#215; roughness</span><span><i class="dash" style="color:var(--muted)"></i>conductor, smooth</span><span><i style="background:var(--signal)"></i>dielectric</span></div>
+      </div>
+    </div>
+    <div class="controls">
+      <div class="ctl">
+        <div class="ctl__head"><label for="ls-df">Loss tangent D<sub>f</sub></label><output id="ls-df-out" for="ls-df">0.008</output></div>
+        <input type="range" id="ls-df" min="2" max="25" step="1" value="8">
+        <span class="ctl__note">The single biggest lever above the crossover</span>
+      </div>
+      <div class="ctl">
+        <div class="ctl__head"><label for="ls-rz">Copper roughness R<sub>z</sub></label><output id="ls-rz-out" for="ls-rz">3.0 µm</output></div>
+        <input type="range" id="ls-rz" min="5" max="80" step="1" value="30">
+        <span class="ctl__note">Standard foil ~5–7, VLP ~2, HVLP ~1</span>
+      </div>
+      <div class="ctl">
+        <div class="ctl__head"><label for="ls-kc">Conductor coefficient</label><output id="ls-kc-out" for="ls-kc">0.08</output></div>
+        <input type="range" id="ls-kc" min="3" max="30" step="1" value="8">
+        <span class="ctl__note">Stands in for trace width and thickness</span>
+      </div>
+      <div class="ctl">
+        <div class="ctl__head"><label for="ls-len">Trace length</label><output id="ls-len-out" for="ls-len">10 in</output></div>
+        <input type="range" id="ls-len" min="1" max="40" step="1" value="10">
+      </div>
+      <div class="ctl">
+        <div class="ctl__head"><label for="ls-fn">Nyquist frequency</label><output id="ls-fn-out" for="ls-fn">8 GHz</output></div>
+        <input type="range" id="ls-fn" min="1" max="20" step="1" value="8">
+        <span class="ctl__note">Gen 4 = 8, Gen 5 = 16</span>
+      </div>
+    </div>
+    <div class="presets">
+      <button class="preset" type="button" data-preset="mid" aria-pressed="true">Mid-loss, standard foil</button>
+      <button class="preset" type="button" data-preset="low" aria-pressed="false">Low-loss + HVLP</button>
+      <button class="preset" type="button" data-preset="rough" aria-pressed="false">Rough foil</button>
+      <button class="preset" type="button" data-preset="wide" aria-pressed="false">Wider trace</button>
+      <button class="preset" type="button" data-preset="fr4" aria-pressed="false">Standard FR-4</button>
+    </div>
+    <div class="transport"><span data-out="note">—</span></div>
+  </section>
+
+  <div class="prose">
+    <div class="note">
+      <b>Why this plot goes up and an S-parameter goes down</b>
+      Both are decibels, and they are not the same quantity. What is plotted above is the
+      <em>attenuation constant</em> &alpha; &mdash; a rate, in dB <em>per inch</em> &mdash; and a rate
+      of loss is a positive number that grows with frequency. Insertion loss is the result of
+      applying that rate over a length: <span class="num">S<sub>21</sub> = &minus;&alpha; &times;
+      length</span>, which is why <a href="./s-parameters.html">an SDD21 plot</a> heads downwards
+      into negative decibels while this one climbs. The giveaway is the unit: anything quoted
+      &ldquo;per inch&rdquo; is a slope, not a channel.
+    </div>
+    <h2>Where energy goes when a signal travels</h2>
+
+    <p>
+      Send a fast edge down a short trace and it arrives looking much like
+      it left. Send the same edge down a 12-inch trace and it arrives
+      visibly slower — the sharp corners have been rounded off, the rise
+      time has grown, and the eye diagram has closed. The signal is not
+      just <em>smaller</em>; it is <em>smeared</em>. That distinction is
+      why loss is a signal-integrity problem, not just an amplitude
+      problem: an amplifier can recover amplitude, but it cannot un-smear
+      an edge that has already lost its high-frequency content.
+    </p>
+
+    <p>
+      The smearing happens because a PCB trace does not attenuate all
+      frequencies equally. High frequencies — the ones that make edges
+      sharp — are attenuated far more than low frequencies. After a long
+      run, the low-frequency body of the signal arrives nearly intact but
+      the fast transitions that carry timing information have been
+      selectively destroyed. Understanding <em>where</em> that energy goes,
+      and <em>which mechanism</em> is responsible, tells you whether the
+      fix is a wider trace, a smoother copper foil, or a better laminate.
+    </p>
+
+    <p>
+      A signal moving down a trace loses energy in exactly two places, and it is worth being
+      concrete about both before any formulas appear.
+    </p>
+
+    <p>
+      Some of it is lost <strong>in the copper</strong>. Copper is a very good conductor but not a
+      perfect one, so current flowing through it dissipates power as heat — ordinary I²R.
+    </p>
+
+    <p>
+      The rest is lost <strong>in the insulator</strong>. The laminate between the trace and the
+      plane is full of molecules that respond to an electric field by twisting slightly to align
+      with it. Reversing the field makes them twist back. That motion is not free — it is internal
+      friction, and it turns signal energy into heat.
+    </p>
+
+    <p>
+      Neither of these is surprising on its own. What makes loss interesting is that the two scale
+      with frequency in different ways, so their relative importance changes as you go up in band —
+      and the fix you should reach for changes with it.
+    </p>
+
+    <h2>Conductor loss: √f</h2>
+
+    <p>
+      At DC, current fills the conductor. As frequency rises, the magnetic field inside the copper
+      opposes it and current is pushed to the surface. The depth it occupies is the skin depth, and it
+      shrinks as the inverse square root of frequency: <strong>2.06 µm at 1 GHz</strong> for copper,
+      0.65 µm at 10 GHz. Less usable cross-section means more resistance, and because the depth goes as
+      1/√f, the resistance goes as √f.
+    </p>
+
+    <div class="eq">
+      δ = √( ρ / π <i class="var">f</i> µ ) &nbsp;&nbsp;→&nbsp;&nbsp; δ<sub>Cu</sub> ≈ 2.06 µm / √( <i class="var">f</i> in GHz )
+      <span class="cap">At 10 GHz the current is running in the outermost 0.65 µm of the trace — thinner than the copper's own surface texture, which is the reason roughness matters at all.</span>
+    </div>
+
+    <h2 class="section-rule"><span>Dielectric loss: f</span></h2>
+
+    <p>
+      The laminate absorbs energy too. Every cycle, the polar molecules in the resin are dragged back
+      and forth and lag slightly behind the field; that lag is the loss tangent, D<sub>f</sub> (also
+      written tanδ). Because the loss is per cycle, the total scales linearly with frequency:
+    </p>
+
+    <div class="eq">
+      α<sub>d</sub> [dB/inch] ≈ 2.3 · <i class="var">f</i>[GHz] · <i class="var">D</i><sub>f</sub> · √<i class="var">D</i><sub>k</sub>
+      <span class="cap">A mid-loss laminate (D_f = 0.008, D_k = 3.8) gives ≈ 0.36 dB/inch at 10 GHz from dielectric alone. Switching to a low-loss build at D_f = 0.003 cuts that to 0.14 dB/inch — the single biggest lever on a long channel.</span>
+    </div>
+
+    <p>
+      Because one term grows as √f and the other as f, they cross &mdash; and <em>where</em> they cross
+      depends almost entirely on D<sub>f</sub>. Setting the two expressions equal gives
+      <span class="num">√f = k<sub>c</sub> / (2.3 · D<sub>f</sub> · √D<sub>k</sub>)</span>, so on
+      standard FR-4 at D<sub>f</sub> = 0.020 the crossover lands near <strong>3 GHz</strong>, while on
+      a mid-loss laminate at 0.008 it is up around <strong>20 GHz</strong>. Below the crossover the
+      trace geometry owns the budget; above it the material does. Drag D<sub>f</sub> in the panel and
+      watch the crossing move.
+    </p>
+    <p>
+      Follow that through and the conclusion is the opposite of the usual folklore. Widening a trace
+      attacks the <em>conductor</em> term, so it helps precisely where conductor loss dominates &mdash;
+      <strong>below</strong> the crossover. On lossy FR-4 the crossover is already down at 3 GHz, so a
+      bus running near or above it is dielectric-limited and extra width buys little; the fix is the
+      laminate. On a low-loss build the crossover is up around 20 GHz, so a 32 GT/s channel working at
+      16 GHz Nyquist is still <em>conductor</em>-limited &mdash; and there geometry is genuinely back on
+      the table. Good material does not retire the trace width question; it is what puts it back.
+    </p>
+    <p>
+      The catch is that width is not a free variable: it sets impedance too. Going wider at fixed
+      impedance means moving further from the reference plane, which costs crosstalk isolation and
+      return-path tightness. That trade, not the loss arithmetic, is usually what decides it.
+    </p>
+
+    <h2 class="section-rule"><span>Roughness: the multiplier</span></h2>
+
+    <p>
+      Copper foil is deliberately roughened so the laminate bonds to it. At low frequencies that
+      texture is irrelevant, because the current is flowing through the full thickness. Once the skin
+      depth drops below the roughness profile, the current has to follow the contour instead of a
+      straight line — a longer path through the same copper, and therefore more loss. It can add up to
+      <strong>a factor of two</strong> over the smooth-copper prediction in the worst pairings.
+    </p>
+
+    <p>
+      <strong>Mind which roughness number the model wants.</strong> Foil datasheets quote
+      R<sub>z</sub>, a peak-to-valley measure. A Hammerstad-style correction is written in terms of an
+      RMS roughness R<sub>q</sub>, and the two are not the same quantity — their ratio depends on the
+      surface's profile shape, so there is no universal conversion factor to apply. Feed R<sub>z</sub>
+      into a model expecting R<sub>q</sub> and the correction comes out too large. Use the parameter
+      the model asks for, from a source that measured it, and treat the panel above as showing the
+      <em>shape</em> of the roughness effect rather than a calibrated prediction for your stackup.
+    </p>
+    <p>
+      This is why foil grade appears in high-speed stackup specs at all. Standard foil has a peak
+      profile around 5–7 µm; very-low-profile and hyper-very-low-profile foils bring it under 2 µm and
+      about 1 µm respectively. At 10 GHz, with a 0.65 µm skin depth, that difference is the whole
+      argument. A simulation that models loss from D<sub>k</sub> and D<sub>f</sub> alone and ignores
+      roughness will be optimistic, and it will be optimistic in exactly the band you cared about.
+    </p>
+
+    <h2 class="section-rule"><span>Why this decides how your board behaves</span></h2>
+
+    <p>
+      Loss is rarely a problem of amplitude. A 20 dB channel delivers a tenth of the voltage, and a
+      receiver with a bit of gain does not care much about that. What it cares about is
+      <em>frequency-dependent</em> loss, and the damage it does:
+    </p>
+
+    <ul class="tight">
+      <li><strong>The edge arrives slower than it left.</strong> The high-frequency content that
+        made the edge sharp is what got attenuated most, so the rise time at the receiver is longer
+        than at the driver. The two are genuinely different numbers on the same net.</li>
+      <li><strong>That slower edge spills into the next bit.</strong> Once the smear is comparable
+        to a unit interval, the voltage at the sampling instant depends on which bits came before
+        — which is <a href="isi.html">ISI</a>, and it is the dominant impairment on almost every
+        long channel.</li>
+      <li><strong>It gets worse twice over when you raise the data rate.</strong> Nyquist moves up,
+        where the loss is higher, <em>and</em> the bit period shrinks, so the same tail in
+        picoseconds covers more bits. Both push the same way.</li>
+      <li><strong>Loss is also the thing that saves you from reflections.</strong> A long lossy
+        channel attenuates an echo twice — out and back — so the worst ringing is usually on short
+        mismatched nets, not long ones.</li>
+    </ul>
+
+    <h2 class="section-rule"><span>What to do about it</span></h2>
+
+    <p>
+      <strong>First, find out which term dominates in your band.</strong> This is the decision that
+      determines everything else, and the panel above answers it directly: set your D<sub>f</sub>
+      and read where the crossover lands relative to your Nyquist frequency. Below the crossover,
+      geometry is the lever. Above it, material is.
+    </p>
+
+    <p>
+      <strong>If you are conductor-limited, go wider — and budget what that costs.</strong> Width
+      attacks the conductor term directly. But width sets impedance too, so holding impedance
+      while widening means moving further from the reference plane, which costs crosstalk isolation
+      and loosens the return path. That trade, not the loss arithmetic, is usually what decides it.
+    </p>
+
+    <p>
+      <strong>If you are dielectric-limited, change the laminate.</strong> Nothing about the routing
+      will help. Going from D<sub>f</sub> = 0.020 to 0.008 roughly halves the dielectric term, and
+      to 0.003 halves it again. This is a bill-of-materials decision made at stackup time, which is
+      why loss has to be estimated before layout rather than discovered after it.
+    </p>
+
+    <p>
+      <strong>Specify the foil, not just the resin.</strong> Roughness is a multiplier on the
+      conductor term, and a low-loss resin on rough foil throws away much of what you paid for.
+    </p>
+
+    <p>
+      <strong>And check whether you can simply go shorter.</strong> Loss is proportional to length,
+      with no threshold and no cleverness available. Two inches saved by a floorplan change is two
+      inches of budget that never has to be equalised.
+    </p>
+
+    <div class="note">
+      <b>Using this to find a fault</b>
+      <ul class="tight">
+        <li><b>Measured loss higher than simulated, and the gap grows with frequency.</b> Almost
+          always roughness — either not modelled, or modelled with the wrong parameter. Check
+          whether the model wanted R<sub>q</sub> and was given R<sub>z</sub>.</li>
+        <li><b>Measured loss higher than simulated by a constant offset.</b> Not the trace. Look
+          at connectors, launches and the fixture — a flat offset is a fixed number of
+          discontinuities, not a distributed effect.</li>
+        <li><b>Loss that varies board to board on the same design.</b> Laminate lot variation is
+          real: D<sub>k</sub> and D<sub>f</sub> both drift with the glass-to-resin ratio. Ask for
+          the lot data before redesigning anything.</li>
+        <li><b>An eye that closes far more than the loss number suggests.</b> Loss alone rarely
+          closes an eye; loss plus a reflection does. Look at the return loss in the same band
+          before adding equalisation.</li>
+      </ul>
+    </div>
+
+    <details class="deeper">
+      <summary>Go deeper — why √f and f, and what the two-term fit is really for</summary>
+
+      <p>
+        <strong>Where the √f comes from.</strong> The current in a conductor generates a magnetic
+        field, and that field induces eddy currents which oppose the flow in the centre of the
+        conductor more than at the surface. The result is that current is confined to a surface
+        layer whose thickness is the skin depth, δ = √(ρ/πfµ). Resistance is inversely proportional
+        to the conducting cross-section, and the cross-section is proportional to δ, so
+        R ∝ 1/δ ∝ √f. That is the entire derivation — the square root comes from the square root in
+        the skin depth, and nothing else.
+      </p>
+
+      <p>
+        <strong>Where the linear term comes from.</strong> Dielectric loss is a fixed fraction of
+        the energy stored per cycle. The number of cycles per second is f, so the power lost is
+        proportional to f. Expressed as an attenuation per unit length it is linear in frequency,
+        with D<sub>f</sub> as the constant of proportionality. D<sub>f</sub> is itself mildly
+        frequency-dependent in real materials, which is one reason measured and modelled curves
+        diverge slowly rather than exactly tracking.
+      </p>
+
+      <p>
+        <strong>What the two-term fit is for.</strong> Channel models across this site use
+        α(f) = k<sub>c</sub>√f + k<sub>d</sub>f, and it is worth being clear about its status. It
+        is a <em>fit</em>, not a derivation from geometry — it captures the two physical scalings
+        and rolls everything else, including roughness and the mild dispersion of D<sub>f</sub>,
+        into the two coefficients. That is why it works well across a decade and less well across
+        four, and why the honest way to use it is to fit it to measured or solved data for your
+        stackup rather than to predict from datasheet numbers.
+      </p>
+
+      <p>
+        <strong>Causality is not optional.</strong> A loss curve alone does not define a channel.
+        A filter that attenuates without the corresponding phase shift is not physical — it would
+        produce output before its input. The channel model in the
+        <a href="../labs/one-channel.html">labs</a> builds a minimum-phase response so that the
+        attenuation and the delay belong to each other, and this matters in practice: a
+        magnitude-only channel model produces a plausible-looking eye that is wrong in exactly the
+        way that makes equalisation look better than it is.
+      </p>
+
+      <p>
+        One last practical note on D<sub>k</sub>. It appears in the dielectric loss expression, but
+        its bigger effect is on velocity — v = c/√D<sub>k</sub> — and therefore on delay and on
+        every length-matching calculation. A laminate change made for loss reasons changes your
+        timing too, and the two reviews are usually done by different people.
+      </p>
+    </details>
+
+    <h2 class="section-rule"><span>In the real world</span></h2>
+
+    <p>
+      Loss is the most predictable impairment on this site, which is both its virtue and its trap.
+      It is predictable enough that budgets are built on it years before hardware exists — and that
+      means the most informative failures are often those where the prediction used an unchecked
+      input. A laminate substituted at the last minute, a foil grade that was never specified, a
+      D<sub>f</sub> quoted at 1 GHz and used at 14.
+    </p>
+
+    <p>
+      The habit worth building: whenever you are handed a loss number, ask <b>at what frequency, on
+      what stackup, and measured or modelled?</b> A dB-per-inch figure with no frequency attached is
+      not a specification, and the three most common ways a channel budget goes wrong are all
+      contained in that question.
+    </p>
+
+    <h3>Related</h3>
+    <ul class="tight">
+      <li><a href="../fundamentals/isi.html">Intersymbol Interference (ISI) and Channel Memory</a></li>
+      <li><a href="../fundamentals/s-parameters.html">S-Parameters: Insertion Loss, Return Loss, and Mixed Mode</a></li>
+      <li><a href="../package-board/stackup-design.html">PCB Stackup Design and Dielectric Selection</a></li>
+      <li><a href="../signal-integrity/channel-budgeting.html">Channel Loss Budgeting Across Die, Package, and Board</a></li>
+    </ul>
+  </div>
+
+  <!-- pager:start -->
+  <nav class="pager" aria-label="Previous and next topic">
+    <a class="prev" href="../../topics/fundamentals/crosstalk.html"><span class="dir">Previous</span><span>PCB Crosstalk: NEXT, FEXT, and Mutual Coupling</span></a>
+    <a class="next" href="../../topics/fundamentals/isi.html"><span class="dir">Next</span><span>Intersymbol Interference (ISI) and Channel Memory</span></a>
+  </nav>
+  <!-- pager:end -->
+</main>
+
+<footer class="site-foot">
+  <span>SIPI &#8212; signal and power integrity, visualised.</span>
+  <span>Created and directed by Geetansh Arora. <a href="../../colophon.html">About, review &amp; AI assistance</a> &#183; <a href="../../model-contract.html">Model assumptions</a> &#183; <a href="../../docs/claims.md">Claim ledger</a></span>
+</footer>
+
+<script src="../../js/site.js?v=acb47d86"></script>
+<script src="../../js/viz-kit.js?v=a53e49c3"></script>
+<script src="../../js/viz/loss.js?v=7566d0ea"></script>
+<script src="../../js/viz-loader.js?v=89d5884d"></script>
+<script src="../../js/search.js?v=6c93a285"></script>
+</body>
+</html>

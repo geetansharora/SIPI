@@ -1,0 +1,366 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chip-Package-System Power Integrity Co-Analysis | SIPI</title>
+<meta name="description" content="Why die, package and board have to be simulated together, what a chip power model contains, and what the approach actually costs.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<link rel="stylesheet" href="../../css/base.css?v=e4f774de">
+<link rel="stylesheet" href="../../css/components.css?v=295837ab">
+  <!-- meta:start -->
+  <link rel="canonical" href="https://sipi.work/topics/power-integrity/cps-co-analysis.html">
+  <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="SIPI">
+  <meta property="og:title" content="Chip-Package-System Power Integrity Co-Analysis | SIPI">
+  <meta property="og:description" content="Why die, package and board have to be simulated together, what a chip power model contains, and what the approach actually costs.">
+  <meta property="og:url" content="https://sipi.work/topics/power-integrity/cps-co-analysis.html">
+  <meta property="og:image" content="https://sipi.work/assets/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Chip-Package-System Power Integrity Co-Analysis | SIPI">
+  <meta name="twitter:description" content="Why die, package and board have to be simulated together, what a chip power model contains, and what the approach actually costs.">
+  <meta name="twitter:image" content="https://sipi.work/assets/og.png">
+  <!-- meta:end -->
+</head>
+<body>
+
+<header class="masthead">
+  <a class="wordmark" href="../../index.html">SIPI</a>
+  <nav>
+    <a href="../../index.html#fundamentals">Fundamentals</a>
+    <a href="../../index.html#power-integrity">Power</a>
+    <a href="../../index.html#interfaces">Interfaces</a>
+    <a href="../../start.html">Start</a>
+    <a href="../../labs.html">Labs</a>
+    <a href="../../reference.html">Reference</a>
+    <button class="theme-toggle" data-act="theme" type="button">System</button>
+  </nav>
+</header>
+
+<main>
+  <div class="page-head">
+    <p class="crumb"><a href="../../index.html#power-integrity">Power Integrity</a> / 11</p>
+    <h1>Chip-Package-System Power Integrity Co-Analysis</h1>
+    <p class="byline">
+      <!-- review:start --><span>By Geetansh Arora — Principal SI/PI Engineer</span><time datetime="2026-09-15" title="Technical review by Geetansh Arora on this date">15 Sep 2026</time><span>9 min</span><!-- review:end -->
+    </p>
+    <p class="answer">
+      Every significant PDN resonance lives at a boundary &#8212; between the board and the
+      package, or the package and the die. A model that stops at one of those boundaries cannot
+      contain the resonance that lives there, and it will produce a smooth, plausible impedance
+      curve with the peak simply missing. Nothing about the result looks wrong.
+    </p>
+  </div>
+
+  <!-- ───────────── the picture ───────────── -->
+  <figure class="figure">
+    <div class="figure__bar"><span>Why the models have to be joined</span></div>
+    <div class="figure__body"><svg viewBox="-4 20 700 230" role="img" aria-label="Three models — die, package and board — shown side by side with the impedance peaks that live at the two boundaries between them, and a note that a model stopping at a boundary cannot contain that boundary's resonance.">
+  <rect class="edge" x="0" y="52" width="180" height="92" rx="3" fill="var(--surface-2)"/>
+  <text class="lbl-hi" x="90" y="72" text-anchor="middle">DIE — chip power model</text>
+  <text class="lbl" x="90" y="90" text-anchor="middle">on-die C · grid R</text>
+  <text class="lbl" x="90" y="106" text-anchor="middle">current profiles · bump map</text>
+  <text class="lbl-bad" x="90" y="130" text-anchor="middle">arrives last, trusted least</text>
+
+  <rect class="edge" x="256" y="52" width="180" height="92" rx="3" fill="var(--surface-2)"/>
+  <text class="lbl-hi" x="346" y="72" text-anchor="middle">PACKAGE</text>
+  <text class="lbl" x="346" y="90" text-anchor="middle">bumps · planes · caps</text>
+  <text class="lbl" x="346" y="106" text-anchor="middle">balls</text>
+
+  <rect class="edge" x="512" y="52" width="180" height="92" rx="3" fill="var(--surface-2)"/>
+  <text class="lbl-hi" x="602" y="72" text-anchor="middle">BOARD</text>
+  <text class="lbl" x="602" y="90" text-anchor="middle">planes · ceramics</text>
+  <text class="lbl" x="602" y="106" text-anchor="middle">bulk · VRM</text>
+
+  <path class="flow-bad" d="M180,98 L256,98"/>
+  <path class="flow-bad" d="M436,98 L512,98"/>
+  <circle cx="218" cy="98" r="13" fill="var(--alarm)" opacity=".22"/>
+  <circle cx="474" cy="98" r="13" fill="var(--alarm)" opacity=".22"/>
+  <text class="lbl-bad" x="218" y="168" text-anchor="middle">first-droop peak</text>
+  <text class="lbl" x="218" y="182" text-anchor="middle">package L × on-die C</text>
+  <text class="lbl" x="218" y="196" text-anchor="middle">low hundreds of MHz</text>
+  <text class="lbl-bad" x="474" y="168" text-anchor="middle">second peak</text>
+  <text class="lbl" x="474" y="182" text-anchor="middle">board C × package L</text>
+  <text class="lbl" x="474" y="196" text-anchor="middle">tens of MHz</text>
+
+  <path class="edge dash" d="M218,112 L218,156" stroke="var(--alarm)"/>
+  <path class="edge dash" d="M474,112 L474,156" stroke="var(--alarm)"/>
+  <text class="lbl-hi" x="346" y="228" text-anchor="middle">every peak lives at a boundary — so a model that stops at one cannot contain it</text>
+  <text class="lbl" x="346" y="42" text-anchor="middle">terminate any of these in a guess and you have guessed the answer</text>
+</svg></div>
+    <figcaption><b>The interfaces are the design.</b> Simulate the board PDN alone and you must terminate it in something at the balls &#8212; an ideal source, a lumped capacitor, an open &#8212; and whatever you choose <em>is</em> a guess about the package and die. Since a PDN's significant resonances sit at handoffs between two stages, a model that stops at a handoff cannot contain the resonance that lives there. It will produce a smooth, plausible impedance curve with the peak simply missing, and nothing about the result will look wrong. The practical shape is progressive rather than all-at-once: start with a lumped die model early enough that package and board decisions are still open &#8212; that alone locates the major resonances well enough to steer stackup and decoupling &#8212; then refine to a real chip power model when it exists, and reserve full co-analysis for the questions only it can answer.</figcaption>
+  </figure>
+
+  <div class="prose">
+    <h2>Why a model has to end somewhere, and why that matters</h2>
+
+    <p>
+      Standard engineering methodology relies on modular division: break a massive problem into independent
+      subsystems, solve each subsystem in isolation, and integrate them at the end. In hardware development, this
+      leads naturally to siloed teams: silicon engineers extract the on-die power grid, packaging engineers model
+      the BGA substrate, and board engineers simulate the PCB power planes and decoupling capacitors. Each team
+      proves their standalone subsystem meets its target impedance and signs off.
+    </p>
+
+    <p>
+      Yet when the assembled hardware powers up on the test bench, the supply rail violently oscillates and crashes
+      the system. This happens because the die, package, and board are not decoupled islands &#8212; they are three
+      electrically continuous impedance stages connected in series. The most dangerous anti-resonant peaks on a PDN
+      do not exist within any single subsystem. They form precisely at the boundaries where one subsystem connects to
+      the next. When a simulation stops at the package balls or die bumps and terminates the port in an ideal boundary
+      condition, it mathematically erases the interface &#8212; and with it, the very resonance that will destroy the
+      product.
+    </p>
+
+    <p>
+      You cannot simulate everything. A board PDN model has to stop at the package balls, and
+      whatever you put there — an ideal current source, a lumped capacitor, an open circuit — is a
+      stand-in for everything beyond.
+    </p>
+
+    <p>
+      Normally that is fine. A boundary condition only matters if something interesting happens at
+      it. But in a PDN, the boundaries are precisely where the interesting things happen: each one
+      sits at a handoff between two stores of charge, and a handoff is where an
+      <a href="anti-resonance.html">anti-resonance</a> forms.
+    </p>
+
+    <p>
+      So the peak you most need to find is exactly the one your boundary condition replaced with a
+      guess. That is the argument for co-analysis in one sentence, and everything below is detail.
+    </p>
+
+    <h2 class="section-rule"><span>Why separate models miss the answer</span></h2>
+
+    <p>
+      Simulate the board PDN alone and you must terminate it in something at the package balls. Whatever
+      you choose — an ideal current source, a lumped capacitor, an open — is a guess about the package
+      and die, and the impedance peak that lives at that boundary is a function of exactly that guess.
+      The same is true one level up: a package model needs a die model to terminate into.
+    </p>
+
+    <p>
+      A PDN's significant resonances sit at handoffs between stages — a bank that has gone
+      inductive against one that is still capacitive — so a model that stops at a handoff cannot
+      contain the resonance that lives there. It will produce a smooth, plausible impedance curve
+      with the peak missing, and nothing about the result looks wrong. (The converse does not
+      hold: a handoff can be well enough damped to show no peak at all, which is what a
+      controlled-ESR bank buys.)
+    </p>
+
+    <h2 class="section-rule"><span>What the die contributes</span></h2>
+
+    <p>
+      The die enters as a <strong>chip power model</strong> — a reduced-order network extracted from the
+      full design, small enough to simulate but preserving what matters electrically:
+    </p>
+
+    <ul class="tight">
+      <li><strong>On-die capacitance</strong>, both intentional decoupling and the intrinsic capacitance
+        of every non-switching transistor. This is what holds up the first droop.</li>
+      <li><strong>Power grid resistance</strong>, distributed rather than lumped, so IR drop appears at
+        the right locations rather than as an average.</li>
+      <li><strong>Current profiles</strong> per region, which is what excites the network — and the
+        part most likely to be a placeholder early on.</li>
+      <li><strong>Bump locations</strong>, so the die's connection to the package is spatially real
+        rather than a single node.</li>
+    </ul>
+
+    <div class="note">
+      <b>The die model is the weakest link, and it arrives last</b>
+      Everything else in a co-analysis comes from geometry you control. The chip power model comes from
+      the SoC team, is extracted from a design that is still changing, and lands late. Its current
+      profile is often the roughest part of the whole simulation, and it is the part the answer is most
+      sensitive to. Treat an early co-analysis result as a shape to design against, not a number to sign
+      off on.
+    </div>
+
+    <h2 class="section-rule"><span>What it costs, and how to phase it</span></h2>
+
+    <p>
+      Co-analysis is expensive in the ways that matter to a schedule: model availability, extraction
+      runtime, simulation runtime, and the coordination cost of three teams whose models have to agree
+      on port definitions and reference planes. Running it only after the main design decisions are
+      fixed limits how much the result can improve the design.
+    </p>
+
+    <p>
+      The workable pattern is progressive. Start with a lumped die model — a single capacitance and
+      resistance with a plausible step current — early enough that the package and board decisions are
+      still open; that alone locates the major resonances to within a factor that is good enough to
+      steer stackup and decoupling. Refine to a real chip power model when it exists, and reserve full
+      co-analysis for the specific questions that only it can answer: first-droop magnitude, SSN with
+      on-die effects included, and the package-to-die anti-resonance frequency.
+    </p>
+
+    <h2 class="section-rule"><span>Why this decides how your board behaves</span></h2>
+
+    <ul class="tight">
+      <li><strong>The missing peak is not visible as missing.</strong> A truncated model produces a
+        clean curve. There is no error message and no discontinuity — just a resonance that is not
+        there.</li>
+      <li><strong>It is the peak that hurts.</strong> The package-to-die handoff sits in the
+        hundreds of megahertz, which is where a modern core's di/dt has real energy.</li>
+      <li><strong>Assign ownership across the boundary.</strong> Board, package, and die teams often
+        own separate models, so an interface resonance can surface late unless one person owns the
+        combined result.</li>
+      <li><strong>Signal and power interact across it too.</strong> A driver's return current flows
+        through the same package and board network that the PDN analysis covers, which is why SSN
+        and PDN are the same problem seen from two directions. See
+        <a href="ssn-ground-bounce.html">Simultaneous Switching Noise and Ground Bounce</a>.</li>
+    </ul>
+
+    <h2 class="section-rule"><span>What to do about it</span></h2>
+
+    <p>
+      <strong>Get a die model early, even a crude one.</strong> A single lumped capacitance and
+      resistance for the on-die network is far better than an ideal source, because it at least puts
+      a resonance somewhere near the right frequency. Precision can come later; the <em>existence</em>
+      of the peak cannot be added later.
+    </p>
+
+    <p>
+      <strong>State the partition and the port definitions explicitly.</strong> Where does the board
+      model end, where does the package model begin, and are the ports at the same physical plane
+      with the same reference? Most co-analysis failures are bookkeeping failures, not physics ones.
+    </p>
+
+    <p>
+      <strong>Treat the current profile as the weakest input.</strong> The network can be extracted
+      accurately; the excitation usually cannot, early on. A placeholder current profile produces a
+      confident-looking answer to a question you have not actually asked yet.
+    </p>
+
+    <p>
+      <strong>Check that the combined model reproduces each part.</strong> If the assembled
+      simulation does not match the standalone board model where the board dominates, the partition
+      is wrong somewhere.
+    </p>
+
+    <div class="note">
+      <b>Using this to find a fault</b>
+      <ul class="tight">
+        <li><b>A measured peak the simulation does not have.</b> First suspect: the model stops at
+          the boundary where that peak lives. Compare the peak's frequency against
+          1/(2π√LC) for the package inductance and the die capacitance.</li>
+        <li><b>Simulation and measurement agree at low frequency and diverge above ~100 MHz.</b>
+          Classic truncation signature. The board dominates below, the package and die above.</li>
+        <li><b>A result that changes a lot when you change the boundary condition.</b> That
+          sensitivity is itself the finding — it means the boundary is electrically active and
+          needs a real model, not a better guess.</li>
+        <li><b>Noise at one block caused by another with no shared net.</b> Transfer impedance
+          through a shared plane or package layer. A single-port analysis cannot show it.</li>
+      </ul>
+    </div>
+
+    <details class="deeper">
+      <summary>Go deeper — what a chip power model contains, and what co-analysis costs</summary>
+
+      <p>
+        The die enters as a reduced-order network — small enough to simulate, large enough to keep
+        what matters electrically. Four things have to survive the reduction:
+      </p>
+
+      <ul class="tight">
+        <li><strong>On-die capacitance</strong>, both intentional decoupling and the intrinsic
+          capacitance of every non-switching transistor. This is what holds up the first droop, and
+          the intrinsic part is often larger than the intentional part.</li>
+        <li><strong>Power grid resistance</strong>, distributed rather than lumped, so IR drop
+          appears at the right locations rather than as an average across the die.</li>
+        <li><strong>Current profiles per region</strong> — the excitation, and the input most likely
+          to be a placeholder early in a project.</li>
+        <li><strong>Bump locations</strong>, so the die's connection to the package is at the right
+          places. A die model with a single lumped port cannot show a gradient across the die.</li>
+      </ul>
+
+      <p>
+        <strong>What it costs.</strong> Co-analysis is expensive in ways that are worth being honest
+        about: the models are large, they come from three organisations on different schedules, and
+        they carry confidentiality constraints that make sharing them awkward. The full analysis
+        usually arrives later than you want it.
+      </p>
+
+      <p>
+        Which is why the practical approach is staged. Start with crude terminations and refine
+        them; the first version answers "is there a peak near here?" and only the last version
+        answers "how tall is it?". Doing it in that order means the structural decisions — package
+        inductance, on-die capacitance targets, bump map — are informed at the point they can still
+        be changed.
+      </p>
+
+      <p>
+        <strong>One more thing the partition has to get right.</strong> Signal and power share the
+        same physical structures, so a genuinely complete analysis is not just three PDN models
+        joined together — it is a model in which a driver's return current and the PDN's current are
+        the same current. That is what "chip-package-system" means in full, and it is also why the
+        boundary between an SI model and a PI model is itself a partition with the same problem.
+      </p>
+
+      <p>
+        <strong>Practical co-simulation workflow and port setup.</strong> Setting up a chip-package-system simulation
+        in practice requires rigorous boundary discipline to prevent artificial artifacts:
+      </p>
+
+      <ul class="tight">
+        <li><strong>Port referencing and spatial grouping:</strong> At the board-to-package BGA boundary and
+          package-to-die C4 bump field, never assign all power pins to a single lumped port. Group pins into localized
+          spatial clusters referenced to their adjacent return pins. A global idealized ground reference introduces
+          artificial return paths that artificially suppress loop inductance.</li>
+        <li><strong>Bridging the chip power model (CPM):</strong> The die model must include both the non-switching
+          intrinsic capacitance (<span class="num">C<sub>die</sub></span>) and the effective grid series resistance
+          (<span class="num">R<sub>grid</sub></span>). Terminating the package at the bumps with an ideal current source
+          alone is a fatal error: it omits the significant damping that the on-die grid resistance provides, leading to
+          artificially exaggerated anti-resonant peaks that cause teams to over-design the board capacitor network.</li>
+        <li><strong>Cascaded AC loop verification:</strong> Before attempting multi-microsecond time-domain SPICE
+          transient simulations, perform an AC loop impedance analysis looking into the die bumps:
+          <span class="num">Z<sub>die</sub>(f) = [ (Z<sub>board</sub> + Z<sub>pkg</sub>) || Z<sub>die</sub> ]</span>.
+          This frequency-domain sweep identifies the exact frequencies and Q-factors of boundary anti-resonances in
+          seconds, steering layout and stackup fixes before spending days on transient convergence.</li>
+      </ul>
+    </details>
+
+    <h2 class="section-rule"><span>In the real world</span></h2>
+
+    <p>
+      Co-analysis is as much a procurement and scheduling problem as a technical one. The technical
+      method is well understood; what is hard is getting three organisations to produce compatible
+      models at a moment when the answer can still change a decision.
+    </p>
+
+    <p>
+      So the most useful thing you can do is ask for the models early and accept rough ones. A crude
+      co-analysis at the right time beats an exact one after tape-out, because the value of the
+      answer is entirely in what it lets you change.
+    </p>
+
+    <h3>Related</h3>
+    <ul class="tight">
+      <li><a href="../power-integrity/three-frequency-domains.html">PDN Frequency Regions: Board, Package, and Die</a></li>
+      <li><a href="../power-integrity/ir-drop-electromigration.html">DC IR Drop and Electromigration</a></li>
+      <li><a href="../power-integrity/ssn-ground-bounce.html">Simultaneous Switching Noise and Ground Bounce</a></li>
+      <li><a href="../methodology/simulation-flow.html">Signal Integrity Simulation Workflow</a></li>
+    </ul>
+  </div>
+
+  <!-- pager:start -->
+  <nav class="pager" aria-label="Previous and next topic">
+    <a class="prev" href="../../topics/power-integrity/vrm-loop-bandwidth.html"><span class="dir">Previous</span><span>VRM Control-Loop Bandwidth and Load Transients</span></a>
+    <a class="next" href="../../topics/power-integrity/real-capacitors.html"><span class="dir">Next</span><span>Real Capacitors: Bias, Tolerance, Temperature, and Mounting</span></a>
+  </nav>
+  <!-- pager:end -->
+</main>
+
+<footer class="site-foot">
+  <span>SIPI &#8212; signal and power integrity, visualised.</span>
+  <span>Created and directed by Geetansh Arora. <a href="../../colophon.html">About, review &amp; AI assistance</a> &#183; <a href="../../model-contract.html">Model assumptions</a> &#183; <a href="../../docs/claims.md">Claim ledger</a></span>
+</footer>
+
+<script src="../../js/site.js?v=acb47d86"></script>
+<script src="../../js/search.js?v=6c93a285"></script>
+</body>
+</html>

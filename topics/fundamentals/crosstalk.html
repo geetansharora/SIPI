@@ -1,0 +1,415 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PCB Crosstalk: NEXT, FEXT, and Mutual Coupling | SIPI</title>
+<meta name="description" content="Near-end and far-end crosstalk from mutual L and C, why NEXT saturates with length and FEXT does not, and why stripline and microstrip behave differently.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<link rel="stylesheet" href="../../css/base.css?v=e4f774de">
+<link rel="stylesheet" href="../../css/components.css?v=295837ab">
+  <!-- meta:start -->
+  <link rel="canonical" href="https://sipi.work/topics/fundamentals/crosstalk.html">
+  <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="SIPI">
+  <meta property="og:title" content="PCB Crosstalk: NEXT, FEXT, and Mutual Coupling | SIPI">
+  <meta property="og:description" content="Near-end and far-end crosstalk from mutual L and C, why NEXT saturates with length and FEXT does not, and why stripline and microstrip behave differently.">
+  <meta property="og:url" content="https://sipi.work/topics/fundamentals/crosstalk.html">
+  <meta property="og:image" content="https://sipi.work/assets/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="PCB Crosstalk: NEXT, FEXT, and Mutual Coupling | SIPI">
+  <meta name="twitter:description" content="Near-end and far-end crosstalk from mutual L and C, why NEXT saturates with length and FEXT does not, and why stripline and microstrip behave differently.">
+  <meta name="twitter:image" content="https://sipi.work/assets/og.png">
+  <!-- meta:end -->
+</head>
+<body>
+
+<header class="masthead">
+  <a class="wordmark" href="../../index.html">SIPI</a>
+  <nav>
+    <a href="../../index.html#fundamentals">Fundamentals</a>
+    <a href="../../index.html#power-integrity">Power</a>
+    <a href="../../index.html#interfaces">Interfaces</a>
+    <a href="../../start.html">Start</a>
+    <a href="../../labs.html">Labs</a>
+    <a href="../../reference.html">Reference</a>
+    <button class="theme-toggle" data-act="theme" type="button">System</button>
+  </nav>
+</header>
+
+<main>
+  <div class="page-head">
+    <p class="crumb"><a href="../../index.html#fundamentals">Fundamentals</a> / 07</p>
+    <h1>PCB Crosstalk: NEXT, FEXT, and Mutual Coupling</h1>
+    <p class="byline">
+      <!-- review:start --><span>By Geetansh Arora — Principal SI/PI Engineer</span><time datetime="2026-09-13" title="Technical review by Geetansh Arora on this date">13 Sep 2026</time><span>11 min</span><!-- review:end -->
+    </p>
+    <p class="answer">
+      Two traces running side by side are not two independent circuits &#8212; they share a
+      magnetic field and an electric field, so a signal on one puts a signal on the other. What
+      crosstalk arrives at <em>both</em> ends of the victim. In the weak-coupling, velocity-matched
+      model used here, NEXT amplitude saturates with electrical length while FEXT grows with
+      coupled length until loss, dispersion, or stronger coupling changes that approximation.
+    </p>
+  </div>
+
+  <!-- ───────────── the picture ───────────── -->
+  <section class="instrument" data-viz="crosstalk" aria-label="Interactive crosstalk waveforms showing near-end and far-end coupling from the mutual inductance and capacitance ratios">
+    <script type="application/json" data-contract>{"kind":"analytical","evidence":"independent","purpose":"Show why near-end saturates and far-end accumulates.","equations":["Kb=(Lm/L0+Cm/C0)/4","Kfe proportional to (Lm/L0-Cm/C0)"],"units":"ps, mV","validity":"Weak coupling, ratios <= 0.30. One aggressor, not a bus.","numerics":"Closed form superposition over the coupled length.","limitations":"Weak coupling, ratios <= 0.30. One aggressor, not a bus.","suites":["Crosstalk"],"version":"2.0","reviewed":"2026-09-12","panel":"crosstalk"}</script>
+    <div class="instrument__bar">
+      <span class="instrument__title">One aggressor edge · what the victim sees at each end</span>
+        <span data-evidence="independent" data-model-version="2.0" class="model-tag model-tag--analytical" title="Weak-coupling superposition, ratios ≤ 0.30. Single pair, uniform coupled section.">analytical</span>
+      <span class="instrument__readout" role="status" aria-live="polite" aria-label="Current values">
+        <span>K_b <b data-out="kb">—</b></span>
+        <span>K_fe <b data-out="kfe">—</b></span>
+        <span>NEXT peak <b data-out="next">—</b></span>
+        <span>ceiling <b data-out="nsat">—</b></span>
+        <span>FEXT <b data-out="fext">—</b></span>
+        <span>saturates past <b data-out="sat">—</b></span>
+        <span>model <b data-out="weak">—</b></span>
+      </span>
+    </div>
+    <div class="panels">
+      <div class="panel">
+        <span class="panel__label">Victim voltage at both ends, against time</span>
+        <canvas data-cv="xtalk" role="img" aria-label="Three waveforms against time: the aggressor edge, the near-end crosstalk plateau lasting twice the coupled delay, and the far-end crosstalk pulse arriving with the aggressor edge."></canvas>
+        <div class="legend"><span><i class="dash" style="color:var(--muted)"></i>aggressor</span><span><i style="background:var(--reflect)"></i>NEXT — near end</span><span><i style="background:var(--signal)"></i>FEXT — far end</span></div>
+      </div>
+    </div>
+    <div class="controls">
+      <div class="ctl">
+        <div class="ctl__head"><label for="xt-lm">Inductive ratio L<sub>m</sub>/L<sub>0</sub></label><output id="xt-lm-out" for="xt-lm">0.140</output></div>
+        <input type="range" id="xt-lm" min="0" max="300" step="5" value="140">
+        <span class="ctl__note">A field solve gives you this number</span>
+      </div>
+      <div class="ctl">
+        <div class="ctl__head"><label for="xt-cm">Capacitive ratio C<sub>m</sub>/C<sub>0</sub></label><output id="xt-cm-out" for="xt-cm">0.105</output></div>
+        <input type="range" id="xt-cm" min="0" max="300" step="5" value="105">
+        <span class="ctl__note">Set it equal to L and FEXT vanishes</span>
+      </div>
+      <div class="ctl">
+        <div class="ctl__head"><label for="xt-len">Coupled length</label><output id="xt-len-out" for="xt-len">25 mm</output></div>
+        <input type="range" id="xt-len" min="5" max="150" step="1" value="25">
+        <span class="ctl__note">NEXT saturates; FEXT keeps growing</span>
+      </div>
+      <div class="ctl">
+        <div class="ctl__head"><label for="xt-tr">Rise time t<sub>r</sub></label><output id="xt-tr-out" for="xt-tr">100 ps</output></div>
+        <input type="range" id="xt-tr" min="20" max="600" step="5" value="100">
+        <span class="ctl__note">FEXT follows dV/dt</span>
+      </div>
+    </div>
+    <div class="presets">
+      <button class="preset" type="button" data-preset="microstrip" aria-pressed="true">Microstrip</button>
+      <button class="preset" type="button" data-preset="stripline" aria-pressed="false">Stripline — ratios equal</button>
+      <button class="preset" type="button" data-preset="tight" aria-pressed="false">Neighbour closer</button>
+      <button class="preset" type="button" data-preset="long" aria-pressed="false">4× coupled length</button>
+      <button class="preset" type="button" data-preset="fastedge" aria-pressed="false">Faster edge</button>
+    </div>
+    <div class="transport"><span data-out="note">—</span></div>
+  </section>
+
+  <div class="prose">
+    <h2>Why a neighbouring trace picks anything up at all</h2>
+
+    <p>
+      Crosstalk is your neighbour's signal leaking onto yours. You route two
+      traces side by side — a fast data line and a quiet analog reference,
+      say — and when the data line switches, the analog line twitches. No
+      physical connection exists between them, yet energy has crossed over.
+      On a tight-pitch bus, every line is both aggressor and victim at the
+      same time, and the coupled noise can close an eye as effectively as
+      loss or reflections.
+    </p>
+
+    <p>
+      The mechanism is not mysterious once you see it: any two conductors
+      near each other share electric and magnetic fields. A changing
+      voltage on one pushes current through the shared capacitance. A
+      changing current on one induces a voltage through the shared
+      inductance. These are the same <span class="num">i = C·dV/dt</span>
+      and <span class="num">v = L·di/dt</span> from a first circuits
+      course, just happening between traces instead of inside a component.
+    </p>
+
+    <p>
+      <strong>Mutual capacitance.</strong> Two conductors near each other form a capacitor, even
+      when neither is supposed to be one. A changing voltage on the aggressor pushes current
+      through that capacitance and into the victim — the familiar
+      <span class="num">i = C·dV/dt</span>. Note what that says: the coupling depends on how fast
+      the voltage is changing, not on how often.
+    </p>
+
+    <p>
+      <strong>Mutual inductance.</strong> The aggressor's current creates a magnetic field, and
+      part of that field passes through the loop formed by the victim and its return path. A
+      changing field through a loop induces a voltage — <span class="num">v = L·di/dt</span>. Again
+      it is the rate of change that matters.
+    </p>
+
+    <p>
+      Both coupling mechanisms are present, but their relative strengths depend on geometry and
+      dielectric distribution. The terms do not point the same way, which produces different
+      near-end and far-end behavior.
+    </p>
+
+    <h2 class="section-rule"><span>Two couplings, two directions</span></h2>
+
+    <p>
+      Here is the asymmetry that explains everything else on this page. The capacitively injected
+      current has no preferred direction — it splits evenly and travels both ways along the victim.
+      The inductively injected voltage <em>does</em> have a direction, set by the sign of the
+      changing field: it drives current backwards, towards the near end.
+    </p>
+
+    <p>
+      So at the near end the two contributions <strong>add</strong>, and at the far end they
+      <strong>subtract</strong>.
+    </p>
+
+    <div class="eq">
+      <span class="eq__main"><i class="var">K</i><sub>b</sub> = ¼ ( <i class="var">L</i><sub>m</sub>/<i class="var">L</i><sub>0</sub> + <i class="var">C</i><sub>m</sub>/<i class="var">C</i><sub>0</sub> ) &nbsp;&nbsp;&nbsp; <i class="var">K</i><sub>f</sub> ∝ ( <i class="var">L</i><sub>m</sub>/<i class="var">L</i><sub>0</sub> − <i class="var">C</i><sub>m</sub>/<i class="var">C</i><sub>0</sub> )</span>
+      <span class="eq__note">K_b is the backward (near-end) coefficient, K_f the forward (far-end) one. The sign between the two terms is the whole story.</span>
+    </div>
+
+    <p>
+      Set the two ratios equal on the panel above and watch the far-end pulse vanish while the
+      near-end plateau stays put. That is not a numerical coincidence — it is the subtraction
+      going to zero, and it is the reason a buried stripline behaves so differently from a surface
+      microstrip.
+    </p>
+
+    <h2 class="section-rule"><span>NEXT saturates. FEXT accumulates.</span></h2>
+
+    <p>
+      <strong>Near-end crosstalk</strong> is a low, wide pulse. Each slice of coupled length contributes
+      noise that arrives back at the near end at a slightly different time, so the contributions smear
+      into a plateau lasting twice the coupled delay. Crucially, its <em>amplitude</em> stops growing
+      once the coupled length exceeds <span class="num">t<sub>r</sub> / 2t<sub>pd</sub></span> — past
+      that, extra length makes the pulse longer, not taller. For a 100 ps edge on stripline, that is
+      about 0.3 inch. Runs longer than this example's saturation length mainly extend the NEXT pulse
+      duration rather than its height, which is why NEXT is often quoted as a percentage of aggressor swing.
+    </p>
+
+    <p>
+      <strong>Far-end crosstalk</strong> behaves the opposite way. It arrives as a single narrow pulse
+      about one rise time wide, travelling alongside the aggressor edge and gathering contributions the
+      whole way — so its amplitude grows <em>linearly</em> with coupled length and gets worse as edges
+      get faster. It lands at the receiver at exactly the moment the data edge does, which is what makes
+      it a timing problem rather than just a noise problem.
+    </p>
+
+    <div class="note">
+      <b>Stripline versus microstrip</b>
+      In a homogeneous dielectric — a buried stripline — the inductive and capacitive coupling ratios
+      are equal, so the far-end terms cancel and FEXT is ideally zero. A microstrip has air above and
+      laminate below, the ratios no longer match, and FEXT appears. This is the strongest SI argument
+      for burying a congested bus: it can greatly reduce this FEXT mechanism. In
+      practice a real stripline still shows some FEXT, mostly from glass-weave inhomogeneity and
+      asymmetric builds — but far less than the equivalent microstrip.
+    </div>
+
+    <p>
+      The levers, in the order they are worth pulling: increase spacing (coupling falls roughly with
+      the square of separation, so 3× trace width buys most of what is available), reduce the coupled
+      length, move the pair closer to its reference plane — halving the dielectric height roughly
+      quarters the coupling — or bury the run. Guard traces are a distant last resort and are actively
+      harmful unless stitched to ground densely along their whole length.
+    </p>
+
+    <h2 class="section-rule"><span>Why this decides how your board behaves</span></h2>
+
+    <p>
+      The two kinds of crosstalk fail in different ways, and they want different fixes.
+    </p>
+
+    <ul class="tight">
+      <li><strong>NEXT is a noise problem at the driver's end.</strong> It is a long, low plateau,
+        so it looks like a shifted reference rather than a glitch. On a bidirectional bus it lands
+        on the receiver that is currently listening while its neighbour drives — which is why
+        NEXT matters most on wide parallel buses that turn around.</li>
+      <li><strong>FEXT is a timing problem.</strong> It arrives as a narrow pulse at exactly the
+        moment the victim's own edge does, because both travelled the same distance at the same
+        speed. It moves the crossing, so it shows up as jitter rather than as noise, and it is
+        worse on longer runs and faster edges.</li>
+      <li><strong>It is not one aggressor.</strong> In a bus, a victim has neighbours on both
+        sides and further out. Contributions add, and the worst case is all aggressors switching
+        the same way at once — which is exactly what a wide data bus does.</li>
+      <li><strong>An equaliser makes it worse, not better.</strong> Crosstalk lives at high
+        frequency, and a CTLE boosts high frequency. It lifts the crosstalk along with the
+        signal. See <a href="../signal-integrity/what-closes-the-eye.html">what closes the
+        eye</a>, where you can turn aggressors up with the equaliser on and watch it happen.</li>
+    </ul>
+
+    <h2 class="section-rule"><span>What to do about it</span></h2>
+
+    <p>
+      The levers, in the order they are worth pulling.
+    </p>
+
+    <p>
+      <strong>First, spacing.</strong> Coupling falls roughly with the square of separation, so the
+      first doubling buys most of what is available. Three times the trace width between centres is
+      the usual starting rule, and going beyond about five buys very little. This is the cheapest
+      effective when the required spacing fits the routing constraints.
+    </p>
+
+    <p>
+      <strong>Second, get closer to the reference plane.</strong> Halving the dielectric height
+      roughly quarters the coupling, because the field that would have reached the neighbour
+      terminates on the plane instead. It also halves the trace width needed for the same
+      impedance, which gives back some of the space spacing cost you. This is a stackup decision
+      and often a better one than a routing decision.
+    </p>
+
+    <p>
+      <strong>Third, shorten the coupled length</strong> — while noting which component dominates.
+      Past saturation it may not reduce the ideal NEXT plateau height, although it shortens the pulse;
+      in the weak-coupling model it reduces FEXT approximately in proportion to length.
+    </p>
+
+    <p>
+      <strong>Fourth, consider stripline for a congested run.</strong> A homogeneous stripline can
+      cancel the ideal far-end term, while manufacturing asymmetry and transitions still contribute
+      residual coupling. Evaluate the complete routed structure before assigning the benefit.
+    </p>
+
+    <div class="note">
+      <b>Termination and timing complete the result</b>
+      Coupling coefficients describe the interconnect, while the voltage observed at the victim also
+      depends on source and load impedances, transition direction, relative timing, and the states of
+      other aggressors. Preserve those conditions when comparing a field-solver result, a transient
+      simulation, and a bench waveform.
+    </div>
+
+    <p>
+      <strong>Guard traces are a distant last resort.</strong> An unstitched guard trace is a
+      floating conductor that couples to both neighbours and can make things worse. If you use one,
+      it must be stitched to ground densely along its whole length — vias every fraction of a
+      wavelength at the knee frequency — and at that point you have usually spent more space than
+      simply separating the two signals would have cost.
+    </p>
+
+    <div class="note">
+      <b>Using this to find a fault</b>
+      <ul class="tight">
+        <li><b>Noise on a quiet net, lasting much longer than an edge.</b> A wide, flat plateau is
+          NEXT. Measure its duration: it should be twice the coupled delay, which tells you how
+          long the shared run is and therefore where it is.</li>
+        <li><b>Jitter that appears only when neighbours are active.</b> FEXT is one candidate. It should
+          correlate with the aggressor's data pattern, not with anything on the victim, which is
+          the quickest way to tell it apart from ISI.</li>
+        <li><b>Crosstalk between traces that are not adjacent.</b> Look at the return paths, not
+          the traces. Two signals whose returns are forced through the same plane opening are
+          coupled regardless of how far apart the traces run. See
+          <a href="return-current-paths.html">return current paths</a>.</li>
+        <li><b>A bus where only some bits fail.</b> Map the failures against physical position.
+          Edge bits have one neighbour, middle bits have two — if the middle of the bus fails
+          first, crosstalk is the likely cause; if the edges fail first, look at the return path
+          at the edge of the field instead.</li>
+      </ul>
+    </div>
+
+    <details class="deeper">
+      <summary>Go deeper — where the coefficients come from, and why saturation happens</summary>
+
+      <p>
+        Take a short slice of coupled line, length δ. The aggressor edge passing over it injects a
+        small amount of noise into the victim: a capacitive component that splits both ways, and an
+        inductive component that goes backwards only. Integrate those contributions over the whole
+        coupled length and the two behaviours fall out of the geometry of <em>when</em> each
+        contribution arrives.
+      </p>
+
+      <p>
+        <strong>Backward.</strong> Noise generated at distance <i>x</i> along the coupled section
+        travels back to the near end, arriving at time 2x/v after the edge set off. Different
+        slices therefore arrive at different times, spreading the contributions into a plateau
+        lasting 2T<sub>d</sub>. Because they are spread in time rather than stacked, the
+        <em>height</em> of the plateau is set by the coupling per unit length and the rise time —
+        not by the total length. Once the coupled section is longer than the edge occupies
+        physically, adding more only makes the plateau wider:
+      </p>
+
+      <div class="eq">
+        <span class="eq__main"><i class="var">l</i><sub>sat</sub> = <i class="var">t</i><sub>r</sub> / ( 2 · <i class="var">t</i><sub>pd</sub> )</span>
+        <span class="eq__note">for a 100 ps edge on stripline, about 0.3 inch; longer runs are in the saturated-height region of this ideal NEXT model</span>
+      </div>
+
+      <p>
+        <strong>Forward.</strong> Noise generated at <i>x</i> travels forward at the same speed as
+        the aggressor edge that made it. It never falls behind, so every slice's contribution
+        arrives at the far end at the same instant and they stack directly on top of each other.
+        That is why FEXT grows linearly with length and NEXT does not — and why FEXT is a narrow
+        pulse about one rise time wide rather than a plateau.
+      </p>
+
+      <p>
+        The cancellation is then easy to state. The forward term is proportional to
+        (L<sub>m</sub>/L<sub>0</sub> − C<sub>m</sub>/C<sub>0</sub>). In a homogeneous dielectric —
+        everything buried in the same laminate — the inductive and capacitive coupling ratios are
+        forced to be equal, because both are determined by the same field geometry and the same
+        material everywhere. The difference is zero and FEXT vanishes. Put air above the trace and
+        the electric field, which is happy in air, behaves differently from the magnetic field,
+        which barely notices the material. The ratios separate and FEXT appears.
+      </p>
+
+      <p>
+        Two honest caveats on the model in the panel. It is a weak-coupling superposition, valid
+        while the ratios are below roughly 0.3 — beyond that the aggressor's own impedance is
+        changed by the presence of the victim and the linear treatment breaks down. And it is a
+        single pair; a real bus needs the contributions from several aggressors summed, with the
+        worst case being all of them switching together in the same direction.
+      </p>
+    </details>
+
+    <h2 class="section-rule"><span>In the real world</span></h2>
+
+    <p>
+      The practical shape of crosstalk work is a budget rather than a universal spacing rule. Routing
+      space is limited, so the job is deciding where the space goes: clocks and
+      strobes get isolation, address and control get whatever is left, and the decision is made by
+      what a coupled pulse would cost at each receiver rather than by a uniform spacing constraint.
+    </p>
+
+    <p>
+      The failure worth anticipating is the one that only appears in the assembled system. Crosstalk
+      inside a connector, between pins of a package, or across a cable bundle is often larger than
+      anything on the board. These structures deserve explicit review even when they arrive inside
+      a model supplied by another team or vendor.
+    </p>
+
+    <h3>Related</h3>
+    <ul class="tight">
+      <li><a href="../fundamentals/return-current-paths.html">Return-Current Paths and Reference Continuity</a></li>
+      <li><a href="../fundamentals/differential-signalling.html">Differential Signaling and Mode Conversion</a></li>
+      <li><a href="../package-board/stackup-design.html">PCB Stackup Design and Dielectric Selection</a></li>
+      <li><a href="../power-integrity/ssn-ground-bounce.html">Simultaneous Switching Noise and Ground Bounce</a></li>
+      <li><a href="../labs/adc-interference.html">Lab D: ADC Interference, Aliasing and Reference Noise</a> — the same dV/dt coupling, arriving at a converter’s input or its reference</li>
+    </ul>
+  </div>
+
+  <!-- pager:start -->
+  <nav class="pager" aria-label="Previous and next topic">
+    <a class="prev" href="../../topics/fundamentals/return-current-paths.html"><span class="dir">Previous</span><span>Return-Current Paths and Reference Continuity</span></a>
+    <a class="next" href="../../topics/fundamentals/loss-mechanisms.html"><span class="dir">Next</span><span>PCB Transmission-Line Loss Mechanisms</span></a>
+  </nav>
+  <!-- pager:end -->
+</main>
+
+<footer class="site-foot">
+  <span>SIPI &#8212; signal and power integrity, visualised.</span>
+  <span>Created and directed by Geetansh Arora. <a href="../../colophon.html">About, review &amp; AI assistance</a> &#183; <a href="../../model-contract.html">Model assumptions</a> &#183; <a href="../../docs/claims.md">Claim ledger</a></span>
+</footer>
+
+<script src="../../js/site.js?v=acb47d86"></script>
+<script src="../../js/viz-kit.js?v=a53e49c3"></script>
+<script src="../../js/viz/crosstalk.js?v=d47b7e2d"></script>
+<script src="../../js/viz-loader.js?v=89d5884d"></script>
+<script src="../../js/search.js?v=6c93a285"></script>
+</body>
+</html>

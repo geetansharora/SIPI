@@ -1,0 +1,75 @@
+{
+  "schemaVersion": 1,
+  "id": "matched-channel-delay",
+  "kind": "channel",
+  "model": "labChannel",
+  "modelVersion": "1.2",
+  "contractVersion": "3.2",
+  "params": {
+    "reach": 8,
+    "loss": 0,
+    "rate": 16,
+    "dz": 50,
+    "dpos": 45,
+    "dlen": 0,
+    "stub": 0,
+    "tr": 12,
+    "trTdr": 12,
+    "eq": false
+  },
+  "topology": "Eight inches of uniform lossless 50 Ω line; no discontinuity or stub, CTLE off.",
+  "planes": "50 Ω input/output wave-reference planes; group delay before CTLE.",
+  "evidence": {
+    "type": "analytical",
+    "provenance": "First-principles boundary conditions, linear circuit laws or the declared teaching-loop equation; no measured or licensed data."
+  },
+  "checks": [
+    {
+      "metric": "maxInsertionDeviationDb",
+      "expected": 0,
+      "absoluteTolerance": 1e-08,
+      "unit": "dB",
+      "derivation": "A matched lossless two-port has |S21|=1, so 20 log10|S21|=0."
+    },
+    {
+      "metric": "groupDelay",
+      "expected": 1.36e-09,
+      "absoluteTolerance": 5e-15,
+      "unit": "s",
+      "derivation": "Eight inches × the declared 170 ps/in propagation delay = 1360 ps."
+    },
+    {
+      "metric": "impulseSum",
+      "expected": 1,
+      "absoluteTolerance": 1e-08,
+      "unit": "-",
+      "derivation": "The discrete impulse weights sum to the unity DC transfer under this FFT convention."
+    }
+  ],
+  "lesson": {
+    "prediction": "Can a channel have zero insertion loss while still delaying the signal?",
+    "experiment": "Open the scenario, keep its network and stimulus fixed, and inspect the stated observation. Compare with the derived answer before changing one variable.",
+    "explanation": "Yes. The ideal transfer is exp(−jωτ): magnitude is unity and group delay is τ. Bulk-delay removal changes the impulse time reference, not the input/output group delay.",
+    "transferQuestion": "Does changing symbol rate change the physical delay of this fixed lossless line?",
+    "answer": "No. The delay in seconds is unchanged; its length in unit intervals changes."
+  },
+  "limitations": [
+    "Ideal matched lossless model, not a real copper channel.",
+    "Group delay is checked at every exported frequency, not only its mean.",
+    "Do not compare the peak of individual discrete impulse weights with unity gain."
+  ],
+  "scenario": "/topics/labs/one-channel.html#lab=labChannel;v=3.2;lc-reach=8;lc-loss=0;lc-rate=16;lc-dz=50;lc-dpos=45;lc-dlen=0;lc-stub=0;lc-tr=12;lc-trtdr=12;lc-eq=0",
+  "parameterUnits": {
+    "reach": "in",
+    "loss": "dB at 8 GHz",
+    "rate": "GT/s",
+    "dz": "ohm",
+    "dpos": "%",
+    "dlen": "ps",
+    "stub": "ps",
+    "tr": "ps",
+    "trTdr": "ps",
+    "eq": "boolean"
+  },
+  "stimulus": "Frequency sweep and discrete impulse of a matched lossless channel; fixed PRBS/edge pipeline retained by the lab."
+}

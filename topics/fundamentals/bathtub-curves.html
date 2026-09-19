@@ -1,0 +1,367 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bathtub curves and BER extrapolation | SIPI</title>
+<meta name="description" content="Why BER values such as 10⁻¹² are usually extrapolated, how bathtub curves separate DJ from RJ, and what the extrapolation assumes.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<link rel="stylesheet" href="../../css/base.css?v=e4f774de">
+<link rel="stylesheet" href="../../css/components.css?v=295837ab">
+  <!-- meta:start -->
+  <link rel="canonical" href="https://sipi.work/topics/fundamentals/bathtub-curves.html">
+  <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="SIPI">
+  <meta property="og:title" content="Bathtub curves and BER extrapolation | SIPI">
+  <meta property="og:description" content="Why BER values such as 10⁻¹² are usually extrapolated, how bathtub curves separate DJ from RJ, and what the extrapolation assumes.">
+  <meta property="og:url" content="https://sipi.work/topics/fundamentals/bathtub-curves.html">
+  <meta property="og:image" content="https://sipi.work/assets/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Bathtub curves and BER extrapolation | SIPI">
+  <meta name="twitter:description" content="Why BER values such as 10⁻¹² are usually extrapolated, how bathtub curves separate DJ from RJ, and what the extrapolation assumes.">
+  <meta name="twitter:image" content="https://sipi.work/assets/og.png">
+  <!-- meta:end -->
+</head>
+<body>
+
+<header class="masthead">
+  <a class="wordmark" href="../../index.html">SIPI</a>
+  <nav>
+    <a href="../../index.html#fundamentals">Fundamentals</a>
+    <a href="../../index.html#power-integrity">Power</a>
+    <a href="../../index.html#interfaces">Interfaces</a>
+    <a href="../../start.html">Start</a>
+    <a href="../../labs.html">Labs</a>
+    <a href="../../reference.html">Reference</a>
+    <button class="theme-toggle" data-act="theme" type="button">System</button>
+  </nav>
+</header>
+
+<main>
+  <div class="page-head">
+    <p class="crumb"><a href="../../index.html#fundamentals">Fundamentals</a> / 12</p>
+    <h1>Bathtub curves and BER extrapolation</h1>
+    <p class="byline">
+      <!-- review:start --><span>By Geetansh Arora — Principal SI/PI Engineer</span><time datetime="2026-09-13" title="Technical review by Geetansh Arora on this date">13 Sep 2026</time><span>10 min</span><!-- review:end -->
+    </p>
+    <p class="answer">
+      A bathtub curve answers the question an eye diagram cannot: not &ldquo;is there an
+      opening?&rdquo; but &ldquo;how wide is the opening at the error rate I have to meet?&rdquo;
+      It is the bridge between what you can measure in seconds and what a specification demands
+      over days &#8212; and most of it is extrapolation, which is fine as long as the page says
+      which part.
+    </p>
+  </div>
+
+  <!-- ───────────── the picture ───────────── -->
+  <section class="instrument" data-viz="bathtub" aria-label="Interactive bathtub curve showing bit error rate against sampling position, with the measured region and the extrapolated region distinguished">
+    <script type="application/json" data-contract>{"kind":"analytical","evidence":"independent","purpose":"Show the measured region and the extrapolated region as different things.","equations":["BER(t)=0.5[Q((t-DJ/2)/s)+Q((UI-DJ/2-t)/s)]","TJ=DJpp+2*Q(BER)*RJrms"],"units":"UI, s","validity":"Dual-Dirac is a FIT, not a measurement of the deterministic width.","numerics":"erfc below x=3, asymptotic series above; explicit empty result when no interval meets the target.","limitations":"Dual-Dirac is a FIT, not a measurement of the deterministic width.","suites":["Bathtub","Empty results"],"version":"2.0","reviewed":"2026-09-12","panel":"bathtub"}</script>
+    <div class="instrument__bar">
+      <span class="instrument__title">BER vs where you sample &#183; and how much of it you could actually measure</span>
+        <span data-evidence="independent" data-model-version="2.0" class="model-tag model-tag--analytical" title="Dual-Dirac read as BER vs sampling position. Extrapolated below the measured floor.">analytical</span>
+      <span class="instrument__readout" role="status" aria-live="polite" aria-label="Current values">
+        <span>opening at 1e-12 <b data-out="open">—</b></span>
+        <span>as UI <b data-out="openui">—</b></span>
+        <span>extrapolated <b data-out="decades">—</b></span>
+      </span>
+    </div>
+    <div class="panels">
+      <div class="panel">
+        <span class="panel__label">Bit error rate against sampling position</span>
+        <canvas data-cv="tub" role="img" aria-label="Bit error rate on a logarithmic axis against sampling position across one unit interval, forming a bathtub shape with a flat floor and steep walls."></canvas>
+        <div class="legend"><span><i style="background:var(--signal)"></i>BER</span><span><i style="background:var(--reflect)"></i>opening at 1e-12</span><span><i class="dash" style="color:var(--muted)"></i>measurement floor</span></div>
+      </div>
+    </div>
+    <div class="controls">
+      <div class="ctl">
+        <div class="ctl__head"><label for="bt-rj">Random jitter &#963;</label><output id="bt-rj-out" for="bt-rj">1.0 ps</output></div>
+        <input type="range" id="bt-rj" min="1" max="50" step="1" value="10">
+        <span class="ctl__note">Sets how steep the walls are</span>
+      </div>
+      <div class="ctl">
+        <div class="ctl__head"><label for="bt-dj">Deterministic jitter</label><output id="bt-dj-out" for="bt-dj">12 ps</output></div>
+        <input type="range" id="bt-dj" min="0" max="40" step="1" value="12">
+        <span class="ctl__note">Sets how wide the floor is</span>
+      </div>
+      <div class="ctl">
+        <div class="ctl__head"><label for="bt-meas">Measured down to</label><output id="bt-meas-out" for="bt-meas">1e-8</output></div>
+        <input type="range" id="bt-meas" min="4" max="13" step="1" value="8">
+        <span class="ctl__note">Everything below this is a fit, not data</span>
+      </div>
+    </div>
+    <div class="presets">
+      <button class="preset" type="button" data-preset="typical" aria-pressed="true">ISI-limited</button>
+      <button class="preset" type="button" data-preset="noisy" aria-pressed="false">Noise-limited</button>
+      <button class="preset" type="button" data-preset="clean" aria-pressed="false">Clean link</button>
+      <button class="preset" type="button" data-preset="deep" aria-pressed="false">Measure to 1e-12</button>
+    </div>
+    <div class="transport"><span data-out="note">—</span></div>
+  </section>
+
+  <div class="prose">
+    <h2>What a receiver is actually doing</h2>
+
+    <p>
+      Here is the problem a bathtub curve solves. A serial-link
+      specification says you must guarantee a bit error rate of 10⁻¹²
+      — fewer than one error per trillion bits. To <em>measure</em> that
+      directly at 16 GT/s, you would need to observe about three
+      trillion bits without a single error, which takes roughly three
+      minutes. That is for <em>one</em> sampling position. A bathtub
+      curve needs dozens of positions, and sign-off needs curves at every
+      voltage, temperature, and process corner. Direct measurement is not
+      impossible — it is just too slow to be practical.
+    </p>
+
+    <p>
+      The bathtub curve is the workaround. It combines a short, fast
+      measurement (counting errors at BER levels you <em>can</em> reach
+      quickly, like 10⁻⁶ or 10⁻⁸) with a statistical model that
+      extrapolates those measured walls down to the target BER. The
+      extrapolation assumes the error distribution is Gaussian in the
+      tails — a reasonable assumption for random jitter, and a dangerous
+      one if a deterministic component is lurking. Knowing which part of
+      a bathtub curve is measurement and which part is extrapolation is
+      the whole skill.
+    </p>
+
+    <p>
+      A receiver looks at the incoming voltage at one instant per bit and decides whether it is
+      above or below a threshold. Two things can make that decision wrong: the voltage is on the
+      wrong side because noise pushed it there, or the <em>instant</em> was wrong because the edge
+      moved.
+    </p>
+
+    <p>
+      If you sample dead in the middle of the eye, both would have to be large to cause an error,
+      and errors are correspondingly rare. Move the sampling point towards an edge and less and
+      less is required, so errors become more common. Push it past the crossing and you are
+      sampling the wrong bit entirely.
+    </p>
+
+    <p>
+      The bathtub is simply that relationship, plotted: error rate against sampling position. It
+      looks the way it does — flat in the middle, walls rising steeply at both sides — because the
+      thing driving it is a Gaussian tail, and Gaussian tails are extraordinarily steep.
+    </p>
+
+    <h2 class="section-rule"><span>Why the curve exists at all</span></h2>
+
+    <p>
+      Sweep the sampling point across the unit interval, count errors at each position, and plot the
+      result on a log axis. In the middle you are sampling in the clear and see no errors. Move toward
+      either edge and the error rate climbs — slowly at first, then very steeply. The result looks like
+      a cross-section of a bathtub, and the width of the floor at your target BER is your timing margin.
+    </p>
+
+    <p>
+      Now do the arithmetic on measuring it honestly. At 16 GT/s, one error at a BER of 10⁻¹² means
+      about 10¹² bits, which takes just over a minute. But one error is not a measurement — you need
+      several for any confidence, so call it three to five minutes <em>per sampling position</em>. A
+      bathtub has dozens of positions, and sign-off wants the whole curve at every process corner, every
+      voltage, every temperature. The direct measurement is not expensive so much as slow — and it is worth being
+      precise, because &ldquo;impossible&rdquo; is not true and the real limit is more useful.
+    </p>
+    <p>
+      For a stationary, independent error process, the probability of seeing zero errors in
+      <span class="num">N</span> bits is <span class="num">(1 − BER)<sup>N</sup> ≈ e<sup>−N·BER</sup></span>.
+      Demanding 95% confidence means <span class="num">N ≈ −ln(0.05)/BER ≈ 3 × 10<sup>12</sup></span>
+      bits, which at 16 Gb/s is about <strong>187 seconds</strong> of error-free traffic. Three minutes
+      buys a 95% upper bound near 10<sup>−12</sup> at <em>one</em> sampling position.
+    </p>
+    <p>
+      That is the honest statement, and it also shows where the cost really lives. A bathtub needs
+      dozens of positions, and sign-off needs the curve at every corner of voltage, temperature and
+      process. Three minutes becomes days. It is the <em>curve</em> that is impractical to measure
+      directly, not the point</p>
+
+    <div class="note">
+      <b>So the curve is fitted, not measured</b>
+      In practice you measure down to 10⁻⁸ or so — seconds per point — and fit the Gaussian tails from
+      the region you can see. Everything below that is extrapolation. This is not a shortcut anyone is
+      embarrassed about; it is what the specs assume. But it does mean the headline number inherits every
+      assumption in the fit.
+    </div>
+
+    <h2 class="section-rule"><span>Reading the shape</span></h2>
+
+    <p>
+      The two halves of the curve tell you different things. The <strong>width of the floor</strong> is
+      set by the bounded jitter — the flat region shrinks by exactly DJ<sub>pp</sub>. The
+      <strong>slope of the walls</strong> is set by RJ: steeper walls mean less random jitter, and the
+      slope is what the fit extracts σ from. A curve with a wide floor and steep walls is a link with an
+      ISI problem you can fix; a narrow floor with shallow walls is a noise problem, and it is much more
+      expensive.
+    </p>
+
+    <p>
+      Two failure modes to watch for. If the two walls have different slopes, the jitter is not
+      symmetric — usually duty cycle distortion or an asymmetric threshold — and a single-σ fit will be
+      wrong on at least one side. And if the floor never really flattens, there is a jitter component
+      that is not separating cleanly into bounded and unbounded, which almost always means crosstalk or
+      a periodic aggressor being mis-fitted as Gaussian. In that case the extrapolated number is
+      optimistic, and the amount it is optimistic by is not bounded either.
+    </p>
+
+    <h2 class="section-rule"><span>Why this decides how your board behaves</span></h2>
+
+    <ul class="tight">
+      <li><strong>The floor width is your actual timing margin.</strong> Not the eye width — the
+        eye shows the common cases, and the floor at your target BER shows what survives the rare
+        ones. That is the number a sign-off report should carry.</li>
+      <li><strong>The two halves point at different fixes.</strong> A narrow floor with steep walls
+        is a deterministic problem: something bounded is eating the middle, and it can be found and
+        removed. A wide floor with shallow walls is a noise problem, and noise is much more
+        expensive to fix.</li>
+      <li><strong>It tells you whether more decades are cheap or expensive.</strong> Because the
+        walls are so steep, going from 10<sup>−12</sup> to 10<sup>−15</sup> usually costs
+        remarkably little margin. If it costs a lot on your link, the walls are shallower than they
+        should be and you have a noise problem worth chasing.</li>
+      <li><strong>It is the only place the extrapolation is visible.</strong> Every headline BER
+        number is a fit. The bathtub is where you can see how far the fit reaches beyond the data.</li>
+    </ul>
+
+    <h2 class="section-rule"><span>What to do about it</span></h2>
+
+    <p>
+      <strong>Mark the measured floor on every curve you publish.</strong> The panel above shades
+      the extrapolated region for exactly this reason. A bathtub that does not say where the data
+      stopped is presenting a model as a measurement, and the person reading it has no way to tell.
+    </p>
+
+    <p>
+      <strong>Check the fit against the histogram, not just the residual.</strong> The fit assumes
+      the tails are Gaussian. If there is a periodic component in there, it is not Gaussian — it is
+      arcsine-shaped, with hard edges — and a Gaussian fit to it extrapolates optimistically. Look
+      at the distribution before trusting the number that came out of it.
+    </p>
+
+    <p>
+      <strong>Measure both walls and compare their slopes.</strong> They should match. If they do
+      not, the jitter is asymmetric — duty-cycle distortion or an offset threshold — and a single-σ
+      fit is wrong on at least one side. That asymmetry is easy to see on a bathtub and nearly
+      invisible on an eye.
+    </p>
+
+    <p>
+      <strong>Spend your time budget where the curve says to.</strong> If the floor is narrow,
+      attack DJ: loss, reflections, crosstalk. If the walls are shallow, attack RJ: supply noise,
+      reference clock quality, receiver bandwidth. Doing the wrong one is the most common way a
+      week disappears.
+    </p>
+
+    <div class="note">
+      <b>Using this to find a fault</b>
+      <ul class="tight">
+        <li><b>A floor that never really flattens.</b> Something is not separating cleanly into
+          bounded and unbounded — usually crosstalk or a periodic aggressor being mis-fitted as
+          Gaussian. The extrapolated number is optimistic, and by an amount that is not bounded
+          either.</li>
+        <li><b>Walls with different slopes.</b> Asymmetric jitter. Check the crossing levels and
+          the duty cycle before anything else.</li>
+        <li><b>A curve that changes shape with the data pattern.</b> The DJ is data-dependent, so
+          it is the channel. Correlate against run length.</li>
+        <li><b>A measured curve far worse than the simulated one, only in the tails.</b> The
+          simulation is probably missing a random contributor — most often supply noise, which
+          channel simulators do not include unless you ask them to.</li>
+      </ul>
+    </div>
+
+    <details class="deeper">
+      <summary>Go deeper — the arithmetic of measuring one, and the empty-opening case</summary>
+
+      <p>
+        It is worth doing the confidence arithmetic once, because it explains both why the curve is
+        fitted and what the fit is actually standing in for.
+      </p>
+
+      <p>
+        For a stationary, independent error process, the probability of seeing zero errors in
+        <i>N</i> bits is (1 − BER)<sup>N</sup> ≈ e<sup>−N·BER</sup>. Setting that to 0.05 — a 95%
+        upper confidence bound — gives N ≈ −ln(0.05)/BER, the rule of three. Note what this is: it
+        is a bound from having seen <em>nothing</em>, which is the situation you are usually in.
+        Observing errors and estimating a rate from them is a different and easier calculation.
+      </p>
+
+      <p>
+        The same arithmetic is why the panel on the <a href="eye-diagram.html">eye page</a> states
+        what its own run supports, and why the labs do the same. It is the one piece of statistics
+        that stops a few thousand simulated symbols from quietly becoming a compliance claim.
+      </p>
+
+      <p>
+        <strong>The empty-opening case deserves its own note</strong>, because it is a real bug
+        pattern rather than a theoretical nicety. Ask a bathtub “how wide is the opening at
+        10<sup>−12</sup>?” and sometimes the honest answer is <em>there isn't one</em> — the curve
+        never gets that low anywhere in the unit interval. A routine that returns a width for that
+        case, rather than reporting no interval, produces a number that reads as a wide-open eye
+        when the eye is in fact closed. That failure mode is the reason the panel above reports an
+        explicit “no sampling position reaches this BER” rather than a number.
+      </p>
+
+      <p>
+        <strong>On the shape itself.</strong> The walls are the integral of the jitter distribution,
+        so on a log axis a Gaussian tail plots as a parabola rather than a straight line. That
+        curvature is a useful check: a wall that is genuinely straight on a log-linear plot is not
+        Gaussian, and whatever model produced it is not the dual-Dirac one.
+      </p>
+
+      <p>
+        <strong>And one thing the curve assumes.</strong> Errors are taken to be independent. Real
+        links with burst errors — from a periodic aggressor, or from DFE error propagation — violate
+        that, and the confidence arithmetic above is then optimistic, because a burst of ten errors
+        is much less evidence than ten independent ones. This matters most for links with forward
+        error correction, whose whole design depends on burst structure.
+      </p>
+    </details>
+
+    <h2 class="section-rule"><span>In the real world</span></h2>
+
+    <p>
+      The bathtub is where signal integrity stops being about waveforms and starts being about
+      statistics, and that transition catches people out. The instinct from every other page on this
+      site — look at the shape, find the mechanism — still works, but it has to be joined by a
+      second instinct: <b>ask how much of what I am looking at was measured.</b>
+    </p>
+
+    <p>
+      Most of a published bathtub is model. That is not a criticism; measuring it directly at every
+      corner is genuinely impractical, and the specs are written on that assumption. But it does
+      mean a clear presentation should distinguish measured and extrapolated regions. Drawing the
+      whole curve as uniformly measured would overstate the available evidence.
+    </p>
+
+    <h3>Related</h3>
+    <ul class="tight">
+      <li><a href="../fundamentals/jitter-taxonomy.html">Jitter Components: RJ, DJ, DCD, PJ, and TJ</a></li>
+      <li><a href="../fundamentals/eye-diagram.html">Eye Diagrams: Construction and Interpretation</a></li>
+      <li><a href="../signal-integrity/statistical-vs-time-domain.html">Statistical and Time-Domain Channel Simulation</a></li>
+      <li><a href="../methodology/reporting-margin.html">Reporting Signal and Power Integrity Margin</a></li>
+    </ul>
+  </div>
+
+  <!-- pager:start -->
+  <nav class="pager" aria-label="Previous and next topic">
+    <a class="prev" href="../../topics/fundamentals/jitter-taxonomy.html"><span class="dir">Previous</span><span>Jitter Components: RJ, DJ, DCD, PJ, and TJ</span></a>
+    <a class="next" href="../../topics/fundamentals/differential-signalling.html"><span class="dir">Next</span><span>Differential Signaling and Mode Conversion</span></a>
+  </nav>
+  <!-- pager:end -->
+</main>
+
+<footer class="site-foot">
+  <span>SIPI &#8212; signal and power integrity, visualised.</span>
+  <span>Created and directed by Geetansh Arora. <a href="../../colophon.html">About, review &amp; AI assistance</a> &#183; <a href="../../model-contract.html">Model assumptions</a> &#183; <a href="../../docs/claims.md">Claim ledger</a></span>
+</footer>
+
+<script src="../../js/site.js?v=acb47d86"></script>
+<script src="../../js/viz-kit.js?v=a53e49c3"></script>
+<script src="../../js/viz/jitter.js?v=cef8ecda"></script>
+<script src="../../js/viz-loader.js?v=89d5884d"></script>
+<script src="../../js/search.js?v=6c93a285"></script>
+</body>
+</html>

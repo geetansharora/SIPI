@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Signal and Power Integrity Learning Labs | SIPI</title>
+<meta name="description" content="Learn signal and power integrity with interactive models, clear explanations, engineering examples, and explicit assumptions.">
+<meta name="theme-color" content="#17191c">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="assets/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<link rel="manifest" href="site.webmanifest">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<link rel="stylesheet" href="css/base.css?v=e4f774de">
+<link rel="stylesheet" href="css/components.css?v=295837ab">
+<style>
+  .hero { max-width: var(--measure); margin-inline: auto; padding-block: var(--s8) var(--s6); display: flex; flex-direction: column; gap: var(--s4); }
+  .hero p { font-size: 1.15rem; color: var(--ink-2); }
+  /* width:100% is load-bearing — #map is a flex column, and auto cross-axis margins
+     suppress the default stretch, leaving .sec shrink-to-fit at ~half --wide. */
+  .sec { width: 100%; max-width: var(--wide); margin-inline: auto; padding-block: var(--s5); border-top: 1px solid var(--border-soft); }
+  .sec__head { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--s2) var(--s4); margin-bottom: var(--s4); }
+  .sec__head p { color: var(--muted); font-size: .95rem; }
+  .topic-grid { display: grid; gap: var(--s2); grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr)); }
+  .topic { display: flex; align-items: baseline; gap: var(--s3); padding: .55rem .7rem; border: 1px solid var(--border-soft); border-radius: var(--radius); background: var(--surface); font-size: .95rem; min-width: 0; }
+  .topic a { text-decoration: none; }
+  .topic.is-planned { border-style: dashed; }
+  .topic.is-planned a { color: var(--muted); }
+  .topic .tag { font-family: var(--font-mono); font-size: .6rem; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-left: auto; flex: none; }
+  .topic.is-live .tag { color: var(--signal); }
+  .topic.is-brief:hover, .topic.is-live:hover { border-color: var(--border); }
+</style>
+  <!-- meta:start -->
+  <link rel="canonical" href="https://sipi.work/">
+  <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="SIPI">
+  <meta property="og:title" content="Signal and Power Integrity Learning Labs | SIPI">
+  <meta property="og:description" content="Learn signal and power integrity with interactive models, clear explanations, engineering examples, and explicit assumptions.">
+  <meta property="og:url" content="https://sipi.work/">
+  <meta property="og:image" content="https://sipi.work/assets/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Signal and Power Integrity Learning Labs | SIPI">
+  <meta name="twitter:description" content="Learn signal and power integrity with interactive models, clear explanations, engineering examples, and explicit assumptions.">
+  <meta name="twitter:image" content="https://sipi.work/assets/og.png">
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"SIPI","alternateName":["SI/PI Work","SI & PI"],"url":"https://sipi.work/","description":"Learn signal and power integrity with interactive models, clear explanations, engineering examples, and explicit assumptions.","creator":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer"}}</script>
+  <!-- meta:end -->
+</head>
+<body>
+
+<header class="masthead">
+  <a class="wordmark" href="index.html">SIPI</a>
+  <nav>
+    <a href="#fundamentals">Fundamentals</a>
+    <a href="#power-integrity">Power</a>
+    <a href="#interfaces">Interfaces</a>
+    <a href="start.html">Start</a>
+    <a href="labs.html">Labs</a>
+    <a href="reference.html">Reference</a>
+    <button class="theme-toggle" data-act="theme" type="button">System</button>
+  </nav>
+</header>
+
+<main>
+  <div class="hero">
+    <p class="eyebrow">Signal &amp; power integrity, visualised</p>
+    <h1>Learn signal and power integrity through interactive models</h1>
+    <p>
+      Explore reflections, crosstalk, loss, jitter, and PDN impedance with models you can adjust
+      alongside the equations and explanations. The material begins with basic electronics and
+      extends into the questions practising engineers use during design and debug.
+      <strong>Build intuition, test a prediction, and inspect the assumptions</strong> behind each result.
+    </p>
+    <p>Developed under Geetansh's direction, with his technical review of the content and hands-on exploration of the labs.</p>
+  </div>
+  <nav class="doors" aria-label="Ways in">
+    <a class="door" href="start.html">
+      <b>Learn</b>
+      <span>Follow eight connected steps through both disciplines, with an experiment and an application question at each stage.</span>
+    </a>
+    <a class="door" href="topics/labs/one-channel.html">
+      <b>Labs</b>
+      <span>Three instruments. One channel in six domains, travelling waves and termination, and a power network from regulator to die.</span>
+    </a>
+    <a class="door" href="model-contract.html">
+      <b>Reference</b>
+      <span>Review each model's assumptions, computation method, limitations, and supporting tests.</span>
+    </a>
+    <a class="door" href="topics/methodology/debug-playbook.html">
+      <b>Debug</b>
+      <span>Start from a symptom, choose the most informative domain, and use each measurement to narrow the possible causes.</span>
+    </a>
+  </nav>
+
+  <section class="try">
+    <div class="try__head">
+      <h2>Explore one channel comparison</h2>
+      <p>
+        Three channels, all 8 inches, all 16 GT/s, all with the loss budget set to 14 dB.
+        One has an impedance step, one has no added discontinuity, and one has a 28 ps via stub.
+        <strong>The openings are 254 mV, 253 mV and 48 mV</strong>, although all three begin
+        with the same loss-budget setting.
+      </p>
+      <p class="try__why">
+        Compare the modeled channel responses to see why the eye openings differ.
+        The first two really are matched: <strong>14.06 dB and 14.00 dB</strong> at Nyquist,
+        and their eyes agree to 0.7%. The third is <strong>24.15 dB</strong> — ten decibels
+        more — because a 28 ps stub is not extra attenuation, it is a quarter-wave notch at
+        8.93 GHz, close to the 8 GHz Nyquist frequency. The comparison shows why a loss
+        budget alone does not describe the complete channel response.
+      </p>
+      <p class="try__why">
+        To explore the comparison, open Lab B, press <em>PCIe Gen 4</em>, then
+        <em>…no step at all</em>, then <em>…same budget, a stub</em>, and watch the
+        <em>IL at Nyquist</em> readout rather than the loss slider.
+      </p>
+      <p>
+        <a class="try__go" href="topics/labs/one-channel.html#lab=labChannel;_p=stubby">Open that case in Lab&nbsp;B</a>
+        <a class="try__alt" href="topics/labs/pdn-chain.html">or start on the power side</a>
+      </p>
+    </div>
+  </section>
+
+  <div class="stack">
+  <!-- map:start -->
+    <section class="sec" id="groundwork">
+      <div class="sec__head"><h2>Groundwork</h2><p>Vocabulary, conventions, and mathematical connections used throughout the site.</p></div>
+      <div class="topic-grid">
+        <div class="topic is-live"><a href="topics/groundwork/units-and-conventions.html">SI/PI Units, Conventions, and Reference Planes</a></div>
+        <div class="topic is-live"><a href="topics/groundwork/domain-bridges.html">Time-Domain and Frequency-Domain Analysis</a></div>
+      </div>
+    </section>
+    <section class="sec" id="fundamentals">
+      <div class="sec__head"><h2>Fundamentals</h2><p>Build intuition for transmission lines, loss, coupling, sampling, and measurement.</p></div>
+      <div class="topic-grid">
+        <div class="topic is-live"><a href="topics/fundamentals/edge-rate-not-clock-rate.html">Signal Bandwidth: Why Edge Rate Matters</a></div>
+        <div class="topic is-live"><a href="topics/fundamentals/when-is-a-trace-a-transmission-line.html">When does a trace become a transmission line?</a></div>
+        <div class="topic is-live"><a href="topics/fundamentals/characteristic-impedance.html">Transmission-Line Characteristic Impedance</a></div>
+        <div class="topic is-live"><a href="topics/fundamentals/reflections.html">Transmission-Line Reflections and Ringing</a></div>
+        <div class="topic is-live"><a href="topics/fundamentals/termination-schemes.html">Transmission-Line Termination Schemes</a></div>
+        <div class="topic is-live"><a href="topics/fundamentals/return-current-paths.html">Return-Current Paths and Reference Continuity</a></div>
+        <div class="topic is-live"><a href="topics/fundamentals/crosstalk.html">PCB Crosstalk: NEXT, FEXT, and Mutual Coupling</a></div>
+        <div class="topic is-live"><a href="topics/fundamentals/loss-mechanisms.html">PCB Transmission-Line Loss Mechanisms</a></div>
+        <div class="topic is-live"><a href="topics/fundamentals/isi.html">Intersymbol Interference (ISI) and Channel Memory</a></div>
+        <div class="topic is-live"><a href="topics/fundamentals/eye-diagram.html">Eye Diagrams: Construction and Interpretation</a></div>
+        <div class="topic is-live"><a href="topics/fundamentals/jitter-taxonomy.html">Jitter Components: RJ, DJ, DCD, PJ, and TJ</a></div>
+        <div class="topic is-live"><a href="topics/fundamentals/bathtub-curves.html">Bathtub curves and BER extrapolation</a></div>
+        <div class="topic is-live"><a href="topics/fundamentals/differential-signalling.html">Differential Signaling and Mode Conversion</a></div>
+        <div class="topic is-live"><a href="topics/fundamentals/s-parameters.html">S-Parameters: Insertion Loss, Return Loss, and Mixed Mode</a></div>
+        <div class="topic is-live"><a href="topics/fundamentals/vias.html">High-Speed Vias: Stubs, Resonance, and Backdrilling</a></div>
+      </div>
+    </section>
+    <section class="sec" id="power-integrity">
+      <div class="sec__head"><h2>Power Integrity</h2><p>Follow rail impedance and transient current from the regulator to the die.</p></div>
+      <div class="topic-grid">
+        <div class="topic is-live"><a href="topics/power-integrity/what-is-the-pdn.html">Power Delivery Networks: From Regulator to Die</a></div>
+        <div class="topic is-live"><a href="topics/power-integrity/target-impedance.html">PDN Target Impedance: Use and Limitations</a></div>
+        <div class="topic is-live"><a href="topics/power-integrity/decoupling-capacitors.html">Decoupling Capacitors: ESR, ESL, and Placement</a></div>
+        <div class="topic is-live"><a href="topics/power-integrity/anti-resonance.html">PDN Anti-Resonance and Impedance Peaks</a></div>
+        <div class="topic is-live"><a href="topics/power-integrity/three-frequency-domains.html">PDN Frequency Regions: Board, Package, and Die</a></div>
+        <div class="topic is-live"><a href="topics/power-integrity/plane-resonance.html">Power-Plane Cavity Resonance and Edge Radiation</a></div>
+        <div class="topic is-live"><a href="topics/power-integrity/ir-drop-electromigration.html">DC IR Drop and Electromigration</a></div>
+        <div class="topic is-live"><a href="topics/power-integrity/ssn-ground-bounce.html">Simultaneous Switching Noise and Ground Bounce</a></div>
+        <div class="topic is-live"><a href="topics/power-integrity/pdn-induced-jitter.html">Power-Supply-Induced Jitter: Connecting PI and SI</a></div>
+        <div class="topic is-live"><a href="topics/power-integrity/vrm-loop-bandwidth.html">VRM Control-Loop Bandwidth and Load Transients</a></div>
+        <div class="topic is-live"><a href="topics/power-integrity/cps-co-analysis.html">Chip-Package-System Power Integrity Co-Analysis</a></div>
+        <div class="topic is-live"><a href="topics/power-integrity/real-capacitors.html">Real Capacitors: Bias, Tolerance, Temperature, and Mounting</a></div>
+      </div>
+    </section>
+    <section class="sec" id="signal-integrity">
+      <div class="sec__head"><h2>SI in practice</h2><p>Apply channel budgeting, equalization, receiver, and simulation methods.</p></div>
+      <div class="topic-grid">
+        <div class="topic is-live"><a href="topics/signal-integrity/channel-budgeting.html">Channel Loss Budgeting Across Die, Package, and Board</a></div>
+        <div class="topic is-live"><a href="topics/signal-integrity/what-closes-the-eye.html">Eye Closure: Loss, Reflections, Discontinuities, and Crosstalk</a></div>
+        <div class="topic is-live"><a href="topics/signal-integrity/equalization.html">Equalization and Clock Recovery: CTLE, FFE, DFE, and CDR</a></div>
+        <div class="topic is-live"><a href="topics/signal-integrity/nrz-vs-pam4.html">NRZ and PAM4: Levels, Bandwidth, and SNR</a></div>
+        <div class="topic is-live"><a href="topics/signal-integrity/statistical-vs-time-domain.html">Statistical and Time-Domain Channel Simulation</a></div>
+        <div class="topic is-live"><a href="topics/signal-integrity/ibis-ami-spice.html">IBIS, IBIS-AMI, and SPICE Model Selection</a></div>
+        <div class="topic is-live"><a href="topics/signal-integrity/de-embedding.html">S-Parameter De-Embedding and Fixture Removal</a></div>
+        <div class="topic is-live"><a href="topics/signal-integrity/compliance-masks.html">Transmitter Compliance Masks and Receiver Eye Masks</a></div>
+        <div class="topic is-live"><a href="topics/signal-integrity/receiver-and-clock.html">Receiver Sampling, Clock Recovery, and Jitter Tolerance</a></div>
+      </div>
+    </section>
+    <section class="sec" id="package-board">
+      <div class="sec__head"><h2>Package & board</h2><p>Where the electrical design meets manufacturing.</p></div>
+      <div class="topic-grid">
+        <div class="topic is-live"><a href="topics/package-board/package-families.html">IC Package Interconnects: Wirebond, Flip-Chip, FOWLP, Interposers, and Chiplets</a></div>
+        <div class="topic is-live"><a href="topics/package-board/stackup-design.html">PCB Stackup Design and Dielectric Selection</a></div>
+        <div class="topic is-live"><a href="topics/package-board/bga-escape-routing.html">BGA Escape Routing and Breakout Congestion</a></div>
+        <div class="topic is-live"><a href="topics/package-board/layer-transitions.html">PCB Layer Transitions and Return-Path Stitching</a></div>
+        <div class="topic is-live"><a href="topics/package-board/connectors-cables.html">High-Speed Connectors and Cables</a></div>
+        <div class="topic is-live"><a href="topics/package-board/manufacturing-tolerance.html">PCB Manufacturing Variation: Etch, Glass Weave, and Impedance</a></div>
+        <div class="topic is-live"><a href="topics/package-board/package-and-system.html">Package Interconnects as Transmission Lines</a></div>
+      </div>
+    </section>
+    <section class="sec" id="interfaces">
+      <div class="sec__head"><h2>Interface sign-off</h2><p>Interface-specific data rates, channel considerations, and source boundaries.</p></div>
+      <div class="topic-grid">
+        <div class="topic is-live"><a href="topics/interfaces/lpddr5x.html">LPDDR5 and LPDDR5X Signal Integrity: Timing, ODT, and Training</a></div>
+        <div class="topic is-live"><a href="topics/interfaces/pcie-gen4-gen5.html">PCIe 4.0 and 5.0 Signal Integrity: Loss and Equalization</a></div>
+        <div class="topic is-live"><a href="topics/interfaces/pcie-gen6.html">PCIe 6.0 Signal Integrity: PAM4, FLIT, and FEC</a></div>
+        <div class="topic is-live"><a href="topics/interfaces/usb-3x.html">USB 3.1 and 3.2 Signal Integrity: SSC and Compliance</a></div>
+        <div class="topic is-live"><a href="topics/interfaces/ufs4.html">UFS 4.0 Signal Integrity: M-PHY Gear 5</a></div>
+      </div>
+    </section>
+    <section class="sec" id="methodology">
+      <div class="sec__head"><h2>Methodology</h2><p>Plan simulations and measurements, compare evidence, report margin, and debug efficiently.</p></div>
+      <div class="topic-grid">
+        <div class="topic is-live"><a href="topics/methodology/simulation-flow.html">Signal Integrity Simulation Workflow</a></div>
+        <div class="topic is-live"><a href="topics/methodology/field-solvers.html">Field Solvers for SI/PI: 2D, 2.5D, and 3D</a></div>
+        <div class="topic is-live"><a href="topics/methodology/correlation.html">Correlating Simulation and Measurement</a></div>
+        <div class="topic is-live"><a href="topics/methodology/reporting-margin.html">Reporting Signal and Power Integrity Margin</a></div>
+        <div class="topic is-live"><a href="topics/methodology/debug-playbook.html">SI/PI Debugging: From Symptom to Cause</a></div>
+        <div class="topic is-live"><a href="topics/methodology/measurement-practice.html">SI/PI Measurement: Fixtures, Calibration, and Instrument Effects</a></div>
+      </div>
+    </section>
+    <section class="sec" id="labs">
+      <div class="sec__head"><h2>Labs</h2><p>Four long-form instruments with linked views, stated assumptions, and documented evidence.</p></div>
+      <div class="topic-grid">
+        <div class="topic is-live"><a href="topics/labs/travelling-waves.html">Lab A: Transmission-Line Reflections and Energy Flow</a></div>
+        <div class="topic is-live"><a href="topics/labs/one-channel.html">Lab B: Channel Response, ISI, and Eye Diagrams</a></div>
+        <div class="topic is-live"><a href="topics/labs/pdn-chain.html">Lab C: PDN Impedance, Current Sharing, and Transient Droop</a></div>
+        <div class="topic is-live"><a href="topics/labs/adc-interference.html">Lab D: ADC Interference, Aliasing and Reference Noise</a></div>
+      </div>
+    </section>
+  <!-- map:end -->
+  </div>
+</main>
+
+<footer class="site-foot">
+  <span>SIPI &#8212; signal and power integrity, visualised.</span>
+  <span>Created and directed by Geetansh Arora. <a href="colophon.html">About, review &amp; AI assistance</a> &#183; <a href="model-contract.html">Model assumptions</a> &#183; <a href="docs/claims.md">Claim ledger</a></span>
+</footer>
+
+<script src="js/site.js?v=acb47d86"></script>
+<script src="js/search.js?v=6c93a285"></script>
+</body>
+</html>

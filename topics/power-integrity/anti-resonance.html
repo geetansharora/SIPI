@@ -1,0 +1,443 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PDN Anti-Resonance and Impedance Peaks | SIPI</title>
+<meta name="description" content="How two capacitors that both look fine on their own create an impedance peak between them, and why the biggest peaks come from structure rather than components.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<link rel="stylesheet" href="../../css/base.css?v=e4f774de">
+<link rel="stylesheet" href="../../css/components.css?v=295837ab">
+  <!-- meta:start -->
+  <link rel="canonical" href="https://sipi.work/topics/power-integrity/anti-resonance.html">
+  <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="SIPI">
+  <meta property="og:title" content="PDN Anti-Resonance and Impedance Peaks | SIPI">
+  <meta property="og:description" content="How two capacitors that both look fine on their own create an impedance peak between them, and why the biggest peaks come from structure rather than components.">
+  <meta property="og:url" content="https://sipi.work/topics/power-integrity/anti-resonance.html">
+  <meta property="og:image" content="https://sipi.work/assets/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="PDN Anti-Resonance and Impedance Peaks | SIPI">
+  <meta name="twitter:description" content="How two capacitors that both look fine on their own create an impedance peak between them, and why the biggest peaks come from structure rather than components.">
+  <meta name="twitter:image" content="https://sipi.work/assets/og.png">
+  <!-- meta:end -->
+</head>
+<body>
+
+<header class="masthead">
+  <a class="wordmark" href="../../index.html">SIPI</a>
+  <nav>
+    <a href="../../index.html#fundamentals">Fundamentals</a>
+    <a href="../../index.html#power-integrity">Power</a>
+    <a href="../../index.html#interfaces">Interfaces</a>
+    <a href="../../start.html">Start</a>
+    <a href="../../labs.html">Labs</a>
+    <a href="../../reference.html">Reference</a>
+    <button class="theme-toggle" data-act="theme" type="button">System</button>
+  </nav>
+</header>
+
+<main>
+  <div class="page-head">
+    <p class="crumb"><a href="../../index.html#power-integrity">Power Integrity</a> / 04</p>
+    <h1>PDN Anti-Resonance and Impedance Peaks</h1>
+    <p class="byline">
+      <!-- review:start --><span>By Geetansh Arora — Principal SI/PI Engineer</span><time datetime="2026-09-14" title="Technical review by Geetansh Arora on this date">14 Sep 2026</time><span>9 min</span><!-- review:end -->
+    </p>
+    <p class="answer">
+      Two good capacitors, correctly chosen and correctly mounted, can combine to produce an
+      impedance <em>peak</em> that neither has on its own. It is not a fault in either part &#8212;
+      it is what happens when one has become an inductor and its neighbour has not yet, and they
+      find themselves in parallel. Many PDN impedance peaks arise from this same exchange of energy
+      between a capacitive region and an inductive one.
+    </p>
+  </div>
+
+  <!-- ───────────── the picture ───────────── -->
+  <section class="instrument" data-viz="antiResonance" aria-label="Interactive plot of two capacitors in parallel showing the anti-resonant impedance peak between their self-resonant frequencies">
+    <script type="application/json" data-contract>{"kind":"analytical","evidence":"independent","purpose":"Show a peak appearing between two capacitor banks, and what damps it.","equations":["Zpeak ~ L/(R*C)","fSRF=1/(2*pi*sqrt(LC))"],"units":"Hz, ohm","validity":"Lumped; no plane modes.","numerics":"Direct complex evaluation; explicit no-peak state when none exists.","limitations":"Lumped; no plane modes.","suites":["Anti-resonance","PDN"],"version":"2.0","reviewed":"2026-09-12","panel":"antiResonance"}</script>
+    <div class="instrument__bar">
+      <span class="instrument__title">Two capacitors in parallel &#183; and the peak between them</span>
+        <span data-evidence="independent" data-model-version="2.0" class="model-tag model-tag--analytical" title="Complex parallel RLC admittance. Lumped branches only.">analytical</span>
+      <span class="instrument__readout" role="status" aria-live="polite" aria-label="Current values">
+        <span>peak <b data-out="peak">—</b></span>
+        <span>at <b data-out="fpk">—</b></span>
+        <span>SRF big <b data-out="srf1">—</b></span>
+        <span>SRF small <b data-out="srf2">—</b></span>
+      </span>
+    </div>
+    <div class="panels">
+      <div class="panel">
+        <span class="panel__label">Impedance of each part, and of the two together</span>
+        <canvas data-cv="ar" role="img" aria-label="Impedance magnitude against frequency for two capacitors individually and in parallel, showing a peak between their self-resonant frequencies."></canvas>
+        <div class="legend"><span><i style="background:var(--signal)"></i>the two in parallel</span><span><i class="dash" style="color:var(--muted)"></i>each on its own</span><span><i class="dash" style="color:var(--reflect)"></i>each SRF</span><span><i style="background:var(--alarm)"></i>the peak</span></div>
+      </div>
+    </div>
+    <div class="controls">
+      <div class="ctl">
+        <div class="ctl__head"><label for="ar-cb">Large capacitor</label><output id="ar-cb-out" for="ar-cb">10 µF</output></div>
+        <input type="range" id="ar-cb" min="1" max="100" step="1" value="10">
+      </div>
+      <div class="ctl">
+        <div class="ctl__head"><label for="ar-cs">Small capacitor</label><output id="ar-cs-out" for="ar-cs">100 nF</output></div>
+        <input type="range" id="ar-cs" min="10" max="1000" step="10" value="100">
+        <span class="ctl__note">Bring the values closer and the peak shrinks</span>
+      </div>
+      <div class="ctl">
+        <div class="ctl__head"><label for="ar-esr">ESR scale</label><output id="ar-esr-out" for="ar-esr">1.0×</output></div>
+        <input type="range" id="ar-esr" min="1" max="60" step="1" value="10">
+        <span class="ctl__note">Q goes as 1/R — this is the whole story</span>
+      </div>
+      <div class="ctl">
+        <div class="ctl__head"><label for="ar-esl">Mounting inductance</label><output id="ar-esl-out" for="ar-esl">1.2 nH</output></div>
+        <input type="range" id="ar-esl" min="3" max="30" step="1" value="12">
+      </div>
+    </div>
+    <div class="presets">
+      <button class="preset" type="button" data-preset="two" aria-pressed="true">Two decades apart</button>
+      <button class="preset" type="button" data-preset="close" aria-pressed="false">One decade apart</button>
+      <button class="preset" type="button" data-preset="lowesr" aria-pressed="false">A fifth the ESR</button>
+      <button class="preset" type="button" data-preset="damped" aria-pressed="false">Deliberately damped</button>
+    </div>
+    <div class="transport"><span data-out="note">—</span></div>
+  </section>
+
+  <div class="prose">
+    <h2>A parallel LC is a maximum, not a minimum</h2>
+
+    <p>
+      Basic circuit intuition tells you that putting components in parallel reduces overall impedance:
+      two identical resistors in parallel halve the resistance, and two identical capacitors in parallel
+      halve the capacitive reactance. It seems logical that scattering capacitors of different values across a
+      power rail should make the rail's impedance drop across every frequency band. Yet in high-speed power
+      integrity, doing exactly that often produces the opposite result: a sharp, towering spike of high
+      impedance right where you needed clean power most.
+    </p>
+
+    <p>
+      This apparent paradox is an anti-resonance. It occurs because real capacitors are not ideal. Every capacitor
+      has parasitic series inductance (ESL and mounting loop inductance), which causes it to turn into an inductor
+      above its self-resonant frequency. When you place a larger capacitor in parallel with a smaller one, there is
+      inevitably a middle frequency where the larger part has already become an inductor while the smaller part is
+      still behaving as a capacitor. You have inadvertently connected an inductor in parallel with a capacitor &#8212;
+      forming a classic parallel LC tank circuit across your power rail.
+    </p>
+
+    <p>
+      Series resonance is the familiar one: an inductor and a capacitor in series, and at the
+      frequency where their reactances cancel, the impedance collapses to whatever resistance is
+      left. That is what makes a capacitor useful — its self-resonance is the point of lowest
+      impedance.
+    </p>
+
+    <p>
+      Put the same two elements in <em>parallel</em> and the arithmetic inverts. Their reactances
+      still cancel, but now they are cancelling in the denominator, and the parallel combination
+      goes to a maximum. At that frequency the pair looks like a large resistance, and current
+      circulates between them rather than flowing to the load.
+    </p>
+
+    <p>
+      That is the entire mechanism, and everything below is a consequence of noticing where such
+      pairs occur. They occur wherever one part of the network has passed its own resonance and
+      turned inductive while the next part is still capacitive — which is to say, at a handoff
+      between two stages of a PDN. Not every handoff produces a visible peak: if the two stages
+      resonate close together, or if there is enough series resistance in the loop between them,
+      the pair is damped and the curve simply passes through. What is reliable is the converse —
+      a peak between two stages <em>is</em> such a pair, so a peak tells you where to look.
+    </p>
+
+    <h2 class="section-rule"><span>How a peak appears from two good parts</span></h2>
+
+    <p>
+      Take a 10 µF bulk part and a 100 nF ceramic. Below both self-resonant frequencies they are both
+      capacitors and they add — fine. Above both, they are both inductors in parallel — also fine, the
+      inductance halves. The trouble is the band in between: the 10 µF is past its SRF and behaving as
+      an inductor, while the 100 nF has not reached its SRF and is still a capacitor.
+    </p>
+
+    <p>
+      An inductor in parallel with a capacitor is a tank circuit, and at its resonance the parallel
+      combination goes to a <em>maximum</em>, not a minimum. The peak's height is set by how lossy the
+      loop is:
+    </p>
+
+    <div class="eq">
+      <i class="var">Q</i> = (1 / <i class="var">R</i>) √( <i class="var">L</i> / <i class="var">C</i> )
+      <span class="cap">R here is the total series resistance in the loop — mostly the two capacitors' ESR. Halve the resistance and the peak doubles. This is why a bank of very low-ESR parts can measure worse than a mixed one.</span>
+    </div>
+
+    <div class="note">
+      <b>Check the complete curve after changing a capacitor bank</b>
+      A value added to lower one region can introduce anti-resonances with neighbouring stages and
+      raise another region. Adding more of an existing value avoids a new nominal C value, but it also
+      changes bank ESR, ESL, and interaction with shared mounting paths. Recompute the mounted network
+      after either change.
+    </div>
+
+    <h2 class="section-rule"><span>Structural peaks need structural context</span></h2>
+
+    <p>
+      Component-to-component anti-resonance is the textbook case. Other peaks come from boundaries
+      between board, package, and die, so a board BOM change may have limited influence on their
+      frequency or damping:
+    </p>
+
+    <ul class="tight">
+      <li><strong>Board caps against package inductance</strong>, typically in the tens of megahertz.
+        The board's capacitance looks inductive through the balls and vias, resonating against the
+        package's own capacitance.</li>
+      <li><strong>Package against die.</strong> Package inductance against on-die capacitance, usually
+        in the low hundreds of megahertz. This is the first-droop resonance, and it is the one that
+        shows up as periodic jitter.</li>
+    </ul>
+
+    <p>
+      For those, the levers are different in kind: add damping rather than capacitance, move the
+      resonance by changing the package's inductance or the die's capacitance, or — most often in
+      practice — compare the peak with a bounded load-current spectrum. A peak with negligible
+      excitation may be acceptable, but document the workload evidence and margin rather than assuming
+      that an unmeasured spectral gap is quiet.
+    </p>
+
+    <h2 class="section-rule"><span>Why this decides how your board behaves</span></h2>
+
+    <ul class="tight">
+      <li><strong>Peaks are where the rail actually moves.</strong> A PDN's noise is
+        I × Z, so the frequency where Z is largest is where a given current does the most damage.
+        The peak, not the average, is the design constraint.</li>
+      <li><strong>Adding capacitance can move rather than remove a peak.</strong> A new value creates
+        another interaction, while more identical parts change the bank's effective ESR and ESL.
+        Evaluate the resulting network rather than inferring improvement from capacitance alone.</li>
+      <li><strong>Lower ESR can make it worse.</strong> ESR is the damping. A bank of very
+        low-loss parts has a taller peak than a mixed one, which inverts the usual instinct that a
+        better capacitor is better.</li>
+      <li><strong>A peak only costs you if the load excites it.</strong> This is the redeeming
+        feature and the reason the impedance curve alone is not a verdict. Compare it with the
+        current spectrum before spending anything.</li>
+    </ul>
+
+    <div class="note">
+      <b>Model the mounted population and its spread</b>
+      Use bias- and temperature-adjusted capacitance, representative ESR and ESL, mounting-loop
+      inductance, and component tolerance. Sweep those quantities or measured populations: a nominal
+      curve can place a narrow peak between activity lines while production variation moves it onto
+      one. Correlate the model with impedance or load-step measurements at the same reference point.
+    </div>
+
+    <h2 class="section-rule"><span>What to do about it</span></h2>
+
+    <p>
+      <strong>Damp it rather than trying to remove it.</strong> The peak's height is set by Q, and
+      Q is set by resistance. Deliberately choosing a part with higher ESR — or adding a small
+      series resistance — flattens the peak at the cost of slightly raising the floor. Controlled-ESR
+      capacitors exist for exactly this, and choosing a "worse" capacitor on purpose is a legitimate
+      and underused move.
+    </p>
+
+    <p>
+      <strong>Move it, if you cannot damp it.</strong> The resonant frequency is set by the L of one
+      stage and the C of the next. Changing either moves the peak — so if there is a band where the
+      load has little energy, move the peak there rather than trying to eliminate it.
+    </p>
+
+    <p>
+      <strong>Reduce the inductance that created it.</strong> Lower L lowers both the peak frequency
+      and √(L/C), which is the peak's height scale. This is the only lever that improves both at
+      once, and it is a layout and stackup change rather than a BOM one.</p>
+
+    <p>
+      <strong>Resist the instinct to fill gaps with new values.</strong> The classic failure is
+      seeing a rise in the curve, adding a value chosen to cover it, and finding the curve got
+      worse — because the new part brought two new anti-resonances with it and one of them landed in
+      the gap.
+    </p>
+
+    <div class="note">
+      <b>Using this to find a fault</b>
+      <ul class="tight">
+        <li><b>Ringing after a load step.</b> Measure its frequency. That is the anti-resonance,
+          and the two stages fighting at it are the two whose handoff sits there. In
+          <a href="../labs/pdn-chain.html">Lab C</a> the topology panel names them directly.</li>
+        <li><b>A peak that moved when you changed a capacitor value.</b> Expected — you changed the
+          C in one half of the tank. If it moved into a worse place, that is information about
+          where your load's energy is.</li>
+        <li><b>A peak that got taller when you added parts.</b> Damping. Check the bank's total
+          ESR before and after.</li>
+        <li><b>Two identical boards, different peak heights.</b> Look at the mounting inductance
+          and at the capacitors' actual capacitance under bias — both vary, and both move the
+          tank.</li>
+      </ul>
+    </div>
+
+    <details class="deeper">
+      <summary>Go deeper — peak Q and the main damping levers</summary>
+
+      <p>
+        At the parallel resonance the impedance magnitude is approximately Q times the characteristic
+        impedance of the tank:
+      </p>
+
+      <div class="eq">
+        <span class="eq__main">|<i class="var">Z</i>|<sub>peak</sub> ≈ <i class="var">Q</i> · √( <i class="var">L</i> / <i class="var">C</i> ) &nbsp;&nbsp;&nbsp; <i class="var">Q</i> = (1/<i class="var">R</i>) √( <i class="var">L</i> / <i class="var">C</i> )</span>
+        <span class="eq__note">so |Z|_peak ≈ L / (R·C) — and every lever you have is one of those three symbols</span>
+      </div>
+
+      <p>
+        Writing it as L/(RC) makes the whole design space visible at once. There are exactly three
+        things you can do to a peak, and the expression says what each one costs:
+      </p>
+
+      <ul class="tight">
+        <li><strong>Raise R</strong> — damping. Lowers the peak proportionally, raises the floor
+          slightly in the band where that bank is doing its job. Cheap, and the usual answer.</li>
+        <li><strong>Raise C</strong> — lowers the peak <em>and</em> moves it down in frequency. Two
+          effects, and the second is why "add capacitance" sometimes helps and sometimes relocates
+          the problem onto something else.</li>
+        <li><strong>Lower L</strong> — lowers the peak and moves it <em>up</em>. The only lever that
+          improves the height without a frequency trade you might regret, and the hardest to
+          change, because it is geometry.</li>
+      </ul>
+
+      <p>
+        <strong>Practical mitigation: value spacing and ESR damping.</strong> Understanding the tank reveals why two
+        ubiquitous design practices either succeed or fail catastrophically:
+      </p>
+
+      <ul class="tight">
+        <li><strong>The decade-spacing trap:</strong> A historical rule of thumb recommended staggering decoupling
+          values by decades &#8212; placing a 10 &#181;F, a 1 &#181;F, a 100 nF, and a 10 nF capacitor on every rail.
+          Because each value is separated by a 10&#215; ratio, their self-resonant frequencies are separated by roughly
+          a factor of 3. In low-loss ceramic networks, this creates three distinct, sharp anti-resonant peaks between
+          the dips. Modern high-density designs often achieve a flatter impedance profile by populating multiple copies
+          of a <em>single</em> well-mounted value (such as 1 &#181;F or 100 nF), or by restricting value steps to no more
+          than a factor of 2 or 3 to keep anti-resonant peaks shallow and damped.</li>
+        <li><strong>Targeting critical ESR damping:</strong> For a parallel LC tank formed by inductance
+          <span class="num">L</span> and capacitance <span class="num">C</span>, the characteristic tank impedance is
+          <span class="num">Z<sub>tank</sub> = &#8730;(L / C)</span>. If the branch ESR satisfies
+          <span class="num">R &#8776; &#8730;(L / C)</span>, the tank is critically damped (<span class="num">Q &#8776; 1</span>),
+          and the anti-resonant peak collapses completely into a smooth transitional plateau. Replacing high-ESR electrolytic
+          or tantalum capacitors with ultra-low-ESR MLCCs without compensating for this loss is the single most common reason
+          a revised PCB suddenly fails radiated emissions or transient ripple tests.</li>
+      </ul>
+
+      <p>
+        <strong>The peaks you cannot buy your way out of.</strong> Component-to-component
+        anti-resonance is the textbook case and the easiest to fix. The structural ones are harder:
+        the package's inductance against the on-die capacitance sets a peak whose frequency is fixed
+        by the package design, and no board component is inside that loop. Similarly, the plane pair
+        itself has resonances — see <a href="plane-resonance.html">plane resonance</a> — which are
+        set by board dimensions rather than by anything on the BOM.
+      </p>
+
+      <p>
+        One measurement caution. A peak measured at one port may not exist at another, because the
+        currents circulating in a tank are local. This is the multiport point again: damping a peak
+        seen at the die may do very little for one seen at a bypass capacitor several centimetres
+        away, and vice versa.
+      </p>
+    </details>
+
+    <h2 class="section-rule"><span>In the real world</span></h2>
+
+    <p>
+      Anti-resonance illustrates why adding capacitance does not always lower impedance at every
+      frequency. Interactions among capacitance, inductance, and resistance can make an impedance
+      peak grow even when each added component is useful on its own.
+    </p>
+
+    <p>
+      This is a practical reason to simulate the PDN as a network rather than specifying it only as
+      a parts list. A BOM cannot show where the peaks are, while an impedance curve can reveal how a
+      peak changes as parts are added.
+    </p>
+
+    <h3>Related</h3>
+    <ul class="tight">
+      <li><a href="../power-integrity/decoupling-capacitors.html">Decoupling Capacitors: ESR, ESL, and Placement</a></li>
+      <li><a href="../power-integrity/three-frequency-domains.html">PDN Frequency Regions: Board, Package, and Die</a></li>
+      <li><a href="../power-integrity/pdn-induced-jitter.html">Power-Supply-Induced Jitter: Connecting PI and SI</a></li>
+      <li><a href="../power-integrity/target-impedance.html">PDN Target Impedance: Use and Limitations</a></li>
+    </ul>
+  </div>
+
+
+  <script type="application/json" data-exercises>
+{
+  "title": "Check yourself",
+  "items": [
+    {
+      "ask": "You have an impedance peak between your board and package capacitor banks. You double the number of board capacitors. What happens to the peak?",
+      "options": [
+        {
+          "label": "It roughly halves",
+          "note": "That is what the capacitance alone would suggest, and it is not what happens — the damping changed too."
+        },
+        {
+          "label": "It stays about the same and moves down in frequency",
+          "note": "Close, but this peak's frequency is set by the package bank and the plane inductance, so it barely moves."
+        },
+        {
+          "label": "It can get taller",
+          "correct": true,
+          "note": "Yes. Parts in parallel divide the bank's ESR as well as its ESL, and ESR is the only damping in the loop."
+        },
+        {
+          "label": "It disappears",
+          "note": "Peaks do not disappear when you add capacitance; they move, or change height."
+        }
+      ],
+      "why": "N parts in parallel give N·C, ESR/N and ESL/N. The bank's own minimum impedance falls as 1/N, its self-resonance does not move at all — the L and C changes cancel in 1/√(LC) — and the ESR that was damping the anti-resonance against the next stage is now N times smaller. Measured in Lab C: 20 → 50 board parts takes the worst peak from 56.8 to 61.3 mΩ."
+    },
+    {
+      "ask": "Which of these lowers an anti-resonant peak AND moves it upward in frequency?",
+      "options": [
+        {
+          "label": "More capacitance",
+          "note": "Lowers it, but moves it DOWN — 1/√(LC) falls as C rises."
+        },
+        {
+          "label": "More ESR",
+          "note": "Lowers it without moving it. Damping changes height, not frequency."
+        },
+        {
+          "label": "Less inductance",
+          "correct": true,
+          "note": "Yes — the only lever that improves height and frequency together."
+        },
+        {
+          "label": "A larger case size",
+          "note": "That mainly changes capacitance and bias behaviour, not the loop inductance that matters here."
+        }
+      ],
+      "why": "Write the peak as |Z| ≈ L/(R·C). Raising R lowers the peak and leaves its frequency alone. Raising C lowers it and drags it down in frequency. Lowering L lowers it and pushes it up — the only lever that improves both, and the hardest to change, because it is geometry rather than a part number."
+    }
+  ]
+}
+  </script>
+
+  <!-- pager:start -->
+  <nav class="pager" aria-label="Previous and next topic">
+    <a class="prev" href="../../topics/power-integrity/decoupling-capacitors.html"><span class="dir">Previous</span><span>Decoupling Capacitors: ESR, ESL, and Placement</span></a>
+    <a class="next" href="../../topics/power-integrity/three-frequency-domains.html"><span class="dir">Next</span><span>PDN Frequency Regions: Board, Package, and Die</span></a>
+  </nav>
+  <!-- pager:end -->
+</main>
+
+<footer class="site-foot">
+  <span>SIPI &#8212; signal and power integrity, visualised.</span>
+  <span>Created and directed by Geetansh Arora. <a href="../../colophon.html">About, review &amp; AI assistance</a> &#183; <a href="../../model-contract.html">Model assumptions</a> &#183; <a href="../../docs/claims.md">Claim ledger</a></span>
+</footer>
+
+<script src="../../js/site.js?v=acb47d86"></script>
+<script src="../../js/viz-kit.js?v=a53e49c3"></script>
+<script src="../../js/viz/pdn-extras.js?v=57fcc26f"></script>
+<script src="../../js/viz-loader.js?v=89d5884d"></script>
+<script src="../../js/search.js?v=6c93a285"></script>
+</body>
+</html>

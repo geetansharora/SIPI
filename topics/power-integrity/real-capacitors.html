@@ -1,0 +1,491 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Real Capacitors: Bias, Tolerance, Temperature, and Mounting | SIPI</title>
+<meta name="description" content="Real Capacitors: Bias, Tolerance, Temperature, and Mounting">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<link rel="stylesheet" href="../../css/base.css?v=e4f774de">
+<link rel="stylesheet" href="../../css/components.css?v=295837ab">
+  <!-- meta:start -->
+  <link rel="canonical" href="https://sipi.work/topics/power-integrity/real-capacitors.html">
+  <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="SIPI">
+  <meta property="og:title" content="Real Capacitors: Bias, Tolerance, Temperature, and Mounting | SIPI">
+  <meta property="og:description" content="Real Capacitors: Bias, Tolerance, Temperature, and Mounting">
+  <meta property="og:url" content="https://sipi.work/topics/power-integrity/real-capacitors.html">
+  <meta property="og:image" content="https://sipi.work/assets/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Real Capacitors: Bias, Tolerance, Temperature, and Mounting | SIPI">
+  <meta name="twitter:description" content="Real Capacitors: Bias, Tolerance, Temperature, and Mounting">
+  <meta name="twitter:image" content="https://sipi.work/assets/og.png">
+  <!-- meta:end -->
+</head>
+<body>
+
+<header class="masthead">
+  <a class="wordmark" href="../../index.html">SIPI</a>
+  <nav>
+    <a href="../../index.html#fundamentals">Fundamentals</a>
+    <a href="../../index.html#power-integrity">Power</a>
+    <a href="../../index.html#interfaces">Interfaces</a>
+    <a href="../../start.html">Start</a>
+    <a href="../../labs.html">Labs</a>
+    <a href="../../reference.html">Reference</a>
+    <button class="theme-toggle" data-act="theme" type="button">System</button>
+  </nav>
+</header>
+
+<main>
+  <div class="page-head">
+    <p class="crumb"><a href="../../index.html#power-integrity">Power Integrity</a> / 12</p>
+    <h1>Real Capacitors: Bias, Tolerance, Temperature, and Mounting</h1>
+    <p class="byline">
+      <!-- review:start --><span>By Geetansh Arora — Principal SI/PI Engineer</span><time datetime="2026-09-15" title="Technical review by Geetansh Arora on this date">15 Sep 2026</time><span>10 min</span><!-- review:end -->
+    </p>
+    <p class="answer">
+      The capacitance printed on a decoupling capacitor is not the capacitance
+      you get. DC bias can remove half of it, temperature moves it, ageing moves
+      it again, and the mounting geometry decides how much of what is left can
+      actually reach the load. A PDN simulated from datasheet values is therefore
+      answering a question about a different circuit — and not always a
+      flattering one. Less capacitance raises the floor where that bank was
+      supposed to work, which is worse; but it also moves the resonance against
+      its neighbour, and a higher ESR damps it, which at that frequency is
+      better. Which way any given peak moves is a property of the network, not a
+      rule you can apply in advance.
+    </p>
+  </div>
+
+  <!-- ───────────── the picture ───────────── -->
+  <section class="instrument" data-viz="realCaps" aria-label="Interactive real-capacitor impedance plot">
+    <script type="application/json" data-contract>{"kind":"analytical","evidence":"independent","purpose":"Show what a marked capacitance is worth at an operating point, and how much of the answer the derating uncertainty owns.","equations":["Z=ESR(f)+j(w*Ltot-1/(w*Ceff))","Ceff=cNom*retained","SRF=1/(2*pi*sqrt(Ltot*Ceff))","L_mount=length*(mu0/pi)*acosh(s/2r)","ESR=esrMin*cosh(ln(f/fMin)/2)"],"units":"Hz, ohm, F, H","validity":"Lumped R+L+C. Not valid above the part body's first structural resonance. The retained fraction is an INPUT - this panel does not know your derating and will not guess it.","numerics":"Closed form at every frequency. The band is the exact envelope over the capacitance range, not a two-endpoint min/max.","limitations":"No temperature coefficient on ESR, although one is measured to exist at high frequency. No mutual coupling to neighbouring parts. The ESR shape between its anchors is illustrative.","suites":["Real capacitors"],"version":"1.0","reviewed":"2026-09-13","panel":"realCaps"}</script>
+    <div class="instrument__bar">
+      <span class="instrument__title">One part, one mount · 1 kHz – 100 MHz</span>
+        <span data-evidence="independent" data-model-version="1.0" class="model-tag model-tag--analytical" title="Closed-form series RLC. Exact given the retained fraction — which the panel takes from you rather than guessing.">analytical</span>
+      <span class="instrument__readout" role="status" aria-live="polite" aria-label="Current values">
+        <span>marked <b data-out="marked">—</b></span>
+        <span>delivered <b data-out="ceff">—</b></span>
+        <span>SRF <b data-out="srf">—</b></span>
+      </span>
+    </div>
+
+    <div class="panels">
+      <div class="panel">
+        <span class="panel__label">Impedance magnitude vs frequency — log/log. The shaded region is everything consistent with what you know.</span>
+        <canvas data-cv="zplot" role="img"
+          aria-label="Impedance magnitude of one mounted capacitor against frequency on logarithmic axes from 1 kHz to 100 MHz. A dashed curve shows the marked capacitance, a solid curve the derated value, and a shaded band spans the range of capacitances consistent with the stated uncertainty."></canvas>
+        <div class="legend">
+          <span><i class="dash" style="color:var(--muted)"></i>as marked</span>
+          <span><i style="background:var(--signal)"></i>at your operating point</span>
+          <span><i style="background:var(--reflect)"></i>consistent with what you know</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="controls">
+      <div class="ctl">
+        <div class="ctl__head"><label for="rc-part">Part</label><output data-out="rating">—</output></div>
+        <select id="rc-part" class="ctl__select">
+          <option value="grm188-22u">Murata GRM188R60J226 — 22 µF 0603 X5R 6.3 V</option>
+          <option value="c1608-22u">TDK C1608X5R0J226M — 22 µF 0603 X5R 6.3 V</option>
+          <option value="cl21a226-22u">Samsung CL21A226MAQNNN — 22 µF 0805 X5R 25 V</option>
+          <option value="generic-100n">100 nF 0402 X7R 16 V</option>
+        </select>
+        <span class="ctl__note">Marking, case and rating only — no vendor curve is reproduced here</span>
+      </div>
+      <div class="ctl">
+        <div class="ctl__head"><label for="rc-retained">Capacitance retained</label><output id="rc-retained-out" for="rc-retained">55% retained</output></div>
+        <input type="range" id="rc-retained" min="15" max="100" step="1" value="55">
+        <span class="ctl__note">You supply this. Get it from your vendor’s curve, for your part, at your bias</span>
+      </div>
+      <div class="ctl">
+        <div class="ctl__head"><label for="rc-band">How well you know it</label><output id="rc-band-out" for="rc-band">± 15 points</output></div>
+        <input type="range" id="rc-band" min="0" max="40" step="1" value="15">
+        <span class="ctl__note">Lot spread, vendor spread, and the slow settling after bias is applied</span>
+      </div>
+      <div class="ctl">
+        <div class="ctl__head"><label for="rc-esl">Part ESL</label><output id="rc-esl-out" for="rc-esl">600 pH</output></div>
+        <input type="range" id="rc-esl" min="200" max="1500" step="25" value="600">
+        <span class="ctl__note">Declared, not derived — your vendor publishes it</span>
+      </div>
+      <div class="ctl">
+        <div class="ctl__head"><label for="rc-spacing">Return via spacing</label><output id="rc-spacing-out" for="rc-spacing">1.00 mm</output></div>
+        <input type="range" id="rc-spacing" min="400" max="3000" step="50" value="1000">
+        <span class="ctl__note">1.6 mm board, 0.3 mm barrels — loop computed exactly, not estimated</span>
+      </div>
+    </div>
+
+    <div class="presets">
+      <button class="preset" type="button" data-preset="marked" aria-pressed="false">As marked</button>
+      <button class="preset" type="button" data-preset="classII" aria-pressed="false">Class II, historically</button>
+      <button class="preset" type="button" data-preset="today" aria-pressed="false">High-density, today</button>
+      <button class="preset" type="button" data-preset="badmount" aria-pressed="false">Return via 3 mm away</button>
+    </div>
+
+    <p class="instrument__note"><b data-out="note">Custom</b></p>
+
+    <div class="instrument__meta">
+      <span>Ltot <b data-out="mount">—</b></span>
+      <span>|Z| at SRF <b data-out="zsrf">—</b></span>
+      <span>resonance moves <b data-out="shift">—</b></span>
+    </div>
+  </section>
+
+  <div class="prose">
+    <h2>What a marking actually promises</h2>
+
+    <p>
+      In schematic entry tools and component bills of materials, a capacitor is defined by an idealized,
+      static value: a 22 &#181;F 0603 ceramic capacitor is assumed to deliver exactly 22 microfarads of pure
+      capacitance. If a PDN calculation demands 100 &#181;F of charge storage to satisfy a target impedance,
+      it is tempting to simply place five of those 22 &#181;F capacitors in parallel and assume the requirement is met.
+    </p>
+
+    <p>
+      In physical reality, the capacitor on your BOM is virtually never the capacitor operating on your circuit
+      board. High-density multilayer ceramic capacitors (MLCCs) rely on ferroelectric barium titanate dielectrics
+      (such as X5R and X7R) to achieve enormous capacitance in tiny packages. But that high permittivity comes with
+      a steep physical penalty: when exposed to an electric field from a DC working voltage, the crystal domains
+      saturate, and effective capacitance plummets by 40% to 70% or more. Add manufacturing tolerances, thermal shifts
+      across operating corners, decades of aging, and the parasitic loop inductance of surface vias, and that nominal
+      22 &#181;F part may deliver less than 6 &#181;F of real capacitance behind an ESL three times higher than the
+      vendor's component datasheet.
+    </p>
+
+    <p>
+      A 100 nF 0402 capacitor is characterised at a specific voltage,
+      temperature and signal level — usually near zero bias, 25 °C and a small
+      AC excitation. Your rail is none of those.
+    </p>
+
+    <p>
+      Class II ceramic dielectrics, which is what X7R and X5R are, get their high
+      capacitance density from a ferroelectric material whose permittivity
+      depends on the field across it. Apply a DC bias and the permittivity falls,
+      and with it the capacitance. That is not a defect; it is how the material
+      works.
+    </p>
+
+    <h2 class="section-rule"><span>The four things that move the value</span></h2>
+
+    <ul class="tight">
+      <li><strong>DC bias.</strong> The largest effect, and the one most often
+        missed. A small-case-size part at its rated voltage can lose most of its
+        capacitance, and the effect is worse for smaller packages at the same
+        value — because the dielectric is thinner, so the field is higher.</li>
+      <li><strong>Temperature.</strong> X7R holds ±15% over −55 to +125 °C; X5R
+        holds the same band over a narrower range. That tolerance is on top of
+        the bias effect, not instead of it.</li>
+      <li><strong>Initial tolerance.</strong> ±10% or ±20% is typical, and it is
+        the smallest of these four.</li>
+      <li><strong>Ageing.</strong> Class II dielectrics lose capacitance
+        logarithmically with time from their last thermal reset — a few percent
+        per decade of hours. Soldering resets it, so the clock starts at assembly.</li>
+    </ul>
+
+    <div class="note">
+      <b>The practical consequence</b>
+      Stack a realistic bias derating on top of tolerance, temperature and
+      ageing, and a part marked 100 nF may be delivering half that in service.
+      Simulate the PDN with the marked value and the impedance curve you get is
+      not the one the board has. It is tempting to add that the error always
+      flatters the design. It does not, and the next section is about why that
+      matters more than if it did.
+    </div>
+
+    <h2 class="section-rule"><span>Derating does not simply make things worse</span></h2>
+
+    <p>
+      Take the 22&nbsp;µF part in the panel above, mounted with a 1&nbsp;mm
+      return via, and derate it to 35% of its marking — the kind of loss a
+      high-density Class II part can show at a real rail voltage. Its delivered
+      capacitance falls to 7.70&nbsp;µF, and because the self-resonant frequency
+      goes as one over the square root of capacitance, its resonance climbs from
+      800&nbsp;kHz to 1.352&nbsp;MHz. Now compare the impedance the board actually
+      has against the impedance a simulation using the marking predicts:
+    </p>
+
+    <div class="table-scroll">
+    <table class="data">
+      <caption>|Z| of one mounted 22&nbsp;µF part: marked value against 35% retained</caption>
+      <thead>
+        <tr><th>Frequency</th><th>Marked</th><th>Derated</th><th>Ratio</th><th></th></tr>
+      </thead>
+      <tbody>
+        <tr><td>10 kHz</td><td>723.63 mΩ</td><td>2066.94 mΩ</td><td>2.856×</td><td>worse, by exactly the capacitance you lost</td></tr>
+        <tr><td>751 kHz</td><td>3.56 mΩ</td><td>19.33 mΩ</td><td>5.436×</td><td>worst point — the marked model resonates here and the part does not</td></tr>
+        <tr><td>1.111 MHz</td><td>6.81 mΩ</td><td>6.81 mΩ</td><td>1.000×</td><td>crossover</td></tr>
+        <tr><td>1.380 MHz</td><td>10.79 mΩ</td><td>3.11 mΩ</td><td>0.288×</td><td>best point — now the part resonates and the model does not</td></tr>
+        <tr><td>20 MHz</td><td>225.80 mΩ</td><td>225.13 mΩ</td><td>0.997×</td><td>both inductive; the capacitance has stopped mattering</td></tr>
+      </tbody>
+    </table>
+    </div>
+
+    <p>
+      Three things in that table are worth more than the headline. Well below
+      resonance the ratio approaches <strong>exactly</strong> one over the
+      retained fraction — 1/0.35 = 2.857, against 2.856 measured at 10 kHz —
+      because there the part is nothing but its capacitance, so losing 65% of it
+      costs you 65% of it and not a decibel more. Around the marked resonance
+      the error is <strong>5.44×</strong>, and
+      it is large precisely because the marked model predicts a deep null that
+      the real part does not have. And a little higher up the error
+      <em>reverses</em>: at 1.380&nbsp;MHz the real part is
+      <strong>3.47× better</strong> than the marked model says, because now it
+      is the real part that is resonating.
+    </p>
+
+    <p>
+      So the marked-value simulation is not conservative and it is not
+      optimistic. It is wrong in one direction in one band and wrong in the
+      other direction in the next, with a crossover at 1.111&nbsp;MHz that lands
+      wherever the derating happens to put it. That is the reason a derating you
+      cannot bound is worse than a derating that is merely large: a large known
+      loss can be designed around, and an unknown one moves the sign of your
+      error across the band.
+    </p>
+
+    <div class="note">
+      <b>Why the panel will not tell you your derating</b>
+      It has no honest way to. Novak and colleagues at DesignCon East 2011
+      measured MLCCs from six vendors and found that the bias dependence of the
+      same nominal part differs markedly between them, that X7R is not reliably
+      better than X5R — sometimes not even within one vendor — and that beyond
+      the immediate change there is a slow settling worth as much as another 25%
+      over a few minutes. Ten samples of a single order code spread visibly.
+      A panel that shipped one curve and called it &ldquo;22&nbsp;µF X5R&rdquo;
+      would be teaching you that derating is something you look up. It is
+      something you bound, from your vendor&rsquo;s curve, for the part you are
+      actually buying, at the bias you are actually applying. The panel takes
+      that number from you and shows you what the uncertainty in it costs.
+    </div>
+
+    <h2 class="section-rule"><span>ESR is not a constant either</span></h2>
+
+    <p>
+      Datasheets often quote a single ESR, and it is a value at one frequency.
+      Real ESR has two mechanisms that move in opposite directions:
+    </p>
+
+    <ul class="tight">
+      <li><strong>Dielectric loss</strong> dominates at low frequency and falls as
+        frequency rises.</li>
+      <li><strong>Metal loss</strong> in the electrodes and terminations rises with
+        frequency, because of the skin effect.</li>
+    </ul>
+
+    <p>
+      The result is a shallow minimum, usually somewhere near the part's
+      self-resonant frequency. That matters because ESR is the
+      <em>damping</em> in every anti-resonance — so a model using a single
+      flat ESR gets the peak heights wrong, and gets them wrong differently in
+      different bands.
+    </p>
+
+    <h2 class="section-rule"><span>Mounting: the inductance you built</span></h2>
+
+    <p>
+      The part's own ESL for an 0402 is a few hundred picohenries. The loop it
+      sits in — pad, via down to the plane pair, along the planes, and back — is
+      routinely two to three times that. So the mounting dominates, and it is
+      geometry rather than a purchasing decision.
+    </p>
+
+    <p>
+      Which is why the same part number behaves differently on two boards, and why
+      moving a capacitor two millimetres can matter more than doubling its value.
+      See <a href="decoupling-capacitors.html">decoupling capacitors</a>.
+    </p>
+
+    <h2 class="section-rule"><span>The regulator is a component too</span></h2>
+
+    <p>
+      A voltage regulator is usually modelled as an ideal source, and it is not.
+      Two properties belong in a PDN model:
+    </p>
+
+    <ul class="tight">
+      <li><strong>Closed-loop output impedance</strong> — approximately resistive
+        inside the loop bandwidth and rising like an inductor above it. Modelling
+        it as R + jωL <em>from DC</em> gives it an enormous apparent inductance at
+        low frequency and invents a resonance against the bulk capacitors that no
+        real rail has.</li>
+      <li><strong>Load line</strong> — many high-current rails deliberately regulate
+        to a voltage that falls with load. That halves the apparent transient
+        excursion and reduces power at heavy load, at the cost of a DC window that
+        is now load-dependent. Static and dynamic budgets then have to be
+        evaluated together rather than separately.</li>
+    </ul>
+
+    <h2 class="section-rule"><span>One port is not the PDN</span></h2>
+
+    <p>
+      Everything above describes components. The last modelling gap is
+      structural: a die has many loads and many observation points, and a single
+      impedance at one port answers only "how much does the rail move when
+      <em>this</em> block draws current?"
+    </p>
+
+    <p>
+      It does not answer "how much does a noisy block over there disturb me?"
+      That is a <strong>transfer</strong> impedance, and on a shared plane it can
+      be the number that matters. A rail can pass its own target and still be
+      disturbed by a neighbour, and fixing a peak at one port can move it to
+      another.
+    </p>
+
+    <h2 class="section-rule"><span>What to do about it</span></h2>
+
+    <p>
+      <strong>Use the vendor's bias curve, not the marking.</strong> Every major
+      manufacturer publishes capacitance against DC bias, and most provide
+      S-parameter or SPICE models that include it. Using them is the single
+      highest-value correction available.
+    </p>
+
+    <p>
+      <strong>Prefer a larger case size at the same value</strong> where the space
+      exists. The thicker dielectric derates less under bias, and often ends up
+      delivering more real capacitance than a smaller part of a higher marked
+      value.
+    </p>
+
+    <p>
+      <strong>Model ESR as frequency-dependent if the peaks matter.</strong> It is
+      the damping term you control by choosing a part, which is why it gets the
+      attention — but it is not the only one in the circuit. Plane and via
+      resistance, the regulator's own output resistance inside its control
+      bandwidth, the die's on-chip resistance, and dielectric loss in the plane
+      cavity all dissipate. On a well-damped rail those can matter as much as the
+      capacitors' ESR; on a rail with a sharp mid-band peak the capacitors
+      usually dominate it. The useful habit is to ask which resistance is in
+      series with the <em>circulating</em> current at the frequency of the peak,
+      rather than to assume it is the one on the datasheet.
+    </p>
+
+    <p>
+      <strong>Model the mounting, not the part.</strong> For the short, wide,
+      via-in-pad geometries this page assumes, the loop adds a few hundred
+      picohenries to a part whose own ESL is a few hundred — so datasheet ESL
+      alone understates the total by roughly two to three times. A long thin
+      trace to a distant via makes it much worse than that; a part mounted
+      directly over a via pair with a thin dielectric underneath makes it
+      better. The factor is geometry, so measure or extract yours rather than
+      carrying this one.
+    </p>
+
+    <div class="note">
+      <b>Using this to find a fault</b>
+      <ul class="tight">
+        <li><b>Measured impedance consistently above simulated.</b> Check bias
+          derating first. It is the largest single discrepancy and it is
+          systematic, not random.</li>
+        <li><b>A rail that degrades over temperature more than the silicon
+          explains.</b> Class II dielectric moving with temperature.</li>
+        <li><b>Two boards, same BOM, different peaks.</b> Mounting, or actual
+          capacitance under bias. Both vary; neither is on the BOM.</li>
+        <li><b>Anti-resonance peaks taller than modelled.</b> Flat ESR in the
+          model. The real ESR is lower near resonance, so there is less damping
+          than assumed.</li>
+      </ul>
+    </div>
+
+    <details class="deeper">
+      <summary>Go deeper — why smaller packages derate harder, and why ageing resets</summary>
+
+      <p>
+        <strong>Derating and dielectric thickness.</strong> Capacitance density is
+        won by making the dielectric layers thinner, so a smaller package at the
+        same value has thinner layers. The field across the dielectric is the
+        applied voltage divided by that thickness — so at the same rail voltage,
+        a smaller part sees a higher field and loses more permittivity.
+      </p>
+
+      <p>
+        The consequence is counter-intuitive and worth internalising: <b>between
+        two parts of the same marked value, the physically larger one usually
+        delivers more capacitance in circuit.</b> Choosing the smaller part to
+        save board area can cost you the capacitance you were buying.
+      </p>
+
+      <p>
+        <strong>Why ageing resets.</strong> The ferroelectric domains in a Class II
+        dielectric relax over time towards a lower-permittivity arrangement, which
+        is why capacitance falls logarithmically with time. Heating the part above
+        its Curie point randomises the domains again and restarts the clock —
+        which reflow soldering does. So the ageing clock starts at assembly, not
+        at manufacture, and a part measured at incoming inspection is not in the
+        state it will be in on the board.
+      </p>
+
+      <p>
+        <strong>And the one that is not a derating at all.</strong> Class I
+        dielectrics — C0G/NP0 — are not ferroelectric. They have essentially no
+        bias dependence, negligible temperature coefficient and no ageing. They
+        also have far lower capacitance density, so they appear in small values
+        where stability matters rather than in bulk decoupling. If a model and a
+        measurement agree suspiciously well on a rail, check whether the parts
+        were C0G.
+      </p>
+    </details>
+
+    <h2 class="section-rule"><span>In the real world</span></h2>
+
+    <p>
+      This page exists because PDN simulation has a systematic bias, and the bias
+      is always optimistic. Marked capacitance, flat ESR, datasheet ESL and an
+      ideal regulator each flatter the design a little, and they compound.
+    </p>
+
+    <p>
+      Which makes the first question about any PDN discrepancy the same one: not
+      "is the model wrong?" but <b>"which of these four is the model still
+      using the datasheet value for?"</b> Usually at least one of them is.
+    </p>
+
+    <h3>Related</h3>
+    <ul class="tight">
+      <li><a href="decoupling-capacitors.html">Decoupling Capacitors: ESR, ESL, and Placement</a> — the mounting loop in detail</li>
+      <li><a href="anti-resonance.html">PDN Anti-Resonance and Impedance Peaks</a> — why ESR is the term that matters</li>
+      <li><a href="vrm-loop-bandwidth.html">VRM Control-Loop Bandwidth and Load Transients</a> — the regulator's output impedance shape</li>
+      <li><a href="cps-co-analysis.html">Chip-Package-System Power Integrity Co-Analysis</a> — why one port is not the PDN</li>
+      <li><a href="../labs/pdn-chain.html">Lab C: PDN Impedance, Current Sharing, and Transient Droop</a> — the whole ladder, with branch currents</li>
+    </ul>
+  </div>
+
+<!-- sources:start -->
+    <section class="sources">
+      <h2 class="section-rule"><span>Sources</span></h2>
+      <ul class="sources__list">
+      <li><a href="http://electrical-integrity.com/Paper_download_files/DCE11_200.pdf" rel="noopener">Novak et al. — DC and AC Bias Dependence of MLCC Capacitors, DesignCon East 2011</a> <span class="src__for">C-19</span></li>
+      </ul>
+      <p class="sources__note">Rows marked with a claim id are tracked in <a href="../../docs/claims.md">the claim ledger</a>, which records what each source can and cannot establish.</p>
+    </section>
+    <!-- sources:end -->
+  <!-- pager:start -->
+  <nav class="pager" aria-label="Previous and next topic">
+    <a class="prev" href="../../topics/power-integrity/cps-co-analysis.html"><span class="dir">Previous</span><span>Chip-Package-System Power Integrity Co-Analysis</span></a>
+    <a class="next" href="../../topics/signal-integrity/channel-budgeting.html"><span class="dir">Next</span><span>Channel Loss Budgeting Across Die, Package, and Board</span></a>
+  </nav>
+  <!-- pager:end -->
+</main>
+
+<footer class="site-foot">
+  <span>SIPI &#8212; signal and power integrity, visualised.</span>
+  <span>Created and directed by Geetansh Arora. <a href="../../colophon.html">About, review &amp; AI assistance</a> &#183; <a href="../../model-contract.html">Model assumptions</a> &#183; <a href="../../docs/claims.md">Claim ledger</a></span>
+</footer>
+
+<script src="../../js/viz-kit.js?v=a53e49c3"></script>
+<script src="../../js/viz/real-caps.js?v=0e4dd229"></script>
+<script src="../../js/viz-loader.js?v=89d5884d"></script>
+<script src="../../js/site.js?v=acb47d86"></script>
+<script src="../../js/search.js?v=6c93a285"></script>
+</body>
+</html>

@@ -1,0 +1,58 @@
+{
+  "schemaVersion": 1,
+  "id": "series-rlc-cancellation",
+  "title": "Series RLC reactance changes sign through resonance",
+  "kind": "series-rlc",
+  "inputs": {
+    "r": 0.02,
+    "l": 1e-09,
+    "c": 1e-07
+  },
+  "inputUnits": {
+    "r": "ohm",
+    "l": "H",
+    "c": "F"
+  },
+  "checks": [
+    {
+      "metric": "resonantReal",
+      "expected": 0.02,
+      "absoluteTolerance": 1e-10,
+      "unit": "ohm",
+      "derivation": "At ω0=1/sqrt(LC), reactive terms cancel and Z=R."
+    },
+    {
+      "metric": "resonantImag",
+      "expected": 0.0,
+      "absoluteTolerance": 1e-10,
+      "unit": "ohm",
+      "derivation": "Inductor and capacitor reactances are equal and opposite."
+    },
+    {
+      "metric": "halfFrequencyImag",
+      "expected": -0.15,
+      "absoluteTolerance": 1e-10,
+      "unit": "ohm",
+      "derivation": "sqrt(L/C)=.1 Ω; at half resonance X=.1(.5−2)=−.15 Ω."
+    },
+    {
+      "metric": "doubleFrequencyImag",
+      "expected": 0.15,
+      "absoluteTolerance": 1e-10,
+      "unit": "ohm",
+      "derivation": "At twice resonance X=.1(2−.5)=+.15 Ω."
+    }
+  ],
+  "evidence": {
+    "type": "analytical",
+    "provenance": "First-principles network limits or algebraic reduction of the declared teaching loop, independent of production numerical output."
+  },
+  "prediction": "Does the capacitor branch remain capacitive above self-resonance?",
+  "explanation": "No. The series branch is capacitive below resonance, resistive at resonance, and inductive above it.",
+  "limitations": [
+    "Lumped series RLC; no bias, temperature, aging or distributed behavior.",
+    "This is a branch-level reference rather than a named-part capacitor model."
+  ],
+  "relatedPage": "/topics/power-integrity/real-capacitors.html",
+  "availability": "helper-only"
+}

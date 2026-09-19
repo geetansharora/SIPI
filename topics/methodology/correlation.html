@@ -1,0 +1,348 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Correlating Simulation and Measurement | SIPI</title>
+<meta name="description" content="What correlation actually means, which instrument answers which question, and how to tell a modelling error from a measurement artefact.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<link rel="stylesheet" href="../../css/base.css?v=e4f774de">
+<link rel="stylesheet" href="../../css/components.css?v=295837ab">
+  <!-- meta:start -->
+  <link rel="canonical" href="https://sipi.work/topics/methodology/correlation.html">
+  <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="SIPI">
+  <meta property="og:title" content="Correlating Simulation and Measurement | SIPI">
+  <meta property="og:description" content="What correlation actually means, which instrument answers which question, and how to tell a modelling error from a measurement artefact.">
+  <meta property="og:url" content="https://sipi.work/topics/methodology/correlation.html">
+  <meta property="og:image" content="https://sipi.work/assets/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Correlating Simulation and Measurement | SIPI">
+  <meta name="twitter:description" content="What correlation actually means, which instrument answers which question, and how to tell a modelling error from a measurement artefact.">
+  <meta name="twitter:image" content="https://sipi.work/assets/og.png">
+  <!-- meta:end -->
+</head>
+<body>
+
+<header class="masthead">
+  <a class="wordmark" href="../../index.html">SIPI</a>
+  <nav>
+    <a href="../../index.html#fundamentals">Fundamentals</a>
+    <a href="../../index.html#power-integrity">Power</a>
+    <a href="../../index.html#interfaces">Interfaces</a>
+    <a href="../../start.html">Start</a>
+    <a href="../../labs.html">Labs</a>
+    <a href="../../reference.html">Reference</a>
+    <button class="theme-toggle" data-act="theme" type="button">System</button>
+  </nav>
+</header>
+
+<main>
+  <div class="page-head">
+    <p class="crumb"><a href="../../index.html#methodology">Methodology</a> / 03</p>
+    <h1>Correlating Simulation and Measurement</h1>
+    <p class="byline">
+      <!-- review:start --><span>By Geetansh Arora — Principal SI/PI Engineer</span><time datetime="2026-09-18" title="Technical review by Geetansh Arora on this date">18 Sep 2026</time><span>9 min</span><!-- review:end -->
+    </p>
+    <p class="answer">
+      Correlation is the act of deciding what it means when a simulation and a measurement
+      disagree. That is harder than it sounds, because both have uncertainty, and a disagreement
+      smaller than the combined uncertainty is not evidence of anything at all.
+    </p>
+  </div>
+
+  <!-- ───────────── the picture ───────────── -->
+  <figure class="figure">
+    <div class="figure__bar"><span>What a disagreement actually means</span></div>
+    <div class="figure__body"><svg viewBox="-4 14 680 292" role="img" aria-label="Three instruments and the questions each answers, above an ordered checklist for deciding what a disagreement between simulation and measurement actually means.">
+  <g>
+    <text class="lbl-hi" x="0" y="32">three instruments, three questions</text>
+    <rect class="edge" x="0" y="44" width="210" height="58" rx="3" fill="var(--surface-2)"/>
+    <text class="lbl-hi" x="12" y="64">VNA</text><text class="lbl" x="12" y="80">S-parameters vs frequency</text>
+    <text class="lbl-sig" x="12" y="94">what the simulation produces too</text>
+    <rect class="edge" x="228" y="44" width="210" height="58" rx="3" fill="var(--surface-2)"/>
+    <text class="lbl-hi" x="240" y="64">TDR</text><text class="lbl" x="240" y="80">impedance vs distance</text>
+    <text class="lbl-sig" x="240" y="94">tells you WHICH via</text>
+    <rect class="edge" x="456" y="44" width="210" height="58" rx="3" fill="var(--surface-2)"/>
+    <text class="lbl-hi" x="468" y="64">Scope</text><text class="lbl" x="468" y="80">eyes, jitter, a running link</text>
+    <text class="lbl-sig" x="468" y="94">what the receiver experiences</text>
+  </g>
+  <g transform="translate(0,124)">
+    <text class="lbl-hi" x="0" y="0">when they disagree, work in this order</text>
+    <circle cx="14" cy="26" r="11" fill="var(--signal)" opacity=".22"/><text class="lbl-sig" x="14" y="30" text-anchor="middle">1</text><text class="lbl-hi" x="34" y="24">Are they the same question?</text><text class="lbl" x="34" y="40">same planes, ports, reference Z, de-embedding — most disagreements die here</text>
+    <circle cx="14" cy="70" r="11" fill="var(--signal)" opacity=".22"/><text class="lbl-sig" x="14" y="74" text-anchor="middle">2</text><text class="lbl-hi" x="34" y="68">Is the measurement clean?</text><text class="lbl" x="34" y="84">calibration, passivity, a ripple whose period matches the fixture</text>
+    <circle cx="14" cy="114" r="11" fill="var(--signal)" opacity=".22"/><text class="lbl-sig" x="14" y="118" text-anchor="middle">3</text><text class="lbl-hi" x="34" y="112">Does the disagreement have a shape?</text><text class="lbl" x="34" y="128">flat offset = length or material · growing with f = roughness or Df · narrow = a missing resonance</text>
+    <circle cx="14" cy="158" r="11" fill="var(--signal)" opacity=".22"/><text class="lbl-sig" x="14" y="162" text-anchor="middle">4</text><text class="lbl-hi" x="34" y="156">Only then, suspect the model.</text><text class="lbl" x="34" y="172">and the shape from step 3 usually names the missing physics</text>
+  </g>
+</svg></div>
+    <figcaption><b>Correlation is not agreement to the last decibel</b> &#8212; it is agreement within a stated tolerance over a stated band, for a stated reason. Most apparent disagreements turn out to be a measurement artefact or a model that was never asked the same question, which is why the ladder runs in that order: it is roughly the order of how often each turns out to be the cause. <b>Probing changes what you measure.</b> A probe is a circuit &#8212; its capacitance loads the node, its ground lead is an inductor, and together they form a resonance that appears in the measurement and not in the design. Before believing any anomaly, shorten the ground path and see whether it moves. Agree the tolerance in advance and in writing: insertion loss within a stated fraction of a decibel up to Nyquist, impedance within a stated percentage. Without a number agreed beforehand, &ldquo;correlated&rdquo; becomes a matter of whoever is more insistent &#8212; and the first time it matters is the worst time to negotiate it.</figcaption>
+  </figure>
+
+  <div class="prose">
+    <p>
+      The ultimate sign-off of any signal or power integrity engineering is not a polished PDF report or a clean
+      synthetic eye diagram — it is whether physical copper and silicon behave as predicted when powered on in the
+      laboratory. If a 32 GT/s link runs error-free on the bench, but your simulation predicted total eye closure,
+      your model was uselessly pessimistic. If your simulation promised 40 millivolts of eye margin, but the prototype
+      drops packets every ten minutes, your model was dangerously optimistic.
+    </p>
+
+    <p>
+      Closing this gap is the discipline of <strong>correlation</strong>: the systematic, side-by-side reconciliation
+      of electromagnetic simulations against bench measurements taken with vector network analyzers (VNAs), time-domain
+      reflectometers (TDRs), and real-time oscilloscopes.
+    </p>
+
+    <p>
+      Engineers new to the lab almost universally make the same initial mistake: whenever hardware disagrees with a
+      simulation, they assume the simulation failed and immediately begin tweaking dielectric constants or copper
+      roughness values to force the simulator's curves onto the measured plot. In practice, however, bench measurements
+      are laden with physical artifacts — probe ground-lead inductance, worn calibration standards, cable flex phase
+      errors, and imperfect fixture de-embedding. True correlation is not curve-fitting; it is a methodical process of
+      diagnosing the physical signature of the discrepancy.
+    </p>
+
+    <h2>What a disagreement can mean</h2>
+
+    <p>
+      A simulation says one thing, hardware says another. There are four possibilities and they
+      have completely different consequences:
+    </p>
+
+    <ul class="tight">
+      <li><strong>The model is wrong</strong> — a geometry, a material, a missing structure.</li>
+      <li><strong>The measurement is wrong</strong> — calibration, de-embedding, fixture, probe
+        loading.</li>
+      <li><strong>They are measuring different things</strong> — different reference planes,
+        different conditions, different corners.</li>
+      <li><strong>Neither is wrong</strong> — the difference is inside the uncertainty of both, and
+        there is nothing to explain.</li>
+    </ul>
+
+    <p>
+      The fourth is the one people skip, and skipping it produces weeks of investigation into noise.
+      So the first question in any correlation exercise is not "why do they differ?" but
+      <b>"by more than what?"</b>
+    </p>
+
+    <h2 class="section-rule"><span>Three instruments, three questions</span></h2>
+
+    <ul class="tight">
+      <li><strong>VNA.</strong> Frequency-domain S-parameters. The primary tool for channel
+        characterisation, because it is what the simulation produces too. Needs careful calibration and
+        de-embedding, and its accuracy at the extremes of its range is worse than the middle.</li>
+      <li><strong>TDR.</strong> Impedance versus distance. Unbeatable for <em>locating</em> a
+        discontinuity — it tells you which via or which connector, which a frequency-domain plot cannot.
+        Its resolution is set by the step's rise time, so a slow TDR merges features that a fast one
+        separates.</li>
+      <li><strong>Real-time or sampling scope.</strong> Eyes, jitter decomposition, and the actual
+        behaviour of a running link. The only instrument that measures what the receiver experiences,
+        and the only one that includes the transmitter, the PDN and the protocol.</li>
+    </ul>
+
+    <div class="note">
+      <b>Probing changes what you measure</b>
+      A probe is a circuit. Its capacitance loads the node, its ground lead is an inductor, and together
+      they form a resonance that appears in the measurement and not in the design. Ground-lead
+      inductance is the classic offender — a long ground wire on a high-speed probe produces ringing that
+      looks exactly like a signal-integrity problem. Before believing any anomaly, shorten the ground
+      path and see whether it moves.
+    </div>
+
+    <h2 class="section-rule"><span>Deciding what a disagreement means</span></h2>
+
+    <p>
+      When simulation and measurement disagree, work through this order — it is roughly the order of how
+      often each turns out to be the cause:
+    </p>
+
+    <ol class="tight">
+      <li><strong>Are they the same question?</strong> Same reference planes, same ports, same
+        reference impedance, same de-embedding applied on both sides. Most disagreements die here.</li>
+      <li><strong>Is the measurement clean?</strong> Check the calibration, check the de-embedded file
+        for passivity, look for a ripple whose period matches the fixture length. An
+        over-de-embedded measurement disagrees with a correct simulation and the simulation is right.</li>
+      <li><strong>Does the disagreement have a shape?</strong> A constant offset is usually a length or a
+        material property. A divergence growing with frequency is usually roughness or a D<sub>f</sub>
+        that is optimistic. A narrow discrepancy at one frequency is a resonance the model omitted —
+        typically a stub or a cavity mode.</li>
+      <li><strong>Only then, suspect the model.</strong> And when you do, the shape from step 3 usually
+        names the missing physics.</li>
+    </ol>
+
+    <p>
+      Agree the tolerance in advance, in writing: something like insertion loss within a stated fraction
+      of a decibel up to the Nyquist frequency, and impedance within a stated percentage. Without a
+      number agreed beforehand, &ldquo;correlated&rdquo; becomes a matter of whoever is more insistent,
+      and the first time it matters is the worst time to negotiate it.
+    </p>
+
+    <h2 class="section-rule"><span>Why this decides how your board behaves</span></h2>
+
+    <ul class="tight">
+      <li><strong>It is how a model earns the right to be trusted.</strong> Every predictive
+        decision later — a stackup choice, a reach limit — rests on a model that was correlated
+        once, somewhere.</li>
+      <li><strong>Fitting is not validating.</strong> Adjusting parameters until a model matches one
+        measurement proves the model has enough free parameters, not that it is right. The test is
+        whether it then predicts a <em>different</em> structure correctly.</li>
+      <li><strong>The domain of the disagreement names the cause.</strong> A constant offset, a
+        growing gap, and a localised ripple point at three different things.</li>
+      <li><strong>Uncertainty is not symmetric across frequency.</strong> A VNA is least accurate at
+        the extremes of its range, so a disagreement there deserves less weight than one in the
+        middle.</li>
+    </ul>
+
+    <h2 class="section-rule"><span>What to do about it</span></h2>
+
+    <p>
+      <strong>Quantify the measurement uncertainty before comparing.</strong> Repeat the measurement
+      — same fixture, different day; different fixture, same board; different board, same design.
+      The spread you get is the floor below which a disagreement means nothing.
+    </p>
+
+    <p>
+      <strong>Match the reference planes explicitly.</strong> This is the single most common source
+      of apparent disagreement, and it is bookkeeping rather than physics. See
+      <a href="../signal-integrity/de-embedding.html">de-embedding</a>.
+    </p>
+
+    <p>
+      <strong>Correlate a structure you can vary.</strong> A single comparison is one data point. A
+      family — three trace lengths, two via styles — lets you check that the model gets the
+      <em>trend</em> right, which is a far stronger claim than matching one curve.
+    </p>
+
+    <p>
+      <strong>Validate on something you did not fit to.</strong> Fit on one structure, predict
+      another, then measure it. That is the difference between a fitted model and a validated one.
+    </p>
+
+    <div class="note">
+      <b>Using this to find a fault</b>
+      <ul class="tight">
+        <li><b>A constant dB offset.</b> A discrete structure missing from the model — a launch, a
+          connector, a transition.</li>
+        <li><b>A gap that grows with frequency.</b> Distributed: roughness, D<sub>f</sub>, or a
+          material parameter quoted at the wrong frequency.</li>
+        <li><b>Ripple present in one and not the other.</b> A reflection pair. Either the model is
+          missing a discontinuity or the de-embedding introduced one.</li>
+        <li><b>Disagreement only in the tails of a jitter or BER comparison.</b> A random
+          contributor absent from the model — supply noise is the usual one.</li>
+        <li><b>Agreement that is suspiciously perfect.</b> Check that the comparison is against
+          independent data and not against something the model was fitted to.</li>
+      </ul>
+    </div>
+
+    <details class="deeper">
+      <summary>Go deeper — three instruments, three questions, and their blind spots</summary>
+
+      <ul class="tight">
+        <li><strong>VNA</strong> — frequency-domain S-parameters, and the primary tool because it is
+          what simulation produces too. Needs careful calibration and de-embedding, and is least
+          accurate at the extremes of its range.</li>
+        <li><strong>TDR</strong> — impedance versus distance. Unbeatable for <em>locating</em> a
+          discontinuity: it says which via, which a frequency plot cannot. Its spatial resolution is
+          set by the step's rise time, so a slow TDR merges features a fast one separates.</li>
+        <li><strong>BERT / scope</strong> — the actual link, running. It is the only instrument that
+          measures the thing the specification is about, and the only one that cannot reach a low
+          BER in reasonable time.</li>
+      </ul>
+
+      <p>
+        Those three answer different questions, and a good correlation exercise uses the
+        redundancy. A TDR and a VNA measure the same structure in two domains, and they must be
+        consistent — the TDR trace is the step response of S<sub>11</sub>. If they are not, one of
+        the measurements is wrong, and you have found that out without needing a simulation at all.
+      </p>
+
+      <p>
+        <strong>Model sensitivity is the other half.</strong> Before blaming a parameter, check how
+        much the answer moves when you change it. If a plausible ±10% on D<sub>f</sub> covers the
+        disagreement, then D<sub>f</sub> is a candidate — and if it takes ±200%, it is not, whatever
+        the disagreement looks like. Sensitivity analysis turns a list of suspects into a short
+        list.
+      </p>
+
+      <p>
+        <strong>And a caution about averaging.</strong> Comparing a simulated nominal against a
+        measured single board compares a mean to a sample. Either measure several boards or compare
+        the simulation's corners against the measurement's spread — but do not treat one board as
+        the population.
+      </p>
+
+      <p>
+        <strong>Diagnostic playbook: reading the shape of a discrepancy.</strong> When an S-parameter simulation
+        diverges from a calibrated VNA measurement, the mathematical shape of the divergence identifies the underlying
+        mechanism immediately:
+      </p>
+
+      <ul class="tight">
+        <li><strong>Uniform vertical dB offset across all frequencies:</strong> Points to bulk DC conductor loss or
+          contact resistance. Check trace length book-keeping, copper plating thickness (e.g. 0.5 oz vs 1 oz), or
+          a <span class="num">50 to 100 m&Omega;</span> contact resistance at a launch connector.</li>
+        <li><strong>Discrepancy grows linearly with frequency (&prop; f):</strong> Dielectric loss tangent (<span class="num">D<sub>f</sub></span>)
+          error. If measured loss is steeper than simulated loss, the dielectric material is lossier than the vendor's
+          datasheet quoted, or ambient moisture has been absorbed into the resin matrix.</li>
+        <li><strong>Discrepancy grows as &radic;f above 5–10 GHz:</strong> Copper surface roughness under-prediction.
+          Smooth conductor models fail above a few gigahertz; switch the solver's roughness model from smooth to a calibrated
+          Cannonball-Huray or modified Hammerstad formulation.</li>
+        <li><strong>Periodic ripple in S<sub>21</sub> and S<sub>11</sub>:</strong> Cavity or standing-wave reflection
+          between two impedance discontinuities. Calculate the physical distance between the reflectors using the ripple
+          frequency spacing: <span class="num">&Delta;f = v / (2 &times; L)</span>. The resulting distance will land
+          directly on the culprit features (e.g., the distance from the SMA connector launch to the first via transition).</li>
+        <li><strong>Sharp resonant notch at a discrete frequency:</strong> An unmodeled or inaccurately sized via stub
+          acting as a quarter-wave open circuit resonator (<span class="num">f<sub>notch</sub> &approx; v / (4 &times; h<sub>stub</sub>)</span>),
+          or an unstitched power plane resonance.</li>
+        <li><strong>Unphysical gain (|S<sub>21</sub>| > 0 dB or |S<sub>11</sub>| > 1):</strong> Never believe hardware
+          violating thermodynamics. This indicates an invalid VNA calibration, a damaged port cable, temperature-induced
+          cable phase drift, or an over-subtracted 2x-thru de-embedding coupon.</li>
+      </ul>
+    </details>
+
+    <h2 class="section-rule"><span>In the real world</span></h2>
+
+    <p>
+      Correlation is where engineering judgement is least substitutable. The arithmetic is easy; the
+      hard part is deciding which of four explanations a discrepancy supports, and resisting the
+      pull towards whichever one is cheapest to act on.
+    </p>
+
+    <p>
+      The discipline that helps most is writing down what would change your mind before you look.
+      "If the gap grows with frequency, I will suspect roughness; if it is flat, I will suspect the
+      launch." That costs nothing and it prevents a long afternoon of fitting a model to a
+      measurement error.
+    </p>
+
+    <h3>Related</h3>
+    <ul class="tight">
+      <li><a href="../signal-integrity/de-embedding.html">S-Parameter De-Embedding and Fixture Removal</a></li>
+      <li><a href="../fundamentals/s-parameters.html">S-Parameters: Insertion Loss, Return Loss, and Mixed Mode</a></li>
+      <li><a href="../methodology/debug-playbook.html">SI/PI Debugging: From Symptom to Cause</a></li>
+      <li><a href="../package-board/manufacturing-tolerance.html">PCB Manufacturing Variation: Etch, Glass Weave, and Impedance</a></li>
+    </ul>
+  </div>
+
+  <!-- pager:start -->
+  <nav class="pager" aria-label="Previous and next topic">
+    <a class="prev" href="../../topics/methodology/field-solvers.html"><span class="dir">Previous</span><span>Field Solvers for SI/PI: 2D, 2.5D, and 3D</span></a>
+    <a class="next" href="../../topics/methodology/reporting-margin.html"><span class="dir">Next</span><span>Reporting Signal and Power Integrity Margin</span></a>
+  </nav>
+  <!-- pager:end -->
+</main>
+
+<footer class="site-foot">
+  <span>SIPI &#8212; signal and power integrity, visualised.</span>
+  <span>Created and directed by Geetansh Arora. <a href="../../colophon.html">About, review &amp; AI assistance</a> &#183; <a href="../../model-contract.html">Model assumptions</a> &#183; <a href="../../docs/claims.md">Claim ledger</a></span>
+</footer>
+
+<script src="../../js/site.js?v=acb47d86"></script>
+<script src="../../js/search.js?v=6c93a285"></script>
+</body>
+</html>

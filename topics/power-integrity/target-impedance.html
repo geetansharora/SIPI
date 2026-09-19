@@ -1,0 +1,394 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PDN Target Impedance: Use and Limitations | SIPI</title>
+<meta name="description" content="Where the classic target impedance formula comes from, a worked number, and the three assumptions that make a flat target both over- and under-conservative.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<link rel="stylesheet" href="../../css/base.css?v=e4f774de">
+<link rel="stylesheet" href="../../css/components.css?v=295837ab">
+  <!-- meta:start -->
+  <link rel="canonical" href="https://sipi.work/topics/power-integrity/target-impedance.html">
+  <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="SIPI">
+  <meta property="og:title" content="PDN Target Impedance: Use and Limitations | SIPI">
+  <meta property="og:description" content="Where the classic target impedance formula comes from, a worked number, and the three assumptions that make a flat target both over- and under-conservative.">
+  <meta property="og:url" content="https://sipi.work/topics/power-integrity/target-impedance.html">
+  <meta property="og:image" content="https://sipi.work/assets/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="PDN Target Impedance: Use and Limitations | SIPI">
+  <meta name="twitter:description" content="Where the classic target impedance formula comes from, a worked number, and the three assumptions that make a flat target both over- and under-conservative.">
+  <meta name="twitter:image" content="https://sipi.work/assets/og.png">
+  <!-- meta:end -->
+</head>
+<body>
+
+<header class="masthead">
+  <a class="wordmark" href="../../index.html">SIPI</a>
+  <nav>
+    <a href="../../index.html#fundamentals">Fundamentals</a>
+    <a href="../../index.html#power-integrity">Power</a>
+    <a href="../../index.html#interfaces">Interfaces</a>
+    <a href="../../start.html">Start</a>
+    <a href="../../labs.html">Labs</a>
+    <a href="../../reference.html">Reference</a>
+    <button class="theme-toggle" data-act="theme" type="button">System</button>
+  </nav>
+</header>
+
+<main>
+  <div class="page-head">
+    <p class="crumb"><a href="../../index.html#power-integrity">Power Integrity</a> / 02</p>
+    <h1>PDN Target Impedance: Use and Limitations</h1>
+    <p class="byline">
+      <!-- review:start --><span>By Geetansh Arora — Principal SI/PI Engineer</span><time datetime="2026-09-14" title="Technical review by Geetansh Arora on this date">14 Sep 2026</time><span>10 min</span><!-- review:end -->
+    </p>
+    <p class="answer">
+      Target impedance turns a vague requirement &#8212; &ldquo;the rail must stay steady enough&rdquo;
+      &#8212; into a single number you can plot a simulation against. It is one division, and its
+      value is that it gives the PDN a clear screening line. Its limitation is that the division
+      simplifies the load, so the result must be interpreted with the current spectrum, location,
+      and transient duration in mind.
+    </p>
+  </div>
+
+  <!-- ───────────── the picture ───────────── -->
+  <section class="instrument" data-viz="targetZ" aria-label="Interactive target impedance calculator showing the flat target against where a die actually draws current">
+    <script type="application/json" data-contract>{"kind":"illustrative","evidence":"plausible","purpose":"Turn a ripple budget and a current step into an impedance line, and show it against a load spectrum.","equations":["Ztarget=(Vdd*ripple)/Istep"],"units":"V, A, ohm","validity":"ILLUSTRATIVE — the impedance division is exact arithmetic, but the current spectrum beside it is synthetic and representative, not measured die demand. Assumes a load independent of the rail.","numerics":"Exact arithmetic.","limitations":"ILLUSTRATIVE — the impedance division is exact arithmetic, but the current spectrum beside it is synthetic and representative, not measured die demand. Assumes a load independent of the rail.","suites":["PDN"],"version":"1.0","reviewed":"2026-09-12","panel":"targetZ"}</script>
+    <div class="instrument__bar">
+      <span class="instrument__title">Z<sub>target</sub> = (V<sub>dd</sub> &#215; ripple) / I<sub>step</sub></span>
+        <span data-evidence="plausible" data-model-version="1.0" class="model-tag model-tag--illustrative" title="Synthetic current spectrum beside a computed impedance. Not measured die demand.">illustrative</span>
+      <span class="instrument__readout" role="status" aria-live="polite" aria-label="Current values">
+        <span>Z target <b data-out="zt">—</b></span>
+        <span>noise budget <b data-out="budget">—</b></span>
+        <span>current step <b data-out="step">—</b></span>
+      </span>
+    </div>
+    <div class="panels">
+      <div class="panel">
+        <span class="panel__label">The flat target, and the current spectrum it ignores</span>
+        <canvas data-cv="zt" role="img" aria-label="Impedance against frequency on logarithmic axes with a flat target impedance line, overlaid with a shaded profile showing where a die actually draws current."></canvas>
+        <div class="legend"><span><i class="dash" style="color:var(--alarm)"></i>target impedance</span><span><i style="background:var(--signal)"></i>where current actually is</span></div>
+      </div>
+    </div>
+    <div class="controls">
+      <div class="ctl">
+        <div class="ctl__head"><label for="tz-vdd">Rail voltage</label><output id="tz-vdd-out" for="tz-vdd">0.75 V</output></div>
+        <input type="range" id="tz-vdd" min="50" max="180" step="5" value="75">
+      </div>
+      <div class="ctl">
+        <div class="ctl__head"><label for="tz-rip">Ripple allowance</label><output id="tz-rip-out" for="tz-rip">5 %</output></div>
+        <input type="range" id="tz-rip" min="1" max="15" step="1" value="5">
+        <span class="ctl__note">The whole noise budget, DC drop included</span>
+      </div>
+      <div class="ctl">
+        <div class="ctl__head"><label for="tz-imax">Maximum current</label><output id="tz-imax-out" for="tz-imax">20 A</output></div>
+        <input type="range" id="tz-imax" min="1" max="80" step="1" value="20">
+      </div>
+      <div class="ctl">
+        <div class="ctl__head"><label for="tz-frac">Step as % of I<sub>max</sub></label><output id="tz-frac-out" for="tz-frac">50 %</output></div>
+        <input type="range" id="tz-frac" min="10" max="100" step="5" value="50">
+        <span class="ctl__note">The 50% convention is a rule of thumb, not a workload</span>
+      </div>
+    </div>
+    <div class="presets">
+      <button class="preset" type="button" data-preset="soc" aria-pressed="true">SoC core rail</button>
+      <button class="preset" type="button" data-preset="tight" aria-pressed="false">Tighter ripple</button>
+      <button class="preset" type="button" data-preset="io" aria-pressed="false">1.8 V I/O rail</button>
+      <button class="preset" type="button" data-preset="big" aria-pressed="false">Big compute die</button>
+    </div>
+    <div class="transport"><span data-out="note">—</span></div>
+
+    <div class="experiment-flow" aria-label="Target-impedance learning sequence">
+      <div class="experiment-step"><strong>Predict</strong><p>With the load waveform held fixed, will changing capacitor ESR and changing mounting inductance affect the same parts of the response in the same way?</p></div>
+      <div class="experiment-step"><strong>Experiment</strong><p>Use this page to establish the screening target, then open Lab C. Change ESR and mounting inductance separately and compare the impedance peak with the transient response.</p></div>
+      <div class="experiment-step"><strong>Explain</strong><p>Target impedance connects a permitted voltage excursion with a specified current change. The rail waveform also depends on the current waveform and where that current is drawn.</p></div>
+      <div class="experiment-step"><strong>Transfer</strong><p>For a result you would act on, name the current path, relevant frequency band, stimulus timing, and location. More capacitance does not improve every frequency, and ESR can trade damping against impedance elsewhere.</p></div>
+    </div>
+  
+    <script type="application/json" data-guide>
+{
+  "title": "Where the number comes from",
+  "steps": [
+    {
+      "say": "A typical SoC rail. Target impedance is one division: how much ripple you will allow, divided by how much current can step.",
+      "set": {
+        "_p": "soc"
+      }
+    },
+    {
+      "say": "Double the current step and leave everything else alone.",
+      "ask": "What happens to the target impedance?",
+      "answer": "It halves. Zt = ΔV / ΔI, so twice the current for the same allowed ripple means half the impedance — and halving an impedance across a decade of frequency is not a small ask. This is why current, not voltage, usually sets how hard a PDN is."
+    },
+    {
+      "say": "Now tighten the ripple budget instead.",
+      "set": {
+        "_p": "tight"
+      },
+      "ask": "The ripple allowance is a percentage of Vdd. What does a low-voltage rail do to the target?",
+      "answer": "It tightens the target in two ways. A 5% budget on 0.75 V is 37.5 mV, compared with 45 mV on 0.9 V, and low-voltage rails are often the high-current rails. The target scales with Vdd and inversely with current, so both changes reduce the allowable impedance."
+    }
+  ],
+  "transfer": "Your rail's target impedance is 8 mΩ and the measured impedance meets it from DC to 200 MHz. The part still shows supply-induced timing failures. Give two explanations that are consistent with both facts, and the measurement that separates them.",
+  "transferNote": "One of them is about frequency and one is about position."
+}
+  </script>
+  </section>
+
+  <div class="prose">
+    <h2>Turning a requirement into a line on a plot</h2>
+
+    <p>
+      Power integrity specifications often look intimidating when expressed in frequency-domain plots, but
+      the concept of target impedance is built on elementary physics: Ohm's law. If you model the entire power
+      delivery network as a black-box supply with an internal impedance <span class="num">Z</span>, any sudden demand
+      for current by the load must flow through that impedance. The result is an instantaneous voltage drop
+      across the rail: <span class="num">&#916;V = &#916;I &#215; Z</span>.
+    </p>
+
+    <p>
+      Every digital chip has a strict operating voltage window &#8212; typically nominal voltage &#177;5%. If the supply
+      sags below that boundary, transistors slow down, setup times fail, and logic errors occur. If the rail surges
+      above it, oxide breakdown and reliability hazards threaten the silicon. Keeping the rail within bounds means
+      ensuring that the maximum transient droop <span class="num">&#916;V</span> never exceeds the permitted ripple
+      budget. Rearranging Ohm's law gives the maximum impedance the PDN is allowed to present:
+      <span class="num">Z<sub>target</sub> = &#916;V<sub>max</sub> / &#916;I<sub>step</sub></span>.
+    </p>
+
+    <p>
+      Suppose you are told the core rail must stay within 5% of 0.75 V. That is a statement about
+      voltage. What you actually control is impedance. To connect them you need the one relationship
+      that holds at every frequency:
+    </p>
+
+    <div class="eq">
+      <span class="eq__main"><i class="var">V</i><sub>noise</sub> = <i class="var">I</i><sub>transient</sub> × <i class="var">Z</i><sub>PDN</sub></span>
+      <span class="eq__note">Ohm's law, evaluated per frequency: rail noise depends on both the current spectrum and PDN impedance</span>
+    </div>
+
+    <p>
+      Now fix the voltage you will allow and the current you expect, and the impedance you can afford
+      falls straight out. That is the entire derivation, and it is worth noticing how little is
+      assumed: no circuit topology, no frequency, nothing about capacitors. Just a division.
+    </p>
+
+    <h2 class="section-rule"><span>Where the number comes from</span></h2>
+
+    <p>
+      Rearrange <span class="num">V = I·Z</span> for the worst case you are willing to accept, and you
+      have the whole derivation:
+    </p>
+
+    <div class="eq">
+      <i class="var">Z</i><sub>target</sub> = ( <i class="var">V</i><sub>dd</sub> · ripple% ) / <i class="var">I</i><sub>step</sub>
+      <span class="cap">A 0.75 V rail at 5% ripple gives 37.5 mV of budget. Against a 10 A step — half of a 20 A maximum, the usual assumption — that is Z_target = 3.75 mΩ, flat, from DC to the highest frequency of interest. Note what "5%" has to cover before any of it reaches this formula.</span>
+    </div>
+
+    <div class="note">
+      <b>The tolerance is a budget, and AC noise only gets what is left</b>
+      &ldquo;5%&rdquo; is the total the rail may deviate at the transistor, and several claims are
+      already on it before dynamic impedance gets a share: the regulator's own DC set-point error and
+      reference tolerance, any deliberate load-line offset, drift over temperature and lifetime, and
+      the static IR drop from the sense point to the load. Allocate those first; whatever remains is
+      what this formula may spend.
+      <br><br>
+      Be explicit about <em>± tolerance versus peak-to-peak</em> too — they differ by a factor of two.
+      Recording which convention the budget uses prevents a corresponding factor-of-two error in the
+      target.
+      <br><br>
+      And one driving-point impedance is not the PDN. A die has many loads and many observation points;
+      properly it is <span class="num">V = Z·I</span> with Z a multiport matrix, where noise injected at
+      one location appears at another through a <em>transfer</em> impedance. A single Z(f) at one port
+      is a screening tool, and a good one — it is not the whole answer.
+    </div>
+
+    <p>
+      Three and three-quarter milliohms across eight decades is a demanding specification, and it does a
+      genuinely useful job: it turns a vague requirement into a curve you can plot a simulation against
+      and see, at a glance, where the design is short. Every PI flow starts here for a reason.
+    </p>
+
+    <h2 class="section-rule"><span>The three assumptions</span></h2>
+
+    <ul class="tight">
+      <li><strong>A flat current spectrum.</strong> Real current can be concentrated at the clock rate
+        and its harmonics, at memory burst rates, and at power-state transition rates. A flat target
+        can spend effort where the load has little energy, while treating a resonance on an activity
+        frequency the same as one between dominant components.</li>
+      <li><strong>That the step is the maximum step.</strong> The 50%-of-I<sub>max</sub> convention is a
+        rule of thumb standing in for a workload. The current step that matters is the largest one that
+        happens <em>fast enough to matter</em>, and for the first droop that is a much smaller number
+        arriving much more quickly.</li>
+      <li><strong>One impedance represents the whole die.</strong> Local droop depends on the load and
+        observation position. A network that meets target at the package balls can exceed it at a
+        particular location on the power grid.</li>
+    </ul>
+
+    <div class="note">
+      <b>What to do instead, in order of effort</b>
+      Keep the flat target as the screening check — it is cheap and it catches gross problems. Then
+      weight it: overlay the impedance curve with where the current spectrum actually has energy, and
+      spend the effort at the overlaps. When a real current profile is available, add a time-domain
+      droop simulation; it preserves duration and sequence that a flat frequency-domain mask omits.
+    </div>
+
+    <p>
+      Target impedance alone says nothing about <em>duration</em>. A narrow
+      impedance peak that is 2× over target may cost you a few millivolts for a few nanoseconds and be
+      acceptable within the full budget, while a broad shallow excess sustained through a long burst
+      may not be. Two curves that cross the same mask by the same margin can therefore produce very
+      different time-domain responses.
+    </p>
+
+    <h2 class="section-rule"><span>Why this decides how your board behaves</span></h2>
+
+    <ul class="tight">
+      <li><strong>It is the specification everything else is measured against.</strong> Every
+        decoupling decision, every stackup choice and every package trade-off gets justified by
+        whether the resulting curve stays under this line.</li>
+      <li><strong>Lower voltage and higher current tighten the target.</strong> Z<sub>target</sub> falls as
+        voltage falls and current rises, a common combination in modern silicon. A rail at 0.75 V and
+        20 A is a far harder target than one at 1.8 V and
+        5 A, by about a factor of ten.</li>
+      <li><strong>Missing it does not fail uniformly.</strong> Exceeding the target at a frequency
+        the load never excites costs nothing measurable. Exceeding it on a clock harmonic can
+        dominate the whole noise budget. The single line does not distinguish the two.</li>
+      <li><strong>It is a screening tool, not a verdict.</strong> Passing it is good evidence and
+        not proof; failing it is a reason to look closer, not automatically a defect.</li>
+    </ul>
+
+    <h2 class="section-rule"><span>What to do about it</span></h2>
+
+    <p>
+      <strong>Allocate the tolerance before you divide.</strong> The 5% is the total the rail may
+      deviate <em>at the transistor</em>, and several claims are already on it: the regulator's
+      set-point error, any deliberate load-line offset, drift over temperature and life, and the
+      static IR drop from the sense point to the load. Dynamic impedance receives the remainder,
+      which may be substantially smaller than the headline tolerance.
+    </p>
+
+    <p>
+      <strong>Be explicit about ± versus peak-to-peak.</strong> They differ by a factor of two and
+      produce targets that differ by a factor of two. Write the convention beside the budget so the
+      calculation and the requirement use the same definition.
+    </p>
+
+    <p>
+      <strong>Justify the current step rather than halving the maximum.</strong> “Half of I<sub>max</sub>”
+      is a convention, not a measurement. The number that matters is the largest step the workload
+      actually produces, and on a modern SoC that is a power-management question — a clock-gate
+      release or a power-state exit, not a slow ramp to maximum.
+    </p>
+
+    <p>
+      <strong>Follow the screening line with workload context.</strong> Once the curve is under it
+      everywhere, compare the impedance against the load's <em>spectrum</em>.
+      See <a href="../labs/pdn-chain.html">Lab C</a>, which plots both.
+    </p>
+
+    <div class="note">
+      <b>Using this to find a fault</b>
+      <ul class="tight">
+        <li><b>The curve meets target and the rail still misbehaves.</b> Check the current
+          assumption first. Within the linear model, a step larger than budgeted produces noise in
+          direct proportion; compare the assumed and measured load transient before changing the PDN.</li>
+        <li><b>Noise larger than I × Z predicts.</b> Suspect a second source arriving through
+          transfer impedance from another block on the same plane, or a measurement whose ground
+          reference is adding its own loop.</li>
+        <li><b>A rail that fails only under a specific workload.</b> Workload spectrum and sequence
+          are useful discriminators. Find its repetition rates and current transitions, then compare
+          them with the impedance curve and time-domain response.</li>
+        <li><b>Everything passes in simulation and fails on hardware.</b> Compare the models'
+          reference points. A simulation measuring at the package ball and hardware measuring at a
+          board test point are answering different questions.</li>
+      </ul>
+    </div>
+
+    <details class="deeper">
+      <summary>Go deeper — what "flat from DC" really asks for, and the multiport truth</summary>
+
+      <p>
+        The formula produces a single number, and the convention is to require it flat across the
+        whole band. That is deliberately conservative, and it is worth knowing what it is standing
+        in for.
+      </p>
+
+      <p>
+        A flat impedance requirement is equivalent to assuming the load's current spectrum is flat —
+        that the worst case at every frequency could coincide. Real loads are not flat, so the flat
+        target over-specifies at frequencies where the load is quiet and, more dangerously,
+        remains conservative across the band. That makes it a common and useful screening convention.
+      </p>
+
+      <p>
+        <strong>The multiport truth.</strong> One driving-point impedance is not the PDN. A die has
+        many loads and many observation points, and properly it is
+        <span class="num">V = Z·I</span> with Z a matrix: noise injected at one location appears at
+        another through a <em>transfer</em> impedance. A single Z(f) at one port is a screening tool
+        — a good one — and not the whole answer. Two consequences follow: a rail can pass its own
+        target and still be disturbed by a neighbour, and fixing a peak at one port can move it to
+        another.
+      </p>
+
+      <p>
+        <strong>Where the linear formula needs a richer model.</strong> It assumes the load is a current
+        source independent of the rail. At large droops that breaks down — a lower rail makes the
+        logic slower, which reduces the current it draws, which is a stabilising feedback the linear
+        model has no term for. It also assumes the step is a step. A resonant PDN excited by a
+        <em>repetitive</em> load at its resonant frequency accumulates, and the steady-state
+        amplitude can far exceed the single-step response.
+      </p>
+    </details>
+
+    <h2 class="section-rule"><span>In the real world</span></h2>
+
+    <p>
+      Target impedance earns its place by being the thing everyone can agree on early. It can be
+      computed from a specification sheet before any hardware exists, it gives the layout team a
+      constraint they can work to, and it gives the review a line on a plot. That coordination value
+      is worth more than its precision.
+    </p>
+
+    <p>
+      The failure to avoid is treating the line as the finish rather than the start. A PDN that
+      meets target everywhere and resonates at the load's dominant frequency has passed the check
+      and failed the job — which is why the curve and the load spectrum belong on the same page.
+    </p>
+
+    <h3>Related</h3>
+    <ul class="tight">
+      <li><a href="../../reference.html#experiment-pdn-shared-dc">Two-load PDN DC reference</a> — constant-current resistor-path values, separate from Lab C’s finite-pulse droop</li>
+      <li><a href="../power-integrity/what-is-the-pdn.html">Power Delivery Networks: From Regulator to Die</a></li>
+      <li><a href="../power-integrity/decoupling-capacitors.html">Decoupling Capacitors: ESR, ESL, and Placement</a></li>
+      <li><a href="../power-integrity/vrm-loop-bandwidth.html">VRM Control-Loop Bandwidth and Load Transients</a></li>
+      <li><a href="../methodology/reporting-margin.html">Reporting Signal and Power Integrity Margin</a></li>
+    </ul>
+  </div>
+
+  <!-- pager:start -->
+  <nav class="pager" aria-label="Previous and next topic">
+    <a class="prev" href="../../topics/power-integrity/what-is-the-pdn.html"><span class="dir">Previous</span><span>Power Delivery Networks: From Regulator to Die</span></a>
+    <a class="next" href="../../topics/power-integrity/decoupling-capacitors.html"><span class="dir">Next</span><span>Decoupling Capacitors: ESR, ESL, and Placement</span></a>
+  </nav>
+  <!-- pager:end -->
+</main>
+
+<footer class="site-foot">
+  <span>SIPI &#8212; signal and power integrity, visualised.</span>
+  <span>Created and directed by Geetansh Arora. <a href="../../colophon.html">About, review &amp; AI assistance</a> &#183; <a href="../../model-contract.html">Model assumptions</a> &#183; <a href="../../docs/claims.md">Claim ledger</a></span>
+</footer>
+
+<script src="../../js/site.js?v=acb47d86"></script>
+<script src="../../js/viz-kit.js?v=a53e49c3"></script>
+<script src="../../js/viz/pdn-extras.js?v=57fcc26f"></script>
+<script src="../../js/viz-loader.js?v=89d5884d"></script>
+<script src="../../js/search.js?v=6c93a285"></script>
+</body>
+</html>

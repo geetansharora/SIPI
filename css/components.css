@@ -1,0 +1,1552 @@
+/* SI & PI — components.css
+   Site chrome, the instrument panel, callouts, deep-dive accordion. */
+
+/* ---------- masthead ---------- */
+.masthead {
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: var(--s2) var(--s4);
+  max-width: var(--wide); margin-inline: auto;
+  padding-block: var(--s4);
+  border-bottom: 1px solid var(--border-soft);
+}
+.wordmark {
+  display: block; flex: 0 0 auto;
+  width: 7.6rem; aspect-ratio: 1200 / 319;
+  background: url("../assets/sipi-logo.png") center / contain no-repeat;
+  color: var(--ink); text-decoration: none;
+  overflow: hidden; text-indent: 150%; white-space: nowrap;
+  filter: invert(1) hue-rotate(180deg);
+}
+.masthead nav { display: flex; align-items: center; flex-wrap: wrap; gap: var(--s2) var(--s4); }
+.masthead nav a { font-family: var(--font-mono); font-size: .78rem; color: var(--muted); text-decoration: none; }
+.masthead nav a:hover { color: var(--ink); }
+
+.theme-toggle {
+  font-family: var(--font-mono); font-size: .72rem;
+  background: transparent; color: var(--muted);
+  border: 1px solid var(--border); border-radius: var(--radius);
+  padding: .3rem .55rem; cursor: pointer; line-height: 1;
+}
+.theme-toggle:hover { color: var(--ink); border-color: var(--muted); }
+
+/* ---------- page header ---------- */
+.page-head { max-width: var(--measure); margin-inline: auto; padding-block: var(--s7) var(--s5); display: flex; flex-direction: column; gap: var(--s3); }
+.crumb { font-family: var(--font-mono); font-size: .72rem; color: var(--muted); letter-spacing: .06em; }
+.crumb a { color: var(--muted); text-decoration: none; }
+.crumb a:hover { color: var(--signal); }
+
+.byline { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--s2) var(--s3); font-family: var(--font-mono); font-size: .74rem; color: var(--muted); }
+/* One line, three facts, divided rather than merely spaced: author, the date the
+   page was reviewed, reading time. The rule sits on the item so it wraps with it. */
+.byline > * + *::before { content: "|"; margin-right: var(--s3); color: var(--border); }
+
+/* The one-sentence answer — the page's thesis. */
+.answer {
+  font-family: var(--font-display);
+  font-size: clamp(1.15rem, 2.6vw, 1.4rem);
+  font-weight: 500; line-height: 1.4; text-wrap: pretty;
+  color: var(--ink);
+  border-left: 3px solid var(--signal);
+  padding: var(--s2) 0 var(--s2) var(--s4);
+  margin-block: var(--s2);
+}
+
+/* ---------- instrument panel ---------- */
+.instrument {
+  max-width: var(--wide); margin-inline: auto;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  margin-block: var(--s6);
+  /* No `overflow: hidden` here. It was only clipping the bar's background to the
+     rounded corner, and it creates a clipping context that a `position: sticky`
+     descendant cannot escape — so the sticky control group had nowhere to stick.
+     The corners are rounded on the first and last children instead. */
+}
+.instrument > :first-child { border-radius: var(--radius) var(--radius) 0 0; }
+.instrument > :last-child  { border-radius: 0 0 var(--radius) var(--radius); }
+.instrument__bar {
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: var(--s2) var(--s4);
+  padding: var(--s3) var(--s4);
+  background: var(--surface-2);
+  border-bottom: 1px solid var(--border);
+}
+.instrument__title { font-family: var(--font-mono); font-size: .74rem; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2); }
+.instrument__readout { font-family: var(--font-mono); font-size: .74rem; color: var(--muted); font-variant-numeric: tabular-nums; display: flex; gap: var(--s4); flex-wrap: wrap; }
+.instrument__readout b { color: var(--ink); font-weight: 500; }
+
+.panels { display: grid; gap: 1px; background: var(--border-soft); }
+@media (min-width: 62rem) { .panels.two-up { grid-template-columns: 1fr 1fr; } }
+.panel { background: var(--surface); padding: var(--s4); min-width: 0; display: flex; flex-direction: column; gap: var(--s2); }
+.panel__label { font-family: var(--font-mono); font-size: .7rem; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+/* pan-y, not none. `touch-action: none` on every plot meant a finger landing on a
+   canvas could not scroll the page at all — on a phone most of the article is
+   canvas, so the page felt stuck. pan-y keeps vertical scrolling with the page and
+   still lets a horizontal drag reach a scrubber. */
+.panel canvas { display: block; width: 100%; height: auto; touch-action: pan-y; }
+.panel--scrub canvas { cursor: ew-resize; }
+
+/* legend — identity is never colour-alone: swatch + label */
+.legend { display: flex; flex-wrap: wrap; gap: var(--s2) var(--s4); font-family: var(--font-mono); font-size: .72rem; color: var(--muted); }
+.legend span { display: inline-flex; align-items: center; gap: .4rem; }
+.legend i { width: 14px; height: 2px; border-radius: 1px; display: inline-block; }
+.legend i.dash { background: repeating-linear-gradient(90deg, currentColor 0 4px, transparent 4px 7px); height: 2px; }
+
+/* ---------- controls ---------- */
+.controls {
+  display: grid; gap: var(--s4);
+  grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+  padding: var(--s4);
+  border-top: 1px solid var(--border);
+  background: var(--surface);
+}
+.ctl { display: flex; flex-direction: column; gap: var(--s1); min-width: 0; }
+.ctl__head { display: flex; align-items: baseline; justify-content: space-between; gap: var(--s2); font-family: var(--font-mono); font-size: .74rem; }
+.ctl__head label { color: var(--ink-2); }
+.ctl__head output { color: var(--signal-text); font-variant-numeric: tabular-nums; }
+.ctl input[type="range"] { width: 100%; accent-color: var(--signal); margin: 0; }
+.ctl input[type="number"] {
+  box-sizing: border-box; width: 100%; min-height: 44px; min-width: 0;
+  padding: .5rem .6rem; color: var(--ink); background: var(--surface-2);
+  border: 1px solid var(--border); border-radius: 3px;
+  font: .78rem var(--font-mono); font-variant-numeric: tabular-nums;
+}
+.ctl input[type="number"]:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
+.ctl__note { font-family: var(--font-mono); font-size: .66rem; color: var(--muted); }
+
+.presets { display: flex; flex-wrap: wrap; gap: var(--s2); padding: 0 var(--s4) var(--s4); background: var(--surface); }
+.preset {
+  font-family: var(--font-mono); font-size: .72rem;
+  background: var(--surface-2); color: var(--ink-2);
+  border: 1px solid var(--border); border-radius: var(--radius);
+  padding: .35rem .6rem; cursor: pointer;
+}
+.preset:hover { border-color: var(--signal); color: var(--ink); }
+.preset[aria-pressed="true"] { background: var(--signal); border-color: var(--signal); color: var(--ground); }
+
+/* M5-5 · `flex-wrap: wrap` and `min-width: 0`. A non-wrapping flex row of three
+   buttons with a 5.2rem minimum plus a readout is about 520 px wide, so at a
+   375 px viewport it was the element that pushed the page out — and because the
+   layout viewport then expands to fit, every later measurement reads against
+   the wider viewport and the real culprit hides. */
+.transport { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s3); padding: 0 var(--s4) var(--s4); background: var(--surface); font-family: var(--font-mono); font-size: .74rem; color: var(--muted); min-width: 0; }
+.transport > * { min-width: 0; }
+.transport button {
+  font-family: var(--font-mono); font-size: .74rem;
+  background: var(--surface-2); color: var(--ink);
+  border: 1px solid var(--border); border-radius: var(--radius);
+  padding: .35rem .7rem; cursor: pointer; min-width: 5.2rem;
+}
+@media (max-width: 30rem) {
+  /* Three buttons at 5.2rem plus gaps does not fit 375 px. Let them share. */
+  .transport button { min-width: 0; flex: 1 1 auto; }
+}
+.transport button:hover { border-color: var(--signal); }
+.check { display: inline-flex; align-items: center; gap: .45rem; font-family: var(--font-mono); font-size: .74rem; color: var(--ink-2); cursor: pointer; }
+.check input { accent-color: var(--signal); }
+
+/* ---------- prose furniture ---------- */
+.section-rule { max-width: var(--measure); margin: var(--s7) auto var(--s5); display: flex; align-items: center; gap: var(--s3); }
+.section-rule::after { content: ""; flex: 1; height: 1px; background: var(--border-soft); }
+
+.eq {
+  font-family: var(--font-mono); font-size: .95rem;
+  background: var(--surface); border: 1px solid var(--border-soft);
+  border-left: 2px solid var(--border);
+  border-radius: var(--radius);
+  padding: var(--s3) var(--s4);
+  overflow-x: auto; white-space: nowrap;
+  color: var(--ink);
+}
+.eq .var { color: var(--signal); font-style: normal; }
+.eq .cap { display: block; white-space: normal; font-family: var(--font-mono); font-size: .7rem; color: var(--muted); margin-top: var(--s2); }
+/* A block form, for the pages that set more than one line of maths in a single
+   box — the labs do, where two related expressions belong together. `.eq__note`
+   is `.cap` under another name so both spellings read the same. */
+.eq__main { display: block; }
+.eq__main + .eq__main { margin-top: var(--s2); }
+.eq .eq__note, .eq__note {
+  display: block; white-space: normal;
+  font-family: var(--font-mono); font-size: .7rem; color: var(--muted);
+  margin-top: var(--s2);
+}
+
+.note {
+  border: 1px solid var(--border-soft);
+  border-left: 2px solid var(--reflect);
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: var(--s3) var(--s4);
+  font-size: .97rem;
+}
+.note b { font-family: var(--font-display); font-size: .78rem; letter-spacing: .08em; text-transform: uppercase; color: var(--reflect); display: block; margin-bottom: var(--s1); }
+
+details.deeper {
+  max-width: var(--measure); margin-inline: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  margin-block: var(--s5);
+}
+details.deeper > summary {
+  cursor: pointer; list-style: none;
+  padding: var(--s3) var(--s4);
+  font-family: var(--font-mono); font-size: .78rem;
+  letter-spacing: .06em; color: var(--ink-2);
+  display: flex; align-items: center; gap: var(--s2);
+}
+details.deeper > summary::-webkit-details-marker { display: none; }
+details.deeper > summary::before { content: "▸"; color: var(--signal); }
+details.deeper[open] > summary::before { content: "▾"; }
+details.deeper[open] > summary { border-bottom: 1px solid var(--border-soft); }
+.deeper__body { padding: var(--s5) var(--s4); display: flex; flex-direction: column; gap: var(--s4); }
+.deeper__body > * { max-width: var(--measure); margin-inline: auto; width: 100%; }
+
+table.data { width: 100%; border-collapse: collapse; font-family: var(--font-mono); font-size: .8rem; font-variant-numeric: tabular-nums; }
+table.data th, table.data td { text-align: left; padding: .5rem .6rem; border-bottom: 1px solid var(--border-soft); }
+table.data th { color: var(--muted); font-weight: 500; letter-spacing: .05em; text-transform: uppercase; font-size: .68rem; }
+table.data td:first-child { color: var(--ink-2); }
+/* M5-5 · `overflow-x: auto` alone does not contain a wide table: inside a grid
+   or flex track the wrapper itself sizes to its content, so the table pushed
+   the page to 531 px at a 375 px viewport — which is the overflow Astra
+   measured. `min-width: 0` is what lets the track shrink below its content, and
+   `max-width: 100%` is the belt to that braces.
+
+   `.table-wrap` is an alias, because two of the tables added during M3 and M4
+   used a class that did not exist. A class name with no rule behind it is a
+   silent no-op, which is this project's dominant bug class; `scaffold.py check`
+   now rejects an unknown table wrapper rather than letting it degrade to
+   nothing. */
+.table-scroll,
+.table-wrap { overflow-x: auto; min-width: 0; max-width: 100%; }
+.table-scroll > table,
+.table-wrap > table { min-width: 28rem; }
+
+ul.tight { margin: 0; padding-left: 1.15rem; display: flex; flex-direction: column; gap: var(--s2); }
+ul.tight li::marker { color: var(--muted); }
+
+/* ---------- footer ---------- */
+.site-foot {
+  max-width: var(--wide); margin: var(--s8) auto 0;
+  border-top: 1px solid var(--border-soft);
+  padding-block: var(--s5) var(--s7);
+  display: flex; flex-wrap: wrap; gap: var(--s2) var(--s5);
+  align-items: center; justify-content: space-between;
+  font-family: var(--font-mono); font-size: .72rem; color: var(--muted);
+}
+.site-foot > span:first-child {
+  display: flex; align-items: center; gap: var(--s3);
+}
+.site-foot > span:first-child::before {
+  content: ""; display: block; flex: 0 0 auto;
+  width: 2.8rem; aspect-ratio: 1;
+  background: url("../assets/brand/si-pi-mark-128.png") center / contain no-repeat;
+  filter: invert(1) hue-rotate(180deg);
+  opacity: .78;
+}
+.site-foot a { color: var(--muted); }
+.site-foot a:hover { color: var(--signal); }
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) .wordmark,
+  :root:not([data-theme="dark"]) .site-foot > span:first-child::before { filter: none; }
+}
+:root[data-theme="light"] .wordmark,
+:root[data-theme="light"] .site-foot > span:first-child::before { filter: none; }
+
+@media (max-width: 34rem) {
+  .wordmark { width: 6.6rem; }
+  .site-foot { align-items: flex-start; }
+  .site-foot > span:first-child { align-items: center; }
+}
+
+/* ---------- search ---------- */
+.search-open {
+  display: inline-flex; align-items: center; gap: .4rem;
+  font-family: var(--font-mono); font-size: .72rem;
+  background: transparent; color: var(--muted);
+  border: 1px solid var(--border); border-radius: var(--radius);
+  padding: .3rem .55rem; cursor: pointer; line-height: 1;
+}
+.search-open:hover { color: var(--ink); border-color: var(--muted); }
+.search-open kbd {
+  font-family: var(--font-mono); font-size: .62rem;
+  border: 1px solid var(--border); border-radius: 2px;
+  padding: 0 .25rem; color: var(--muted);
+}
+@media (max-width: 34rem) { .search-open kbd { display: none; } }
+
+dialog.searchbox {
+  width: min(38rem, calc(100vw - 2rem));
+  margin: 12vh auto auto;
+  padding: 0;
+  background: var(--surface);
+  color: var(--ink);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: 0 18px 50px rgba(0, 0, 0, .38);
+}
+dialog.searchbox::backdrop { background: rgba(4, 8, 11, .58); }
+
+.sb__form { display: flex; align-items: center; gap: var(--s2); padding: var(--s3) var(--s4); border-bottom: 1px solid var(--border-soft); }
+.sb__field { display: flex; align-items: center; gap: var(--s3); flex: 1; min-width: 0; color: var(--muted); font-size: 1.1rem; }
+.sb__field input {
+  flex: 1; min-width: 0;
+  font-family: var(--font-body); font-size: 1rem;
+  background: transparent; color: var(--ink);
+  border: 0; padding: .2rem 0; outline: none;
+}
+.sb__field input::placeholder { color: var(--muted); }
+.sb__close {
+  font-family: var(--font-mono); font-size: .66rem;
+  background: var(--surface-2); color: var(--muted);
+  border: 1px solid var(--border); border-radius: 2px;
+  padding: .2rem .4rem; cursor: pointer;
+}
+
+.sr { list-style: none; margin: 0; padding: var(--s2); max-height: 56vh; overflow-y: auto; }
+.sr__row {
+  display: flex; align-items: baseline; gap: var(--s3);
+  padding: .5rem .6rem; border-radius: var(--radius);
+  text-decoration: none; color: var(--ink-2);
+}
+.sr__row.is-cur { background: var(--surface-2); color: var(--ink); }
+.sr__sec { font-family: var(--font-mono); font-size: .62rem; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); flex: none; width: 8.5rem; }
+.sr__ttl { flex: 1; min-width: 0; font-size: .95rem; }
+.sr__ttl mark { background: transparent; color: var(--signal-text); font-weight: 600; }
+.sr__st { font-family: var(--font-mono); font-size: .6rem; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); flex: none; }
+.sr__st--live { color: var(--signal); }
+.sr__none { padding: var(--s4); font-size: .95rem; color: var(--muted); }
+@media (max-width: 34rem) {
+  .sr__row { flex-wrap: wrap; gap: var(--s1) var(--s2); }
+  .sr__sec { width: auto; }
+}
+
+/* ---------- prev / next ---------- */
+.pager {
+  max-width: var(--measure); margin: var(--s7) auto 0;
+  display: grid; gap: var(--s2);
+  grid-template-columns: 1fr 1fr;
+  border-top: 1px solid var(--border-soft); padding-top: var(--s4);
+}
+.pager a, .pager span {
+  display: flex; flex-direction: column; gap: var(--s1);
+  padding: var(--s3); border: 1px solid var(--border-soft); border-radius: var(--radius);
+  background: var(--surface); text-decoration: none; color: var(--ink-2); font-size: .95rem;
+  min-width: 0;
+}
+.pager a:hover { border-color: var(--signal); color: var(--ink); }
+.pager span { opacity: .45; }
+.pager .dir { font-family: var(--font-mono); font-size: .62rem; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+.pager .next { text-align: right; }
+@media (max-width: 34rem) { .pager { grid-template-columns: 1fr; } }
+
+/* ---------- stub notice ---------- */
+.stub-note {
+  max-width: var(--measure); margin: var(--s5) auto;
+  border: 1px dashed var(--border);
+  border-radius: var(--radius);
+  padding: var(--s3) var(--s4);
+  font-family: var(--font-mono); font-size: .74rem; line-height: 1.6;
+  color: var(--muted);
+}
+.stub-note b { color: var(--ink-2); font-weight: 500; }
+
+/* ---------- figure: a static SVG diagram in the instrument frame ----------
+   Tier 3 of the visual system. No JS, no canvas — inline SVG reads CSS custom
+   properties directly, so it themes with the page for free and costs nothing
+   to render. Used where a labelled cross-section explains more than a slider. */
+.figure {
+  max-width: var(--wide); margin: var(--s6) auto;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.figure__bar {
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: var(--s2) var(--s4);
+  padding: var(--s3) var(--s4);
+  background: var(--surface-2);
+  border-bottom: 1px solid var(--border);
+  font-family: var(--font-mono); font-size: .74rem;
+  letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2);
+}
+.figure__body { padding: var(--s5) var(--s4) var(--s4); display: flex; justify-content: center; }
+.figure svg { display: block; width: 100%; height: auto; max-width: 44rem; overflow: visible; }
+.figure figcaption {
+  padding: 0 var(--s4) var(--s5);
+  max-width: var(--measure); margin-inline: auto;
+  font-size: .95rem; color: var(--ink-2); text-wrap: pretty;
+}
+.figure figcaption b { font-family: var(--font-display); color: var(--ink); font-weight: 600; }
+
+/* shared SVG idioms — set once so every diagram reads as one family */
+.figure .dielectric { fill: var(--surface-2); stroke: var(--border-soft); stroke-width: 1; }
+.figure .plane      { fill: var(--muted); }
+.figure .copper     { fill: var(--signal); }
+.figure .copper-2   { fill: var(--reflect); }
+.figure .bad        { fill: var(--alarm); }
+.figure .edge       { fill: none; stroke: var(--border); stroke-width: 1; }
+.figure .field      { fill: none; stroke: var(--signal); stroke-width: 1; opacity: .45; }
+.figure .field-2    { fill: none; stroke: var(--reflect); stroke-width: 1; opacity: .45; }
+.figure .flow       { fill: none; stroke: var(--signal); stroke-width: 1.6; }
+.figure .flow-2     { fill: none; stroke: var(--reflect); stroke-width: 1.6; }
+.figure .flow-bad   { fill: none; stroke: var(--alarm); stroke-width: 1.6; }
+.figure .dash       { stroke-dasharray: 4 3; }
+.figure .lbl        { font-family: var(--font-mono); font-size: 10px; fill: var(--muted); }
+.figure .lbl-hi     { font-family: var(--font-mono); font-size: 10px; fill: var(--ink); }
+.figure .lbl-sig    { font-family: var(--font-mono); font-size: 10px; fill: var(--signal); }
+.figure .lbl-ref    { font-family: var(--font-mono); font-size: 10px; fill: var(--reflect); }
+.figure .lbl-bad    { font-family: var(--font-mono); font-size: 10px; fill: var(--alarm); }
+.figure .tick       { stroke: var(--border); stroke-width: 1; }
+
+/* two diagrams side by side — the compare-and-contrast case */
+.figure__pair { display: grid; gap: var(--s4); grid-template-columns: 1fr; padding: var(--s5) var(--s4) var(--s4); }
+@media (min-width: 46rem) { .figure__pair { grid-template-columns: 1fr 1fr; } }
+.figure__pair > div { min-width: 0; display: flex; flex-direction: column; gap: var(--s2); align-items: center; }
+.figure__pair .figure__label { font-family: var(--font-mono); font-size: .7rem; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+
+/* select control — same visual weight as a slider's row, for discrete choices
+   where a range input would imply a continuum that does not exist */
+.ctl .sel {
+  width: 100%;
+  font-family: var(--font-mono); font-size: .76rem;
+  background: var(--surface-2); color: var(--ink);
+  border: 1px solid var(--border); border-radius: var(--radius);
+  padding: .3rem .4rem;
+}
+.ctl .sel:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
+
+/* ---------- model badge ----------
+   Every panel states what kind of model produced it. Astra's review: "computed",
+   "physically plausible", "verified against an independent model" and "compliant
+   with a named specification" are different levels of evidence, and a UI must not
+   collapse them into one generic verified badge. So the badge names the TYPE and
+   carries the main limitation in its title, rather than asserting correctness. */
+.model-tag {
+  font-family: var(--font-mono); font-size: .62rem;
+  letter-spacing: .08em; text-transform: uppercase;
+  border: 1px solid var(--border); border-radius: 2px;
+  padding: .12rem .4rem; white-space: nowrap;
+  color: var(--muted); background: var(--surface);
+}
+.model-tag--exact       { color: var(--signal); border-color: color-mix(in oklab, var(--signal) 45%, var(--border)); }
+.model-tag--analytical  { color: var(--signal); border-color: color-mix(in oklab, var(--signal) 45%, var(--border)); }
+.model-tag--numerical   { color: var(--ink2); border-color: color-mix(in oklab, var(--ink2) 45%, var(--border)); }
+.model-tag--computed    { color: var(--signal); border-color: color-mix(in oklab, var(--signal) 45%, var(--border)); }
+.model-tag--illustrative{ color: var(--reflect); border-color: color-mix(in oklab, var(--reflect) 45%, var(--border)); }
+.model-tag--plausible   { color: var(--reflect); border-color: color-mix(in oklab, var(--reflect) 45%, var(--border)); }
+.model-note {
+  max-width: var(--wide); margin: calc(var(--s6) * -1) auto var(--s6);
+  padding: var(--s3) var(--s4);
+  border: 1px solid var(--border-soft); border-top: 0;
+  border-radius: 0 0 var(--radius) var(--radius);
+  background: var(--surface);
+  font-size: .9rem; color: var(--ink-2);
+}
+.model-note b { font-family: var(--font-mono); font-size: .68rem; letter-spacing: .08em;
+  text-transform: uppercase; color: var(--muted); display: block; margin-bottom: var(--s1); }
+
+/* a panel that could not start says so, rather than leaving an empty frame */
+.viz-failed {
+  margin: 0; padding: var(--s4);
+  border-top: 1px solid var(--border);
+  background: var(--surface);
+  font-size: .95rem; color: var(--ink-2);
+}
+.viz-failed b { font-family: var(--font-display); color: var(--ink); display: block; margin-bottom: var(--s1); }
+.viz-failed__id { font-family: var(--font-mono); font-size: .7rem; color: var(--muted); }
+
+/* ---------- HTML result summary ----------
+   Values and explanations live here rather than painted on a canvas: this reflows,
+   is readable by assistive technology, and can be selected and copied. The canvas
+   keeps only the short labels that sit on the geometry itself. */
+.viz-summary { margin: var(--s3) 0 0; display: flex; flex-direction: column; gap: 1px;
+  background: var(--border-soft); border: 1px solid var(--border-soft); border-radius: var(--radius); }
+.viz-summary__row { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--s2) var(--s3);
+  padding: .4rem .6rem; background: var(--surface); }
+.viz-summary dt { display: flex; align-items: center; gap: .45rem; flex: none; min-width: 11rem;
+  font-family: var(--font-mono); font-size: .74rem; color: var(--ink-2); }
+.viz-summary dd { margin: 0; flex: 1; min-width: 0; display: flex; flex-wrap: wrap;
+  align-items: baseline; gap: var(--s2) var(--s3);
+  font-family: var(--font-mono); font-size: .74rem; color: var(--ink); font-variant-numeric: tabular-nums; }
+.viz-summary__note { color: var(--muted); font-size: .72rem; }
+.viz-summary__sw { width: 12px; height: 3px; border-radius: 1px; flex: none; }
+@media (max-width: 34rem) {
+  .viz-summary dt { min-width: 0; width: 100%; }
+  .viz-summary dd { width: 100%; }
+}
+
+/* numeric entry beside a slider — a precise value should not need pixel-accurate dragging */
+.ctl__num {
+  width: 4.6rem; text-align: right;
+  font-family: var(--font-mono); font-size: .74rem;
+  background: var(--surface-2); color: var(--signal-text);
+  border: 1px solid var(--border); border-radius: 2px;
+  padding: .1rem .3rem; font-variant-numeric: tabular-nums;
+}
+.ctl__num:focus-visible { outline: 2px solid var(--signal); outline-offset: 1px; }
+.ctl__unit { font-family: var(--font-mono); font-size: .72rem; color: var(--muted); margin-left: .3rem; }
+.ctl__head { gap: var(--s2); }
+
+/* ---------- sticky controls on a tall panel ----------
+   On reflections the first plot sits 570 px above its controls, inside a panel
+   869 px tall — so on a 768 px viewport you cannot see what you are changing and
+   what it changes at the same time. When a panel is taller than the viewport, its
+   control group pins to the bottom edge while the panel is on screen and releases
+   at its end. Only on pointer-and-space screens: on a phone the controls already
+   follow their single plot. */
+@media (min-width: 52rem) and (min-height: 34rem) {
+  .instrument.is-tall .controls {
+    position: sticky;
+    bottom: 0;
+    z-index: 3;
+    border-top: 1px solid var(--border);
+    box-shadow: 0 -10px 26px -12px rgba(0, 0, 0, .45);
+    backdrop-filter: blur(2px);
+  }
+  .instrument.is-tall .presets,
+  .instrument.is-tall .transport { position: sticky; bottom: 0; z-index: 2; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .instrument.is-tall .controls { position: static; box-shadow: none; }
+}
+
+/* ── probe cursor ──────────────────────────────────────────────────────────
+   An overlay, not canvas drawing. The module repaints its canvas on every
+   control change; a crosshair painted there would be wiped on the next frame
+   and would have to be re-issued from outside the module's own render loop.
+   The overlay is inert to the pointer so it never eats a drag on a scrubber. */
+.probe-host { position: relative; min-width: 0; }
+.probe { position: absolute; inset: 0; pointer-events: none; opacity: 0; transition: opacity .08s linear; }
+.probe.is-on { opacity: 1; }
+@media (prefers-reduced-motion: reduce) { .probe { transition: none; } }
+.probe i { position: absolute; background: var(--ink-2); opacity: .55; }
+.probe__v { width: 1px; }
+.probe__h { height: 1px; }
+.probe__tag {
+  position: absolute; transform: translate(-50%, -110%);
+  font-family: var(--font-mono); font-size: .68rem; font-weight: 500;
+  white-space: nowrap; padding: .12rem .38rem; border-radius: 3px;
+  background: var(--surface-2); color: var(--ink);
+  border: 1px solid var(--border); font-variant-numeric: tabular-nums;
+}
+.probe-host canvas:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
+/* The spoken copy of the readout. Off-screen, not display:none — a hidden
+   element is not announced. */
+/* N4-6 · exact X entry. A cursor answers "roughly here"; this answers "at
+   12 MHz". Kept small and beside the readout rather than in the control block,
+   because it is a way of READING the plot, not a parameter of the model. */
+.probe__at {
+  display: inline-flex; align-items: baseline; gap: .4rem;
+  font-family: var(--font-mono); font-size: .68rem; color: var(--muted);
+  margin-top: .3rem;
+}
+.probe__at input {
+  font: inherit; color: var(--ink); background: var(--surface);
+  border: 1px solid var(--border); border-radius: 3px; padding: .1rem .3rem;
+}
+.probe__at.is-bad input { border-color: var(--alarm); color: var(--alarm-text); }
+.probe__t em { font-style: normal; color: var(--ink-2); }
+
+.probe__live {
+  position: absolute; width: 1px; height: 1px; overflow: hidden;
+  clip-path: inset(50%); white-space: nowrap; margin: 0;
+}
+
+/* ── panel tools: scenario link, values ───────────────────────────────────── */
+.instrument__tools { display: flex; gap: var(--s2); align-items: center; }
+.tool-btn {
+  font-family: var(--font-mono); font-size: .68rem; letter-spacing: .04em;
+  padding: .25rem .5rem; border-radius: 4px; cursor: pointer;
+  background: var(--surface); color: var(--ink-2);
+  border: 1px solid var(--border);
+}
+.tool-btn:hover { color: var(--ink); border-color: var(--ink-2); }
+.tool-btn:focus-visible { outline: 2px solid var(--signal); outline-offset: 1px; }
+.tool-btn[data-done] { color: var(--signal-text); border-color: var(--signal-text); }
+
+/* ── values table ────────────────────────────────────────────────────────── */
+.viz-values {
+  padding: var(--s3) var(--s4) var(--s4);
+  background: var(--surface-2); border-top: 1px solid var(--border);
+  min-width: 0; max-width: 100%;
+}
+.viz-values table { width: 100%; table-layout: fixed; border-collapse: collapse; font-size: .8rem; }
+.viz-values caption { text-align: left; color: var(--muted); font-size: .72rem; padding-bottom: var(--s2); }
+.viz-values th, .viz-values td { text-align: left; padding: .2rem .5rem .2rem 0; border-bottom: 1px solid var(--border-soft); overflow-wrap: anywhere; }
+.viz-values th { font-weight: 400; color: var(--ink-2); }
+.viz-values td:last-child { font-family: var(--font-mono); color: var(--ink); font-variant-numeric: tabular-nums; text-align: right; }
+.viz-values__k { font-family: var(--font-mono); font-size: .66rem; color: var(--muted); text-transform: uppercase; width: 2.6rem; }
+.viz-values > .tool-btn { margin-top: var(--s3); }
+/* The panel's bottom corners belong to the last VISIBLE child. `:last-child` is
+   structural and does not care that the values table is hidden, so the radius has
+   to be handed back to whatever sits in front of a hidden one. */
+.instrument > .viz-values { border-radius: 0 0 var(--radius) var(--radius); }
+.instrument > :has(+ .viz-values[hidden]) { border-radius: 0 0 var(--radius) var(--radius); }
+
+/* ── legend as trace toggles ──────────────────────────────────────────────── */
+.legend--toggle { cursor: pointer; border-radius: 3px; padding: .1rem .25rem; margin: -.1rem -.25rem; }
+.legend--toggle:hover { background: var(--surface-2); color: var(--ink); }
+.legend--toggle:focus-visible { outline: 2px solid var(--signal); outline-offset: 1px; }
+/* Off is signalled twice — struck through and faded — never by colour alone. */
+.legend--toggle.is-off { opacity: .45; text-decoration: line-through; }
+.legend--toggle.is-off i { opacity: .35; }
+
+/* ── zoom ─────────────────────────────────────────────────────────────────── */
+.instrument.is-zooming canvas { cursor: crosshair; }
+.zoom-band {
+  position: absolute; pointer-events: none;
+  background: var(--signal); opacity: .16;
+  border-left: 1px solid var(--signal); border-right: 1px solid var(--signal);
+}
+
+/* ── A/B reference overlay ────────────────────────────────────────────────── */
+.probe-host > canvas { position: relative; z-index: 1; }
+/* The reference sits UNDER the live canvas. The kit clears with clearRect, so the
+   live surface is transparent wherever it has drawn nothing and the reference
+   reads through the gaps — one grid, two sets of traces. */
+/* `.probe-host > canvas` is (0,1,1) and would otherwise win over a bare `.ghost`
+   (0,1,0), leaving the reference in normal flow as a second plot stacked below
+   the live one instead of behind it. */
+.probe-host > canvas.ghost {
+  position: absolute; inset: 0; z-index: 0;
+  width: 100%; height: auto; display: block;
+  opacity: .42; pointer-events: none;
+}
+.probe-host > canvas.ghost.is-stale { opacity: .18; filter: grayscale(1); }
+.pin-note { font-family: var(--font-mono); font-size: .66rem; color: var(--alarm-text); }
+
+/* ── linked views as tabs, narrow screens only ────────────────────────────────
+   The switch is pure CSS at the same 62rem breakpoint `.panels.two-up` uses for
+   its grid. Above it the tablist is hidden and every panel shows regardless of
+   what the JS marked, so the two can never disagree. */
+.panel-tabs { display: none; }
+@media (max-width: 61.99rem) {
+  .panel-tabs {
+    display: flex; gap: 1px; background: var(--border-soft);
+    border-bottom: 1px solid var(--border);
+  }
+  /* M5-5 · The strip scrolls rather than compressing every label to an
+     ellipsis. `flex: 1 1 0` with `min-width: 0` divided the width equally and
+     then truncated, so on a six-panel lab at 375 px every tab read "Freque…" —
+     which is worse than a scroll, because a truncated label cannot be
+     recognised at all. Now each tab is its own width and the strip scrolls,
+     with the selected one scrolled into view by the loader. */
+  .panel-tabs {
+    overflow-x: auto; overflow-y: hidden;
+    scrollbar-width: thin; -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x proximity;
+  }
+  .panel-tab {
+    flex: 0 0 auto; scroll-snap-align: start;
+    font-family: var(--font-mono); font-size: .68rem; letter-spacing: .03em;
+    padding: .5rem .55rem; cursor: pointer;
+    background: var(--surface-2); color: var(--muted); border: 0;
+    border-bottom: 2px solid transparent;
+    white-space: nowrap;
+  }
+  .panel-tab[aria-selected="true"] {
+    background: var(--surface); color: var(--ink);
+    border-bottom-color: var(--signal);
+  }
+  .panel-tab:focus-visible { outline: 2px solid var(--signal); outline-offset: -2px; }
+  /* `.panel` is display:flex, which beats the reset's [hidden] rule, so the
+     hidden state needs its own declaration rather than the hidden attribute. */
+  .panels.has-tabs > .panel[data-tab-hidden] { display: none; }
+}
+
+/* ── event stepping ───────────────────────────────────────────────────────── */
+.transport__step { display: inline-flex; align-items: center; gap: var(--s2); }
+.transport__step button {
+  font-family: var(--font-mono); font-size: .9rem; line-height: 1;
+  padding: .2rem .45rem; cursor: pointer;
+  background: var(--surface); color: var(--ink-2);
+  border: 1px solid var(--border); border-radius: 4px;
+}
+.transport__step button:hover { color: var(--ink); border-color: var(--ink-2); }
+.transport__step button:focus-visible { outline: 2px solid var(--signal); outline-offset: 1px; }
+.transport__at {
+  font-family: var(--font-mono); font-size: .7rem; color: var(--muted);
+  font-variant-numeric: tabular-nums; min-width: 22ch;
+}
+
+/* ── Guided / Explore / Verify ────────────────────────────────────────────── */
+.modes { display: flex; gap: 1px; border-radius: 4px; overflow: hidden; border: 1px solid var(--border); }
+.mode {
+  font-family: var(--font-mono); font-size: .66rem; letter-spacing: .06em;
+  text-transform: uppercase; padding: .25rem .55rem; cursor: pointer;
+  background: var(--surface); color: var(--muted); border: 0;
+}
+.mode[aria-selected="true"] { background: var(--signal); color: var(--ground); }
+.mode:focus-visible { outline: 2px solid var(--signal); outline-offset: -2px; }
+.mode-stage {
+  padding: var(--s3) var(--s4); background: var(--surface-2);
+  border-bottom: 1px solid var(--border);
+}
+.mode-stage p { margin: 0 0 var(--s2); max-width: 62ch; }
+.mode-stage__where {
+  font-family: var(--font-mono); font-size: .66rem; letter-spacing: .06em;
+  text-transform: uppercase; color: var(--muted);
+}
+.mode-stage__say { font-size: .88rem; color: var(--ink-2); }
+.mode-stage__ask { font-size: .88rem; color: var(--ink); }
+.mode-stage__answer {
+  font-size: .88rem; color: var(--ink-2);
+  border-left: 2px solid var(--signal); padding-left: var(--s3);
+}
+.mode-stage__nav { display: flex; gap: var(--s2); margin-bottom: 0; }
+.tool-btn[disabled] { opacity: .4; cursor: default; }
+/* Guided narrows the surface deliberately: presets are a shortcut past the point
+   the step is making. */
+.instrument.mode-guided .presets { display: none; }
+
+/* The evidence floor sits with the readouts but reads as a caveat, not a result. */
+.evidence {
+  flex-basis: 100%;
+  font-family: var(--font-mono); font-size: .66rem; color: var(--muted);
+  font-style: normal;
+}
+
+/* ── the locate exercise ──────────────────────────────────────────────────── */
+.locate {
+  display: flex; flex-wrap: wrap; align-items: center; gap: var(--s2);
+  padding: 0 var(--s4) var(--s4); background: var(--surface);
+  font-family: var(--font-mono); font-size: .72rem; color: var(--muted);
+}
+.locate input[type="number"] {
+  width: 5.5rem; font-family: var(--font-mono); font-size: .78rem;
+  padding: .2rem .4rem; border-radius: 4px;
+  background: var(--surface-2); color: var(--ink); border: 1px solid var(--border);
+}
+.locate input:focus-visible { outline: 2px solid var(--signal); outline-offset: 1px; }
+.locate__verdict { flex-basis: 100%; color: var(--ink-2); line-height: 1.5; }
+/* A locked control is visibly out of play, not just unresponsive. */
+.ctl.is-locked { opacity: .45; }
+.ctl.is-locked output { font-style: normal; letter-spacing: .1em; }
+
+/* ── model contract page ──────────────────────────────────────────────────── */
+.ev {
+  font-family: var(--font-mono); font-size: .66rem; letter-spacing: .06em;
+  text-transform: uppercase; padding: .12rem .45rem; border-radius: 3px;
+  border: 1px solid var(--border); white-space: nowrap;
+}
+/* Four levels, four appearances. Never one generic "verified". */
+.ev--computed      { color: var(--ink-2); }
+.ev--plausible     { color: var(--reflect); border-color: color-mix(in oklab, var(--reflect) 45%, var(--border)); }
+.ev--independent   { color: var(--signal); border-color: color-mix(in oklab, var(--signal) 45%, var(--border)); }
+.ev--specification { color: var(--muted); border-style: dashed; }
+
+.ev-key { display: grid; gap: var(--s3); margin: var(--s5) 0; }
+.ev-key__row { display: grid; grid-template-columns: 8.5rem 1fr; gap: var(--s3); align-items: baseline; }
+.ev-key__row p { margin: 0; font-size: .9rem; color: var(--ink-2); }
+@media (max-width: 34rem) { .ev-key__row { grid-template-columns: 1fr; gap: var(--s1); } }
+
+.contract {
+  max-width: var(--measure); margin: var(--s5) auto;
+  background: var(--surface); border: 1px solid var(--border-soft);
+  border-radius: var(--radius); padding: var(--s4);
+}
+.contract__head { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s2) var(--s3); }
+.contract__head h2 { font-family: var(--font-mono); font-size: 1rem; margin: 0; }
+.contract__ver { font-family: var(--font-mono); font-size: .66rem; color: var(--muted); margin-left: auto; }
+.contract__purpose { color: var(--ink-2); margin: var(--s3) 0; }
+.contract__body { display: grid; grid-template-columns: 9.5rem 1fr; gap: var(--s2) var(--s3); margin: 0; font-size: .88rem; }
+.contract__body dt { font-family: var(--font-mono); font-size: .7rem; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); }
+.contract__body dd { margin: 0; color: var(--ink-2); }
+.contract__body code { font-size: .82rem; }
+@media (max-width: 40rem) { .contract__body { grid-template-columns: 1fr; gap: var(--s1) 0; } .contract__body dd { margin-bottom: var(--s2); } }
+.viz-values__acts { display: flex; gap: var(--s2); margin-top: var(--s3); flex-wrap: wrap; }
+
+/* ── learning paths ───────────────────────────────────────────────────────── */
+.path { max-width: var(--measure); margin: var(--s6) auto; }
+.path h2 { margin-bottom: var(--s1); }
+.path__who { color: var(--ink-2); margin: 0 0 var(--s2); }
+.path__note { color: var(--muted); font-size: .9rem; margin: 0 0 var(--s4); }
+.path__steps { list-style: none; counter-reset: step; padding: 0; margin: 0;
+  display: grid; gap: 1px; background: var(--border-soft);
+  border: 1px solid var(--border-soft); border-radius: var(--radius); overflow: hidden; }
+.path__steps li { counter-increment: step; background: var(--surface);
+  padding: var(--s3) var(--s4) var(--s3) 3.2rem; position: relative; }
+.path__steps li::before { content: counter(step); position: absolute; left: var(--s4); top: var(--s3);
+  font-family: var(--font-mono); font-size: .72rem; color: var(--muted); }
+.path__steps a { font-weight: 500; }
+.path__why { display: block; color: var(--muted); font-size: .86rem; margin-top: .15rem; }
+
+/* ── exercises ────────────────────────────────────────────────────────────── */
+.exercises { max-width: var(--measure); margin: var(--s6) auto 0; }
+.exercises__intro { color: var(--muted); font-size: .9rem; margin-bottom: var(--s4); }
+.ex {
+  background: var(--surface); border: 1px solid var(--border-soft);
+  border-radius: var(--radius); padding: var(--s4); margin-bottom: var(--s3);
+}
+.ex__ask { margin: 0 0 var(--s3); color: var(--ink); }
+.ex__opts { display: flex; flex-wrap: wrap; gap: var(--s2); }
+.ex__opts .tool-btn { font-family: inherit; font-size: .88rem; text-align: left; padding: .4rem .6rem; }
+.ex__opts .tool-btn[disabled] { opacity: 1; cursor: default; }
+/* The right answer is marked whichever way they answered — the point is to
+   leave them knowing it, not to score them. */
+.ex__opts .is-answer { border-color: var(--signal); color: var(--signal-text); }
+.ex__opts .is-picked:not(.is-answer) { border-color: var(--alarm-text); color: var(--alarm-text); text-decoration: line-through; }
+.ex__num { display: flex; align-items: center; gap: var(--s2); margin: 0; }
+.ex__num input {
+  width: 7rem; font-family: var(--font-mono); font-size: .9rem;
+  padding: .25rem .45rem; border-radius: 4px;
+  background: var(--surface-2); color: var(--ink); border: 1px solid var(--border);
+}
+.ex__num input:focus-visible { outline: 2px solid var(--signal); outline-offset: 1px; }
+.ex__unit { font-family: var(--font-mono); font-size: .8rem; color: var(--muted); }
+.ex__hintline { margin: var(--s3) 0 0; }
+.ex__hint { margin: var(--s3) 0 0; font-size: .9rem; color: var(--ink-2);
+  border-left: 2px solid var(--reflect); padding-left: var(--s3); }
+.ex__out { margin-top: var(--s3); padding-top: var(--s3); border-top: 1px solid var(--border-soft); }
+.ex__verdict { margin: 0 0 var(--s2); font-family: var(--font-mono); font-size: .78rem;
+  letter-spacing: .04em; text-transform: uppercase; }
+.ex__out--ok .ex__verdict { color: var(--signal-text); }
+.ex__out--no .ex__verdict { color: var(--alarm-text); }
+.ex__note { margin: 0 0 var(--s2); font-size: .92rem; color: var(--ink-2); }
+/* The mechanism, shown whatever the answer was. This is the point of the whole
+   component, so it is the most prominent thing in the response. */
+.ex__why { margin: 0; font-size: .92rem; color: var(--ink-2);
+  border-left: 2px solid var(--signal); padding-left: var(--s3); }
+
+/* M3-3 · Verify mode renders a model's own contract, so it needs a definition
+   list that stays readable inside the mode stage at phone width. */
+.verify { margin: .7rem 0 0; display: grid; gap: .35rem .9rem; }
+.verify dt { font: 600 .72rem/1.3 var(--mono); letter-spacing: .04em;
+             text-transform: uppercase; color: var(--muted); }
+.verify dd { margin: 0 0 .5rem; font-size: .88rem; color: var(--ink2); }
+.verify dd code { font-size: .82rem; }
+.verify ul.tight { margin: 0; padding-left: 1.1rem; }
+@media (min-width: 40rem) {
+  .verify { grid-template-columns: 11rem 1fr; align-items: baseline; }
+  .verify dd { margin-bottom: .15rem; }
+}
+
+/* M3-5 · generated per-page source lists. A reader checking a normative claim
+   should not have to find an internal ledger first. */
+.sources { margin-top: 2.2rem; }
+.sources__list { margin: .6rem 0 0; padding-left: 1.1rem; }
+.sources__list li { margin-bottom: .4rem; font-size: .92rem; }
+.src__for { font: 500 .7rem/1 var(--mono); letter-spacing: .04em;
+            color: var(--muted); border: 1px solid var(--border);
+            border-radius: 3px; padding: .1rem .3rem; margin-left: .3rem; }
+.sources__note { margin-top: .7rem; font-size: .82rem; color: var(--muted); }
+
+/* M3-7 · the four review statuses, in the byline. An unreviewed page has to say
+   so; leaving the question open is how "generated into the repository" comes to
+   read as "checked by somebody". */
+
+/* M5-1 · the values table's own stamp, and the stale-scenario notice. */
+.viz-values__stamp { margin: .5rem 0 0; font: 500 .72rem/1.4 var(--mono);
+                     color: var(--muted); letter-spacing: .02em; overflow-wrap: anywhere; }
+.viz-stale { margin: 0; padding: .55rem .8rem; font-size: .85rem;
+             color: var(--reflect); background: color-mix(in oklab, var(--reflect) 8%, var(--surface));
+             border-bottom: 1px solid var(--border); }
+
+/* M5-4 · an entry whose colour is shared with another cannot be toggled without
+   hiding the wrong trace, so it is marked rather than made to lie. */
+.legend--shared { cursor: help; opacity: .8; }
+.legend--shared::after { content: ' (shared colour)'; font-size: .72em; color: var(--muted); }
+
+/* M5-3 · the probe reports trace VALUES first and the pointer's own position
+   last, labelled. A free crosshair that reads like a measurement is the defect
+   this replaces. */
+.probe__tag { display: flex; flex-wrap: wrap; align-items: center; gap: .1rem .45rem; }
+.probe__x { font-weight: 600; }
+.probe__t { display: inline-flex; align-items: center; gap: .22rem; }
+.probe__t i { width: .5rem; height: .5rem; border-radius: 1px; display: inline-block; }
+.probe__free { color: var(--muted); font-weight: 400; }
+.probe__dot { position: absolute; width: .42rem; height: .42rem; border-radius: 50%;
+              transform: translate(-50%, -50%); box-shadow: 0 0 0 1.5px var(--surface);
+              pointer-events: none; }
+
+/* ── M5-5 · the control block at phone width ───────────────────────────────
+   Measured on Lab C at 375 x 812: the controls occupied 774 px, or 95% of the
+   viewport height, so a reader adjusting a slider could not see the plot it
+   changed. Astra measured the same defect at 1280 x 720 on Lab B, where the
+   sticky block took about 347 px — nearly half the height.
+
+   The fix is not to shrink the controls. It is to let them collapse, and to
+   keep the thing a reader is actually watching — the readout strip — pinned
+   instead. One control group open at a time is enough to run an experiment;
+   all nine at once is a form, not an instrument. */
+@media (max-width: 47.99rem) {
+  .controls {
+    grid-template-columns: 1fr;
+    gap: var(--s3);
+    max-height: 42vh;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+  /* The readout strip is what stays. It is one line, it carries the numbers the
+     experiment is about, and it costs a tenth of what the controls do. */
+  .instrument.is-tall .instrument__bar {
+    position: sticky; top: 0; z-index: 4;
+    background: var(--surface); border-bottom: 1px solid var(--border);
+  }
+  .instrument.is-tall .controls {
+    max-height: 38vh;
+  }
+  /* A collapsed control block still has to say what it is hiding. */
+  .controls[hidden] { display: none; }
+  .controls-toggle {
+    display: flex; width: 100%; align-items: center; justify-content: space-between;
+    gap: var(--s2); padding: .55rem var(--s4);
+    font-family: var(--font-mono); font-size: .72rem; letter-spacing: .04em;
+    text-transform: uppercase;
+    background: var(--surface-2); color: var(--ink2);
+    border: 0; border-top: 1px solid var(--border); cursor: pointer;
+  }
+.controls-toggle::after { content: '\25be'; font-size: .9rem; }
+  .controls-toggle[aria-expanded="false"]::after { content: '\25b8'; }
+}
+
+/* One phone view of the same result; desktop keeps its comparison panels. */
+.workspace-picker { display: none; }
+.workspace .panel { margin: 0; }
+.panel__hint { font-size: .75rem; line-height: 1.5; color: var(--muted); margin: .3rem 0 .6rem; }
+@media (max-width: 47.99rem) {
+  .workspace .panel-tabs { display: none; }
+  .workspace .panel[hidden], .workspace .panels[hidden],
+  .workspace .panel-group[hidden], .workspace .instrument__grid[hidden] { display: none !important; }
+  .workspace .panel[data-mobile-active] { display: block !important; scroll-margin-top: 4.5rem; }
+  .workspace.is-tall .instrument__bar { position: static; }
+  .workspace-picker:not([hidden]) {
+    display: flex; align-items: center; gap: .6rem; position: sticky; top: 0; z-index: 4;
+    padding: .65rem var(--s4); background: var(--surface); border-block: 1px solid var(--border);
+    font: .72rem var(--font-mono);
+  }
+  .workspace-picker label { flex: none; color: var(--muted); }
+  .workspace-picker select {
+    min-width: 0; width: 100%; padding: .5rem .3rem; font: inherit;
+    background: var(--surface-2); color: var(--ink); border: 1px solid var(--border); border-radius: 3px;
+  }
+  .workspace-picker select:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
+}
+@media (min-width: 48rem) {
+  .controls-toggle { display: none; }
+}
+
+/* M5-5 · the masthead wordmark truncated at 375 px (202 px into 106 px). It is
+   the site's name; an ellipsis on it is not a graceful degradation. */
+@media (max-width: 26rem) {
+  .wordmark { font-size: .92rem; letter-spacing: 0; }
+}
+
+/* M5-6 · off-screen but announced. The visible summary is rewritten on every
+   frame of a drag; this is the settled version, debounced, so a screen reader
+   hears one result rather than sixty. */
+.sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap;
+  border: 0;
+}
+
+/* M6-4 · the map tag is a review state, not a completeness badge. "full" was
+   earned by the presence of a <details> block, which is not evidence of
+   anything. These three say what has actually happened to a page. */
+
+/* M6-8 · preset groups. A controlled comparison and a protocol example answer
+   different questions, and a row of undifferentiated buttons hides that. */
+.presets__group {
+  font: 600 .66rem/1 var(--font-mono); letter-spacing: .08em; text-transform: uppercase;
+  color: var(--muted); align-self: center; margin-left: .3rem;
+}
+.presets__group:first-child { margin-left: 0; }
+
+/* M6-1 · each step carries its prerequisites, outcome, the misconception it
+   corrects, a five-minute experiment and a transfer check. A path that is only
+   an ordered list of links is a table of contents. */
+.path__steps--full > li { margin-bottom: var(--s5); }
+.step { display: grid; gap: .15rem .9rem; margin: .55rem 0 0; }
+.step dt {
+  font: 600 .68rem/1.4 var(--font-mono); letter-spacing: .05em;
+  text-transform: uppercase; color: var(--muted);
+}
+.step dd { margin: 0 0 .35rem; font-size: .9rem; color: var(--ink2); }
+@media (min-width: 42rem) {
+  .step { grid-template-columns: 9.5rem 1fr; align-items: baseline; }
+  .step dd { margin-bottom: .1rem; }
+}
+
+/* ── M6-3 · four ways in, and one playable thing above the inventory ────────
+   The homepage led with a fifty-nine item topic map, so the first thing a new
+   reader met was an index. Astra's §9: promote Learn, Labs, Reference and Debug,
+   and put a validated experiment near the top. */
+.doors {
+  display: grid; gap: var(--s3); margin: var(--s6) auto var(--s5);
+  max-width: var(--measure-wide, 68rem);
+  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+}
+.door {
+  display: flex; flex-direction: column; gap: var(--s2);
+  padding: var(--s4); text-decoration: none;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+.door:hover { border-color: var(--signal); }
+.door b {
+  font-family: var(--font-mono); font-size: .8rem; letter-spacing: .06em;
+  text-transform: uppercase; color: var(--signal);
+}
+.door span { font-size: .9rem; color: var(--ink2); line-height: 1.5; }
+
+.try {
+  max-width: var(--measure-wide, 68rem); margin: 0 auto var(--s6);
+  background: color-mix(in oklab, var(--signal) 6%, var(--surface));
+  border: 1px solid color-mix(in oklab, var(--signal) 25%, var(--border));
+  border-radius: var(--radius); padding: var(--s5);
+}
+.try h2 { margin: 0 0 var(--s3); font-size: 1.1rem; }
+.try p { margin: 0 0 var(--s3); }
+.try__why { color: var(--ink2); font-size: .93rem; }
+.try__go {
+  display: inline-block; font-family: var(--font-mono); font-size: .82rem;
+  padding: .5rem .9rem; border-radius: var(--radius);
+  background: var(--signal); color: var(--surface); text-decoration: none;
+}
+.try__go:hover { filter: brightness(1.08); }
+.try__alt { margin-left: var(--s3); font-size: .88rem; }
+
+/* M6-2 · the predict phase, and the transfer question. A guide that applies a
+   setting and then asks about it is testing recall of a demonstration; these
+   two make it an exercise. */
+.mode-stage__commit { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s3); margin: var(--s3) 0 0; }
+.mode-stage__hint { font-size: .84rem; color: var(--muted); margin: 0; }
+.tool-btn--go { background: var(--signal); color: var(--surface); border-color: var(--signal); }
+.tool-btn--go:hover { filter: brightness(1.08); }
+.mode-stage__transfer {
+  margin: var(--s4) 0 0; padding-top: var(--s3);
+  border-top: 1px dashed var(--border);
+}
+
+/* M6-5 · what produced a given bounce. A diagram you cannot interrogate is a
+   picture of the answer rather than a way of getting it. */
+.event-detail {
+  margin: .5rem 0 0; padding: .5rem .7rem;
+  font: 400 .84rem/1.5 var(--font-mono); color: var(--ink2);
+  background: var(--surface-2); border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+.event-detail b { color: var(--ink); }
+
+/* M4-1 / M6 · a panel that spans the instrument grid. The CDR lab's tolerance
+   plot is the payoff of the other two and wants the full width. Added after the
+   figure-class gate caught it being used with no rule behind it — the fourth
+   invented class in this round, which is why that gate now exists. */
+.panel--wide { grid-column: 1 / -1; }
+
+/* M7-1 · an action styled like a preset but not one. Reusing `.preset` for the
+   sweep button is what surfaced the unguarded PRESETS lookup in ten modules. */
+.preset--act { border-style: dashed; }
+
+/* M7-5 · the .s2p inspector. An inspector rather than an importer, and the
+   styling should not suggest otherwise — no "load" affordance anywhere. */
+.ts-drop { padding: var(--s4); border-top: 1px solid var(--border); }
+.ts-drop.is-over { background: color-mix(in oklab, var(--signal) 8%, var(--surface)); }
+.ts-label { font-family: var(--font-mono); font-size: .8rem; margin-right: var(--s2); }
+.ts-or { font-size: .84rem; color: var(--muted); margin: 0 var(--s2); }
+.ts-out { margin-top: var(--s3); }
+.ts-report { display: grid; gap: .1rem .9rem; margin: var(--s3) 0 0; }
+.ts-row { display: contents; }
+.ts-report dt { font: 600 .7rem/1.5 var(--font-mono); letter-spacing: .04em;
+                text-transform: uppercase; color: var(--muted); }
+.ts-report dd { margin: 0 0 .3rem; font-size: .88rem; color: var(--ink2); }
+.ts-ok { color: var(--signal); font-size: .92rem; margin: 0; }
+.ts-bad { color: var(--alarm); }
+.ts-note { font-size: .86rem; color: var(--muted); margin: var(--s3) 0 0; }
+.ts-warn { margin: var(--s3) 0 0; padding-left: 1.1rem; font-size: .86rem; color: var(--reflect); }
+@media (min-width: 40rem) { .ts-report { grid-template-columns: 14rem 1fr; } }
+
+/* A prediction is a learner interaction, outside the physical control set. */
+.arrival-prediction { gap: .65rem; border-top: 1px solid var(--border); }
+.arrival-prediction p { font: 0.9rem/1.6 var(--font-display); margin: 0; max-width: 75ch; }
+.arrival-prediction button, .arrival-prediction select {
+  font: 0.85rem/1.4 var(--font-display); color: var(--ink); background: var(--surface-2);
+  border: 1px solid var(--border); border-radius: 4px; padding: .6rem .8rem;
+  min-height: 44px; width: fit-content; max-width: 100%;
+}
+.arrival-prediction button { cursor: pointer; }
+.arrival-prediction button:disabled { opacity: .55; cursor: default; }
+.arrival-prediction button:focus-visible, .arrival-prediction select:focus-visible {
+  outline: 2px solid var(--signal); outline-offset: 3px;
+}
+.arrival-prediction [role="status"] { border-left: 3px solid var(--reflect); padding-left: .8rem; }
+
+/* Flagships keep controls in document flow; large pinned control blocks obscure
+   the linked plots and their explanations. */
+.workspace.is-tall .controls,
+.workspace.is-tall .presets,
+.workspace.is-tall .transport { position: static; box-shadow: none; backdrop-filter: none; }
+.workspace .controls[data-grouped] { display: block; scroll-margin-top: 8rem; max-height: none; overflow: visible; }
+.workspace .controls[data-grouped][hidden] { display: none; }
+.workspace .control-group { margin: 0; border: 0; border-bottom: 1px solid var(--border); padding: 0; }
+.workspace .control-group > summary {
+  font: .8rem var(--font-display); font-weight: 600; color: var(--ink);
+  cursor: pointer; padding: .85rem .2rem; min-height: 44px;
+}
+.control-group__grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr)); gap: var(--s4); padding: .3rem 0 1rem; }
+.workspace-picker__nav { display: flex; align-items: center; gap: .5rem; width: 100%; }
+.workspace-measurements { display: flex; flex-wrap: wrap; gap: .3rem 1rem; font: .66rem/1.4 var(--font-mono); color: var(--muted); }
+.workspace-measurements b { color: var(--ink); font-weight: 500; }
+.workspace-picker button { padding: .5rem; min-height: 44px; background: var(--surface-2); border: 1px solid var(--border); border-radius: 3px; color: var(--ink); font: inherit; cursor: pointer; }
+.workspace-picker button:focus-visible, .control-group > summary:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
+@media (max-width: 47.99rem) {
+  .workspace-picker:not([hidden]) { flex-direction: column; align-items: stretch; gap: .45rem; padding-block: .4rem; }
+  .workspace-picker label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+  .workspace .panel[data-mobile-active] { scroll-margin-top: 7rem; }
+}
+
+.decision-controls { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; font: .75rem var(--font-display); }
+.decision-controls input { width: 5rem; }
+.decision-controls input, .decision-controls button {
+  min-height: 44px; padding: .4rem .6rem; color: var(--ink); background: var(--surface-2);
+  border: 1px solid var(--border); border-radius: 3px; font: inherit;
+}
+.decision-controls button { cursor: pointer; }
+.decision-controls :focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
+.decision-table { overflow-x: auto; }
+.decision-table table { width: 100%; font: .68rem/1.5 var(--font-mono); }
+.decision-table caption { text-align: left; color: var(--muted); margin-bottom: .5rem; }
+.decision-table th, .decision-table td { padding: .35rem; }
+
+.channel-topology { display: flex; flex-wrap: wrap; gap: .6rem; }
+.topology-node {
+  flex: 1 1 9rem; min-height: 5rem; text-align: left; padding: .7rem;
+  background: var(--surface-2); color: var(--ink); border: 1px solid var(--border);
+  border-top: 3px solid var(--signal); border-radius: 4px; cursor: pointer;
+}
+.topology-node strong, .topology-node span { display: block; }
+.topology-node strong { font: .8rem var(--font-display); font-weight: 600; margin-bottom: .4rem; }
+.topology-node span { font: .68rem/1.5 var(--font-mono); color: var(--muted); }
+.topology-node--shunt { border-top-color: var(--reflect); border-style: dashed; }
+.topology-node:focus-visible { outline: 2px solid var(--signal); outline-offset: 3px; }
+
+/* Shared styling for model-owned inspection selectors. */
+.decision-controls select { min-height: 44px; max-width: 100%; padding: .4rem .6rem; color: var(--ink); background: var(--surface-2); border: 1px solid var(--border); border-radius: 3px; font: inherit; }
+.decision-term-selected { background: var(--surface-2); outline: 1px solid var(--reflect); outline-offset: -1px; }
+
+/* Short learning sequences beside the live evidence. */
+.experiment-flow {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr));
+  gap: var(--s2); margin: var(--s3) 0 0;
+}
+.experiment-step {
+  min-width: 0; padding: .7rem .8rem; background: var(--surface-2);
+  border-left: 3px solid var(--border); border-radius: 2px;
+  font-size: .78rem; line-height: 1.55; overflow-wrap: anywhere;
+}
+.experiment-step:nth-child(1) { border-left-color: var(--reflect); }
+.experiment-step:nth-child(2) { border-left-color: var(--signal); }
+.experiment-step strong { display: block; margin-bottom: .25rem; font: 600 .72rem var(--font-display); text-transform: uppercase; letter-spacing: .04em; }
+.experiment-step p { margin: 0; }
+.experiment-answer { margin-top: .45rem; color: var(--muted); }
+.experiment-answer summary { min-height: 44px; display: flex; align-items: center; cursor: pointer; color: var(--signal-text); font-family: var(--font-display); }
+.comparison-plots { display: grid; grid-template-columns: 1fr; gap: var(--s3); min-width: 0; }
+.comparison-plot { min-width: 0; }
+.comparison-plot .panel__label { margin-bottom: var(--s1); }
+.comparison-status { overflow-wrap: anywhere; }
+@media (min-width: 48rem) {
+  .comparison-plots { grid-template-columns: 1fr 1fr; align-items: start; }
+}
+
+/* Native-frequency inspection stays outside physical scenario controls. */
+.frequency-inspector { padding: var(--s3); border: 1px solid var(--border); margin-block: var(--s3); }
+.frequency-inspector h3 { margin-top: 0; }
+.frequency-inspector [role="status"], [data-out="transfer-detail"] { overflow-wrap: anywhere; font: .75rem/1.6 var(--font-mono); }
+#lc-frequency, #pd-frequency { width: 10rem; max-width: 100%; }
+.frequency-controls { align-items: end; margin-bottom: var(--s2); }
+.inspection-pair, .inspection-entry, .inspection-actions { display: flex; flex-wrap: wrap; align-items: center; gap: .4rem; min-width: 0; }
+.inspection-pair, .inspection-entry { padding: .4rem; background: var(--surface-2); border: 1px solid var(--border-soft); border-radius: 3px; }
+.inspection-entry input { flex: 1 1 8rem; }
+@media (max-width: 40rem) {
+  .frequency-controls, .inspection-pair, .inspection-entry, .inspection-actions { align-items: stretch; }
+  .frequency-controls { display: grid; grid-template-columns: 1fr; }
+  .inspection-pair, .inspection-entry { display: grid; grid-template-columns: 1fr; }
+  .inspection-actions { display: grid; grid-template-columns: 1fr 1fr; }
+  #lc-frequency, #pd-frequency { width: 100%; }
+}
+
+/* Generated analytical reference library. */
+.reference-library { margin: var(--s7) auto 0; max-width: var(--measure-wide, 68rem); }
+.reference-card {
+  margin: var(--s4) 0; padding: var(--s4); min-width: 0;
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+}
+.reference-card__head { display: flex; align-items: start; justify-content: space-between; gap: var(--s3); }
+.reference-card__head h3 { margin: 0; font-size: 1.15rem; }
+.reference-card__eyebrow {
+  margin: 0 0 var(--s1); color: var(--muted); font: .66rem var(--font-mono);
+  letter-spacing: .06em; text-transform: uppercase;
+}
+.reference-tags, .reference-card__actions { display: flex; flex-wrap: wrap; gap: var(--s2); }
+.reference-tag {
+  padding: .2rem .4rem; white-space: nowrap; color: var(--signal-text);
+  background: var(--surface-2); border: 1px solid var(--border); border-radius: 999px;
+  font: .65rem var(--font-mono);
+}
+.reference-card__actions { margin: var(--s3) 0; }
+.reference-card__actions .tool-btn { display: inline-flex; align-items: center; min-height: 44px; }
+.reference-card__meta { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px; margin: 0; background: var(--border-soft); }
+.reference-card__meta > div { min-width: 0; padding: .65rem .75rem; background: var(--surface-2); overflow-wrap: anywhere; }
+.reference-card__meta dt { margin-bottom: .2rem; color: var(--muted); font: .66rem var(--font-mono); text-transform: uppercase; letter-spacing: .05em; }
+.reference-card__meta dd { margin: 0; font-size: .78rem; line-height: 1.5; }
+.reference-result { margin-top: var(--s3); border-top: 1px solid var(--border); }
+.reference-result > summary { display: flex; align-items: center; min-height: 44px; cursor: pointer; color: var(--signal-text); font: 600 .78rem var(--font-display); }
+.reference-result > summary:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
+.reference-result table { min-width: 48rem; font-size: .72rem; }
+.reference-result th[scope="row"] { text-align: left; }
+.reference-result h4 { margin-bottom: var(--s1); }
+@media (max-width: 40rem) {
+  .reference-card { padding: var(--s3); }
+  .reference-card__head { display: block; }
+  .reference-tags { margin-top: var(--s2); }
+  .reference-card__meta { grid-template-columns: 1fr; }
+  .reference-card__actions .tool-btn { flex: 1 1 100%; justify-content: center; }
+}
+
+
+/* ============================================================================
+   LAB WORKSPACE
+   The desktop arrangement for a lab page: a control column on each side of a
+   stage that holds the plots, with view tabs, expandable plots and full screen.
+   Behaviour lives in js/lab-workspace.js; everything here is presentation.
+
+   It applies only inside .instrument.lab, so no other panel on the site is
+   affected. Below the breakpoint at the end of this section the frame falls back
+   to ordinary page flow and the site's own phone view picker takes over.
+   ============================================================================ */
+/* The real lab pages have a whole article below the lab. Without comparable
+   height here the frame could never scroll flush to the top of the window. */
+
+/* ── the frame: one screen tall ─────────────────────────────────────────────
+   Once the lab is scrolled into view, a control and the plots it changes are on
+   screen together. A rail or the stage scrolls inside the frame only when its own
+   content outgrows that height; the layout script resizes plots to avoid it. */
+.instrument.lab { max-width: 1680px; margin-block: var(--s5); }
+.lab-frame {
+  --rail: clamp(15rem, 18vw, 19rem);
+  display: grid;
+  grid-template-columns: var(--rail) minmax(0, 1fr) var(--rail);
+  grid-template-rows: auto auto minmax(0, 1fr);
+  grid-template-areas:
+    "bar  bar   bar"
+    "left guide right"
+    "left stage right";
+  height: calc(100dvh - 1.5rem);
+  min-height: 36rem;
+}
+.lab-frame > .mode-stage,
+.lab-frame > .viz-stale { grid-area: guide; }
+/* The guided step names what to change and what to watch, so it sits above the
+   plots -- compact, and scrolling inside itself rather than taking the plots' room. */
+.lab-frame > .mode-stage { max-height: 10rem; overflow-y: auto; padding: .45rem var(--s4); }
+.lab-frame > .mode-stage:not([hidden]) {
+  display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: var(--s4); align-items: start;
+}
+.lab-frame > .mode-stage > * { grid-column: 1 / -1; }
+.lab-frame > .mode-stage p { max-width: none; margin: 0 0 .25rem; font-size: .8rem; line-height: 1.4; }
+/* Step navigation shares the step's title line. */
+.lab-frame > .mode-stage > .mode-stage__where { grid-column: 1; grid-row: 1; }
+.lab-frame > .mode-stage > .mode-stage__nav { grid-column: 2; grid-row: 1; margin: 0; }
+.lab-frame > .mode-stage .mode-stage__hint {
+  position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; border: 0;
+  overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap;
+}
+
+/* Two rows instead of three: name, badge, tools, modes and full screen on one
+   line, every readout on the line below. */
+.lab-frame > .instrument__bar {
+  grid-area: bar;
+  display: grid; grid-template-columns: auto auto minmax(0, 1fr) auto auto auto;
+  grid-template-areas:
+    "title   tag     .       tools   modes   full"
+    "readout readout readout readout readout readout";
+  align-items: center; gap: .3rem var(--s3); padding: .45rem var(--s4);
+}
+.lab-frame > .instrument__bar > .instrument__title { grid-area: title; }
+.lab-frame > .instrument__bar > .model-tag { grid-area: tag; justify-self: start; }
+.lab-frame > .instrument__bar > .instrument__tools { grid-area: tools; }
+.lab-frame > .instrument__bar > .modes { grid-area: modes; }
+.lab-frame > .instrument__bar > .lab-full { grid-area: full; }
+.lab-frame > .instrument__bar > .instrument__readout { grid-area: readout; gap: .1rem var(--s3); font-size: .72rem; }
+.lab-full[aria-pressed="true"] { color: var(--signal-text); border-color: var(--signal); }
+
+/* ── rails ─────────────────────────────────────────────────────────────────── */
+.lab-rail {
+  display: flex; flex-direction: column; gap: var(--s2);
+  min-height: 0; overflow-y: auto; overscroll-behavior: contain;
+  padding: var(--s3);
+  background: var(--surface);
+}
+.lab-rail--left  { grid-area: left;  border-right: 1px solid var(--border); }
+.lab-rail--right { grid-area: right; border-left: 1px solid var(--border); }
+.lab-rail__side {
+  display: flex; justify-content: space-between; gap: var(--s2); margin: 0;
+  font: 600 .66rem/1.4 var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--muted);
+}
+.lab-rail__side span { font-weight: 400; letter-spacing: .02em; text-transform: none; text-align: right; }
+/* A rail group is a named, collapsible set of controls: the same semantics the
+   loader builds on a page without a workspace, authored here instead. Collapsing
+   one is presentation — it changes nothing the model reads. */
+.lab-group { display: block; padding-top: .5rem; border-top: 1px solid var(--border-soft); border-bottom: 0; }
+.lab-group > summary.lab-group__title {
+  margin: 0; padding: 0; cursor: pointer; list-style: revert; border: 0;
+  font: 600 .76rem/1.3 var(--font-display); color: var(--ink); text-transform: none; letter-spacing: normal;
+}
+.lab-group > .lab-group__body {
+  display: flex; flex-direction: column; gap: .5rem; padding: .5rem 0 0; grid-template-columns: none;
+}
+.lab-group__title { margin: 0; font: 600 .76rem/1.3 var(--font-display); color: var(--ink); }
+.lab-pairs { display: flex; flex-direction: column; gap: .5rem; }
+
+/* A plain number entry puts its label and box on one line; stacked, Lab C's four
+   board-load entries alone took 355 px of the rail. */
+.lab-rail .ctl:has(> input[type="number"]) {
+  display: grid; grid-template-columns: minmax(0, 1fr) 6.5rem; align-items: center; gap: var(--s2);
+}
+.lab-rail .ctl > label { font-family: var(--font-mono); font-size: .72rem; line-height: 1.35; color: var(--ink-2); }
+.lab-rail .ctl > input[type="number"] { width: 100%; min-width: 0; }
+.lab-rail .presets,
+.lab-rail .transport { padding: 0; background: none; }
+.lab-rail .presets__group { flex-basis: 100%; margin: .2rem 0 0; }
+.lab-rail .locate { padding: 0; background: none; border: 0; }
+
+/* A prediction exercise placed in a rail keeps its own heading and compact type. */
+.lab-rail .arrival-prediction { padding: 0; gap: .4rem; background: none; }
+.lab-rail .arrival-prediction h3 { margin: 0; font: 600 .76rem/1.3 var(--font-display); color: var(--ink); }
+.lab-rail .arrival-prediction p { margin: 0; font-size: .78rem; line-height: 1.45; }
+.lab-rail .arrival-prediction select { width: 100%; }
+.lab-rail .arrival-prediction label { font: .72rem/1.35 var(--font-mono); color: var(--ink-2); }
+.lab-rail .experiment-flow { grid-template-columns: minmax(0, 1fr); }
+
+/* The one-line note under a slider moves to the help box at the foot of its rail.
+   It stays in the document, bound to its input by aria-describedby. */
+.lab-strip .ctl__note,
+.lab-rail .ctl__note {
+  position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; border: 0;
+  overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap;
+}
+.lab-help {
+  margin: auto 0 0; padding: .45rem .6rem; min-height: 3.2em;
+  font-size: .76rem; line-height: 1.5; color: var(--muted);
+  background: var(--surface-2); border-radius: var(--radius);
+}
+.lab-help b { color: var(--ink); font-weight: 600; }
+
+/* ── stage ─────────────────────────────────────────────────────────────────── */
+.lab-stage {
+  grid-area: stage; min-width: 0; min-height: 0; overflow-y: auto;
+  display: flex; flex-direction: column; gap: var(--s3);
+  padding: var(--s3) var(--s4); background: var(--surface);
+}
+.lab-stage__head { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s2) var(--s4); }
+.lab-stage__head .presets,
+.lab-stage__head .transport { padding: 0; background: none; }
+.lab-stage__head .transport { flex: 1 1 14rem; }
+.lab-stage .panel { padding: 0; }
+.lab-top > .panel { gap: var(--s1); }
+.lab-top h3 { margin: 0; font: .7rem var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.lab-row--anchor {
+  display: grid; gap: var(--s4); align-items: start;
+  grid-template-columns: var(--anchor-columns, minmax(0, 3fr) minmax(0, 2fr));
+}
+.lab-row--anchor > :only-child { grid-column: 1 / -1; }
+
+.lab-panel-head { display: flex; align-items: center; gap: var(--s2); min-height: 26px; }
+.lab-panel-head > .panel__label,
+.lab-panel-head > .lab-unit-label,
+.lab-panel-head > h3 { flex: 1 1 auto; min-width: 0; margin: 0; }
+.lab-unit-label { font-family: var(--font-mono); font-size: .7rem; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.lab-view--section h3, .lab-view h3 { font: 600 .8rem/1.3 var(--font-display); color: var(--ink); }
+.lab-expand { flex: none; }
+.lab-scale { flex: none; font: .7rem var(--font-mono); color: var(--muted); font-variant-numeric: tabular-nums; }
+.lab-expand[aria-pressed="true"] { color: var(--signal-text); border-color: var(--signal); }
+/* The probe's "read at" entry shares the legend row where a plot has one, and
+   otherwise takes a short right-aligned line under the plot; a header row shared
+   with the title and the expand button wrapped the title onto two lines. */
+.instrument.lab .probe-host > .probe__at { display: flex; justify-content: flex-end; align-items: center; gap: .4rem; margin-top: 2px; }
+.instrument.lab .panel:has(.legend) .probe-host > .probe__at { position: absolute; right: 0; top: 100%; margin: 2px 0 0; }
+.instrument.lab .panel:has(.probe__at) > .legend { padding-right: 10.5rem; min-height: 25px; }
+
+/* Playback and a control that moves along the plots' own axis (Lab A's time),
+   between the always-visible plots and the views. The playback block's buttons
+   join the row directly. */
+.lab-strip {
+  display: flex; flex-wrap: wrap; align-items: center; gap: var(--s2) var(--s4);
+  padding: .4rem .6rem; background: var(--surface-2); border-radius: var(--radius);
+}
+.lab-strip .transport { display: contents; }
+.lab-strip .ctl { flex: 1 1 13rem; min-width: 11rem; }
+
+.lab-tabs { display: flex; flex-wrap: wrap; gap: 2px; border-bottom: 1px solid var(--border); }
+.lab-tabs [role="tab"] {
+  min-height: 36px; padding: .4rem .7rem; margin-bottom: -1px; cursor: pointer;
+  font: 500 .72rem var(--font-mono); color: var(--muted);
+  background: none; border: 0; border-bottom: 2px solid transparent;
+}
+.lab-tabs [role="tab"]:hover { color: var(--ink); }
+@media (max-width: 90rem) { .lab-tabs [role="tab"] { padding-inline: .45rem; font-size: .7rem; } }
+.lab-tabs [role="tab"][aria-selected="true"] { color: var(--ink); border-bottom-color: var(--signal); }
+.lab-tabs [role="tab"]:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
+
+.lab-view { display: none; }
+.lab-view.is-active { display: grid; gap: var(--s3) var(--s4); align-items: start; grid-template-columns: minmax(0, 1fr); }
+.lab-view.is-active[data-count="2"],
+.lab-view.is-active[data-count="3"] { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.lab-view.is-active[data-count="3"] > :last-child { grid-column: 1 / -1; }
+/* The site's full-width panel modifier belongs to the original stacked grid; here the
+   layout decides each plot's column. */
+.lab-row--anchor > .panel--wide,
+.lab-view > .panel--wide,
+.lab-focus > .panel--wide { grid-column: auto; }
+.lab-stage figcaption { margin: 0; font-size: .74rem; line-height: 1.4; color: var(--muted); }
+
+/* A block carrying more than a plot -- controls, a table, a caption -- puts the
+   plot on the left and the rest in a side column that scrolls on its own
+   (workspace.js groups those elements and sets the column's height). */
+.lab-split {
+  display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(16rem, 1fr);
+  grid-template-rows: auto auto 1fr; gap: var(--s2) var(--s4); align-items: start;
+}
+.lab-split > .lab-panel-head { grid-column: 1 / -1; }
+.lab-split > :is(canvas, .probe-host, .comparison-plots) { grid-column: 1; grid-row: 2; }
+.lab-split > .legend { grid-column: 1; grid-row: 3; }
+.lab-side {
+  grid-column: 2; grid-row: 2 / span 2;
+  display: flex; flex-direction: column; gap: var(--s2);
+  min-width: 0; overflow-y: auto; overscroll-behavior: contain; padding-right: 2px;
+}
+.lab-side > * { margin: 0; }
+.lab-side p, .lab-side .comparison-status { font-size: .8rem; line-height: 1.5; }
+/* Side-by-side comparison plots are too narrow to share a header row with the
+   probe entry, so it takes its own line under each plot. */
+.xl .comparison-plot .probe-host > .probe__at { position: static; margin-top: 2px; }
+.lab-locate > summary {
+  min-height: 32px; display: flex; align-items: center; cursor: pointer;
+  font: .72rem var(--font-mono); color: var(--signal-text);
+}
+.lab-locate .locate { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s2) var(--s3); padding: 0; margin: 0; border: 0; background: none; }
+
+/* A scenario note can run to six lines in a rail; it shows three until opened. */
+.lab-rail [data-out="note"] {
+  display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; overflow: hidden;
+  margin: 0; font-size: .76rem; line-height: 1.45; color: var(--muted);
+}
+.lab-rail .is-open > [data-out="note"] { display: block; -webkit-line-clamp: unset; }
+.lab-rail .instrument__hint { margin: 0; font-size: .74rem; line-height: 1.45; color: var(--muted); }
+.lab-more { padding: 0; border: 0; background: none; cursor: pointer; font: .7rem var(--font-mono); color: var(--signal-text); }
+.lab-more:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
+.lab-view > .viz-summary { max-height: 14rem; overflow-y: auto; overscroll-behavior: contain; }
+.lab-notes { margin-top: var(--s1); }
+.lab-notes > summary {
+  min-height: 32px; display: flex; align-items: center; cursor: pointer;
+  font: .72rem var(--font-mono); color: var(--signal-text);
+}
+
+/* ── expanded plots ────────────────────────────────────────────────────────── */
+.lab-focusbar:not([hidden]) { display: flex; flex-wrap: wrap; align-items: center; gap: .35rem .4rem; }
+.lab-focusbar__lead {
+  margin-right: .15rem; font: .66rem var(--font-mono); letter-spacing: .08em;
+  text-transform: uppercase; color: var(--muted);
+}
+.lab-chip {
+  min-height: 30px; padding: .25rem .6rem; border-radius: 999px; cursor: pointer;
+  font: .7rem var(--font-mono); color: var(--ink-2);
+  background: var(--surface-2); border: 1px solid var(--border);
+}
+.lab-chip:hover { border-color: var(--signal); }
+.lab-chip[aria-pressed="true"] { background: var(--signal); border-color: var(--signal); color: var(--ground); }
+.lab-chip:focus-visible, .lab-expand:focus-visible, .lab-full:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
+.lab-focusbar__back { margin-left: auto; }
+.lab-stage.is-focus > :not(.lab-focusbar):not(.lab-focus) { display: none !important; }
+.lab-focus:not([hidden]) { display: grid; gap: var(--s4); align-content: start; grid-template-columns: minmax(0, 1fr); }
+.lab-focus[data-count="3"],
+.lab-focus[data-count="4"] { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.lab-focus[data-count="3"] > :first-child { grid-column: 1 / -1; }
+.lab-focus[data-count="5"],
+.lab-focus[data-count="6"],
+.lab-focus[data-count="7"],
+.lab-focus[data-count="8"],
+.lab-focus[data-count="9"] { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+/* ── full screen ───────────────────────────────────────────────────────────── */
+.instrument.lab.is-full {
+  position: fixed; inset: 0; z-index: 1000;
+  max-width: none; margin: 0; border: 0; border-radius: 0;
+  background: var(--ground); overflow: hidden;
+}
+.instrument.lab.is-full .lab-frame { height: 100dvh; min-height: 0; }
+html.lab-lock, html.lab-lock body { overflow: hidden; }
+
+/* ── short laptop screens ──────────────────────────────────────────────────── */
+@media (min-width: 75rem) and (max-height: 50rem) {
+  .lab-help { display: none; }
+  .lab-rail { gap: .2rem; padding-block: .35rem; }
+  .lab-group { gap: .25rem; padding-top: .25rem; }
+  .lab-group__title { font-size: .7rem; }
+  .lab-rail .ctl { gap: 2px; }
+  .lab-pairs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .35rem .5rem; }
+  .lab-rail .lab-pairs > .ctl:has(> input[type="number"]) { display: flex; flex-direction: column; align-items: stretch; gap: .15rem; }
+  .lab-rail .presets { gap: .3rem; }
+  .lab-rail .preset { padding-block: .2rem; }
+  .lab-rail .presets__group { margin-top: 0; }
+  .lab-rail [data-out="note"] { -webkit-line-clamp: 2; }
+  .lab-stage { gap: .5rem; padding-block: .5rem; }
+}
+
+/* ── below laptop width ────────────────────────────────────────────────────────
+   The frame is not attempted: everything returns to one column, all views show,
+   and the site's own phone view picker takes over. */
+@media (max-width: 74.99rem) {
+  .lab-frame { display: block; height: auto; min-height: 0; }
+  /* The bar's column tracks are a desktop arrangement; on a phone it wraps like
+     every other instrument bar on the site instead of scrolling the page sideways. */
+  .lab-frame > .instrument__bar { display: flex; flex-wrap: wrap; grid-template-columns: none; grid-template-areas: none; }
+  .lab-frame > .instrument__bar > * { grid-area: auto; }
+  .lab-frame > .instrument__bar > .instrument__readout { flex-basis: 100%; }
+  .lab-rail { overflow: visible; border: 0; border-top: 1px solid var(--border); }
+  .lab-stage { overflow: visible; }
+  .lab-tabs, .lab-help, .lab-expand, .lab-full { display: none; }
+  .lab-view, .lab-view.is-active { display: grid; gap: var(--s4); margin-top: var(--s3); grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr)); }
+  .lab-row--anchor { grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr)); }
+  .lab-split { display: block; }
+  .lab-side { max-height: none !important; overflow: visible; margin-top: var(--s2); }
+  .instrument.lab .panel:has(.probe__at) > .legend { padding-right: 0; }
+  .instrument.lab .probe-host > .probe__at { position: static; margin: 0; }
+  .lab-rail .ctl__note {
+    position: static; width: auto; height: auto; margin: 0;
+    overflow: visible; clip: auto; clip-path: none; white-space: normal;
+  }
+}
+
+/* ── introductions ─────────────────────────────────────────────────────────────
+   Between a lab's headline and the lab: a map of the frame in the frame's own
+   arrangement — results across the top, the source side left, what happens in the
+   middle, the receiving side right, more views underneath. One column when narrow. */
+.lab-intro { margin-bottom: 2rem; }
+.lab-map { list-style: none; margin: 0; padding: 0; display: grid; gap: .5rem; grid-template-columns: minmax(0, 1fr); }
+.lab-map > li {
+  margin: 0; padding: .65rem .8rem;
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  font-size: .92rem; line-height: 1.5; color: var(--ink-2);
+}
+.lab-map > li > b {
+  display: block; margin-bottom: .2rem;
+  font: 600 .7rem/1.3 var(--font-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--ink);
+}
+.lab-map > .lab-map__mid { border-color: var(--signal); }
+@media (min-width: 46rem) {
+  .lab-map {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr) minmax(0, 1fr);
+    grid-template-areas: "top top top" "left mid right" "bottom bottom bottom";
+  }
+  .lab-map__top { grid-area: top; }
+  .lab-map__left { grid-area: left; }
+  .lab-map__mid { grid-area: mid; }
+  .lab-map__right { grid-area: right; }
+  .lab-map__bottom { grid-area: bottom; }
+}

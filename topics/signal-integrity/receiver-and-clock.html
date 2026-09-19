@@ -1,0 +1,622 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Receiver Sampling, Clock Recovery, and Jitter Tolerance | SIPI</title>
+<meta name="description" content="Receiver Sampling, Clock Recovery, and Jitter Tolerance">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<link rel="stylesheet" href="../../css/base.css?v=e4f774de">
+<link rel="stylesheet" href="../../css/components.css?v=295837ab">
+  <!-- meta:start -->
+  <link rel="canonical" href="https://sipi.work/topics/signal-integrity/receiver-and-clock.html">
+  <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="SIPI">
+  <meta property="og:title" content="Receiver Sampling, Clock Recovery, and Jitter Tolerance | SIPI">
+  <meta property="og:description" content="Receiver Sampling, Clock Recovery, and Jitter Tolerance">
+  <meta property="og:url" content="https://sipi.work/topics/signal-integrity/receiver-and-clock.html">
+  <meta property="og:image" content="https://sipi.work/assets/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Receiver Sampling, Clock Recovery, and Jitter Tolerance | SIPI">
+  <meta name="twitter:description" content="Receiver Sampling, Clock Recovery, and Jitter Tolerance">
+  <meta name="twitter:image" content="https://sipi.work/assets/og.png">
+  <!-- meta:end -->
+</head>
+<body>
+
+<header class="masthead">
+  <a class="wordmark" href="../../index.html">SIPI</a>
+  <nav>
+    <a href="../../index.html#fundamentals">Fundamentals</a>
+    <a href="../../index.html#power-integrity">Power</a>
+    <a href="../../index.html#interfaces">Interfaces</a>
+    <a href="../../start.html">Start</a>
+    <a href="../../labs.html">Labs</a>
+    <a href="../../reference.html">Reference</a>
+    <button class="theme-toggle" data-act="theme" type="button">System</button>
+  </nav>
+</header>
+
+<main>
+  <div class="page-head">
+    <p class="crumb"><a href="../../index.html#signal-integrity">SI in practice</a> / 09</p>
+    <h1>Receiver Sampling, Clock Recovery, and Jitter Tolerance</h1>
+    <p class="byline">
+      <!-- review:start --><span>By Geetansh Arora — Principal SI/PI Engineer</span><time datetime="2026-09-16" title="Technical review by Geetansh Arora on this date">16 Sep 2026</time><span>11 min</span><!-- review:end -->
+    </p>
+    <p class="answer">
+      Everything else on this site describes what happens to a signal on its way
+      to the receiver. This page is about what the receiver then does with it
+      &#8212; because on a modern link that is where most of the margin is
+      created, and it is why an eye measured at the pad can be closed while the
+      link runs perfectly.
+    </p>
+  </div>
+
+  <div class="prose">
+    <p>
+      Every preceding analysis in signal integrity focuses on the physical journey: how PCB transmission lines,
+      vias, dielectric dissipation, and crosstalk distort a pulse train before it reaches the far end of the channel.
+      However, a degraded waveform does not interpret itself. At the end of the channel sits a silicon receiver,
+      tasked with converting noisy, dispersed, multi-gigahertz analog voltages back into pristine digital bits.
+    </p>
+
+    <p>
+      At its core, the receiver must execute two continuous, interrelated operations: <strong>when to look</strong>
+      (establishing the optimal sampling phase in time) and <strong>what it saw</strong> (comparing the sampled voltage
+      against a decision threshold). In legacy parallel buses like DDR memory, a companion clock trace travels
+      alongside the data lines to dictate sampling instants. But at multi-gigabit SerDes speeds (10 to 112 Gbps),
+      routing a separate physical clock trace is physically impossible: picoseconds of trace length mismatch,
+      package delay differences, and thermal gradients would completely consume the timing window.
+    </p>
+
+    <p>
+      Instead, modern serial interconnects embed the clock directly within the data transitions. The receiver's
+      <strong>Clock and Data Recovery (CDR)</strong> circuit acts as a specialized phase-tracking filter: it extracts
+      a synchronous clock reference from the incoming data stream, tracks low-frequency wander, and positions the
+      internal sampling clock precisely in the center of the received eye. Meanwhile, high-speed voltage comparators
+      (slicers) resolve the signal amplitude. Understanding how the CDR loop, slicers, and AC coupling networks
+      interact is where signal integrity meets digital silicon.
+    </p>
+
+    <h2>Two decisions, made continuously</h2>
+
+    <p>
+      A receiver is doing two things at once, forever:
+    </p>
+
+    <ul class="tight">
+      <li><strong>When to look.</strong> Pick an instant within each symbol and
+        sample there. That instant has to track the transmitter's rate, which is
+        not known exactly and drifts.</li>
+      <li><strong>What it saw.</strong> Compare the sampled voltage against a
+        threshold and decide which symbol it was.</li>
+    </ul>
+
+    <p>
+      Both decisions can be wrong, and they fail differently: a wrong instant is
+      a timing failure, a wrong threshold is a voltage failure. The eye diagram's
+      two axes are exactly these two questions.
+    </p>
+
+    <h2 class="section-rule"><span>Sampling phase: the receiver chooses it</span></h2>
+
+    <p>
+      The best sampling instant is not the middle of the symbol, and it is not
+      the peak of the pulse response. It is the point that maximises the
+      <em>eye</em> — which is a trade between pre-cursor and post-cursor
+      interference, and it moves as the channel changes.
+    </p>
+
+    <p>
+      <strong>What a CDR converges on is its phase detector's balance point, which
+      is not the same thing.</strong> A bang-bang (Alexander) detector equalises
+      the number of early and late transition votes, which lands near the mean
+      zero crossing — close to the widest opening on a symmetric eye, and
+      measurably off it on an asymmetric one. A baud-rate detector such as
+      Mueller-Müller drives a particular combination of the sampled levels to
+      zero, which on a channel with strong post-cursor settles <em>later</em> than
+      the widest opening. Neither searches for maximum margin; both happen to be
+      near it when the eye is well behaved. So "the CDR finds the best phase" is a
+      useful first approximation and a bad assumption when the eye is skewed —
+      which is exactly when you are debugging.
+    </p>
+
+    <p>
+      A clock-and-data-recovery loop converges on it. Which means a fixed-phase
+      measurement understates what the receiver achieves, and two eyes measured
+      with different recovery settings are not comparable.
+    </p>
+
+    <h2 class="section-rule"><span>The CDR is a filter on jitter</span></h2>
+
+    <p>
+      This is the part most worth understanding, because it decides which jitter
+      even reaches the decision.
+    </p>
+
+    <p>
+      The loop tracks the incoming data's timing. Jitter slower than the loop can
+      follow is <em>tracked out</em> — the sampling instant moves with it, so the
+      receiver never sees it. Jitter faster than the loop can follow passes
+      straight through.
+    </p>
+
+    <div class="eq">
+      <span class="eq__main">H(f) low-pass &nbsp;·&nbsp; residual = 1 − H(f) &nbsp;·&nbsp; tolerance = margin ⁄ |1 − H(f)|</span>
+      <span class="eq__note">three functions, not two — and the third is one <em>over</em> the second, which is why it rises where the second falls</span>
+    </div>
+
+    <p>
+      That deserves spelling out, because naming the wrong one of the three is the
+      commonest confusion in this subject — and an earlier version of this page made
+      exactly that mistake.
+    </p>
+
+    <ul class="tight">
+      <li><strong>H(f), input jitter to recovered clock, is low-pass.</strong> The loop
+        follows slow wander, so slow input jitter ends up on the receiver's own clock.</li>
+      <li><strong>The residual phase error carries 1 − H(f), which is high-pass.</strong>
+        Whatever the loop tracked is gone from the decision; what is left is the fast part.
+        Note that this is the <em>complex</em> complement: 1 − |H(f)| is a different
+        function and differs wherever H has phase, which is everywhere near the loop's
+        natural frequency. Under-damped, the two differ by as much as 1.63, and
+        1 − |H| goes <em>negative</em> across the peak.</li>
+      <li><strong>The jitter a receiver can tolerate is margin ⁄ |1 − H(f)|.</strong> This
+        is the curve that <em>rises steeply at low frequency</em> — not because it is
+        high-pass, but because it is one over something that is. Calling tolerance
+        "high-pass" gets the shape exactly backwards.</li>
+    </ul>
+  </div>
+
+  <section class="instrument lab" data-viz="cdr" aria-label="Interactive clock recovery panel: jitter transfer, residual phase error and allowable input jitter, all from one loop">
+<script type="application/json" data-contract>{"kind":"analytical","evidence":"independent","purpose":"Separate the three functions a clock-recovery loop defines: input jitter onto the recovered clock, the residual phase error at the decision, and the input jitter the receiver can withstand.","equations":["H(s) = (2*zeta*wn*s + wn^2) / (s^2 + 2*zeta*wn*s + wn^2)","residual = COMPLEX 1 - H(f), never 1 - |H(f)|","tolerance = margin / |1 - H(f)|, capped by a declared tracking ceiling","f3dB: u^2 - (2 + 4*zeta^2)*u - 1 = 0 with u = (w/wn)^2, so f3dB = fn*sqrt(root)","steady-state sinusoid: recovered phase = H(f) times input phase; residual = input - recovered"],"units":"Hz, seconds, UI peak-to-peak, dimensionless transfer","validity":"A teaching loop with declared parameters: natural frequency, damping and sampling margin. The sinusoidal experiment is the steady-state small-signal response after settling. The low-frequency tracking ceiling is DECLARED, not derived — a real one comes from the phase detector's range and the VCO's tuning. fn is the NATURAL frequency and is reported separately from the closed-loop -3 dB bandwidth, which is 1.58x to 3.37x higher depending on damping.","numerics":"Direct complex evaluation on 340 log-spaced points from 1 kHz to 1 GHz; 181 analytic sinusoidal samples over three periods at the selected frequency.","limitations":"Not a lock or acquisition transient, cycle-slip model, BER simulation, or compliance jitter-tolerance mask. A mask carries a BER target, a defined pattern, the phase detector's own characteristic and usually a measured low-frequency corner. This model has none of those, and the dashed part of the tolerance curve is an assumption drawn as one. No noise model: the panel makes no claim about how much of the loop's own reference noise reaches the recovered clock, because that needs a spectrum and an injection point and neither is here. The tracking ceiling is a DECLARED assumption, not a derived result, and where it binds the tolerance no longer scales with the sampling margin.","suites":["CDR loop"],"version":"2.1","reviewed":"2026-09-13","panel":"cdr"}</script>
+<div class="lab-frame">
+<div class="instrument__bar">
+        <span class="instrument__title">One loop · three readings</span>
+        <span data-evidence="independent" data-model-version="2.1" class="model-tag model-tag--analytical" title="placeholder, stamped from docs/model-types.json">analytical</span>
+        <span class="instrument__readout" role="status" aria-live="polite" aria-label="Current values">
+          <span>peak transfer <b data-out="peak">—</b></span>
+          <span>residual −3 dB <b data-out="cross">—</b></span>
+          <span>worst tolerance <b data-out="floor">—</b></span>
+          <span><b data-out="low">—</b></span>
+        </span>
+      <button type="button" class="tool-btn lab-full" data-lab-full aria-pressed="false">full screen</button>
+</div>
+<aside class="lab-rail lab-rail--left" aria-label="Jitter input controls">
+<p class="lab-rail__side">Jitter input <span>what the loop follows</span></p>
+<details class="control-group lab-group" open><summary class="lab-group__title" id="lab-left-0">Scenarios</summary><div class="control-group__grid lab-group__body"><div class="presets">
+        <button class="preset" type="button" data-preset="typical" aria-pressed="false">Typical</button>
+        <button class="preset" type="button" data-preset="wide" aria-pressed="false">Wide loop</button>
+        <button class="preset" type="button" data-preset="peaky" aria-pressed="false">Under-damped</button>
+        <button class="preset" type="button" data-preset="tight" aria-pressed="false">Less margin</button>
+        <p class="presets__note" data-out="note"></p>
+      </div></div></details>
+<details class="control-group lab-group" open><summary class="lab-group__title" id="lab-left-1">Input jitter</summary><div class="control-group__grid lab-group__body"><div class="ctl">
+          <div class="ctl__head"><label for="cdr-jitter-f">Jitter frequency</label><output id="cdr-jitter-f-out" for="cdr-jitter-f">4 MHz</output></div>
+          <input type="range" id="cdr-jitter-f" min="1" max="80" step="1" value="4">
+        </div>
+<div class="ctl">
+          <div class="ctl__head"><label for="cdr-jitter-a">Input phase amplitude</label><output id="cdr-jitter-a-out" for="cdr-jitter-a">0.40 UI pp</output></div>
+          <input type="range" id="cdr-jitter-a" min="5" max="100" step="5" value="40">
+        </div></div></details>
+<p class="lab-help" aria-hidden="true">Point at or focus a control to see what it changes.</p>
+</aside>
+<div class="lab-stage">
+<div class="lab-row lab-row--anchor" style="--anchor-columns: minmax(0, 1fr) minmax(0, 1fr)">
+<figure data-lab-unit="transfer" data-lab-name="Jitter transfer" class="panel"><div class="lab-panel-head"><span class="lab-unit-label">Jitter transfer</span><button type="button" class="tool-btn lab-expand" data-lab-expand aria-pressed="false" aria-label="Expand Jitter transfer">expand</button></div>
+          <canvas data-cv="transfer" role="img" aria-label="Magnitude of the jitter transfer function against jitter frequency, low-pass, with any peaking near the loop bandwidth marked."></canvas>
+          <figcaption>Input jitter onto the recovered clock. Low-pass: the loop follows slow wander.</figcaption>
+        </figure>
+<figure data-lab-unit="residual" data-lab-name="Residual phase error" class="panel"><div class="lab-panel-head"><span class="lab-unit-label">Residual phase error</span><button type="button" class="tool-btn lab-expand" data-lab-expand aria-pressed="false" aria-label="Expand Residual phase error">expand</button></div>
+          <canvas data-cv="residual" role="img" aria-label="Magnitude of one minus the complex jitter transfer function, the residual phase error at the decision, which is high-pass."></canvas>
+          <figcaption>What is left at the decision — the complex complement 1 − H(f). High-pass.</figcaption>
+        </figure>
+</div>
+<div class="lab-tabs" role="tablist" aria-label="Linked views">
+<button type="button" role="tab" id="lab-tab-tolerance" aria-controls="lab-view-tolerance" aria-selected="true" tabindex="0" data-view="tolerance">Tolerance and phase in time</button>
+<button type="button" role="tab" id="lab-tab-values" aria-controls="lab-view-values" aria-selected="false" tabindex="-1" data-view="values">Values as text</button>
+</div>
+<div class="lab-view is-active" id="lab-view-tolerance" role="tabpanel" aria-labelledby="lab-tab-tolerance" data-view="tolerance" data-count="2">
+<figure data-lab-unit="tolerance" data-lab-name="Jitter tolerance" class="panel panel--wide"><div class="lab-panel-head"><span class="lab-unit-label">Jitter tolerance</span><button type="button" class="tool-btn lab-expand" data-lab-expand aria-pressed="false" aria-label="Expand Jitter tolerance">expand</button></div>
+          <canvas data-cv="tolerance" role="img" aria-label="Allowable input jitter in unit intervals peak to peak against jitter frequency, rising at low frequency until a declared tracking ceiling limits it."></canvas>
+          <figcaption>The jitter the receiver withstands: margin ⁄ |1 − H|, and a declared ceiling where a real phase detector runs out of range.</figcaption>
+        </figure>
+<figure data-lab-unit="phase" data-lab-name="Clock phase in time" class="panel panel--wide"><div class="lab-panel-head"><span class="lab-unit-label">Clock phase in time</span><button type="button" class="tool-btn lab-expand" data-lab-expand aria-pressed="false" aria-label="Expand Clock phase in time">expand</button></div>
+          <canvas data-cv="phase" role="img" aria-label="Aligned input jitter, recovered clock phase, and residual phase error over three sinusoidal periods."></canvas>
+          <figcaption>Steady-state sinusoidal experiment: input phase (dashed), recovered clock (blue), and their residual (amber), aligned in time. This shows small-signal response after settling, not lock acquisition.</figcaption>
+        </figure>
+</div>
+<div class="lab-view" id="lab-view-values" role="tabpanel" aria-labelledby="lab-tab-values" data-view="values" data-count="1">
+<dl data-summary class="viz-summary" aria-label="Current values"></dl>
+</div>
+</div>
+<aside class="lab-rail lab-rail--right" aria-label="Loop and sampler controls">
+<p class="lab-rail__side">Loop and sampler <span>what recovers and decides</span></p>
+<details class="control-group lab-group" open><summary class="lab-group__title" id="lab-right-0">Clock recovery loop</summary><div class="control-group__grid lab-group__body"><div class="ctl">
+          <div class="ctl__head"><label for="cdr-fn">Natural frequency f<sub>n</sub></label><output id="cdr-fn-out" for="cdr-fn">4 MHz</output></div>
+          <input type="range" id="cdr-fn" min="1" max="40" step="1" value="4">
+        </div>
+<div class="ctl">
+          <div class="ctl__head"><label for="cdr-zeta">Damping ζ</label><output id="cdr-zeta-out" for="cdr-zeta">0.70</output></div>
+          <input type="range" id="cdr-zeta" min="15" max="150" step="5" value="70">
+        </div></div></details>
+<details class="control-group lab-group" open><summary class="lab-group__title" id="lab-right-1">Receiver aperture</summary><div class="control-group__grid lab-group__body"><div class="ctl">
+          <div class="ctl__head"><label for="cdr-margin">Sampling margin</label><output id="cdr-margin-out" for="cdr-margin">0.30 UI</output></div>
+          <input type="range" id="cdr-margin" min="5" max="60" step="1" value="30">
+        </div></div></details>
+<section class="lab-group">
+<p class="instrument__hint">The red marker ties this excitation frequency to all three frequency plots. The time trace is the steady-state small-signal response of the same complex H(f); it does not simulate lock, acquisition, cycle slips, BER, or a compliance test.</p>
+</section>
+<section class="lab-group">
+<details class="lab-notes"><summary>Learning sequence</summary>
+<div class="experiment-flow" aria-label="Clock-recovery learning sequence">
+        <div class="experiment-step"><strong>Predict</strong><p>When the jitter frequency is far below the loop’s natural frequency, which portion should appear on the recovered-clock trace?</p></div>
+        <div class="experiment-step"><strong>Experiment</strong><p>Move the jitter frequency through the loop region. Compare input, recovered clock, and residual on the aligned time plot while watching transfer and residual magnitude.</p></div>
+        <div class="experiment-step"><strong>Explain</strong><p>The residual is input phase minus recovered phase at the same times. Input equals recovered plus residual point by point, so amplitude and relative phase must be interpreted together.</p></div>
+        <div class="experiment-step"><strong>Transfer</strong><p>Explain why the loop’s natural frequency cannot be substituted for its measured −3 dB bandwidth, and name the additional hardware evidence needed before treating the tolerance curve as a receiver limit.</p></div>
+      </div>
+</details>
+</section>
+<p class="lab-help" aria-hidden="true">Point at or focus a control to see what it changes.</p>
+</aside>
+</div>
+<script type="application/json" data-guide>
+{
+  "title": "Three readings of one loop",
+  "steps": [
+    {
+      "say": "Start at the typical loop: 4 MHz natural frequency — whose −3 dB bandwidth is 8.20 MHz, a different number — damping 0.70, a third of a UI of sampling margin. The first two plots look like mirror images and are not: H and 1−H are COMPLEX complements, so their magnitudes need not sum to anything. At 6.13 MHz both read 0.93 at once.",
+      "set": {
+        "cdr-fn": "4",
+        "cdr-zeta": "70",
+        "cdr-margin": "30"
+      }
+    },
+    {
+      "say": "Now widen the loop to a 20 MHz natural frequency — five times. The −3 dB bandwidth goes with it, 8.20 MHz to 40.98, because the ratio between them is fixed by the damping and that has not moved.",
+      "set": {
+        "cdr-fn": "20"
+      },
+      "ask": "The loop now tracks five times as much jitter out. Does the PEAK of the jitter transfer get bigger, smaller, or stay the same?",
+      "answer": "It stays the same — about +2.1 dB — and moves five times up the frequency axis. Peaking is set by the DAMPING, not the bandwidth: the numerator's zero lifts the response near the natural frequency by an amount that depends only on zeta. That is why a specification quotes jitter transfer separately from loop bandwidth; you cannot infer one from the other. What did change is the tolerance curve, which now rises from five times higher up."
+    },
+    {
+      "say": "Back to 4 MHz, and now under-damp the loop: drag damping down to 0.25.",
+      "set": {
+        "cdr-fn": "4",
+        "cdr-zeta": "25"
+      },
+      "ask": "Transfer now peaks at about +7 dB — the loop AMPLIFIES jitter near its natural frequency. What does that do to the residual phase error at the same frequency, and therefore to the jitter the receiver can tolerate there?",
+      "answer": "It gets worse too. The residual RISES above unity — |1 − H| peaks at ×2.07, which is worse than having no loop at all — and tolerance therefore DIPS to 0.145 UI, below the 0.30 UI the receiver has far above the loop. There is no trade here: an under-damped loop is worse on both plots in the same band. At the transfer peak |H| is 2.28 and |1 − H| is 1.83; both are large, because H has about a quarter-turn of phase there and two large complex numbers can differ by a large one. That is also why the residual must be the COMPLEX 1 − H(f) and never 1 − |H(f)|: across the peak 1 − |H| is NEGATIVE, and over the sweep the two differ by as much as 1.63."
+    },
+    {
+      "say": "Restore the damping to 0.70 and cut the sampling margin from 0.30 UI to 0.10.",
+      "set": {
+        "cdr-zeta": "70",
+        "cdr-margin": "10"
+      },
+      "ask": "A third of the margin. Does the SHAPE of the tolerance curve change, or only its height?",
+      "answer": "Both, and the split is the interesting part. Where the LOOP governs, tolerance scales exactly with the margin — a factor of 3.000 at every such frequency, which the gate asserts. But the flat low-frequency section is held down by the declared tracking ceiling, and that does not move at all: the ratio there is 1.000. So the curve changes shape, because one end slides and the other is pinned. The loop decides the shape of what the loop can give you, the sampling window decides how much of it you get, and the ceiling decides where that separation stops being true."
+    },
+    {
+      "say": "Finally, look at the dashed part of the tolerance curve at the low-frequency end.",
+      "ask": "The solid curve rises as 1/f-squared and the dashed one is flat. What decides where the dashed part starts, and why is it drawn differently?",
+      "answer": "Nothing in this model decides it — it is a DECLARED ceiling, and that is why it is dashed. The 1/f-squared rise is real and comes from the loop, but it cannot continue for ever: a real phase detector has finite range and a real VCO has finite tuning, so past some amplitude the loop loses lock however slowly the jitter moves. Where that happens is a property of the hardware and is not derivable from a transfer function. A compliance mask carries that corner from measurement; this panel carries it as an assumption drawn as one."
+    }
+  ],
+  "transfer": "A link fails jitter tolerance at 100 kHz and passes everywhere else. You may widen the loop bandwidth, increase the damping, or improve the sampling margin. Predict which of the three helps at 100 kHz, which helps and hurts elsewhere, and which does nothing at all — and say what you would need to know about the phase detector before trusting any of it.",
+  "transferNote": "There is no reveal. If your answer distinguishes what the loop sets from what the hardware sets, you have the idea — and the last clause is the point of the dashed line."
+}
+      </script>
+</section>
+
+  <div class="prose">
+    <p>
+      Two consequences that cause real confusion:
+    </p>
+
+    <ul class="tight">
+      <li><strong>State the loop bandwidth with a jitter result.</strong>
+        The same signal measured with two different CDR settings gives two
+        different answers, and the difference can exceed a real design change.</li>
+      <li><strong>Spread-spectrum clocking works because of this.</strong>
+        Deliberately modulating the clock slowly spreads emissions across
+        frequency, and the CDR tracks it out. It is jitter the receiver is
+        designed not to see.</li>
+    </ul>
+
+    <h2 class="section-rule"><span>Adaptation, and its limits</span></h2>
+
+    <p>
+      A modern receiver adapts: it adjusts its CTLE boost and DFE taps until some
+      internal metric is optimised. Three things about that are worth knowing.
+    </p>
+
+    <p>
+      <strong>It needs time and transitions.</strong> Adaptation converges over
+      thousands of symbols, so the first part of any capture is the receiver
+      settling, not a result. On a burst-mode link that re-converges every wake,
+      this is the dominant design problem — see <a href="../interfaces/ufs4.html">UFS</a>.
+    </p>
+
+    <p>
+      <strong>It has a range, and running out of it is the real signal.</strong>
+      Coefficients sitting at their limits mean the channel is outside what the
+      reference equaliser was defined against. That is far more informative than
+      an eye photograph, and it is available from the link itself.
+    </p>
+
+    <p>
+      <strong>It optimises its own metric, not yours.</strong> A receiver
+      converging to maximum eye height may accept more jitter to get it. What it
+      converged to is a fact about the receiver as much as about the channel.
+    </p>
+
+    <h2 class="section-rule"><span>AC coupling and baseline wander</span></h2>
+
+    <p>
+      Many serial interfaces are AC-coupled, with series capacitors in each line,
+      so the two ends need not agree on a common-mode voltage — PCIe and USB 3.x
+      place them in the lane, and where they sit and what value they take is
+      specified per interface rather than assumed. It is not universal: plenty of
+      short-reach and chip-to-chip links are DC-coupled and negotiate a shared
+      common mode instead, and the parallel memory interfaces on this site have no
+      series capacitor anywhere. Where the capacitors <em>are</em> present the cost
+      is that <strong>DC content cannot pass</strong>.
+    </p>
+
+    <p>
+      A long run of identical bits has DC content. With it blocked, the signal
+      droops towards the coupling capacitor's mid-point during the run and jumps
+      when it ends — <strong>baseline wander</strong>. The decision threshold is
+      then in the wrong place for the bits at the end of the run, which is exactly
+      where the margin was already thinnest.
+    </p>
+
+    <div class="eq">
+      <span class="eq__main">droop over a run ≈ <i class="var">t</i><sub>run</sub> / (<i class="var">R</i><i class="var">C</i>)</span>
+      <span class="eq__note">so the defence is a long RC and a bounded run length — and the encoding is what bounds the run</span>
+    </div>
+
+    <p>
+      This is why line coding exists — though the three common answers do
+      different jobs and only two of them give a guarantee. <strong>8b/10b is a
+      constrained code</strong>: the mapping table itself excludes long runs, so a
+      bounded run length and a bounded disparity are properties of the code no
+      payload can defeat. <strong>128b/130b with scrambling is not.</strong>
+      Scrambling XORs the payload with a known pseudo-random sequence, which makes
+      long runs overwhelmingly <em>unlikely</em> for ordinary data and improves the
+      average transition density — but a payload that happens to match the
+      scrambler's output produces exactly the run the scrambler was supposed to
+      break up. It is a statistical improvement, not a bound, and standards that
+      rely on it add a sync header and a periodic scrambler reset rather than
+      claiming otherwise. The distinction matters when you are choosing a test
+      pattern: a compliance pattern is chosen to <em>defeat</em> the statistics on
+      purpose.
+    </p>
+
+    <div class="note">
+      <b>Using this to find a fault</b>
+      <ul class="tight">
+        <li><b>Errors at the end of long runs.</b> Baseline wander. Check the
+          coupling capacitor value and the coding's run-length bound before
+          looking at the channel.</li>
+        <li><b>Errors only in the first microseconds after a link comes up.</b>
+          Adaptation has not converged. Normal on a burst-mode link, a defect on
+          a continuous one.</li>
+        <li><b>Adapted coefficients pinned at a limit.</b> The channel is outside
+          the reference equaliser's design range. This is a budgeting problem, not
+          a tuning one.</li>
+        <li><b>Jitter numbers that disagree between two instruments.</b> Compare
+          the CDR loop bandwidths before suspecting anything physical.</li>
+        <li><b>A closed eye at the pad on a link that works.</b> Expected on a
+          modern serial standard. Measure after the equaliser, or read the
+          adapted settings instead.</li>
+      </ul>
+    </div>
+
+    <details class="deeper">
+      <summary>Go deeper — why tolerance and transfer are opposite, and what a slicer really compares</summary>
+
+      <p>
+        <strong>Transfer, residual and tolerance are three readings of one loop.</strong>
+        Jitter <em>transfer</em> H(f) asks how much of the input jitter appears on the
+        recovered clock: the loop follows slow input jitter, so transfer is low-pass.
+        The <em>residual phase error</em> at the decision carries the complex
+        complement 1 − H(f), which is high-pass — whatever the loop tracked is no
+        longer a timing error. And the input jitter the receiver can <em>tolerate</em>
+        is its sampling margin divided by that residual factor, which is large at low
+        frequency because the divisor is small there.
+      </p>
+
+      <p>
+        This page previously said <q data-was-wrong>tolerance is high-pass and
+        rises steeply at low frequency</q>, which cannot both be true: a
+        high-pass response falls at low frequency. The sentence was reaching for a real fact and naming the wrong
+        function. Tolerance is not high-pass; it is one <em>over</em> a high-pass,
+        and that is exactly why it rises.
+      </p>
+
+      <p>
+        For a second-order type-2 loop, which is what the panel above models:
+      </p>
+
+      <div class="eq">
+        <span class="eq__main">H(s) = (2ζω<sub>n</sub>s + ω<sub>n</sub>²) ⁄ (s² + 2ζω<sub>n</sub>s + ω<sub>n</sub>²)</span>
+        <span class="eq__note">far above ω<sub>n</sub>, |1 − H| → 1 and tolerance → the bare sampling margin; far below, |1 − H| → (f/f<sub>n</sub>)² and tolerance rises as 1/f²</span>
+      </div>
+
+      <p>
+        Two things fall out of that form which a first-order sketch cannot show.
+        <strong>A type-2 loop peaks above unity even when it is nominally well
+        damped</strong> — at ζ = 0.7 the panel reports about +2.1 dB — because the
+        numerator's zero lifts the response near ω<sub>n</sub>. That is why jitter
+        transfer is specified separately from loop bandwidth: a loop can amplify
+        jitter in a band while still being called a 4 MHz loop. And
+        <strong>the 1/f² rise in tolerance does not continue for ever.</strong> A real
+        phase detector has finite range and a real VCO has finite tuning, so past
+        some amplitude the loop loses lock however slowly the jitter moves. The panel
+        draws that ceiling as a dashed line and labels it <em>declared</em>, because
+        it is an assumption rather than a result.
+      </p>
+
+      <p>
+        <strong>Jitter Transfer (JTF) vs. Jitter Tolerance (JTOL).</strong> The CDR loop governs receiver
+        timing through two complementary transfer functions:
+      </p>
+
+      <ul class="tight">
+        <li><strong>Jitter Transfer Function (JTF, <span class="num">H(s)</span>):</strong> Describes how much
+          input jitter on the incoming data appears on the recovered clock. A CDR is a low-pass filter for jitter:
+          phase modulations slower than the loop bandwidth (<span class="num">f &lt; f<sub>LBW</sub></span>) pass
+          directly onto the recovered clock with unity gain (<span class="num">0 dB</span>). Jitter faster than
+          <span class="num">f<sub>LBW</sub></span> is filtered out, leaving the recovered clock clean and quiet.</li>
+        <li><strong>Jitter Error Function (<span class="num">H<sub>e</sub>(s) = 1 - H(s)</span>):</strong> The relative
+          timing error between the incoming data and the recovered clock — the exact jitter that closes the eye at the
+          slicer latch. Because <span class="num">H(s) &asymp; 1</span> at low frequencies, the error function exhibits
+          a steep high-pass response: low-frequency jitter produces near-zero phase error because the clock tracks
+          the data perfectly.</li>
+        <li><strong>Jitter Tolerance (JTOL, <span class="num">1 / |H<sub>e</sub>(s)|</span>):</strong> The amplitude
+          of sinusoidal jitter the receiver can tolerate before dropping bits. At low frequencies, JTOL climbs at
+          <span class="num">20 dB/decade</span> (or <span class="num">40 dB/decade</span> for second-order loops),
+          allowing the receiver to effortlessly tolerate tens or hundreds of Unit Intervals (UI) of low-frequency
+          wander (such as Spread-Spectrum Clocking, SSC). Above <span class="num">f<sub>LBW</sub></span>, tolerance
+          flattens to an asymptotic high-frequency floor (typically <span class="num">0.15 to 0.25 UI</span>),
+          strictly bounded by the receiver's intrinsic setup/hold aperture and internal thermal noise.</li>
+      </ul>
+
+      <p>
+        <strong>AC coupling and baseline wander.</strong> High-speed serial links almost universally place series
+        AC coupling capacitors (typically <span class="num">100 nF</span> in 0201 or 0402 packages) in the signal
+        path. These capacitors isolate the DC bias of the transmitter's output stage from the receiver's internal
+        common-mode termination (<span class="num">V<sub>cm</sub></span>), preventing DC ground loops and enabling
+        interoperability between different semiconductor process nodes.
+      </p>
+
+      <p>
+        However, the capacitor interacts with the channel's termination resistance (<span class="num">50 &Omega;</span>
+        single-ended, <span class="num">100 &Omega;</span> differential) to form a high-pass filter with a low-frequency
+        cut-off: <span class="num">f<sub>c</sub> = 1 / (2 &pi; &middot; R<sub>term</sub> &middot; C)</span>.
+        While this cut-off is typically low (a few tens of kilohertz), it cannot pass true DC. If the transmitted
+        data contains a long run of Consecutive Identical Digits (CID) — such as dozens of consecutive ones — the
+        coupling capacitor slowly charges toward the supply voltage. When the data eventually transitions back to a
+        zero, the average DC baseline has drifted upward.
+      </p>
+
+      <p>
+        This phenomenon — <strong>baseline wander</strong> — shifts the vertical center of the waveform relative to
+        the slicer's fixed reference threshold, directly eroding vertical eye height and triggering false bit flips.
+        To prevent baseline wander from destroying margin, high-speed protocol architectures rely on two defenses:
+        DC-balanced block encoding (such as 8b/10b, 64b/66b, or 128b/130b) and digital PRBS scramblers that guarantee
+        high transition density and strictly bound the maximum allowable run length of identical bits.
+      </p>
+
+      <p>
+        <strong>What this model is not.</strong> A compliance jitter-tolerance mask
+        carries more than a loop: a BER target, a defined test pattern, the phase
+        detector's own characteristic, and usually a measured rather than modelled
+        low-frequency corner. Transfer and tolerance are also not independent
+        specifications — a loop bandwidth chosen to improve one necessarily moves the
+        other. A wider loop tracks more jitter out, so tolerance improves over a wider
+        band, and it passes proportionally more of its own reference's noise onto the
+        recovered clock.
+      </p>
+
+      <p>
+        <strong>What a slicer compares against.</strong> The threshold is not a
+        fixed voltage. It is derived from the receiver's own supply and reference,
+        which is precisely why
+        <a href="../power-integrity/pdn-induced-jitter.html">rail noise becomes
+        timing noise</a>: move the reference and every input moves relative to it,
+        including the quiet ones.
+      </p>
+
+      <p>
+        For PAM4 there are three thresholds, and they have to be placed
+        accurately relative to levels that are not perfectly evenly spaced. That
+        is why a PAM4 link reports three eye heights, and why one eye being worse
+        than the others points at the device rather than the channel.
+      </p>
+
+      <p>
+        <strong>And a note on what the receiver does to error statistics.</strong>
+        A DFE that makes a wrong decision feeds a wrong correction into the next
+        few bits, so errors arrive in bursts rather than singly. That matters
+        enormously to a forward-error-correction budget, which is designed around
+        burst-correcting capacity. The receiver is therefore part of the error
+        model, not just a consumer of the signal.
+      </p>
+
+      <p>
+        <strong>The burst is not bounded by the tap count, and that is worth being
+        precise about.</strong> A single wrong decision corrupts the corrections
+        applied to the next N bits, where N is the tap span — but any one of those
+        corrupted bits can itself be decided wrongly, and then <em>it</em> seeds a
+        fresh N-bit window. The feedback is recursive, so the burst length is not
+        N; it is however long the chain of induced errors happens to run. On a
+        healthy channel it usually terminates within a tap span or two, because
+        each induced error needs the residual margin to be small as well. On a
+        marginal one it can run much longer, and the distribution has a tail that
+        a "bursts are N bits" model does not contain. This is the mechanism behind
+        the difference between a DFE's ideal and decision-directed modes, which the
+        <a href="what-closes-the-eye.html">impairment panel</a> exposes as a
+        toggle — ideal cancellation knows the transmitted bits and cannot make this
+        mistake at all.
+      </p>
+    </details>
+
+    <h2 class="section-rule"><span>In the real world</span></h2>
+
+    <p>
+      The practical shift this page describes is that analogue eye measurements
+      have become much less informative than they used to be. A specification that
+      assumes a reference receiver with a defined CTLE, DFE and CDR is permitting
+      channels that would have been unusable a generation earlier — and permitting
+      the eye at the pad to be completely closed.
+    </p>
+
+    <p>
+      So the questions worth asking a link are no longer "what does the eye look
+      like?" but <b>what did the equaliser converge to, how much range was left,
+      and at what loop bandwidth was the jitter measured?</b> All three come from
+      the link itself, and all three say more than a photograph.
+    </p>
+
+    <h3>Related</h3>
+    <ul class="tight">
+      <li><a href="../../reference.html#experiment-cdr-natural-frequency">CDR natural-frequency reference</a> — a steady-state complex-phase example with explicit UI units and tolerances</li>
+      <li><a href="equalization.html">Equalization and Clock Recovery: CTLE, FFE, DFE, and CDR</a> — the blocks in detail</li>
+      <li><a href="../fundamentals/eye-diagram.html">The eye diagram</a> — why the reference plane changes the picture</li>
+      <li><a href="../fundamentals/jitter-taxonomy.html">Jitter taxonomy</a> — what the CDR does and does not remove</li>
+      <li><a href="../power-integrity/pdn-induced-jitter.html">PDN-induced jitter</a> — why the threshold moves</li>
+      <li><a href="../interfaces/ufs4.html">UFS 4.0</a> — a link that re-converges every burst</li>
+    </ul>
+  </div>
+
+  <!-- pager:start -->
+  <nav class="pager" aria-label="Previous and next topic">
+    <a class="prev" href="../../topics/signal-integrity/compliance-masks.html"><span class="dir">Previous</span><span>Transmitter Compliance Masks and Receiver Eye Masks</span></a>
+    <a class="next" href="../../topics/package-board/package-families.html"><span class="dir">Next</span><span>IC Package Interconnects: Wirebond, Flip-Chip, FOWLP, Interposers, and Chiplets</span></a>
+  </nav>
+  <!-- pager:end -->
+</main>
+
+<footer class="site-foot">
+  <span>SIPI &#8212; signal and power integrity, visualised.</span>
+  <span>Created and directed by Geetansh Arora. <a href="../../colophon.html">About, review &amp; AI assistance</a> &#183; <a href="../../model-contract.html">Model assumptions</a> &#183; <a href="../../docs/claims.md">Claim ledger</a></span>
+</footer>
+
+<script src="../../js/site.js?v=acb47d86"></script>
+<script src="../../js/viz-kit.js?v=a53e49c3"></script>
+<script src="../../js/viz/cdr.js?v=e8bc922d"></script>
+<script src="../../js/viz-loader.js?v=89d5884d"></script>
+<script src="../../js/lab-workspace.js?v=49b1d309"></script>
+<script src="../../js/search.js?v=6c93a285"></script>
+</body>
+</html>

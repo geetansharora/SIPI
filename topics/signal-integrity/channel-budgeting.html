@@ -1,0 +1,349 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Channel Loss Budgeting Across Die, Package, and Board | SIPI</title>
+<meta name="description" content="How a loss budget is split between package, connector, card and board — a worked Gen 5 allocation, and the impairments that are not in the insertion loss number at all.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<link rel="stylesheet" href="../../css/base.css?v=e4f774de">
+<link rel="stylesheet" href="../../css/components.css?v=295837ab">
+  <!-- meta:start -->
+  <link rel="canonical" href="https://sipi.work/topics/signal-integrity/channel-budgeting.html">
+  <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="SIPI">
+  <meta property="og:title" content="Channel Loss Budgeting Across Die, Package, and Board | SIPI">
+  <meta property="og:description" content="How a loss budget is split between package, connector, card and board — a worked Gen 5 allocation, and the impairments that are not in the insertion loss number at all.">
+  <meta property="og:url" content="https://sipi.work/topics/signal-integrity/channel-budgeting.html">
+  <meta property="og:image" content="https://sipi.work/assets/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Channel Loss Budgeting Across Die, Package, and Board | SIPI">
+  <meta name="twitter:description" content="How a loss budget is split between package, connector, card and board — a worked Gen 5 allocation, and the impairments that are not in the insertion loss number at all.">
+  <meta name="twitter:image" content="https://sipi.work/assets/og.png">
+  <!-- meta:end -->
+</head>
+<body>
+
+<header class="masthead">
+  <a class="wordmark" href="../../index.html">SIPI</a>
+  <nav>
+    <a href="../../index.html#fundamentals">Fundamentals</a>
+    <a href="../../index.html#power-integrity">Power</a>
+    <a href="../../index.html#interfaces">Interfaces</a>
+    <a href="../../start.html">Start</a>
+    <a href="../../labs.html">Labs</a>
+    <a href="../../reference.html">Reference</a>
+    <button class="theme-toggle" data-act="theme" type="button">System</button>
+  </nav>
+</header>
+
+<main>
+  <div class="page-head">
+    <p class="crumb"><a href="../../index.html#signal-integrity">SI in practice</a> / 01</p>
+    <h1>Channel Loss Budgeting Across Die, Package, and Board</h1>
+    <p class="byline">
+      <!-- review:start --><span>By Geetansh Arora — Principal SI/PI Engineer</span><time datetime="2026-09-15" title="Technical review by Geetansh Arora on this date">15 Sep 2026</time><span>9 min</span><!-- review:end -->
+    </p>
+    <p class="answer">
+      A channel budget is a subtraction. The receiver can recover a signal that has lost a certain
+      amount; everything between the two chips takes a share of it; what is left over is how much
+      trace you are allowed. The arithmetic is trivial &#8212; the work is knowing what belongs in
+      the list and who owns each row.
+    </p>
+  </div>
+
+  <!-- ───────────── the picture ───────────── -->
+  <figure class="figure">
+    <div class="figure__bar"><span>One budget, six owners &#183; and four impairments that are not in it</span></div>
+    <div class="figure__body"><svg viewBox="-4 20 680 210" role="img" aria-label="A stacked bar dividing a 36 decibel channel budget between transmitter package, breakout, system board trace, connector, add-in card and receiver package, with the board trace being the largest single share.">
+  <text class="lbl-hi" x="0" y="40">36 dB end-to-end at 16 GHz &#8212; who spends it</text>
+  <rect x="0.0" y="56" width="64.2" height="40" fill="var(--signal)" opacity="0.75"/><rect x="0.0" y="56" width="64.2" height="40" fill="none" stroke="var(--surface)" stroke-width="1.5"/><rect x="64.2" y="56" width="27.5" height="40" fill="var(--muted)" opacity="0.35"/><rect x="64.2" y="56" width="27.5" height="40" fill="none" stroke="var(--surface)" stroke-width="1.5"/><rect x="91.7" y="56" width="311.7" height="40" fill="var(--reflect)" opacity="0.75"/><rect x="91.7" y="56" width="311.7" height="40" fill="none" stroke="var(--surface)" stroke-width="1.5"/><rect x="403.3" y="56" width="27.5" height="40" fill="var(--muted)" opacity="0.35"/><rect x="403.3" y="56" width="27.5" height="40" fill="none" stroke="var(--surface)" stroke-width="1.5"/><rect x="430.8" y="56" width="165.0" height="40" fill="var(--signal)" opacity="0.75"/><rect x="430.8" y="56" width="165.0" height="40" fill="none" stroke="var(--surface)" stroke-width="1.5"/><rect x="595.8" y="56" width="64.2" height="40" fill="var(--signal)" opacity="0.75"/><rect x="595.8" y="56" width="64.2" height="40" fill="none" stroke="var(--surface)" stroke-width="1.5"/><text class="lbl-hi" x="32.1" y="112" text-anchor="middle">3.5 dB</text><text class="lbl" x="32.1" y="128" text-anchor="middle">Tx</text><text class="lbl-hi" x="77.9" y="112" text-anchor="middle">1.5 dB</text><text class="lbl" x="77.9" y="128" text-anchor="middle">Tx</text><text class="lbl-hi" x="247.5" y="112" text-anchor="middle">17 dB</text><text class="lbl" x="247.5" y="128" text-anchor="middle">system board trace</text><text class="lbl-hi" x="417.1" y="112" text-anchor="middle">1.5 dB</text><text class="lbl" x="417.1" y="128" text-anchor="middle">connector</text><text class="lbl-hi" x="513.3" y="112" text-anchor="middle">9 dB</text><text class="lbl" x="513.3" y="128" text-anchor="middle">add-in card</text><text class="lbl-hi" x="627.9" y="112" text-anchor="middle">3.5 dB</text><text class="lbl" x="627.9" y="128" text-anchor="middle">Rx</text>
+  <path class="edge" d="M0,48 L660,48" stroke="var(--border)"/>
+  <g>
+    <path class="edge dash" d="M91,142 L91,166" stroke="var(--reflect)"/>
+    <path class="edge dash" d="M356,142 L356,166" stroke="var(--reflect)"/>
+    <path class="flow-2" d="M91,158 L356,158"/>
+    <text class="lbl-ref" x="223" y="180" text-anchor="middle">17 dB left for the board &#247; 1.3 dB/in &#8776; 13 inches of trace</text>
+    <text class="lbl" x="223" y="196" text-anchor="middle">that number, not the 36 dB, is what floorplanning needs</text>
+  </g>
+  <text class="lbl-bad" x="660" y="180" text-anchor="end">not in this bar: return loss, crosstalk,</text>
+  <text class="lbl-bad" x="660" y="194" text-anchor="end">resonances, jitter, PDN noise</text>
+</svg></div>
+    <figcaption><b>A budget is an allocation of insertion loss at Nyquist between everyone who gets to spend it.</b> Work backwards from what the receiver's reference equaliser can recover, subtract the blocks you do not own, and what is left divided by the loss per inch is the answer floorplanning actually needs. The failure mode is rarely arithmetic. It is that the same few decibels get spent twice &#8212; the package team assumes a nominal board, the board team assumes the package meets its allocation, and each block passes its own review while the system fails. Budgets need owners written next to them and a re-total whenever any block changes. And note what the bar does not contain. Return loss, crosstalk, a via-stub notch and jitter are separate budgets; running out of any of them fails the link no matter how the decibels add up.</figcaption>
+  </figure>
+
+  <div class="prose">
+    <h2>What a budget is for</h2>
+
+    <p>
+      When high-speed interface specifications such as PCIe, USB4, or Ethernet are published, they define an
+      overall channel loss envelope &#8212; for example, 36 dB of total insertion loss at a 16 GHz Nyquist frequency
+      for PCIe 5.0. But an aggregate number on a standards document does not tell a hardware engineer how to design
+      their circuit board. A physical link is not a single uniform trace; it is a modular cascade of distinct components
+      designed by different teams and vendors.
+    </p>
+
+    <p>
+      A channel loss budget is the engineering contract that partitions that total loss among all physical
+      segments: the transmitter package substrate, the motherboard breakout vias, the main PCB transmission lines,
+      the card edge connector, the add-in card, and the receiver package. Without an explicit, written budget,
+      integration fails by default: each team designs to what they assume is reasonable headroom, only to discover at
+      system bring-up that the cumulative loss closes the eye completely and drops the link.
+    </p>
+
+    <p>
+      Long before any board exists, somebody has to answer a question that decides the floorplan:
+      <em>how far apart can these two chips be?</em>
+    </p>
+
+    <p>
+      That question cannot be answered by measurement, because nothing has been built. It can be
+      answered by subtraction, because loss adds up along a path. The receiver tolerates so much;
+      the package, the vias, the connector and the far package each take a share; the trace gets
+      what remains.
+    </p>
+
+    <p>
+      So a budget is a planning tool, and its purpose is to turn a specification into a distance
+      that a mechanical engineer can work with.
+    </p>
+
+    <h2 class="section-rule"><span>Work backwards from the receiver</span></h2>
+
+    <p>
+      The budget starts with what the receiver can recover. A specification defines a reference
+      equaliser, and that reference implies a maximum insertion loss the link is guaranteed to survive.
+      Everything else is subtraction. For a PCIe Gen 5 system at 16 GHz Nyquist, with an
+      end-to-end figure of around 36 dB, a plausible allocation looks like this:
+    </p>
+
+    <div class="table-scroll">
+      <table class="data">
+        <thead><tr><th>Block</th><th>Order of</th><th>Owned by</th></tr></thead>
+        <tbody>
+          <tr><td>Transmitter package</td><td>3–4 dB</td><td>SoC / package team</td></tr>
+          <tr><td>Breakout and via transitions</td><td>1–2 dB</td><td>you</td></tr>
+          <tr><td>System board trace + vias</td><td>whatever is left</td><td>you</td></tr>
+          <tr><td>Connector</td><td>1–2 dB</td><td>mechanical selection</td></tr>
+          <tr><td>Add-in card</td><td>~9 dB (CEM)</td><td>somebody else entirely</td></tr>
+          <tr><td>Receiver package</td><td>3–4 dB</td><td>the other SoC</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>
+      Subtract all of it — and note the breakout is the row people forget, which is exactly how a budget ends up a decibel or two short — and the board trace gets somewhere near 17 dB.
+    </p>
+
+    <p>
+      To see how this works in practice, walk through a concrete 36 dB PCIe 5.0 channel ledger step-by-step:
+    </p>
+
+    <ul class="tight">
+      <li><strong>Total system budget:</strong> <span class="num">36.0 dB</span> maximum insertion loss at the 16 GHz Nyquist frequency, defined by the receiver's reference equalizer (CTLE + 3-tap DFE).</li>
+      <li><strong>Fixed external deductions:</strong>
+        Subtract the TX package (<span class="num">3.5 dB</span>), the RX package (<span class="num">3.5 dB</span>),
+        the PCIe CEM connector (<span class="num">1.5 dB</span>), and the standard add-in card allocation
+        (<span class="num">9.5 dB</span>). These total <span class="num">18.0 dB</span> of loss that you do not own and
+        cannot change.</li>
+      <li><strong>Motherboard parasitic transitions:</strong>
+        Subtract the BGA breakout via transitions and AC coupling capacitor mounting discontinuities on your board
+        (<span class="num">1.0 dB</span>).</li>
+      <li><strong>Net remaining budget for motherboard traces:</strong>
+        <span class="num">36.0 dB - 18.0 dB - 1.0 dB = 17.0 dB</span>.</li>
+    </ul>
+
+    <p>
+      Now translate that remaining 17 dB into physical board geometry. On a mid-loss laminate (such as Megtron 6 class
+      dielectric with standard reverse-treated foil), realistic microstrip or stripline loss at 16 GHz is roughly
+      <span class="num">1.3 dB/inch</span> once surface roughness and temperature derating are included.
+      Dividing the 17 dB allowance by 1.3 dB/inch yields about <strong>13 inches of trace</strong>.
+      That number, not the 36 dB, is what floorplanning actually needs. If the mechanical enclosure forces the CPU to sit
+      18 inches away from the expansion slot, this budget gives you the answer before routing a single net: you cannot meet
+      spec with standard materials, and must either upgrade to ultra-low-loss laminate, insert a retimer, or move the slot.
+    </p>
+
+    <h2 class="section-rule"><span>What the budget does not contain</span></h2>
+
+    <p>
+      Insertion loss is one impairment. The specification's reference equaliser is defined against a
+      channel that is <em>smooth</em>, and a real one is not. These are separate budgets, and running
+      out of any of them fails the link regardless of how the decibels add up:
+    </p>
+
+    <ul class="tight">
+      <li><strong>Return loss.</strong> Energy reflected is missing from S<sub>21</sub> and also comes
+        back as an echo. A channel that meets its loss budget with poor return loss can still fail.</li>
+      <li><strong>Crosstalk.</strong> Not in the insertion loss number at all. Worse, the receiver's
+        CTLE amplifies it along with the signal, so equalisation makes it relatively worse rather than
+        better.</li>
+      <li><strong>Resonances.</strong> A via stub notch removes energy at one frequency rather than
+        attenuating it. Twenty decibels of flat loss and twenty decibels concentrated in a notch are the
+        same budget number and completely different links.</li>
+      <li><strong>Jitter and PDN noise</strong> from both ends, which the loss budget never sees.</li>
+    </ul>
+
+    <div class="note">
+      <b>The mistake that costs a respin</b>
+      Spending the same margin twice. The package team assumes the board is nominal, the board team
+      assumes the package meets its allocation, and both use the same few decibels of headroom. Budgets
+      have to be written down with owners attached and re-totalled when any block changes — otherwise
+      each block passes its own review and the system fails.
+    </div>
+
+    <p>
+      One habit worth adopting early: budget at Nyquist but <em>look at the whole curve</em>. A channel
+      that meets its number at 16 GHz and has a notch at 11 GHz will fail, and nothing in the headline
+      figure will warn you.
+    </p>
+
+    <h2 class="section-rule"><span>Why this decides how your board behaves</span></h2>
+
+    <ul class="tight">
+      <li><strong>It sets the floorplan, and the floorplan cannot be changed later.</strong> The
+        number the budget produces is a constraint on physical placement, which is decided early
+        and expensively revisited.</li>
+      <li><strong>A missing row is a real shortfall.</strong> The breakout and via transitions are
+        the row people forget, and they are a decibel or two — which on a 17 dB trace allowance is
+        more than an inch of reach.</li>
+      <li><strong>One number cannot capture a channel.</strong> Two channels with the same loss at
+        Nyquist behave very differently if one is flat and the other is falling hard, or if one has
+        a resonance. Loss is the headline; the shape is the story.</li>
+      <li><strong>The rows have different owners.</strong> Packages, connectors and add-in cards
+        belong to other teams or other companies, so a budget is as much a negotiation record as a
+        calculation.</li>
+    </ul>
+
+    <h2 class="section-rule"><span>What to do about it</span></h2>
+
+    <p>
+      <strong>State the reference planes for every row.</strong> A package loss figure means nothing
+      until you know where it was measured from and to. Rows measured to different planes either
+      double-count or leave a gap, and both are invisible in the final total.
+    </p>
+
+    <p>
+      <strong>State the frequency.</strong> Every decibel in the table is at a frequency, and
+      Nyquist moves with the data rate. A budget carried over from a previous generation without
+      re-evaluating its rows at the new Nyquist is the single most common way a budget quietly stops
+      being true.
+    </p>
+
+    <p>
+      <strong>Budget return loss and crosstalk separately, not as decibels of insertion loss.</strong>
+      They do not add to the same total and they do not fail the same way. A notch is not worth its
+      decibels; crosstalk scales with neighbours, not with length.
+    </p>
+
+    <p>
+      <strong>Keep margin for what is not in the list.</strong> Manufacturing tolerance, laminate lot
+      variation, temperature and the difference between a modelled and a measured connector all
+      land outside the headline rows.
+    </p>
+
+    <div class="note">
+      <b>Using this to find a fault</b>
+      <ul class="tight">
+        <li><b>A channel that measures worse than budget by a roughly constant number of dB.</b>
+          Look for a discrete structure that was left out — a connector, a launch, a breakout — not
+          for a distributed effect.</li>
+        <li><b>Worse by an amount that grows with frequency.</b> Distributed: laminate, roughness,
+          or a loss figure quoted at the wrong frequency.</li>
+        <li><b>In budget and still failing.</b> The impairment is not insertion loss. Check return
+          loss for a resonance and crosstalk with the neighbours active.</li>
+        <li><b>A budget that passes and hardware that varies board to board.</b> The rows were
+          nominal. Re-run at the tolerance corners.</li>
+      </ul>
+    </div>
+
+    <details class="deeper">
+      <summary>Go deeper — why decibels add, and what the reference equaliser is really promising</summary>
+
+      <p>
+        Decibels add along a cascade because they are logarithms of a ratio, and the ratios multiply:
+        a channel that passes half, then half again, passes a quarter — and −3 dB plus −3 dB is
+        −6 dB. That is the whole reason budgets are written in decibels rather than in ratios.
+      </p>
+
+      <p>
+        Two caveats on that addition, both of which bite in practice.
+      </p>
+
+      <p>
+        <strong>It assumes each stage is matched to the next.</strong> Insertion loss measured with
+        50 Ω terminations, then cascaded, ignores the reflections between stages. Two elements that
+        each measure −1 dB do not necessarily give −2 dB when connected, because energy bounces
+        between their mismatches. On a well-matched channel the error is small; through a connector
+        with poor return loss it is not, and it can go either way.
+      </p>
+
+      <p>
+        <strong>It says nothing about phase.</strong> A budget is an amplitude accounting, and
+        amplitude alone does not determine an eye. Two channels with identical loss curves and
+        different group-delay behaviour produce different amounts of
+        <a href="../fundamentals/isi.html">ISI</a>.
+      </p>
+
+      <p>
+        <strong>What the reference equaliser promises.</strong> The maximum loss a specification
+        guarantees is not a property of copper; it is a statement that a receiver implementing a
+        defined reference equaliser will recover a signal degraded in a defined way. That has a
+        sharp consequence: <em>the guarantee only applies to impairments of the kind the reference
+        equaliser was defined against.</em> Smooth loss, yes. A deep notch from a via stub, no — and
+        the budget will not tell you, because the notch appears in the same column as the loss.
+      </p>
+
+      <p>
+        This is why a budget is a screening tool in the same sense as
+        <a href="../power-integrity/target-impedance.html">target impedance</a>: passing is good
+        evidence, failing is a reason to look closer, and neither is a verdict. The verdict comes
+        from a simulation of the actual channel — which is what <a href="../labs/one-channel.html">
+        Lab B</a> is for.
+      </p>
+    </details>
+
+    <h2 class="section-rule"><span>In the real world</span></h2>
+
+    <p>
+      A channel budget's real job is coordination. It exists so that a package team, a board team and
+      a connector vendor can each be told a number they must meet, and so that the consequences of
+      missing it land on whoever missed it rather than on whoever is last to integrate.
+    </p>
+
+    <p>
+      Which is why the rows matter more than the total. A budget that is correct in sum and wrong in
+      allocation will be met on paper and fail in hardware, and the argument that follows will be
+      about whose decibel it was.
+    </p>
+
+    <h3>Related</h3>
+    <ul class="tight">
+      <li><a href="../fundamentals/loss-mechanisms.html">PCB Transmission-Line Loss Mechanisms</a></li>
+      <li><a href="../interfaces/pcie-gen4-gen5.html">PCIe 4.0 and 5.0 Signal Integrity: Loss and Equalization</a></li>
+      <li><a href="../fundamentals/s-parameters.html">S-Parameters: Insertion Loss, Return Loss, and Mixed Mode</a></li>
+      <li><a href="../methodology/reporting-margin.html">Reporting Signal and Power Integrity Margin</a></li>
+    </ul>
+  </div>
+
+  <!-- pager:start -->
+  <nav class="pager" aria-label="Previous and next topic">
+    <a class="prev" href="../../topics/power-integrity/real-capacitors.html"><span class="dir">Previous</span><span>Real Capacitors: Bias, Tolerance, Temperature, and Mounting</span></a>
+    <a class="next" href="../../topics/signal-integrity/what-closes-the-eye.html"><span class="dir">Next</span><span>Eye Closure: Loss, Reflections, Discontinuities, and Crosstalk</span></a>
+  </nav>
+  <!-- pager:end -->
+</main>
+
+<footer class="site-foot">
+  <span>SIPI &#8212; signal and power integrity, visualised.</span>
+  <span>Created and directed by Geetansh Arora. <a href="../../colophon.html">About, review &amp; AI assistance</a> &#183; <a href="../../model-contract.html">Model assumptions</a> &#183; <a href="../../docs/claims.md">Claim ledger</a></span>
+</footer>
+
+<script src="../../js/site.js?v=acb47d86"></script>
+<script src="../../js/search.js?v=6c93a285"></script>
+</body>
+</html>

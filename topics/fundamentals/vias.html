@@ -1,0 +1,377 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>High-Speed Vias: Stubs, Resonance, and Backdrilling | SIPI</title>
+<meta name="description" content="Why an unused via stub notches the channel, where the resonance lands, and what backdrilling actually buys.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<link rel="stylesheet" href="../../css/base.css?v=e4f774de">
+<link rel="stylesheet" href="../../css/components.css?v=295837ab">
+  <!-- meta:start -->
+  <link rel="canonical" href="https://sipi.work/topics/fundamentals/vias.html">
+  <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="SIPI">
+  <meta property="og:title" content="High-Speed Vias: Stubs, Resonance, and Backdrilling | SIPI">
+  <meta property="og:description" content="Why an unused via stub notches the channel, where the resonance lands, and what backdrilling actually buys.">
+  <meta property="og:url" content="https://sipi.work/topics/fundamentals/vias.html">
+  <meta property="og:image" content="https://sipi.work/assets/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="High-Speed Vias: Stubs, Resonance, and Backdrilling | SIPI">
+  <meta name="twitter:description" content="Why an unused via stub notches the channel, where the resonance lands, and what backdrilling actually buys.">
+  <meta name="twitter:image" content="https://sipi.work/assets/og.png">
+  <!-- meta:end -->
+</head>
+<body>
+
+<header class="masthead">
+  <a class="wordmark" href="../../index.html">SIPI</a>
+  <nav>
+    <a href="../../index.html#fundamentals">Fundamentals</a>
+    <a href="../../index.html#power-integrity">Power</a>
+    <a href="../../index.html#interfaces">Interfaces</a>
+    <a href="../../start.html">Start</a>
+    <a href="../../labs.html">Labs</a>
+    <a href="../../reference.html">Reference</a>
+    <button class="theme-toggle" data-act="theme" type="button">System</button>
+  </nav>
+</header>
+
+<main>
+  <div class="page-head">
+    <p class="crumb"><a href="../../index.html#fundamentals">Fundamentals</a> / 15</p>
+    <h1>High-Speed Vias: Stubs, Resonance, and Backdrilling</h1>
+    <p class="byline">
+      <!-- review:start --><span>By Geetansh Arora — Principal SI/PI Engineer</span><time datetime="2026-09-14" title="Technical review by Geetansh Arora on this date">14 Sep 2026</time><span>10 min</span><!-- review:end -->
+    </p>
+    <p class="answer">
+      A via is three problems wearing one name. It is a short piece of transmission line with the
+      wrong impedance, it carries a leftover stub that behaves as a resonator, and it punches a
+      hole in the plane your return current was using. Which of the three bites you depends
+      almost entirely on how thick the board is.
+    </p>
+  </div>
+
+  <!-- ───────────── the picture ───────────── -->
+  <figure class="figure">
+    <div class="figure__bar"><span>A through via &#183; before and after backdrilling</span></div>
+    <div class="figure__pair">
+      <div><span class="figure__label">Through via &#8212; the barrel keeps going</span><svg viewBox="0 0 300 230" role="img" aria-label="A through-hole via carrying a signal from layer 2 to layer 4 of a twelve-layer board, leaving most of the barrel below as an unterminated stub.">
+  <g class="edge">
+    <rect x="40" y="24" width="220" height="180" fill="var(--surface-2)" opacity=".5"/>
+  </g>
+  <g class="plane">
+    <rect x="40" y="44" width="220" height="4"/><rect x="40" y="92" width="220" height="4"/>
+    <rect x="40" y="128" width="220" height="4"/><rect x="40" y="164" width="220" height="4"/>
+  </g>
+  <rect class="copper" x="40" y="60" width="106" height="5"/>
+  <rect class="copper" x="154" y="108" width="106" height="5"/>
+  <rect class="copper" x="144" y="24" width="12" height="88" rx="1"/>
+  <rect class="bad" x="144" y="112" width="12" height="92" rx="1"/>
+  <g class="tick"><path d="M176,112 L176,204" class="dash"/></g>
+  <text class="lbl-bad" x="182" y="160">stub</text>
+  <text class="lbl-sig" x="46" y="56">in (L2)</text>
+  <text class="lbl-sig" x="254" y="104" text-anchor="end">out (L4)</text>
+  <text class="lbl-bad" x="150" y="220" text-anchor="middle">&#955;/4 resonator</text>
+</svg></div>
+      <div><span class="figure__label">Backdrilled &#8212; the stub removed</span><svg viewBox="0 0 300 230" role="img" aria-label="The same via after backdrilling: a larger drill from the far side has removed the unused barrel, leaving only a short residual stub.">
+  <g class="edge">
+    <rect x="40" y="24" width="220" height="180" fill="var(--surface-2)" opacity=".5"/>
+  </g>
+  <g class="plane">
+    <rect x="40" y="44" width="220" height="4"/><rect x="40" y="92" width="220" height="4"/>
+    <rect x="40" y="128" width="220" height="4"/><rect x="40" y="164" width="220" height="4"/>
+  </g>
+  <rect class="copper" x="40" y="60" width="106" height="5"/>
+  <rect class="copper" x="154" y="108" width="106" height="5"/>
+  <rect class="copper" x="144" y="24" width="12" height="88" rx="1"/>
+  <rect class="copper-2" x="144" y="112" width="12" height="10" rx="1"/>
+  <rect x="140" y="122" width="20" height="82" fill="var(--ground)" stroke="var(--border)" stroke-dasharray="3 3"/>
+  <text class="lbl-ref" x="168" y="120">5&#8211;10 mil left</text>
+  <text class="lbl" x="168" y="168">drilled away</text>
+  <text class="lbl-sig" x="46" y="56">in (L2)</text>
+  <text class="lbl-sig" x="254" y="104" text-anchor="end">out (L4)</text>
+  <text class="lbl-ref" x="150" y="220" text-anchor="middle">resonance pushed out of band</text>
+</svg></div>
+    </div>
+    <figcaption><b>The signal leaves at layer 4; the drill does not.</b> Everything below the exit layer is connected at one end and open at the other, which makes it a quarter-wave resonator. At the frequency where that length is &#955;/4, the wave that travels down it and back returns exactly out of phase and cancels the signal &#8212; a notch tens of decibels deep, at a frequency you do not choose. Backdrilling comes in from the far side with a larger drill and removes the unused copper. It cannot take all of it &#8212; drilling into the exit pad would break the connection &#8212; so 5&#8211;10&#160;mil is left behind, which pushes the resonance up by roughly an order of magnitude and usually clean out of band.</figcaption>
+  </figure>
+
+  <div class="prose">
+    <h2>What a via actually is</h2>
+
+    <p>
+      A via is the vertical highway between layers of a PCB. You cannot
+      route a signal from the top of a board to an inner layer without
+      drilling a hole through the stackup and plating its walls with
+      copper. That plated hole — the via barrel — is a short piece of
+      transmission line, and in principle it works fine.
+    </p>
+
+    <p>
+      The problem is that a standard through-hole via is drilled through
+      the <em>entire</em> board, whether the signal needs all of it or
+      not. If your signal enters at layer 2 and exits at layer 4, the
+      barrel keeps going for another eight layers below — connected at
+      one end, open at the other, doing nothing useful. That leftover
+      section is the <strong>stub</strong>, and it behaves as a resonant
+      dead-end. At the frequency where the stub is a quarter-wavelength
+      long, the wave that travels down it and back arrives exactly out
+      of phase and cancels the signal at the junction. The result is a
+      deep notch in your S<sub>21</sub> plot at a frequency you did not
+      choose — and which can land right in the middle of your channel's
+      operating band if the board is thick enough.
+    </p>
+
+    <p>
+      A plated through-hole is a copper tube — a <strong>barrel</strong> — drilled through the
+      board, with a <strong>pad</strong> at each layer it connects to and an
+      <strong>antipad</strong>, a clearance hole, cut into every plane it passes through so it does
+      not short to them.
+    </p>
+
+    <p>
+      Electrically, those three features are an inductance, a capacitance, and a hole in the
+      reference plane. The barrel is a conductor with a current loop around it, so it has
+      inductance. The pads face the planes across the antipad gap, so they have capacitance. And
+      the antipad is a gap in the plane that the signal's return current has to get around. None of
+      those is on your schematic.
+    </p>
+
+    <p>
+      Whether that combination behaves as a transmission line of roughly the right impedance or as
+      a lump of the wrong one depends on the ratio of its L to its C — the same √(L/C) as any other
+      geometry. A via with a big pad and a tight antipad is capacitive and its impedance is low; a
+      via with a small pad and a generous antipad is inductive and its impedance is high. Neither is
+      automatically 50 Ω, and the discontinuity is the difference.
+    </p>
+
+    <h2 class="section-rule"><span>The stub is a resonator</span></h2>
+
+    <p>
+      Now the part that does the real damage on thick boards. A through-hole via is drilled through
+      the <em>whole</em> board whether the signal needs it or not. If the signal enters at the top
+      and leaves on an inner layer, the section of barrel below that exit layer is still there,
+      connected at one end and open at the other.
+    </p>
+
+    <p>
+      That is a quarter-wave resonator, and it does something specific. At the frequency where the
+      stub is a quarter wavelength long, a wave that travels down it and back comes home having
+      taken half a wavelength — exactly out of phase — and cancels the signal at the junction. The
+      open end has been transformed into a short circuit across your signal path. The result is a
+      notch in S<sub>21</sub> that can be tens of decibels deep.
+    </p>
+
+    <div class="eq">
+      <span class="eq__main"><i class="var">f</i><sub>res</sub> [GHz] ≈ 2950 / ( <i class="var">L</i><sub>stub</sub>[mil] · √<i class="var">D</i><sub>k</sub> )</span>
+      <span class="eq__note">A 60 mil stub in D_k 4.0 resonates near 24 GHz. A 200 mil stub — a thick backplane, signal exiting near the top — lands at about 7.4 GHz, inside the frequency range that may matter to a 16 GT/s link.</span>
+    </div>
+
+    <p>
+      The pattern that number reveals is the useful part: <strong>stub problems scale with board
+      thickness</strong>. A thin board tends to push the first stub resonance upward, while a thick
+      backplane can place it inside the channel band. Whether it matters depends on residual length,
+      material, edge spectrum, and how strongly the junction excites the stub.
+    </p>
+
+    <div class="note">
+      <b>Why a deep notch is different from smooth loss</b>
+      A CTLE applies a smooth, gently rising gain across frequency. It has no mechanism to restore
+      energy at one specific frequency where the channel has cancelled it — there is nothing left
+      there to amplify without also raising noise. The practical remedies are to move the resonance
+      outside the required band, reduce its excitation, or shorten the stub. See
+      <a href="../labs/one-channel.html">Lab B</a>, where adding a stub puts a null in S<sub>21</sub>
+      that a smooth equaliser cannot reconstruct.
+    </div>
+
+    <h2 class="section-rule"><span>Backdrilling, and what is left over</span></h2>
+
+    <p>
+      Backdrilling is a second, larger drill from the far side that removes the unused copper. It works
+      well — but it cannot remove all of it, because drilling into the exit layer's pad would destroy
+      the connection. A residual stub of roughly 5–10 mil is normal, plus the drill's depth tolerance.
+      That residue pushes the resonance up by an order of magnitude, which is usually enough to get it
+      out of band entirely.
+    </p>
+
+    <p>
+      The alternatives each cost something different. Blind and buried vias remove the stub by
+      construction but add lamination cycles and cost. Choosing exit layers so signals leave near the
+      bottom of the stack makes the leftover barrel short without any extra process. On a package
+      substrate the whole question changes shape — the structures are thin enough that stub resonance
+      is rarely the limit, and via <em>inductance</em> becomes the thing to worry about instead.
+    </p>
+
+    <div class="note">
+      <b>The rest of the via</b>
+      Even with no stub, a via is a discontinuity. The pad and antipad set its capacitance, the barrel
+      sets its inductance, and the pair rarely land at the line's impedance. Enlarging the antipad
+      reduces capacitance and raises the via's impedance — useful when the via is capacitive, harmful
+      when it is not, and always at the cost of interrupting the plane the return current needs. As with
+      most via problems, the fix is only as good as the return path you leave next to it.
+    </div>
+
+    <h2 class="section-rule"><span>Why this decides how your board behaves</span></h2>
+
+    <ul class="tight">
+      <li><strong>A deep in-band notch can close the link.</strong> Unlike smooth loss, which consumes
+        margin gradually, a resonance can strongly suppress a narrow part of the signal spectrum and
+        create long-lived ISI.</li>
+      <li><strong>The impedance bump costs reflections.</strong> Even a stubless via is a short
+        section at the wrong impedance. One is negligible; a differential pair crossing a
+        twenty-via connector field is not, because the reflections add coherently when the vias are
+        evenly spaced.</li>
+      <li><strong>The antipad costs return path.</strong> Every via perforates every plane it
+        passes. In a dense BGA escape the antipads merge into what is effectively a slot, and the
+        return current for every signal in that field has to find its way around it. See
+        <a href="return-current-paths.html">return current paths</a>.</li>
+      <li><strong>A layer change needs a return via.</strong> When the signal changes reference
+        plane, its return must change too. Without a stitching via beside it, the return goes the
+        long way and the loop inductance is whatever that detour happened to be.</li>
+    </ul>
+
+    <h2 class="section-rule"><span>What to do about it</span></h2>
+
+    <p>
+      <strong>Choose exit layers before you consider backdrilling.</strong> Routing a high-speed signal
+      so it leaves near the <em>bottom</em> of a top-entry through via can minimise the unused barrel
+      without adding a drilling operation. Confirm the remaining geometry and fabrication tolerance;
+      this stackup and floorplan decision is easiest to make early.
+    </p>
+
+    <p>
+      <strong>Backdrill when the stub must exist.</strong> A second, larger drill from the far side
+      removes the unused copper. Specify the residual you can live with, not the drill depth — the
+      fab controls depth and you care about what is left. Then check the resonance of the residual,
+      not of zero.
+    </p>
+
+    <p>
+      <strong>Provide the intended return transition beside the signal via.</strong> For reference
+      planes on the same net, this is commonly a nearby stitching via. For different reference nets,
+      use an appropriate low-inductance AC connection and verify the complete loop rather than adding
+      a ground via that the return cannot use.
+    </p>
+
+    <div class="note">
+      <b>What a useful via model must include</b>
+      Define port and reference-plane locations, pad and antipad geometry on every traversed layer,
+      the residual barrel, nearby return transitions, and the surrounding plane openings. For a
+      differential pair, preserve pair orientation and mixed-mode port order. Compare both TDR and
+      S-parameters; either view alone can hide where the discontinuity was introduced.
+    </div>
+
+    <p>
+      <strong>Tune the antipad only when you know which way the via is wrong.</strong> Enlarging the
+      antipad reduces capacitance and raises the via's impedance — which helps a capacitive via and
+      makes an inductive one worse, and always at the cost of interrupting the plane the return
+      current needs. Measure first.
+    </p>
+
+    <div class="note">
+      <b>Using this to find a fault</b>
+      <ul class="tight">
+        <li><b>A deep, narrow null in S<sub>21</sub>.</b> Read its frequency and invert the stub
+          formula. If the length it implies matches a plausible leftover barrel, you have found it
+          — and no receiver setting will help.</li>
+        <li><b>A link that fails on thick boards and passes on thin ones with the same
+          schematic.</b> A via stub is a strong candidate; compare residual barrel lengths and the
+          corresponding notch frequencies before attributing the difference.</li>
+        <li><b>TDR shows a dip exactly at a via field.</b> Capacitive — pads too large or antipads
+          too tight. A bump instead means inductive, and usually means the return vias are missing
+          or far away.</li>
+        <li><b>Backdrilled boards that still show a notch, at a higher frequency.</b> Check the
+          residual stub against the drill depth tolerance, not the nominal. The tolerance is what
+          sets the worst case, and it varies lot to lot — which is exactly the pattern that looks
+          like a mystery yield problem.</li>
+      </ul>
+    </div>
+
+    <details class="deeper">
+      <summary>Go deeper — where 2950 comes from, and why a package via is a different problem</summary>
+
+      <p>
+        The constant is just unit conversion. A quarter-wave resonance happens when the stub length
+        equals λ/4, and λ = v/f with v = c/√D<sub>k</sub>:
+      </p>
+
+      <div class="eq">
+        <span class="eq__main"><i class="var">f</i><sub>res</sub> = <i class="var">c</i> / ( 4 · <i class="var">L</i><sub>stub</sub> · √<i class="var">D</i><sub>k</sub> )</span>
+        <span class="eq__note">c in mil/s gives 2950 when f is in GHz and L in mil</span>
+      </div>
+
+      <p>
+        Two refinements matter in practice. First, the effective D<sub>k</sub> a via sees is not the
+        laminate's bulk value — the field in the antipad region is partly in the resin-rich area
+        around the barrel — so measured resonances usually land a little above the formula. Second,
+        the notch has finite depth because the stub is lossy and because the junction is not ideal;
+        a very short stub gives a shallow notch that reads as ripple rather than as a null.
+      </p>
+
+      <p>
+        The third feature, the antipad, deserves its own note because it is the one people tune
+        last and should often tune first. Widening an antipad does three things at once: it lowers
+        the via's capacitance (good, if the via is capacitive), it increases the loop area the
+        return current must take around it (bad, always), and on a dense field it merges with its
+        neighbours into a slot (very bad). The first effect is local and modelled; the second and
+        third are global and usually are not.
+      </p>
+
+      <p>
+        On a package substrate the whole question changes shape. The structures are thin enough that
+        stub resonance is rarely the limit — a 4 mil stub resonates well above 300 GHz — and via
+        <em>inductance</em> becomes the thing to worry about instead. A package via is short, thin,
+        and carries current into a die with enormous di/dt, so the L·di/dt it develops is a power
+        integrity problem rather than a signal one. Same structure, different dominant term. See
+        <a href="../power-integrity/ssn-ground-bounce.html">Simultaneous Switching Noise and Ground Bounce</a>.
+      </p>
+    </details>
+
+    <h2 class="section-rule"><span>In the real world</span></h2>
+
+    <p>
+      Vias are where signal integrity stops being a 2D problem. Everything else on this section of
+      the site can be reasoned about from a cross-section: trace width, height above plane, spacing
+      to a neighbour. A via cannot — it is genuinely three-dimensional, it couples to every plane it
+      passes, and its behaviour depends on the stackup as a whole rather than on any one layer.
+    </p>
+
+    <p>
+      Via models are therefore worth checking when a simulation and measurement diverge. A
+      channel built from an accurate 2D trace model and a crude via model will match well at low
+      frequency and diverge exactly where the vias start to matter. If your correlation falls apart
+      above a few gigahertz, look at the vias before you look at the laminate.
+    </p>
+
+    <h3>Related</h3>
+    <ul class="tight">
+      <li><a href="../fundamentals/return-current-paths.html">Return-Current Paths and Reference Continuity</a></li>
+      <li><a href="../fundamentals/s-parameters.html">S-Parameters: Insertion Loss, Return Loss, and Mixed Mode</a></li>
+      <li><a href="../package-board/layer-transitions.html">PCB Layer Transitions and Return-Path Stitching</a></li>
+      <li><a href="../package-board/stackup-design.html">PCB Stackup Design and Dielectric Selection</a></li>
+    </ul>
+  </div>
+
+  <!-- pager:start -->
+  <nav class="pager" aria-label="Previous and next topic">
+    <a class="prev" href="../../topics/fundamentals/s-parameters.html"><span class="dir">Previous</span><span>S-Parameters: Insertion Loss, Return Loss, and Mixed Mode</span></a>
+    <a class="next" href="../../topics/power-integrity/what-is-the-pdn.html"><span class="dir">Next</span><span>Power Delivery Networks: From Regulator to Die</span></a>
+  </nav>
+  <!-- pager:end -->
+</main>
+
+<footer class="site-foot">
+  <span>SIPI &#8212; signal and power integrity, visualised.</span>
+  <span>Created and directed by Geetansh Arora. <a href="../../colophon.html">About, review &amp; AI assistance</a> &#183; <a href="../../model-contract.html">Model assumptions</a> &#183; <a href="../../docs/claims.md">Claim ledger</a></span>
+</footer>
+
+<script src="../../js/site.js?v=acb47d86"></script>
+<script src="../../js/search.js?v=6c93a285"></script>
+</body>
+</html>

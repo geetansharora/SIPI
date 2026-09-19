@@ -1,0 +1,629 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Interactive Model Assumptions and Evidence | SIPI</title>
+<meta name="description" content="What every interactive model on this site assumes, what it computes, and how well it has been checked. Generated from the catalogue the build gate validates.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<link rel="stylesheet" href="css/base.css?v=e4f774de">
+<link rel="stylesheet" href="css/components.css?v=295837ab">
+  <!-- meta:start -->
+  <link rel="canonical" href="https://sipi.work/model-contract.html">
+  <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="SIPI">
+  <meta property="og:title" content="Interactive Model Assumptions and Evidence | SIPI">
+  <meta property="og:description" content="What each interactive model on this site assumes, how it is computed, what it is known not to do, and which test suites its evidence rests on.">
+  <meta property="og:url" content="https://sipi.work/model-contract.html">
+  <meta property="og:image" content="https://sipi.work/assets/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Interactive Model Assumptions and Evidence | SIPI">
+  <meta name="twitter:description" content="What each interactive model on this site assumes, how it is computed, what it is known not to do, and which test suites its evidence rests on.">
+  <meta name="twitter:image" content="https://sipi.work/assets/og.png">
+  <!-- meta:end -->
+</head>
+<body>
+
+<header class="masthead">
+  <a class="wordmark" href="index.html">SI<span class="amp">&amp;</span>PI</a>
+  <nav>
+    <a href="index.html#fundamentals">Fundamentals</a>
+    <a href="index.html#power-integrity">Power</a>
+    <a href="index.html#interfaces">Interfaces</a>
+    <a href="start.html">Start</a>
+    <a href="labs.html">Labs</a>
+    <a href="reference.html">Reference</a>
+    <button class="theme-toggle" data-act="theme" type="button">System</button>
+  </nav>
+</header>
+
+<main>
+  <div class="page-head">
+    <p class="crumb"><a href="index.html">SIPI</a> / model contracts</p>
+    <h1>Interactive model assumptions and evidence</h1>
+    <p class="byline"><span>Generated from <code>docs/model-types.json</code></span><span>28 panels</span><span>fidelity: 12 analytical, 4 exact, 6 illustrative, 6 numerical · evidence: 2 computed, 22 independent, 4 plausible</span></p>
+    <p class="answer">
+      Each interactive panel uses a model with a defined scope. This page publishes the
+      contract for all 28 panels: the
+      topology, the reference planes, the equations, the units, the range over which it is
+      valid, how it is computed, and the evidence available for its behavior.
+    </p>
+  </div>
+
+  <div class="prose">
+    <h2>How to read the evidence labels</h2>
+    <p>
+      Evidence can support several different kinds of conclusions. A model that
+      computes its own formula correctly, a model that behaves plausibly, and a model that
+      agrees with an independent check are three different claims, and collapsing them into
+      one label would blur those distinctions, so the site reports the evidence category explicitly.
+    </p>
+    <div class="ev-key"><div class="ev-key__row"><span class="model-tag model-tag--exact">exact</span><p>Arithmetic, or a closed form, with no modelling assumption beyond the waveform or topology named. Read the stated precision and scope.</p></div><div class="ev-key__row"><span class="model-tag model-tag--analytical">analytical</span><p>A closed form under stated physical assumptions. Exact for the circuit described; the assumptions are where it departs from a real one, and they are listed.</p></div><div class="ev-key__row"><span class="model-tag model-tag--numerical">numerical</span><p>The answer depends on a grid — an FFT length, a quadrature, a sweep. Convergence bounds are stated, and a scenario that does not meet them returns no number rather than a wrong one.</p></div><div class="ev-key__row"><span class="model-tag model-tag--illustrative">illustrative</span><p>The model is intended to explain a mechanism or qualitative shape. Its numbers are for teaching and are not intended for a design budget.</p></div><div class="ev-key__row"><span class="ev ev--computed">computed</span><p>The model computes the stated relation. An independent comparison has not been recorded for this result.</p></div><div class="ev-key__row"><span class="ev ev--plausible">plausible</span><p>Physically reasonable and useful for teaching. Deliberately simplified, with no independent validation recorded.</p></div><div class="ev-key__row"><span class="ev ev--independent">independent</span><p>Agrees with an independent model, an analytical limit or a conservation law that does not reuse the implementation result.</p></div><div class="ev-key__row"><span class="ev ev--specification">specification</span><p>Matches a named, cited specification. No panel on this site claims this level.</p></div></div>
+    <p>
+      The fourth level is listed for reference and is currently unused. These model labels do not
+      claim validation against a published specification. Where a page states a
+      specification claim, it is recorded in the
+      <a href="docs/claims.md">claim ledger</a> with its status, and most of those are still
+      awaiting a primary source.
+    </p>
+    <p>
+      <em>Kind</em> and <em>evidence</em> answer different questions. A deliberately
+      simplified model can have rigorously checked arithmetic: the PDN-induced jitter panel
+      is a first-order loop rather than a solved PLL, and the behaviour that matters &#8212;
+      that its three injection points are treated oppositely &#8212; is asserted by the model
+      gate.
+    </p>
+    <p>
+      This page is generated by <code>python3 scaffold.py contract</code> from the same file
+      the build gate validates, so what is published here and what is enforced cannot drift
+      apart.
+    </p>
+  </div>
+
+  <section class="contract" id="criticalLength">
+    <div class="contract__head">
+      <h2>criticalLength</h2>
+      <span class="model-tag model-tag--exact">exact model</span>
+      <span class="ev ev--computed">computed</span>
+      <span class="contract__ver">v2.0 &#183; reviewed 2026-09-12</span>
+    </div>
+    <p class="contract__purpose">Compare the round trip against the edge.</p>
+    <dl class="contract__body">
+      <dt>Topology</dt><dd>One uniform line.</dd>
+      <dt>Reference planes</dt><dd>Both ends.</dd>
+      <dt>Equations</dt><dd><ul class="tight"><li><code>2*Td &gt; tr/3</code></li><li><code>tpd=84.7*sqrt(Dk_eff) ps/in</code></li></ul></dd>
+      <dt>Units</dt><dd>ps, in</dd>
+      <dt>Validity</dt><dd>One driver, one receiver, uniform line, lossless.</dd>
+      <dt>Numerics</dt><dd>Exact arithmetic.</dd>
+      <dt>Known limitations</dt><dd>One driver, one receiver, uniform line, lossless.</dd>
+      <dt>Evidence</dt><dd>check-numbers.py — tpd for stripline and microstrip recomputed.</dd>
+    </dl>
+  </section>
+  <section class="contract" id="loss">
+    <div class="contract__head">
+      <h2>loss</h2>
+      <span class="model-tag model-tag--illustrative">illustrative model</span>
+      <span class="ev ev--computed">computed</span>
+      <span class="contract__ver">v2.0 &#183; reviewed 2026-09-12</span>
+    </div>
+    <p class="contract__purpose">Show the two loss terms crossing, and where the crossover moves.</p>
+    <dl class="contract__body">
+      <dt>Topology</dt><dd>One uniform line; attenuation per unit length only.</dd>
+      <dt>Reference planes</dt><dd>Per inch — a rate, not a channel.</dd>
+      <dt>Equations</dt><dd><ul class="tight"><li><code>a = kc*sqrt(f) + kd*f</code></li><li><code>delta=sqrt(rho/(pi*f*mu))</code></li></ul></dd>
+      <dt>Units</dt><dd>Hz, dB/in, um</dd>
+      <dt>Validity</dt><dd>A FIT, not a geometry solve. Roughness shown as shape, not a calibrated prediction.</dd>
+      <dt>Numerics</dt><dd>Direct evaluation.</dd>
+      <dt>Known limitations</dt><dd>A FIT, not a geometry solve. Roughness shown as shape, not a calibrated prediction.</dd>
+      <dt>Evidence</dt><dd>check-numbers.py — skin depth at 1 and 10 GHz recomputed.</dd>
+    </dl>
+  </section>
+  <section class="contract" id="adcLab">
+    <div class="contract__head">
+      <h2>adcLab</h2>
+      <span class="model-tag model-tag--numerical">numerical model</span>
+      <span class="ev ev--independent">independent</span>
+      <span class="contract__ver">v1.0 &#183; reviewed 2026-09-18</span>
+    </div>
+    <p class="contract__purpose">Say where a coupled digital aggressor lands in a converter's output — as spurs, as offset, or as raised noise — and what that does to SNR, for a SAR and a delta-sigma converter fed the same disturbance.</p>
+    <dl class="contract__body">
+      <dt>Topology</dt><dd>Two converters, one aggressor. SAR: ideal bipolar sample-and-hold, then N bit trials spread over the first half of the sample period, each comparing the held input with a DAC scaled by the reference at that trial's own instant. Delta-sigma: discrete-time, second order, one bit, reference multiplying the feedback DAC, followed by sinc-cubed decimation of length 3·OSR−2. The aggressor is a 50%-duty trapezoid with linear edges through a single RC pole, in periodic steady state.</dd>
+      <dt>Reference planes</dt><dd>Injection at the converter input or at its reference, chosen explicitly. Observation is the decimated output record for the delta-sigma and the code record for the SAR; the modulator bitstream is separately observable. The aggressor is evaluated in the time domain at the exact instants the converter uses it — the sampling instant for the input path, each bit trial for the SAR reference, each modulator clock for the delta-sigma.</dd>
+      <dt>Equations</dt><dd><ul class="tight"><li><code>aggressor: 50%-duty trapezoid, 10-90% rise/fall, full ramp = that / 0.8, through one pole at the path bandwidth</code></li><li><code>flat coupling: v = G·y(t); capacitive: v = G·(f_bw/f_ref)·(x - y), i.e. G/(2*pi*f_ref)·dy/dt with G stated at f_ref = 1 MHz</code></li><li><code>fold: f_out = |f - round(f/fs)·fs|</code></li><li><code>SAR trial j: c &lt;- c + 2^(N-1-j) if h &gt;= (Vref + d(t_j))·(2c/2^N - 1)</code></li><li><code>delta-sigma, for the implemented ordering: X1 = (U-V)/(1-z^-1), X2 = (X1-V)/(1-z^-1), V = z^-1·X2 + E, giving V = z^-1·U + (1-z^-1)^2·E because (1-z^-1)^2 + z^-1(2-z^-1) = 1</code></li><li><code>sinc-cubed: three cascaded length-OSR moving averages; |H(f)| = |sin(pi·f·OSR/fmod)/(OSR·sin(pi·f/fmod))|^3</code></li><li><code>SNR excludes the fundamental, input harmonics 2-6 and DC, each +/-4 bins; interference counts as noise</code></li></ul></dd>
+      <dt>Units</dt><dd>Hz, seconds, volts, dBFS, dB, LSB, ppm</dd>
+      <dt>Validity</dt><dd>Ideal comparator, DAC, sample-and-hold and clocks. One periodic trapezoidal aggressor. Oversampling is capped at 256 so a run stays interactive. Every parameter is checked against a declared domain before a run — enums, a finite positive reference, whole-number resolution 6-24 and oversampling 8-1024, an input below Nyquist and at or below full scale, finite non-negative noise, swing, phase, ppm, coupling and bandwidth, a positive rise/fall time — and a value outside it is refused with its reason. A reference driven to zero or below is refused, and so is an overloaded loop.</dd>
+      <dt>Numerics</dt><dd>SAR 65,536 samples at 16 bits. Delta-sigma output records are chosen from the oversampling ratio to hold the cost near a million modulator samples: 16,384 outputs at OSR 32 and 64, 8,192 at 128, 4,096 at 256, after a warm-up of 4,096 + 8·OSR modulator samples plus a full decimator kernel. Coherent input: an odd number of cycles in a power-of-two record, kept two lobes clear of DC and Nyquist. 4-term Blackman-Harris window, lobes summed over +/-4 bins. Deterministic noise seed. One run is synchronous and cannot be cancelled part way: measured at 14 ms for the SAR and 38-89 ms for the delta-sigma, so a dragged control coalesces to one run.</dd>
+      <dt>Known limitations</dt><dd>No clock jitter or aperture uncertainty, no supply or ground bounce as a separate path, no DAC mismatch, no continuous-time or multi-bit modulator, no anti-alias filter beyond the single path pole. DNL and INL are named as mechanisms and are NOT measured: there is no static ramp or histogram test here, and THD is not a substitute for one. Interference that folds inside an excluded lobe is excluded with it and does not reduce the reported SNR, however large it is; diagnostics.masked names any such component and measurements.maskedCount counts them. The excluded bins carry no measurable noise of their own, so the measured average density stands in for them: exact for white noise, and otherwise bounded by the replaced fraction, which is under 0.2% of bins and so under 0.01 dB. The reference-ripple mixing shown is a property of this loop and does not transfer unchanged to a continuous-time or multi-bit modulator. Nothing here is a compliance measurement.</dd>
+      <dt>Evidence</dt><dd>check-models.js, eight named suites, 47 assertions, none of which re-runs the model's own formulas. The loop's transfer function is checked by inverting its claim: the double integral of (V - z^-1·U) must BE the quantization error, bounded by the reference plus the overload threshold and consistent with the decision that produced it, which holds at 7.73 V against a 42.5 V bound with no sign violations and fails at 130 V for any other delay. Spur levels come from the trapezoid's Fourier series through a least-squares tone fit to the output record, agreeing within 0.2 dB. Ideal SAR SNR is checked against 6.02N + 1.76 at 10, 12 and 16 bits; the delta-sigma against 15.05 dB per doubling and the closed-form 1-bit second-order limit. Folds are checked against a remainder-and-mirror construction. The decimator is checked against the properties of three cascaded boxcars. Scenario prose is guarded separately by tests/check-adc-integration.js (56 values) and the page's closed forms by check-numbers.py (21). Twelve planted faults in mutate.js, each required to fail the assertion that claims it.</dd>
+    </dl>
+  </section>
+  <section class="contract" id="antiResonance">
+    <div class="contract__head">
+      <h2>antiResonance</h2>
+      <span class="model-tag model-tag--analytical">analytical model</span>
+      <span class="ev ev--independent">independent</span>
+      <span class="contract__ver">v2.0 &#183; reviewed 2026-09-12</span>
+    </div>
+    <p class="contract__purpose">Show a peak appearing between two capacitor banks, and what damps it.</p>
+    <dl class="contract__body">
+      <dt>Topology</dt><dd>Two RLC branches in parallel, plus the VRM branch.</dd>
+      <dt>Reference planes</dt><dd>One port at the load.</dd>
+      <dt>Equations</dt><dd><ul class="tight"><li><code>Zpeak ~ L/(R*C)</code></li><li><code>fSRF=1/(2*pi*sqrt(LC))</code></li></ul></dd>
+      <dt>Units</dt><dd>Hz, ohm</dd>
+      <dt>Validity</dt><dd>Lumped; no plane modes.</dd>
+      <dt>Numerics</dt><dd>Direct complex evaluation; explicit no-peak state when none exists.</dd>
+      <dt>Known limitations</dt><dd>Lumped; no plane modes.</dd>
+      <dt>Evidence</dt><dd>check-models.js — PDN (anti-resonance exists and is damped by R; no phantom peak when flat).</dd>
+    </dl>
+  </section>
+  <section class="contract" id="bathtub">
+    <div class="contract__head">
+      <h2>bathtub</h2>
+      <span class="model-tag model-tag--analytical">analytical model</span>
+      <span class="ev ev--independent">independent</span>
+      <span class="contract__ver">v2.0 &#183; reviewed 2026-09-12</span>
+    </div>
+    <p class="contract__purpose">Show the measured region and the extrapolated region as different things.</p>
+    <dl class="contract__body">
+      <dt>Topology</dt><dd>Dual-Dirac: two impulses separated by DJ, convolved with a Gaussian.</dd>
+      <dt>Reference planes</dt><dd>Receiver decision point.</dd>
+      <dt>Equations</dt><dd><ul class="tight"><li><code>BER(t)=0.5[Q((t-DJ/2)/s)+Q((UI-DJ/2-t)/s)]</code></li><li><code>TJ=DJpp+2*Q(BER)*RJrms</code></li></ul></dd>
+      <dt>Units</dt><dd>UI, s</dd>
+      <dt>Validity</dt><dd>Dual-Dirac is a FIT, not a measurement of the deterministic width.</dd>
+      <dt>Numerics</dt><dd>erfc below x=3, asymptotic series above; explicit empty result when no interval meets the target.</dd>
+      <dt>Known limitations</dt><dd>Dual-Dirac is a FIT, not a measurement of the deterministic width.</dd>
+      <dt>Evidence</dt><dd>check-models.js — Bathtub (closed eye returns no interval; crossings match the analytic Q inverse).</dd>
+    </dl>
+  </section>
+  <section class="contract" id="cdr">
+    <div class="contract__head">
+      <h2>cdr</h2>
+      <span class="model-tag model-tag--analytical">analytical model</span>
+      <span class="ev ev--independent">independent</span>
+      <span class="contract__ver">v2.1 &#183; reviewed 2026-09-13</span>
+    </div>
+    <p class="contract__purpose">Separate the three functions a clock-recovery loop defines: input jitter onto the recovered clock, the residual phase error at the decision, and the input jitter the receiver can withstand.</p>
+    <dl class="contract__body">
+      <dt>Topology</dt><dd>Second-order type-2 loop. No phase-detector model, no VCO model, no data pattern.</dd>
+      <dt>Reference planes</dt><dd>Phase at the receiver's decision instant, relative to the incoming data.</dd>
+      <dt>Equations</dt><dd><ul class="tight"><li><code>H(s) = (2*zeta*wn*s + wn^2) / (s^2 + 2*zeta*wn*s + wn^2)</code></li><li><code>residual = COMPLEX 1 - H(f), never 1 - |H(f)|</code></li><li><code>tolerance = margin / |1 - H(f)|, capped by a declared tracking ceiling</code></li><li><code>f3dB: u^2 - (2 + 4*zeta^2)*u - 1 = 0 with u = (w/wn)^2, so f3dB = fn*sqrt(root)</code></li><li><code>steady-state sinusoid: recovered phase = H(f) times input phase; residual = input - recovered</code></li></ul></dd>
+      <dt>Units</dt><dd>Hz, seconds, UI peak-to-peak, dimensionless transfer</dd>
+      <dt>Validity</dt><dd>A teaching loop with declared parameters: natural frequency, damping and sampling margin. The sinusoidal experiment is the steady-state small-signal response after settling. The low-frequency tracking ceiling is DECLARED, not derived — a real one comes from the phase detector's range and the VCO's tuning. fn is the NATURAL frequency and is reported separately from the closed-loop -3 dB bandwidth, which is 1.58x to 3.37x higher depending on damping.</dd>
+      <dt>Numerics</dt><dd>Direct complex evaluation on 340 log-spaced points from 1 kHz to 1 GHz; 181 analytic sinusoidal samples over three periods at the selected frequency.</dd>
+      <dt>Known limitations</dt><dd>Not a lock or acquisition transient, cycle-slip model, BER simulation, or compliance jitter-tolerance mask. A mask carries a BER target, a defined pattern, the phase detector's own characteristic and usually a measured low-frequency corner. This model has none of those, and the dashed part of the tolerance curve is an assumption drawn as one. No noise model: the panel makes no claim about how much of the loop's own reference noise reaches the recovered clock, because that needs a spectrum and an injection point and neither is here. The tracking ceiling is a DECLARED assumption, not a derived result, and where it binds the tolerance no longer scales with the sampling margin.</dd>
+      <dt>Evidence</dt><dd>check-models.js — CDR loop: the analytic asymptotes (|1-H| -&gt; 1 far above the loop so tolerance equals the bare margin; |1-H| -&gt; (f/fn)^2 far below), H(0) = 1 exactly, the complex complement distinguished from 1 - |H|, and type-2 peaking present at every damping. N3-1: the -3 dB bandwidth is checked against a closed form solved by hand from |H|^2 = 1/2 and, independently, against where the swept |H| crosses 1/sqrt(2) with log-interpolation between grid samples. The residual peak is asserted to EXCEED unity whenever the loop is underdamped, and the worst tolerance to fall below the sampling margin with it. Three assertions record that a fixed axis limit of 3, and a tolerance floor of half the margin, would clip the extrema the damping control exists to produce.</dd>
+    </dl>
+  </section>
+  <section class="contract" id="crosstalk">
+    <div class="contract__head">
+      <h2>crosstalk</h2>
+      <span class="model-tag model-tag--analytical">analytical model</span>
+      <span class="ev ev--independent">independent</span>
+      <span class="contract__ver">v2.0 &#183; reviewed 2026-09-12</span>
+    </div>
+    <p class="contract__purpose">Show why near-end saturates and far-end accumulates.</p>
+    <dl class="contract__body">
+      <dt>Topology</dt><dd>Single coupled pair, uniform section, weak coupling.</dd>
+      <dt>Reference planes</dt><dd>Both ends of the victim.</dd>
+      <dt>Equations</dt><dd><ul class="tight"><li><code>Kb=(Lm/L0+Cm/C0)/4</code></li><li><code>Kfe proportional to (Lm/L0-Cm/C0)</code></li></ul></dd>
+      <dt>Units</dt><dd>ps, mV</dd>
+      <dt>Validity</dt><dd>Weak coupling, ratios &lt;= 0.30. One aggressor, not a bus.</dd>
+      <dt>Numerics</dt><dd>Closed form superposition over the coupled length.</dd>
+      <dt>Known limitations</dt><dd>Weak coupling, ratios &lt;= 0.30. One aggressor, not a bus.</dd>
+      <dt>Evidence</dt><dd>check-models.js — Crosstalk (FEXT cancels when the ratios are equal; NEXT saturates past tr/2tpd).</dd>
+    </dl>
+  </section>
+  <section class="contract" id="equalizer">
+    <div class="contract__head">
+      <h2>equalizer</h2>
+      <span class="model-tag model-tag--analytical">analytical model</span>
+      <span class="ev ev--independent">independent</span>
+      <span class="contract__ver">v2.0 &#183; reviewed 2026-09-12</span>
+    </div>
+    <p class="contract__purpose">Separate what each equaliser block can and cannot reach.</p>
+    <dl class="contract__body">
+      <dt>Topology</dt><dd>Shared channel impulse, then CTLE and/or DFE.</dd>
+      <dt>Reference planes</dt><dd>Receiver input and slicer input.</dd>
+      <dt>Equations</dt><dd><ul class="tight"><li><code>H(s)=(1+s/wz)/((1+s/wp1)(1+s/wp2))</code></li><li><code>DFE subtracts h[k]*a[n-k] for k&gt;0</code></li></ul></dd>
+      <dt>Units</dt><dd>UI, V</dd>
+      <dt>Validity</dt><dd>Ideal or decision-directed DFE as selected; no adaptation dynamics.</dd>
+      <dt>Numerics</dt><dd>Half-open tap window; CTLE normalised to unity peak gain.</dd>
+      <dt>Known limitations</dt><dd>Ideal or decision-directed DFE as selected; no adaptation dynamics.</dd>
+      <dt>Evidence</dt><dd>check-models.js — CTLE (causality, normalisation) and DFE (exact cancellation, window width).</dd>
+    </dl>
+  </section>
+  <section class="contract" id="eye">
+    <div class="contract__head">
+      <h2>eye</h2>
+      <span class="model-tag model-tag--numerical">numerical model</span>
+      <span class="ev ev--independent">independent</span>
+      <span class="contract__ver">v2.0 &#183; reviewed 2026-09-12</span>
+    </div>
+    <p class="contract__purpose">Build an eye from bits and state what the run supports.</p>
+    <dl class="contract__body">
+      <dt>Topology</dt><dd>Shared channel impulse plus Gaussian jitter.</dd>
+      <dt>Reference planes</dt><dd>Receiver input.</dd>
+      <dt>Equations</dt><dd><ul class="tight"><li><code>superposition of 858 symbols; rule of three for the evidence floor</code></li></ul></dd>
+      <dt>Units</dt><dd>ps, mV</dd>
+      <dt>Validity</dt><dd>Fixed sampling phase; no adaptation. 858 symbols evidences 3.5e-3, not a compliance BER.</dd>
+      <dt>Numerics</dt><dd>Seeded LFSR and seeded Gaussians — reproducible.</dd>
+      <dt>Known limitations</dt><dd>Fixed sampling phase; no adaptation. 858 symbols evidences 3.5e-3, not a compliance BER.</dd>
+      <dt>Evidence</dt><dd>check-models.js — Evidence suite (13 assertions) guards the BER floor claim.</dd>
+    </dl>
+  </section>
+  <section class="contract" id="impairments">
+    <div class="contract__head">
+      <h2>impairments</h2>
+      <span class="model-tag model-tag--analytical">analytical model</span>
+      <span class="ev ev--independent">independent</span>
+      <span class="contract__ver">v2.0 &#183; reviewed 2026-09-12</span>
+    </div>
+    <p class="contract__purpose">Compare four impairments on one consistent channel, as counterfactuals rather than a decomposition.</p>
+    <dl class="contract__body">
+      <dt>Topology</dt><dd>Two-term loss law, one through-section discontinuity, source and load mismatch, up to four FEXT aggressors.</dd>
+      <dt>Reference planes</dt><dd>Transmitter output to receiver input. No package.</dd>
+      <dt>Equations</dt><dd><ul class="tight"><li><code>S21_disc=2/(2cos+j(r+1/r)sin)</code></li><li><code>S11_in=S11_disc*e^-j2wTd1 + S21_disc^2*GL*H^2*e^-j2wTd</code></li><li><code>echo = Gs.GL * H^2 * direct, delayed by 2*Td  (first term of a geometric series in Gs.GL)</code></li></ul></dd>
+      <dt>Units</dt><dd>s, V, ohm, dB</dd>
+      <dt>Validity</dt><dd>FIRST ORDER in the reflection coefficients: one source-load round trip is kept and the (Gs.GL)^2 terms and beyond are dropped. The relative size of what is dropped is |Gs.GL|, measured at 0.06% to 0.71% of the retained echo across the released presets and 6.3% at the controls' extremes — so it is accurate here, but it is an expansion and not a cascade. Single-ended; fixed CTLE+DFE, not adapting. For a network with every internal re-reflection included exactly, see labChannel, which cascades ABCD matrices instead.</dd>
+      <dt>Numerics</dt><dd>4096-point FFT, 32 samples/UI, 420 symbols.</dd>
+      <dt>Known limitations</dt><dd>An expansion truncated at first order, not an exact network. It also uses the two-term magnitude loss law with a minimum phase, not the causal material model that labChannel now uses, so its phase is reconstructed rather than derived.</dd>
+      <dt>Evidence</dt><dd>check-models.js — Networks and Impairment chain: the through-section loses at most 0.0481 dB and never notches, the echo is Gs.GL rather than GL^2, and the truncated series is bounded by |Gs.GL| of the retained term over the whole released range.</dd>
+    </dl>
+  </section>
+  <section class="contract" id="isi">
+    <div class="contract__head">
+      <h2>isi</h2>
+      <span class="model-tag model-tag--numerical">numerical model</span>
+      <span class="ev ev--independent">independent</span>
+      <span class="contract__ver">v2.0 &#183; reviewed 2026-09-12</span>
+    </div>
+    <p class="contract__purpose">Show a channel's memory as specific earlier bits.</p>
+    <dl class="contract__body">
+      <dt>Topology</dt><dd>Shared channel impulse; cursor and neighbours.</dd>
+      <dt>Reference planes</dt><dd>Receiver sampling instant.</dd>
+      <dt>Equations</dt><dd><ul class="tight"><li><code>y[n]=h0*a[n] + sum h[k]*a[n-k]</code></li></ul></dd>
+      <dt>Units</dt><dd>UI, mV</dd>
+      <dt>Validity</dt><dd>Linear time-invariant channel; no equaliser unless stated.</dd>
+      <dt>Numerics</dt><dd>Shared kit channel; cursor at the single-bit peak.</dd>
+      <dt>Known limitations</dt><dd>Linear time-invariant channel; no equaliser unless stated.</dd>
+      <dt>Evidence</dt><dd>check-models.js — CTLE and DFE suites share this channel model.</dd>
+    </dl>
+  </section>
+  <section class="contract" id="jitter">
+    <div class="contract__head">
+      <h2>jitter</h2>
+      <span class="model-tag model-tag--analytical">analytical model</span>
+      <span class="ev ev--independent">independent</span>
+      <span class="contract__ver">v2.0 &#183; reviewed 2026-09-12</span>
+    </div>
+    <p class="contract__purpose">Show how TJ depends on the BER you name.</p>
+    <dl class="contract__body">
+      <dt>Topology</dt><dd>As bathtub.</dd>
+      <dt>Reference planes</dt><dd>Receiver decision point.</dd>
+      <dt>Equations</dt><dd><ul class="tight"><li><code>Q(BER) by bisection on the Gaussian tail integral</code></li></ul></dd>
+      <dt>Units</dt><dd>ps, UI</dd>
+      <dt>Validity</dt><dd>Gaussian tails assumed; a periodic component is fitted badly.</dd>
+      <dt>Numerics</dt><dd>Same erfc treatment as the bathtub.</dd>
+      <dt>Known limitations</dt><dd>Gaussian tails assumed; a periodic component is fitted badly.</dd>
+      <dt>Evidence</dt><dd>check-models.js — Bathtub suite, shared model.</dd>
+    </dl>
+  </section>
+  <section class="contract" id="labChannel">
+    <div class="contract__head">
+      <h2>labChannel</h2>
+      <span class="model-tag model-tag--analytical">analytical model</span>
+      <span class="ev ev--independent">independent</span>
+      <span class="contract__ver">v3.2 &#183; reviewed 2026-09-13</span>
+    </div>
+    <p class="contract__purpose">Show one network in six domains at once, and link a post-cursor back to the bit that caused it.</p>
+    <dl class="contract__body">
+      <dt>Topology</dt><dd>ABCD cascade: causal lossy line, optional mismatched section, optional open stub, causal lossy line. 50 ohm source and load.</dd>
+      <dt>Reference planes</dt><dd>Both ports referenced to a real 50 ohm. No package, no connector, no die. Transport delay de-embedded as an exact integer sample rotation and reported separately.</dd>
+      <dt>Equations</dt><dd><ul class="tight"><li><code>z'(f)=Rs(f)(1+j)+jwL, y'(f)=jw*Cvac*eps_r(f)</code></li><li><code>gamma=sqrt(z'y'), Zc=sqrt(z'/y')</code></li><li><code>eps_r(f) = Djordjevic-Sarkar wideband Debye, decades 1e4 to 1e13</code></li><li><code>A=D=cosh(gamma*l), B=Zc*sinh(gamma*l), C=sinh(gamma*l)/Zc</code></li><li><code>S21=2/(A+B/Z0+C*Z0+D)</code></li></ul></dd>
+      <dt>Units</dt><dd>Hz, s, ohm, V. Loss referenced to a FIXED 8 GHz belonging to the board, not to the symbol rate.</dd>
+      <dt>Validity</dt><dd>Single-ended, no crosstalk, CTLE only, ideal terminations. Loss is a budget at one frequency split between two mechanisms, not an arbitrary measured curve. Validity is per measurement, not per page: an impulse response that has not decayed inside its record marks the IMPULSE and PULSE panels and names them; it does not invalidate the S-parameters, and it is not used to infer the eye's accuracy. The eye's accuracy is measured directly instead - every released preset is within 0.35 mV of its value at four times the record.</dd>
+      <dt>Numerics</dt><dd>4096-point FFT at 32 samples/UI. Pre-wavefront energy below 1e-5 of the total and falling as the record is refined at fixed bandwidth. Propagation loss meets its budget to 1e-6 dB; |S21| differs from it by up to 5e-3 dB, which is the port mismatch of a lossy line whose Zc is not its nominal z. The tail diagnostic measures |h| at a quarter-record or more from the response PEAK. Measuring a fixed last eighth of the circular record instead reported 3.8462% on a matched lossless line with no reflector anywhere — the sidelobes of a band-limited fractional delay, falling as 1/n, wrapping in behind a peak that sits at sample 0. Impulse exports are dimensionless discrete convolution weights; normalized SBR exports are dimensionless too. The panel converts SBR weights to volts using its transmitted amplitude. Raw and active impulse records share dt and removed transport delay tdBulk; absolute display labels add tdBulk without changing the samples. The early view is a display window, and the full FFT record remains available. Frequency inspection selects the nearest native sample in linear Hz and links S21, S11 and group delay; exported group delay is in seconds. It does not interpolate wrapped phase or rebuild the model.</dd>
+      <dt>Known limitations</dt><dd>Not a field solver, not coupled-line, not correlated against measurement. The eye height is the extremal gap between the two transmitted populations over one PRBS7 period at the decision instant — not a percentile, not a BER contour, and not comparable with a compliance eye height.</dd>
+      <dt>Evidence</dt><dd>docs/channel-model.md is the contract; every clause has assertions. check-models.js — Causal line (44 assertions): lossless Zc and delay exact, loss budget exact, agreement with an independently derived S21 to 1e-12, pre-wavefront causality with measured convergence, and eps' monotone with eps'' flat. Lab B assembled (60 assertions): the arrival is retained for every preset and both extremes, one sampling phase across four views, populations labelled by transmitted symbol, an ideal channel delivering the full swing with zero errors, and S-parameters unchanged by a rate-only change. mutate.js: nine planted defects each caught by the assertion that claims it.</dd>
+    </dl>
+  </section>
+  <section class="contract" id="labPdn">
+    <div class="contract__head">
+      <h2>labPdn</h2>
+      <span class="model-tag model-tag--numerical">numerical model</span>
+      <span class="ev ev--independent">independent</span>
+      <span class="contract__ver">v2.3 &#183; reviewed 2026-09-13</span>
+    </div>
+    <p class="contract__purpose">Say in amps which capacitor bank supplies the load at each frequency, and which two make each peak.</p>
+    <dl class="contract__body">
+      <dt>Topology</dt><dd>Five-stage ladder: VRM, bulk, board, package, die. Series R-L between stages, shunt R-L-C at each.</dd>
+      <dt>Reference planes</dt><dd>Board and die load nodes on one five-stage ladder; observe either node. Frequency branch-share panels retain unit die excitation.</dd>
+      <dt>Equations</dt><dd><ul class="tight"><li><code>Zout_vrm=R(1+jf/fbw)</code></li><li><code>ladder reduction from the VRM end</code></li><li><code>M di/dt + R i + vC = -Br I - Bl dI/dt; dvC/dt = diag(1/C)i</code></li><li><code>Y(f) v(f) = i(f); Zij = vi / ij</code></li><li><code>rail deviation dVi = -sum_j Zij Ij for positive withdrawal</code></li></ul></dd>
+      <dt>Units</dt><dd>Hz, ohm, A, V, s</dd>
+      <dt>Validity</dt><dd>Lumped five-stage RL/series-RLC network with zero initial incremental state. No plane cavity modes or spatial distribution. The browser transient is causal; the finite observation interval can omit later behavior and timestep resolution still matters.</dd>
+      <dt>Numerics</dt><dd>420 log-spaced frequency points with nodal transfer impedances. Two-load browser transients use an eight-state causal ladder model and a small matrix exponential with first-order-held sampled currents; analytic raised-cosine derivatives recover inductive voltage. Nominal record 32768 × 200 ps; edge refinement halves dt and doubles sample count at fixed duration. Physical event times are rounded to samples. Signed contributions are solved separately and summed; no repeating-record tail is introduced. The legacy single-load API and explicit test-only periodic option retain FFT convolution for regression comparisons. All board/die complex transfer pairs and full-precision time traces remain exported. Frequency inspection retains nearest-native-Hz semantics.</dd>
+      <dt>Known limitations</dt><dd>The causal transient starts from zero incremental state and approximates current between samples linearly. A quiet pre-event baseline follows from causality and is not a timestep convergence certificate. Six selected two-load corners are compared with an independent causal trapezoidal reference; this is not proof for every parameter combination. Reported extrema cover the declared observation interval, not all future time. The VRM remains a first-order R+jwL teaching model, without compensation, phase margin or nonlinear behavior. The topology has one die and one board load; scalar target impedance remains a single-load heuristic. Frequency branch-current magnitudes can exceed the injected current because phasors circulate. Legacy FFT-only helper results retain periodic-record limitations.</dd>
+      <dt>Evidence</dt><dd>check-models.js — PDN ladder (21 assertions): DC limit is the resistive path, 5 GHz limit is the die ESL reactance, the biggest peak matches the closed-form VRM-against-bulk resonance, and |Z| agrees with K.cascadeS — a separate code path — to 1e-6 ohm. Lab C transient (N2-4): the reference solver is itself validated against an analytical DC limit — capacitors open, inductors shorted, 7.8 mOhm at the die — which it reaches to under a microvolt from rest; 200 ps and 400 ps are asserted to differ; every requested edge is asserted to be realised exactly; droop is asserted monotone in edge rate and to fall 3.36% across the control. Causal two-load path: tests/check-pdn-multi.js compares six corners at both observation nodes, checks timestep and record extension separately, and exercises closed-form causal/periodic references and targeted numerical faults.</dd>
+    </dl>
+  </section>
+  <section class="contract" id="labWaves">
+    <div class="contract__head">
+      <h2>labWaves</h2>
+      <span class="model-tag model-tag--numerical">numerical model</span>
+      <span class="ev ev--independent">independent</span>
+      <span class="contract__ver">v2.2 &#183; reviewed 2026-09-13</span>
+    </div>
+    <p class="contract__purpose">Make the current half of a travelling wave visible, and account for where the energy goes.</p>
+    <dl class="contract__body">
+      <dt>Topology</dt><dd>As reflection, with variable length and 24 launched waves.</dd>
+      <dt>Reference planes</dt><dd>Driver node, load node, and a movable probe along the line.</dd>
+      <dt>Equations</dt><dd><ul class="tight"><li><code>V/I=+Z0 forward, -Z0 backward</code></li><li><code>E=Td*int(0.5 v^2/Z0 + 0.5 i^2 Z0)</code></li></ul></dd>
+      <dt>Units</dt><dd>ps, V, A, ohm, pJ</dd>
+      <dt>Validity</dt><dd>Lossless, uniform, no mid-line discontinuity.</dd>
+      <dt>Numerics</dt><dd>Trapezoid integration with 900 time intervals and max(220, ceil(64 Td/tr)) spatial intervals, capped at 65536. The energy history uses 121 uniformly spaced times plus finite-edge boundary transition landmarks; straight segments join computed samples. History is cached until physical settings change. Cursor energies are recomputed at the actual cursor time; the residual is shown on a separate aligned scale. Energy integrals begin before the source edge. Energy-history UI updates debounce rapid physical edits, then yield between samples with a generation guard. Pending histories are hidden and omitted from exports; instantaneous calculations remain current. Completed histories use the same sample grid and quadrature as the synchronous model.</dd>
+      <dt>Known limitations</dt><dd>Lossless, uniform, no mid-line discontinuity. The energy account is refused rather than reported when it closes to worse than 1%. Across every length and edge the controls allow it now closes to 0.086% or better.</dd>
+      <dt>Evidence</dt><dd>check-models.js — Line1D (21 assertions), shared with the reflections panel.</dd>
+    </dl>
+  </section>
+  <section class="contract" id="pam4">
+    <div class="contract__head">
+      <h2>pam4</h2>
+      <span class="model-tag model-tag--numerical">numerical model</span>
+      <span class="ev ev--independent">independent</span>
+      <span class="contract__ver">v2.0 &#183; reviewed 2026-09-12</span>
+    </div>
+    <p class="contract__purpose">Compare NRZ and PAM4 on the same channel at the same data rate: PAM4 halves the Nyquist frequency and so meets less loss, and pays for it with a third the eye height.</p>
+    <dl class="contract__body">
+      <dt>Topology</dt><dd>Two full chains, identical except for the alphabet. Each runs K.channelImpulse at its own Nyquist loss, the shared CTLE at a fixed boost, and the shared DFE with a fixed tap count. NOT an ideal-level comparison.</dd>
+      <dt>Reference planes</dt><dd>Transmitter output.</dd>
+      <dt>Equations</dt><dd><ul class="tight"><li><code>loss_NRZ = lossPerGHz * rate/2,   loss_PAM4 = lossPerGHz * rate/4</code></li><li><code>level spacing penalty = 20*log10(3) = 9.54 dB at equal total swing</code></li><li><code>h = ctle(channelImpulse(loss, sps, nfft)); y = applyDFE(conv(levels, h), ...)</code></li></ul></dd>
+      <dt>Units</dt><dd>dB, V</dd>
+      <dt>Validity</dt><dd>A controlled comparison of two alphabets on one loss law, not a system margin. Fixed CTLE boost and fixed DFE taps for both, deliberately, so the comparison is about the alphabet. No adaptation, no jitter, no crosstalk, ideal terminations.</dd>
+      <dt>Numerics</dt><dd>FFT channel at 32 samples/UI, minimum phase by real cepstrum; seeded symbol sequence. The 9.54 dB level-spacing figure is exact arithmetic and is checked separately from the chain.</dd>
+      <dt>Known limitations</dt><dd>The 20*log10(3) level-spacing penalty is a fact about amplitudes and is exact. Everything else on the panel is the output of a numerical channel, and the two should not be read with the same confidence.</dd>
+      <dt>Evidence</dt><dd>check-models.js — DFE and Convergence suites cover the chain's parts: exact cancellation with known symbols, the half-open tap window, gain-aware slicing for PAM4 (M2-7), and grid independence of the channel. The 9.54 dB figure is in check-numbers.py.</dd>
+    </dl>
+  </section>
+  <section class="contract" id="pdnImpedance">
+    <div class="contract__head">
+      <h2>pdnImpedance</h2>
+      <span class="model-tag model-tag--analytical">analytical model</span>
+      <span class="ev ev--independent">independent</span>
+      <span class="contract__ver">v2.0 &#183; reviewed 2026-09-12</span>
+    </div>
+    <p class="contract__purpose">Show a capacitor bank's impedance and where mounting inductance takes over.</p>
+    <dl class="contract__body">
+      <dt>Topology</dt><dd>N parallel RLC branches against a plane.</dd>
+      <dt>Reference planes</dt><dd>One port.</dd>
+      <dt>Equations</dt><dd><ul class="tight"><li><code>Z=R/N+j(w*L/N-1/(w*C*N))</code></li></ul></dd>
+      <dt>Units</dt><dd>Hz, ohm</dd>
+      <dt>Validity</dt><dd>Lumped; no plane modes; no package.</dd>
+      <dt>Numerics</dt><dd>Direct complex evaluation.</dd>
+      <dt>Known limitations</dt><dd>Lumped; no plane modes; no package.</dd>
+      <dt>Evidence</dt><dd>check-models.js — PDN (RLC limits and damping).</dd>
+    </dl>
+  </section>
+  <section class="contract" id="pdnJitter">
+    <div class="contract__head">
+      <h2>pdnJitter</h2>
+      <span class="model-tag model-tag--illustrative">illustrative model</span>
+      <span class="ev ev--independent">independent</span>
+      <span class="contract__ver">v1.0 &#183; reviewed 2026-09-12</span>
+    </div>
+    <p class="contract__purpose">Show that where supply noise enters decides whether the loop removes it.</p>
+    <dl class="contract__body">
+      <dt>Topology</dt><dd>First-order PLL, three injection points: VCO, reference, output buffer.</dd>
+      <dt>Reference planes</dt><dd>Clock output.</dd>
+      <dt>Equations</dt><dd><ul class="tight"><li><code>VCO noise high-passed at the loop bandwidth; reference noise low-passed; buffer noise uncorrected</code></li></ul></dd>
+      <dt>Units</dt><dd>Hz, V, s</dd>
+      <dt>Validity</dt><dd>ILLUSTRATIVE topology — a first-order loop, not a solved PLL, and a linear small-signal sensitivity. What IS independently checked is the behaviour that matters: the three injection points are treated oppositely, and the units are dimensionally correct.</dd>
+      <dt>Numerics</dt><dd>Closed-form transfer functions.</dd>
+      <dt>Known limitations</dt><dd>ILLUSTRATIVE topology — a first-order loop, not a solved PLL, and a linear small-signal sensitivity. What IS independently checked is the behaviour that matters: the three injection points are treated oppositely, and the units are dimensionally correct.</dd>
+      <dt>Evidence</dt><dd>check-models.js — PSIJ suite. The assertions cover units and the three transfer paths; they do not validate the loop order.</dd>
+    </dl>
+  </section>
+  <section class="contract" id="realCaps">
+    <div class="contract__head">
+      <h2>realCaps</h2>
+      <span class="model-tag model-tag--analytical">analytical model</span>
+      <span class="ev ev--independent">independent</span>
+      <span class="contract__ver">v1.0 &#183; reviewed 2026-09-13</span>
+    </div>
+    <p class="contract__purpose">Show what a marked capacitance is worth at an operating point, and how much of the answer the derating uncertainty owns.</p>
+    <dl class="contract__body">
+      <dt>Topology</dt><dd>One capacitor: ESR(f) in series with ESL_part + L_mount in series with Ceff. No neighbours, no plane.</dd>
+      <dt>Reference planes</dt><dd>One port, at the capacitor terminals as mounted. Nothing beyond the mounting loop.</dd>
+      <dt>Equations</dt><dd><ul class="tight"><li><code>Z=ESR(f)+j(w*Ltot-1/(w*Ceff))</code></li><li><code>Ceff=cNom*retained</code></li><li><code>SRF=1/(2*pi*sqrt(Ltot*Ceff))</code></li><li><code>L_mount=length*(mu0/pi)*acosh(s/2r)</code></li><li><code>ESR=esrMin*cosh(ln(f/fMin)/2)</code></li></ul></dd>
+      <dt>Units</dt><dd>Hz, ohm, F, H</dd>
+      <dt>Validity</dt><dd>Lumped R+L+C. Not valid above the part body's first structural resonance. The retained fraction is an INPUT - this panel does not know your derating and will not guess it.</dd>
+      <dt>Numerics</dt><dd>Closed form at every frequency. The band is the exact envelope over the capacitance range, not a two-endpoint min/max.</dd>
+      <dt>Known limitations</dt><dd>No temperature coefficient on ESR, although one is measured to exist at high frequency. No mutual coupling to neighbouring parts. The ESR shape between its anchors is illustrative.</dd>
+      <dt>Evidence</dt><dd>check-models.js — Real capacitors (11 assertions): SRF scales exactly as one over root C independent of L and ESR, the two-term ESR equals the closed form esrMin*cosh(ln(f/fMin)/2), reactance is zero at SRF so |Z| there is ESR(SRF), the marked and derated curves converge above resonance and differ by exactly the retained fraction below it, the band provably contains the operating point at every frequency, and a zero retained fraction is refused rather than drawn.</dd>
+    </dl>
+  </section>
+  <section class="contract" id="reflection">
+    <div class="contract__head">
+      <h2>reflection</h2>
+      <span class="model-tag model-tag--analytical">analytical model</span>
+      <span class="ev ev--independent">independent</span>
+      <span class="contract__ver">v2.0 &#183; reviewed 2026-09-12</span>
+    </div>
+    <p class="contract__purpose">Show how a step reflects between two mismatched ends, and why the ringing decays at the rate it does.</p>
+    <dl class="contract__body">
+      <dt>Topology</dt><dd>Ideal step source with series Rs, one uniform lossless line of delay Td, one resistive or open load.</dd>
+      <dt>Reference planes</dt><dd>Driver output node and load node. No package, no connector.</dd>
+      <dt>Equations</dt><dd><ul class="tight"><li><code>Gs=(Rs-Z0)/(Rs+Z0)</code></li><li><code>GL=(RL-Z0)/(RL+Z0)</code></li><li><code>a0=Vs*Z0/(Rs+Z0)</code></li><li><code>V(x,t) by superposition of 7 launched waves</code></li></ul></dd>
+      <dt>Units</dt><dd>ps, V, ohm</dd>
+      <dt>Validity</dt><dd>Passive terminations. Lossless: late-time amplitudes are optimistic.</dd>
+      <dt>Numerics</dt><dd>Closed-form lattice sum. The edge is a CUBIC SMOOTHSTEP, s^2*(3-2s), centred on t = 0 and spanning tr from 0 to 1 — not a raised cosine, which the contract and the module header both used to claim. The two differ by at most 1% pointwise, but the rise-time convention differs: a cubic smoothstep's 10-90% time is 0.608*tr where a raised cosine's is 0.590*tr.</dd>
+      <dt>Known limitations</dt><dd>tr is the full 0-100% support of the smoothstep, not a 10-90% time. Multiply by 0.608 to compare with a datasheet 10-90% figure. Lossless, so late-time amplitudes are optimistic.</dd>
+      <dt>Evidence</dt><dd>check-models.js — Line1D (21 assertions): Ohm's law at the load and Kirchhoff at the source hold to 1e-12 at every instant; energy balances across five terminations.</dd>
+    </dl>
+  </section>
+  <section class="contract" id="sparams">
+    <div class="contract__head">
+      <h2>sparams</h2>
+      <span class="model-tag model-tag--exact">exact model</span>
+      <span class="ev ev--independent">independent</span>
+      <span class="contract__ver">v2.0 &#183; reviewed 2026-09-12</span>
+    </div>
+    <p class="contract__purpose">Show what passivity, reciprocity and causality each assert, separately.</p>
+    <dl class="contract__body">
+      <dt>Topology</dt><dd>Through-section and stub networks.</dd>
+      <dt>Reference planes</dt><dd>Two 50 ohm ports.</dd>
+      <dt>Equations</dt><dd><ul class="tight"><li><code>exact ABCD of a mismatched through-section and an open stub</code></li></ul></dd>
+      <dt>Units</dt><dd>Hz, dB</dd>
+      <dt>Validity</dt><dd>Lossless unless stated; two-port only.</dd>
+      <dt>Numerics</dt><dd>Closed form.</dd>
+      <dt>Known limitations</dt><dd>Lossless unless stated; two-port only.</dd>
+      <dt>Evidence</dt><dd>check-models.js — Networks (passivity, and reciprocity checked as a separate property).</dd>
+    </dl>
+  </section>
+  <section class="contract" id="spectrum">
+    <div class="contract__head">
+      <h2>spectrum</h2>
+      <span class="model-tag model-tag--exact">exact model</span>
+      <span class="ev ev--independent">independent</span>
+      <span class="contract__ver">v2.0 &#183; reviewed 2026-09-12</span>
+    </div>
+    <p class="contract__purpose">Tie the edge in time to the envelope in frequency.</p>
+    <dl class="contract__body">
+      <dt>Topology</dt><dd>Trapezoidal clock, one edge rate, one duty cycle.</dd>
+      <dt>Reference planes</dt><dd>Driver output.</dd>
+      <dt>Equations</dt><dd><ul class="tight"><li><code>|An| proportional to |sinc(n*pi*tau/T)|*|sinc(n*pi*tr/T)|</code></li></ul></dd>
+      <dt>Units</dt><dd>Hz, s, dB</dd>
+      <dt>Validity</dt><dd>Ideal trapezoid; no channel.</dd>
+      <dt>Numerics</dt><dd>Closed form harmonics.</dd>
+      <dt>Known limitations</dt><dd>Ideal trapezoid; no channel.</dd>
+      <dt>Evidence</dt><dd>check-models.js — Spectrum (a 50% duty square wave has no even harmonics).</dd>
+    </dl>
+  </section>
+  <section class="contract" id="ssn">
+    <div class="contract__head">
+      <h2>ssn</h2>
+      <span class="model-tag model-tag--analytical">analytical model</span>
+      <span class="ev ev--independent">independent</span>
+      <span class="contract__ver">v2.0 &#183; reviewed 2026-09-12</span>
+    </div>
+    <p class="contract__purpose">Show ground bounce as v=L di/dt across a shared return.</p>
+    <dl class="contract__body">
+      <dt>Topology</dt><dd>N drivers sharing one return inductance.</dd>
+      <dt>Reference planes</dt><dd>Die-side ground against board ground.</dd>
+      <dt>Equations</dt><dd><ul class="tight"><li><code>v=L*di/dt</code></li><li><code>peak slope = (pi/2)*dI/tr for a raised-cosine edge</code></li></ul></dd>
+      <dt>Units</dt><dd>A/s, H, V</dd>
+      <dt>Validity</dt><dd>Single lumped shared inductance; no mutual coupling between returns.</dd>
+      <dt>Numerics</dt><dd>Closed form; peak rather than mean slope reported.</dd>
+      <dt>Known limitations</dt><dd>Single lumped shared inductance; no mutual coupling between returns.</dd>
+      <dt>Evidence</dt><dd>check-numbers.py — the di/dt and mean-slope figures are recomputed from first principles.</dd>
+    </dl>
+  </section>
+  <section class="contract" id="touchstone">
+    <div class="contract__head">
+      <h2>touchstone</h2>
+      <span class="model-tag model-tag--exact">exact model</span>
+      <span class="ev ev--independent">independent</span>
+      <span class="contract__ver">v2.0 &#183; reviewed 2026-09-13</span>
+    </div>
+    <p class="contract__purpose">Report what a Touchstone 1.0 two-port file contains, and whether this reader can trust it.</p>
+    <dl class="contract__body">
+      <dt>Topology</dt><dd>No model. It parses a file and computes properties of what it read.</dd>
+      <dt>Reference planes</dt><dd>Whatever the file's own reference planes are — the reader cannot know and does not guess.</dd>
+      <dt>Equations</dt><dd><ul class="tight"><li><code>sigma_max(S) = sqrt( largest eigenvalue of S^H S ), over the FULL complex 2x2</code></li><li><code>T = sum |Sij|^2,  D = |det S|^2,  sigma_max = sqrt( (T + sqrt(max(0, T^2 - 4D))) / 2 )</code></li><li><code>IL = -20*log10(|S21|)</code></li><li><code>reflection in dB = 20*log10(|S11|);  return loss = -20*log10(|S11|)</code></li></ul></dd>
+      <dt>Units</dt><dd>Hz after conversion from the file's own unit; dB; linear S</dd>
+      <dt>Validity</dt><dd>Touchstone 1.0, two-port, S-parameters, MA/DB/RI format, Hz through GHz. Strictly ascending non-negative frequencies. Values validated AFTER unit and format conversion, because a finite 1e308 becomes infinite once multiplied by 1e9.</dd>
+      <dt>Numerics</dt><dd>Exact arithmetic on the file's own numbers. No interpolation, no renormalisation, no extrapolation.</dd>
+      <dt>Known limitations</dt><dd>An INSPECTOR, not an importer. It cannot feed the channel lab, because that needs renormalisation to the model's reference impedance, interpolation onto its frequency grid and a DC extrapolation — three pieces of numerical work with three error budgets, none written. Does not support Touchstone 2.0 keywords, noise data, ports other than two, Y/Z/H/G parameters, per-port reference impedances, or any repair of a malformed file. Passivity is evaluated only at the frequencies the file contains: it establishes nothing about the gaps between samples, about causality, about measurement quality, or about fitness for a transient transform.</dd>
+      <dt>Evidence</dt><dd>check-models.js — Touchstone (30 assertions): refuses a 2.0 file, a non-2-port file, a missing option line, a wrong reference impedance, descending or negative frequencies, and values that overflow after conversion. Accepts MA, DB and RI and agrees between them to 1e-9. Passivity (N1-3): sigma_max(S) is computed from the full complex matrix and cross-checked against power iteration -- a different algorithm -- over 300 random complex matrices to 1e-9, plus four checked-in .s2p fixtures whose true singular values were computed independently: a unitary asymmetric network the retired |S11 +/- S21| shortcut called active at 1.414, an active one it called passive at 0.5, a non-reciprocal isolator it reported as 0.000, and a port-symmetric lossy case where the shortcut was correct and still is. The degenerate case that makes the discriminant negative in floating point is asserted by name.</dd>
+    </dl>
+  </section>
+  <section class="contract" id="lpddrBudget">
+    <div class="contract__head">
+      <h2>lpddrBudget</h2>
+      <span class="model-tag model-tag--illustrative">illustrative model</span>
+      <span class="ev ev--plausible">plausible</span>
+      <span class="contract__ver">v1.0 &#183; reviewed 2026-09-12</span>
+    </div>
+    <p class="contract__purpose">Show how a UI is consumed by contributions that are not all the same kind.</p>
+    <dl class="contract__body">
+      <dt>Topology</dt><dd>A budget, not a circuit.</dd>
+      <dt>Reference planes</dt><dd>Controller pin to DRAM pin.</dd>
+      <dt>Equations</dt><dd><ul class="tight"><li><code>UI_ps = 1e6 / rate_MTps        (the control is a TRANSFER rate in MT/s)</code></li><li><code>budget terms summed as an RSS of the independent contributors</code></li></ul></dd>
+      <dt>Units</dt><dd>ps</dd>
+      <dt>Validity</dt><dd>ILLUSTRATIVE — the contributions are representative magnitudes, not JEDEC values. Training gain is a labelled model, not a specification.</dd>
+      <dt>Numerics</dt><dd>Exact arithmetic on the budget terms. At 8533 MT/s, UI = 1e6/8533 = 117.2 ps, which is what the page states.</dd>
+      <dt>Known limitations</dt><dd>The contract previously wrote UI = 1/(2*rate), which is the formula for a clock frequency rather than a transfer rate and would have given 58.6 ps. The code was always right; the contract was not. The budget split itself is illustrative — the terms are plausible magnitudes, not a sourced allocation.</dd>
+      <dt>Evidence</dt><dd>check-numbers.py — the UI at 8533 MT/s is recomputed. The allocation is not sourced; see docs/claims.md.</dd>
+    </dl>
+  </section>
+  <section class="contract" id="planeResonance">
+    <div class="contract__head">
+      <h2>planeResonance</h2>
+      <span class="model-tag model-tag--illustrative">illustrative model</span>
+      <span class="ev ev--plausible">plausible</span>
+      <span class="contract__ver">v1.0 &#183; reviewed 2026-09-12</span>
+    </div>
+    <p class="contract__purpose">Show where a rectangular cavity's first modes land and that position matters.</p>
+    <dl class="contract__body">
+      <dt>Topology</dt><dd>Rectangular plane pair, open edges, ideal conductors.</dd>
+      <dt>Reference planes</dt><dd>Between the two planes.</dd>
+      <dt>Equations</dt><dd><ul class="tight"><li><code>fmn=(c/(2*sqrt(Dk)))*sqrt((m/a)^2+(n/b)^2)</code></li></ul></dd>
+      <dt>Units</dt><dd>Hz, m</dd>
+      <dt>Validity</dt><dd>ILLUSTRATIVE — solid rectangular planes only. Antipads, splits and cutouts perturb every mode.</dd>
+      <dt>Numerics</dt><dd>Closed-form mode frequencies.</dd>
+      <dt>Known limitations</dt><dd>ILLUSTRATIVE — solid rectangular planes only. Antipads, splits and cutouts perturb every mode.</dd>
+      <dt>Evidence</dt><dd>check-numbers.py — the mode frequencies are recomputed from the formula.</dd>
+    </dl>
+  </section>
+  <section class="contract" id="targetZ">
+    <div class="contract__head">
+      <h2>targetZ</h2>
+      <span class="model-tag model-tag--illustrative">illustrative model</span>
+      <span class="ev ev--plausible">plausible</span>
+      <span class="contract__ver">v1.0 &#183; reviewed 2026-09-12</span>
+    </div>
+    <p class="contract__purpose">Turn a ripple budget and a current step into an impedance line, and show it against a load spectrum.</p>
+    <dl class="contract__body">
+      <dt>Topology</dt><dd>None — this is one division.</dd>
+      <dt>Reference planes</dt><dd>The point the ripple is specified at.</dd>
+      <dt>Equations</dt><dd><ul class="tight"><li><code>Ztarget=(Vdd*ripple)/Istep</code></li></ul></dd>
+      <dt>Units</dt><dd>V, A, ohm</dd>
+      <dt>Validity</dt><dd>ILLUSTRATIVE — the impedance division is exact arithmetic, but the current spectrum beside it is synthetic and representative, not measured die demand. Assumes a load independent of the rail.</dd>
+      <dt>Numerics</dt><dd>Exact arithmetic.</dd>
+      <dt>Known limitations</dt><dd>ILLUSTRATIVE — the impedance division is exact arithmetic, but the current spectrum beside it is synthetic and representative, not measured die demand. Assumes a load independent of the rail.</dd>
+      <dt>Evidence</dt><dd>check-numbers.py recomputes the worked budget. The current spectrum is not sourced.</dd>
+    </dl>
+  </section>
+  <section class="contract" id="vrmStep">
+    <div class="contract__head">
+      <h2>vrmStep</h2>
+      <span class="model-tag model-tag--illustrative">illustrative model</span>
+      <span class="ev ev--plausible">plausible</span>
+      <span class="contract__ver">v1.0 &#183; reviewed 2026-09-12</span>
+    </div>
+    <p class="contract__purpose">Show the shape of a regulator's recovery and that release is its own event.</p>
+    <dl class="contract__body">
+      <dt>Topology</dt><dd>First-order loop response to a current step and release.</dd>
+      <dt>Reference planes</dt><dd>Regulator output.</dd>
+      <dt>Equations</dt><dd><ul class="tight"><li><code>tau=1/(2*pi*fc)</code></li></ul></dd>
+      <dt>Units</dt><dd>s, V</dd>
+      <dt>Validity</dt><dd>ILLUSTRATIVE — a real loop is not single-pole; order, damping and peaking change the shape.</dd>
+      <dt>Numerics</dt><dd>Analytic first-order response.</dd>
+      <dt>Known limitations</dt><dd>ILLUSTRATIVE — a real loop is not single-pole; order, damping and peaking change the shape.</dd>
+      <dt>Evidence</dt><dd>Not independently verified. The time-constant arithmetic is checked by check-numbers.py.</dd>
+    </dl>
+  </section>
+</main>
+
+<footer class="site-foot">
+  <span>SIPI &#8212; signal and power integrity, visualised.</span>
+  <span>Created and directed by Geetansh Arora. <a href="colophon.html">About, review &amp; AI assistance</a> &#183; <a href="model-contract.html">Model assumptions</a> &#183; <a href="docs/claims.md">Claim ledger</a></span>
+</footer>
+
+<script src="js/site.js?v=acb47d86"></script>
+</body>
+</html>

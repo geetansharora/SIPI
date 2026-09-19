@@ -1,0 +1,450 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>State transitions — flagship panels</title>
+<style>
+  body { font: 13px/1.5 ui-monospace, Menlo, monospace; margin: 1.5rem; background: #0e1216; color: #dbe3ea; }
+  h1 { font-size: 1rem; letter-spacing: .04em; text-transform: uppercase; color: #8fa3b3; }
+  table { border-collapse: collapse; width: 100%; margin-top: 1rem; }
+  th, td { text-align: left; padding: .3rem .5rem; border-bottom: 1px solid #1e262e; vertical-align: top; }
+  th { color: #8fa3b3; font-weight: 500; }
+  .ok { color: #4ea86a; } .bad { color: #e0655c; font-weight: 700; }
+  #sum { margin: 1rem 0; padding: .75rem 1rem; border: 1px solid #1e262e; border-radius: 4px; }
+  iframe { width: 390px; height: 844px; border: 0; position: absolute; left: -9999px; top: 0; }
+</style>
+
+<h1>Flagship state transitions and semantic exports</h1>
+<p>Exercises preset → control edit → view switch → summary and trace export → scenario reload.
+   Runs at a 390 px layout width. Exported identity and full-precision numbers are compared with the panel's published model result.</p>
+<div id="sum" data-state="running">running…</div>
+<table><thead><tr><th>panel</th><th>transition</th><th>semantic export</th><th>reload</th><th>errors</th></tr></thead><tbody></tbody></table>
+<p id="history-timing"></p>
+<iframe id="fr"></iframe>
+
+<script>
+const CASES = [
+  { label: 'Lab A', url: '../topics/labs/travelling-waves.html', viz: 'labWaves', preset: 'mismatch' },
+  { label: 'Lab B', url: '../topics/labs/one-channel.html', viz: 'labChannel', preset: 'stubby' },
+  { label: 'Lab C', url: '../topics/labs/pdn-chain.html', viz: 'labPdn', preset: 'lossy' },
+  { label: 'CDR', url: '../topics/signal-integrity/receiver-and-clock.html', viz: 'cdr', preset: 'peaky' }
+];
+const LOAD_TIMEOUT = 15000, SETTLE = 180;
+const INJECT_EXPORT_FAULT = new URLSearchParams(location.search).get('fault') === 'export';
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+const results = [];
+
+function csv(text) {
+  return text.split(/\r?\n/).map((line) => {
+    const out = []; let s = '', quoted = false;
+    for (let i = 0; i < line.length; i++) {
+      const c = line[i];
+      if (c === '"' && quoted && line[i + 1] === '"') { s += '"'; i++; }
+      else if (c === '"') quoted = !quoted;
+      else if (c === ',' && !quoted) { out.push(s); s = ''; }
+      else s += c;
+    }
+    out.push(s); return out;
+  });
+}
+
+function exactResult(res) {
+  const values = {};
+  const units = res.units || {};
+  const exported = (key, value) => typeof value === 'number'
+    ? String(value) + (units[key] ? ' ' + units[key] : '') : String(value);
+  Object.keys(res.params || {}).forEach((k) => { values['set\0' + k] = exported(k, res.params[k]); });
+  Object.keys(res.measurements || {}).forEach((k) => { values['read\0' + k] = exported(k, res.measurements[k]); });
+  return values;
+}
+
+function semanticSummary(text, res, scenario, panel) {
+  const rows = csv(text), meta = {}, values = {};
+  rows.forEach((r) => {
+    if (r[0] && r[0].indexOf('# ') === 0) meta[r[0].slice(2)] = r[1];
+    if (r[0] === 'set' || r[0] === 'read') values[r[0] + '\0' + r[1]] = r[2];
+  });
+  const want = exactResult(res);
+  const mismatches = Object.keys(want).filter((k) => values[k] !== want[k]);
+  if (meta.panel !== panel) throw new Error('summary panel identity ' + meta.panel);
+  if (rows.filter((r) => r[0] === '# model version').length !== 1
+      || rows.filter((r) => r[0] === '# contract version').length !== 1)
+    throw new Error('summary has ambiguous model/contract version headers');
+  if (meta['model version'] !== String(res.version)) throw new Error('summary model version ' + meta['model version']);
+  if (res.stimulus && res.stimulus.numericalMethod
+      && meta['numerical method'] !== res.stimulus.numericalMethod)
+    throw new Error('summary numerical method differs');
+  if (meta.status !== String(res.status)) throw new Error('summary status ' + meta.status);
+  if (meta.scenario !== scenario) throw new Error('summary scenario differs');
+  if (mismatches.length) throw new Error('summary numeric mismatch: ' + mismatches.slice(0, 3).join(', '));
+  return Object.keys(want).length;
+}
+
+function semanticTraces(text, res, scenario) {
+  const rows = csv(text), meta = {}, exported = {};
+  let trace = null, header = false;
+  rows.forEach((r) => {
+    if (r[0] && r[0].indexOf('# ') === 0) {
+      const key = r[0].slice(2); meta[key] = r[1];
+      if (key === 'trace') { trace = r[1]; exported[trace] = []; header = true; }
+    } else if (trace && header && r[0]) header = false;
+    else if (trace && r[0] !== '') exported[trace].push([r[0], r[1]]);
+  });
+  if (meta.scenario !== scenario) throw new Error('trace scenario differs');
+  if (res.stimulus && res.stimulus.numericalMethod
+      && meta['numerical method'] !== res.stimulus.numericalMethod)
+    throw new Error('trace numerical method differs');
+  const traces = res.traces || [];
+  if (Object.keys(exported).length !== traces.length) throw new Error('trace count differs');
+  let checked = 0;
+  traces.forEach((t) => {
+    const got = exported[t.id], xs = t.x && t.x.values, ys = t.y;
+    if (!got || got.length !== Math.min(xs.length, ys.length)) throw new Error('trace length differs: ' + t.id);
+    [...new Set([0, Math.floor(got.length / 2), got.length - 1])].forEach((i) => {
+      if (got[i][0] !== String(xs[i]) || got[i][1] !== String(ys[i])) throw new Error('trace numeric mismatch: ' + t.id + '[' + i + ']');
+      checked++;
+    });
+  });
+  return checked;
+}
+
+function comparable(res) {
+  return JSON.stringify({ model: res.model, version: res.version, status: res.status,
+    params: res.params, measurements: res.measurements });
+}
+
+async function load(url) {
+  const fr = document.querySelector('#fr');
+  const done = new Promise((resolve, reject) => {
+    const timer = setTimeout(() => reject(new Error('load timeout')), LOAD_TIMEOUT);
+    fr.onload = () => { clearTimeout(timer); resolve(); };
+  });
+  const hashAt = url.indexOf('#');
+  const base = hashAt < 0 ? url : url.slice(0, hashAt), hash = hashAt < 0 ? '' : url.slice(hashAt);
+  const join = base.indexOf('?') < 0 ? '?' : '&';
+  fr.src = base + join + 'state_test=' + Date.now() + hash;
+  await done;
+  const win = fr.contentWindow, errors = [];
+  win.addEventListener('error', (e) => errors.push(String(e.message || e.error)));
+  win.addEventListener('unhandledrejection', (e) => errors.push('rejection: ' + e.reason));
+  win.onerror = (m) => { errors.push(String(m)); return false; };
+  await sleep(550);
+  return { win, doc: fr.contentDocument, errors };
+}
+
+async function runCase(c) {
+  let ctx = await load(c.url);
+  const root = ctx.doc.querySelector('[data-viz="' + c.viz + '"]');
+  if (!root) throw new Error('panel did not mount');
+  const K = ctx.win.SIPI && ctx.win.SIPI.kit;
+  if (!K || !K.published(root)) throw new Error('no published model result');
+
+  const preset = root.querySelector('[data-preset="' + c.preset + '"]');
+  if (!preset) throw new Error('preset missing: ' + c.preset);
+  preset.click(); await sleep(SETTLE);
+  if (preset.getAttribute('aria-pressed') !== 'true') throw new Error('preset identity not selected');
+
+  const input = [...root.querySelectorAll('input[type="range"]')].find((n) => Number(n.value) + Number(n.step || 1) <= Number(n.max));
+  if (!input) throw new Error('no editable range');
+  input.value = String(Number(input.value) + Number(input.step || 1));
+  input.dispatchEvent(new ctx.win.Event('input', { bubbles: true }));
+  input.dispatchEvent(new ctx.win.Event('change', { bubbles: true }));
+  await sleep(SETTLE);
+  if (c.viz === 'labWaves') {
+    const waitHistory=async()=>{
+      const deadline=performance.now()+10000;
+      while(K.published(root).diagnostics.energyHistory.status==='pending' && performance.now()<deadline)await sleep(20);
+      if(K.published(root).diagnostics.energyHistory.status!=='complete')throw new Error('history did not finish');
+    };
+    await waitHistory();
+    const edit = (id, value) => {
+      const el = root.querySelector(id); el.value = value;
+      el.dispatchEvent(new ctx.win.Event('input', { bubbles: true }));
+    };
+    // Force an in-flight history to yield until cancelled, independently of CPU speed.
+    const models=ctx.win.SIPI.models, originalSteps=models.labWavesHistorySteps;
+    let holdHistory=true;const started=[],completed=[];
+    models.labWavesHistorySteps=function*(p){
+      started.push({...p});while(holdHistory)yield;
+      const result=yield* originalSteps(p);completed.push({...p});return result;
+    };
+    const burstStart=performance.now();
+    edit('#lw-len',8);edit('#lw-len',10);edit('#lw-len',12);edit('#lw-tr',10);
+    const burstMs=performance.now()-burstStart;
+    if(started.length)throw new Error('drag burst started a history before debounce');
+    if(!root.querySelector('[data-cv="energy"]').hidden)throw new Error('old energy canvas remained visible while pending');
+    const pending=K.published(root);
+    if(pending.diagnostics.energyHistory.status!=='pending'||pending.traces.some(t=>t.id.startsWith('energy-')))
+      throw new Error('pending history exported old traces');
+    if(!root.querySelector('[data-out="energy-history"]').textContent.includes('Updating energy history'))
+      throw new Error('pending history not explained');
+    root.querySelector('#lw-tr').dispatchEvent(new ctx.win.Event('change',{bubbles:true}));
+    await sleep(25);
+    if(started.length!==1||started[0].len!==12||started[0].tr!==10||completed.length)
+      throw new Error('edit release did not start only the latest queued history');
+    edit('#lw-t',100);
+    if(K.published(root).params.t!==100||K.published(root).traces.some(t=>t.id.startsWith('energy-')))
+      throw new Error('cursor published stale history while pending');
+    holdHistory=false;const finalStart=performance.now();
+    edit('#lw-len',3);edit('#lw-tr',60);
+    root.querySelector('[data-preset="mismatch"]').click();
+    await waitHistory();models.labWavesHistorySteps=originalSteps;
+    const finalMs=performance.now()-finalStart;
+    document.querySelector('#history-timing').textContent='Lab A browser timing: four physical edits '+burstMs.toFixed(1)+' ms; final default-length history ready in '+finalMs.toFixed(1)+' ms. Local browser observations, not phone frame-rate limits.';
+    if(completed.length!==1||completed[0].len!==3||completed[0].tr!==60)
+      throw new Error('cancelled history completed or replaced newer preset');
+    const finalState=K.published(root), expected=models.labWavesHistory({...finalState.params,xp:finalState.view.xp});
+    const actual=finalState.traces.filter(t=>t.id.startsWith('energy-'));
+    if(JSON.stringify(actual)!==JSON.stringify(expected.traces))throw new Error('chunked history differs from synchronous history');
+    edit('#lw-t',0);
+    root.querySelector('[data-act="predict-arrival"]').click();
+    root.querySelector('#lw-prediction').value = 'positive';
+    root.querySelector('[data-act="reveal-arrival"]').click();
+    if (!root.querySelector('[data-out="prediction"]').textContent.startsWith('Correct.'))
+      throw new Error('mismatched load prediction feedback incorrect');
+    if (K.published(root).params.t !== K.published(root).measurements.td)
+      throw new Error('prediction reveal did not advance to boundary');
+    root.querySelector('[data-act="predict-arrival"]').click();
+    edit('#lw-t', 0);
+    if (!root.querySelector('[data-act="reveal-arrival"]').disabled)
+      throw new Error('time edit left stale prediction enabled');
+    // Clear the reveal selection before testing keyboard selection from the start.
+    root.querySelector('[data-preset="mismatch"]').click();
+    await waitHistory();
+    const cachedHistory = K.published(root).traces.find(trace => trace.id === 'energy-onLine');
+    if (!cachedHistory) throw new Error('missing exported energy history');
+    const initialEnergy = K.published(root).measurements.onLine;
+    edit('#lw-t', 600);
+    if (K.published(root).traces.find(trace => trace.id === 'energy-onLine') !== cachedHistory)
+      throw new Error('cursor recomputed cached history');
+    if (K.published(root).params.t !== 600) throw new Error('time did not publish');
+    if (K.published(root).measurements.onLine === initialEnergy) throw new Error('energy stayed stale');
+    edit('#lw-xp', 25);
+    if (K.published(root).view.xp !== 25) throw new Error('probe did not publish');
+    const lattice = root.querySelector('[data-cv="lattice"]');
+    lattice.dispatchEvent(new ctx.win.KeyboardEvent('keydown', {key: 'ArrowRight', bubbles: true}));
+    const first = K.published(root);
+    if (Math.abs(first.params.t - Math.round(first.measurements.td * .25)) > 1e-8)
+      throw new Error('forward selection did not seek probe crossing');
+    lattice.dispatchEvent(new ctx.win.KeyboardEvent('keydown', {key: 'ArrowRight', bubbles: true}));
+    const second = K.published(root);
+    if (Math.abs(second.params.t - Math.round(second.measurements.td * 1.75)) > 1e-8)
+      throw new Error('backward selection did not seek probe crossing');
+    if (!root.querySelector('[data-out="event-detail"]').textContent.includes('edge midpoint'))
+      throw new Error('selection lacks timing convention');
+  }
+  if (c.viz === 'labPdn') {
+    const load=root.querySelector('#pd-imax2'); load.value='3';
+    load.dispatchEvent(new ctx.win.Event('input',{bubbles:true}));
+    const timings=[];
+    for(const [id,value] of [['pd-fbw','10'],['pd-tr','200'],['pd-tr2','200'],['pd-fbw','120']]) {
+      const input=root.querySelector('#'+id),start=performance.now();input.value=value;
+      input.dispatchEvent(new ctx.win.Event('input',{bubbles:true}));
+      const current=K.published(root);
+      if(current.status!=='ok'||current.diagnostics.transientMethod!=='causal-state-space-foh-v1'||current.version!=='1.3')
+        throw new Error('causal PDN method/status/version not published');
+      if(current.diagnostics.preEventDeviation!==0||!current.generated.multi.nodes.every(q=>q.stats.every(st=>st.pre===0)))
+        throw new Error('causal PDN has a pre-event response');
+      if(!root.querySelector('[data-out="quality"]').textContent.includes('Causal from rest'))throw new Error('causal method readout stale');
+      if(!Number.isFinite(current.measurements.droop))throw new Error('causal droop unavailable');
+      timings.push({id,value,handlerToPublishedMs:performance.now()-start});
+    }
+    const timing=document.createElement('pre');timing.id='pdn-causal-timings';timing.textContent=JSON.stringify(timings);document.body.appendChild(timing);
+    const r=K.published(root), before=comparable(r);
+    if (r.params.imax2!==3 || !r.traces.some(t=>t.id==='i2-t') || !r.generated.multi)
+      throw new Error('two-load response/export missing');
+    const observe=root.querySelector('#pd-observe');observe.value='1';
+    observe.dispatchEvent(new ctx.win.Event('change',{bubbles:true}));
+    const mode=root.querySelector('#pd-compare');mode.value='1';
+    mode.dispatchEvent(new ctx.win.Event('change',{bubbles:true}));
+    if (!root.querySelector('[data-out="multi-detail"]').textContent.includes('Observe board'))
+      throw new Error('two-load observation readout stale');
+    const fc=root.querySelector('#pd-frequency');fc.value='1000000';
+    fc.dispatchEvent(new ctx.win.KeyboardEvent('keydown',{key:'Enter',bubbles:true}));
+    const f0=Number(fc.value);
+    root.querySelector('[data-cv="transferZ"]').dispatchEvent(new ctx.win.KeyboardEvent('keydown',{key:'ArrowRight',bubbles:true}));
+    if (!(Number(fc.value)>f0)) throw new Error('PDN frequency keyboard did not advance');
+    const P=root.querySelector('[data-cv="transferZ"]').__plot;
+    for(const row of r.generated.transfer) for(const col of row.columns) for(const node of [4,2]) {
+      const y=P.Y(Math.hypot(col[node].re,col[node].im));
+      if(y<P.box.TP-1e-6||y>P.box.B+1e-6)throw new Error('transfer pair outside shared rendered bounds');
+    }
+    const transferCanvas=root.querySelector('[data-cv="transferZ"]');
+    if(transferCanvas.__probed)throw new Error('native inspector has a competing interpolating probe');
+    const transferPicker=root.querySelector('.workspace-picker select');
+    if(transferPicker) {
+      transferPicker.value=[...transferPicker.options].find(o=>o.textContent==='Board/die transfer impedance').value;
+      transferPicker.dispatchEvent(new ctx.win.Event('change',{bubbles:true}));
+      await sleep(SETTLE);
+    }
+    transferCanvas.__zoom={x:[1e5,1e7]};K.repaint(root);
+    const zoomPlot=transferCanvas.__plot, rect=transferCanvas.getBoundingClientRect();
+    transferCanvas.dispatchEvent(new ctx.win.MouseEvent('click',{bubbles:true,
+      clientX:rect.left+(zoomPlot.box.L+zoomPlot.box.R)/2*rect.width/zoomPlot.box.w,
+      clientY:rect.top+50}));
+    // Geometric midpoint of a 100 kHz..10 MHz log axis is exactly 1 MHz;
+    // the native log grid has under 2% nearest-sample distance here.
+    if(Math.abs(Number(fc.value)-1e6)/1e6>.02)throw new Error('zoomed frequency pick used full-axis coordinates');
+    root.querySelector('#pd-frequency-fit').click();
+    const transferObserve=root.querySelector('#pd-transfer-observe');transferObserve.value='0';
+    transferObserve.dispatchEvent(new ctx.win.Event('change',{bubbles:true}));
+    if(observe.value!=='0'||!root.querySelector('[data-out="transfer-detail"]').textContent.includes('observe die'))
+      throw new Error('transfer observation selectors not linked');
+    const frequency=fc.value;ctx.doc.dispatchEvent(new ctx.win.Event('sipi:theme'));
+    if(fc.value!==frequency)throw new Error('theme changed frequency selection');
+    if (K.published(root)!==r || comparable(K.published(root))!==before)
+      throw new Error('two-load comparison rebuilt the experiment');
+  }
+  if (c.viz === 'labChannel') {
+    const state = comparable(K.published(root));
+    const fc=root.querySelector('#lc-frequency');fc.value='8';
+    fc.dispatchEvent(new ctx.win.KeyboardEvent('keydown',{key:'Enter',bubbles:true}));
+    const f0=Number(fc.value);
+    root.querySelector('[data-cv="delay"]').dispatchEvent(new ctx.win.KeyboardEvent('keydown',{key:'ArrowRight',bubbles:true}));
+    if(!(Number(fc.value)>f0)||!root.querySelector('[data-out="frequency-detail"]').textContent.includes('group delay'))
+      throw new Error('linked channel frequency inspection failed');
+    const selectedFrequency=fc.value;fc.value='-1';fc.dispatchEvent(new ctx.win.Event('change',{bubbles:true}));
+    if(!root.querySelector('[data-out="frequency-detail"]').textContent.includes('previous selection is unchanged'))
+      throw new Error('frequency range refusal missing');
+    root.querySelector('#lc-frequency-fit').click();
+    if(fc.value!==selectedFrequency)throw new Error('range refusal changed channel selection');
+    const impulseTrace = K.published(root).traces.find(trace => trace.id === 'impulse');
+    if (!impulseTrace || !K.published(root).traces.some(trace => trace.id === 'impulse-active'))
+      throw new Error('impulse export traces missing');
+    const impulseTime = root.querySelector('#lc-impulse-time');
+    impulseTime.value = 'absolute'; impulseTime.dispatchEvent(new ctx.win.Event('change', {bubbles:true}));
+    const impulseSpan = root.querySelector('#lc-impulse-span');
+    impulseSpan.value = 'full'; impulseSpan.dispatchEvent(new ctx.win.Event('change', {bubbles:true}));
+    root.querySelector('[data-cv="impulse"]').dispatchEvent(new ctx.win.KeyboardEvent('keydown', {key:'ArrowRight',bubbles:true}));
+    if (Number(root.querySelector('#lc-impulse-index').value) !== 1) throw new Error('impulse keyboard selection failed');
+    if (!root.querySelector('[data-out="impulse-detail"]').textContent.includes('Sample 1'))
+      throw new Error('impulse inspection text missing');
+    if (comparable(K.published(root)) !== state || K.published(root).traces.find(trace => trace.id === 'impulse') !== impulseTrace)
+      throw new Error('impulse view altered numerical state');
+
+    root.querySelector('[data-act="decision-worst"]').click();
+    const selected = Number(root.querySelector('#lc-decision').value);
+    const m = K.published(root).generated.measured;
+    const i = selected - m.valid.from;
+    if (m.vals[i] * m.symbols[i] !== Math.min(...m.vals.map((v, k) => v * m.symbols[k])))
+      throw new Error('worst-margin selector did not choose the worst decision');
+    if (!root.querySelector('[data-out="decision-detail"]').textContent.includes('Reconstruction residual'))
+      throw new Error('decision explanation missing');
+    if (root.querySelectorAll('[data-out="decision-terms"] tr').length < 1)
+      throw new Error('decision contribution table empty');
+    root.querySelector('[data-act="decision-next"]').click();
+    const topology = root.querySelectorAll('.topology-node');
+    if (topology.length < 4 || !root.querySelector('[data-out="channel-topology"]').textContent.includes('Output plane'))
+      throw new Error('topology missing reference planes');
+    topology[0].click();
+    if (ctx.doc.activeElement.id !== 'lc-reach') throw new Error('topology did not focus its control');
+
+    if (comparable(K.published(root)) !== state) throw new Error('decision inspection changed experiment');
+    root.querySelector('[data-act="sweep"]').click();
+    const loadCell = root.querySelector('[data-act="load-cell"]');
+    const deadline = Date.now() + 10000;
+    while (loadCell.disabled && Date.now() < deadline) await sleep(50);
+    if (loadCell.disabled) throw new Error('sweep did not produce selectable cell');
+    loadCell.click();
+    const loaded = K.published(root);
+    if (loaded.params.stub !== 0 || loaded.params.loss !== 4) throw new Error('sweep loaded wrong cell');
+    if (loaded.origins.nfft !== 4096) throw new Error('cell did not rerun at full resolution');
+    if (!root.querySelector('[data-out="sweep-selection"]').textContent.includes('difference (full − sweep)'))
+      throw new Error('sweep comparison missing');
+
+  }
+  /* Named, collapsible control groups. How many there are, and whether the page
+     authors them in its rails or the loader builds them from a single control
+     block, is arrangement. What this asserts is the behaviour: every group is
+     named, a group collapses, and collapsing changes nothing the model reads. */
+  const groups = [...root.querySelectorAll('.control-group')];
+  if (groups.length < 3) throw new Error('missing named control groups');
+  if (groups.some((g) => !((g.querySelector('summary') || {}).textContent || '').trim()))
+    throw new Error('a control group has no name');
+  const holder = root.querySelector('.lab-rail') || root.querySelector('.controls');
+  const controlStyle = ctx.win.getComputedStyle(holder);
+  if (controlStyle.position === 'fixed' || controlStyle.position === 'absolute')
+    throw new Error('workspace controls overlay plots');
+  const groupState = comparable(K.published(root));
+  groups[0].querySelector('summary').click();
+  if (groups[0].open) throw new Error('control group did not collapse');
+  if (comparable(K.published(root)) !== groupState) throw new Error('collapsing controls changed experiment');
+  groups[0].querySelector('summary').click();
+  const metricKeys = {labWaves: ['vp', 'ip'], labChannel: ['eh', 'il'], labPdn: ['droop', 'zpk'], cdr: ['peak', 'floor']}[c.viz];
+  await sleep(20);
+  const stripValues = [...root.querySelectorAll('.workspace-measurements b')];
+  if (stripValues.length !== 2 || metricKeys.some((key, i) => stripValues[i].textContent !== root.querySelector('[data-out="' + key + '"]').textContent))
+    throw new Error('compact measurements differ from current readout');
+  const edited = K.published(root), beforeView = comparable(edited);
+  if (!edited || edited.status !== 'ok') throw new Error('edited model status: ' + (edited && edited.status));
+
+  /* Walkthrough modes are allowed to apply guide settings, so they are an
+     experiment transition. Tabs and legend toggles are view-only operations. */
+  const picker = root.querySelector('.workspace-picker select');
+  const visibleViews = () => [...root.querySelectorAll('.panel canvas[data-cv]')]
+    .filter((cv) => cv.getBoundingClientRect().width > 0 && cv.getBoundingClientRect().height > 0)
+    .map((cv) => cv.dataset.cv);
+  const beforeVisible = visibleViews();
+  const view = root.querySelector('.panel-tab:not([aria-selected="true"])')
+            || root.querySelector('.legend [role="switch"]');
+  if (picker && picker.options.length > 1) {
+    picker.value = picker.value === '0' ? '1' : '0';
+    picker.dispatchEvent(new ctx.win.Event('change', { bubbles: true }));
+  } else if (view) view.click();
+  else throw new Error('no switchable view');
+  await sleep(SETTLE);
+  const afterVisible = visibleViews();
+  if (beforeVisible.length !== 1 || afterVisible.length !== 1 || beforeVisible[0] === afterVisible[0]) {
+    throw new Error('view switch must replace one visible plot with another');
+  }
+  const afterView = K.published(root);
+  if (comparable(afterView) !== beforeView) throw new Error('view switch changed experiment');
+
+  let copied = '';
+  try { Object.defineProperty(ctx.win.navigator, 'clipboard', { configurable: true, value: { writeText: (t) => { copied = t; return Promise.resolve(); } } }); }
+  catch (e) { throw new Error('cannot intercept clipboard: ' + e.message); }
+  root.querySelector('.instrument__tools button:nth-child(2)').click(); await sleep(20);
+  const box = root.querySelector('.viz-values');
+  const scenario = K.scenarioHash(root, c.viz);
+  const absoluteScenario = ctx.win.location.origin + ctx.win.location.pathname + scenario;
+  box.querySelector('[data-x="csv"]').click(); await sleep(20);
+  if (INJECT_EXPORT_FAULT) copied = copied.replace(/("(?:set|read)","[^"]+",)"[^"]+"/, '$1"fault planted by harness"');
+  const summaryCount = semanticSummary(copied, afterView, absoluteScenario, c.viz);
+  copied = '';
+  box.querySelector('[data-x="traces"]').click(); await sleep(20);
+  const traceCount = semanticTraces(copied, afterView, absoluteScenario);
+  if (ctx.errors.length) throw new Error(ctx.errors.join(' ; '));
+
+  const expected = comparable(afterView);
+  ctx = await load(c.url + scenario);
+  const reloadedRoot = ctx.doc.querySelector('[data-viz="' + c.viz + '"]');
+  const reloaded = ctx.win.SIPI.kit.published(reloadedRoot);
+  if (comparable(reloaded) !== expected) throw new Error('scenario reload changed computed state or identity');
+  if (ctx.errors.length) throw new Error(ctx.errors.join(' ; '));
+  return { summaryCount, traceCount };
+}
+
+(async () => {
+  const body = document.querySelector('tbody'); let passed = 0;
+  for (const c of CASES) {
+    const tr = document.createElement('tr');
+    try {
+      const r = await runCase(c); passed++;
+      tr.className = 'ok'; tr.innerHTML = '<td></td><td>preset → edit → view</td><td></td><td>computed state identical</td><td>none</td>';
+      tr.children[0].textContent = c.label + ' / ' + c.viz;
+      tr.children[2].textContent = r.summaryCount + ' values; ' + r.traceCount + ' trace samples';
+      results.push({ panel: c.viz, pass: true, summaryValues: r.summaryCount, traceSamples: r.traceCount });
+    } catch (e) {
+      tr.className = 'bad'; tr.innerHTML = '<td></td><td>failed</td><td>failed</td><td>failed</td><td></td>';
+      tr.children[0].textContent = c.label + ' / ' + c.viz; tr.children[4].textContent = e.message;
+      results.push({ panel: c.viz, pass: false, error: e.message });
+    }
+    body.appendChild(tr);
+  }
+  const summary = { checks: CASES.length, passed, failed: CASES.length - passed };
+  const sum = document.querySelector('#sum'); sum.textContent = JSON.stringify(summary);
+  sum.className = summary.failed ? 'bad' : 'ok'; sum.dataset.state = summary.failed ? 'failed' : 'passed';
+  window.__RESULT = { summary, cases: results }; window.__DONE = true;
+})().catch((e) => {
+  const sum = document.querySelector('#sum'); sum.textContent = 'HARNESS FAILED: ' + e.message;
+  sum.className = 'bad'; sum.dataset.state = 'failed'; window.__RESULT = { harnessError: e.message }; window.__DONE = true;
+});
+</script>

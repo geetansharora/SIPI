@@ -1,0 +1,1148 @@
+{
+  "site": {
+    "name": "SIPI",
+    "tagline": "Signal and power integrity, visualised.",
+    "domain": "sipi.work",
+    "url": "https://sipi.work",
+    "repo": "https://github.com/geetansharora/SIPI",
+    "author": "Geetansh Arora",
+    "linkedin": "",
+    "technicalReview": {
+      "reviewer": "Geetansh Arora",
+      "date": "2026-09-18",
+      "scope": "Every page in this catalogue, read in catalogue order at about eight a day from 12 to 18 September 2026, with hands-on exploration of the labs. Each page carries its own review date; this entry records the reviewer and the date the pass finished. Lab D’s review covers its lesson text and its model: the discrete-time second-order loop ordering, the SAR bit-trial timing, and the SNR masking and noise-replacement conventions."
+    }
+  },
+  "sections": [
+    {
+      "id": "groundwork",
+      "title": "Groundwork",
+      "blurb": "Vocabulary, conventions, and mathematical connections used throughout the site.",
+      "topics": [
+        {
+          "slug": "units-and-conventions",
+          "title": "SI/PI Units, Conventions, and Reference Planes",
+          "status": "live",
+          "keywords": [
+            "SI units",
+            "omega",
+            "radians",
+            "rise time",
+            "10-90",
+            "20-80",
+            "unit interval",
+            "UI",
+            "symbol rate",
+            "baud",
+            "RMS",
+            "peak",
+            "peak-to-peak",
+            "dB",
+            "dBc",
+            "dBV",
+            "dBm",
+            "insertion loss",
+            "return loss",
+            "normalisation",
+            "reference plane",
+            "convention"
+          ],
+          "reviewed": "2026-09-12",
+          "reviewer": "Geetansh Arora"
+        },
+        {
+          "slug": "domain-bridges",
+          "title": "Time-Domain and Frequency-Domain Analysis",
+          "status": "live",
+          "keywords": [
+            "Fourier",
+            "convolution",
+            "impulse response",
+            "step response",
+            "pulse response",
+            "complex impedance",
+            "phase",
+            "group delay",
+            "propagation delay",
+            "sampling",
+            "aliasing",
+            "Nyquist",
+            "confidence",
+            "statistics",
+            "transform"
+          ],
+          "reviewed": "2026-09-12",
+          "reviewer": "Geetansh Arora"
+        }
+      ]
+    },
+    {
+      "id": "fundamentals",
+      "title": "Fundamentals",
+      "blurb": "Build intuition for transmission lines, loss, coupling, sampling, and measurement.",
+      "topics": [
+        {
+          "slug": "edge-rate-not-clock-rate",
+          "title": "Signal Bandwidth: Why Edge Rate Matters",
+          "status": "live",
+          "viz": "spectrum",
+          "keywords": [
+            "rise time",
+            "slew rate",
+            "edge rate",
+            "knee frequency",
+            "bandwidth"
+          ],
+          "reviewed": "2026-09-12",
+          "reviewer": "Geetansh Arora"
+        },
+        {
+          "slug": "when-is-a-trace-a-transmission-line",
+          "title": "When does a trace become a transmission line?",
+          "status": "live",
+          "viz": "criticalLength",
+          "keywords": [
+            "electrical length",
+            "critical length",
+            "lumped",
+            "distributed",
+            "rule of thumb"
+          ],
+          "reviewed": "2026-09-12",
+          "reviewer": "Geetansh Arora"
+        },
+        {
+          "slug": "characteristic-impedance",
+          "title": "Transmission-Line Characteristic Impedance",
+          "status": "live",
+          "keywords": [
+            "Z0",
+            "50 ohm",
+            "microstrip",
+            "stripline",
+            "impedance",
+            "LC"
+          ],
+          "reviewed": "2026-09-12",
+          "reviewer": "Geetansh Arora"
+        },
+        {
+          "slug": "reflections",
+          "title": "Transmission-Line Reflections and Ringing",
+          "status": "live",
+          "viz": "reflection",
+          "keywords": [
+            "gamma",
+            "reflection coefficient",
+            "ringing",
+            "overshoot",
+            "undershoot",
+            "bounce diagram",
+            "lattice",
+            "TDR"
+          ],
+          "reviewed": "2026-09-12",
+          "reviewer": "Geetansh Arora"
+        },
+        {
+          "slug": "termination-schemes",
+          "title": "Transmission-Line Termination Schemes",
+          "status": "live",
+          "keywords": [
+            "series",
+            "parallel",
+            "Thevenin",
+            "ODT",
+            "AC termination",
+            "damping resistor",
+            "source termination"
+          ],
+          "reviewed": "2026-09-12",
+          "reviewer": "Geetansh Arora"
+        },
+        {
+          "slug": "return-current-paths",
+          "title": "Return-Current Paths and Reference Continuity",
+          "status": "live",
+          "keywords": [
+            "return path",
+            "ground",
+            "split plane",
+            "reference plane",
+            "stitching via",
+            "loop area"
+          ],
+          "reviewed": "2026-09-12",
+          "reviewer": "Geetansh Arora"
+        },
+        {
+          "slug": "crosstalk",
+          "title": "PCB Crosstalk: NEXT, FEXT, and Mutual Coupling",
+          "status": "live",
+          "viz": "crosstalk",
+          "keywords": [
+            "NEXT",
+            "FEXT",
+            "coupling",
+            "aggressor",
+            "victim",
+            "mutual inductance",
+            "mutual capacitance",
+            "spacing"
+          ],
+          "reviewed": "2026-09-13",
+          "reviewer": "Geetansh Arora"
+        },
+        {
+          "slug": "loss-mechanisms",
+          "title": "PCB Transmission-Line Loss Mechanisms",
+          "status": "live",
+          "viz": "loss",
+          "keywords": [
+            "skin effect",
+            "dielectric loss",
+            "Df",
+            "tan delta",
+            "roughness",
+            "insertion loss",
+            "dB per inch",
+            "Dk"
+          ],
+          "reviewed": "2026-09-13",
+          "reviewer": "Geetansh Arora"
+        },
+        {
+          "slug": "isi",
+          "title": "Intersymbol Interference (ISI) and Channel Memory",
+          "status": "live",
+          "viz": "isi",
+          "keywords": [
+            "intersymbol interference",
+            "data dependent jitter",
+            "DDJ",
+            "pattern",
+            "PRBS"
+          ],
+          "reviewed": "2026-09-13",
+          "reviewer": "Geetansh Arora"
+        },
+        {
+          "slug": "eye-diagram",
+          "title": "Eye Diagrams: Construction and Interpretation",
+          "status": "live",
+          "viz": "eye",
+          "keywords": [
+            "eye",
+            "eye height",
+            "eye width",
+            "mask",
+            "unit interval",
+            "UI",
+            "eye opening"
+          ],
+          "reviewed": "2026-09-13",
+          "reviewer": "Geetansh Arora"
+        },
+        {
+          "slug": "jitter-taxonomy",
+          "title": "Jitter Components: RJ, DJ, DCD, PJ, and TJ",
+          "status": "live",
+          "viz": "jitter",
+          "keywords": [
+            "RJ",
+            "DJ",
+            "DCD",
+            "PJ",
+            "TJ",
+            "random jitter",
+            "deterministic jitter",
+            "dual dirac",
+            "BER"
+          ],
+          "reviewed": "2026-09-13",
+          "reviewer": "Geetansh Arora"
+        },
+        {
+          "slug": "bathtub-curves",
+          "title": "Bathtub curves and BER extrapolation",
+          "status": "live",
+          "viz": "bathtub",
+          "keywords": [
+            "BER",
+            "bit error rate",
+            "extrapolation",
+            "1e-12",
+            "CDF",
+            "confidence"
+          ],
+          "reviewed": "2026-09-13",
+          "reviewer": "Geetansh Arora"
+        },
+        {
+          "slug": "differential-signalling",
+          "title": "Differential Signaling and Mode Conversion",
+          "status": "live",
+          "keywords": [
+            "odd mode",
+            "even mode",
+            "common mode",
+            "mode conversion",
+            "skew",
+            "differential pair",
+            "tightly coupled"
+          ],
+          "reviewed": "2026-09-13",
+          "reviewer": "Geetansh Arora"
+        },
+        {
+          "slug": "s-parameters",
+          "title": "S-Parameters: Insertion Loss, Return Loss, and Mixed Mode",
+          "status": "live",
+          "viz": "sparams",
+          "keywords": [
+            "S21",
+            "S11",
+            "SDD21",
+            "SCD21",
+            "insertion loss",
+            "return loss",
+            "touchstone",
+            "TDT",
+            "VNA",
+            "mixed mode",
+            "passivity",
+            "causality"
+          ],
+          "reviewed": "2026-09-13",
+          "reviewer": "Geetansh Arora"
+        },
+        {
+          "slug": "vias",
+          "title": "High-Speed Vias: Stubs, Resonance, and Backdrilling",
+          "status": "live",
+          "keywords": [
+            "via stub",
+            "backdrill",
+            "antipad",
+            "resonance",
+            "layer transition",
+            "through via",
+            "blind via"
+          ],
+          "reviewed": "2026-09-14",
+          "reviewer": "Geetansh Arora"
+        }
+      ]
+    },
+    {
+      "id": "power-integrity",
+      "title": "Power Integrity",
+      "blurb": "Follow rail impedance and transient current from the regulator to the die.",
+      "topics": [
+        {
+          "slug": "what-is-the-pdn",
+          "title": "Power Delivery Networks: From Regulator to Die",
+          "status": "live",
+          "keywords": [
+            "PDN",
+            "power delivery network",
+            "VRM",
+            "on-die capacitance",
+            "impedance profile"
+          ],
+          "reviewed": "2026-09-14",
+          "reviewer": "Geetansh Arora"
+        },
+        {
+          "slug": "target-impedance",
+          "title": "PDN Target Impedance: Use and Limitations",
+          "status": "live",
+          "viz": "targetZ",
+          "keywords": [
+            "Zt",
+            "target impedance",
+            "ripple",
+            "transient current",
+            "ohms law"
+          ],
+          "reviewed": "2026-09-14",
+          "reviewer": "Geetansh Arora"
+        },
+        {
+          "slug": "decoupling-capacitors",
+          "title": "Decoupling Capacitors: ESR, ESL, and Placement",
+          "status": "live",
+          "viz": "pdnImpedance",
+          "keywords": [
+            "decap",
+            "decoupling",
+            "bypass cap",
+            "MLCC",
+            "ESR",
+            "ESL",
+            "mounting inductance",
+            "placement",
+            "SRF"
+          ],
+          "reviewed": "2026-09-14",
+          "reviewer": "Geetansh Arora"
+        },
+        {
+          "slug": "anti-resonance",
+          "title": "PDN Anti-Resonance and Impedance Peaks",
+          "status": "live",
+          "viz": "antiResonance",
+          "keywords": [
+            "anti-resonance",
+            "antiresonance",
+            "parallel resonance",
+            "impedance peak",
+            "PDN peak",
+            "two caps"
+          ],
+          "reviewed": "2026-09-14",
+          "reviewer": "Geetansh Arora"
+        },
+        {
+          "slug": "three-frequency-domains",
+          "title": "PDN Frequency Regions: Board, Package, and Die",
+          "status": "live",
+          "keywords": [
+            "board",
+            "package",
+            "die",
+            "frequency domain",
+            "who owns what",
+            "crossover"
+          ],
+          "reviewed": "2026-09-14",
+          "reviewer": "Geetansh Arora"
+        },
+        {
+          "slug": "plane-resonance",
+          "title": "Power-Plane Cavity Resonance and Edge Radiation",
+          "status": "live",
+          "viz": "planeResonance",
+          "keywords": [
+            "cavity resonance",
+            "edge radiation",
+            "plane pair",
+            "EMI",
+            "modal"
+          ],
+          "reviewed": "2026-09-14",
+          "reviewer": "Geetansh Arora"
+        },
+        {
+          "slug": "ir-drop-electromigration",
+          "title": "DC IR Drop and Electromigration",
+          "status": "live",
+          "keywords": [
+            "IR drop",
+            "DC drop",
+            "EM",
+            "electromigration",
+            "current density",
+            "Blacks equation"
+          ],
+          "reviewed": "2026-09-14",
+          "reviewer": "Geetansh Arora"
+        },
+        {
+          "slug": "ssn-ground-bounce",
+          "title": "Simultaneous Switching Noise and Ground Bounce",
+          "status": "live",
+          "viz": "ssn",
+          "keywords": [
+            "SSN",
+            "SSO",
+            "simultaneous switching noise",
+            "ground bounce",
+            "di/dt",
+            "rail collapse"
+          ],
+          "reviewed": "2026-09-15",
+          "reviewer": "Geetansh Arora"
+        },
+        {
+          "slug": "pdn-induced-jitter",
+          "title": "Power-Supply-Induced Jitter: Connecting PI and SI",
+          "status": "live",
+          "viz": "pdnJitter",
+          "keywords": [
+            "PSIJ",
+            "power supply induced jitter",
+            "droop",
+            "PSRR",
+            "supply noise",
+            "jitter"
+          ],
+          "reviewed": "2026-09-15",
+          "reviewer": "Geetansh Arora"
+        },
+        {
+          "slug": "vrm-loop-bandwidth",
+          "title": "VRM Control-Loop Bandwidth and Load Transients",
+          "status": "live",
+          "viz": "vrmStep",
+          "keywords": [
+            "VRM",
+            "regulator",
+            "load step",
+            "control loop",
+            "droop",
+            "AVP",
+            "compensation"
+          ],
+          "reviewed": "2026-09-15",
+          "reviewer": "Geetansh Arora"
+        },
+        {
+          "slug": "cps-co-analysis",
+          "title": "Chip-Package-System Power Integrity Co-Analysis",
+          "status": "live",
+          "keywords": [
+            "chip package system",
+            "CPS",
+            "co-analysis",
+            "co-simulation",
+            "CPM"
+          ],
+          "reviewed": "2026-09-15",
+          "reviewer": "Geetansh Arora"
+        },
+        {
+          "slug": "real-capacitors",
+          "title": "Real Capacitors: Bias, Tolerance, Temperature, and Mounting",
+          "keywords": [
+            "DC bias",
+            "derating",
+            "X7R",
+            "X5R",
+            "class II",
+            "tolerance",
+            "temperature",
+            "ageing",
+            "ESR",
+            "frequency dependence",
+            "mounting",
+            "loop inductance",
+            "load line",
+            "multiport"
+          ],
+          "status": "live",
+          "reviewed": "2026-09-15",
+          "reviewer": "Geetansh Arora"
+        }
+      ]
+    },
+    {
+      "id": "signal-integrity",
+      "title": "SI in practice",
+      "blurb": "Apply channel budgeting, equalization, receiver, and simulation methods.",
+      "topics": [
+        {
+          "slug": "channel-budgeting",
+          "title": "Channel Loss Budgeting Across Die, Package, and Board",
+          "status": "live",
+          "keywords": [
+            "loss budget",
+            "channel budget",
+            "insertion loss budget",
+            "allocation"
+          ],
+          "reviewed": "2026-09-15",
+          "reviewer": "Geetansh Arora"
+        },
+        {
+          "slug": "what-closes-the-eye",
+          "title": "Eye Closure: Loss, Reflections, Discontinuities, and Crosstalk",
+          "status": "live",
+          "viz": "impairments",
+          "keywords": [
+            "IL",
+            "RL",
+            "return loss",
+            "insertion loss",
+            "TDR",
+            "crosstalk",
+            "eye closure",
+            "impairments",
+            "discontinuity",
+            "echo",
+            "budget"
+          ],
+          "reviewed": "2026-09-15",
+          "reviewer": "Geetansh Arora"
+        },
+        {
+          "slug": "equalization",
+          "title": "Equalization and Clock Recovery: CTLE, FFE, DFE, and CDR",
+          "status": "live",
+          "viz": "equalizer",
+          "keywords": [
+            "EQ",
+            "CTLE",
+            "DFE",
+            "FFE",
+            "CDR",
+            "equaliser",
+            "equalizer",
+            "pre-emphasis",
+            "de-emphasis",
+            "tap"
+          ],
+          "reviewed": "2026-09-15",
+          "reviewer": "Geetansh Arora"
+        },
+        {
+          "slug": "nrz-vs-pam4",
+          "title": "NRZ and PAM4: Levels, Bandwidth, and SNR",
+          "status": "live",
+          "viz": "pam4",
+          "keywords": [
+            "PAM4",
+            "NRZ",
+            "SNR penalty",
+            "FEC",
+            "symbol",
+            "3 dB",
+            "gray code"
+          ],
+          "reviewed": "2026-09-16",
+          "reviewer": "Geetansh Arora"
+        },
+        {
+          "slug": "statistical-vs-time-domain",
+          "title": "Statistical and Time-Domain Channel Simulation",
+          "status": "live",
+          "keywords": [
+            "statistical",
+            "StatEye",
+            "time domain",
+            "bit by bit",
+            "PDA",
+            "impulse response"
+          ],
+          "reviewed": "2026-09-16",
+          "reviewer": "Geetansh Arora"
+        },
+        {
+          "slug": "ibis-ami-spice",
+          "title": "IBIS, IBIS-AMI, and SPICE Model Selection",
+          "status": "live",
+          "keywords": [
+            "IBIS",
+            "AMI",
+            "SPICE",
+            "buffer model",
+            "transistor model",
+            "encrypted model"
+          ],
+          "reviewed": "2026-09-16",
+          "reviewer": "Geetansh Arora"
+        },
+        {
+          "slug": "de-embedding",
+          "title": "S-Parameter De-Embedding and Fixture Removal",
+          "status": "live",
+          "keywords": [
+            "de-embed",
+            "deembed",
+            "fixture removal",
+            "TRL",
+            "AFR",
+            "2x thru",
+            "SOLT",
+            "calibration",
+            "reference plane"
+          ],
+          "reviewed": "2026-09-16",
+          "reviewer": "Geetansh Arora"
+        },
+        {
+          "slug": "compliance-masks",
+          "title": "Transmitter Compliance Masks and Receiver Eye Masks",
+          "status": "live",
+          "keywords": [
+            "eye mask",
+            "compliance",
+            "receiver mask",
+            "template",
+            "hit ratio"
+          ],
+          "reviewed": "2026-09-16",
+          "reviewer": "Geetansh Arora"
+        },
+        {
+          "slug": "receiver-and-clock",
+          "title": "Receiver Sampling, Clock Recovery, and Jitter Tolerance",
+          "keywords": [
+            "sampling phase",
+            "threshold",
+            "slicer",
+            "CDR",
+            "PLL",
+            "loop bandwidth",
+            "jitter transfer",
+            "adaptation",
+            "AC coupling",
+            "baseline wander",
+            "run length",
+            "DC balance"
+          ],
+          "status": "live",
+          "reviewed": "2026-09-16",
+          "reviewer": "Geetansh Arora"
+        }
+      ]
+    },
+    {
+      "id": "package-board",
+      "title": "Package & board",
+      "blurb": "Where the electrical design meets manufacturing.",
+      "topics": [
+        {
+          "slug": "package-families",
+          "title": "IC Package Interconnects: Wirebond, Flip-Chip, FOWLP, Interposers, and Chiplets",
+          "status": "live",
+          "keywords": [
+            "FCBGA",
+            "wirebond",
+            "FOWLP",
+            "interposer",
+            "2.5D",
+            "chiplet",
+            "UCIe",
+            "flip chip",
+            "bump"
+          ],
+          "reviewed": "2026-09-16",
+          "reviewer": "Geetansh Arora"
+        },
+        {
+          "slug": "stackup-design",
+          "title": "PCB Stackup Design and Dielectric Selection",
+          "status": "live",
+          "keywords": [
+            "stackup",
+            "layer count",
+            "dielectric",
+            "prepreg",
+            "core",
+            "Dk",
+            "Df",
+            "symmetric build"
+          ],
+          "reviewed": "2026-09-16",
+          "reviewer": "Geetansh Arora"
+        },
+        {
+          "slug": "bga-escape-routing",
+          "title": "BGA Escape Routing and Breakout Congestion",
+          "status": "live",
+          "keywords": [
+            "BGA",
+            "escape",
+            "breakout",
+            "fanout",
+            "dogbone",
+            "via in pad",
+            "pitch",
+            "congestion"
+          ],
+          "reviewed": "2026-09-17",
+          "reviewer": "Geetansh Arora"
+        },
+        {
+          "slug": "layer-transitions",
+          "title": "PCB Layer Transitions and Return-Path Stitching",
+          "status": "live",
+          "keywords": [
+            "stitching via",
+            "return via",
+            "layer change",
+            "ground via",
+            "transition"
+          ],
+          "reviewed": "2026-09-17",
+          "reviewer": "Geetansh Arora"
+        },
+        {
+          "slug": "connectors-cables",
+          "title": "High-Speed Connectors and Cables",
+          "status": "live",
+          "keywords": [
+            "connector",
+            "cable",
+            "discontinuity",
+            "footprint",
+            "launch",
+            "compression mount"
+          ],
+          "reviewed": "2026-09-17",
+          "reviewer": "Geetansh Arora"
+        },
+        {
+          "slug": "manufacturing-tolerance",
+          "title": "PCB Manufacturing Variation: Etch, Glass Weave, and Impedance",
+          "status": "live",
+          "keywords": [
+            "etch",
+            "trapezoid",
+            "glass weave skew",
+            "fibre weave",
+            "fiber weave",
+            "impedance control",
+            "tolerance",
+            "coupon"
+          ],
+          "reviewed": "2026-09-17",
+          "reviewer": "Geetansh Arora"
+        },
+        {
+          "slug": "package-and-system",
+          "title": "Package Interconnects as Transmission Lines",
+          "keywords": [
+            "mutual inductance",
+            "return via",
+            "stitching",
+            "partition",
+            "transfer impedance",
+            "lumped",
+            "distributed",
+            "co-analysis",
+            "boundary",
+            "port"
+          ],
+          "status": "live",
+          "reviewed": "2026-09-17",
+          "reviewer": "Geetansh Arora"
+        }
+      ]
+    },
+    {
+      "id": "interfaces",
+      "title": "Interface sign-off",
+      "blurb": "Interface-specific data rates, channel considerations, and source boundaries.",
+      "topics": [
+        {
+          "slug": "lpddr5x",
+          "title": "LPDDR5 and LPDDR5X Signal Integrity: Timing, ODT, and Training",
+          "status": "live",
+          "viz": "lpddrBudget",
+          "keywords": [
+            "LPDDR5",
+            "LPDDR5X",
+            "DDR",
+            "DRAM",
+            "WCK",
+            "DQS",
+            "ODT",
+            "training",
+            "JEDEC",
+            "8533",
+            "tDQS2DQ",
+            "x16"
+          ],
+          "reviewed": "2026-09-17",
+          "reviewer": "Geetansh Arora"
+        },
+        {
+          "slug": "pcie-gen4-gen5",
+          "title": "PCIe 4.0 and 5.0 Signal Integrity: Loss and Equalization",
+          "status": "live",
+          "keywords": [
+            "PCIe",
+            "Gen4",
+            "Gen5",
+            "16GT",
+            "32GT",
+            "SeaSim",
+            "CEM",
+            "preset",
+            "link training",
+            "LTSSM"
+          ],
+          "reviewed": "2026-09-17",
+          "reviewer": "Geetansh Arora"
+        },
+        {
+          "slug": "pcie-gen6",
+          "title": "PCIe 6.0 Signal Integrity: PAM4, FLIT, and FEC",
+          "status": "live",
+          "keywords": [
+            "PCIe",
+            "Gen6",
+            "64GT",
+            "PAM4",
+            "FLIT",
+            "FEC",
+            "precoding"
+          ],
+          "reviewed": "2026-09-17",
+          "reviewer": "Geetansh Arora"
+        },
+        {
+          "slug": "usb-3x",
+          "title": "USB 3.1 and 3.2 Signal Integrity: SSC and Compliance",
+          "status": "live",
+          "keywords": [
+            "USB",
+            "SuperSpeed",
+            "5Gbps",
+            "10Gbps",
+            "20Gbps",
+            "SSC",
+            "Type-C",
+            "USB-IF"
+          ],
+          "reviewed": "2026-09-18",
+          "reviewer": "Geetansh Arora"
+        },
+        {
+          "slug": "ufs4",
+          "title": "UFS 4.0 Signal Integrity: M-PHY Gear 5",
+          "status": "live",
+          "keywords": [
+            "UFS",
+            "MPHY",
+            "M-PHY",
+            "HS-Gear5",
+            "Gear5",
+            "UniPro",
+            "storage",
+            "23.2"
+          ],
+          "reviewed": "2026-09-18",
+          "reviewer": "Geetansh Arora"
+        }
+      ]
+    },
+    {
+      "id": "methodology",
+      "title": "Methodology",
+      "blurb": "Plan simulations and measurements, compare evidence, report margin, and debug efficiently.",
+      "topics": [
+        {
+          "slug": "simulation-flow",
+          "title": "Signal Integrity Simulation Workflow",
+          "status": "live",
+          "keywords": [
+            "simulation flow",
+            "extraction",
+            "methodology",
+            "workflow",
+            "end to end"
+          ],
+          "reviewed": "2026-09-18",
+          "reviewer": "Geetansh Arora"
+        },
+        {
+          "slug": "field-solvers",
+          "title": "Field Solvers for SI/PI: 2D, 2.5D, and 3D",
+          "status": "live",
+          "keywords": [
+            "2D",
+            "2.5D",
+            "3D",
+            "field solver",
+            "FEM",
+            "MoM",
+            "FDTD",
+            "hybrid",
+            "mesh"
+          ],
+          "reviewed": "2026-09-18",
+          "reviewer": "Geetansh Arora"
+        },
+        {
+          "slug": "correlation",
+          "title": "Correlating Simulation and Measurement",
+          "status": "live",
+          "keywords": [
+            "correlation",
+            "VNA",
+            "TDR",
+            "scope",
+            "probe",
+            "measurement",
+            "lab",
+            "de-embed"
+          ],
+          "reviewed": "2026-09-18",
+          "reviewer": "Geetansh Arora"
+        },
+        {
+          "slug": "reporting-margin",
+          "title": "Reporting Signal and Power Integrity Margin",
+          "status": "live",
+          "keywords": [
+            "margin",
+            "corners",
+            "PVT",
+            "sign-off",
+            "reporting",
+            "stacking",
+            "worst case"
+          ],
+          "reviewed": "2026-09-18",
+          "reviewer": "Geetansh Arora"
+        },
+        {
+          "slug": "debug-playbook",
+          "title": "SI/PI Debugging: From Symptom to Cause",
+          "status": "live",
+          "keywords": [
+            "debug",
+            "troubleshoot",
+            "symptom",
+            "root cause",
+            "bring-up",
+            "failure"
+          ],
+          "reviewed": "2026-09-18",
+          "reviewer": "Geetansh Arora"
+        },
+        {
+          "slug": "measurement-practice",
+          "title": "SI/PI Measurement: Fixtures, Calibration, and Instrument Effects",
+          "keywords": [
+            "TDR",
+            "bandwidth",
+            "fixture",
+            "VNA",
+            "calibration",
+            "SOLT",
+            "TRL",
+            "probe loading",
+            "shunt-through",
+            "two-port",
+            "BERT",
+            "confidence",
+            "repeatability",
+            "uncertainty",
+            "ground lead"
+          ],
+          "status": "live",
+          "reviewed": "2026-09-18",
+          "reviewer": "Geetansh Arora"
+        }
+      ]
+    },
+    {
+      "id": "labs",
+      "title": "Labs",
+      "blurb": "Four long-form instruments with linked views, stated assumptions, and documented evidence.",
+      "topics": [
+        {
+          "slug": "travelling-waves",
+          "title": "Lab A: Transmission-Line Reflections and Energy Flow",
+          "status": "live",
+          "viz": "labWaves",
+          "keywords": [
+            "travelling wave",
+            "forward wave",
+            "backward wave",
+            "current",
+            "energy",
+            "bounce diagram",
+            "lattice",
+            "termination",
+            "probe",
+            "TDR",
+            "discontinuity",
+            "locate",
+            "return path",
+            "Z0"
+          ],
+          "reviewed": "2026-09-18",
+          "reviewer": "Geetansh Arora"
+        },
+        {
+          "slug": "one-channel",
+          "title": "Lab B: Channel Response, ISI, and Eye Diagrams",
+          "status": "live",
+          "keywords": [
+            "S-parameters",
+            "group delay",
+            "impulse response",
+            "single-bit response",
+            "step",
+            "TDR",
+            "eye",
+            "equaliser",
+            "histogram",
+            "domain",
+            "cursor",
+            "post-cursor"
+          ],
+          "viz": "labChannel",
+          "reviewed": "2026-09-18",
+          "reviewer": "Geetansh Arora"
+        },
+        {
+          "slug": "pdn-chain",
+          "title": "Lab C: PDN Impedance, Current Sharing, and Transient Droop",
+          "status": "live",
+          "keywords": [
+            "PDN",
+            "VRM",
+            "regulator",
+            "decoupling",
+            "branch current",
+            "transfer impedance",
+            "phase",
+            "anti-resonance",
+            "droop",
+            "die",
+            "package",
+            "board"
+          ],
+          "viz": "labPdn",
+          "reviewed": "2026-09-18",
+          "reviewer": "Geetansh Arora"
+        },
+        {
+          "slug": "adc-interference",
+          "title": "Lab D: ADC Interference, Aliasing and Reference Noise",
+          "status": "live",
+          "viz": "adcLab",
+          "keywords": [
+            "ADC",
+            "analog-to-digital converter",
+            "SAR",
+            "successive approximation",
+            "delta-sigma",
+            "sigma-delta",
+            "oversampling",
+            "OSR",
+            "sinc",
+            "decimation",
+            "aliasing",
+            "folding",
+            "SNR",
+            "SINAD",
+            "SFDR",
+            "THD",
+            "ENOB",
+            "GPIO",
+            "aggressor",
+            "reference noise",
+            "reference ripple",
+            "clock sharing",
+            "ppm",
+            "capacitive coupling",
+            "rise time",
+            "offset",
+            "gain error",
+            "DNL",
+            "INL"
+          ],
+          "reviewed": "2026-09-18",
+          "reviewer": "Geetansh Arora"
+        }
+      ]
+    }
+  ]
+}

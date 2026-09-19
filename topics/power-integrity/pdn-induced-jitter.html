@@ -1,0 +1,414 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Power-Supply-Induced Jitter: Connecting PI and SI | SIPI</title>
+<meta name="description" content="How supply noise becomes timing error, why the eye diagram hides the cause, and the debug signature that identifies it.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<link rel="stylesheet" href="../../css/base.css?v=e4f774de">
+<link rel="stylesheet" href="../../css/components.css?v=295837ab">
+  <!-- meta:start -->
+  <link rel="canonical" href="https://sipi.work/topics/power-integrity/pdn-induced-jitter.html">
+  <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="SIPI">
+  <meta property="og:title" content="Power-Supply-Induced Jitter: Connecting PI and SI | SIPI">
+  <meta property="og:description" content="How supply noise becomes timing error, why the eye diagram hides the cause, and the debug signature that identifies it.">
+  <meta property="og:url" content="https://sipi.work/topics/power-integrity/pdn-induced-jitter.html">
+  <meta property="og:image" content="https://sipi.work/assets/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Power-Supply-Induced Jitter: Connecting PI and SI | SIPI">
+  <meta name="twitter:description" content="How supply noise becomes timing error, why the eye diagram hides the cause, and the debug signature that identifies it.">
+  <meta name="twitter:image" content="https://sipi.work/assets/og.png">
+  <!-- meta:end -->
+</head>
+<body>
+
+<header class="masthead">
+  <a class="wordmark" href="../../index.html">SIPI</a>
+  <nav>
+    <a href="../../index.html#fundamentals">Fundamentals</a>
+    <a href="../../index.html#power-integrity">Power</a>
+    <a href="../../index.html#interfaces">Interfaces</a>
+    <a href="../../start.html">Start</a>
+    <a href="../../labs.html">Labs</a>
+    <a href="../../reference.html">Reference</a>
+    <button class="theme-toggle" data-act="theme" type="button">System</button>
+  </nav>
+</header>
+
+<main>
+  <div class="page-head">
+    <p class="crumb"><a href="../../index.html#power-integrity">Power Integrity</a> / 09</p>
+    <h1>Power-Supply-Induced Jitter: Connecting PI and SI</h1>
+    <p class="byline">
+      <!-- review:start --><span>By Geetansh Arora — Principal SI/PI Engineer</span><time datetime="2026-09-15" title="Technical review by Geetansh Arora on this date">15 Sep 2026</time><span>10 min</span><!-- review:end -->
+    </p>
+    <p class="answer">
+      A gate switches faster when its supply is higher and slower when it is lower. So noise on a
+      power rail does not stay in the power domain &#8212; it comes out of the clock tree as
+      <em>timing</em> noise. This is the bridge between power integrity and signal integrity, and
+      it is the reason a jitter problem is sometimes a decoupling problem.
+    </p>
+  </div>
+
+  <!-- ───────────── the picture ───────────── -->
+  <section class="instrument" data-viz="pdnJitter" aria-label="Interactive plot showing supply ripple and the resulting clock-edge displacement, with a selectable noise injection point relative to the PLL loop">
+    <script type="application/json" data-contract>{"kind":"illustrative","evidence":"independent","purpose":"Show that where supply noise enters decides whether the loop removes it.","equations":["VCO noise high-passed at the loop bandwidth; reference noise low-passed; buffer noise uncorrected"],"units":"Hz, V, s","validity":"ILLUSTRATIVE topology — a first-order loop, not a solved PLL, and a linear small-signal sensitivity. What IS independently checked is the behaviour that matters: the three injection points are treated oppositely, and the units are dimensionally correct.","numerics":"Closed-form transfer functions.","limitations":"ILLUSTRATIVE topology — a first-order loop, not a solved PLL, and a linear small-signal sensitivity. What IS independently checked is the behaviour that matters: the three injection points are treated oppositely, and the units are dimensionally correct.","suites":["PSIJ"],"version":"1.0","reviewed":"2026-09-12","panel":"pdnJitter"}</script>
+    <div class="instrument__bar">
+      <span class="instrument__title">Supply ripple &#8594; delay modulation &#8594; periodic jitter</span>
+        <span data-evidence="independent" data-model-version="1.0" class="model-tag model-tag--illustrative" title="Sensitivity times ripple times a first-order loop transfer. Not a solved PLL.">illustrative</span>
+      <span class="instrument__readout" role="status" aria-live="polite" aria-label="Current values">
+        <span>periodic jitter <b data-out="pj">—</b></span>
+        <span> <b data-out="pjui">—</b></span>
+        <span>rms <b data-out="rms">—</b></span>
+        <span>noise at <b data-out="fn">—</b></span>
+        <span>loop <b data-out="tracked">—</b></span>
+      </span>
+    </div>
+    <div class="panels two-up">
+      <div class="panel">
+        <span class="panel__label">The supply &#8212; three periods of the ripple</span>
+        <canvas data-cv="ripple" role="img"
+          aria-label="Supply voltage against time over three periods of the ripple, with the peak and trough marked."></canvas>
+        <div class="legend">
+          <span><i style="background:var(--reflect)"></i>supply ripple</span>
+          <span><i class="dash" style="color:var(--muted)"></i>&#177;peak</span>
+        </div>
+      </div>
+      <div class="panel">
+        <span class="panel__label">The clock edge &#8212; magnified to picoseconds</span>
+        <canvas data-cv="edge" role="img"
+          aria-label="A clock edge drawn at three supply values: nominal, ripple peak and ripple trough, on a picosecond time axis, with the peak-to-peak displacement marked."></canvas>
+        <div class="legend">
+          <span><i class="dash" style="color:var(--muted)"></i>nominal edge</span>
+          <span><i style="background:var(--signal)"></i>at peak / trough</span>
+          <span><i style="background:var(--alarm)"></i>pk-pk displacement</span>
+        </div>
+      </div>
+    </div>
+    <div class="controls">
+      <div class="ctl">
+        <div class="ctl__head"><label for="pj-rip">Supply ripple</label><output id="pj-rip-out" for="pj-rip">30 mV peak</output></div>
+        <input type="range" id="pj-rip" min="2" max="120" step="2" value="30">
+        <span class="ctl__note">This is a PDN number, not an SI one</span>
+      </div>
+      <div class="ctl">
+        <div class="ctl__head"><label for="pj-f">Noise frequency</label><output id="pj-f-out" for="pj-f">120 MHz</output></div>
+        <input type="range" id="pj-f" min="1" max="500" step="1" value="120">
+        <span class="ctl__note">Whether the loop helps depends on where the noise enters</span>
+      </div>
+      <div class="ctl">
+        <div class="ctl__head"><label for="pj-s">Delay sensitivity</label><output id="pj-s-out" for="pj-s">30 ps/V</output></div>
+        <input type="range" id="pj-s" min="5" max="80" step="1" value="30">
+        <span class="ctl__note">Delay change per volt of supply, per stage</span>
+        <span class="ctl__note">ps per stage per unit supply</span>
+      </div>
+      <div class="ctl">
+        <div class="ctl__head"><label for="pj-n">Clock tree depth</label><output id="pj-n-out" for="pj-n">8 stages</output></div>
+        <input type="range" id="pj-n" min="2" max="20" step="1" value="8">
+        <span class="ctl__note">The effect accumulates down the tree</span>
+      </div>
+      <div class="ctl">
+        <div class="ctl__head"><label for="pj-inj">Where the noise enters</label></div>
+        <select id="pj-inj" class="sel">
+          <option value="vco">VCO &#8212; inside the loop</option>
+          <option value="reference">Reference input</option>
+          <option value="buffer">Output buffer &#8212; outside the loop</option>
+        </select>
+        <span class="ctl__note">A first-order loop treats these three oppositely</span>
+      </div>
+    </div>
+    <div class="presets">
+      <button class="preset" type="button" data-preset="firstdroop" aria-pressed="true">Package-to-die peak</button>
+      <button class="preset" type="button" data-preset="vrm" aria-pressed="false">VRM switching</button>
+      <button class="preset" type="button" data-preset="refnoise" aria-pressed="false">Same noise, at the reference</button>
+      <button class="preset" type="button" data-preset="outside" aria-pressed="false">Outside the loop</button>
+      <button class="preset" type="button" data-preset="sensitive" aria-pressed="false">Longer clock tree</button>
+    </div>
+    <div class="transport"><span data-out="note">—</span></div>
+  </section>
+
+  <div class="prose">
+    <h2>Why a power problem becomes a timing problem</h2>
+
+    <p>
+      In hardware engineering teams, Signal Integrity (SI) and Power Integrity (PI) are often treated as
+      entirely separate disciplines. SI engineers focus on eye diagrams, loss budgets, trace geometry, and
+      equalization; PI engineers focus on decoupling capacitor counts, plane impedance, and millivolts of ripple.
+      Power-Supply-Induced Jitter (PSIJ) is the direct physical bridge where these two worlds collide.
+    </p>
+
+    <p>
+      Every digital gate, clock buffer, and serializer in a high-speed transmitter is constructed from CMOS
+      transistors whose propagation delay is governed by their operating voltage. When a power rail fluctuates
+      because of load steps or resonant impedance peaks, the transistors switch faster when the supply rises and
+      slower when it dips. That voltage ripple is converted directly into picoseconds of timing uncertainty on
+      clock and data edges. An engineer trying to debug a closed eye by adjusting receiver equalization will make
+      zero progress if the jitter is actually being generated by a ringing power plane ten millimetres away.
+    </p>
+
+    <p>
+      A CMOS stage charges its load through a transistor, and how much current that transistor
+      delivers depends on its gate-to-source voltage — which is referenced to the supply. Raise the
+      supply and the stage drives harder and switches sooner. Lower it and the stage switches later.
+    </p>
+
+    <p>
+      One stage's shift is tiny. But a clock edge passes through a long chain of buffers on its way
+      from the PLL to the flip-flops, and each one adds its own shift in the same direction. The
+      delay change accumulates down the tree.
+    </p>
+
+    <p>
+      So a rail wobbling by a few percent produces an edge arriving a few picoseconds early or late,
+      varying at whatever rate the rail is wobbling. That is jitter, and it has arrived without
+      anything at all happening to the signal path.
+    </p>
+
+    <h2 class="section-rule"><span>Voltage modulates delay</span></h2>
+
+    <p>
+      A CMOS stage drives its load with a current set by its supply. Lower the supply and the stage
+      switches later; raise it and it switches earlier. Across a clock tree of many stages the effect
+      accumulates, so a small percentage wobble on the rail becomes a meaningful shift in when the edge
+      arrives.
+    </p>
+
+    <p>
+      The sensitivity is usually expressed as delay change per unit of supply change, and it is highly
+      design-dependent — a long clock tree on a low-voltage rail is far more sensitive than a short
+      path on a well-regulated one. What matters structurally is that the relationship exists, is
+      roughly linear for small perturbations, and multiplies by the number of stages the edge passes
+      through.
+    </p>
+
+    <div class="note">
+      <b>The frequency decides its fate — but only once you say where it entered</b>
+      &ldquo;A PLL tracks out slow supply noise&rdquo; is right for exactly one injection point, and a
+      first-order loop treats the three <em>oppositely</em>. Noise on the <strong>VCO, inside the
+      loop</strong>, is high-pass filtered: the loop corrects it below the loop bandwidth. Noise at the
+      <strong>reference</strong> is low-pass filtered — the loop <em>follows</em> it onto the output, so
+      slow reference noise is not removed at all. Noise on an <strong>output buffer outside the
+      loop</strong> has no feedback path reaching it and is never corrected at any frequency.
+      <br><br>
+      The panel above makes the difference concrete: the same 30 mV of 1 MHz ripple produces
+      <span class="num">3.5 ps</span> peak-to-peak entering at the VCO and <span class="num">14.0 ps</span>
+      entering at the reference. Four times the jitter from an identical supply. &ldquo;How much
+      ripple?&rdquo; has no answer without &ldquo;entering where?&rdquo;
+    </div>
+
+    <h2 class="section-rule"><span>The debug signature</span></h2>
+
+    <p>
+      This is the mechanism that makes PI and SI one problem, and it has a recognisable fingerprint. A
+      PDN impedance peak at some frequency, excited by activity at that frequency, produces supply
+      ripple at that frequency, which produces <strong>periodic jitter at the same frequency</strong> in
+      the eye.
+    </p>
+
+    <p>
+      So when jitter decomposition reports a PJ component, the first question is what its frequency is,
+      and the second is whether that frequency matches anything on the PDN impedance plot. A match is
+      close to a diagnosis. Common culprits, in rough order:
+    </p>
+
+    <ul class="tight">
+      <li><strong>The package-to-die anti-resonance</strong>, typically in the low hundreds of MHz — the
+        first-droop peak, excited by any bursty compute activity.</li>
+      <li><strong>The switching regulator's own frequency</strong> and its harmonics, usually a few
+        hundred kilohertz to a few megahertz. Often inside the PLL bandwidth, and therefore often
+        harmless — but not always.</li>
+      <li><strong>Board-to-package resonance</strong> in the tens of MHz, excited by memory burst
+        patterns whose repetition rate happens to land there.</li>
+    </ul>
+
+    <p>
+      The practical lesson is about ownership rather than physics. An eye that fails with clean-looking
+      signal integrity — good return loss, budgeted insertion loss, crosstalk under control — and a
+      stubborn periodic jitter term is not an SI problem being solved by an SI engineer. Looking at the
+      PDN impedance plot early costs an hour and regularly saves a week of channel tuning that was never
+      going to work.
+    </p>
+
+    <h3>Sources</h3>
+    <ul class="tight refs">
+      <li><a href="https://www.analog.com/media/en/technical-documentation/application-notes/AN143f.pdf">Analog Devices AN-143</a> &#8212; PLL noise injection paths, and why the transfer depends on where the noise enters</li>
+    </ul>
+      <h2 class="section-rule"><span>Why this decides how your board behaves</span></h2>
+
+    <ul class="tight">
+      <li><strong>It is often the dominant jitter term, and the least suspected.</strong> Channel
+        analysis does not include it, because channel simulators model the channel. A budget built
+        purely from S-parameters is missing it entirely.</li>
+      <li><strong>It couples blocks that share nothing but a rail.</strong> A noisy digital core and
+        a quiet SerDes on the same supply are connected, and the connection is the PDN.</li>
+      <li><strong>Where the noise enters changes everything.</strong> The same millivolts at the
+        VCO, at the reference, or at an output buffer produce completely different amounts of output
+        jitter, because the loop treats the three oppositely.</li>
+      <li><strong>It is correlated, so it does not average out.</strong> Rail noise driven by the
+        core's own activity is synchronous with the data, which is exactly the property that makes
+        a jitter term refuse to behave like random noise.</li>
+    </ul>
+
+    <h2 class="section-rule"><span>What to do about it</span></h2>
+
+    <p>
+      <strong>First establish where the noise is entering.</strong> This is the whole diagnosis, and
+      the panel above is built around it. The answer determines whether the loop helps you, ignores
+      you, or actively carries the noise onto the output.
+    </p>
+
+    <p>
+      <strong>Attack the impedance at the frequency that matters, not everywhere.</strong> Once you
+      know the injection point, the loop's response tells you which band of rail noise actually
+      reaches the output. Flattening the PDN somewhere the transfer function rejects is effort
+      spent for nothing.
+    </p>
+
+    <p>
+      <strong>Separate the sensitive rails.</strong> A dedicated supply for the PLL and SerDes —
+      ideally through its own regulator, or at minimum through a filter — breaks the coupling path
+      rather than reducing it. On-chip low-dropout regulation for analogue blocks exists for this
+      reason.
+    </p>
+
+    <p>
+      <strong>Reduce the noise at its source where you can.</strong> Staggering clock-gate release
+      lowers the di/dt that made the noise in the first place, and it costs no hardware. The best
+      PDN-induced jitter fix is often a firmware change.
+    </p>
+
+    <div class="note">
+      <b>Using this to find a fault</b>
+      <ul class="tight">
+        <li><b>Jitter with a periodic component at a switching-regulator frequency.</b> Almost
+          conclusive. Read the spur frequency and compare it with the converter's switching rate and
+          its harmonics.</li>
+        <li><b>Jitter that changes with workload but not with the data pattern.</b> The channel is
+          not the cause. Rail noise tracks activity; ISI tracks the pattern.</li>
+        <li><b>A link that degrades when an unrelated block powers up.</b> Shared rail or shared
+          plane. Check the transfer impedance between them, not the channel.</li>
+        <li><b>Jitter present at the transmitter output with a clean input clock.</b> The noise is
+          getting in after the reference — output buffer supply or VCO, and the frequency
+          dependence will tell you which.</li>
+      </ul>
+    </div>
+
+    <details class="deeper">
+      <summary>Go deeper — the three injection points, and why "a PLL tracks out slow noise" is only sometimes true</summary>
+
+      <p>
+        The common claim is that a PLL removes slow supply noise. That is right for exactly one
+        injection point, and a first-order loop treats the three oppositely:
+      </p>
+
+      <ul class="tight">
+        <li><strong>Noise on the VCO — inside the loop.</strong> High-pass filtered. The loop
+          measures the phase error and corrects it, so noise <em>below</em> the loop bandwidth is
+          suppressed and noise above it passes. This is the case the claim describes.</li>
+        <li><strong>Noise at the reference.</strong> Low-pass filtered — the exact opposite. The
+          loop's job is to follow the reference, so slow reference noise is faithfully reproduced on
+          the output and is not removed at all.</li>
+        <li><strong>Noise on an output buffer — outside the loop.</strong> No feedback path reaches
+          it, so it is never corrected, at any frequency.</li>
+      </ul>
+
+      <p>
+        This is why identical rail noise can produce very different output jitter depending on which
+        supply it landed on, and why the first question in any PSIJ investigation has to be where
+        rather than how much.
+      </p>
+
+      <p>
+        <strong>The K<sub>PSIJ</sub> sensitivity coefficient and the jitter budget.</strong> Inside silicon design kits,
+        power-supply jitter sensitivity is quantified by the metric
+        <span class="num">K<sub>PSIJ</sub> = &#8706;t<sub>delay</sub> / &#8706;V<sub>dd</sub></span>, expressed in
+        picoseconds of edge displacement per millivolt of supply ripple (ps/mV). For a typical clock distribution tree
+        or multi-stage CML-to-CMOS converter, <span class="num">K<sub>PSIJ</sub></span> commonly falls between
+        <span class="num">0.05</span> and <span class="num">0.20 ps/mV</span>.
+      </p>
+
+      <p>
+        The consequence for multi-gigabit links is severe. Consider a 32 Gbps NRZ link with a unit interval of just
+        <span class="num">31.25 ps</span>. If the transmitter's clock tree has a <span class="num">K<sub>PSIJ</sub></span>
+        of <span class="num">0.12 ps/mV</span>, a modest <span class="num">40 mV</span> peak-to-peak ripple on the
+        VDD rail injects <span class="num">40 mV &#215; 0.12 ps/mV = 4.8 ps</span> of deterministic periodic jitter (PJ).
+        That single power-supply perturbation eats over 15% of the total timing budget before channel loss, crosstalk,
+        or receiver setup time even take their share.
+      </p>
+
+      <p>
+        <strong>The units trap.</strong> Supply sensitivity is quoted as a delay change per volt, or
+        sometimes as a fractional delay change per fractional supply change. Those are different
+        quantities and mixing them is an easy way to be out by the supply voltage — a factor of
+        nearly one and a half on a 0.75 V rail versus a 1.1 V one. Always check whether a
+        sensitivity figure is ps/V or ps/%.
+      </p>
+
+      <p>
+        <strong>And a caution about superposition.</strong> The linear treatment here assumes the
+        perturbation is small enough that delay varies linearly with supply. For a deep droop that
+        stops being true — the relationship is genuinely nonlinear at large excursions, and a
+        sensitivity fitted at small signal will understate the effect of a big one.
+      </p>
+    </details>
+
+    <h2 class="section-rule"><span>In the real world</span></h2>
+
+    <p>
+      PDN-induced jitter is where the two halves of this site meet, and it is usually discovered by
+      accident — a link fails, the channel is exonerated, and someone eventually looks at the supply.
+      The reason it takes so long is organisational: channel analysis and PDN analysis are different
+      tools, different models and frequently different people.
+    </p>
+
+    <p>
+      Which makes the useful habit a cheap one. When a jitter number does not reconcile with the
+      channel model, look at the rail before re-examining the channel. It is ten minutes with a scope
+      and it resolves the question either way.
+    </p>
+
+    <h3>Related</h3>
+    <ul class="tight">
+      <li><a href="../fundamentals/jitter-taxonomy.html">Jitter Components: RJ, DJ, DCD, PJ, and TJ</a></li>
+      <li><a href="../power-integrity/anti-resonance.html">PDN Anti-Resonance and Impedance Peaks</a></li>
+      <li><a href="../power-integrity/ssn-ground-bounce.html">Simultaneous Switching Noise and Ground Bounce</a></li>
+      <li><a href="../methodology/debug-playbook.html">SI/PI Debugging: From Symptom to Cause</a></li>
+    </ul>
+  </div>
+
+<!-- sources:start -->
+    <section class="sources">
+      <h2 class="section-rule"><span>Sources</span></h2>
+      <ul class="sources__list">
+      <li><a href="https://www.analog.com/media/en/technical-documentation/application-notes/AN143f.pdf" rel="noopener">Analog Devices AN-143 — PLL noise injection paths</a></li>
+      </ul>
+      <p class="sources__note">Rows marked with a claim id are tracked in <a href="../../docs/claims.md">the claim ledger</a>, which records what each source can and cannot establish.</p>
+    </section>
+    <!-- sources:end -->
+  <!-- pager:start -->
+  <nav class="pager" aria-label="Previous and next topic">
+    <a class="prev" href="../../topics/power-integrity/ssn-ground-bounce.html"><span class="dir">Previous</span><span>Simultaneous Switching Noise and Ground Bounce</span></a>
+    <a class="next" href="../../topics/power-integrity/vrm-loop-bandwidth.html"><span class="dir">Next</span><span>VRM Control-Loop Bandwidth and Load Transients</span></a>
+  </nav>
+  <!-- pager:end -->
+</main>
+
+<footer class="site-foot">
+  <span>SIPI &#8212; signal and power integrity, visualised.</span>
+  <span>Created and directed by Geetansh Arora. <a href="../../colophon.html">About, review &amp; AI assistance</a> &#183; <a href="../../model-contract.html">Model assumptions</a> &#183; <a href="../../docs/claims.md">Claim ledger</a></span>
+</footer>
+
+<script src="../../js/site.js?v=acb47d86"></script>
+<script src="../../js/viz-kit.js?v=a53e49c3"></script>
+<script src="../../js/viz/pdn-extras.js?v=57fcc26f"></script>
+<script src="../../js/viz-loader.js?v=89d5884d"></script>
+<script src="../../js/search.js?v=6c93a285"></script>
+</body>
+</html>

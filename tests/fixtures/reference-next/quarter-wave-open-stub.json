@@ -1,0 +1,59 @@
+{
+  "schemaVersion": 1,
+  "id": "quarter-wave-open-stub",
+  "title": "An open stub transforms into a shunt short at quarter wave",
+  "kind": "stub",
+  "inputs": {
+    "referenceOhms": 50,
+    "stubOhms": 50,
+    "delaySeconds": 2.5e-11
+  },
+  "inputUnits": {
+    "referenceOhms": "ohm",
+    "stubOhms": "ohm",
+    "delaySeconds": "s"
+  },
+  "checks": [
+    {
+      "metric": "quarterWaveTransmission",
+      "expected": 0.0,
+      "absoluteTolerance": 1e-12,
+      "unit": "-",
+      "derivation": "An open stub is a short at f=1/(4td), nulling transmission."
+    },
+    {
+      "metric": "halfWaveTransmission",
+      "expected": 1.0,
+      "absoluteTolerance": 1e-12,
+      "unit": "-",
+      "derivation": "At f=1/(2td), the open stub is open again."
+    },
+    {
+      "metric": "eighthWaveTransmission",
+      "expected": 0.8944271909999159,
+      "absoluteTolerance": 1e-10,
+      "unit": "-",
+      "derivation": "At f=1/(8td), normalized shunt admittance is j; S21=2/(2+j)."
+    },
+    {
+      "metric": "quarterWaveReflection",
+      "expected": 1.0,
+      "absoluteTolerance": 1e-10,
+      "unit": "-",
+      "derivation": "A lossless shunt short reflects all incident power."
+    }
+  ],
+  "evidence": {
+    "type": "analytical",
+    "provenance": "First-principles network limits or algebraic reduction of the declared teaching loop, independent of production numerical output."
+  },
+  "prediction": "Can an open-ended branch suppress transmission on the through path?",
+  "explanation": "Yes. The impedance seen at the junction depends on electrical length. At quarter wave the open end transforms into a short; at half wave it transforms back to an open.",
+  "limitations": [
+    "Ideal lossless open stub.",
+    "Exact-null evaluation is a floating-point approximation to a singular tangent.",
+    "No finite-bandwidth impulse reconstruction is inferred."
+  ],
+  "relatedPage": "/topics/labs/one-channel.html",
+  "availability": "helper-only"
+}

@@ -1,0 +1,397 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Decoupling Capacitors: ESR, ESL, and Placement | SIPI</title>
+<meta name="description" content="How capacitance, ESR, ESL, mounting-loop geometry, placement, and anti-resonance shape a practical decoupling network.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<link rel="stylesheet" href="../../css/base.css?v=e4f774de">
+<link rel="stylesheet" href="../../css/components.css?v=295837ab">
+  <!-- meta:start -->
+  <link rel="canonical" href="https://sipi.work/topics/power-integrity/decoupling-capacitors.html">
+  <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="SIPI">
+  <meta property="og:title" content="Decoupling Capacitors: ESR, ESL, and Placement | SIPI">
+  <meta property="og:description" content="How capacitance, ESR, ESL, mounting-loop geometry, placement, and anti-resonance shape a practical decoupling network.">
+  <meta property="og:url" content="https://sipi.work/topics/power-integrity/decoupling-capacitors.html">
+  <meta property="og:image" content="https://sipi.work/assets/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Decoupling Capacitors: ESR, ESL, and Placement | SIPI">
+  <meta name="twitter:description" content="How capacitance, ESR, ESL, mounting-loop geometry, placement, and anti-resonance shape a practical decoupling network.">
+  <meta name="twitter:image" content="https://sipi.work/assets/og.png">
+  <!-- meta:end -->
+</head>
+<body>
+
+<header class="masthead">
+  <a class="wordmark" href="../../index.html">SIPI</a>
+  <nav>
+    <a href="../../index.html#fundamentals">Fundamentals</a>
+    <a href="../../index.html#power-integrity">Power</a>
+    <a href="../../index.html#interfaces">Interfaces</a>
+    <a href="../../start.html">Start</a>
+    <a href="../../labs.html">Labs</a>
+    <a href="../../reference.html">Reference</a>
+    <button class="theme-toggle" data-act="theme" type="button">System</button>
+  </nav>
+</header>
+
+<main>
+  <div class="page-head">
+    <p class="crumb"><a href="../../index.html#power-integrity">Power Integrity</a> / 03</p>
+    <h1>Decoupling Capacitors: ESR, ESL, and Placement</h1>
+    <p class="byline">
+      <!-- review:start --><span>By Geetansh Arora — Principal SI/PI Engineer</span><time datetime="2026-09-14" title="Technical review by Geetansh Arora on this date">14 Sep 2026</time><span>10 min</span><!-- review:end -->
+    </p>
+    <p class="answer">
+      A decoupling capacitor is a local reserve of charge, placed close enough to the load that it
+      can supply a current burst before the regulator has noticed. What limits it is not how much
+      charge it holds &#8212; it is also the <em>inductance of the loop</em> the current has to travel
+      to get out of it. Capacitance value, loop geometry, ESR, and the rest of the PDN therefore
+      belong in the same design question.
+    </p>
+  </div>
+
+  <!-- ───────────── the picture ───────────── -->
+  <section class="instrument" data-viz="pdnImpedance" aria-label="Interactive PDN impedance plot">
+    <script type="application/json" data-contract>{"kind":"analytical","evidence":"independent","purpose":"Show a capacitor bank's impedance and where mounting inductance takes over.","equations":["Z=R/N+j(w*L/N-1/(w*C*N))"],"units":"Hz, ohm","validity":"Lumped; no plane modes; no package.","numerics":"Direct complex evaluation.","limitations":"Lumped; no plane modes; no package.","suites":["PDN"],"version":"2.0","reviewed":"2026-09-12","panel":"pdnImpedance"}</script>
+    <div class="instrument__bar">
+      <span class="instrument__title">Board PDN · 1 kHz – 100 MHz · Z<sub>target</sub> = 20 mΩ</span>
+        <span data-evidence="independent" data-model-version="2.0" class="model-tag model-tag--analytical" title="Complex parallel RLC admittance. Exact for lumped branches; a real plane is distributed.">analytical</span>
+      <span class="instrument__readout" role="status" aria-live="polite" aria-label="Current values">
+        <span>peak <b data-out="peak">—</b></span>
+        <span>at <b data-out="fpeak">—</b></span>
+        <span>100 nF SRF <b data-out="srf">—</b></span>
+      </span>
+    </div>
+
+    <div class="panels">
+      <div class="panel">
+        <span class="panel__label">Impedance magnitude vs frequency — log/log</span>
+        <canvas data-cv="zplot" role="img"
+          aria-label="Magnitude of PDN impedance plotted against frequency on logarithmic axes, from 1 kHz to 100 MHz, showing the capacitor banks combining and the anti-resonance peak between them."></canvas>
+        <div class="legend">
+          <span><i style="background:var(--signal)"></i>total network</span>
+          <span><i class="dash" style="color:var(--muted)"></i>individual banks</span>
+          <span><i class="dash" style="color:var(--muted)"></i>target impedance</span>
+          <span><i style="background:var(--alarm)"></i>peak over target</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="controls">
+      <div class="ctl">
+        <div class="ctl__head"><label for="pdn-esl">Mounting inductance</label><output id="pdn-esl-out" for="pdn-esl">1.20 nH</output></div>
+        <input type="range" id="pdn-esl" min="300" max="2500" step="50" value="1200">
+        <span class="ctl__note">Loop, not the part — this is the lever that matters</span>
+      </div>
+      <div class="ctl">
+        <div class="ctl__head"><label for="pdn-n">100 nF capacitors</label><output id="pdn-n-out" for="pdn-n">8 × 100 nF</output></div>
+        <input type="range" id="pdn-n" min="0" max="24" step="1" value="8">
+        <span class="ctl__note">n in parallel divides that branch by n</span>
+      </div>
+      <div class="ctl">
+        <div class="ctl__head"><label for="pdn-esr">ESR scale</label><output id="pdn-esr-out" for="pdn-esr">1.00×</output></div>
+        <input type="range" id="pdn-esr" min="25" max="400" step="5" value="100">
+        <span class="ctl__note">Lower ESR: lower floor, taller peak</span>
+      </div>
+      <div class="ctl">
+        <div class="ctl__head"><label for="pdn-mid">Second value</label></div>
+        <label class="check" for="pdn-mid"><input type="checkbox" id="pdn-mid" checked> add the 1 µF bank</label>
+        <label class="check" for="pdn-branches"><input type="checkbox" id="pdn-branches" checked> show each bank</label>
+      </div>
+    </div>
+
+    <div class="presets">
+      <button class="preset" type="button" data-preset="one" aria-pressed="false">One value only</button>
+      <button class="preset" type="button" data-preset="two" aria-pressed="false">Two values</button>
+      <button class="preset" type="button" data-preset="lowesr" aria-pressed="false">Low ESR</button>
+      <button class="preset" type="button" data-preset="damped" aria-pressed="false">Damped</button>
+      <button class="preset" type="button" data-preset="badmount" aria-pressed="false">Bad mounting</button>
+    </div>
+
+    <div class="transport">
+      <button type="button" data-act="play" aria-pressed="false">▶ Replay</button>
+      <span data-out="note">—</span>
+    </div>
+  </section>
+
+  <div class="prose">
+    <h2>Why a capacitor helps at all</h2>
+
+    <p>
+      In beginner textbooks, decoupling capacitors are frequently described as &ldquo;filters that short high-frequency
+      noise to ground.&rdquo; While that filter model is useful in low-speed analog filtering, it misrepresents what
+      happens on a high-speed digital rail. In a digital system, a decoupling capacitor is not a passive sponge soaking
+      up noise &#8212; it is an active, local charge reservoir parked as close to the chip as physical layout allows.
+    </p>
+
+    <p>
+      When clock gates fire and millions of transistors switch simultaneously, they demand an immediate surge of
+      charge within tens of picoseconds. The main voltage regulator is parked centimetres away; hindered by signal
+      propagation delays and the series inductance of power planes, it cannot respond for hundreds of nanoseconds or
+      microseconds. During that critical window, the decoupling capacitor stands in for the regulator, dumping its
+      stored charge directly into the rail to keep the voltage from collapsing.
+    </p>
+
+    <p>
+      When the load suddenly demands more current, that current has to come from somewhere. The
+      regulator is centimetres away behind a lot of inductance, so it cannot respond quickly. A
+      capacitor sitting next to the load already holds charge, and charge that is already there can
+      move immediately.
+    </p>
+
+    <p>
+      So a decoupling capacitor is not smoothing anything in the way the name suggests. It is a
+      <em>local source</em>, standing in for the regulator over the timescales the regulator cannot
+      reach. The question is how short a timescale it can cover.
+    </p>
+
+    <p>
+      And that is not set by the capacitance. Getting current out of a capacitor means pushing it
+      around a loop — through the part, its pads, the vias down to the planes, along the planes, and
+      back. That loop is an inductor, and an inductor is exactly the thing that resists a sudden
+      change in current. The capacitor can only respond as fast as its own loop allows.
+    </p>
+
+    <h2 class="section-rule"><span>The part is an RLC</span></h2>
+
+    <p>
+      A real capacitor has three elements in series: the capacitance you wanted, the equivalent series
+      resistance, and the equivalent series inductance. Its impedance falls as 1/ωC, bottoms out at
+      ESR, then rises as ωL. The turning point is the self-resonant frequency:
+    </p>
+
+    <div class="eq">
+      <i class="var">f</i><sub>SRF</sub> = 1 / ( 2π √( <i class="var">L</i>·<i class="var">C</i> ) )
+      <span class="cap">A 100 nF 0402 with 1.5 nH of total loop inductance resonates at about 13 MHz. Above that the inductive term dominates the branch's own impedance. Not a cliff: near resonance the capacitive and inductive reactances are comparable and ESR sets the floor, and the capacitance still matters in the NETWORK &#8212; it is what resonates against the next stage's inductance to make an anti-resonance. What stops scaling with C, well above the SRF, is that branch's contribution to lowering the impedance.</span>
+    </div>
+
+    <p>
+      In this example, a part used for high-frequency decoupling is inductive above roughly thirteen
+      megahertz. Well above its series resonance, the branch impedance is increasingly set by
+      <strong>L</strong>, so mounting-loop inductance becomes as important as the nominal value.
+    </p>
+
+    <h2 class="section-rule"><span>The inductance you built, not the one you bought</span></h2>
+
+    <p>
+      To see why layout matters more than the capacitor catalog, look at the arithmetic of a real mounting loop.
+      Consider a standard 100 nF capacitor in an 0402 package:
+    </p>
+
+    <ul class="tight">
+      <li><strong>The part itself (<span class="num">L<sub>part</sub></span>):</strong> The internal metal plates and
+        end metallization contribute roughly <span class="num">0.4 nH</span> of equivalent series inductance (ESL).
+        This is what you bought from the component vendor.</li>
+      <li><strong>The mounting loop (<span class="num">L<sub>mount</sub></span>):</strong> The surface pads, fanout traces,
+        the pair of vias travelling down to internal plane layers, and the small loop enclosed between power and ground
+        vias easily add <span class="num">1.2 nH</span>. This is what you built on the PCB.</li>
+    </ul>
+
+    <p>
+      The total branch inductance is the sum:
+      <span class="num">L<sub>total</sub> = L<sub>part</sub> + L<sub>mount</sub> = 0.4 nH + 1.2 nH = 1.6 nH</span>.
+      The mounting loop contributes 75% of the total inductance. If you evaluate the self-resonant frequency
+      with datasheet ESL alone, you would expect resonance at
+      <span class="num">f<sub>SRF</sub> = 1 / (2&#960; &#8730;(0.4 nH &#215; 100 nF)) &#8776; 25.2 MHz</span>.
+      In reality, with the 1.2 nH mounting loop included, the true resonance collapses to
+      <span class="num">f<sub>SRF</sub> = 1 / (2&#960; &#8730;(1.6 nH &#215; 100 nF)) &#8776; 12.6 MHz</span>.
+      At 50 MHz, the mounted capacitor's impedance is four times higher than the datasheet curve promised &#8212; entirely
+      because of the loop you etched into the board.
+    </p>
+
+    <p>
+      The part's own ESL for an 0402 is a few hundred picohenries. The loop it sits in &#8212; pad, via down
+      to the plane, the plane pair, and back &#8212; is routinely two to three times that. So the mounting
+      dominates, and the levers are all layout:
+    </p>
+
+    <ul class="tight">
+      <li><strong>Shorten the via.</strong> The loop's area is set mostly by how far the capacitor has
+        to reach to get to its plane pair. A power/ground pair near the surface makes every capacitor
+        on that surface better.</li>
+      <li><strong>Thin the plane-pair dielectric.</strong> The two planes are the return path for each
+        other; bringing them closer shrinks the loop directly.</li>
+      <li><strong>Via-in-pad, or vias at both ends.</strong> Removing the fanout trace removes real loop
+        area. Two vias per terminal roughly halves that contribution.</li>
+      <li><strong>Reverse-geometry parts.</strong> An 0204 puts the terminals on the long edges, which
+        shortens the current path through the part itself.</li>
+    </ul>
+
+    <div class="note">
+      <b>Why placement and current-path geometry matter</b>
+      Ten identical capacitors in parallel divide the inductance by ten <em>only if their loops are
+      genuinely independent</em>. Crowd them so they share vias, share plane current paths, or sit in
+      each other's spreading field, and the improvement can be much smaller. A capacitor a few
+      millimetres farther away can provide the lower-impedance path when its vias and planes form a
+      shorter, wider loop than those of a closer part. Placement is therefore a statement about the
+      complete current path, rather than centre-to-centre distance alone.
+    </div>
+
+    <p>
+      ESR is loss, but it also provides damping for resonances between capacitor banks. A set of
+      very low-ESR parts produces a lower impedance floor
+      and taller, sharper peaks between the floors. Controlled-ESR capacitors exist precisely for this,
+      and on some rails deliberately choosing a lossier part is a practical way to flatten a curve.
+    </p>
+
+    <h2 class="section-rule"><span>Why this decides how your board behaves</span></h2>
+
+    <ul class="tight">
+      <li><strong>Above its SRF, the branch becomes inductive while remaining part of the network.</strong>
+        It may no longer lower the impedance at that frequency, but its capacitance still resonates against the next stage's
+        inductance — which is how a peak gets created. Adding parts can make a peak worse. See
+        <a href="anti-resonance.html">anti-resonance</a>.</li>
+      <li><strong>Parts in parallel divide ESR as well as ESL.</strong> Lower ESR means less damping,
+        so a bank of many low-ESR capacitors can have a <em>higher</em> anti-resonant peak than a
+        smaller bank. This is why part count and impedance do not always improve together.</li>
+      <li><strong>Mounting can matter more than nominal value.</strong> The mounting loop typically contributes
+        two to three times the part's own ESL, so moving a capacitor a couple of millimetres can
+        matter more than changing its value tenfold.</li>
+      <li><strong>At sufficiently high frequency, the package limits support from the board.</strong>
+        Above a few hundred megahertz in the example hierarchy, package inductance can make board
+        capacitors much less effective at the die, increasing the importance of package and on-die capacitance.</li>
+    </ul>
+
+    <h2 class="section-rule"><span>What to do about it</span></h2>
+
+    <p>
+      <strong>Design the mounting before you choose the part.</strong> Get the power and ground
+      planes near the surface the capacitors sit on, keep the vias short and the via pair close
+      together, and use two vias per pad where the space exists. All of that is loop area, and loop
+      area is the number that decides the useful bandwidth.
+    </p>
+
+    <p>
+      <strong>Thin the plane-pair dielectric.</strong> The two planes are each other's return path,
+      and bringing them closer shrinks every capacitor's loop at once — plus it adds a little
+      distributed capacitance for free.
+    </p>
+
+    <p>
+      <strong>Choose values from the impedance curve.</strong> Spreading parts across many decades of
+      capacitance can introduce several anti-resonances. In this lumped example, two or three
+      well-chosen values with suitable damping can give a flatter curve than six; confirm the choice
+      with the mounted models and the full interconnect.
+    </p>
+
+    <p>
+      <strong>Check the capacitance you will actually get.</strong> Class II ceramics lose
+      capacitance with applied DC bias — often half of it or more at rated voltage — and with
+      temperature and age. A 100 nF part biased at 0.75 V may be delivering 50 nF. Use the vendor's
+      bias curve, not the marking.
+    </p>
+
+    <div class="note">
+      <b>Using this to find a fault</b>
+      <ul class="tight">
+        <li><b>Adding capacitors made it worse.</b> Almost certainly damping. More parts in
+          parallel lowered the bank's ESR, and ESR is what was flattening the anti-resonance.</li>
+        <li><b>Two boards with the same BOM behave differently.</b> Look at the mounting, not the
+          parts — via length, via spacing, which plane pair each capacitor reaches.</li>
+        <li><b>Measured impedance higher than simulated across the board.</b> Check whether the
+          model used the part's ESL or the mounted loop inductance. Using the datasheet ESL alone
+          is optimistic by a factor of two or three.</li>
+        <li><b>A rail that degrades over temperature more than the silicon explains.</b> Class II
+          dielectric. The capacitance is temperature-dependent and the curve moves with it.</li>
+      </ul>
+    </div>
+
+    <details class="deeper">
+      <summary>Go deeper — where mounting inductance comes from, and what "many small caps" really buys</summary>
+
+      <p>
+        The loop a decoupling current takes has three parts, and they are worth separating because
+        only two of them are yours to change.
+      </p>
+
+      <ul class="tight">
+        <li><strong>The part's own ESL</strong> — a few hundred picohenries for an 0402, set by the
+          internal electrode geometry. Reverse-geometry and low-inductance parts reduce it, at a
+          cost.</li>
+        <li><strong>The pad and via loop</strong> — pads, the vias down to the plane pair, and the
+          spacing between them. This is usually the largest term, and it is entirely a layout
+          decision.</li>
+        <li><strong>The spreading inductance in the planes</strong> — the current fans out from the
+          via into the plane pair, and that costs inductance too. It is what makes distance from the
+          load matter, and it is why a thinner plane-pair dielectric helps.</li>
+      </ul>
+
+      <p>
+        <strong>What N parts in parallel actually does.</strong> Placing N identical capacitors in
+        parallel gives you N·C, ESR/N and ESL/N. All three change, and they do not all help:
+      </p>
+
+      <div class="eq">
+        <span class="eq__main"><i class="var">f</i><sub>SRF</sub> ∝ 1/√(<i class="var">L</i>/<i class="var">N</i> · <i class="var">N</i><i class="var">C</i>) = 1/√(<i class="var">L</i><i class="var">C</i>)</span>
+        <span class="eq__note">unchanged — paralleling identical parts does not move the resonance, it only lowers the floor</span>
+      </div>
+
+      <p>
+        So the bank's minimum impedance falls as 1/N and its resonant frequency does not move. What
+        <em>does</em> move is the damping: ESR/N means the anti-resonance against the next stage is
+        less damped and therefore taller. That is the mechanism behind the result in
+        <a href="../labs/pdn-chain.html">Lab C</a> where going from 20 to 50 board parts raises the
+        worst peak rather than lowering it.
+      </p>
+
+      <p>
+        <strong>Why the same part behaves differently in two places.</strong> Above the SRF the
+        branch impedance is ωL and nothing else. Two capacitors of identical value with different
+        mounting loops have different L, therefore different SRF, therefore different useful
+        bandwidth — and in a network, different resonances against their neighbours. The part number
+        is genuinely not the interesting variable.
+      </p>
+    </details>
+
+    <h2 class="section-rule"><span>In the real world</span></h2>
+
+    <p>
+      Several familiar decoupling rules were developed for thicker boards, lower frequencies, and
+      more inductive parts. A decade-per-value ladder, a fixed count per power pin, or placing the
+      smallest value closest can be a useful starting heuristic, but each approximates a network whose
+      result depends on mounted impedance and current-path geometry.
+    </p>
+
+    <p>
+      Use capacitor counts and placement rules to form an initial design, then plot the resulting
+      impedance against the target. The curve makes resonances, damping, and mounting trade-offs visible
+      and provides a direct basis for refining the layout.
+    </p>
+
+    <h3>Related</h3>
+    <ul class="tight">
+      <li><a href="../power-integrity/anti-resonance.html">PDN Anti-Resonance and Impedance Peaks</a></li>
+      <li><a href="../power-integrity/target-impedance.html">PDN Target Impedance: Use and Limitations</a></li>
+      <li><a href="../power-integrity/three-frequency-domains.html">PDN Frequency Regions: Board, Package, and Die</a></li>
+      <li><a href="../fundamentals/return-current-paths.html">Return-Current Paths and Reference Continuity</a></li>
+    </ul>
+  </div>
+
+  <!-- pager:start -->
+  <nav class="pager" aria-label="Previous and next topic">
+    <a class="prev" href="../../topics/power-integrity/target-impedance.html"><span class="dir">Previous</span><span>PDN Target Impedance: Use and Limitations</span></a>
+    <a class="next" href="../../topics/power-integrity/anti-resonance.html"><span class="dir">Next</span><span>PDN Anti-Resonance and Impedance Peaks</span></a>
+  </nav>
+  <!-- pager:end -->
+</main>
+
+<footer class="site-foot">
+  <span>SIPI &#8212; signal and power integrity, visualised.</span>
+  <span>Created and directed by Geetansh Arora. <a href="../../colophon.html">About, review &amp; AI assistance</a> &#183; <a href="../../model-contract.html">Model assumptions</a> &#183; <a href="../../docs/claims.md">Claim ledger</a></span>
+</footer>
+
+<script src="../../js/site.js?v=acb47d86"></script>
+<script src="../../js/viz-kit.js?v=a53e49c3"></script>
+<script src="../../js/viz/pdn-impedance.js?v=095ed124"></script>
+<script src="../../js/viz-loader.js?v=89d5884d"></script>
+<script src="../../js/search.js?v=6c93a285"></script>
+</body>
+</html>

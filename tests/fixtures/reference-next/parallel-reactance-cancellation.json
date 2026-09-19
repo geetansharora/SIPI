@@ -1,0 +1,52 @@
+{
+  "schemaVersion": 1,
+  "id": "parallel-reactance-cancellation",
+  "title": "Parallel branches can raise impedance while their currents oppose",
+  "kind": "parallel-rl-rc",
+  "inputs": {
+    "r": 0.001,
+    "l": 1e-09,
+    "c": 1e-06
+  },
+  "inputUnits": {
+    "r": "ohm per branch",
+    "l": "H",
+    "c": "F"
+  },
+  "checks": [
+    {
+      "metric": "impedanceReal",
+      "expected": 0.5005,
+      "absoluteTolerance": 1e-10,
+      "unit": "ohm",
+      "derivation": "At X=ωL=1/(ωC)=sqrt(L/C), 1/(R+jX)+1/(R−jX)=2R/(R²+X²); Z=(R²+X²)/(2R)=.5005 Ω."
+    },
+    {
+      "metric": "impedanceImag",
+      "expected": 0.0,
+      "absoluteTolerance": 1e-10,
+      "unit": "ohm",
+      "derivation": "Equal and opposite branch susceptances cancel."
+    },
+    {
+      "metric": "doubledResistanceReal",
+      "expected": 0.251,
+      "absoluteTolerance": 1e-10,
+      "unit": "ohm",
+      "derivation": "With R=.002 Ω in each branch and the same X, Z=(.002²+.001)/(.004)=.251 Ω."
+    }
+  ],
+  "evidence": {
+    "type": "analytical",
+    "provenance": "First-principles network limits or algebraic reduction of the declared teaching loop, independent of production numerical output."
+  },
+  "prediction": "Can adding branch resistance lower the impedance at a parallel cancellation point?",
+  "explanation": "Yes in this example. Loss limits the circulating currents and lowers impedance at the stated cancellation frequency. This is not a claim that more ESR improves every frequency.",
+  "limitations": [
+    "One series RL branch in parallel with one series RC branch.",
+    "The reference frequency is the susceptance-cancellation point, not a claimed numerical global-peak location.",
+    "A board capacitor-bank anti-resonance is more complex than this ideal two-branch limit."
+  ],
+  "relatedPage": "/topics/power-integrity/anti-resonance.html",
+  "availability": "helper-only"
+}

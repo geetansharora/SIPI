@@ -1,0 +1,84 @@
+{
+  "schemaVersion": 1,
+  "id": "shorted-line",
+  "kind": "line",
+  "model": "labWaves",
+  "modelVersion": "1.2",
+  "contractVersion": "2.2",
+  "params": {
+    "Z0": 50,
+    "Rs": 10,
+    "RL": 0,
+    "open": false,
+    "tr": 60,
+    "len": 3,
+    "xp": 100
+  },
+  "topology": "1 V ideal source, series Rs, uniform 50 Ω lossless line, resistive or ideal-open termination.",
+  "planes": "Load at x=L. Observation is after the first edge has finished; source-matched case is after the return reaches the source.",
+  "evidence": {
+    "type": "analytical",
+    "provenance": "First-principles boundary conditions, linear circuit laws or the declared teaching-loop equation; no measured or licensed data."
+  },
+  "checks": [
+    {
+      "metric": "gammaLoad",
+      "expected": -1.0,
+      "absoluteTolerance": 1e-10,
+      "unit": "-",
+      "derivation": "Open: ΓL=+1; otherwise ΓL=(RL−Z0)/(RL+Z0)."
+    },
+    {
+      "metric": "gammaSource",
+      "expected": -0.6666666666666666,
+      "absoluteTolerance": 1e-10,
+      "unit": "-",
+      "derivation": "ΓS=(Rs−Z0)/(Rs+Z0)."
+    },
+    {
+      "metric": "launchedVoltage",
+      "expected": 0.8333333333333334,
+      "absoluteTolerance": 1e-10,
+      "unit": "V",
+      "derivation": "A 1 V source launches Z0/(Rs+Z0) volts."
+    },
+    {
+      "metric": "loadVoltage",
+      "expected": 0.0,
+      "absoluteTolerance": 1e-10,
+      "unit": "V",
+      "derivation": "Before a later nonzero return reaches the load, VL=a(1+ΓL). With source matching ΓS=0, no further return is launched."
+    },
+    {
+      "metric": "loadCurrent",
+      "expected": 0.03333333333333333,
+      "absoluteTolerance": 1e-10,
+      "unit": "A",
+      "derivation": "IL=a(1−ΓL)/Z0, positive toward the load."
+    }
+  ],
+  "lesson": {
+    "prediction": "Predict the signs of the reflected voltage and load current before opening the result.",
+    "experiment": "Open the scenario, keep its network and stimulus fixed, and inspect the stated observation. Compare with the derived answer before changing one variable.",
+    "explanation": "Forward current is +V/Z0; backward current is −V/Z0. Sum the waves at the same boundary. The launch divider matters: the incident wave is not generally the full source voltage.",
+    "transferQuestion": "If the source resistance changes, does the load reflection coefficient change?",
+    "answer": "No, ΓL depends on the line and load. Source resistance changes the launched amplitude and the later source reflection."
+  },
+  "limitations": [
+    "Uniform lossless line; ideal source/load; no parasitic package or connector.",
+    "The stated time is a settled first-arrival observation, not a finite-edge midpoint.",
+    "No lossless-line result is a hardware compliance verdict."
+  ],
+  "scenario": "/topics/labs/travelling-waves.html#lab=labWaves;v=2.2;lw-z0=50;lw-rs=10;lw-rl=0;lw-open=0;lw-len=3;lw-tr=60;lw-xp=100;lw-t=1020",
+  "timePs": 1020,
+  "parameterUnits": {
+    "Z0": "ohm",
+    "Rs": "ohm",
+    "RL": "ohm",
+    "open": "boolean",
+    "tr": "ps (full edge support)",
+    "len": "in",
+    "xp": "% of line"
+  },
+  "stimulus": "1 V source step; cubic smoothstep centred at zero; timePs specifies observation."
+}
