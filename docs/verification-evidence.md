@@ -297,6 +297,11 @@ screen reader, any observed learner task, and every live-host check. The browser
 zoom or an OS motion preference; an emulated viewport is neither of those things, and recording it as
 one would be the specific error this file exists to prevent.
 
+**Superseded in part on 19 September 2026.** The live-host checks, 200 % zoom, print output and a
+physical phone were performed; see the last section of this file. A screen reader, observed learner
+tasks, reduced motion, native keyboard select and downloaded-PNG appearance remain not done. This
+paragraph is kept because it records what was true when the work above it was written.
+
 ### Review record, 18 September 2026
 
 Geetansh reviewed the whole catalogue at about eight pages a day from 12 to 18 September 2026, in
@@ -319,3 +324,54 @@ This changes nothing about the device and human work. Actual 200 % browser zoom,
 setting, native select by real keyboard, downloaded PNG appearance, print boundaries, a physical
 phone, a screen reader, observed learner tasks and every live-host check remain unperformed and
 unrecorded as passed.
+
+## Live host and device session, 19 September 2026
+
+The site went live on `https://sipi.work` (Cloudflare Workers static assets, release
+`5dc34b8`). Three of the checks listed above as never performed have now been performed,
+and two production defects were found that no local gate could see.
+
+### Live-host checks, machine-verified
+
+All 66 sitemap URLs return `200` with zero redirects, measured against `sipi.work` itself.
+Every excluded path is refused: `.git/config`, `.git/HEAD`, `.git/objects`,
+`wrangler.jsonc`, `.assetsignore`, `_redirects`, `_headers`, `.gitignore`, `scaffold.py`,
+`check`, `mutate.js`, `tests/check-load-order.js`, `tests/panels.json`. Everything the
+pages link to but that is not a page is served: the reference-JSON downloads under
+`tests/fixtures/`, `docs/claims.md`, `llms.txt`, `robots.txt`, `sitemap.xml`. The cache
+policy in `_headers` reached the edge unchanged, immutable on `css/`, `js/` and `assets/`,
+revalidating on HTML and JSON. TLS issued 19 September 2026 by Google Trust Services.
+
+A 404 at `/topics/interfaces/typo-that-does-not-exist` renders fully styled, and the
+network log shows why: `css/base.css`, `css/components.css` and `js/site.js` each return
+`200` from the root rather than from the missing directory. That is the first observation
+of the root-absolute `404.html` fix under the condition it was written for, since the
+defect exists at every path except the page's own.
+
+Lab D on the live host: five canvases, 78 controls, model registered, no console errors,
+no failed requests, device-pixel-ratio honoured. Driving the architecture control from SAR
+to delta-sigma republished the measurements — SNR 85.2 to 79.3 dB, ENOB 14.02 to 14.18
+bits — and the modulator panel went from its "a SAR has no modulator" message to a drawn
+spectrum. The model runs in production, not only in the gate.
+
+### Human session, reported by Geetansh
+
+Performed on the live site after launch, on his own devices:
+
+| Check | Result |
+|---|---|
+| Physical phone | Works. **Lab dashboards are large and awkward to use at phone size.** Deferred, not fixed. |
+| Actual 200 % browser zoom | Works, and reads well. |
+| Print output | Acceptable, **not good**. Deferred, not optimised. |
+
+These are Geetansh's observations on real devices, which is what makes them admissible
+here; they are not screenshots from an emulated viewport. Two of the three carry a
+qualification, recorded as given rather than rounded up to a pass. The phone result is
+"the site works, the labs are hard to operate", which is not the same as a phone pass for
+the labs.
+
+### Still not done
+
+A screen reader, and any observed learner task. Also still open: the operating system's
+reduced-motion setting, native select operated by a real keyboard, and the appearance of a
+downloaded PNG. Nothing in this section should be read as covering those.
