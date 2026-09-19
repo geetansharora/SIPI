@@ -1,0 +1,17 @@
+# Cloudflare rewrite rules. Consumed as configuration, never served.
+#
+# `html_handling: "none"` in wrangler.jsonc serves only exact file paths, which
+# is what keeps /foo.html at a direct 200 instead of a 308 to /foo. The cost is
+# that it also switches off the directory-index mapping, so a request for `/`
+# matches no asset and falls through to 404.html. That is not a corner case:
+# `/` is the site's front door, the first entry in sitemap.xml, and the
+# canonical and og:url declared by index.html.
+#
+# A 200 is a rewrite, not a redirect. The visitor's URL stays `https://sipi.work/`,
+# the canonical stays true, and no hop is introduced. Serving index.html at
+# /index.html and calling THAT the canonical would be the alternative, and it is
+# worse: it publishes a filename as the identity of the homepage.
+#
+# Rules are evaluated before `_headers`. Both `/` and `/*.html` carry the same
+# revalidating Cache-Control, so the rewrite cannot change the cache policy.
+/    /index.html    200

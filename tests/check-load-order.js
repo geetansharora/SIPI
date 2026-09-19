@@ -142,4 +142,75 @@ for (const order of [
     + 'referenced by any of the ' + pages.length + ' served pages, none inert.');
 }
 
+/* Every absolute URL the repository DECLARES -- sitemap entries, canonical links,
+   og:url -- has to be one the host will actually serve. Local checks cannot see
+   this, because they verify that files exist and that links resolve, and both are
+   true of a URL the host refuses.
+
+   This is not hypothetical. `html_handling: "none"` is what keeps /foo.html at a
+   direct 200, and it also switches off the directory-index mapping, so `/` matched
+   no asset and the homepage returned 404 in production while every gate here was
+   green. `_redirects` now rewrites it. The rule below is the general form of that
+   mistake: a declared URL must resolve to a real served file, or be covered by a
+   rewrite. */
+{
+  const root = path.join(__dirname, '..');
+  const ORIGIN = 'https://sipi.work';
+
+  const rules = fs.readFileSync(path.join(root, '_redirects'), 'utf8')
+    .split('\n').map((l) => l.trim()).filter((l) => l && !l.startsWith('#'))
+    .map((l) => l.split(/\s+/));
+  for (const r of rules) {
+    assert(r.length === 3 && /^\d{3}$/.test(r[2]),
+      '_redirects line this gate cannot evaluate: ' + r.join(' '));
+    assert(!r[0].includes('*') && !r[0].includes(':'),
+      '_redirects uses a dynamic rule; extend the matcher rather than trusting it');
+  }
+  const rewritten = new Map(rules.map((r) => [r[0], r]));
+
+  const declared = new Set();
+  const addFrom = (text, re) => {
+    for (const m of text.matchAll(re)) if (m[1].startsWith(ORIGIN)) declared.add(m[1]);
+  };
+  addFrom(fs.readFileSync(path.join(root, 'sitemap.xml'), 'utf8'), /<loc>([^<]+)<\/loc>/g);
+
+  const pages = [];
+  const collect = (dir) => {
+    for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
+      if (e.name === '.git' || e.name === 'node_modules' || e.name === 'tests') continue;
+      const full = path.join(dir, e.name);
+      if (e.isDirectory()) { collect(full); continue; }
+      if (e.name.endsWith('.html')) pages.push(full);
+    }
+  };
+  collect(root);
+  for (const f of pages) {
+    const html = fs.readFileSync(f, 'utf8');
+    addFrom(html, /rel="canonical"\s+href="([^"]+)"/g);
+    addFrom(html, /property="og:url"\s+content="([^"]+)"/g);
+  }
+  assert(declared.size > 60, 'expected the site\'s declared URLs, found ' + declared.size);
+
+  const unserved = [];
+  for (const url of declared) {
+    let rel = url.slice(ORIGIN.length) || '/';
+    const rule = rewritten.get(rel);
+    if (rule) {
+      /* A rewrite only helps if its target is itself a real file. */
+      if (rule[2] === '200') rel = rule[1];
+      else continue;
+    }
+    const file = path.join(root, rel.replace(/^\//, ''));
+    if (!fs.existsSync(file) || !fs.statSync(file).isFile()) {
+      unserved.push(url + (rule ? ' (via ' + rule[1] + ')' : ''));
+    }
+  }
+  assert.deepEqual(unserved, [],
+    'the site declares these URLs but the host has no exact asset for them, and no '
+    + '_redirects rule covers them, so they 404 in production:\n  ' + unserved.join('\n  '));
+
+  console.log('Declared URLs: ' + declared.size + ' canonical/sitemap URL(s) all map to a '
+    + 'served file, ' + rules.length + ' via a _redirects rewrite.');
+}
+
 console.log('Script registration: both search/plot load orders passed.');
