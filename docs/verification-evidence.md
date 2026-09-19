@@ -375,3 +375,34 @@ the labs.
 A screen reader, and any observed learner task. Also still open: the operating system's
 reduced-motion setting, native select operated by a real keyboard, and the appearance of a
 downloaded PNG. Nothing in this section should be read as covering those.
+
+### Routing closed out, 19 September 2026
+
+Two hostname settings were reported done and were not, and both took a request
+from outside to show it. They are recorded here because each failed in a way its
+own interface showed as correct.
+
+`workers.dev` was switched off in the dashboard, and both toggles read as off
+there. Cloudflare re-enables that route on the next Wrangler deploy unless the
+Wrangler configuration says otherwise, and this project deploys on every push, so
+the toggle lasted until the next commit — under an hour. The whole site was being
+served again at `sipi.geetansh1991.workers.dev` with no `x-robots-tag`. The
+preview wildcard stayed off throughout, because nothing re-enables it, and that
+asymmetry is what identified the cause. `"workers_dev": false` in
+`wrangler.jsonc` is the setting that persists; the route went down about 30
+seconds after the deploy carrying it. Verified on uncached paths: `/`,
+`/labs.html`, a lab page and `/sitemap.xml` all return 404. `/robots.txt` still
+answers there, but it is Cloudflare's platform file for that hostname — no
+`nosniff` header from `_headers`, and no `User-agent` or `Disallow` line.
+
+The `www` rule was configured exactly as this project's runbook described and
+sent every request to `https://sipi.work/s`, a 404. The runbook was wrong. The
+pattern `http*://www.sipi.work/*` has two wildcards: the `*` in `http*` is
+`${1}`, so it substituted the "s" of "https", and the path is `${2}`. The first
+diagnosis recorded here — that the target had been stored as a static string —
+was also wrong, and the evidence against it was already in the same output: a
+plain `http://` request redirected to `https://sipi.work/` with nothing after the
+slash, and a static string cannot vary with the scheme. Corrected to `${2}` and
+verified by requesting all 66 sitemap paths through `www`: 66 of 66 land on their
+own apex path in one hop, query strings preserved, and the apex itself does not
+redirect, so there is no loop.
