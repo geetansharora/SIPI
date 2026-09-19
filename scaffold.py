@@ -566,18 +566,68 @@ def cmd_titles():
     print(f"updated titles or title references in {changed} page(s)")
 
 
+def stamp_masthead():
+    """One definition of the site header, stamped onto every page.
+
+    It was 67 hand-written copies. They happened to agree, but adding a link meant
+    67 edits and nothing checked that they still matched afterwards.
+
+    The bar holds destinations, not section anchors. Fundamentals, Power and
+    Interfaces used to sit here -- three of the eight sections, chosen for no
+    stated reason, each jumping to an anchor on the homepage. `Topics` reaches the
+    whole map instead, and the space pays for `About`, which had no route from the
+    header at all.
+    """
+    n = 0
+    for f in site_html():
+        rel = f.relative_to(ROOT)
+        prefix = "../../" if rel.parts and rel.parts[0] == "topics" else ""
+        links = [
+            (f"{prefix}index.html#groundwork", "Topics"),
+            (f"{prefix}start.html", "Start"),
+            (f"{prefix}labs.html", "Labs"),
+            (f"{prefix}reference.html", "Reference"),
+            (f"{prefix}colophon.html", "About"),
+        ]
+        nav = "\n".join(f'    <a href="{href}">{label}</a>' for href, label in links)
+        head = (f'<header class="masthead">\n'
+                f'  <a class="wordmark" href="{prefix}index.html">SIPI</a>\n'
+                f'  <nav aria-label="Site">\n'
+                f'{nav}\n'
+                f'    <button class="theme-toggle" data-act="theme" type="button">Light</button>\n'
+                f'  </nav>\n'
+                f'</header>')
+        html = f.read_text(encoding="utf-8")
+        new, hits = re.subn(r'<header class="masthead">[\s\S]*?</header>', head, html, count=1)
+        if hits and new != html:
+            f.write_text(new, encoding="utf-8")
+            n += 1
+    return n
+
+
 def stamp_footer():
     """Keep authorship concise in the footer and detailed in the colophon."""
     n = 0
     for f in site_html():
         rel = f.relative_to(ROOT)
         prefix = "../../" if rel.parts and rel.parts[0] == "topics" else ""
+        # "Claim ledger" pointed at docs/claims.md, which Cloudflare serves as
+        # text/markdown with nosniff -- so on all 67 pages that link downloaded a
+        # file instead of opening one. _headers now serves markdown as plain text,
+        # and the label says what the reader is getting.
         footer = (f'<footer class="site-foot">\n'
                   f'  <span>SIPI &#8212; signal and power integrity, visualised.</span>\n'
+                  f'  <nav class="site-foot__nav" aria-label="Site, footer">\n'
+                  f'    <a href="{prefix}start.html">Start</a>\n'
+                  f'    <a href="{prefix}labs.html">Labs</a>\n'
+                  f'    <a href="{prefix}reference.html">Reference</a>\n'
+                  f'    <a href="{prefix}colophon.html">About &amp; AI disclosure</a>\n'
+                  f'    <a href="{prefix}model-contract.html">Model assumptions</a>\n'
+                  f'    <a href="{prefix}docs/claims.md">Claim ledger (Markdown)</a>\n'
+                  f'  </nav>\n'
                   f'  <span>Created and directed by Geetansh Arora. '
-                  f'<a href="{prefix}colophon.html">About, review &amp; AI assistance</a> &#183; '
-                  f'<a href="{prefix}model-contract.html">Model assumptions</a> &#183; '
-                  f'<a href="{prefix}docs/claims.md">Claim ledger</a></span>\n'
+                  f'Text <a href="{prefix}LICENSE-CONTENT">CC BY 4.0</a>, '
+                  f'code <a href="{prefix}LICENSE-CODE">MIT</a>.</span>\n'
                   f'</footer>')
         html = f.read_text(encoding="utf-8")
         new, hits = re.subn(r'<footer class="site-foot">[\s\S]*?</footer>', footer, html, count=1)
@@ -589,9 +639,11 @@ def stamp_footer():
 
 def cmd_identity():
     cmd_titles()
+    heads = stamp_masthead()
     footers = stamp_footer()
     reviews = stamp_review()
-    print(f"updated {footers} footer(s) and {reviews} review-status block(s)")
+    print(f"updated {heads} masthead(s), {footers} footer(s) and "
+          f"{reviews} review-status block(s)")
 
 
 def cmd_relink():
@@ -755,6 +807,60 @@ def _meta_block(url, title, desc):
             "  <!-- meta:end -->")
 
 
+
+THEME_MARKERS = ("  <!-- theme:start -->", "  <!-- theme:end -->")
+
+# Inline, blocking, and in <head> on purpose. The theme used to be applied by
+# site.js at DOMContentLoaded, which is after the first paint: a reader with a
+# stored preference saw the page render in one palette and swap to the other,
+# and on a phone moving between pages that reads as the site flashing. Nothing
+# asynchronous can fix that -- the attribute has to be on <html> before the
+# browser paints, which means a blocking script, which means inline.
+#
+# It is deliberately tiny and deliberately total: it reads one key, sets one
+# attribute, and swallows every error, because localStorage throws in private
+# mode on some browsers and a theme preference is never worth a broken page.
+# Light needs no attribute at all -- it is what :root already is -- so the
+# default costs nothing and the no-JavaScript case lands on it too.
+THEME_BOOT = """  <!-- theme:start -->
+  <meta name="theme-color" content="#F7F8FA">
+  <script>(function(){try{var t=localStorage.getItem('sipi-theme');\
+if(t==='dark'||t==='system'){document.documentElement.setAttribute('data-theme',t);\
+var m=document.querySelector('meta[name=theme-color]');\
+if(m&&(t==='dark'||matchMedia('(prefers-color-scheme:dark)').matches))m.content='#0B1015';}}catch(e){}})();</script>
+  <!-- theme:end -->"""
+
+
+def stamp_theme_boot(html):
+    """Put the pre-paint theme block in <head>, replacing any earlier copy."""
+    block = THEME_BOOT
+    new, hits = re.subn(r"  <!-- theme:start -->.*?<!-- theme:end -->",
+                        lambda _m: block, html, flags=re.S)
+    if hits:
+        return new
+    # A page may already carry a hand-written theme-color; the block owns it now.
+    html = re.sub(r'\n\s*<meta name="theme-color"[^>]*>', "", html, count=1)
+    m = re.search(r'(<meta name="viewport"[^>]*>)', html)
+    if m:
+        return html.replace(m.group(1), m.group(1) + "\n" + block, 1)
+    return html.replace("</head>", block + "\n</head>", 1)
+
+
+def cmd_theme():
+    """Stamp the pre-paint theme boot block on every page."""
+    n = 0
+    for f in sorted(ROOT.rglob("*.html")):
+        rel = f.relative_to(ROOT).as_posix()
+        if rel.startswith("tests/") or "experimental" in rel:
+            continue
+        html = f.read_text(encoding="utf-8")
+        new = stamp_theme_boot(html)
+        if new != html:
+            f.write_text(new, encoding="utf-8")
+            n += 1
+    print(f"  theme boot stamped on {n} page(s)")
+
+
 def cmd_meta():
     """Stamp canonical + OpenGraph tags on every page, and write sitemap/robots.
 
@@ -774,10 +880,18 @@ def cmd_meta():
         return (t.replace("&", "&amp;").replace("<", "&lt;")
                  .replace(">", "&gt;").replace('"', "&quot;"))
 
-    def block(url, title, desc, is_home=False):
+    def block(url, title, desc, is_home=False, kind="article", crumb=None,
+              reviewed=None):
+        """kind is the Open Graph type, and it is not decorative.
+
+        Every page declared og:type="article", including the homepage and the
+        three hub pages, which are collections rather than articles. `website`
+        is the type for those, and telling an aggregator that a site root is an
+        article is telling it something untrue.
+        """
         og = "\n".join(
             f'  <meta property="{k}" content="{v}">' for k, v in [
-                ("og:type", "article"), ("og:site_name", esc(name)),
+                ("og:type", kind), ("og:site_name", esc(name)),
                 ("og:title", esc(title)), ("og:description", esc(desc)),
                 ("og:url", url), ("og:image", base + "/assets/og.png"),
                 ("og:image:width", "1200"), ("og:image:height", "630"),
@@ -805,35 +919,81 @@ def cmd_meta():
                            },
                        }, ensure_ascii=False, separators=(",", ":"))
                        .replace("</", "<\\/") + '</script>')
+        # A topic page is a technical article inside a named section, and both
+        # facts are already in topics.json. This is not decoration: a
+        # BreadcrumbList is how a result reads "SIPI > Fundamentals > ..."
+        # instead of a bare URL, and TechArticle is what these pages are.
+        # Nothing is invented -- headline, section and date all come from the
+        # source the page itself was stamped from.
+        if crumb:
+            art = {
+                "@context": "https://schema.org",
+                "@type": "TechArticle",
+                "headline": title.split(" | ")[0],
+                "description": desc,
+                "url": url,
+                "articleSection": crumb[0],
+                "isPartOf": {"@type": "WebSite", "name": "SIPI", "url": base + "/"},
+                "author": {"@type": "Person", "name": "Geetansh Arora",
+                           "jobTitle": "Principal SI/PI Engineer"},
+                "publisher": {"@type": "Person", "name": "Geetansh Arora"},
+            }
+            if reviewed:
+                art["dateModified"] = reviewed
+            crumbs = {
+                "@context": "https://schema.org",
+                "@type": "BreadcrumbList",
+                "itemListElement": [
+                    {"@type": "ListItem", "position": 1, "name": "SIPI",
+                     "item": base + "/"},
+                    {"@type": "ListItem", "position": 2, "name": crumb[0],
+                     "item": base + "/#" + crumb[1]},
+                    {"@type": "ListItem", "position": 3,
+                     "name": title.split(" | ")[0]},
+                ],
+            }
+            for obj in (art, crumbs):
+                website += ('\n  <script type="application/ld+json">'
+                            + json.dumps(obj, ensure_ascii=False,
+                                         separators=(",", ":"))
+                            .replace("</", "<\\/") + "</script>")
         return ('  <!-- meta:start -->\n'
                 f'  <link rel="canonical" href="{url}">\n'
                 f'  <link rel="describedby" href="{base}/llms.txt" type="text/markdown">\n'
                 f'{og}\n{tw}{website}\n'
                 '  <!-- meta:end -->')
 
-    pages = [(ROOT / "index.html", base + "/", None, None)]
+    pages = [(ROOT / "index.html", base + "/", None, None, "website", None, None)]
     for t in flat:
         if not t["path"].exists():
             continue
-        pages.append((t["path"], f'{base}/topics/{t["section_id"]}/{t["slug"]}.html', None, None))
+        pages.append((t["path"],
+                      f'{base}/topics/{t["section_id"]}/{t["slug"]}.html',
+                      None, None, "article",
+                      (t["section"], t["section_id"]), t.get("reviewed")))
     # M5-7 · The standalone pages are not topics, so they were not in this list
     # and quietly shipped with no canonical URL and no card. A Pages preview
     # domain then serves each of them twice as far as a crawler is concerned,
     # which is the exact problem canonical tags exist for.
+    # start, labs and reference are collections of links rather than prose, so
+    # they are websites; the colophon and the model contract are documents.
+    HUBS = {"start", "labs", "reference"}
     for stem in ("start", "labs", "reference", "model-contract", "colophon"):
         f = ROOT / (stem + ".html")
         if f.exists():
-            pages.append((f, f"{base}/{stem}.html", None, None))
+            pages.append((f, f"{base}/{stem}.html", None, None,
+                          "website" if stem in HUBS else "article", None, None))
 
     n = 0
-    for path, url, title, desc in pages:
+    for path, url, title, desc, kind, crumb, reviewed in pages:
         html = path.read_text(encoding="utf-8")
         if title is None:
             m = re.search(r"<title>(.*?)</title>", html, re.S)
             title = m.group(1).strip() if m else path.stem
             m = re.search(r'<meta name="description" content="(.*?)">', html, re.S)
             desc = m.group(1).strip() if m else ""
-        b = block(url, title, desc, path.name == "index.html")
+        b = block(url, title, desc, path.name == "index.html", kind, crumb,
+                  reviewed)
         new, hits = re.subn(r"  <!-- meta:start -->.*?<!-- meta:end -->", lambda _m: b, html, flags=re.S)
         if not hits:                       # first run: insert just before </head>
             new = html.replace("</head>", b + "\n</head>", 1)
@@ -843,7 +1003,7 @@ def cmd_meta():
 
     # sitemap — every page, one source of truth
     urls = "\n".join(
-        f"  <url><loc>{u}</loc></url>" for _p, u, _t, _d in pages)
+        f"  <url><loc>{u}</loc></url>" for _p, u, *_rest in pages)
     (ROOT / "sitemap.xml").write_text(
         '<?xml version="1.0" encoding="UTF-8"?>\n'
         '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
@@ -1428,7 +1588,13 @@ def stamp_sources():
                 n += 1
             continue
         items = "".join(
-            f'\n      <li><a href="{esc(u)}" rel="noopener">{esc(t)}</a>'
+            # target="_blank" as well as rel="noopener". These are citations inside
+            # a lesson: a reader who follows one to a 40-page specification and
+            # comes back has lost their scroll position and whatever they had set
+            # in the panel above. Adding the attribute by hand in the page does
+            # nothing, because this block regenerates over it -- which is exactly
+            # what happened on 19 September 2026.
+            f'\n      <li><a href="{esc(u)}" target="_blank" rel="noopener">{esc(t)}</a>'
             + (f' <span class="src__for">{esc(cid)}</span>' if cid else "")
             + "</li>" for t, u, cid in srcs)
         blk = (SOURCES_START
@@ -2449,6 +2615,22 @@ def cmd_check():
         if t.get("viz") and 'data-viz="' not in html:
             structural.append(f"{rel}: topics.json declares viz \"{t['viz']}\" but the page has no [data-viz]")
 
+    # Every link that leaves the site should open beside the page rather than
+    # replace it: these are source citations inside a lesson, and a reader who
+    # follows one loses their place and their panel state. target="_blank"
+    # without rel="noopener" hands the opened page a handle back to this one, so
+    # the two travel together. Twenty-nine links were missing both on
+    # 19 September 2026, against two hundred and forty that had them.
+    for f in site_html():
+        rel_name = f.relative_to(ROOT).as_posix()
+        html_f = f.read_text(encoding="utf-8")
+        for tag in re.findall(r'<a [^>]*href="https?://[^"]*"[^>]*>', html_f):
+            href = re.search(r'href="([^"]*)"', tag).group(1)
+            if 'target="_blank"' not in tag:
+                structural.append(f"{rel_name}: external link opens in the same tab - {href}")
+            elif "noopener" not in tag:
+                structural.append(f"{rel_name}: target=_blank without rel=noopener - {href}")
+
     planned = [t for t in flat if t["status"] == "planned" and not t["path"].exists()]
     orphans = [p for p in sorted((ROOT / "topics").rglob("*.html")) if p.resolve() not in known]
 
@@ -2491,7 +2673,7 @@ def cmd_check():
 if __name__ == "__main__":
     cmds = {"new": cmd_new, "relink": cmd_relink, "titles": cmd_titles,
             "identity": cmd_identity, "check": cmd_check,
-            "bust": cmd_bust, "meta": cmd_meta, "contract": cmd_contract,
+            "bust": cmd_bust, "meta": cmd_meta, "theme": cmd_theme, "contract": cmd_contract,
             "claims": cmd_claims, "absolutes": cmd_absolutes,
             "stats": cmd_stats, "panels": cmd_panels,
             "experiments": stamp_reference_library}

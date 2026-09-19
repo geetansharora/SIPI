@@ -23,11 +23,11 @@ HTTP, and it hides itself when it cannot fetch `topics.json`.
 | | |
 |---|---|
 | Topic pages | **60**, all `live`, each with a `deeper` section and its own review date |
-| Words | 135026; median 2154 per page |
+| Words | 135459; median 2154 per page |
 | Interactive panels | **28**, including four labs |
 | SVG figures | 36 |
 | Arithmetic claims checked | **114** across 34 pages (`check-numbers.py`) |
-| Model assertions | **840** (`check-models.js`), with **0 claims pending** |
+| Model assertions | **848** (`check-models.js`), with **0 claims pending** |
 | Mutation coverage | **44 of 44** known defects have an assertion that provably catches them (`mutate.js`) |
 | Specification claims | **34 tracked: 11 verified, 21 scoped, 2 awaiting a primary source** | <!-- generated from docs/claims.json -->
 

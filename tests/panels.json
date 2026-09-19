@@ -2,6 +2,13 @@
   "generated": "scaffold.py panels",
   "pages": [
     {
+      "url": "index.html",
+      "panels": [
+        "homeShowcase"
+      ],
+      "presets": []
+    },
+    {
       "url": "topics/fundamentals/bathtub-curves.html",
       "panels": [
         "bathtub"
@@ -350,8 +357,8 @@
     }
   ],
   "totals": {
-    "pages": 27,
-    "panels": 28,
+    "pages": 28,
+    "panels": 29,
     "presets": 130
   }
 }

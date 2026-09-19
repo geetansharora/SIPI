@@ -3,13 +3,17 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- theme:start -->
+  <meta name="theme-color" content="#F7F8FA">
+  <script>(function(){try{var t=localStorage.getItem('sipi-theme');if(t==='dark'||t==='system'){document.documentElement.setAttribute('data-theme',t);var m=document.querySelector('meta[name=theme-color]');if(m&&(t==='dark'||matchMedia('(prefers-color-scheme:dark)').matches))m.content='#0B1015';}}catch(e){}})();</script>
+  <!-- theme:end -->
 <meta name="description" content="A GPIO switching beside a converter arrives somewhere in its output. Drive a SAR or delta-sigma converter with a coupled aggressor and watch SNR and offset move.">
 <title>Lab D: ADC Interference, Aliasing and Reference Noise | SIPI</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
-<link rel="stylesheet" href="../../css/base.css?v=e4f774de">
-<link rel="stylesheet" href="../../css/components.css?v=d6d1640a">
+<link rel="stylesheet" href="../../css/base.css?v=d84a55f8">
+<link rel="stylesheet" href="../../css/components.css?v=a45d34f1">
 <link rel="stylesheet" href="../../css/adc-lab.css?v=46db406b">
   <!-- meta:start -->
   <link rel="canonical" href="https://sipi.work/topics/labs/adc-interference.html">
@@ -26,20 +30,21 @@
   <meta name="twitter:title" content="Lab D: ADC Interference, Aliasing and Reference Noise | SIPI">
   <meta name="twitter:description" content="A GPIO switching beside a converter arrives somewhere in its output. Drive a SAR or delta-sigma converter with a coupled aggressor and watch SNR and offset move.">
   <meta name="twitter:image" content="https://sipi.work/assets/og.png">
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Lab D: ADC Interference, Aliasing and Reference Noise","description":"A GPIO switching beside a converter arrives somewhere in its output. Drive a SAR or delta-sigma converter with a coupled aggressor and watch SNR and offset move.","url":"https://sipi.work/topics/labs/adc-interference.html","articleSection":"Labs","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer"},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-09-18"}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"SIPI","item":"https://sipi.work/"},{"@type":"ListItem","position":2,"name":"Labs","item":"https://sipi.work/#labs"},{"@type":"ListItem","position":3,"name":"Lab D: ADC Interference, Aliasing and Reference Noise"}]}</script>
   <!-- meta:end -->
 </head>
 <body>
 
 <header class="masthead">
   <a class="wordmark" href="../../index.html">SIPI</a>
-  <nav>
-    <a href="../../index.html#fundamentals">Fundamentals</a>
-    <a href="../../index.html#power-integrity">Power</a>
-    <a href="../../index.html#interfaces">Interfaces</a>
+  <nav aria-label="Site">
+    <a href="../../index.html#groundwork">Topics</a>
     <a href="../../start.html">Start</a>
     <a href="../../labs.html">Labs</a>
     <a href="../../reference.html">Reference</a>
-    <button class="theme-toggle" data-act="theme" type="button">System</button>
+    <a href="../../colophon.html">About</a>
+    <button class="theme-toggle" data-act="theme" type="button">Light</button>
   </nav>
 </header>
 
@@ -822,14 +827,29 @@
     <section class="sources">
       <h2 class="section-rule"><span>Sources</span></h2>
       <ul class="sources__list">
-      <li><a href="https://www.analog.com/en/resources/analog-dialogue/articles/precision-successive-approximation-adcs.html" rel="noopener">Analog Devices — Voltage reference design for precision SAR ADCs</a> <span class="src__for">C-22</span></li>
-      <li><a href="https://www.analog.com/en/resources/technical-articles/sigmadelta-adcs-tutorial.html" rel="noopener">Analog Devices — Sigma-delta ADC tutorial</a> <span class="src__for">C-23</span></li>
-      <li><a href="https://www.analog.com/media/en/training-seminars/tutorials/MT-003.pdf" rel="noopener">Analog Devices MT-003 — Understand SINAD, ENOB, SNR, THD, THD+N and SFDR</a> <span class="src__for">C-24</span></li>
-      <li><a href="https://www.analog.com/en/resources/app-notes/an-0979.html" rel="noopener">Analog Devices AN-0979 — Digital filtering options</a> <span class="src__for">C-26</span></li>
+      <li><a href="https://www.analog.com/en/resources/analog-dialogue/articles/precision-successive-approximation-adcs.html" target="_blank" rel="noopener">Analog Devices — Voltage reference design for precision SAR ADCs</a> <span class="src__for">C-22</span></li>
+      <li><a href="https://www.analog.com/en/resources/technical-articles/sigmadelta-adcs-tutorial.html" target="_blank" rel="noopener">Analog Devices — Sigma-delta ADC tutorial</a> <span class="src__for">C-23</span></li>
+      <li><a href="https://www.analog.com/media/en/training-seminars/tutorials/MT-003.pdf" target="_blank" rel="noopener">Analog Devices MT-003 — Understand SINAD, ENOB, SNR, THD, THD+N and SFDR</a> <span class="src__for">C-24</span></li>
+      <li><a href="https://www.analog.com/en/resources/app-notes/an-0979.html" target="_blank" rel="noopener">Analog Devices AN-0979 — Digital filtering options</a> <span class="src__for">C-26</span></li>
       </ul>
       <p class="sources__note">Rows marked with a claim id are tracked in <a href="../../docs/claims.md">the claim ledger</a>, which records what each source can and cannot establish.</p>
     </section>
     <!-- sources:end -->
+  <div class="prose" id="where-explained">
+    <h2 class="section-rule"><span>Where this is explained</span></h2>
+    <p>
+      This page is the instrument. The mechanisms it lets you change are
+      described on the topic pages below, each one linked for the specific
+      thing it explains rather than as a general reading list.
+    </p>
+    <ul>
+        <li><a href="../fundamentals/crosstalk.html">Crosstalk</a> &mdash; how an aggressor reaches a victim net, which is the coupling this lab applies.</li>
+        <li><a href="../fundamentals/edge-rate-not-clock-rate.html">Signal Bandwidth: Why Edge Rate Matters</a> &mdash; why a slow clock still carries energy near the sampling frequency.</li>
+        <li><a href="../power-integrity/ssn-ground-bounce.html">Ground bounce and SSN</a> &mdash; switching current in a shared return, the usual path onto a reference.</li>
+        <li><a href="../fundamentals/jitter-taxonomy.html">Jitter taxonomy</a> &mdash; uncertainty in the sampling instant, which this lab holds fixed.</li>
+    </ul>
+  </div>
+
   <!-- share:foot:start --><div class="share share--foot" data-share data-share-url="https://sipi.work/topics/labs/adc-interference.html" data-share-title="Lab D: ADC Interference, Aliasing and Reference Noise"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Flabs%2Fadc-interference.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Flabs%2Fadc-interference.html&amp;text=Lab%20D%3A%20ADC%20Interference%2C%20Aliasing%20and%20Reference%20Noise" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=Lab%20D%3A%20ADC%20Interference%2C%20Aliasing%20and%20Reference%20Noise&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Flabs%2Fadc-interference.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:foot:end -->
 
   <!-- pager:start -->
@@ -843,15 +863,23 @@
 
 <footer class="site-foot">
   <span>SIPI &#8212; signal and power integrity, visualised.</span>
-  <span>Created and directed by Geetansh Arora. <a href="../../colophon.html">About, review &amp; AI assistance</a> &#183; <a href="../../model-contract.html">Model assumptions</a> &#183; <a href="../../docs/claims.md">Claim ledger</a></span>
+  <nav class="site-foot__nav" aria-label="Site, footer">
+    <a href="../../start.html">Start</a>
+    <a href="../../labs.html">Labs</a>
+    <a href="../../reference.html">Reference</a>
+    <a href="../../colophon.html">About &amp; AI disclosure</a>
+    <a href="../../model-contract.html">Model assumptions</a>
+    <a href="../../docs/claims.md">Claim ledger (Markdown)</a>
+  </nav>
+  <span>Created and directed by Geetansh Arora. Text <a href="../../LICENSE-CONTENT">CC BY 4.0</a>, code <a href="../../LICENSE-CODE">MIT</a>.</span>
 </footer>
 
-<script src="../../js/site.js?v=999f3da0"></script>
-<script src="../../js/viz-kit.js?v=a53e49c3"></script>
+<script src="../../js/site.js?v=9ac8f8b6"></script>
+<script src="../../js/viz-kit.js?v=a53e49c3" defer></script>
 <script src="../../js/models/adc-model.js?v=0d3c17ea"></script>
-<script src="../../js/viz/adc-lab.js?v=edb74527"></script>
-<script src="../../js/viz-loader.js?v=89d5884d"></script>
-<script src="../../js/lab-workspace.js?v=49b1d309"></script>
-<script src="../../js/search.js?v=6c93a285"></script>
+<script src="../../js/viz/adc-lab.js?v=edb74527" defer></script>
+<script src="../../js/viz-loader.js?v=89d5884d" defer></script>
+<script src="../../js/lab-workspace.js?v=49b1d309" defer></script>
+<script src="../../js/search.js?v=6c93a285" defer></script>
 </body>
 </html>

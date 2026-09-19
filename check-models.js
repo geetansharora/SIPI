@@ -58,7 +58,8 @@ function loadSite() {
   const files = ['js/viz-kit.js', 'js/viz/jitter.js', 'js/viz/crosstalk.js',
                  'js/viz/spectrum.js', 'js/viz/pdn-extras.js',
                  'js/viz/lab-waves.js', 'js/viz/lab-channel.js', 'js/viz/lab-pdn.js',
-                 'js/viz/cdr.js', 'js/models/adc-model.js', 'js/search.js'];
+                 'js/viz/cdr.js', 'js/models/adc-model.js',
+                 'js/viz/home-showcase.js', 'js/search.js'];
   for (const f of files) {
     // eslint-disable-next-line no-eval
     eval(fs.readFileSync(path.join(SRC, f), 'utf8'));
@@ -3623,34 +3624,179 @@ suite('The featured comparison — matched by measurement, not by parameter', ()
   nearAbs('IL at Nyquist is evaluated exactly, so it does not move with the FFT size',
           coarse.ilAtNyquist, step.ilAtNyquist, 1e-9, ' dB');
 
-  /* THE PAGE AGAINST THE MODEL. The homepage now states six numbers that came out
-     of this pipeline. check-numbers.py cannot recompute them — reimplementing the
-     dispersive fit and the ABCD cascade in Python would be a second copy of the
-     model, not an independent check — so the loop is closed here instead: parse
-     what the page says and compare it to what the model returns. This is what the
-     old claim lacked, and it is why it could sit there being wrong. */
-  const fsHome = require('fs');
-  const home = fsHome.readFileSync(require('path').join(SRC, 'index.html'), 'utf8');
-  const tryBlock = (home.split('class="try"')[1] || '').split('</section>')[0];
-  const saysNumber = (re, what, want, tol, unit) => {
-    const m = tryBlock.match(re);
-    if (!m) { ok(`the homepage still states ${what}`, false, 're did not match'); return; }
-    nearAbs(`the homepage's ${what} agrees with the model`, parseFloat(m[1]), want, tol, unit);
-  };
-  saysNumber(/<strong>The openings are ([\d.]+) mV/, 'step eye', step.eyeHeight * 1e3, 0.5, ' mV');
-  saysNumber(/The openings are [\d.]+ mV, ([\d.]+) mV/, 'matched eye', flat.eyeHeight * 1e3, 0.5, ' mV');
-  saysNumber(/The openings are [\d.]+ mV, [\d.]+ mV and ([\d.]+) mV/, 'stub eye',
-             stub.eyeHeight * 1e3, 0.5, ' mV');
-  saysNumber(/<strong>([\d.]+) dB and [\d.]+ dB<\/strong> at Nyquist/, 'step IL',
-             -step.ilAtNyquist, 0.005, ' dB');
-  saysNumber(/<strong>[\d.]+ dB and ([\d.]+) dB<\/strong> at Nyquist/, 'matched IL',
-             -flat.ilAtNyquist, 0.005, ' dB');
-  saysNumber(/The third is <strong>([\d.]+) dB<\/strong>/, 'stub IL',
-             -stub.ilAtNyquist, 0.005, ' dB');
-  saysNumber(/quarter-wave notch at\s*\n?\s*([\d.]+) GHz/, 'stub notch frequency',
-             notch / 1e9, 0.01, ' GHz');
-  ok('and it no longer claims the insertion loss barely moves',
-     tryBlock.indexOf('barely moves') < 0);
+  /* The homepage used to state six of these numbers in prose, and this block
+     parsed them back out and compared them to the model, because a number written
+     into a page by hand can sit there being wrong. That prose is gone: the
+     homepage now runs the models live, so every number it shows is computed at
+     the moment it is shown. Per the numbers rule, a value that only exists in a
+     panel readout does not need an entry -- the module is the check.
+
+     What replaced it is the suite below, which checks the CLAIMS those panels
+     make in words underneath themselves, since those are the assertions a reader
+     can actually see. */
+});
+
+/* ---------------------------------------------------------------------------
+   The homepage panels. Three models a first-time visitor meets before anything
+   else, each with a sentence under it stating what it is demonstrating. The
+   sentences are the specification here: a panel that stopped demonstrating its
+   own claim would still draw a plausible-looking plot.
+
+   Every assertion is a limit, a sign, a monotonicity or a closed-form special
+   case -- not a second copy of the formula being tested.
+   --------------------------------------------------------------------------- */
+suite('Homepage panels — the claim each one makes on screen', () => {
+  const H = MODELS.homeShowcase;
+
+  /* --- reflections: "Gamma = ..., N% of the wave turns around" --- */
+
+  /* ANALYTICAL LIMIT. A load equal to the line impedance is indistinguishable
+     from more line, so there is nothing to reflect from. Exact, not approximate. */
+  nearAbs('a matched load reflects nothing', H.reflect(50).gamma, 0, 1e-15, '');
+
+  /* PASSIVITY. A resistive load cannot return more than it was sent, at any
+     slider position the panel allows. */
+  {
+    let worst = 0, at = 0;
+    for (let rl = 5; rl <= 500; rl += 5) {
+      const g = Math.abs(H.reflect(rl).gamma);
+      if (g > worst) { worst = g; at = rl; }
+    }
+    ok('no load on the slider reflects more than it receives',
+       worst <= 1 + 1e-12, `max |Gamma| = ${worst.toFixed(4)} at ${at} ohm`);
+  }
+
+  /* SIGN. Below the line impedance the reflection inverts, above it does not.
+     This is the panel's "in phase" / "inverted" sentence, and getting it
+     backwards would teach the opposite of the truth while looking fine. */
+  ok('a load below 50 ohm inverts the reflected wave', H.reflect(25).gamma < 0,
+     H.reflect(25).gamma.toFixed(3));
+  ok('a load above 50 ohm does not', H.reflect(200).gamma > 0,
+     H.reflect(200).gamma.toFixed(3));
+
+  /* MONOTONICITY. Gamma rises with the load, everywhere, with no reversal. */
+  {
+    let bad = 0, prev = -Infinity;
+    for (let rl = 5; rl <= 500; rl += 5) {
+      const g = H.reflect(rl).gamma;
+      if (g < prev - 1e-12) bad++;
+      prev = g;
+    }
+    ok('Gamma increases with the load across the whole slider', bad === 0,
+       `${bad} reversal(s)`);
+  }
+
+  /* CLOSED FORM. An open circuit doubles the far-end voltage: the incident wave
+     arrives and is fully re-launched, so the load sees 2a0 before the source has
+     heard anything. Checked at the top of the slider, where Gamma is near 1. */
+  {
+    const r = H.reflect(500), L = r.line;
+    const vLoad = K.line1DAt(L, 1, 1.5 * H.consts.TD).v;
+    nearRel('a nearly-open load nearly doubles the first arrival at the far end',
+            vLoad, L.a0 * (1 + r.gamma), 0.01, '');
+  }
+
+  /* --- eye: "every decibel of loss takes more of it" --- */
+
+  /* CLOSED-FORM SPECIAL CASE. With no loss there is no dispersion and no ISI, so
+     the eye is the full launched swing and nothing less. */
+  nearRel('a lossless channel leaves the eye at the full launched swing',
+          H.eye(0).opening, 2 * H.consts.SWING, 0.005, ' V');
+
+  /* MONOTONICITY, which is the sentence the panel prints. More loss never opens
+     an eye -- if it ever did, the panel would be teaching that loss can help. */
+  {
+    let bad = 0, prev = Infinity, firstShut = null;
+    for (let L = 0; L <= 18; L++) {
+      const o = H.eye(L).opening;
+      if (o > prev + 1e-12) bad++;
+      if (firstShut === null && o <= 0) firstShut = L;
+      prev = o;
+    }
+    ok('every extra decibel of loss closes the eye further, never opens it',
+       bad === 0, `${bad} increase(s) across 0..18 dB`);
+    ok('and the panel can actually reach a shut eye, which is the point of its range',
+       firstShut !== null && firstShut <= 18, `first shut at ${firstShut} dB`);
+  }
+
+  /* SYMMETRY. The pattern set is complete and sign-symmetric, so the eye must be
+     centred: the worst one and the worst zero sit equidistant from zero. An
+     off-centre eye would mean the superposition had dropped a pattern. */
+  {
+    const e = H.eye(8);
+    nearAbs('the eye is centred, so no pattern was dropped from the superposition',
+            e.hiMin + e.loMax, 0, 1e-12, ' V');
+  }
+
+  /* --- PDN: "more capacitors move it, they do not remove it" --- */
+
+  /* The claim, asserted directly and across the whole slider. A peak above the
+     board bank must EXIST at every capacitor count; adding capacitors must not
+     make it go away. This is the one sentence on the homepage that a reader
+     could disprove with a sweep, so it is the one most worth checking. */
+  {
+    let missing = 0;
+    for (let n = 1; n <= 48; n++) if (!(H.pdn(n).peak > 0)) missing++;
+    ok('an anti-resonance exists at every capacitor count the slider offers',
+       missing === 0, `${missing} count(s) with no peak`);
+  }
+
+  /* MONOTONICITY, the "move it" half, checked at every step rather than at the
+     ends -- a peak that wandered back up in the middle would pass an endpoint
+     comparison and contradict the sentence.
+
+     Note what is NOT asserted here. The obvious claim, that the peak scales as
+     1/sqrt(C), is false for this ladder and was written and removed rather than
+     given a tolerance wide enough to pass. The board bank declares its ESL per
+     capacitor, so K.zBranch gives it L/n and C*n and the bank's OWN resonance is
+     independent of n. What moves is a coupled anti-resonance against the bulk
+     bank through the plane inductance, in which the board capacitance is one
+     element of several: 24x the capacitance moves it by 1.76x, not by 4.9x.
+     Direction and monotonicity are real properties of that; a two-element
+     scaling law is not. */
+  {
+    let reversals = 0, prev = Infinity;
+    for (let n = 1; n <= 48; n++) {
+      const f = H.pdn(n).fPeak;
+      if (f > prev * 1.0001) reversals++;
+      prev = f;
+    }
+    ok('more capacitors move the peak down in frequency, at every step',
+       reversals === 0,
+       `${reversals} reversal(s); ${(H.pdn(1).fPeak / 1e6).toFixed(2)} -> ${(H.pdn(48).fPeak / 1e6).toFixed(2)} MHz`);
+  }
+
+  /* The "do not remove it" half, made quantitative and at its hardest point.
+     Forty-eight capacitors is the most the slider allows, it more than halves the
+     peak -- and the peak is still more than twice the target. This is the whole
+     lesson of the panel in one assertion: the move helps and does not solve. */
+  {
+    const most = H.pdn(48), least = H.pdn(1);
+    ok('the peak falls as capacitors are added', most.peak < least.peak,
+       `${(least.peak * 1e3).toFixed(0)} -> ${(most.peak * 1e3).toFixed(0)} mohm`);
+    ok('but even at the largest count it is still above the target it draws',
+       most.peak > H.consts.TARGET,
+       `${(most.peak * 1e3).toFixed(0)} mohm vs ${(H.consts.TARGET * 1e3).toFixed(0)} mohm target`);
+  }
+
+  /* DC LIMIT. Far below every resonance the ladder is resistive and the die sees
+     the regulator's own output resistance plus the series chain. Independent of
+     the sweep: computed from the stage list itself. */
+  {
+    const st = H.pdnStages(12);
+    const Rdc = st.reduce((a, s) => a + ((s.series && s.series.r) || 0), 0) + 0.005;
+    const zc = K.pdnLadder(st, 1).z;
+    nearRel('at 1 Hz the ladder is the series chain plus the regulator resistance',
+            Math.hypot(zc.re, zc.im), Rdc, 0.02, ' ohm');
+  }
+
+  /* The panel prints a target line at 20 mohm and says whether the peak clears
+     it. At the default the peak is above target -- which is the honest answer and
+     the reason the sentence exists. If a retune ever made the default pass, the
+     sentence would still say it failed. */
+  ok('at the default count the peak really is above the 20 mohm target it draws',
+     H.pdn(12).peak > H.consts.TARGET,
+     `${(H.pdn(12).peak * 1e3).toFixed(0)} mohm vs 20 mohm`);
 });
 
 suite('Lab C transient — against an independently written solver', () => {

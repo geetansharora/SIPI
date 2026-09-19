@@ -3,9 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- theme:start -->
+  <meta name="theme-color" content="#F7F8FA">
+  <script>(function(){try{var t=localStorage.getItem('sipi-theme');if(t==='dark'||t==='system'){document.documentElement.setAttribute('data-theme',t);var m=document.querySelector('meta[name=theme-color]');if(m&&(t==='dark'||matchMedia('(prefers-color-scheme:dark)').matches))m.content='#0B1015';}}catch(e){}})();</script>
+  <!-- theme:end -->
 <title>Signal and Power Integrity Learning Labs | SIPI</title>
 <meta name="description" content="Learn signal and power integrity with interactive models, clear explanations, engineering examples, and explicit assumptions.">
-<meta name="theme-color" content="#17191c">
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="assets/favicon-32.png" sizes="32x32" type="image/png">
 <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
@@ -13,8 +16,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
-<link rel="stylesheet" href="css/base.css?v=e4f774de">
-<link rel="stylesheet" href="css/components.css?v=d6d1640a">
+<link rel="stylesheet" href="css/base.css?v=d84a55f8">
+<link rel="stylesheet" href="css/components.css?v=a45d34f1">
 <style>
   .hero { max-width: var(--measure); margin-inline: auto; padding-block: var(--s8) var(--s6); display: flex; flex-direction: column; gap: var(--s4); }
   .hero p { font-size: 1.15rem; color: var(--ink-2); }
@@ -35,7 +38,7 @@
   <!-- meta:start -->
   <link rel="canonical" href="https://sipi.work/">
   <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
-  <meta property="og:type" content="article">
+  <meta property="og:type" content="website">
   <meta property="og:site_name" content="SIPI">
   <meta property="og:title" content="Signal and Power Integrity Learning Labs | SIPI">
   <meta property="og:description" content="Learn signal and power integrity with interactive models, clear explanations, engineering examples, and explicit assumptions.">
@@ -54,14 +57,13 @@
 
 <header class="masthead">
   <a class="wordmark" href="index.html">SIPI</a>
-  <nav>
-    <a href="#fundamentals">Fundamentals</a>
-    <a href="#power-integrity">Power</a>
-    <a href="#interfaces">Interfaces</a>
+  <nav aria-label="Site">
+    <a href="index.html#groundwork">Topics</a>
     <a href="start.html">Start</a>
     <a href="labs.html">Labs</a>
     <a href="reference.html">Reference</a>
-    <button class="theme-toggle" data-act="theme" type="button">System</button>
+    <a href="colophon.html">About</a>
+    <button class="theme-toggle" data-act="theme" type="button">Light</button>
   </nav>
 </header>
 
@@ -82,13 +84,13 @@
       <b>Learn</b>
       <span>Follow eight connected steps through both disciplines, with an experiment and an application question at each stage.</span>
     </a>
-    <a class="door" href="topics/labs/one-channel.html">
+    <a class="door" href="labs.html">
       <b>Labs</b>
-      <span>Three instruments. One channel in six domains, travelling waves and termination, and a power network from regulator to die.</span>
+      <span>Four instruments. Travelling waves and termination, one channel in six domains, a power network from regulator to die, and a converter under interference.</span>
     </a>
-    <a class="door" href="model-contract.html">
+    <a class="door" href="reference.html">
       <b>Reference</b>
-      <span>Review each model's assumptions, computation method, limitations, and supporting tests.</span>
+      <span>Look up a symbol, formula or unit conversion, or open a worked analytical example with its settings, expected values and tolerances.</span>
     </a>
     <a class="door" href="topics/methodology/debug-playbook.html">
       <b>Debug</b>
@@ -96,33 +98,75 @@
     </a>
   </nav>
 
-  <section class="try">
-    <div class="try__head">
-      <h2>Explore one channel comparison</h2>
+  <section class="showcase" data-viz="homeShowcase" aria-labelledby="showcase-h">
+    <div class="showcase__head">
+      <h2 id="showcase-h">Move something. Watch the physics answer.</h2>
       <p>
-        Three channels, all 8 inches, all 16 GT/s, all with the loss budget set to 14 dB.
-        One has an impedance step, one has no added discontinuity, and one has a 28 ps via stub.
-        <strong>The openings are 254 mV, 253 mV and 48 mV</strong>, although all three begin
-        with the same loss-budget setting.
-      </p>
-      <p class="try__why">
-        Compare the modeled channel responses to see why the eye openings differ.
-        The first two really are matched: <strong>14.06 dB and 14.00 dB</strong> at Nyquist,
-        and their eyes agree to 0.7%. The third is <strong>24.15 dB</strong> — ten decibels
-        more — because a 28 ps stub is not extra attenuation, it is a quarter-wave notch at
-        8.93 GHz, close to the 8 GHz Nyquist frequency. The comparison shows why a loss
-        budget alone does not describe the complete channel response.
-      </p>
-      <p class="try__why">
-        To explore the comparison, open Lab B, press <em>PCIe Gen 4</em>, then
-        <em>…no step at all</em>, then <em>…same budget, a stub</em>, and watch the
-        <em>IL at Nyquist</em> readout rather than the loss slider.
-      </p>
-      <p>
-        <a class="try__go" href="topics/labs/one-channel.html#lab=labChannel;_p=stubby">Open that case in Lab&nbsp;B</a>
-        <a class="try__alt" href="topics/labs/pdn-chain.html">or start on the power side</a>
+        Three models from the labs, running here. Drag a control and every number
+        under it is recomputed — these are the same models the lab pages use, not
+        pictures of them.
       </p>
     </div>
+
+    <div class="showcase__track" data-track tabindex="0" role="group"
+         aria-label="Three interactive demonstrations, scroll or use the arrow keys">
+
+      <article class="demo" data-title="Reflections on a transmission line">
+        <h3>Reflections</h3>
+        <p class="demo__q">A driver launches a step into a 50&nbsp;&Omega; line. What comes back?</p>
+        <canvas data-cv="reflect" aria-label="Voltage against time at the driver and at the load. With the load far from 50 ohms the trace rings for several round trips; at 50 ohms it settles in one step."></canvas>
+        <div class="demo__ctl">
+          <label for="hs-rl">Load</label>
+          <input id="hs-rl" type="range" min="5" max="500" step="5" value="220">
+          <b data-out="rl">220 &Omega;</b>
+        </div>
+        <p class="demo__read">
+          &Gamma; = <b data-out="gamma">+0.64</b> &mdash; <span data-out="rsay"></span>
+        </p>
+        <a class="demo__go" href="topics/labs/travelling-waves.html">Open Lab&nbsp;A: watch the wave travel and account for its energy &rarr;</a>
+      </article>
+
+      <article class="demo" data-title="Channel loss and the eye">
+        <h3>Eye diagram</h3>
+        <p class="demo__q">Every bit smears into its neighbours. How much loss closes the eye?</p>
+        <canvas data-cv="eye" aria-label="An eye diagram built from every combination of seven consecutive symbols. Raising the channel loss closes the opening until no sampling instant separates a one from a zero."></canvas>
+        <div class="demo__ctl">
+          <label for="hs-loss">Channel loss</label>
+          <input id="hs-loss" type="range" min="0" max="18" step="1" value="8">
+          <b data-out="loss">8 dB</b>
+        </div>
+        <p class="demo__read">
+          Opening <b data-out="open">&mdash;</b> &mdash; <span data-out="esay"></span>
+        </p>
+        <a class="demo__go" href="topics/labs/one-channel.html">Open Lab&nbsp;B: the same channel in six domains at once &rarr;</a>
+      </article>
+
+      <article class="demo" data-title="PDN impedance and anti-resonance">
+        <h3>Power delivery</h3>
+        <p class="demo__q">Add decoupling capacitors. Does the impedance only go down?</p>
+        <canvas data-cv="pdn" aria-label="Power distribution network impedance against frequency on log axes, with the anti-resonant peak marked. Adding board capacitors moves the peak rather than removing it."></canvas>
+        <div class="demo__ctl">
+          <label for="hs-ncap">Board caps</label>
+          <input id="hs-ncap" type="range" min="1" max="48" step="1" value="12">
+          <b data-out="ncap">12</b>
+        </div>
+        <p class="demo__read">
+          Peak <b data-out="zpk">&mdash;</b> at <b data-out="fpk">&mdash;</b> &mdash; <span data-out="psay"></span>
+        </p>
+        <a class="demo__go" href="topics/labs/pdn-chain.html">Open Lab&nbsp;C: see which path actually supplies the current &rarr;</a>
+      </article>
+    </div>
+
+    <div class="showcase__nav">
+      <button class="showcase__arrow" data-nav="prev" type="button" aria-label="Previous demonstration">&lsaquo;</button>
+      <div class="showcase__dots">
+        <button class="showcase__dot" data-dot type="button" aria-label="Reflections"></button>
+        <button class="showcase__dot" data-dot type="button" aria-label="Eye diagram"></button>
+        <button class="showcase__dot" data-dot type="button" aria-label="Power delivery"></button>
+      </div>
+      <button class="showcase__arrow" data-nav="next" type="button" aria-label="Next demonstration">&rsaquo;</button>
+    </div>
+    <p class="sr-only" data-live aria-live="polite"></p>
   </section>
 
   <div class="stack">
@@ -233,10 +277,21 @@
 
 <footer class="site-foot">
   <span>SIPI &#8212; signal and power integrity, visualised.</span>
-  <span>Created and directed by Geetansh Arora. <a href="colophon.html">About, review &amp; AI assistance</a> &#183; <a href="model-contract.html">Model assumptions</a> &#183; <a href="docs/claims.md">Claim ledger</a></span>
+  <nav class="site-foot__nav" aria-label="Site, footer">
+    <a href="start.html">Start</a>
+    <a href="labs.html">Labs</a>
+    <a href="reference.html">Reference</a>
+    <a href="colophon.html">About &amp; AI disclosure</a>
+    <a href="model-contract.html">Model assumptions</a>
+    <a href="docs/claims.md">Claim ledger (Markdown)</a>
+  </nav>
+  <span>Created and directed by Geetansh Arora. Text <a href="LICENSE-CONTENT">CC BY 4.0</a>, code <a href="LICENSE-CODE">MIT</a>.</span>
 </footer>
 
-<script src="js/site.js?v=999f3da0"></script>
-<script src="js/search.js?v=6c93a285"></script>
+<script src="js/site.js?v=9ac8f8b6"></script>
+<script src="js/viz-kit.js?v=a53e49c3" defer></script>
+<script src="js/viz/home-showcase.js?v=842eefe3" defer></script>
+<script src="js/viz-loader.js?v=89d5884d" defer></script>
+<script src="js/search.js?v=6c93a285" defer></script>
 </body>
 </html>

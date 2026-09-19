@@ -42,7 +42,22 @@
 /*.json
   Cache-Control: public, max-age=0, must-revalidate
 
+# The two licence files carry no extension, so nothing can infer a type from the
+# name and a browser is as likely to download them as show them. They are now
+# linked from every footer, so they have to open.
+/LICENSE-CODE
+  Content-Type: text/plain; charset=utf-8
+
+/LICENSE-CONTENT
+  Content-Type: text/plain; charset=utf-8
+
+# Markdown is served as text/markdown by default, and with nosniff that makes a
+# browser DOWNLOAD it rather than show it. The footer on all 67 pages links to
+# docs/claims.md, so every one of those links handed the reader a file. Plain
+# text renders in the tab, which is what a source document linked from a footer
+# should do.
 /*.md
+  Content-Type: text/plain; charset=utf-8
   Cache-Control: public, max-age=0, must-revalidate
 
 # Security headers for every path. No Cache-Control here, deliberately.

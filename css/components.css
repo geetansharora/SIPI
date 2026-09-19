@@ -12,10 +12,19 @@
 .wordmark {
   display: block; flex: 0 0 auto;
   width: 7.6rem; aspect-ratio: 1200 / 319;
-  background: url("../assets/sipi-logo.png") center / contain no-repeat;
+  /* 125 KB of PNG was being sent for a mark 122 px wide, on every page. These
+     renditions already existed; nothing referenced them. image-set lets a 1x
+     screen take the 8 KB file and a 2x screen the 16 KB one, and the plain
+     url() above it is the fallback for anything that does not understand
+     image-set. Worst case is now 16 KB instead of 125 KB. */
+  background-image: url("../assets/brand/sipi-logo-300.png");
+  background-image: image-set(url("../assets/brand/sipi-logo-180.png") 1x,
+                              url("../assets/brand/sipi-logo-300.png") 2x);
+  background-position: center;
+  background-size: contain;
+  background-repeat: no-repeat;
   color: var(--ink); text-decoration: none;
   overflow: hidden; text-indent: 150%; white-space: nowrap;
-  filter: invert(1) hue-rotate(180deg);
 }
 .masthead nav { display: flex; align-items: center; flex-wrap: wrap; gap: var(--s2) var(--s4); }
 /* WCAG 2.5.8 asks for a 24x24 CSS-pixel target. These were 21 px tall: fine with
@@ -248,18 +257,41 @@ ul.tight li::marker { color: var(--muted); }
   content: ""; display: block; flex: 0 0 auto;
   width: 2.8rem; aspect-ratio: 1;
   background: url("../assets/brand/si-pi-mark-128.png") center / contain no-repeat;
-  filter: invert(1) hue-rotate(180deg);
   opacity: .78;
 }
+/* The footer carries a real link row now, so it needs to wrap on a phone rather
+   than push the licence line off the side. Targets are 24px tall per WCAG 2.5.8;
+   the type stays small, the tappable box does not. */
+.site-foot__nav {
+  display: flex; flex-wrap: wrap; gap: var(--s2) var(--s4);
+  align-items: center;
+}
+.site-foot__nav a {
+  display: inline-flex; align-items: center; min-height: 24px; padding-block: .15rem;
+}
+
 .site-foot a { color: var(--muted); }
 .site-foot a:hover { color: var(--signal); }
 
-@media (prefers-color-scheme: light) {
-  :root:not([data-theme="dark"]) .wordmark,
-  :root:not([data-theme="dark"]) .site-foot > span:first-child::before { filter: none; }
+/* The mark files are dark ink, so they need inverting on a dark background and
+   nothing on a light one. This used to be the other way round -- the filter was
+   unconditional and two rules removed it for light -- which was correct while
+   the site was dark-first and became a white logo on a white page the moment
+   light became the default. One of those two rules keyed on
+   [data-theme="light"], a value that no longer exists at all, so a fresh visitor
+   on a dark-mode phone got the light palette and an invisible wordmark.
+   tests/check-theme-tokens.js now fails on a selector naming a theme the site
+   cannot set. */
+:root[data-theme="dark"] .wordmark,
+:root[data-theme="dark"] .site-foot > span:first-child::before {
+  filter: invert(1) hue-rotate(180deg);
 }
-:root[data-theme="light"] .wordmark,
-:root[data-theme="light"] .site-foot > span:first-child::before { filter: none; }
+@media (prefers-color-scheme: dark) {
+  :root[data-theme="system"] .wordmark,
+  :root[data-theme="system"] .site-foot > span:first-child::before {
+    filter: invert(1) hue-rotate(180deg);
+  }
+}
 
 @media (max-width: 34rem) {
   .wordmark { width: 6.6rem; }
@@ -1010,22 +1042,118 @@ dialog.searchbox::backdrop { background: rgba(4, 8, 11, .58); }
 }
 .door span { font-size: .9rem; color: var(--ink2); line-height: 1.5; }
 
-.try {
+/* ── HOMEPAGE SHOWCASE ──────────────────────────────────────────────────────
+   Three working models one swipe apart, directly under the hero.
+
+   The swipe is `scroll-snap-type: x mandatory`, not a gesture handler: touch,
+   momentum, rubber-banding and the trackpad all behave the way the platform
+   does them, and with JavaScript off this degrades to three scrollable panels
+   rather than to nothing. Each panel is exactly one track-width wide at every
+   breakpoint, so the snap position is unambiguous and a phone never shows two
+   half panels. */
+.showcase {
   max-width: var(--measure-wide, 68rem); margin: 0 auto var(--s6);
-  background: color-mix(in oklab, var(--signal) 6%, var(--surface));
-  border: 1px solid color-mix(in oklab, var(--signal) 25%, var(--border));
-  border-radius: var(--radius); padding: var(--s5);
+  background: color-mix(in oklab, var(--signal) 5%, var(--surface));
+  border: 1px solid color-mix(in oklab, var(--signal) 22%, var(--border));
+  border-radius: var(--radius); padding: var(--s4) 0 var(--s3);
 }
-.try h2 { margin: 0 0 var(--s3); font-size: 1.1rem; }
-.try p { margin: 0 0 var(--s3); }
-.try__why { color: var(--ink2); font-size: .93rem; }
-.try__go {
-  display: inline-block; font-family: var(--font-mono); font-size: .82rem;
-  padding: .5rem .9rem; border-radius: var(--radius);
-  background: var(--signal); color: var(--surface); text-decoration: none;
+.showcase__head { padding: 0 var(--s4) var(--s3); }
+.showcase__head h2 { margin: 0 0 var(--s1); font-size: 1.1rem; }
+.showcase__head p { margin: 0; color: var(--ink2); font-size: .93rem; }
+
+.showcase__track {
+  display: flex; gap: 0;
+  overflow-x: auto; overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;                 /* the dots are the position indicator */
+  -webkit-overflow-scrolling: touch;
 }
-.try__go:hover { filter: brightness(1.08); }
-.try__alt { margin-left: var(--s3); font-size: .88rem; }
+.showcase__track::-webkit-scrollbar { display: none; }
+
+.demo {
+  flex: 0 0 100%; min-width: 0; scroll-snap-align: center; scroll-snap-stop: always;
+  padding: 0 var(--s4); display: flex; flex-direction: column; gap: var(--s2);
+}
+.demo h3 {
+  margin: 0; font-family: var(--font-mono); font-size: .78rem; letter-spacing: .06em;
+  text-transform: uppercase; color: var(--signal);
+}
+.demo__q { margin: 0; font-size: .95rem; color: var(--ink); }
+/* The canvas is sized in JS from clientWidth, so it must be allowed to shrink
+   inside the flex item -- min-width:0 above -- and must never set its own width
+   in CSS, or the device-pixel-ratio sizing fights the layout. */
+.demo canvas { width: 100%; display: block; border-radius: calc(var(--radius) / 2); }
+
+.demo__ctl {
+  display: flex; align-items: center; gap: var(--s3);
+  padding: var(--s2) 0 0;
+}
+.demo__ctl label {
+  font-size: .85rem; color: var(--ink2); white-space: nowrap;
+}
+.demo__ctl input[type="range"] { flex: 1; min-width: 0; min-height: 24px; }
+.demo__ctl b {
+  font-family: var(--font-mono); font-size: .85rem; color: var(--ink);
+  min-width: 4.5rem; text-align: right;
+}
+.demo__read {
+  margin: 0; font-size: .88rem; color: var(--ink2); line-height: 1.5;
+  min-height: 2.6em;                      /* no reflow as the sentence changes */
+}
+.demo__read b { color: var(--ink); font-family: var(--font-mono); }
+.demo__go {
+  align-self: flex-start; font-size: .85rem; text-decoration: none;
+  color: var(--signal); border-bottom: 1px solid currentColor;
+  padding-block: .15rem; min-height: 24px; display: inline-flex; align-items: center;
+}
+.demo__go:hover { filter: brightness(1.1); }
+
+/* The loader attaches a probe to every plotted canvas. On a lab that is right.
+   Here the hover readout is welcome and its "read at" text entry is not: it adds
+   a row under each plot, and on a phone that row is what pushes the link to the
+   lab below the fold. display:none, so it leaves the accessibility tree and the
+   tab order with it -- the labs are where exact entry belongs. */
+.showcase .probe__at { display: none; }
+
+.showcase__nav {
+  display: flex; align-items: center; justify-content: center; gap: var(--s3);
+  padding: var(--s3) var(--s4) 0;
+}
+.showcase__arrow {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 32px; height: 32px; border-radius: 50%;
+  background: var(--surface); border: 1px solid var(--border);
+  color: var(--ink2); cursor: pointer; font-size: 1rem; line-height: 1;
+}
+.showcase__arrow:hover:not(:disabled) { border-color: var(--signal); color: var(--signal); }
+.showcase__arrow:disabled { opacity: .35; cursor: default; }
+.showcase__dots { display: flex; gap: var(--s2); }
+/* 24px of target around an 8px dot, per WCAG 2.5.8 -- the visible dot is small
+   on purpose, the thing a thumb has to hit is not. */
+.showcase__dot {
+  width: 24px; height: 24px; padding: 0; border: 0; background: none;
+  cursor: pointer; display: inline-flex; align-items: center; justify-content: center;
+}
+.showcase__dot::before {
+  content: ""; width: 8px; height: 8px; border-radius: 50%;
+  background: var(--border); transition: background .15s;
+}
+.showcase__dot[aria-current="true"]::before { background: var(--signal); }
+.showcase__dot:hover::before { background: var(--ink2); }
+
+@media (prefers-reduced-motion: reduce) {
+  .showcase__track { scroll-behavior: auto; }
+  .showcase__dot::before { transition: none; }
+}
+
+@media (max-width: 34rem) {
+  .showcase { padding-top: var(--s3); }
+  .showcase__head { padding: 0 var(--s3) var(--s2); }
+  .demo { padding: 0 var(--s3); }
+  .demo__ctl { flex-wrap: wrap; gap: var(--s2); }
+  .demo__ctl input[type="range"] { flex: 1 1 100%; order: 3; }
+  .demo__ctl b { min-width: 0; }
+}
 
 /* M6-2 · the predict phase, and the transfer question. A guide that applies a
    setting and then asks about it is testing recall of a demonstration; these

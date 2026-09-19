@@ -3,29 +3,56 @@
    Dark-first: the bare :root block is the complete DARK palette.
    Light is redefined at token level only, in both the media query and the stamp. */
 
-/* ---------- tokens: DARK is the default ---------- */
+/* ---------- tokens: LIGHT is the default ----------
+
+   This was dark-first until 19 September 2026, and the inversion fixed two
+   things at once.
+
+   The first was a flicker. A reader with a stored preference saw the page paint
+   in the bare :root palette and then swap when site.js ran, which on a phone
+   moving between pages reads as the site flashing. The theme is now applied by a
+   blocking inline script in <head> (see scaffold.py, stamp_theme_boot), so the
+   first paint is already correct; light-first also means the no-JavaScript and
+   no-preference cases land on the same palette rather than opposite ones.
+
+   The second was a contrast defect. The old light palette existed twice, once in
+   a prefers-color-scheme media query and once under [data-theme="light"], and
+   the media query copy was MISSING --signal-text and --alarm-text. Every visitor
+   whose system asked for light and who never touched the toggle -- the common
+   case -- therefore read those two colours at their DARK values on a white
+   background: 2.93:1 and 3.20:1, against the 4.5:1 WCAG asks for small text.
+   Light living in the bare :root block means there is now one definition of it
+   and nothing for a second copy to drift from.
+
+   Dark is still duplicated, because CSS without a build step cannot share a
+   declaration block across a media query and an attribute selector. That
+   duplication is what produced the bug above, so tests/check-theme-tokens.js
+   asserts the two dark blocks define the same tokens with the same values.
+
+   Default is light for everyone. Dark is opt-in, and "system" is a third state a
+   reader can choose if they want the operating system to decide. */
 :root {
-  --ground:      #0B1015;
-  --surface:     #121B23;
-  --surface-2:   #18242E;
-  --border:      #22323E;
-  --border-soft: #1A2831;
+  --ground:      #F7F8FA;
+  --surface:     #FFFFFF;
+  --surface-2:   #EFF3F6;
+  --border:      #D5DEE5;
+  --border-soft: #E4EAEF;
 
-  --ink:         #DDE7EE;
-  --ink-2:       #A7BAC7;
-  --muted:       #7D93A2;
+  --ink:         #0E171F;
+  --ink-2:       #33454F;
+  --muted:       #5A6B78;
 
-  --signal:      #2E9BD2;  /* validated: OKLCH L .61 on #0B1015 */
-  --reflect:     #BE8722;  /* validated: adjacent-pair ΔE 24.9 normal / 22.3 tritan */
-  --alarm:       #C4574F;
+  --signal:      #0284C7;  /* validated: CVD-checked against --reflect */
+  --reflect:     #B45309;  /* validated: adjacent-pair deltaE clears on all three */
+  --alarm:       #B3392F;
   /* Text-only variants. WCAG holds small text to 4.5:1 and graphical objects to
-     3:1, and two of the series colours sat between the two. The trace palette is
+     3:1, and two of the series colours sit between the two. The trace palette is
      CVD-validated and must not change, so these are used ONLY where the colour is
-     applied to text — a readout, a label — never to a stroke. */
-  --signal-text: #2E9BD2;
-  --alarm-text:  #D96A60;
-  --grid:        #1B2833;
-  --glow:        rgba(46,155,210,.30);
+     applied to text -- a readout, a label -- never to a stroke. */
+  --signal-text: #0369A1;
+  --alarm-text:  #B3392F;
+  --grid:        #E2E8ED;
+  --glow:        rgba(2,132,199,.16);
 
   --font-display: "Archivo", "Helvetica Neue", Arial, sans-serif;
   --font-body:    "Source Serif 4", Georgia, "Times New Roman", serif;
@@ -38,45 +65,51 @@
   --s5: 1.5rem; --s6: 2rem;   --s7: 3rem;   --s8: 4.5rem;
 
   --radius: 3px;
+  color-scheme: light;
+}
+
+/* Dark, chosen deliberately. */
+:root[data-theme="dark"] {
+  --ground:      #0B1015;
+  --surface:     #121B23;
+  --surface-2:   #18242E;
+  --border:      #22323E;
+  --border-soft: #1A2831;
+  --ink:         #DDE7EE;
+  --ink-2:       #A7BAC7;
+  --muted:       #7D93A2;
+  --signal:      #2E9BD2;
+  --reflect:     #BE8722;
+  --alarm:       #C4574F;
+  --signal-text: #2E9BD2;
+  --alarm-text:  #D96A60;
+  --grid:        #1B2833;
+  --glow:        rgba(46,155,210,.30);
   color-scheme: dark;
 }
 
-@media (prefers-color-scheme: light) {
-  :root:not([data-theme="dark"]) {
-    --ground:      #F7F8FA;
-    --surface:     #FFFFFF;
-    --surface-2:   #EFF3F6;
-    --border:      #D5DEE5;
-    --border-soft: #E4EAEF;
-    --ink:         #0E171F;
-    --ink-2:       #33454F;
-    --muted:       #5A6B78;
-    --signal:      #0284C7;
-    --reflect:     #B45309;
-    --alarm:       #B3392F;
-    --grid:        #E2E8ED;
-    --glow:        rgba(2,132,199,.16);
-    color-scheme: light;
+/* Dark, because the reader asked the site to follow the operating system and the
+   operating system asked for dark. Only [data-theme="system"] opts in: without
+   it a dark-mode phone would still get light, which is the point of the default. */
+@media (prefers-color-scheme: dark) {
+  :root[data-theme="system"] {
+    --ground:      #0B1015;
+    --surface:     #121B23;
+    --surface-2:   #18242E;
+    --border:      #22323E;
+    --border-soft: #1A2831;
+    --ink:         #DDE7EE;
+    --ink-2:       #A7BAC7;
+    --muted:       #7D93A2;
+    --signal:      #2E9BD2;
+    --reflect:     #BE8722;
+    --alarm:       #C4574F;
+    --signal-text: #2E9BD2;
+    --alarm-text:  #D96A60;
+    --grid:        #1B2833;
+    --glow:        rgba(46,155,210,.30);
+    color-scheme: dark;
   }
-}
-
-:root[data-theme="light"] {
-  --ground:      #F7F8FA;
-  --surface:     #FFFFFF;
-  --surface-2:   #EFF3F6;
-  --border:      #D5DEE5;
-  --border-soft: #E4EAEF;
-  --ink:         #0E171F;
-  --ink-2:       #33454F;
-  --muted:       #5A6B78;
-  --signal:      #0284C7;
-  --reflect:     #B45309;
-  --alarm:       #B3392F;
-  --signal-text: #0369A1;
-  --alarm-text:  #B3392F;
-  --grid:        #E2E8ED;
-  --glow:        rgba(2,132,199,.16);
-  color-scheme: light;
 }
 
 /* ---------- reset ---------- */

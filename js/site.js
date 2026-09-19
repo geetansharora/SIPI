@@ -1,5 +1,15 @@
 /* SIPI — site.js
- * Theme toggle and the share row. Three states cycle: system → light → dark → system.
+ * Theme toggle and the share row. Three states cycle: light → dark → system → light.
+ * Light is the default and the first state, because the site's default is light:
+ * a reader who has never touched this sees Light and the cycle starts from what
+ * they are looking at.
+ *
+ * The theme itself is NOT applied here. It is applied by a blocking inline script
+ * in <head> (scaffold.py, stamp_theme_boot) so the first paint is already correct;
+ * doing it here meant the page painted in one palette and swapped to the other,
+ * which on a phone moving between pages reads as the site flashing. This file only
+ * keeps the button label in step and re-broadcasts the change.
+ *
  * Visualisations listen for the 'sipi:theme' event to re-read their tokens. */
 (function () {
   const KEY = 'sipi-theme';
@@ -21,9 +31,12 @@
       Object.entries(spec).forEach(([key, value]) => link.setAttribute(key, key === 'href' ? new URL(value, siteRoot).href : value));
       document.head.appendChild(link);
     });
+    /* theme-color tints the browser chrome on a phone. It was pinned to the dark
+       surface, so a light page still got a dark bar. It has to follow the theme,
+       and apply() below keeps it in step. */
     if (!document.head.querySelector('meta[name="theme-color"]')) {
       const theme = document.createElement('meta');
-      theme.name = 'theme-color'; theme.content = '#17191c';
+      theme.name = 'theme-color'; theme.content = '#F7F8FA';
       document.head.appendChild(theme);
     }
   }
@@ -38,25 +51,36 @@
     try { v ? localStorage.setItem(KEY, v) : localStorage.removeItem(KEY); } catch (e) { /* private mode */ }
   }
 
+  /* 'dark' and 'system' are attributes; light is the absence of one, because
+     light is what :root already is. Keep this in step with the boot script in
+     <head> -- they set the same attribute and must agree on its values. */
   function apply(mode) {
-    if (mode === 'light' || mode === 'dark') root.setAttribute('data-theme', mode);
+    if (mode === 'dark' || mode === 'system') root.setAttribute('data-theme', mode);
     else root.removeAttribute('data-theme');
+    const dark = mode === 'dark'
+      || (mode === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    const meta = document.head.querySelector('meta[name="theme-color"]');
+    if (meta) meta.content = dark ? '#0B1015' : '#F7F8FA';
     document.querySelectorAll('[data-act="theme"]').forEach((b) => {
-      b.textContent = mode === 'light' ? 'Light' : mode === 'dark' ? 'Dark' : 'System';
-      b.setAttribute('aria-label', 'Colour theme: ' + (mode || 'system') + '. Click to change.');
+      b.textContent = mode === 'dark' ? 'Dark' : mode === 'system' ? 'System' : 'Light';
+      b.setAttribute('aria-label', 'Colour theme: ' + (mode || 'light') + '. Click to change.');
     });
-    window.dispatchEvent(new CustomEvent('sipi:theme', { detail: { mode: mode || 'system' } }));
+    window.dispatchEvent(new CustomEvent('sipi:theme', { detail: { mode: mode || 'light' } }));
   }
 
-  const ORDER = [null, 'light', 'dark'];
+  const ORDER = [null, 'dark', 'system'];
   function init() {
     apply(stored());
     document.querySelectorAll('[data-act="theme"]').forEach((btn) => {
       btn.addEventListener('click', () => {
         const cur = stored();
-        const next = ORDER[(ORDER.indexOf(cur === null ? null : cur) + 1) % ORDER.length];
+        const i = ORDER.indexOf(cur === 'dark' || cur === 'system' ? cur : null);
+        const next = ORDER[(i + 1) % ORDER.length];
         save(next); apply(next);
       });
+    });
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+      if (stored() === 'system') apply('system');
     });
   }
 

@@ -3,10 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- theme:start -->
+  <meta name="theme-color" content="#F7F8FA">
+  <script>(function(){try{var t=localStorage.getItem('sipi-theme');if(t==='dark'||t==='system'){document.documentElement.setAttribute('data-theme',t);var m=document.querySelector('meta[name=theme-color]');if(m&&(t==='dark'||matchMedia('(prefers-color-scheme:dark)').matches))m.content='#0B1015';}}catch(e){}})();</script>
+  <!-- theme:end -->
 <title>Page Not Found | SIPI</title>
 <meta name="description" content="The requested SIPI page could not be found. Continue from the learning paths, labs, or reference.">
 <meta name="robots" content="noindex, follow">
-<meta name="theme-color" content="#17191c">
 <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="/assets/favicon-32.png" sizes="32x32" type="image/png">
 <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
@@ -20,15 +23,14 @@
 <body>
 
 <header class="masthead">
-  <a class="wordmark" href="/index.html">SIPI</a>
-  <nav>
-    <a href="/index.html#fundamentals">Fundamentals</a>
-    <a href="/index.html#power-integrity">Power</a>
-    <a href="/index.html#interfaces">Interfaces</a>
-    <a href="/start.html">Start</a>
-    <a href="/labs.html">Labs</a>
-    <a href="/reference.html">Reference</a>
-    <button class="theme-toggle" data-act="theme" type="button">System</button>
+  <a class="wordmark" href="index.html">SIPI</a>
+  <nav aria-label="Site">
+    <a href="index.html#groundwork">Topics</a>
+    <a href="start.html">Start</a>
+    <a href="labs.html">Labs</a>
+    <a href="reference.html">Reference</a>
+    <a href="colophon.html">About</a>
+    <button class="theme-toggle" data-act="theme" type="button">Light</button>
   </nav>
 </header>
 
@@ -55,7 +57,15 @@
 
 <footer class="site-foot">
   <span>SIPI &#8212; signal and power integrity, visualised.</span>
-  <span>Created and directed by Geetansh Arora. <a href="/colophon.html">About, review &amp; AI assistance</a> &#183; <a href="/model-contract.html">Model assumptions</a> &#183; <a href="/docs/claims.md">Claim ledger</a></span>
+  <nav class="site-foot__nav" aria-label="Site, footer">
+    <a href="start.html">Start</a>
+    <a href="labs.html">Labs</a>
+    <a href="reference.html">Reference</a>
+    <a href="colophon.html">About &amp; AI disclosure</a>
+    <a href="model-contract.html">Model assumptions</a>
+    <a href="docs/claims.md">Claim ledger (Markdown)</a>
+  </nav>
+  <span>Created and directed by Geetansh Arora. Text <a href="LICENSE-CONTENT">CC BY 4.0</a>, code <a href="LICENSE-CODE">MIT</a>.</span>
 </footer>
 
 <script src="/js/site.js?v=999f3da0"></script>

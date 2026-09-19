@@ -37,6 +37,7 @@ node tests/check-reference.js
 node tests/check-experiments.js
 node tests/check-reference-next.js
 node tests/check-load-order.js
+node tests/check-theme-tokens.js
 node tests/check-numeric-entry.js
 node tests/check-adc-integration.js
 node tests/check-lab-parity.js
