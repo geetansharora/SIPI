@@ -1,0 +1,29 @@
+# What Cloudflare must not serve. Same syntax as .gitignore, but a completely
+# separate mechanism: .gitignore governs what git tracks, and has no bearing on
+# what Wrangler uploads once a file exists on disk. Workers static assets
+# excludes nothing by default, so without this file the deployment would serve
+# .git/config and .git/objects/* at sipi.work.
+#
+# Anything listed here 404s in production while still passing a local gate, so
+# tests/check-load-order.js asserts that no served page references any of it.
+# Adding a line the site actually links to fails ./check instead of the site.
+
+.git
+.gitignore
+wrangler.jsonc
+.assetsignore
+
+# Repository tooling. Public in the repository, but not site content, and
+# indexing it would only add thin pages to search results.
+check
+*.py
+mutate.js
+check-models.js
+tests/*.js
+tests/*.html
+tests/README.md
+tests/panels.json
+
+# NOT excluded, deliberately: tests/fixtures/experiments/ and
+# tests/fixtures/reference-next/ are linked as downloads from reference.html,
+# and docs/ holds the claim ledger the footer points at on every page.

@@ -1,0 +1,29 @@
+{
+  // Cloudflare Workers static assets. The site is plain files: there is no Worker
+  // script, and `main` is deliberately absent, which Wrangler accepts for an
+  // assets-only deployment.
+  "name": "sipi",
+  "compatibility_date": "2026-09-19",
+
+  "assets": {
+    // Everything is served from the repository root, where index.html lives.
+    // Workers static assets excludes NOTHING by default, so .assetsignore next
+    // to this file decides what is not site content. Cloudflare Pages used to
+    // exclude .git implicitly; this platform does not.
+    "directory": "./",
+
+    // The one setting this site exists on. The default, "auto-trailing-slash",
+    // 308-redirects /foo.html to /foo — and Cloudflare Pages applies that with
+    // no way to turn it off. This site uses .html in 1,359 internal links, in
+    // every canonical and og:url, and in 65 of 66 sitemap entries, because the
+    // pages have to work from file:// for offline reading. "none" serves
+    // /foo.html as 200 directly, so every URL the repository declares is the
+    // URL actually served, with no redirect between them.
+    "html_handling": "none",
+
+    // Serve 404.html, with a 404 status, for anything that matches no asset.
+    // Without this the default is "none", which returns a bare 404 and the
+    // custom page is never reached.
+    "not_found_handling": "404-page"
+  }
+}
