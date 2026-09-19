@@ -330,14 +330,20 @@ dialog.searchbox::backdrop { background: rgba(4, 8, 11, .58); }
   grid-template-columns: 1fr 1fr;
   border-top: 1px solid var(--border-soft); padding-top: var(--s4);
 }
-.pager a, .pager span {
+/* Direct children only. `.pager span` matched the label inside each card as well,
+   so PREVIOUS and NEXT were drawn as bordered, padded boxes inside the boxes they
+   were labelling. */
+.pager > a, .pager > span {
   display: flex; flex-direction: column; gap: var(--s1);
   padding: var(--s3); border: 1px solid var(--border-soft); border-radius: var(--radius);
   background: var(--surface); text-decoration: none; color: var(--ink-2); font-size: .95rem;
   min-width: 0;
 }
-.pager a:hover { border-color: var(--signal); color: var(--ink); }
-.pager span { opacity: .45; }
+.pager > a:hover { border-color: var(--signal); color: var(--ink); }
+.pager > span { opacity: .45; }
+/* The two ends of the sequence are real destinations, not absent ones. */
+.pager .pager__end { color: var(--muted); }
+.pager .pager__end:hover { color: var(--ink); }
 .pager .dir { font-family: var(--font-mono); font-size: .62rem; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
 .pager .next { text-align: right; }
 @media (max-width: 34rem) { .pager { grid-template-columns: 1fr; } }
@@ -827,7 +833,11 @@ dialog.searchbox::backdrop { background: rgba(4, 8, 11, .58); }
 
 /* M3-5 · generated per-page source lists. A reader checking a normative claim
    should not have to find an internal ledger first. */
-.sources { margin-top: 2.2rem; }
+/* Stamped after the article, so it sits outside .prose and has to set the reading
+   measure itself — the same way .pager and .share do. Without it the heading and
+   the list ran the full width of <main> while the prose above stayed in its
+   column, which is the misalignment you see at the end of every sourced page. */
+.sources { max-width: var(--measure); margin: 2.2rem auto 0; }
 .sources__list { margin: .6rem 0 0; padding-left: 1.1rem; }
 .sources__list li { margin-bottom: .4rem; font-size: .92rem; }
 .src__for { font: 500 .7rem/1 var(--mono); letter-spacing: .04em;
@@ -1550,3 +1560,31 @@ html.lab-lock, html.lab-lock body { overflow: hidden; }
   .lab-map__right { grid-area: right; }
   .lab-map__bottom { grid-area: bottom; }
 }
+
+
+/* ── share row ─────────────────────────────────────────────────────────────────
+   Under the byline, where a reader decides whether this is worth passing on, and
+   again above the pager, where they have finished. The buttons are the site's own
+   tool-button style rather than anyone's brand colours: these are plain links to
+   share intents, not embedded widgets, and they should not look like a third
+   party has been let onto the page. */
+.share {
+  display: flex; flex-wrap: wrap; align-items: center; gap: var(--s2);
+  max-width: var(--measure); margin-inline: auto;
+}
+.share__label {
+  font-family: var(--font-mono); font-size: .62rem; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--muted);
+}
+.share__btn {
+  font-family: var(--font-mono); font-size: .68rem; letter-spacing: .04em;
+  padding: .25rem .5rem; border-radius: 4px; cursor: pointer;
+  background: var(--surface); color: var(--ink-2);
+  border: 1px solid var(--border); text-decoration: none; line-height: 1.6;
+}
+.share__btn:hover { color: var(--ink); border-color: var(--ink-2); }
+.share__btn:focus-visible { outline: 2px solid var(--signal); outline-offset: 1px; }
+/* Under the byline it is a quiet aside; above the pager it closes the article. */
+.share--head { margin-top: var(--s3); }
+.share--foot { margin-top: var(--s6); padding-top: var(--s4); border-top: 1px solid var(--border-soft); }
+@media (max-width: 34rem) { .share__label { flex-basis: 100%; } }

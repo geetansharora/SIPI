@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
 <link rel="stylesheet" href="../../css/base.css?v=e4f774de">
-<link rel="stylesheet" href="../../css/components.css?v=295837ab">
+<link rel="stylesheet" href="../../css/components.css?v=c1ece184">
 <link rel="stylesheet" href="../../css/adc-lab.css?v=46db406b">
   <!-- meta:start -->
   <link rel="canonical" href="https://sipi.work/topics/labs/adc-interference.html">
@@ -49,6 +49,7 @@
     <p class="byline">
       <!-- review:start --><span>By Geetansh Arora — Principal SI/PI Engineer</span><time datetime="2026-09-18" title="Technical review by Geetansh Arora on this date">18 Sep 2026</time><span>18 min</span><!-- review:end -->
     </p>
+    <!-- share:head:start --><div class="share share--head" data-share data-share-url="https://sipi.work/topics/labs/adc-interference.html" data-share-title="Lab D: ADC Interference, Aliasing and Reference Noise"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Flabs%2Fadc-interference.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Flabs%2Fadc-interference.html&amp;text=Lab%20D%3A%20ADC%20Interference%2C%20Aliasing%20and%20Reference%20Noise" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=Lab%20D%3A%20ADC%20Interference%2C%20Aliasing%20and%20Reference%20Noise&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Flabs%2Fadc-interference.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:head:end -->
     <p class="answer">
       An analog-to-digital converter compares a voltage with its reference at instants
       its clock defines, so anything coupled onto the input or the reference at those
@@ -816,10 +817,24 @@
       different question. An aggressor at an exact multiple passes an SNR test and fails an offset one.
     </p>
   </div>
+<!-- sources:start -->
+    <section class="sources">
+      <h2 class="section-rule"><span>Sources</span></h2>
+      <ul class="sources__list">
+      <li><a href="https://www.analog.com/en/resources/analog-dialogue/articles/precision-successive-approximation-adcs.html" rel="noopener">Analog Devices — Voltage reference design for precision SAR ADCs</a> <span class="src__for">C-22</span></li>
+      <li><a href="https://www.analog.com/en/resources/technical-articles/sigmadelta-adcs-tutorial.html" rel="noopener">Analog Devices — Sigma-delta ADC tutorial</a> <span class="src__for">C-23</span></li>
+      <li><a href="https://www.analog.com/media/en/training-seminars/tutorials/MT-003.pdf" rel="noopener">Analog Devices MT-003 — Understand SINAD, ENOB, SNR, THD, THD+N and SFDR</a> <span class="src__for">C-24</span></li>
+      <li><a href="https://www.analog.com/en/resources/app-notes/an-0979.html" rel="noopener">Analog Devices AN-0979 — Digital filtering options</a> <span class="src__for">C-26</span></li>
+      </ul>
+      <p class="sources__note">Rows marked with a claim id are tracked in <a href="../../docs/claims.md">the claim ledger</a>, which records what each source can and cannot establish.</p>
+    </section>
+    <!-- sources:end -->
+  <!-- share:foot:start --><div class="share share--foot" data-share data-share-url="https://sipi.work/topics/labs/adc-interference.html" data-share-title="Lab D: ADC Interference, Aliasing and Reference Noise"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Flabs%2Fadc-interference.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Flabs%2Fadc-interference.html&amp;text=Lab%20D%3A%20ADC%20Interference%2C%20Aliasing%20and%20Reference%20Noise" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=Lab%20D%3A%20ADC%20Interference%2C%20Aliasing%20and%20Reference%20Noise&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Flabs%2Fadc-interference.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:foot:end -->
+
   <!-- pager:start -->
   <nav class="pager" aria-label="Previous and next topic">
     <a class="prev" href="../../topics/labs/pdn-chain.html"><span class="dir">Previous</span><span>Lab C: PDN Impedance, Current Sharing, and Transient Droop</span></a>
-    <span class="next"><span class="dir">Next</span><span>—</span></span>
+    <a class="next pager__end" href="../../index.html#labs"><span class="dir">End of the sequence</span><span>Back to the topic map</span></a>
   </nav>
   <!-- pager:end -->
 
@@ -830,7 +845,7 @@
   <span>Created and directed by Geetansh Arora. <a href="../../colophon.html">About, review &amp; AI assistance</a> &#183; <a href="../../model-contract.html">Model assumptions</a> &#183; <a href="../../docs/claims.md">Claim ledger</a></span>
 </footer>
 
-<script src="../../js/site.js?v=acb47d86"></script>
+<script src="../../js/site.js?v=999f3da0"></script>
 <script src="../../js/viz-kit.js?v=a53e49c3"></script>
 <script src="../../js/models/adc-model.js?v=0d3c17ea"></script>
 <script src="../../js/viz/adc-lab.js?v=edb74527"></script>

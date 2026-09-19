@@ -1,5 +1,5 @@
-/* SI & PI — site.js
- * Theme toggle. Three states cycle: system → light → dark → system.
+/* SIPI — site.js
+ * Theme toggle and the share row. Three states cycle: system → light → dark → system.
  * Visualisations listen for the 'sipi:theme' event to re-read their tokens. */
 (function () {
   const KEY = 'sipi-theme';
@@ -59,6 +59,54 @@
       });
     });
   }
+
+  /* ---------- sharing ----------
+     The LinkedIn, X and email links are ordinary anchors stamped into the page, so
+     they work with JavaScript off and load nothing from anyone else — a social
+     widget would put a third party's script, and its tracking, on every page here.
+
+     This adds only the two things an anchor cannot do: copy the link to the
+     clipboard, and hand the page to the operating system's own share sheet where
+     one exists, which is what a reader on a phone expects. Both degrade to the
+     anchors beside them. */
+  function wireShare() {
+    document.querySelectorAll('[data-share]').forEach((row) => {
+      const url = row.dataset.shareUrl || location.href;
+      const title = row.dataset.shareTitle || document.title;
+
+      const copy = row.querySelector('[data-act="copy-link"]');
+      if (copy) {
+        copy.addEventListener('click', () => {
+          const done = (ok) => {
+            const was = copy.textContent;
+            copy.textContent = ok ? 'copied' : 'press ⌘C';
+            setTimeout(() => { copy.textContent = was; }, 1600);
+          };
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(url).then(() => done(true), () => done(false));
+          } else done(false);
+        });
+      }
+
+      /* Only offered where the browser actually has a share sheet, so it is never
+         a button that does nothing. */
+      const native = row.querySelector('[data-act="share-native"]');
+      if (native) {
+        if (navigator.share) {
+          native.hidden = false;
+          native.addEventListener('click', () => {
+            navigator.share({ title: title, url: url }).catch(() => {});
+          });
+        } else {
+          native.remove();
+        }
+      }
+    });
+  }
+
+  const initShare = () => { try { wireShare(); } catch (e) { /* sharing is optional */ } };
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initShare);
+  else initShare();
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
   else init();

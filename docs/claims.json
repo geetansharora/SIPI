@@ -23,16 +23,18 @@
       "pages": [
         "interfaces/lpddr5x"
       ],
-      "source_type": "normative",
-      "source": "JESD209-5x speed bin tables",
+      "source_type": "public-rate",
+      "source": "JEDEC press release, \"JEDEC Updates Standard for Low Power Memory Devices: LPDDR5\"",
       "conditions": "A specific edition and speed bin",
-      "status": "awaiting",
-      "note": "Needs an edition. 8533 is not a timeless family maximum — later editions raise it, so the claim has to carry its edition.",
+      "status": "verified",
+      "note": "JEDEC’s own announcement of JESD209-5B states the speed extension to 8533 Mbps. Verifies that the family reaches this rate; says nothing about which speed bin a given part supports, or about the electricals. JESD209-5C (July 2023) is the current revision and is downloadable from jedec.org after registration.",
       "owner": "Geetansh",
-      "sourceCheckedBy": null,
-      "sourceCheckedOn": null,
+      "sourceCheckedBy": "Claude Opus 5",
+      "sourceCheckedOn": "2026-09-19",
       "humanReviewedBy": null,
-      "humanReviewedOn": null
+      "humanReviewedOn": null,
+      "source_url": "https://www.jedec.org/news/pressreleases/jedec-updates-standard-low-power-memory-devices-lpddr5",
+      "source_title": "JEDEC — LPDDR5 standard update announcement"
     },
     {
       "id": "C-2b",
@@ -40,33 +42,37 @@
       "pages": [
         "interfaces/lpddr5x"
       ],
-      "source_type": "normative",
-      "source": "JESD209-5 speed bin tables",
+      "source_type": "public-rate",
+      "source": "JEDEC press release, \"JEDEC Updates Standard for Low Power Memory Devices: LPDDR5\"",
       "conditions": "A specific edition and speed bin",
-      "status": "awaiting",
-      "note": "Split from C-2: a different standard from LPDDR5X, so verifying one says nothing about the other.",
+      "status": "verified",
+      "note": "The same announcement gives 6400 Mbps as the previous revision’s ceiling, which is the LPDDR5 figure. Verifies the rate, not any particular device’s bin.",
       "owner": "Geetansh",
-      "sourceCheckedBy": null,
-      "sourceCheckedOn": null,
+      "sourceCheckedBy": "Claude Opus 5",
+      "sourceCheckedOn": "2026-09-19",
       "humanReviewedBy": null,
-      "humanReviewedOn": null
+      "humanReviewedOn": null,
+      "source_url": "https://www.jedec.org/news/pressreleases/jedec-updates-standard-low-power-memory-devices-lpddr5",
+      "source_title": "JEDEC — LPDDR5 standard update announcement"
     },
     {
       "id": "C-3",
-      "statement": "An LPDDR5X channel is point-to-point rather than multidrop.",
+      "statement": "An LPDDR5X channel is normally point-to-point, controller to DRAM, with no connector and no fly-by topology — but a dual-rank or two-die configuration puts more than one device on the same data net.",
       "pages": [
         "interfaces/lpddr5x"
       ],
-      "source_type": "normative",
-      "source": "JEDEC topology definitions, plus a controller/PHY implementation guide",
-      "conditions": "Single rank; dual rank changes the loading",
-      "status": "awaiting",
-      "note": "'No multidrop' is too categorical — rank count changes it.",
+      "source_type": "commercial",
+      "source": "Synopsys LPDDR5 technical bulletin and LPDDR5X/5/4X controller documentation, on rank and dual-channel support; byte-mode descriptions of two 8-bit dies on one 16-bit channel",
+      "conditions": "Single-rank, single-die is the common case; rank count and byte mode change the loading",
+      "status": "scoped",
+      "note": "Corrected. \"Point to point rather than multidrop\" was too strong: LPDDR5 defines non-target ODT precisely because a dual-rank configuration exists, and a device may be built as two 8-bit dies sharing one 16-bit channel. The page already says so — it calls \"never multi-drop\" a step too far and tells the reader to check the configuration — so this row now matches what the page claims rather than what it used to.",
       "owner": "Geetansh",
-      "sourceCheckedBy": null,
-      "sourceCheckedOn": null,
+      "sourceCheckedBy": "Claude Opus 5",
+      "sourceCheckedOn": "2026-09-19",
       "humanReviewedBy": null,
-      "humanReviewedOn": null
+      "humanReviewedOn": null,
+      "source_title": "Synopsys — Key features designers should know about LPDDR5",
+      "source_url": "https://www.synopsys.com/designware-ip/technical-bulletin/key-features-about-lpddr5.html"
     },
     {
       "id": "C-4a",
@@ -74,33 +80,18 @@
       "pages": [
         "interfaces/lpddr5x"
       ],
-      "source_type": "normative",
-      "source": "JESD209-5x clocking architecture",
-      "conditions": "Write direction",
-      "status": "awaiting",
-      "note": "Split from C-4. WCK and RDQS have distinct roles and the page must not blur them.",
+      "source_type": "commercial",
+      "source": "Synopsys LPDDR5 technical bulletin, on the WCK and RDQS forwarded clocks",
+      "conditions": "LPDDR5 and its LPDDR5X extension; WCK runs at two or four times the command clock",
+      "status": "scoped",
+      "note": "Confirmed: LPDDR5 introduces two unidirectional strobes, WCK for writes and RDQS for reads, with WCK forwarded at two or four times the CK rate. Scoped rather than verified because the ratio options and their training are in JESD209-5, which has not been read.",
       "owner": "Geetansh",
-      "sourceCheckedBy": null,
-      "sourceCheckedOn": null,
+      "sourceCheckedBy": "Claude Opus 5",
+      "sourceCheckedOn": "2026-09-19",
       "humanReviewedBy": null,
-      "humanReviewedOn": null
-    },
-    {
-      "id": "C-4b",
-      "statement": "RDQS is returned by the memory with read data on LPDDR5X.",
-      "pages": [
-        "interfaces/lpddr5x"
-      ],
-      "source_type": "normative",
-      "source": "JESD209-5x clocking architecture",
-      "conditions": "Read direction",
-      "status": "awaiting",
-      "note": "Split from C-4.",
-      "owner": "Geetansh",
-      "sourceCheckedBy": null,
-      "sourceCheckedOn": null,
-      "humanReviewedBy": null,
-      "humanReviewedOn": null
+      "humanReviewedOn": null,
+      "source_title": "Synopsys — Key features designers should know about LPDDR5",
+      "source_url": "https://www.synopsys.com/designware-ip/technical-bulletin/key-features-about-lpddr5.html"
     },
     {
       "id": "C-5",
@@ -121,39 +112,43 @@
     },
     {
       "id": "C-6a",
-      "statement": "A PCIe Gen 4 channel budget is about 28 dB.",
+      "statement": "A PCIe Gen 4 channel insertion loss budget is about 28 dB at 8 GHz.",
       "pages": [
         "interfaces/pcie-gen4-gen5",
         "signal-integrity/channel-budgeting"
       ],
-      "source_type": "normative",
-      "source": "PCIe Base and CEM, Gen 4, with the reference plane for the figure",
-      "conditions": "Reference plane and frequency must both be named",
-      "status": "awaiting",
-      "note": "Split from C-6. Currently labelled 'commonly quoted', which is honest but not sourced.",
+      "source_type": "commercial",
+      "source": "Texas Instruments SNLA426, high-speed PCB layout for PCIe Gen 5; Astera Labs in Electronic Design, on managing the PCIe 5.0 channel insertion loss budget",
+      "conditions": "At the Nyquist frequency of the data rate: 8 GHz for 16 GT/s",
+      "status": "scoped",
+      "note": "The number is only meaningful with its frequency, and the sources supply it: 28 dB at 8 GHz for Gen 4. Independent design guidance agrees on the figure. Scoped rather than verified because the reference PLANE — what the budget is measured between — is defined in the Base and CEM specifications, and that is what decides whether a given measurement can be compared with it.",
       "owner": "Geetansh",
-      "sourceCheckedBy": null,
-      "sourceCheckedOn": null,
+      "sourceCheckedBy": "Claude Opus 5",
+      "sourceCheckedOn": "2026-09-19",
       "humanReviewedBy": null,
-      "humanReviewedOn": null
+      "humanReviewedOn": null,
+      "source_title": "Texas Instruments SNLA426 — High-speed PCB layout for PCIe Gen 5",
+      "source_url": "https://www.ti.com/lit/pdf/snla426"
     },
     {
       "id": "C-6b",
-      "statement": "A PCIe Gen 5 channel budget is about 36 dB.",
+      "statement": "A PCIe Gen 5 channel insertion loss budget is about 36 dB at 16 GHz.",
       "pages": [
         "interfaces/pcie-gen4-gen5",
         "signal-integrity/channel-budgeting"
       ],
-      "source_type": "normative",
-      "source": "PCIe Base and CEM, Gen 5, with the reference plane for the figure",
-      "conditions": "Reference plane and frequency must both be named",
-      "status": "awaiting",
-      "note": "Split from C-6: a different edition, so it needs its own reading.",
+      "source_type": "commercial",
+      "source": "Texas Instruments SNLA426, high-speed PCB layout for PCIe Gen 5; Astera Labs in Electronic Design, on managing the PCIe 5.0 channel insertion loss budget",
+      "conditions": "At the Nyquist frequency of the data rate: 16 GHz for 32 GT/s",
+      "status": "scoped",
+      "note": "The number is only meaningful with its frequency, and the sources supply it: 36 dB at 16 GHz for Gen 5. Independent design guidance agrees on the figure. Scoped rather than verified because the reference PLANE — what the budget is measured between — is defined in the Base and CEM specifications, and that is what decides whether a given measurement can be compared with it.",
       "owner": "Geetansh",
-      "sourceCheckedBy": null,
-      "sourceCheckedOn": null,
+      "sourceCheckedBy": "Claude Opus 5",
+      "sourceCheckedOn": "2026-09-19",
       "humanReviewedBy": null,
-      "humanReviewedOn": null
+      "humanReviewedOn": null,
+      "source_title": "Texas Instruments SNLA426 — High-speed PCB layout for PCIe Gen 5",
+      "source_url": "https://www.ti.com/lit/pdf/snla426"
     },
     {
       "id": "C-7",
@@ -178,16 +173,18 @@
       "pages": [
         "interfaces/pcie-gen6"
       ],
-      "source_type": "normative",
-      "source": "PCIe 6.0 Base, FLIT mode",
+      "source_type": "commercial",
+      "source": "Synopsys, \"PCIe 6.0 Verification of FEC and CRC\"; Cadence PCIe 6.0 electrical testing white paper",
       "conditions": "All rates once negotiated",
-      "status": "awaiting",
-      "note": "Split from C-8, which bundled four separate mechanisms into one row.",
+      "status": "scoped",
+      "note": "IP vendors implementing the specification describe the 256-byte FLIT carrying TLP payload, an 8-byte CRC and a 6-byte FEC, with a lightweight single-symbol-correcting FEC backed by CRC and replay. That supports FLIT mode as a mechanism. The normative requirement and its exact field layout need the Base specification.",
       "owner": "Geetansh",
-      "sourceCheckedBy": null,
-      "sourceCheckedOn": null,
+      "sourceCheckedBy": "Claude Opus 5",
+      "sourceCheckedOn": "2026-09-19",
       "humanReviewedBy": null,
-      "humanReviewedOn": null
+      "humanReviewedOn": null,
+      "source_url": "https://www.synopsys.com/blogs/chip-design/pcie-6-verifaction-fec-crc.html",
+      "source_title": "Synopsys — PCIe 6.0 verification of FEC and CRC"
     },
     {
       "id": "C-8b",
@@ -195,16 +192,18 @@
       "pages": [
         "interfaces/pcie-gen6"
       ],
-      "source_type": "normative",
-      "source": "PCIe 6.0 Base, FEC",
+      "source_type": "commercial",
+      "source": "Synopsys, \"PCIe 6.0 Verification of FEC and CRC\"; Cadence PCIe 6.0 electrical testing white paper",
       "conditions": "Per FLIT",
-      "status": "awaiting",
-      "note": "Split from C-8.",
+      "status": "scoped",
+      "note": "IP vendors implementing the specification describe the 256-byte FLIT carrying TLP payload, an 8-byte CRC and a 6-byte FEC, with a lightweight single-symbol-correcting FEC backed by CRC and replay. That supports forward error correction as a mechanism. The normative requirement and its exact field layout need the Base specification.",
       "owner": "Geetansh",
-      "sourceCheckedBy": null,
-      "sourceCheckedOn": null,
+      "sourceCheckedBy": "Claude Opus 5",
+      "sourceCheckedOn": "2026-09-19",
       "humanReviewedBy": null,
-      "humanReviewedOn": null
+      "humanReviewedOn": null,
+      "source_url": "https://www.synopsys.com/blogs/chip-design/pcie-6-verifaction-fec-crc.html",
+      "source_title": "Synopsys — PCIe 6.0 verification of FEC and CRC"
     },
     {
       "id": "C-8c",
@@ -212,16 +211,18 @@
       "pages": [
         "interfaces/pcie-gen6"
       ],
-      "source_type": "normative",
-      "source": "PCIe 6.0 Base, CRC and replay",
+      "source_type": "commercial",
+      "source": "Synopsys, \"PCIe 6.0 Verification of FEC and CRC\"; Cadence PCIe 6.0 electrical testing white paper",
       "conditions": "Per FLIT",
-      "status": "awaiting",
-      "note": "Split from C-8. FEC and CRC-with-replay are different mechanisms doing different jobs.",
+      "status": "scoped",
+      "note": "IP vendors implementing the specification describe the 256-byte FLIT carrying TLP payload, an 8-byte CRC and a 6-byte FEC, with a lightweight single-symbol-correcting FEC backed by CRC and replay. That supports a CRC with link-level replay as a mechanism. The normative requirement and its exact field layout need the Base specification.",
       "owner": "Geetansh",
-      "sourceCheckedBy": null,
-      "sourceCheckedOn": null,
+      "sourceCheckedBy": "Claude Opus 5",
+      "sourceCheckedOn": "2026-09-19",
       "humanReviewedBy": null,
-      "humanReviewedOn": null
+      "humanReviewedOn": null,
+      "source_url": "https://www.synopsys.com/blogs/chip-design/pcie-6-verifaction-fec-crc.html",
+      "source_title": "Synopsys — PCIe 6.0 verification of FEC and CRC"
     },
     {
       "id": "C-9",
@@ -229,16 +230,18 @@
       "pages": [
         "interfaces/pcie-gen6"
       ],
-      "source_type": "normative",
-      "source": "PCIe 6.0 Base, raw versus post-correction error metrics",
+      "source_type": "commercial",
+      "source": "Cadence PCIe 6.0 electrical testing white paper; PCI-SIG figures as reported by EDA and test vendors",
       "conditions": "Which metric — BER, FLIT error rate, or post-FEC — must be named",
-      "status": "awaiting",
-      "note": "The two numbers are different quantities, not one before and after.",
+      "status": "scoped",
+      "note": "The 1e-6 raw and 1e-12 delivered figures are consistently reported as the PAM4 versus NRZ framing behind the FEC decision. Reported by implementers rather than read from the specification, so the page presents them as the design intent and not as a requirement.",
       "owner": "Geetansh",
-      "sourceCheckedBy": null,
-      "sourceCheckedOn": null,
+      "sourceCheckedBy": "Claude Opus 5",
+      "sourceCheckedOn": "2026-09-19",
       "humanReviewedBy": null,
-      "humanReviewedOn": null
+      "humanReviewedOn": null,
+      "source_url": "https://www.cadence.com/content/dam/cadence-www/global/en_US/documents/tools/silicon-solutions/design-ip/pcie-6-0-electrical-testing-for-high-data-bandwidth-applications.pdf",
+      "source_title": "Cadence — PCIe 6.0 electrical testing for high data bandwidth applications"
     },
     {
       "id": "C-10",
@@ -246,16 +249,18 @@
       "pages": [
         "interfaces/pcie-gen6"
       ],
-      "source_type": "normative",
-      "source": "PCIe 6.0 Base, negotiation rules",
-      "conditions": "After training completes",
-      "status": "awaiting",
-      "note": "Lower-rate behaviour must not be inferred from Gen 6 capability.",
+      "source_type": "commercial",
+      "source": "Cadence, \"Unravelling PCIe 6.0 FLIT mode challenges\"; Synopsys PCIe 6.0 design material",
+      "conditions": "FLIT support is advertised during Polling and Configuration; once negotiated it applies at every rate",
+      "status": "scoped",
+      "note": "Confirmed with the mechanism behind it: 256-byte FLITs are supported at 2.5, 5, 8, 16 and 32 GT/s for backward compatibility, negotiation happens through the FLIT Mode Supported bit in the TS1 Data Rate Identifier during link training, and once enabled a speed change to a lower rate stays in FLIT mode. IP vendors implementing it, not the Base text.",
       "owner": "Geetansh",
-      "sourceCheckedBy": null,
-      "sourceCheckedOn": null,
+      "sourceCheckedBy": "Claude Opus 5",
+      "sourceCheckedOn": "2026-09-19",
       "humanReviewedBy": null,
-      "humanReviewedOn": null
+      "humanReviewedOn": null,
+      "source_title": "Cadence — Unravelling PCIe 6.0 FLIT mode challenges",
+      "source_url": "https://www.chipestimate.com/Unraveling-PCIe-60-FLIT-Mode-Challenges/Cadence/blogs/3640"
     },
     {
       "id": "C-18",
@@ -263,16 +268,18 @@
       "pages": [
         "interfaces/pcie-gen4-gen5"
       ],
-      "source_type": "normative",
-      "source": "PCIe Base, per edition",
+      "source_type": "commercial",
+      "source": "Tektronix, \"10 Things to Know about PCIe\"; Synopsys PCIe 5.0 technical bulletin",
       "conditions": "Per edition; the preset table is edition-specific",
-      "status": "awaiting",
-      "note": "",
+      "status": "scoped",
+      "note": "Vendor test and IP documentation consistently gives eleven transmitter presets, P0 to P10, for Gen 3 onwards. The preset TABLE — the preshoot and de-emphasis each one defines — is in the Base specification and has not been read, so the page states the count and the mechanism, not the values.",
       "owner": "Geetansh",
-      "sourceCheckedBy": null,
-      "sourceCheckedOn": null,
+      "sourceCheckedBy": "Claude Opus 5",
+      "sourceCheckedOn": "2026-09-19",
       "humanReviewedBy": null,
-      "humanReviewedOn": null
+      "humanReviewedOn": null,
+      "source_url": "https://download.tek.com/document/10-Things-to-Know-about-PCIe-eBook-65W-61046-0.pdf",
+      "source_title": "Tektronix — 10 Things to Know about PCIe"
     },
     {
       "id": "C-11",
@@ -339,10 +346,10 @@
       "source": "JESD220E and the M-PHY revision it references",
       "conditions": "Which M-PHY revision UFS 4.0 cites",
       "status": "awaiting",
-      "note": "A rate announcement says nothing about which revision UFS binds.",
+      "note": "MIPI’s own announcement establishes that M-PHY v5.0 defines HS-GEAR5 at 23.32 Gbps (recorded separately as C-12a). What needs JESD220E is the BINDING — that UFS 4.0 requires that gear rather than merely permitting it. Note also that JEDEC published UFS 5.0 (JESD220H) in February 2026 on M-PHY 6.0 with HS-G6, so the page should say which generation it describes.",
       "owner": "Geetansh",
-      "sourceCheckedBy": null,
-      "sourceCheckedOn": null,
+      "sourceCheckedBy": "Claude Opus 5",
+      "sourceCheckedOn": "2026-09-19",
       "humanReviewedBy": null,
       "humanReviewedOn": null
     },
@@ -356,10 +363,10 @@
       "source": "MIPI M-PHY",
       "conditions": "Whether it is required or optional, and its profile",
       "status": "awaiting",
-      "note": "Do not carry USB's SSC behaviour across to another PHY.",
+      "note": "Spread-spectrum clocking is described in M-PHY material as an option for EMI control, and the page should say optional rather than used. What needs the specification is whether UFS mandates it and with what modulation limits.",
       "owner": "Geetansh",
-      "sourceCheckedBy": null,
-      "sourceCheckedOn": null,
+      "sourceCheckedBy": "Claude Opus 5",
+      "sourceCheckedOn": "2026-09-19",
       "humanReviewedBy": null,
       "humanReviewedOn": null
     },
@@ -369,16 +376,18 @@
       "pages": [
         "interfaces/ufs4"
       ],
-      "source_type": "normative",
-      "source": "MIPI M-PHY burst and power-state definitions",
-      "conditions": "Which power state the link is leaving",
-      "status": "awaiting",
-      "note": "",
+      "source_type": "commercial",
+      "source": "Mixel, \"M-PHY benefits and challenges\"; Synopsys M-PHY article, on HS-BURST structure and STALL",
+      "conditions": "HS-MODE; STALL is the power-saving state between bursts",
+      "status": "scoped",
+      "note": "Confirmed by the burst structure: an HS-BURST is PREPARE, SYNC, MARKERs and then data, where SYNC is the symbol sequence the receiver uses to bit-synchronise to the embedded clock. Between bursts the lane sits in STALL with activity stopped, so each burst re-acquires. That is the mechanism the page describes.",
       "owner": "Geetansh",
-      "sourceCheckedBy": null,
-      "sourceCheckedOn": null,
+      "sourceCheckedBy": "Claude Opus 5",
+      "sourceCheckedOn": "2026-09-19",
       "humanReviewedBy": null,
-      "humanReviewedOn": null
+      "humanReviewedOn": null,
+      "source_title": "Mixel — M-PHY benefits and challenges",
+      "source_url": "https://mixel.com/m-phy-benefits-challenges/"
     },
     {
       "id": "C-15",
@@ -386,16 +395,18 @@
       "pages": [
         "interfaces/usb-3x"
       ],
-      "source_type": "normative",
-      "source": "USB 3.2 specification, SSC section",
-      "conditions": "Modulation profile and rate",
-      "status": "awaiting",
-      "note": "",
+      "source_type": "commercial",
+      "source": "TI application note SDAA423, USB 3.1 Gen 1 host TX electrical compliance, SSC parameters",
+      "conditions": "SuperSpeed signalling with SSC enabled; the depth is a range, not a single value",
+      "status": "scoped",
+      "note": "Independent sources agree on triangular down-spread modulation at 30 to 33 kHz. The depth is specified as a RANGE of 0.4% to 0.5%, so \"0 to -5000 ppm\" describes the maximum excursion rather than the required one, and the page says so. USB 3.2 clause 6.5.3 is named as the normative source and has not been read.",
       "owner": "Geetansh",
-      "sourceCheckedBy": null,
-      "sourceCheckedOn": null,
+      "sourceCheckedBy": "Claude Opus 5",
+      "sourceCheckedOn": "2026-09-19",
       "humanReviewedBy": null,
-      "humanReviewedOn": null
+      "humanReviewedOn": null,
+      "source_url": "https://www.ti.com/lit/an/sdaa423/sdaa423.pdf",
+      "source_title": "Texas Instruments SDAA423 — USB 3.1 Gen 1 host TX electrical compliance"
     },
     {
       "id": "C-16a",
@@ -535,15 +546,17 @@
         "labs/adc-interference"
       ],
       "source_type": "commercial",
-      "source": "SAR converter datasheets and application notes describing reference settling and bit-trial timing",
+      "source": "Analog Devices, \"Voltage Reference Design for Precision Successive-Approximation ADCs\"",
       "conditions": "Charge-redistribution SAR with a single reference node; trial timing within one sample period",
-      "status": "awaiting",
-      "note": "The mechanism is what this lab models and it follows from the architecture, but the claim as written is about SAR converters in general and has no primary source recorded yet. The page already states that its own converter is ideal and that trial times are a modelling choice.",
+      "status": "verified",
+      "note": "States the mechanism directly: the reference is disturbed when the DAC inputs change, the DAC changes on each bit-test clock cycle, and the largest droop is at the MSB trial because that capacitor is the largest. That is exactly what this lab models. It describes charge-redistribution SAR parts; the lab’s trial TIMING within the sample period is a modelling choice and the page says so.",
       "owner": "Geetansh",
-      "sourceCheckedBy": null,
-      "sourceCheckedOn": null,
+      "sourceCheckedBy": "Claude Opus 5",
+      "sourceCheckedOn": "2026-09-19",
       "humanReviewedBy": null,
-      "humanReviewedOn": null
+      "humanReviewedOn": null,
+      "source_url": "https://www.analog.com/en/resources/analog-dialogue/articles/precision-successive-approximation-adcs.html",
+      "source_title": "Analog Devices — Voltage reference design for precision SAR ADCs"
     },
     {
       "id": "C-23",
@@ -552,15 +565,17 @@
         "labs/adc-interference"
       ],
       "source_type": "commercial",
-      "source": "Delta-sigma converter datasheets and texts on oversampling converters, for the reference path of a switched-capacitor feedback DAC",
+      "source": "Analog Devices sigma-delta ADC tutorial and AN-0979, on the one-bit feedback DAC and its reference",
       "conditions": "Discrete-time, second order, one bit, single reference; not a continuous-time or multi-bit loop",
-      "status": "awaiting",
-      "note": "The page now bounds this to the loop it simulates and says explicitly that a continuous-time or multi-bit modulator will move the result. The derivation for this loop is in the model contract. Status is awaiting rather than scoped because narrowing the wording is not the same as reading a source.",
+      "status": "scoped",
+      "note": "The one-bit feedback DAC switching between levels set by the reference is standard in the published descriptions of this topology, which is what makes reference ripple multiply the bitstream rather than add to the signal. Scoped rather than verified because the page now bounds the behaviour to the loop it simulates — discrete-time, second order, one bit — and says a continuous-time or multi-bit modulator will differ.",
       "owner": "Geetansh",
-      "sourceCheckedBy": null,
-      "sourceCheckedOn": null,
+      "sourceCheckedBy": "Claude Opus 5",
+      "sourceCheckedOn": "2026-09-19",
       "humanReviewedBy": null,
-      "humanReviewedOn": null
+      "humanReviewedOn": null,
+      "source_url": "https://www.analog.com/en/resources/technical-articles/sigmadelta-adcs-tutorial.html",
+      "source_title": "Analog Devices — Sigma-delta ADC tutorial"
     },
     {
       "id": "C-24",
@@ -568,16 +583,18 @@
       "pages": [
         "labs/adc-interference"
       ],
-      "source_type": "normative",
-      "source": "IEEE Std 1241, terminology and test methods for analog-to-digital converters",
-      "conditions": "A coherent single-tone test with a windowed FFT; exclusion widths depend on the window",
-      "status": "awaiting",
-      "note": "Stated as this lab’s declared convention rather than as a standard it complies with. No licensed source has been read, and the page makes no compliance claim. The exclusion widths, the window and the masking limitation are published in the result contract.",
+      "source_type": "commercial",
+      "source": "Analog Devices MT-003 tutorial, \"Understand SINAD, ENOB, SNR, THD, THD+N and SFDR\"",
+      "conditions": "A coherent single-tone FFT test; exclusion widths depend on the window",
+      "status": "scoped",
+      "note": "MT-003 defines SNR as the signal against all other spectral components below Nyquist EXCLUDING harmonics and DC, and SINAD as including harmonics but excluding DC. That is the convention this lab declares. The specific choices — harmonics 2 to 6, plus or minus 4 bins, Blackman-Harris — are this lab’s parameters, published in its result contract, not a standard’s requirement. IEEE Std 1241 has not been read and the page makes no compliance claim.",
       "owner": "Geetansh",
-      "sourceCheckedBy": null,
-      "sourceCheckedOn": null,
+      "sourceCheckedBy": "Claude Opus 5",
+      "sourceCheckedOn": "2026-09-19",
       "humanReviewedBy": null,
-      "humanReviewedOn": null
+      "humanReviewedOn": null,
+      "source_url": "https://www.analog.com/media/en/training-seminars/tutorials/MT-003.pdf",
+      "source_title": "Analog Devices MT-003 — Understand SINAD, ENOB, SNR, THD, THD+N and SFDR"
     },
     {
       "id": "C-25",
@@ -603,15 +620,17 @@
         "labs/adc-interference"
       ],
       "source_type": "commercial",
-      "source": "Delta-sigma converter datasheets describing sinc-filter order and notch placement",
+      "source": "Analog Devices AN-0979, \"Digital Filtering Options\", and the sigma-delta ADC tutorial",
       "conditions": "Three cascaded length-OSR moving averages, decimating by OSR",
-      "status": "awaiting",
-      "note": "The null positions and the 3·OSR−2 length are first principles and are asserted in the ADC decimation suite. What has no source recorded is the claim that this is the usual choice in commercial parts; the page describes it as what this lab does.",
+      "status": "verified",
+      "note": "Better than \"the usual choice\": there is a stated design rule. The sinc order should be at least one more than the modulator order to keep out-of-band noise from aliasing back, which puts a second-order modulator at sinc-cubed, and the notch position follows the output data rate directly. Both halves of the claim, from the manufacturer’s own filter documentation.",
       "owner": "Geetansh",
-      "sourceCheckedBy": null,
-      "sourceCheckedOn": null,
+      "sourceCheckedBy": "Claude Opus 5",
+      "sourceCheckedOn": "2026-09-19",
       "humanReviewedBy": null,
-      "humanReviewedOn": null
+      "humanReviewedOn": null,
+      "source_url": "https://www.analog.com/en/resources/app-notes/an-0979.html",
+      "source_title": "Analog Devices AN-0979 — Digital filtering options"
     }
   ]
 }

@@ -148,7 +148,14 @@ def pager_html(flat, i):
     following internal links is how a reference site gets found."""
     def cell(j, direction, label):
         if j < 0 or j >= len(flat):
-            return f'    <span class="{direction}"><span class="dir">{label}</span><span>—</span></span>'
+            # Either end of the sequence. A card reading "Next —" looks broken and
+            # leaves the reader with nowhere to go, so the end is named and points
+            # back at the map it came from.
+            here = flat[i]
+            end = "Start of the sequence" if j < 0 else "End of the sequence"
+            return (f'    <a class="{direction} pager__end" '
+                    f'href="../../index.html#{here["section_id"]}">'
+                    f'<span class="dir">{end}</span><span>Back to the topic map</span></a>')
         t = flat[j]
         href = f"../../topics/{t['section_id']}/{t['slug']}.html"
         return (f'    <a class="{direction}" href="{href}">'
@@ -157,6 +164,71 @@ def pager_html(flat, i):
             + cell(i - 1, "prev", "Previous") + "\n"
             + cell(i + 1, "next", "Next") + "\n"
             + "  </nav>")
+
+
+SHARE_MARKERS = {"head": ("<!-- share:head:start -->", "<!-- share:head:end -->"),
+                 "foot": ("<!-- share:foot:start -->", "<!-- share:foot:end -->")}
+
+
+def share_html(url, title, where):
+    """Share links as ordinary anchors, stamped per page.
+
+    No third-party widget. A LinkedIn or X button that loads their script puts
+    their tracking on every page of a site whose whole claim is that you can read
+    its source and see everything it does. These are plain links to the same share
+    intents, they work with JavaScript off, and site.js adds only the two things an
+    anchor cannot do: clipboard copy, and the operating system's share sheet where
+    one exists."""
+    from urllib.parse import quote
+    u, t = quote(url, safe=""), quote(title, safe="")
+    amp = "&amp;"
+    links = [
+        ("LinkedIn", f"https://www.linkedin.com/sharing/share-offsite/?url={u}"),
+        ("X", f"https://x.com/intent/post?url={u}{amp}text={t}"),
+        ("Email", f"mailto:?subject={t}{amp}body={u}"),
+    ]
+    a = "".join(f'<a class="share__btn" href="{h}" target="_blank" rel="noopener">{esc(n)}</a>'
+                for n, h in links)
+    return (f'<div class="share share--{where}" data-share data-share-url="{esc(url)}" '
+            f'data-share-title="{esc(title)}">'
+            f'<span class="share__label">Share</span>{a}'
+            f'<button class="share__btn" type="button" data-act="copy-link">Copy link</button>'
+            f'<button class="share__btn" type="button" data-act="share-native" hidden>'
+            f'Share\u2026</button></div>')
+
+
+def stamp_share():
+    """Put a share row under the byline and again above the pager, on every topic."""
+    n = 0
+    data, flat = load()
+    base = data["site"]["url"].rstrip("/")
+    for t in flat:
+        if not t["path"].exists():
+            continue
+        html = t["path"].read_text(encoding="utf-8")
+        url = f'{base}/topics/{t["section_id"]}/{t["slug"]}.html'
+        out = html
+        for where in ("head", "foot"):
+            start, end = SHARE_MARKERS[where]
+            blk = start + share_html(url, t["title"], where) + end
+            if start in out:
+                out = re.sub(re.escape(start) + r"[\s\S]*?" + re.escape(end), lambda _m: blk, out)
+            elif where == "head":
+                # directly after the byline, which is where a reader decides
+                m = re.search(r'<p class="byline">[\s\S]*?</p>', out)
+                if not m:
+                    continue
+                out = out[:m.end()] + "\n    " + blk + out[m.end():]
+            else:
+                # above the pager, where the reading ends
+                m = re.search(r'  <!-- pager:start -->', out)
+                if not m:
+                    continue
+                out = out[:m.start()] + "  " + blk + "\n\n" + out[m.start():]
+        if out != html:
+            t["path"].write_text(out, encoding="utf-8")
+            n += 1
+    return n
 
 
 def cmd_new():
@@ -542,6 +614,8 @@ def cmd_relink():
     index = ROOT / "index.html"
     html = index.read_text(encoding="utf-8")
     block = "  <!-- map:start -->\n" + map_html(data) + "\n  <!-- map:end -->"
+    sh = stamp_share()
+    print(f"share rows stamped on {sh} page(s)")
     new, hits = re.subn(r"  <!-- map:start -->.*?<!-- map:end -->", lambda _m: block,
                         html, flags=re.S)
     if hits and new != html:
@@ -2010,7 +2084,7 @@ def asset_reference_problems():
         if not (ROOT / rel).exists():
             out.append(f"index.html: og:image points at {rel!r}, which is not in the "
                        f"repository — every social card would 404. Create it, or "
-                       f"remove the og:image tags (see docs/deployment.md)")
+                       f"remove the og:image tags")
     return out
 
 
