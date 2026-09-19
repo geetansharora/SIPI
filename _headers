@@ -19,8 +19,17 @@
 /js/*
   Cache-Control: public, max-age=31536000, immutable
 
+# NOT immutable, and this is the exception that proves the rule above. Nothing
+# under /assets/ is content-addressed: og.png is referenced as a bare
+# https://sipi.work/assets/og.png in every page's og:image and twitter:image,
+# favicon.svg and apple-touch-icon.png are bare <link> hrefs, and the logos are
+# bare url() calls inside components.css. A year of immutable caching on a fixed
+# URL means a replaced image never reaches anyone who already has it, including
+# every social platform that has already scraped the card. That is not
+# hypothetical: the launch card said "SI & PI" and "siandpi.com", and replacing
+# the file could not have reached a cache that already held the old one.
 /assets/*
-  Cache-Control: public, max-age=31536000, immutable
+  Cache-Control: public, max-age=86400, must-revalidate
 
 # Everything else — HTML, JSON, the licences, the changelog — is unversioned and
 # must revalidate, or a deploy never reaches anyone who has visited before.
