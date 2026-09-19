@@ -2362,7 +2362,14 @@ def cmd_check():
         for href in re.findall(r'(?:href|src)="([^"]+)"', html):
             if href.startswith(("http", "mailto:", "#", "data:")) or "${" in href:
                 continue  # "${" is a JS template literal inside a <script>, not a link
-            target = (f.parent / href.split("#")[0].split("?")[0]).resolve()
+            bare = href.split("#")[0].split("?")[0]
+            # A leading slash is resolved from the SITE root, not the file's own
+            # directory. 404.html has to use that form: the server returns it for a
+            # path that does not exist, and the browser's URL stays at that path, so
+            # a relative stylesheet or link would resolve one or three directories
+            # deep and fail.
+            target = ((ROOT / bare.lstrip("/")) if bare.startswith("/")
+                      else (f.parent / bare)).resolve()
             checked += 1
             if not target.exists():
                 dead.append(f"{f.relative_to(ROOT)} → {href}")

@@ -18,7 +18,11 @@
   filter: invert(1) hue-rotate(180deg);
 }
 .masthead nav { display: flex; align-items: center; flex-wrap: wrap; gap: var(--s2) var(--s4); }
-.masthead nav a { font-family: var(--font-mono); font-size: .78rem; color: var(--muted); text-decoration: none; }
+/* WCAG 2.5.8 asks for a 24x24 CSS-pixel target. These were 21 px tall: fine with
+   a mouse, a thin strip with a thumb. The padding is vertical only, so the
+   horizontal rhythm of the bar is unchanged. */
+.masthead nav a { font-family: var(--font-mono); font-size: .78rem; color: var(--muted); text-decoration: none;
+  padding-block: .2rem; display: inline-flex; align-items: center; min-height: 24px; }
 .masthead nav a:hover { color: var(--ink); }
 
 .theme-toggle {
@@ -28,6 +32,8 @@
   padding: .3rem .55rem; cursor: pointer; line-height: 1;
 }
 .theme-toggle:hover { color: var(--ink); border-color: var(--muted); }
+/* The two buttons in the bar reach the same 24 px minimum as the links beside them. */
+.masthead button, .masthead .search-open { min-height: 24px; }
 
 /* ---------- page header ---------- */
 .page-head { max-width: var(--measure); margin-inline: auto; padding-block: var(--s7) var(--s5); display: flex; flex-direction: column; gap: var(--s3); }

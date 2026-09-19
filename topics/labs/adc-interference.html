@@ -3,12 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="A GPIO switching beside a converter arrives somewhere in its output. Drive a SAR or delta-sigma converter with a coupled aggressor and watch SNR and offset move.">
 <title>Lab D: ADC Interference, Aliasing and Reference Noise | SIPI</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
 <link rel="stylesheet" href="../../css/base.css?v=e4f774de">
-<link rel="stylesheet" href="../../css/components.css?v=c1ece184">
+<link rel="stylesheet" href="../../css/components.css?v=d6d1640a">
 <link rel="stylesheet" href="../../css/adc-lab.css?v=46db406b">
   <!-- meta:start -->
   <link rel="canonical" href="https://sipi.work/topics/labs/adc-interference.html">
@@ -16,14 +17,14 @@
   <meta property="og:type" content="article">
   <meta property="og:site_name" content="SIPI">
   <meta property="og:title" content="Lab D: ADC Interference, Aliasing and Reference Noise | SIPI">
-  <meta property="og:description" content="">
+  <meta property="og:description" content="A GPIO switching beside a converter arrives somewhere in its output. Drive a SAR or delta-sigma converter with a coupled aggressor and watch SNR and offset move.">
   <meta property="og:url" content="https://sipi.work/topics/labs/adc-interference.html">
   <meta property="og:image" content="https://sipi.work/assets/og.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Lab D: ADC Interference, Aliasing and Reference Noise | SIPI">
-  <meta name="twitter:description" content="">
+  <meta name="twitter:description" content="A GPIO switching beside a converter arrives somewhere in its output. Drive a SAR or delta-sigma converter with a coupled aggressor and watch SNR and offset move.">
   <meta name="twitter:image" content="https://sipi.work/assets/og.png">
   <!-- meta:end -->
 </head>
@@ -283,7 +284,7 @@
         </figure>
 </div>
 <div class="lab-view" id="lab-view-sweep" role="tabpanel" aria-labelledby="lab-tab-sweep" data-view="sweep" data-count="1">
-<figure data-lab-unit="sweep" data-lab-name="SNR against aggressor frequency" class="panel"><div class="lab-panel-head"><span class="lab-unit-label">SNR against aggressor frequency</span><label class="adc-head-ctl"><span>sweep</span><select class="sel" id="adc-sweep-range">
+<figure data-lab-unit="sweep" data-lab-name="SNR against aggressor frequency" class="panel"><div class="lab-panel-head"><span class="lab-unit-label">SNR against aggressor frequency</span><label class="adc-head-ctl"><span>sweep</span><select class="sel" id="adc-sweep-range" aria-label="Frequency range for the SNR sweep">
               <option value="sar" data-arch="sar">0 to 5 × the sample rate</option>
               <option value="ds-odr" data-arch="ds">0 to 6 × the output data rate</option>
               <option value="ds-clock" data-arch="ds">the nearest modulator-clock multiple ± 3 × the data rate</option>
