@@ -5,6 +5,16 @@
   "name": "sipi",
   "compatibility_date": "2026-09-19",
 
+  // sipi.work is the only public hostname. Without this line the dashboard
+  // toggle does not survive: Cloudflare re-enables the workers.dev route on the
+  // next Wrangler deploy, and every git push is a Wrangler deploy. That is
+  // exactly what happened on 19 September 2026 — the route was switched off in
+  // the dashboard, the next commit deployed, and the full site was served at
+  // sipi.geetansh1991.workers.dev again with no x-robots-tag, as a second
+  // indexable copy. The preview wildcard stayed off because nothing re-enables
+  // it. Turning this back on means choosing to publish the site twice.
+  "workers_dev": false,
+
   "assets": {
     // Everything is served from the repository root, where index.html lives.
     // Workers static assets excludes NOTHING by default, so .assetsignore next
