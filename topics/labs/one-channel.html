@@ -13,7 +13,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
 <link rel="stylesheet" href="../../css/base.css?v=d84a55f8">
-<link rel="stylesheet" href="../../css/components.css?v=a60233d8">
+<link rel="stylesheet" href="../../css/components.css?v=fa1be321">
   <!-- meta:start -->
   <link rel="canonical" href="https://sipi.work/topics/labs/one-channel.html">
   <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
@@ -76,6 +76,15 @@
 
 
   <!-- ───────────── the lab ───────────── -->
+  <!-- mobilenote:start -->
+  <p class="mobile-note" role="note">
+    <b>On a phone you are seeing one view at a time.</b>
+    Use the selector inside the panel to switch between them. The instrument was
+    built to show every view at once, so a laptop or tablet gives you the whole
+    thing side by side &#8212; which is how most of these comparisons are meant to
+    be read.
+  </p>
+  <!-- mobilenote:end -->
   <section class="instrument lab" data-viz="labChannel" aria-label="Interactive channel lab: S-parameters, group delay, impulse response, TDR, bit sequence, eye diagram and sampling histogram, all from one cascaded network">
 <script type="application/json" data-contract>{"kind":"analytical","evidence":"independent","purpose":"Show one network in six domains at once, and link a post-cursor back to the bit that caused it.","equations":["z'(f)=Rs(f)(1+j)+jwL, y'(f)=jw*Cvac*eps_r(f)","gamma=sqrt(z'y'), Zc=sqrt(z'/y')","eps_r(f) = Djordjevic-Sarkar wideband Debye, decades 1e4 to 1e13","A=D=cosh(gamma*l), B=Zc*sinh(gamma*l), C=sinh(gamma*l)/Zc","S21=2/(A+B/Z0+C*Z0+D)"],"units":"Hz, s, ohm, V. Loss referenced to a FIXED 8 GHz belonging to the board, not to the symbol rate.","validity":"Single-ended, no crosstalk, CTLE only, ideal terminations. Loss is a budget at one frequency split between two mechanisms, not an arbitrary measured curve. Validity is per measurement, not per page: an impulse response that has not decayed inside its record marks the IMPULSE and PULSE panels and names them; it does not invalidate the S-parameters, and it is not used to infer the eye's accuracy. The eye's accuracy is measured directly instead - every released preset is within 0.35 mV of its value at four times the record.","numerics":"4096-point FFT at 32 samples/UI. Pre-wavefront energy below 1e-5 of the total and falling as the record is refined at fixed bandwidth. Propagation loss meets its budget to 1e-6 dB; |S21| differs from it by up to 5e-3 dB, which is the port mismatch of a lossy line whose Zc is not its nominal z. The tail diagnostic measures |h| at a quarter-record or more from the response PEAK. Measuring a fixed last eighth of the circular record instead reported 3.8462% on a matched lossless line with no reflector anywhere — the sidelobes of a band-limited fractional delay, falling as 1/n, wrapping in behind a peak that sits at sample 0. Impulse exports are dimensionless discrete convolution weights; normalized SBR exports are dimensionless too. The panel converts SBR weights to volts using its transmitted amplitude. Raw and active impulse records share dt and removed transport delay tdBulk; absolute display labels add tdBulk without changing the samples. The early view is a display window, and the full FFT record remains available. Frequency inspection selects the nearest native sample in linear Hz and links S21, S11 and group delay; exported group delay is in seconds. It does not interpolate wrapped phase or rebuild the model.","limitations":"Not a field solver, not coupled-line, not correlated against measurement. The eye height is the extremal gap between the two transmitted populations over one PRBS7 period at the decision instant — not a percentile, not a BER contour, and not comparable with a compliance eye height.","suites":["Causal line","Lab B assembled","Cascade","Lab result contract"],"version":"3.2","reviewed":"2026-09-13","panel":"labChannel"}</script>
 <div class="lab-frame">
@@ -635,7 +644,7 @@
   <span>Created and directed by Geetansh Arora. Text <a href="../../LICENSE-CONTENT">CC BY 4.0</a>, code <a href="../../LICENSE-CODE">MIT</a>.</span>
 </footer>
 
-<script src="../../js/site.js?v=9ac8f8b6"></script>
+<script src="../../js/site.js?v=9ac8f8b6" defer></script>
 <script src="../../js/viz-kit.js?v=a53e49c3" defer></script>
 <script src="../../js/viz/touchstone.js?v=85cc60d7" defer></script>
 <script src="../../js/viz/lab-channel.js?v=1b5c49ba" defer></script>

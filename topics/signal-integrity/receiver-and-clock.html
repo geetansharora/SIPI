@@ -13,7 +13,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
 <link rel="stylesheet" href="../../css/base.css?v=d84a55f8">
-<link rel="stylesheet" href="../../css/components.css?v=a60233d8">
+<link rel="stylesheet" href="../../css/components.css?v=fa1be321">
   <!-- meta:start -->
   <link rel="canonical" href="https://sipi.work/topics/signal-integrity/receiver-and-clock.html">
   <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
@@ -179,6 +179,15 @@
     </ul>
   </div>
 
+  <!-- mobilenote:start -->
+  <p class="mobile-note" role="note">
+    <b>On a phone you are seeing one view at a time.</b>
+    Use the selector inside the panel to switch between them. The instrument was
+    built to show every view at once, so a laptop or tablet gives you the whole
+    thing side by side &#8212; which is how most of these comparisons are meant to
+    be read.
+  </p>
+  <!-- mobilenote:end -->
   <section class="instrument lab" data-viz="cdr" aria-label="Interactive clock recovery panel: jitter transfer, residual phase error and allowable input jitter, all from one loop">
 <script type="application/json" data-contract>{"kind":"analytical","evidence":"independent","purpose":"Separate the three functions a clock-recovery loop defines: input jitter onto the recovered clock, the residual phase error at the decision, and the input jitter the receiver can withstand.","equations":["H(s) = (2*zeta*wn*s + wn^2) / (s^2 + 2*zeta*wn*s + wn^2)","residual = COMPLEX 1 - H(f), never 1 - |H(f)|","tolerance = margin / |1 - H(f)|, capped by a declared tracking ceiling","f3dB: u^2 - (2 + 4*zeta^2)*u - 1 = 0 with u = (w/wn)^2, so f3dB = fn*sqrt(root)","steady-state sinusoid: recovered phase = H(f) times input phase; residual = input - recovered"],"units":"Hz, seconds, UI peak-to-peak, dimensionless transfer","validity":"A teaching loop with declared parameters: natural frequency, damping and sampling margin. The sinusoidal experiment is the steady-state small-signal response after settling. The low-frequency tracking ceiling is DECLARED, not derived — a real one comes from the phase detector's range and the VCO's tuning. fn is the NATURAL frequency and is reported separately from the closed-loop -3 dB bandwidth, which is 1.58x to 3.37x higher depending on damping.","numerics":"Direct complex evaluation on 340 log-spaced points from 1 kHz to 1 GHz; 181 analytic sinusoidal samples over three periods at the selected frequency.","limitations":"Not a lock or acquisition transient, cycle-slip model, BER simulation, or compliance jitter-tolerance mask. A mask carries a BER target, a defined pattern, the phase detector's own characteristic and usually a measured low-frequency corner. This model has none of those, and the dashed part of the tolerance curve is an assumption drawn as one. No noise model: the panel makes no claim about how much of the loop's own reference noise reaches the recovered clock, because that needs a spectrum and an injection point and neither is here. The tracking ceiling is a DECLARED assumption, not a derived result, and where it binds the tolerance no longer scales with the sampling margin.","suites":["CDR loop"],"version":"2.1","reviewed":"2026-09-13","panel":"cdr"}</script>
 <div class="lab-frame">
@@ -627,7 +636,7 @@
   <span>Created and directed by Geetansh Arora. Text <a href="../../LICENSE-CONTENT">CC BY 4.0</a>, code <a href="../../LICENSE-CODE">MIT</a>.</span>
 </footer>
 
-<script src="../../js/site.js?v=9ac8f8b6"></script>
+<script src="../../js/site.js?v=9ac8f8b6" defer></script>
 <script src="../../js/viz-kit.js?v=a53e49c3" defer></script>
 <script src="../../js/viz/cdr.js?v=e8bc922d" defer></script>
 <script src="../../js/viz-loader.js?v=89d5884d" defer></script>

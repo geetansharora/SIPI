@@ -13,7 +13,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
 <link rel="stylesheet" href="../../css/base.css?v=d84a55f8">
-<link rel="stylesheet" href="../../css/components.css?v=a60233d8">
+<link rel="stylesheet" href="../../css/components.css?v=fa1be321">
 <link rel="stylesheet" href="../../css/adc-lab.css?v=46db406b">
   <!-- meta:start -->
   <link rel="canonical" href="https://sipi.work/topics/labs/adc-interference.html">
@@ -136,6 +136,15 @@
     <p>The lesson below the lab explains the physics behind everything the lab shows.</p>
   </div>
 
+  <!-- mobilenote:start -->
+  <p class="mobile-note" role="note">
+    <b>On a phone you are seeing one view at a time.</b>
+    Use the selector inside the panel to switch between them. The instrument was
+    built to show every view at once, so a laptop or tablet gives you the whole
+    thing side by side &#8212; which is how most of these comparisons are meant to
+    be read.
+  </p>
+  <!-- mobilenote:end -->
   <section class="instrument lab" data-viz="adcLab" aria-label="Interactive ADC interference lab: an aggressor couples into a SAR or Delta-Sigma converter's input or reference, and the output spectrum, SNR and offset respond">
 <script type="application/json" data-contract>{"kind":"numerical","evidence":"independent","purpose":"Say where a coupled digital aggressor lands in a converter's output — as spurs, as offset, or as raised noise — and what that does to SNR, for a SAR and a delta-sigma converter fed the same disturbance.","equations":["aggressor: 50%-duty trapezoid, 10-90% rise/fall, full ramp = that / 0.8, through one pole at the path bandwidth","flat coupling: v = G·y(t); capacitive: v = G·(f_bw/f_ref)·(x - y), i.e. G/(2*pi*f_ref)·dy/dt with G stated at f_ref = 1 MHz","fold: f_out = |f - round(f/fs)·fs|","SAR trial j: c <- c + 2^(N-1-j) if h >= (Vref + d(t_j))·(2c/2^N - 1)","delta-sigma, for the implemented ordering: X1 = (U-V)/(1-z^-1), X2 = (X1-V)/(1-z^-1), V = z^-1·X2 + E, giving V = z^-1·U + (1-z^-1)^2·E because (1-z^-1)^2 + z^-1(2-z^-1) = 1","sinc-cubed: three cascaded length-OSR moving averages; |H(f)| = |sin(pi·f·OSR/fmod)/(OSR·sin(pi·f/fmod))|^3","SNR excludes the fundamental, input harmonics 2-6 and DC, each +/-4 bins; interference counts as noise"],"units":"Hz, seconds, volts, dBFS, dB, LSB, ppm","validity":"Ideal comparator, DAC, sample-and-hold and clocks. One periodic trapezoidal aggressor. Oversampling is capped at 256 so a run stays interactive. Every parameter is checked against a declared domain before a run — enums, a finite positive reference, whole-number resolution 6-24 and oversampling 8-1024, an input below Nyquist and at or below full scale, finite non-negative noise, swing, phase, ppm, coupling and bandwidth, a positive rise/fall time — and a value outside it is refused with its reason. A reference driven to zero or below is refused, and so is an overloaded loop.","numerics":"SAR 65,536 samples at 16 bits. Delta-sigma output records are chosen from the oversampling ratio to hold the cost near a million modulator samples: 16,384 outputs at OSR 32 and 64, 8,192 at 128, 4,096 at 256, after a warm-up of 4,096 + 8·OSR modulator samples plus a full decimator kernel. Coherent input: an odd number of cycles in a power-of-two record, kept two lobes clear of DC and Nyquist. 4-term Blackman-Harris window, lobes summed over +/-4 bins. Deterministic noise seed. One run is synchronous and cannot be cancelled part way: measured at 14 ms for the SAR and 38-89 ms for the delta-sigma, so a dragged control coalesces to one run.","limitations":"No clock jitter or aperture uncertainty, no supply or ground bounce as a separate path, no DAC mismatch, no continuous-time or multi-bit modulator, no anti-alias filter beyond the single path pole. DNL and INL are named as mechanisms and are NOT measured: there is no static ramp or histogram test here, and THD is not a substitute for one. Interference that folds inside an excluded lobe is excluded with it and does not reduce the reported SNR, however large it is; diagnostics.masked names any such component and measurements.maskedCount counts them. The excluded bins carry no measurable noise of their own, so the measured average density stands in for them: exact for white noise, and otherwise bounded by the replaced fraction, which is under 0.2% of bins and so under 0.01 dB. The reference-ripple mixing shown is a property of this loop and does not transfer unchanged to a continuous-time or multi-bit modulator. Nothing here is a compliance measurement.","suites":["ADC SAR","ADC delta-sigma","ADC aliasing","ADC coupling","ADC decimation","ADC metrics","ADC reference coupling","ADC domain"],"version":"1.0","reviewed":"2026-09-18","panel":"adcLab"}</script>
 <div class="lab-frame">
@@ -873,7 +882,7 @@
   <span>Created and directed by Geetansh Arora. Text <a href="../../LICENSE-CONTENT">CC BY 4.0</a>, code <a href="../../LICENSE-CODE">MIT</a>.</span>
 </footer>
 
-<script src="../../js/site.js?v=9ac8f8b6"></script>
+<script src="../../js/site.js?v=9ac8f8b6" defer></script>
 <script src="../../js/viz-kit.js?v=a53e49c3" defer></script>
 <script src="../../js/models/adc-model.js?v=0d3c17ea"></script>
 <script src="../../js/viz/adc-lab.js?v=edb74527" defer></script>

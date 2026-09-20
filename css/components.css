@@ -1685,8 +1685,37 @@ html.lab-lock, html.lab-lock body { overflow: hidden; }
 /* ── below laptop width ────────────────────────────────────────────────────────
    The frame is not attempted: everything returns to one column, all views show,
    and the site's own phone view picker takes over. */
+/* Shown only where it is true. Above the breakpoint every view is on screen at
+   once and the note would be telling the reader something they can see is wrong. */
+.mobile-note { display: none; }
 @media (max-width: 74.99rem) {
-  .lab-frame { display: block; height: auto; min-height: 0; }
+  .mobile-note {
+    display: block;
+    max-width: var(--measure-wide, 68rem); margin: 0 auto var(--s3);
+    padding: var(--s3) var(--s4);
+    background: color-mix(in oklab, var(--signal) 6%, var(--surface));
+    border: 1px solid color-mix(in oklab, var(--signal) 22%, var(--border));
+    border-radius: var(--radius);
+    font-size: .88rem; line-height: 1.55; color: var(--ink2);
+  }
+  .mobile-note b { color: var(--ink); }
+}
+
+@media (max-width: 74.99rem) {
+  /* Source order is bar, left rail, stage, right rail -- the desktop arrangement,
+     where the rails flank the stage and everything is visible at once. Stacked on
+     a phone that same order puts ~690 px of controls between the reader and the
+     plot, and leaves the plot off-screen the whole time they are dragging one.
+     Flex plus order lifts the stage directly under the bar, so a control and the
+     thing it changes are as close together as one screen allows.
+
+     The workspace decides it is in page-flow mode by testing for display:grid on
+     this element, so flex reads the same as block to it and nothing else changes. */
+  .lab-frame { display: flex; flex-direction: column; height: auto; min-height: 0; }
+  .lab-frame > .instrument__bar { order: 1; }
+  .lab-frame > .lab-stage { order: 2; }
+  .lab-frame > .lab-rail--left { order: 3; }
+  .lab-frame > .lab-rail--right { order: 4; }
   /* The bar's column tracks are a desktop arrangement; on a phone it wraps like
      every other instrument bar on the site instead of scrolling the page sideways. */
   .lab-frame > .instrument__bar { display: flex; flex-wrap: wrap; grid-template-columns: none; grid-template-areas: none; }
@@ -1700,7 +1729,12 @@ html.lab-lock, html.lab-lock body { overflow: hidden; }
   .lab-split { display: block; }
   .lab-side { max-height: none !important; overflow: visible; margin-top: var(--s2); }
   .instrument.lab .panel:has(.probe__at) > .legend { padding-right: 0; }
-  .instrument.lab .probe-host > .probe__at { position: static; margin: 0; }
+  /* Must repeat the :has(.legend) hop from the desktop rule it overrides. That
+     rule is six classes deep and this was four, so it lost on specificity no
+     matter where it sat in the file and the entry stayed absolutely positioned
+     on top of the legend -- "backward" and the read-at box printed over each
+     other on every lab plot on a phone. */
+  .instrument.lab .panel:has(.legend) .probe-host > .probe__at { position: static; margin: 0; }
   .lab-rail .ctl__note {
     position: static; width: auto; height: auto; margin: 0;
     overflow: visible; clip: auto; clip-path: none; white-space: normal;

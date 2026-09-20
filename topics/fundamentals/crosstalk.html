@@ -13,7 +13,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
 <link rel="stylesheet" href="../../css/base.css?v=d84a55f8">
-<link rel="stylesheet" href="../../css/components.css?v=a60233d8">
+<link rel="stylesheet" href="../../css/components.css?v=fa1be321">
   <!-- meta:start -->
   <link rel="canonical" href="https://sipi.work/topics/fundamentals/crosstalk.html">
   <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
@@ -64,6 +64,15 @@
   </div>
 
   <!-- ───────────── the picture ───────────── -->
+  <!-- mobilenote:start -->
+  <p class="mobile-note" role="note">
+    <b>On a phone you are seeing one view at a time.</b>
+    Use the selector inside the panel to switch between them. The instrument was
+    built to show every view at once, so a laptop or tablet gives you the whole
+    thing side by side &#8212; which is how most of these comparisons are meant to
+    be read.
+  </p>
+  <!-- mobilenote:end -->
   <section class="instrument" data-viz="crosstalk" aria-label="Interactive crosstalk waveforms showing near-end and far-end coupling from the mutual inductance and capacitance ratios">
     <script type="application/json" data-contract>{"kind":"analytical","evidence":"independent","purpose":"Show why near-end saturates and far-end accumulates.","equations":["Kb=(Lm/L0+Cm/C0)/4","Kfe proportional to (Lm/L0-Cm/C0)"],"units":"ps, mV","validity":"Weak coupling, ratios <= 0.30. One aggressor, not a bus.","numerics":"Closed form superposition over the coupled length.","limitations":"Weak coupling, ratios <= 0.30. One aggressor, not a bus.","suites":["Crosstalk"],"version":"2.0","reviewed":"2026-09-12","panel":"crosstalk"}</script>
     <div class="instrument__bar">
@@ -421,7 +430,7 @@
   <span>Created and directed by Geetansh Arora. Text <a href="../../LICENSE-CONTENT">CC BY 4.0</a>, code <a href="../../LICENSE-CODE">MIT</a>.</span>
 </footer>
 
-<script src="../../js/site.js?v=9ac8f8b6"></script>
+<script src="../../js/site.js?v=9ac8f8b6" defer></script>
 <script src="../../js/viz-kit.js?v=a53e49c3" defer></script>
 <script src="../../js/viz/crosstalk.js?v=d47b7e2d" defer></script>
 <script src="../../js/viz-loader.js?v=89d5884d" defer></script>

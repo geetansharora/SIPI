@@ -13,7 +13,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
 <link rel="stylesheet" href="../../css/base.css?v=d84a55f8">
-<link rel="stylesheet" href="../../css/components.css?v=a60233d8">
+<link rel="stylesheet" href="../../css/components.css?v=fa1be321">
   <!-- meta:start -->
   <link rel="canonical" href="https://sipi.work/topics/interfaces/lpddr5x.html">
   <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
@@ -63,6 +63,15 @@
   </div>
 
   <!-- ───────────── the picture ───────────── -->
+  <!-- mobilenote:start -->
+  <p class="mobile-note" role="note">
+    <b>On a phone you are seeing one view at a time.</b>
+    Use the selector inside the panel to switch between them. The instrument was
+    built to show every view at once, so a laptop or tablet gives you the whole
+    thing side by side &#8212; which is how most of these comparisons are meant to
+    be read.
+  </p>
+  <!-- mobilenote:end -->
   <section class="instrument" data-viz="lpddrBudget" aria-label="Interactive LPDDR5X write timing budget shown as a stacked bar across one unit interval, with each contributor adjustable">
     <script type="application/json" data-contract>{"kind":"illustrative","evidence":"plausible","purpose":"Show how a UI is consumed by contributions that are not all the same kind.","equations":["UI_ps = 1e6 / rate_MTps        (the control is a TRANSFER rate in MT/s)","budget terms summed as an RSS of the independent contributors"],"units":"ps","validity":"ILLUSTRATIVE — the contributions are representative magnitudes, not JEDEC values. Training gain is a labelled model, not a specification.","numerics":"Exact arithmetic on the budget terms. At 8533 MT/s, UI = 1e6/8533 = 117.2 ps, which is what the page states.","limitations":"The contract previously wrote UI = 1/(2*rate), which is the formula for a clock frequency rather than a transfer rate and would have given 58.6 ps. The code was always right; the contract was not. The budget split itself is illustrative — the terms are plausible magnitudes, not a sourced allocation.","suites":["Units","State"],"version":"1.0","reviewed":"2026-09-12","panel":"lpddrBudget"}</script>
     <div class="instrument__bar">
@@ -471,7 +480,7 @@
   <span>Created and directed by Geetansh Arora. Text <a href="../../LICENSE-CONTENT">CC BY 4.0</a>, code <a href="../../LICENSE-CODE">MIT</a>.</span>
 </footer>
 
-<script src="../../js/site.js?v=9ac8f8b6"></script>
+<script src="../../js/site.js?v=9ac8f8b6" defer></script>
 <script src="../../js/viz-kit.js?v=a53e49c3" defer></script>
 <script src="../../js/viz/lpddr.js?v=c201fbab" defer></script>
 <script src="../../js/viz-loader.js?v=89d5884d" defer></script>

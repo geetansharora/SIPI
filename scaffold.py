@@ -614,6 +614,46 @@ def stamp_masthead():
     return n
 
 
+MOBILE_NOTE_MARKERS = ("  <!-- mobilenote:start -->", "  <!-- mobilenote:end -->")
+
+MOBILE_NOTE = """  <!-- mobilenote:start -->
+  <p class="mobile-note" role="note">
+    <b>On a phone you are seeing one view at a time.</b>
+    Use the selector inside the panel to switch between them. The instrument was
+    built to show every view at once, so a laptop or tablet gives you the whole
+    thing side by side &#8212; which is how most of these comparisons are meant to
+    be read.
+  </p>
+  <!-- mobilenote:end -->"""
+
+
+def stamp_mobile_note():
+    """Put the phone note immediately before each page's first panel.
+
+    Only pages that actually carry an instrument get one, and only the first
+    panel on a page: a reader needs telling once, not once per canvas.
+    """
+    n = 0
+    for f in site_html():
+        html = f.read_text(encoding="utf-8")
+        has_panel = re.search(r'<(?:div|section)[^>]*class="[^"]*\binstrument\b', html)
+        new, hits = re.subn(r"  <!-- mobilenote:start -->.*?<!-- mobilenote:end -->\n",
+                            "", html, flags=re.S)
+        if has_panel:
+            m = re.search(r'([ \t]*)<(?:div|section)[^>]*class="[^"]*\binstrument\b', new)
+            if m:
+                new = new[:m.start()] + MOBILE_NOTE + "\n" + new[m.start():]
+        if new != html:
+            f.write_text(new, encoding="utf-8")
+            n += 1
+    return n
+
+
+def cmd_mobilenote():
+    """Stamp the phone note above the first panel on every page that has one."""
+    print(f"  mobile note stamped on {stamp_mobile_note()} page(s)")
+
+
 def stamp_footer():
     """Keep authorship concise in the footer and detailed in the colophon."""
     n = 0
@@ -2066,6 +2106,12 @@ def site_stats():
         html = t["path"].read_text(encoding="utf-8")
         body = html[html.index("<main>"):html.index("</main>")] if "<main>" in html else ""
         svg += len(re.findall(r"<svg", body))
+        # The phone note is the same fifty words stamped on twenty-seven pages.
+        # Counting it added 1,539 words to a figure the README publishes as the
+        # site's written content, which it is not. Other stamped chrome -- the
+        # pager, the share row -- is still counted, and is left alone here so the
+        # published number does not move for reasons unrelated to this change.
+        body = re.sub(r"<!-- mobilenote:start -->[\s\S]*?<!-- mobilenote:end -->", "", body)
         stripped = re.sub(r"<(script|svg)[\s\S]*?</\1>", "", body)
         n = len(re.sub(r"<[^>]+>", " ", stripped).split())
         counts.append(n)
@@ -2708,7 +2754,8 @@ def cmd_check():
 if __name__ == "__main__":
     cmds = {"new": cmd_new, "relink": cmd_relink, "titles": cmd_titles,
             "identity": cmd_identity, "check": cmd_check,
-            "bust": cmd_bust, "meta": cmd_meta, "theme": cmd_theme, "contract": cmd_contract,
+            "bust": cmd_bust, "meta": cmd_meta, "theme": cmd_theme,
+            "mobilenote": cmd_mobilenote, "contract": cmd_contract,
             "claims": cmd_claims, "absolutes": cmd_absolutes,
             "stats": cmd_stats, "panels": cmd_panels,
             "experiments": stamp_reference_library}

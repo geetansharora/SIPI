@@ -13,7 +13,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
 <link rel="stylesheet" href="../../css/base.css?v=d84a55f8">
-<link rel="stylesheet" href="../../css/components.css?v=a60233d8">
+<link rel="stylesheet" href="../../css/components.css?v=fa1be321">
   <!-- meta:start -->
   <link rel="canonical" href="https://sipi.work/topics/fundamentals/loss-mechanisms.html">
   <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
@@ -65,6 +65,15 @@
   </div>
 
   <!-- ───────────── the picture ───────────── -->
+  <!-- mobilenote:start -->
+  <p class="mobile-note" role="note">
+    <b>On a phone you are seeing one view at a time.</b>
+    Use the selector inside the panel to switch between them. The instrument was
+    built to show every view at once, so a laptop or tablet gives you the whole
+    thing side by side &#8212; which is how most of these comparisons are meant to
+    be read.
+  </p>
+  <!-- mobilenote:end -->
   <section class="instrument" data-viz="loss" aria-label="Interactive plot of the three loss mechanisms against frequency, showing conductor loss rising as the square root of frequency, dielectric loss rising linearly, and the roughness multiplier">
     <script type="application/json" data-contract>{"kind":"illustrative","evidence":"computed","purpose":"Show the two loss terms crossing, and where the crossover moves.","equations":["a = kc*sqrt(f) + kd*f","delta=sqrt(rho/(pi*f*mu))"],"units":"Hz, dB/in, um","validity":"A FIT, not a geometry solve. Roughness shown as shape, not a calibrated prediction.","numerics":"Direct evaluation.","limitations":"A FIT, not a geometry solve. Roughness shown as shape, not a calibrated prediction.","suites":["Convergence","Units"],"version":"2.0","reviewed":"2026-09-12","panel":"loss"}</script>
     <div class="instrument__bar">
@@ -433,7 +442,7 @@
   <span>Created and directed by Geetansh Arora. Text <a href="../../LICENSE-CONTENT">CC BY 4.0</a>, code <a href="../../LICENSE-CODE">MIT</a>.</span>
 </footer>
 
-<script src="../../js/site.js?v=9ac8f8b6"></script>
+<script src="../../js/site.js?v=9ac8f8b6" defer></script>
 <script src="../../js/viz-kit.js?v=a53e49c3" defer></script>
 <script src="../../js/viz/loss.js?v=7566d0ea" defer></script>
 <script src="../../js/viz-loader.js?v=89d5884d" defer></script>

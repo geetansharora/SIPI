@@ -13,7 +13,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
 <link rel="stylesheet" href="../../css/base.css?v=d84a55f8">
-<link rel="stylesheet" href="../../css/components.css?v=a60233d8">
+<link rel="stylesheet" href="../../css/components.css?v=fa1be321">
   <!-- meta:start -->
   <link rel="canonical" href="https://sipi.work/topics/power-integrity/pdn-induced-jitter.html">
   <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
@@ -63,6 +63,15 @@
   </div>
 
   <!-- ───────────── the picture ───────────── -->
+  <!-- mobilenote:start -->
+  <p class="mobile-note" role="note">
+    <b>On a phone you are seeing one view at a time.</b>
+    Use the selector inside the panel to switch between them. The instrument was
+    built to show every view at once, so a laptop or tablet gives you the whole
+    thing side by side &#8212; which is how most of these comparisons are meant to
+    be read.
+  </p>
+  <!-- mobilenote:end -->
   <section class="instrument" data-viz="pdnJitter" aria-label="Interactive plot showing supply ripple and the resulting clock-edge displacement, with a selectable noise injection point relative to the PLL loop">
     <script type="application/json" data-contract>{"kind":"illustrative","evidence":"independent","purpose":"Show that where supply noise enters decides whether the loop removes it.","equations":["VCO noise high-passed at the loop bandwidth; reference noise low-passed; buffer noise uncorrected"],"units":"Hz, V, s","validity":"ILLUSTRATIVE topology — a first-order loop, not a solved PLL, and a linear small-signal sensitivity. What IS independently checked is the behaviour that matters: the three injection points are treated oppositely, and the units are dimensionally correct.","numerics":"Closed-form transfer functions.","limitations":"ILLUSTRATIVE topology — a first-order loop, not a solved PLL, and a linear small-signal sensitivity. What IS independently checked is the behaviour that matters: the three injection points are treated oppositely, and the units are dimensionally correct.","suites":["PSIJ"],"version":"1.0","reviewed":"2026-09-12","panel":"pdnJitter"}</script>
     <div class="instrument__bar">
@@ -420,7 +429,7 @@
   <span>Created and directed by Geetansh Arora. Text <a href="../../LICENSE-CONTENT">CC BY 4.0</a>, code <a href="../../LICENSE-CODE">MIT</a>.</span>
 </footer>
 
-<script src="../../js/site.js?v=9ac8f8b6"></script>
+<script src="../../js/site.js?v=9ac8f8b6" defer></script>
 <script src="../../js/viz-kit.js?v=a53e49c3" defer></script>
 <script src="../../js/viz/pdn-extras.js?v=57fcc26f" defer></script>
 <script src="../../js/viz-loader.js?v=89d5884d" defer></script>
