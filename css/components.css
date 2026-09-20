@@ -3,12 +3,24 @@
 
 /* ---------- masthead ---------- */
 .masthead {
-  display: flex; align-items: center; justify-content: space-between;
+  display: flex; align-items: center;
   flex-wrap: wrap; gap: var(--s2) var(--s4);
   max-width: var(--wide); margin-inline: auto;
   padding-block: var(--s4);
   border-bottom: 1px solid var(--border-soft);
 }
+/* The bar has three children now, so space-between would spread them evenly and
+   strand the nav in the middle. Auto margin on the nav pushes it and everything
+   after it to the right instead.
+
+   The order is explicit because the markup order and the wanted visual order
+   differ, and differ DIFFERENTLY at the two sizes. The theme button precedes the
+   nav in the document so that it can share the wordmark's row on a phone; on a
+   desktop it belongs last, after Search, which is where it has always been.
+   Leaving it implicit put it beside the wordmark on desktop, which is a change
+   nobody asked for. */
+.masthead nav { margin-left: auto; order: 2; }
+.masthead .theme-toggle { order: 3; }
 .wordmark {
   display: block; flex: 0 0 auto;
   width: 7.6rem; aspect-ratio: 1200 / 319;
@@ -111,7 +123,11 @@
 /* ---------- controls ---------- */
 .controls {
   display: grid; gap: var(--s4);
-  grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+  /* min(100%, …) so a column can never be wider than the space it has. A bare
+     rem minimum grows with the root font size while the viewport does not, so at
+     150% text these cards were 428 px in a 375 px viewport and the page scrolled
+     sideways. Most grids in this file already did this; three did not. */
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr));
   padding: var(--s4);
   border-top: 1px solid var(--border);
   background: var(--surface);
@@ -291,6 +307,30 @@ ul.tight li::marker { color: var(--muted); }
   :root[data-theme="system"] .site-foot > span:first-child::before {
     filter: invert(1) hue-rotate(180deg);
   }
+}
+
+/* On a phone the bar wrapped into three rows -- wordmark, links, and the theme
+   button alone on a third -- which cost about 45 px of vertical space above the
+   first sentence, with the wordmark's own row more than half empty. Two rows
+   now: the button rides beside the wordmark and the nav takes a full-width row
+   under it. Order is set explicitly because the button precedes the nav in the
+   markup and must stay on the first row when the nav wraps. */
+@media (max-width: 44rem) {
+  .masthead { row-gap: var(--s2); }
+  /* Order reverses here: the button comes first so it lands on the wordmark's
+     row, and the nav takes the full-width row beneath it. */
+  .masthead .theme-toggle { order: 1; margin-left: auto; }
+  .masthead nav { order: 2; flex: 1 0 100%; margin-left: 0; }
+}
+
+/* These two were added to claw back 37 px when the bar still carried Reference,
+   which no longer applies -- the five remaining items need 256 px of 335 px at
+   375 px wide. Both are kept because each stands on its own: the tighter column
+   gap is what keeps the row intact down at 320 px, and the Search button should
+   not advertise a "/" shortcut to a device with no keyboard to press it on. */
+@media (max-width: 28rem) {
+  .masthead nav { column-gap: var(--s2); }
+  .search-open kbd { display: none; }
 }
 
 @media (max-width: 34rem) {
@@ -1027,7 +1067,7 @@ dialog.searchbox::backdrop { background: rgba(4, 8, 11, .58); }
 .doors {
   display: grid; gap: var(--s3); margin: var(--s6) auto var(--s5);
   max-width: var(--measure-wide, 68rem);
-  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
 }
 .door {
   display: flex; flex-direction: column; gap: var(--s2);
@@ -1553,7 +1593,7 @@ dialog.searchbox::backdrop { background: rgba(4, 8, 11, .58); }
    plot on the left and the rest in a side column that scrolls on its own
    (workspace.js groups those elements and sets the column's height). */
 .lab-split {
-  display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(16rem, 1fr);
+  display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(min(100%, 16rem), 1fr);
   grid-template-rows: auto auto 1fr; gap: var(--s2) var(--s4); align-items: start;
 }
 .lab-split > .lab-panel-head { grid-column: 1 / -1; }

@@ -586,15 +586,24 @@ def stamp_masthead():
             (f"{prefix}index.html#groundwork", "Topics"),
             (f"{prefix}start.html", "Start"),
             (f"{prefix}labs.html", "Labs"),
-            (f"{prefix}reference.html", "Reference"),
+            # Reference is a lookup tool rather than a route into the material,
+            # and at 67 px it was the widest item in a bar that has to fit on a
+            # phone. It stays in the footer, which is where a reader looks for a
+            # glossary. Dropping it also retires the 3 px of slack the nav had at
+            # 375 px, which was too little to be stable.
             (f"{prefix}colophon.html", "About"),
         ]
         nav = "\n".join(f'    <a href="{href}">{label}</a>' for href, label in links)
+        # The theme button is a direct child, not a nav item. It is a control
+        # rather than a destination, and the position matters on a phone: as a
+        # sibling of the wordmark it shares that row instead of taking a third
+        # one of its own. js/search.js inserts its button before the toggle if it
+        # finds one in the nav and appends otherwise, so Search stays last either way.
         head = (f'<header class="masthead">\n'
                 f'  <a class="wordmark" href="{prefix}index.html">SIPI</a>\n'
+                f'  <button class="theme-toggle" data-act="theme" type="button">Light</button>\n'
                 f'  <nav aria-label="Site">\n'
                 f'{nav}\n'
-                f'    <button class="theme-toggle" data-act="theme" type="button">Light</button>\n'
                 f'  </nav>\n'
                 f'</header>')
         html = f.read_text(encoding="utf-8")
@@ -2614,6 +2623,32 @@ def cmd_check():
                 structural.append(f"{rel}: no loaded module defines NS.viz.{name}")
         if t.get("viz") and 'data-viz="' not in html:
             structural.append(f"{rel}: topics.json declares viz \"{t['viz']}\" but the page has no [data-viz]")
+
+    # A responsive grid whose column minimum is a bare length cannot shrink below
+    # it, so when the reader's font size grows and the viewport does not, the
+    # column outgrows its container and the whole page scrolls sideways. At 150%
+    # text the homepage map was 408 px of column in a 335 px grid, 53 px of
+    # overflow, and 189 px at 200% -- against WCAG 1.4.4, which asks for 200%
+    # without loss of content. min(100%, ...) is the fix and most of this
+    # stylesheet already used it.
+    #
+    # Scanned across the stylesheets AND inline <style> blocks, because the rule
+    # that caused this lived in one of those and no grep of css/ could see it.
+    sources = [(f.relative_to(ROOT).as_posix(), f.read_text(encoding="utf-8"))
+               for f in sorted((ROOT / "css").glob("*.css"))]
+    for f in site_html():
+        html_s = f.read_text(encoding="utf-8")
+        for block in re.findall(r"<style>(.*?)</style>", html_s, re.S):
+            sources.append((f.relative_to(ROOT).as_posix() + " <style>", block))
+    for name, text in sources:
+        text = re.sub(r"/\*.*?\*/", "", text, flags=re.S)
+        for m in re.finditer(r"repeat\(\s*auto-(?:fit|fill)\s*,\s*minmax\(\s*([^,]+?)\s*,", text):
+            floor = m.group(1).strip()
+            if floor.startswith("min(") or floor in ("0", "0px", "auto", "min-content"):
+                continue
+            structural.append(
+                f"{name}: a responsive grid floors its column at {floor} with no "
+                f"min(100%, ...), so it overflows once the reader enlarges the text")
 
     # Every link that leaves the site should open beside the page rather than
     # replace it: these are source citations inside a lesson, and a reader who

@@ -17,7 +17,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
 <link rel="stylesheet" href="css/base.css?v=d84a55f8">
-<link rel="stylesheet" href="css/components.css?v=a45d34f1">
+<link rel="stylesheet" href="css/components.css?v=a60233d8">
 <style>
   .hero { max-width: var(--measure); margin-inline: auto; padding-block: var(--s8) var(--s6); display: flex; flex-direction: column; gap: var(--s4); }
   .hero p { font-size: 1.15rem; color: var(--ink-2); }
@@ -26,7 +26,12 @@
   .sec { width: 100%; max-width: var(--wide); margin-inline: auto; padding-block: var(--s5); border-top: 1px solid var(--border-soft); }
   .sec__head { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--s2) var(--s4); margin-bottom: var(--s4); }
   .sec__head p { color: var(--muted); font-size: .95rem; }
-  .topic-grid { display: grid; gap: var(--s2); grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr)); }
+  /* min(100%, ...) so a column can never exceed the space it has. A bare rem
+     minimum grows with the reader's font size while the viewport does not, so
+     at 150% text these cards were 408px wide in a 335px grid and the whole page
+     scrolled sideways -- 53px at 150%, 189px at 200%. WCAG 1.4.4 asks for 200%
+     without loss of content. */
+  .topic-grid { display: grid; gap: var(--s2); grid-template-columns: repeat(auto-fill, minmax(min(100%, 17rem), 1fr)); }
   .topic { display: flex; align-items: baseline; gap: var(--s3); padding: .55rem .7rem; border: 1px solid var(--border-soft); border-radius: var(--radius); background: var(--surface); font-size: .95rem; min-width: 0; }
   .topic a { text-decoration: none; }
   .topic.is-planned { border-style: dashed; }
@@ -57,13 +62,12 @@
 
 <header class="masthead">
   <a class="wordmark" href="index.html">SIPI</a>
+  <button class="theme-toggle" data-act="theme" type="button">Light</button>
   <nav aria-label="Site">
     <a href="index.html#groundwork">Topics</a>
     <a href="start.html">Start</a>
     <a href="labs.html">Labs</a>
-    <a href="reference.html">Reference</a>
     <a href="colophon.html">About</a>
-    <button class="theme-toggle" data-act="theme" type="button">Light</button>
   </nav>
 </header>
 
