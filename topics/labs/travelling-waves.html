@@ -405,7 +405,7 @@
     </p>
 
     <figure class="figure">
-      <svg viewBox="0 0 760 116" role="img"
+      <svg viewBox="0 0 760 130" role="img"
            aria-label="Four cross-sections. One: a trace over a continuous plane, return current concentrated directly beneath it. Two: the same trace crossing a gap in the plane, the return current forced to detour around the gap, enclosing a much larger loop. Three: a layer transition with a return via placed close to the signal via, keeping the loop small. Four: the same transition with the return via far away, enclosing a large loop.">
         <defs>
           <marker id="rp-arrow" viewBox="0 0 8 8" refX="4" refY="4" markerWidth="5" markerHeight="5" orient="auto">
@@ -420,8 +420,9 @@
         <rect class="copper" x="70" y="28" width="46" height="8"/>
         <path class="flow" marker-end="url(#rp-arrow)" d="M93 40 v18"/>
         <path class="flow" d="M70 68 h46"/>
-        <text class="lbl" x="8" y="92">the return sits under the signal, because that is the</text>
-        <text class="lbl" x="8" y="104">lowest-inductance path — not the shortest one</text>
+        <text class="lbl" x="8" y="92">the return sits under the</text>
+        <text class="lbl" x="8" y="104">signal — the lowest-</text>
+        <text class="lbl" x="8" y="116">inductance path, not shortest</text>
 
         <!-- 2 · a gap -->
         <text class="lbl-hi" x="196" y="16">2 · a gap in the plane</text>
@@ -431,11 +432,12 @@
         <rect class="copper" x="258" y="28" width="46" height="8"/>
         <path class="flow" marker-end="url(#rp-arrow)" d="M281 40 v14"/>
         <path class="flow-bad" d="M281 58 H256 V78 H306 V58 H281"/>
-        <text class="lbl" x="196" y="92">the current has nowhere under the trace to be, so it</text>
-        <text class="lbl" x="196" y="104">detours — and the loop it encloses is what radiates</text>
+        <text class="lbl" x="196" y="92">the current has nowhere</text>
+        <text class="lbl" x="196" y="104">to be, so it detours — and</text>
+        <text class="lbl" x="196" y="116">the loop it encloses radiates</text>
 
         <!-- 3 · transition, return via close -->
-        <text class="lbl-hi" x="392" y="16">3 · layer change, return via close</text>
+        <text class="lbl-hi" x="392" y="16">3 · layer change, via close</text>
         <rect class="dielectric" x="392" y="24" width="170" height="46"/>
         <rect class="plane" x="392" y="44" width="170" height="6"/>
         <rect class="plane" x="392" y="64" width="170" height="6"/>
@@ -444,8 +446,9 @@
         <path class="copper" d="M441 28 h6 v34 h-6 z"/>
         <path class="copper" d="M455 44 h5 v26 h-5 z"/>
         <path class="flow" marker-end="url(#rp-arrow)" d="M447 36 h8"/>
-        <text class="lbl" x="392" y="92">a via nearby lets the return change layer with the</text>
-        <text class="lbl" x="392" y="104">signal, and the loop stays about as small as it was</text>
+        <text class="lbl" x="392" y="92">a via nearby lets the return</text>
+        <text class="lbl" x="392" y="104">change layer with the signal,</text>
+        <text class="lbl" x="392" y="116">so the loop stays small</text>
 
         <!-- 4 · transition, return via far -->
         <text class="lbl-hi" x="588" y="16">4 · the same, via far away</text>
@@ -457,8 +460,9 @@
         <path class="copper" d="M627 28 h5 v34 h-5 z"/>
         <path class="copper" d="M736 44 h5 v26 h-5 z"/>
         <path class="flow-bad" d="M632 38 H738 V58 H660"/>
-        <text class="lbl" x="588" y="92">the return still has to change layer, and now it goes</text>
-        <text class="lbl" x="588" y="104">the long way — the added loop is inductance in series</text>
+        <text class="lbl" x="588" y="92">the return still changes</text>
+        <text class="lbl" x="588" y="104">layer, but the long way —</text>
+        <text class="lbl" x="588" y="116">that added loop is series L</text>
 
       </svg>
       <figcaption>
