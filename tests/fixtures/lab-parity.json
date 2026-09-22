@@ -165,8 +165,8 @@
       "site.js",
       "viz-kit.js",
       "lab-waves.js",
-      "viz-loader.js",
       "lab-workspace.js",
+      "viz-loader.js",
       "search.js"
     ]
   },
@@ -459,8 +459,8 @@
       "viz-kit.js",
       "touchstone.js",
       "lab-channel.js",
-      "viz-loader.js",
       "lab-workspace.js",
+      "viz-loader.js",
       "search.js"
     ]
   },
@@ -789,8 +789,8 @@
       "site.js",
       "viz-kit.js",
       "lab-pdn.js",
-      "viz-loader.js",
       "lab-workspace.js",
+      "viz-loader.js",
       "search.js"
     ]
   },
@@ -887,8 +887,8 @@
       "site.js",
       "viz-kit.js",
       "cdr.js",
-      "viz-loader.js",
       "lab-workspace.js",
+      "viz-loader.js",
       "search.js"
     ]
   },
@@ -1216,8 +1216,8 @@
       "viz-kit.js",
       "adc-model.js",
       "adc-lab.js",
-      "viz-loader.js",
       "lab-workspace.js",
+      "viz-loader.js",
       "search.js"
     ]
   }

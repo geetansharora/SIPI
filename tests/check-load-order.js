@@ -214,3 +214,87 @@ for (const order of [
 }
 
 console.log('Script registration: both search/plot load orders passed.');
+
+/* ---- script order is a real dependency once the scripts are deferred ----
+   viz-loader boots the moment it runs if document.readyState is not 'loading',
+   and it reads NS.labWorkspace at that moment to mount the lab workspace. A
+   plain <script> at the end of <body> runs while the document is still parsing,
+   so readyState IS 'loading' and boot waits for DOMContentLoaded -- by which
+   time every other script has run and the order on the page does not matter.
+
+   Adding defer changes that: deferred scripts run after parsing with readyState
+   'interactive', so boot runs immediately, and anything the loader needs must
+   already have executed. lab-workspace.js was listed AFTER viz-loader.js, so
+   NS.labWorkspace was undefined at boot, the workspace never mounted, and the
+   view tabs on all four labs did nothing. No console error: the loader guards
+   with `if (NS.labWorkspace)` and simply skipped.
+
+   The dependency is one way -- lab-workspace mentions viz-loader only in a
+   comment -- so the fix is the order, and this is the check that keeps it. */
+{
+  const root = path.join(__dirname, '..');
+  const offenders = [];
+  const walk = (dir) => {
+    for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
+      if (e.name === '.git' || e.name === 'node_modules' || e.name === 'tests') continue;
+      const full = path.join(dir, e.name);
+      if (e.isDirectory()) { walk(full); continue; }
+      if (!e.name.endsWith('.html')) continue;
+      const html = fs.readFileSync(full, 'utf8');
+      const loader = html.search(/<script src="[^"]*viz-loader\.js/);
+      const ws = html.search(/<script src="[^"]*lab-workspace\.js/);
+      if (loader < 0 || ws < 0) continue;
+      if (ws > loader) offenders.push(path.relative(root, full));
+    }
+  };
+  walk(root);
+  assert.deepEqual(offenders, [],
+    'these pages load lab-workspace.js after viz-loader.js. With deferred scripts '
+    + 'the loader boots before the workspace is defined, so it silently skips '
+    + 'mounting it and every view tab in the lab stops working:\n  '
+    + offenders.join('\n  '));
+  console.log('Script order: lab-workspace.js precedes viz-loader.js everywhere both are loaded.');
+}
+
+/* ---- a page must not mix deferred and non-deferred local scripts ----
+   A plain <script src> runs the moment the parser reaches it; a deferred one runs
+   after the document is parsed. Deferring SOME of a page's scripts therefore does
+   not preserve their order -- it inverts it, putting every non-deferred script
+   ahead of every deferred one no matter how they are written.
+
+   That is not hypothetical. Deferring the site's scripts for PageSpeed matched
+   js/viz/*.js but not js/models/*.js, so on Lab D adc-model.js ran while
+   viz-kit.js was still waiting: it read K.fft from a kit that did not exist and
+   the whole panel failed to mount, with 109 px of horizontal overflow where it
+   should have been. The console said so; nothing else did.
+
+   All or nothing per page. Order among deferred scripts is document order, which
+   is what every one of these files assumes. */
+{
+  const root = path.join(__dirname, '..');
+  const offenders = [];
+  const walk = (dir) => {
+    for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
+      if (e.name === '.git' || e.name === 'node_modules' || e.name === 'tests') continue;
+      const full = path.join(dir, e.name);
+      if (e.isDirectory()) { walk(full); continue; }
+      if (!e.name.endsWith('.html')) continue;
+      const html = fs.readFileSync(full, 'utf8');
+      const local = [...html.matchAll(/<script src="([^"]*)"([^>]*)>/g)]
+        .filter((m) => !/^https?:/.test(m[1]));
+      if (local.length < 2) continue;
+      const plain = local.filter((m) => !/\bdefer\b/.test(m[2]));
+      if (plain.length && plain.length !== local.length) {
+        offenders.push(path.relative(root, full) + ': '
+          + plain.map((m) => m[1].split('/').pop().split('?')[0]).join(', ')
+          + ' run during parsing while ' + (local.length - plain.length) + ' other(s) wait');
+      }
+    }
+  };
+  walk(root);
+  assert.deepEqual(offenders, [],
+    'these pages mix deferred and non-deferred local scripts, which reorders them '
+    + 'so the non-deferred ones run first regardless of how they are written:\n  '
+    + offenders.join('\n  '));
+  console.log('Script timing: no page mixes deferred and non-deferred local scripts.');
+}

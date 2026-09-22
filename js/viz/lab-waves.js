@@ -355,7 +355,8 @@
     function drawProbe(cv, T) {
       const s = K.canvas(cv, 210);
       const P = K.plot(s, T, {
-        pad: { l: 56, r: 46, t: 16, b: 30 },
+        /* keepR: the right margin here is the current axis, not trace labels. */
+        pad: { l: 56, r: 46, t: 16, b: 30, keepR: true },
         x: { min: 0, max: TMAX / 1000, count: 6, fmt: (v) => v.toFixed(1), title: 'ns' },
         y: { min: R.vlo, max: R.vhi, count: 4, fmt: (v) => (v * 1000).toFixed(0), title: 'mV' }
       }).grid();

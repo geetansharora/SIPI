@@ -663,7 +663,29 @@
   }
 
   function wireWorkspace(el) {
-    const defaults = { labWaves: 'line', labChannel: 'eye', labPdn: 'z', cdr: 'transfer' };
+    /* The view a phone opens on. labWaves opens on the probe trace rather than the
+       spatial plot: it is the one that looks like a scope, it is what the time
+       scrubber drives, and it is the only view whose meaning survives being 356 px
+       wide. The wide layout shows every panel, so this only decides the phone. */
+    const defaults = { labWaves: 'probe', labChannel: 'eye', labPdn: 'z', cdr: 'transfer' };
+
+    /* Controls that earn a place directly under the chart on a phone, by lab.
+       A lab with no entry keeps its rails as they are. Chosen by Geetansh for
+       labWaves; the rest are deliberately not guessed at. */
+    const PRIMARY = {
+      labWaves: ['lw-rs', 'lw-z0', 'lw-xp'],
+      /* One per feature of the impedance curve, which is why these three and not
+         the other seven: the board bank sets the mid-band dip and the plane
+         anti-resonance beside it, package inductance sets the peak above that,
+         and on-die capacitance sets the high-frequency floor. A reader dragging
+         them sees three different parts of the same curve move. */
+      labPdn: ['pd-nboard', 'pd-lpkg', 'pd-cdie'],
+      /* Loss sets how far the eye closes; the discontinuity's impedance and its
+         length set what the reflection does to it. Between them they move the
+         eye, the insertion loss and the TDR trace, which are the three things
+         the charts on this lab show. */
+      labChannel: ['lc-loss', 'lc-dz', 'lc-dlen']
+    };
     if (!(el.dataset.viz in defaults)) return;
     const K = window.SIPI.kit;
     const panels = [...el.querySelectorAll('.panel')].filter((p) => p.querySelector('canvas[data-cv]'));
@@ -735,21 +757,141 @@
     const firstGroup = panels[0].closest('.panels, .instrument__grid, .panel-group') || panels[0];
     firstGroup.before(picker);
     const groups = [...new Set(panels.map((p) => p.parentElement))];
+
+    /* ---- the swipe track ----
+       Panels move into a scroll-snap row on a phone and back to their own parents
+       above the breakpoint. Moving rather than cloning matters: these are the
+       model's own elements, with its listeners and its ids on them, and a second
+       copy would be a second source of truth for the same number.
+
+       scroll-snap does the gesture, so momentum, rubber-banding and the trackpad
+       are the platform's rather than a handler's, and with no JavaScript at all
+       the panels are simply a row that scrolls. */
+    const home = new Map(panels.map((pn) => [pn, [pn.parentElement, pn.nextSibling]]));
+    const track = document.createElement('div');
+    track.className = 'lab-swipe';
+    track.tabIndex = 0;
+    track.setAttribute('role', 'group');
+    track.setAttribute('aria-label', 'Charts, scroll sideways or use the arrow keys');
+    const dots = document.createElement('div');
+    dots.className = 'lab-swipe__dots';
+    const live = document.createElement('p');
+    live.className = 'sr-only';
+    live.setAttribute('aria-live', 'polite');
+    const dotFor = panels.map((pn, i) => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'lab-swipe__dot';
+      b.setAttribute('aria-label', select.options[i] ? select.options[i].textContent : 'View ' + (i + 1));
+      b.addEventListener('click', () => goTo(i, true));
+      dots.appendChild(b);
+      return b;
+    });
+    picker.after(track);
+    track.after(dots);
+    dots.after(live);
+
+    /* Lab A's three controls sit under the chart on a phone. Same rule: moved,
+       with a note of where they came from so they can go home. */
+    const primaryRow = document.createElement('div');
+    primaryRow.className = 'lab-primary';
+    const primary = (PRIMARY[el.dataset.viz] || [])
+      .map((id) => { const input = el.querySelector('#' + id); return input && input.closest('.ctl'); })
+      .filter(Boolean);
+    const primaryHome = new Map(primary.map((c) => [c, [c.parentElement, c.nextSibling]]));
+    if (primary.length) dots.after(primaryRow);
+
+    let onTrack = false;
+    /* Height BEFORE the scroll, deliberately. The track is sized to the chart
+       being shown, and changing a scroll container's height while a smooth scroll
+       is in flight cancels it -- the dots updated and the track stayed where it
+       was. Resize first, then move. */
+    const fitHeight = (i) => {
+      if (!onTrack) return;
+      const want = panels[i].scrollHeight;
+      if (want > 0 && Math.abs(parseFloat(track.style.height || 0) - want) > 1) {
+        track.style.height = want + 'px';
+      }
+    };
+    const goTo = (i, smooth) => {
+      active = Math.max(0, Math.min(panels.length - 1, i));
+      select.value = String(active);
+      fitHeight(active);
+      if (onTrack) {
+        track.scrollTo({ left: panels[active].offsetLeft - track.offsetLeft,
+          behavior: smooth && !matchMedia('(prefers-reduced-motion: reduce)').matches ? 'smooth' : 'auto' });
+      }
+      sync();
+    };
+    const sync = () => {
+      dotFor.forEach((d, i) => {
+        d.setAttribute('aria-current', i === active ? 'true' : 'false');
+        d.tabIndex = i === active ? 0 : -1;
+      });
+      live.textContent = 'Chart ' + (active + 1) + ' of ' + panels.length + ': '
+        + (select.options[active] ? select.options[active].textContent : '');
+      /* A flex row is as tall as its tallest child, so the short charts sat above
+         a gap the height of the energy panel -- about 130 px of nothing between
+         the plot and the dots. fitHeight gives the track the height of the chart
+         showing instead, and is called before any scroll rather than after. */
+      fitHeight(active);
+    };
+
+    const enterTrack = () => {
+      if (onTrack) return;
+      panels.forEach((pn) => { pn.hidden = false; pn.removeAttribute('data-mobile-active'); track.appendChild(pn); });
+      primary.forEach((c) => primaryRow.appendChild(c));
+      groups.forEach((g) => { if (g !== el) g.hidden = false; });
+      onTrack = true;
+    };
+    const leaveTrack = () => {
+      if (!onTrack) return;
+      track.style.height = '';
+      panels.forEach((pn) => {
+        const [parent, next] = home.get(pn);
+        parent.insertBefore(pn, next && next.parentElement === parent ? next : null);
+        pn.hidden = false;
+        pn.removeAttribute('data-mobile-active');
+      });
+      primary.forEach((c) => {
+        const [parent, next] = primaryHome.get(c);
+        parent.insertBefore(c, next && next.parentElement === parent ? next : null);
+      });
+      groups.forEach((g) => { if (g !== el) g.hidden = false; });
+      onTrack = false;
+    };
+
     const paint = () => {
       picker.hidden = !narrow.matches;
-      panels.forEach((p, i) => {
-        p.hidden = narrow.matches && i !== active;
-        p.toggleAttribute('data-mobile-active', narrow.matches && i === active);
-      });
-      groups.forEach((g) => {
-        if (g !== el) g.hidden = narrow.matches && !g.contains(panels[active]);
-      });
+      track.hidden = dots.hidden = primaryRow.hidden = !narrow.matches;
+      if (narrow.matches) enterTrack(); else leaveTrack();
       K.repaint(el);
+      if (narrow.matches) { sync(); goTo(active, false); }
     };
-    select.addEventListener('change', () => {
-      active = Number(select.value); paint();
-      if (narrow.matches) panels[active].scrollIntoView({ block: 'start' });
+
+    /* Whichever panel's centre is nearest the track's centre is the one showing.
+       The only definition that stays right mid-swipe and at any panel width. */
+    let ticking = 0;
+    track.addEventListener('scroll', () => {
+      if (ticking || !onTrack) return;
+      ticking = requestAnimationFrame(() => {
+        ticking = 0;
+        const mid = track.scrollLeft + track.clientWidth / 2;
+        let best = 0, bestD = Infinity;
+        panels.forEach((pn, i) => {
+          const c = pn.offsetLeft - track.offsetLeft + pn.offsetWidth / 2;
+          const d = Math.abs(c - mid);
+          if (d < bestD) { bestD = d; best = i; }
+        });
+        if (best !== active) { active = best; select.value = String(active); sync(); }
+      });
+    }, { passive: true });
+    track.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowLeft') { goTo(active - 1, true); e.preventDefault(); }
+      else if (e.key === 'ArrowRight') { goTo(active + 1, true); e.preventDefault(); }
     });
+
+    select.addEventListener('change', () => { goTo(Number(select.value), true); });
     if (narrow.addEventListener) narrow.addEventListener('change', paint);
     else narrow.addListener(paint);
     paint();

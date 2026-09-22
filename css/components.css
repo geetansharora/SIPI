@@ -1701,6 +1701,59 @@ html.lab-lock, html.lab-lock body { overflow: hidden; }
   .mobile-note b { color: var(--ink); }
 }
 
+/* ── LAB ON A PHONE ─────────────────────────────────────────────────────────
+   One chart at a time, swiped, with its three controls underneath. Hidden above
+   the picker's own breakpoint, where every panel is on screen together and none
+   of this applies. */
+.lab-swipe, .lab-swipe__dots, .lab-primary { display: none; }
+
+@media (max-width: 47.99rem) {
+  .lab-swipe {
+    display: flex; gap: 0;
+    overflow-x: auto; overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  .lab-swipe::-webkit-scrollbar { display: none; }
+  .lab-swipe:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
+  /* Exactly one track width each, so a snap position is never ambiguous and a
+     phone never shows two half charts. min-width:0 lets the canvas shrink. */
+  /* align-items:start so a short chart does not stretch to the track's height;
+     the track itself is sized to whichever chart is showing, in viz-loader. */
+  .lab-swipe { align-items: start; }
+  .lab-swipe > .panel {
+    flex: 0 0 100%; min-width: 0; scroll-snap-align: center; scroll-snap-stop: always;
+    margin: 0; padding: 0 var(--s1);
+  }
+
+  .lab-swipe__dots {
+    display: flex; justify-content: center; gap: var(--s2);
+    padding: var(--s2) 0 0;
+  }
+  /* 24px of target around an 8px dot, per WCAG 2.5.8. */
+  .lab-swipe__dot {
+    width: 24px; height: 24px; padding: 0; border: 0; background: none; cursor: pointer;
+    display: inline-flex; align-items: center; justify-content: center;
+  }
+  .lab-swipe__dot::before {
+    content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--border);
+  }
+  .lab-swipe__dot[aria-current="true"]::before { background: var(--signal); }
+
+  /* The three controls that live under the chart. Full-width sliders on their own
+     line: a range input sharing a row with its label and readout on a 390 px
+     screen leaves about 140 px of travel, which is not enough to land a value. */
+  .lab-primary {
+    display: grid; gap: var(--s2);
+    margin: var(--s3) 0 0; padding: var(--s3) 0 0;
+    border-top: 1px solid var(--border-soft);
+  }
+  .lab-primary > .ctl { margin: 0; }
+  .lab-primary .ctl__head { display: flex; align-items: baseline; justify-content: space-between; gap: var(--s3); }
+  .lab-primary input[type="range"] { width: 100%; min-height: 24px; }
+}
+
 @media (max-width: 74.99rem) {
   /* Source order is bar, left rail, stage, right rail -- the desktop arrangement,
      where the rails flank the stage and everything is visible at once. Stacked on
@@ -1725,6 +1778,16 @@ html.lab-lock, html.lab-lock body { overflow: hidden; }
   .lab-stage { overflow: visible; }
   .lab-tabs, .lab-help, .lab-expand, .lab-full { display: none; }
   .lab-view, .lab-view.is-active { display: grid; gap: var(--s4); margin-top: var(--s3); grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr)); }
+  /* The [data-count] rules above are two classes plus an attribute and this was
+     two classes, so the desktop two-column layout won on a phone: the events view
+     kept a 2-track grid while the mobile picker showed only one of its panels, so
+     the visible one got half the width and the other track sat empty. That is why
+     "At the probe" and "Reflection events" rendered at 170 px against 356 px for
+     every other view, with the current axis clipped off the right. Matching
+     specificity, so the single column actually applies. */
+  .lab-view.is-active[data-count="2"],
+  .lab-view.is-active[data-count="3"] { grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr)); }
+  .lab-view.is-active[data-count="3"] > :last-child { grid-column: auto; }
   .lab-row--anchor { grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr)); }
   .lab-split { display: block; }
   .lab-side { max-height: none !important; overflow: visible; margin-top: var(--s2); }

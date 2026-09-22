@@ -162,11 +162,17 @@
        the HTML legend and summary carry the identity there instead. */
     const narrow = w < 420;
     const pad = Object.assign({ l: 50, r: 14, t: 16, b: 30 }, opts.pad || {});
-    if (narrow) {
+    if (narrow && !pad.keepR) {
       pad.r = Math.min(pad.r, 14);        // right margin only — see below
       /* The LEFT pad is not shrunk. Y-axis labels are drawn right-aligned into it,
          so trimming it truncates them ("100 mΩ" became ".00 mΩ"). Losing a trace
-         label at the right margin is recoverable; losing the axis is not. */
+         label at the right margin is recoverable; losing the axis is not.
+
+         keepR is the exception that reasoning did not cover. A panel with a SECOND
+         axis on the right — Lab A's probe plot draws current there — loses that
+         axis to this clamp, not a label: the mA numbers were cut to "2(" and "1:"
+         on a phone. A module that declares keepR is saying the right margin is an
+         axis and must survive, and it accepts a narrower plot box in exchange. */
     }
     const L = pad.l, R = w - pad.r, TP = pad.t, B = h - pad.b;
     let ax = opts.x, ay = opts.y;
