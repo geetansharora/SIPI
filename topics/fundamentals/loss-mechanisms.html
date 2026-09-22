@@ -65,13 +65,6 @@
   </div>
 
   <!-- ───────────── the picture ───────────── -->
-  <!-- mobilenote:start -->
-  <p class="mobile-note" role="note">
-    <b>Best on a laptop or desktop.</b>
-    These views are meant to be compared side by side; a narrow screen shows them
-    one after another.
-  </p>
-  <!-- mobilenote:end -->
   <section class="instrument" data-viz="loss" aria-label="Interactive plot of the three loss mechanisms against frequency, showing conductor loss rising as the square root of frequency, dielectric loss rising linearly, and the roughness multiplier">
     <script type="application/json" data-contract>{"kind":"illustrative","evidence":"computed","purpose":"Show the two loss terms crossing, and where the crossover moves.","equations":["a = kc*sqrt(f) + kd*f","delta=sqrt(rho/(pi*f*mu))"],"units":"Hz, dB/in, um","validity":"A FIT, not a geometry solve. Roughness shown as shape, not a calibrated prediction.","numerics":"Direct evaluation.","limitations":"A FIT, not a geometry solve. Roughness shown as shape, not a calibrated prediction.","suites":["Convergence","Units"],"version":"2.0","reviewed":"2026-09-12","panel":"loss"}</script>
     <div class="instrument__bar">

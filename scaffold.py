@@ -618,23 +618,35 @@ MOBILE_NOTE_MARKERS = ("  <!-- mobilenote:start -->", "  <!-- mobilenote:end -->
 
 MOBILE_NOTE = """  <!-- mobilenote:start -->
   <p class="mobile-note" role="note">
-    <b>Best on a laptop or desktop.</b>
-    These views are meant to be compared side by side; a narrow screen shows them
-    one after another.
+    <b>Best viewed on a laptop or desktop.</b>
+    These panels are built so you can move a slider and watch several charts
+    answer at once. A phone has no room to put them side by side.
   </p>
   <!-- mobilenote:end -->"""
 
 
 def stamp_mobile_note():
-    """Put the phone note immediately before each page's first panel.
+    """Put the phone note before the first panel, on pages the note describes.
 
-    Only pages that actually carry an instrument get one, and only the first
-    panel on a page: a reader needs telling once, not once per canvas.
+    Two conditions, not one. The page has to carry an instrument, and it has to
+    plot more than one chart. The note's whole claim is that several charts
+    answer a slider together and a phone cannot put them side by side -- which
+    is not what a single-canvas page does. Fourteen of the twenty-seven pages
+    that carried it plot exactly one chart, and on those it described a layout
+    the reader was not looking at.
+
+    Counting <canvas> is the right test rather than counting controls: a page
+    can have seven sliders and one plot, and it is the number of plots that
+    decides whether "side by side" means anything.
+
+    Only the first panel on a page gets one: a reader needs telling once, not
+    once per canvas.
     """
     n = 0
     for f in site_html():
         html = f.read_text(encoding="utf-8")
-        has_panel = re.search(r'<(?:div|section)[^>]*class="[^"]*\binstrument\b', html)
+        has_panel = (re.search(r'<(?:div|section)[^>]*class="[^"]*\binstrument\b', html)
+                     and len(re.findall(r'<canvas\b', html)) >= 2)
         new, hits = re.subn(r"  <!-- mobilenote:start -->.*?<!-- mobilenote:end -->\n",
                             "", html, flags=re.S)
         if has_panel:
@@ -2572,6 +2584,38 @@ def readme_problems():
     return out
 
 
+def mobile_note_problems():
+    """The phone note has to sit on exactly the pages it describes.
+
+    It claims that several charts answer one slider together and that a phone
+    has no room to put them side by side. That is true of a page plotting two
+    or more charts and plainly false of a page plotting one, so which pages
+    should carry it is decidable rather than a matter of taste.
+
+    It is checked because it has drifted twice. It was first written telling
+    readers to use a view selector that only the four lab pages build, and it
+    sat for a while on fourteen single-chart pages describing a layout the
+    reader was not looking at. Neither shows up in a link check or a physics
+    gate: the note is valid markup and renders correctly, it is just untrue.
+    """
+    out = []
+    for f in site_html():
+        html = f.read_text(encoding="utf-8")
+        has_note = "mobilenote:start" in html
+        has_panel = bool(re.search(r'<(?:div|section)[^>]*class="[^"]*\binstrument\b', html))
+        charts = len(re.findall(r"<canvas\b", html))
+        should = has_panel and charts >= 2
+        rel = f.relative_to(ROOT)
+        if has_note and not should:
+            why = "carries no instrument" if not has_panel else f"plots {charts} chart(s)"
+            out.append(f"{rel}: carries the phone note, but {why} — the note "
+                       f"describes several charts that cannot sit side by side")
+        elif should and not has_note:
+            out.append(f"{rel}: has an instrument and {charts} charts but no phone "
+                       f"note — run `python3 scaffold.py mobilenote`")
+    return out
+
+
 def cmd_check():
     data, flat = load()
     known = {t["path"].resolve() for t in flat}
@@ -2602,7 +2646,8 @@ def cmd_check():
                   + path_problems() + scenario_link_problems()
                   + guide_problems() + preset_problems()
                   + panel_manifest_problems() + evidence_problems()
-                  + contract_prose_problems() + reference_library_problems())
+                  + contract_prose_problems() + reference_library_problems()
+                  + mobile_note_problems())
     for t in flat:
         if not t["path"].exists():
             continue

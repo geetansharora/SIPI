@@ -63,13 +63,6 @@
   </div>
 
   <!-- ───────────── the picture ───────────── -->
-  <!-- mobilenote:start -->
-  <p class="mobile-note" role="note">
-    <b>Best on a laptop or desktop.</b>
-    These views are meant to be compared side by side; a narrow screen shows them
-    one after another.
-  </p>
-  <!-- mobilenote:end -->
   <section class="instrument" data-viz="lpddrBudget" aria-label="Interactive LPDDR5X write timing budget shown as a stacked bar across one unit interval, with each contributor adjustable">
     <script type="application/json" data-contract>{"kind":"illustrative","evidence":"plausible","purpose":"Show how a UI is consumed by contributions that are not all the same kind.","equations":["UI_ps = 1e6 / rate_MTps        (the control is a TRANSFER rate in MT/s)","budget terms summed as an RSS of the independent contributors"],"units":"ps","validity":"ILLUSTRATIVE — the contributions are representative magnitudes, not JEDEC values. Training gain is a labelled model, not a specification.","numerics":"Exact arithmetic on the budget terms. At 8533 MT/s, UI = 1e6/8533 = 117.2 ps, which is what the page states.","limitations":"The contract previously wrote UI = 1/(2*rate), which is the formula for a clock frequency rather than a transfer rate and would have given 58.6 ps. The code was always right; the contract was not. The budget split itself is illustrative — the terms are plausible magnitudes, not a sourced allocation.","suites":["Units","State"],"version":"1.0","reviewed":"2026-09-12","panel":"lpddrBudget"}</script>
     <div class="instrument__bar">

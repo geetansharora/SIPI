@@ -69,13 +69,6 @@
   </div>
 
   <!-- ───────────── the picture ───────────── -->
-  <!-- mobilenote:start -->
-  <p class="mobile-note" role="note">
-    <b>Best on a laptop or desktop.</b>
-    These views are meant to be compared side by side; a narrow screen shows them
-    one after another.
-  </p>
-  <!-- mobilenote:end -->
   <section class="instrument" data-viz="realCaps" aria-label="Interactive real-capacitor impedance plot">
     <script type="application/json" data-contract>{"kind":"analytical","evidence":"independent","purpose":"Show what a marked capacitance is worth at an operating point, and how much of the answer the derating uncertainty owns.","equations":["Z=ESR(f)+j(w*Ltot-1/(w*Ceff))","Ceff=cNom*retained","SRF=1/(2*pi*sqrt(Ltot*Ceff))","L_mount=length*(mu0/pi)*acosh(s/2r)","ESR=esrMin*cosh(ln(f/fMin)/2)"],"units":"Hz, ohm, F, H","validity":"Lumped R+L+C. Not valid above the part body's first structural resonance. The retained fraction is an INPUT - this panel does not know your derating and will not guess it.","numerics":"Closed form at every frequency. The band is the exact envelope over the capacitance range, not a two-endpoint min/max.","limitations":"No temperature coefficient on ESR, although one is measured to exist at high frequency. No mutual coupling to neighbouring parts. The ESR shape between its anchors is illustrative.","suites":["Real capacitors"],"version":"1.0","reviewed":"2026-09-13","panel":"realCaps"}</script>
     <div class="instrument__bar">

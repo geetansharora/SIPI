@@ -64,13 +64,6 @@
   </div>
 
   <!-- ───────────── the picture ───────────── -->
-  <!-- mobilenote:start -->
-  <p class="mobile-note" role="note">
-    <b>Best on a laptop or desktop.</b>
-    These views are meant to be compared side by side; a narrow screen shows them
-    one after another.
-  </p>
-  <!-- mobilenote:end -->
   <section class="instrument" data-viz="bathtub" aria-label="Interactive bathtub curve showing bit error rate against sampling position, with the measured region and the extrapolated region distinguished">
     <script type="application/json" data-contract>{"kind":"analytical","evidence":"independent","purpose":"Show the measured region and the extrapolated region as different things.","equations":["BER(t)=0.5[Q((t-DJ/2)/s)+Q((UI-DJ/2-t)/s)]","TJ=DJpp+2*Q(BER)*RJrms"],"units":"UI, s","validity":"Dual-Dirac is a FIT, not a measurement of the deterministic width.","numerics":"erfc below x=3, asymptotic series above; explicit empty result when no interval meets the target.","limitations":"Dual-Dirac is a FIT, not a measurement of the deterministic width.","suites":["Bathtub","Empty results"],"version":"2.0","reviewed":"2026-09-12","panel":"bathtub"}</script>
     <div class="instrument__bar">
