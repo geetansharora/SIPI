@@ -1,6 +1,6 @@
 {
-  "name": "SI & PI",
-  "short_name": "SI&PI",
+  "name": "SIPI.work",
+  "short_name": "SIPI",
   "description": "Signal and power integrity, visualised.",
   "start_url": "/index.html",
   "display": "standalone",

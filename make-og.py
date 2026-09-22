@@ -60,9 +60,9 @@ def main():
     for y in range(0, H, 60):
         d.line([(0, y), (W, y)], fill=GRID, width=1)
 
-    # ---- wordmark: SI & PI, ampersand in the signal colour as in the masthead ----
+    # ---- wordmark: SIPI, matching the masthead brand ----
     fw = font(MONO, 104, index=1)
-    parts = [("SI", INK), (" & ", SIGNAL), ("PI", INK)]
+    parts = [("SI", INK), ("PI", SIGNAL)]
     total = sum(d.textlength(t, font=fw) for t, _ in parts)
     x = (W - total) / 2
     for text, colour in parts:

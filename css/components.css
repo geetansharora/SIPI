@@ -1727,6 +1727,22 @@ html.lab-lock, html.lab-lock body { overflow: hidden; }
     margin: 0; padding: 0 var(--s1);
   }
 
+  /* The chart has to let go of the horizontal axis, or there is no swipe.
+     `.panel canvas` declares `touch-action: pan-y` so that a finger landing on a
+     plot mid-article still scrolls the page down while left/right stays with the
+     canvas -- right for an article, and exactly what killed the thumb here. The
+     canvas is two thirds of the panel's area, so most swipes started on a surface
+     that had told the compositor horizontal was not its business. The dots kept
+     working the whole time because scrollTo() is a scripted scroll and
+     touch-action only governs input-driven ones.
+
+     `auto` hands the gesture back to the browser inside the track. What it costs
+     is dragging along a plot to sweep the readout, which a tap still does, and
+     drag-to-zoom, which has to be armed from a button and is not a phone gesture
+     anyway. What it buys back, besides the swipe, is pinch-zoom on the chart --
+     pan-y suppresses that too. */
+  .lab-swipe > .panel canvas { touch-action: auto; }
+
   .lab-swipe__dots {
     display: flex; justify-content: center; gap: var(--s2);
     padding: var(--s2) 0 0;
