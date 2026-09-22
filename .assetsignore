@@ -25,5 +25,35 @@ tests/README.md
 tests/panels.json
 
 # NOT excluded, deliberately: tests/fixtures/experiments/ and
-# tests/fixtures/reference-next/ are linked as downloads from reference.html,
-# and docs/ holds the claim ledger the footer points at on every page.
+# tests/fixtures/reference-next/ are linked as downloads from reference.html.
+
+# docs/ is allow-listed rather than deny-listed. The source repository keeps its
+# working notes beside the published ledger, and a note that slipped into this
+# one should fail closed -- not be served because nobody thought to list it.
+# Publishing a new document means adding its line here; a page that links to one
+# that is missing fails check-load-order.js, which names it.
+docs/*
+!docs/absolutes.json
+!docs/architecture.md
+!docs/channel-model.md
+!docs/claims.json
+!docs/claims.md
+!docs/model-types.json
+!docs/pdn-causal-evidence.json
+!docs/pdn-causal-model.md
+!docs/pdn-two-load-evidence.json
+!docs/performance.md
+!docs/real-capacitor-model.md
+!docs/reference-experiments-next.json
+!docs/reference-experiments.json
+!docs/reference-experiments.md
+!docs/verification-evidence.md
+
+# Files that must never be in this repository at all. Publishing removes them and
+# a local pre-push hook refuses any push that still carries one, so in a correct
+# deployment each line below matches nothing -- check-load-order.js exempts them
+# from its must-match rule, as it does .git. They are here so that if one ever
+# got through, Cloudflare still would not serve it.
+CLAUDE.md
+HANDOVER.md
+tests/experimental-labs/*

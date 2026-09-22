@@ -61,17 +61,35 @@ for (const order of [
     .filter((l) => l && !l.startsWith('#'));
   assert(patterns.length, '.assetsignore parsed to nothing');
 
-  for (const pat of patterns) {
-    assert(!/[!\[\]?]/.test(pat) && !pat.endsWith('/') && !pat.includes('**'),
-      '.assetsignore uses a pattern this gate cannot evaluate: ' + pat
-      + ' -- extend the matcher rather than trusting it');
-  }
-
   const rx = (pat) => new RegExp('^' + pat.replace(/[.+^${}()|\\]/g, '\\$&')
     .replace(/\*/g, '[^/]*') + '$');
-  const ignored = (rel) => patterns.some((pat) => pat.includes('/')
+  const hits = (pat, rel) => pat.includes('/')
     ? rx(pat).test(rel)
-    : rel.split('/').some((seg) => rx(pat).test(seg)));
+    : rel.split('/').some((seg) => rx(pat).test(seg));
+  const body = (pat) => (pat.startsWith('!') ? pat.slice(1) : pat);
+
+  /* A leading `!` re-includes, and the last pattern that matches a path decides:
+     the .gitignore rule, which Cloudflare follows. docs/ relies on it, being
+     allow-listed so that a working note which slips into the public repository
+     is refused rather than served. Accepted only on an anchored path, and only
+     where no earlier line excludes a parent DIRECTORY -- .gitignore cannot
+     re-include a file whose directory is itself excluded, so `docs/*` then
+     `!docs/claims.md` works while `docs` then the same line silently would not. */
+  for (const pat of patterns) {
+    const b = body(pat);
+    assert(!/[!\[\]?]/.test(b) && !b.endsWith('/') && !b.includes('**'),
+      '.assetsignore uses a pattern this gate cannot evaluate: ' + pat
+      + ' -- extend the matcher rather than trusting it');
+    if (pat.startsWith('!')) {
+      assert(b.includes('/'), 'a re-include must be an anchored path: ' + pat);
+      const dirs = b.split('/').slice(0, -1).map((_, i, a) => a.slice(0, i + 1).join('/'));
+      const blocker = patterns.find((q) => !q.startsWith('!') && dirs.some((d) => hits(q, d)));
+      assert(!blocker, pat + ' can never take effect: "' + blocker
+        + '" excludes its directory, and .gitignore cannot re-include inside one');
+    }
+  }
+  const ignored = (rel) => patterns.reduce(
+    (out, pat) => (hits(body(pat), rel) ? !pat.startsWith('!') : out), false);
 
   /* Every page Cloudflare will serve, and every local thing it points at. */
   const pages = [];
@@ -130,11 +148,14 @@ for (const order of [
     }
   };
   walkAll(root, '');
-  const DEFENSIVE = new Set(['.git']);
+  /* The private-file lines are defensive in the same sense. They name files that
+     must never be in the public repository, so in the exported tree the publish
+     step verifies they correctly match nothing; they exist for the day one gets
+     through. Requiring them to match would make the publish check demand the
+     leak it is guarding against. */
+  const DEFENSIVE = new Set(['.git', 'CLAUDE.md', 'HANDOVER.md', 'tests/experimental-labs/*']);
   const inert = patterns.filter((pat) => !DEFENSIVE.has(pat)
-    && !all.some((f) => pat.includes('/')
-      ? rx(pat).test(f)
-      : f.split('/').some((seg) => rx(pat).test(seg))));
+    && !all.some((f) => hits(body(pat), f)));
   assert.deepEqual(inert, [],
     '.assetsignore lines that no longer match anything: ' + inert.join(', '));
 

@@ -8,3 +8,4 @@ __pycache__/
 /.claude/
 /docs/release-checklist.md
 /docs/deployment.md
+/tmp/

@@ -1,7 +1,8 @@
 /* SI & PI — base.css
    Design tokens, reset, typography.
-   Dark-first: the bare :root block is the complete DARK palette.
-   Light is redefined at token level only, in both the media query and the stamp. */
+   Light-first: the bare :root block is the complete LIGHT palette.
+   Dark is redefined at token level only, under [data-theme="dark"] and again
+   for [data-theme="system"] inside the dark media query. */
 
 /* ---------- tokens: LIGHT is the default ----------
 
