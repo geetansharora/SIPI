@@ -14,6 +14,7 @@
   };
 
   NS.viz.calcRlc = function (root) {
+    const keep = {};                      // this chart's axis ranges, held while they still fit
     return K.calc(root, {
       selects: [{
         id: 'mode', label: 'Circuit', def: 'series',
@@ -44,13 +45,13 @@
       chart: {
         draw(s, T, v, r) {
           const mode = v.mode === 'cap' ? 'series' : v.mode;
-          const [lo, hi] = K.decades(r.f0 / 100, r.f0 * 100);
+          const [lo, hi] = K.sticky(keep, 'x', r.f0 / 100, r.f0 * 100, true);
           const pts = []; let zmin = Infinity, zmax = 0;
           for (let i = 0; i <= 320; i++) {
             const f = lo * Math.pow(hi / lo, i / 320), z = M.rlcZ(mode, v.R, v.L, v.C, f).mag;
             pts.push([f, z]); zmin = Math.min(zmin, z); zmax = Math.max(zmax, z);
           }
-          const [ylo, yhi] = K.decades(zmin / 1.5, zmax * 1.5);
+          const [ylo, yhi] = K.sticky(keep, 'y', zmin / 1.5, zmax * 1.5, true);
           const P = K.plot(s, T, {
             pad: { l: 62, r: 16, t: 20, b: 32 },
             x: { min: lo, max: hi, log: true, fmt: (x) => K.si(x, 'Hz', 1), title: 'frequency' },

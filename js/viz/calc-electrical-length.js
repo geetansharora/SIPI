@@ -29,22 +29,25 @@
         { k: 'Verdict', tone: r.long ? 'alarm' : 'ok', v: r.long ? 'Transmission line' : 'Lumped' }
       ],
       chart: {
+        /* Log-log and fixed. The round trip is then a straight line, t_r/3 a
+           horizontal one, and the critical length is where they cross: dragging
+           the length slides the dot along the line, Dk shifts the line, the rise
+           time moves the threshold -- and no axis ever rescales under the reader. */
         draw(s, T, v, r) {
-          const xMax = Math.max(2 * v.len, 2.5 * r.lcrit);
+          const xlo = 0.01, xhi = 100;
           const P = K.plot(s, T, {
             pad: { l: 58, r: 16, t: 20, b: 32 },
-            x: { min: 0, max: xMax, count: 5, fmt: (x) => (x < 10 ? x.toPrecision(2) : x.toFixed(0)), title: 'length, in' },
-            y: { min: 0, max: Math.max(2 * r.tpd * xMax, r.third * 1.3), count: 5,
-                 fmt: (y) => K.si(y, 's', 2), title: 'time' }
+            x: { min: xlo, max: xhi, log: true, fmt: (x) => String(Number(x.toPrecision(1))), title: 'length, in' },
+            y: { min: 1e-13, max: 1e-7, log: true, fmt: (y) => K.si(y, 's', 1), title: 'time' }
           }).grid();
-          K.shadeX(P, r.lcrit, xMax, K.rgba(T.alarm, 0.07));
-          P.trace([[0, 0], [xMax, 2 * r.tpd * xMax]], T.signal, { width: 2.2, label: 'round trip', unit: 's' });
-          P.hline(r.third, T.reflect, [4, 4], 'tᵣ/3');
+          K.shadeX(P, r.lcrit, xhi, K.rgba(T.alarm, 0.07));
+          P.trace([[xlo, 2 * r.tpd * xlo], [xhi, 2 * r.tpd * xhi]], T.signal, { width: 2.2, label: 'round trip', unit: 's' });
+          P.hline(r.third, T.reflect, [4, 4], 't\u1d63/3');
           P.vline(r.lcrit, T.ink2, [3, 4], 'critical ' + r.lcrit.toPrecision(2) + ' in');
           K.dot(s.ctx, P.X(v.len), P.Y(r.round), r.long ? T.alarm : T.signal, true);
           P.frame();
           return [{ label: 'round trip 2Td', colour: T.signal },
-                  { label: 'tᵣ/3', colour: T.reflect, dash: true },
+                  { label: 't\u1d63/3', colour: T.reflect, dash: true },
                   { label: 'transmission-line region', colour: K.rgba(T.alarm, 0.35) }];
         }
       }

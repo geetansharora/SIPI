@@ -231,7 +231,28 @@ details.deeper > summary::-webkit-details-marker { display: none; }
 details.deeper > summary::before { content: "▸"; color: var(--signal); }
 details.deeper[open] > summary::before { content: "▾"; }
 details.deeper[open] > summary { border-bottom: 1px solid var(--border-soft); }
-.deeper__body { padding: var(--s5) var(--s4); display: flex; flex-direction: column; gap: var(--s4); }
+/* The panel pads itself. 70 of the 72 pages put their paragraphs straight
+   inside <details> rather than in the .deeper__body wrapper this rule used to
+   pad, so the text ran into the border and, with p { margin: 0 }, paragraphs
+   touched. Padding the panel -- not margins on its children -- keeps width: 100%
+   tables and equations inside it; the summary bar keeps its full width through
+   a matching negative margin. */
+details.deeper { padding: 0 var(--s5); width: 100%; box-sizing: border-box; }
+/* width: 100% because details.deeper sits in the .prose flex column with
+   margin-inline: auto, and auto margins switch off a flex item's stretch: the
+   panel sized itself to its content, so one nowrap .eq 476 px wide made a 510 px
+   panel in a 335 px column and the page scrolled sideways -- on six pages, five
+   of them before this padding existed. Held to the column, the .eq scrolls in
+   its own box, as its overflow-x: auto always intended. */
+details.deeper[open] { padding-bottom: var(--s5); }
+details.deeper > summary { margin-inline: calc(-1 * var(--s5)); }
+details.deeper > * + * { margin-top: var(--s4); }
+@media (max-width: 47.99rem) {
+  details.deeper { padding-inline: var(--s4); }
+  details.deeper[open] { padding-bottom: var(--s4); }
+  details.deeper > summary { margin-inline: calc(-1 * var(--s4)); }
+}
+.deeper__body { padding: 0; display: flex; flex-direction: column; gap: var(--s4); }
 .deeper__body > * { max-width: var(--measure); margin-inline: auto; width: 100%; }
 
 table.data { width: 100%; border-collapse: collapse; font-family: var(--font-mono); font-size: .8rem; font-variant-numeric: tabular-nums; }

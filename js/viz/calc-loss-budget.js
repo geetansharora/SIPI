@@ -9,6 +9,7 @@
   const db = (x) => x.toFixed(x < 1 ? 3 : 2) + ' dB';
 
   NS.viz.calcLossBudget = function (root) {
+    const keep = {};                      // this chart's axis ranges, held while they still fit
     return K.calc(root, {
       inputs: [
         { id: 'f', label: 'Frequency (usually Nyquist)', kind: 'si', unit: 'Hz', min: 0.1e9, max: 100e9, log: true,
@@ -38,16 +39,18 @@
         ];
       },
       chart: {
+        /* A fixed log frequency axis, 100 MHz to 100 GHz, as the loss pages draw
+           it: the frequency input moves a marker along curves that stay put. */
         draw(s, T, v, r) {
-          const fMax = 2 * v.f, c = [], d = [], t = [];
-          for (let i = 1; i <= 200; i++) {
-            const f = fMax * i / 200, q = M.loss(f, v.len, v.dk, v.df, v.w, v.z0, v.rq);
+          const lo = 1e8, hi = 1e11, c = [], d = [], t = [];
+          for (let i = 0; i <= 240; i++) {
+            const f = lo * Math.pow(hi / lo, i / 240), q = M.loss(f, v.len, v.dk, v.df, v.w, v.z0, v.rq);
             c.push([f, q.ac * v.len]); d.push([f, q.ad * v.len]); t.push([f, q.total]);
           }
-          const top = Math.max(t[t.length - 1][1], v.budget) * 1.1;
+          const top = K.sticky(keep, 'y', 0, Math.max(r.total * 1.6, v.budget * 1.1), false)[1];
           const P = K.plot(s, T, {
             pad: { l: 52, r: 16, t: 20, b: 32 },
-            x: { min: 0, max: fMax, count: 4, fmt: (x) => K.si(x, 'Hz', 2), title: 'frequency' },
+            x: { min: lo, max: hi, log: true, fmt: (x) => K.si(x, 'Hz', 1), title: 'frequency' },
             y: { min: 0, max: top, count: 5, fmt: (y) => y.toFixed(y < 10 ? 1 : 0), title: 'loss, dB' }
           }).grid();
           P.trace(c, T.reflect, { width: 1.8, label: 'conductor', unit: 'dB' });
@@ -55,9 +58,9 @@
           P.trace(t, T.signal, { width: 2.4, label: 'total', unit: 'dB' });
           P.hline(v.budget, T.alarm, [4, 4], 'budget ' + v.budget + ' dB');
           P.vline(v.f, T.ink2, [3, 4]);
-          K.dot(s.ctx, P.X(v.f), P.Y(r.total), T.signal, true);
+          K.dot(s.ctx, P.X(v.f), P.Y(Math.min(r.total, top)), T.signal, true);
           P.frame();
-          return [{ label: 'total', colour: T.signal }, { label: 'conductor × roughness', colour: T.reflect },
+          return [{ label: 'total', colour: T.signal }, { label: 'conductor \u00d7 roughness', colour: T.reflect },
                   { label: 'dielectric', colour: T.muted, dash: true }, { label: 'budget', colour: T.alarm, dash: true }];
         }
       }

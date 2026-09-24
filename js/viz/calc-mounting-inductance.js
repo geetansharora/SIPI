@@ -9,6 +9,7 @@
   const K = NS.kit, M = NS.calc;
 
   NS.viz.calcMountingInductance = function (root) {
+    const keep = {};                      // this chart's axis ranges, held while they still fit
     return K.calc(root, {
       inputs: [
         { id: 'h', label: 'Via length to the plane pair', kind: 'length', unit: 'mil', base: 25.4e-6, dp: 1,
@@ -32,12 +33,12 @@
       ] : [{ k: 'Geometry', wide: true, tone: 'alarm', v: 'The pitch must exceed the drill diameter — these vias would overlap' }]),
       chart: {
         draw(s, T, v, r) {
-          const sLo = v.d * 1.05, sHi = Math.max(4 * v.s, 3 * v.d), pts = [];
+          const sLo = v.d * 1.05, sHi = K.sticky(keep, 'x', 0, Math.max(1.5 * v.s, 3 * v.d), false)[1], pts = [];
           for (let i = 0; i <= 200; i++) {
             const sp = sLo + (sHi - sLo) * i / 200;
             pts.push([sp, M.mount(v.h, v.d, sp, v.esl, v.cap).lVia]);
           }
-          const top = pts[pts.length - 1][1] * 1.15;
+          const top = K.sticky(keep, 'y', 0, pts[pts.length - 1][1] * 1.05, false)[1];
           const P = K.plot(s, T, {
             pad: { l: 58, r: 16, t: 20, b: 32 },
             x: { min: 0, max: sHi, count: 5, fmt: (x) => x.toFixed(0), title: 'via pitch, mil' },

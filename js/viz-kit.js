@@ -2799,6 +2799,31 @@
     if (!(b > a)) b = a * 10;
     return [a, b];
   };
+  /* A round upper limit for a linear axis: 1, 2, 2.5 or 5 times a power of ten. */
+  K.niceCeil = function (x) {
+    if (!(x > 0)) return 1;
+    const e = Math.pow(10, Math.floor(Math.log10(x))), m = x / e;
+    return [1, 2, 2.5, 5, 10].find((k) => k >= m - 1e-9) * e;
+  };
+  /* An axis that holds still. A calculator's chart must show a slider MOVING the
+     curve; an axis re-fitted to the input on every frame keeps the curve in place
+     and changes only the numbers under it, which reads as nothing happening
+     (Geetansh, on the return-loss chart). So a range is kept while what must be
+     shown still fits in it, and replaced -- by whole decades on a log axis, a
+     round number on a linear one -- only when it no longer fits, or when the
+     content has shrunk to a small corner of it. `keep` is per chart. */
+  K.sticky = function (keep, key, needLo, needHi, log) {
+    const prev = keep[key];
+    if (prev && needLo >= prev[0] && needHi <= prev[1]) {
+      const roomy = log ? Math.log10(prev[1] / prev[0]) - Math.log10(needHi / needLo) <= 2.01
+                        : needHi >= prev[1] / 5;
+      if (roomy) return prev;
+    }
+    const r = log ? K.decades(needLo, needHi) : [Math.min(0, needLo), K.niceCeil(needHi * 1.02)];
+    keep[key] = r;
+    return r;
+  };
+
   /* A shaded x-interval clipped to the plot box: a band, a region, a margin. */
   K.shadeX = function (P, x1, x2, colour) {
     const B = P.box, l = Math.max(B.L, Math.min(P.X(x1), P.X(x2)));

@@ -4263,6 +4263,12 @@ suite('Calculator: bit rate, UI and Nyquist', () => {
   nearAbs('the edge filter is 3 dB down at 0.35/tr', 10 * Math.log10(CALC.edgeLpf(0.35 / 15e-12, 15e-12)), -3.0103, 1e-3, ' dB');
   nearAbs('random data has a spectral null at the symbol rate', CALC.dataPsd(n.baud, n.ui), 0, 1e-20);
   nearAbs('and unit density at DC', CALC.dataPsd(0, n.ui), 1, 0);
+  /* The chart draws the envelope, so it must never fall below the spectrum it
+     stands for, and must touch it where sin^2 = 1 -- at the sidelobe peaks. */
+  let below = 0;
+  for (let i = 1; i < 4000; i++) { const f = n.baud * 8 * i / 4000; if (CALC.dataEnvelope(f, n.ui) < CALC.dataPsd(f, n.ui) - 1e-15) below++; }
+  ok('the drawn envelope never falls below the data spectrum', below === 0, below + ' samples below');
+  nearRel('and touches it at a sidelobe peak, f = 1.5/UI', CALC.dataEnvelope(1.5 * n.baud, n.ui), CALC.dataPsd(1.5 * n.baud, n.ui), 1e-12);
   nearRel('10 in at Dk 1 takes 0.254 m / c', CALC.bitrate(1e9, 1, 1e-11, 10, 1).td, 0.254 / 299792458, 1e-12);
 });
 

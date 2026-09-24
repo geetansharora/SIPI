@@ -10,6 +10,7 @@
   const pct = (x) => (x * 100 < 0.1 ? (x * 100).toPrecision(2) : (x * 100).toFixed(x * 100 < 10 ? 2 : 1)) + ' %';
 
   NS.viz.calcReturnLoss = function (root) {
+    const keep = {};                      // this chart's axis ranges, held while they still fit
     return K.calc(root, {
       selects: [{ id: 'given', label: 'Start from', def: 'rl',
                   options: [['rl', 'Return loss'], ['gamma', '|Γ|'], ['vswr', 'VSWR'], ['zl', 'Load R']] }],
@@ -40,13 +41,13 @@
       },
       chart: {
         draw(s, T, v, r) {
-          const lo = v.z0 / 20, hi = v.z0 * 20, top = 60;
+          const [lo, hi] = K.sticky(keep, 'x', v.z0 / 10, v.z0 * 10, true), top = 60;
           const rlOf = (z) => Math.min(top, -20 * Math.log10(Math.abs((z - v.z0) / (z + v.z0))));
           const pts = [];
           for (let i = 0; i <= 400; i++) { const z = lo * Math.pow(hi / lo, i / 400); pts.push([z, rlOf(z)]); }
           const P = K.plot(s, T, {
             pad: { l: 52, r: 16, t: 20, b: 32 },
-            x: { min: lo, max: hi, log: true, ticks: [lo, v.z0 / 10, v.z0 / 2, v.z0, v.z0 * 2, v.z0 * 10, hi],
+            x: { min: lo, max: hi, log: true,
                  fmt: (x) => K.si(x, 'Ω', 2), title: 'load resistance' },
             y: { min: 0, max: top, count: 6, fmt: (y) => y.toFixed(0), title: 'return loss, dB' }
           }).grid();
@@ -56,7 +57,7 @@
           loads.forEach((z) => {
             if (z >= lo && z <= hi) K.dot(s.ctx, P.X(z), P.Y(Math.min(isFinite(r.rl) ? r.rl : top, top)), T.reflect, true);
           });
-          P.vline(v.z0, T.muted, [2, 4]);
+          P.vline(v.z0, T.muted, [2, 4], 'Z0');
           P.frame();
           return [{ label: 'return loss against load', colour: T.signal },
                   { label: r.known ? 'this load' : 'the two loads that fit', colour: T.reflect }];

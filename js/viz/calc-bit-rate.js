@@ -30,27 +30,33 @@
         { k: 'UIs in flight', v: r.inFlight.toPrecision(3) }
       ],
       chart: {
+        /* A fixed log axis, 10 MHz to 1 THz. Nothing rescales: dragging the data
+           rate slides the whole spectrum sideways past the edge bandwidth, which
+           the rise time sets and which therefore stays put -- and whether the edge
+           cuts into the spectrum is the thing this chart is for. */
         draw(s, T, v, r) {
-          const fMax = Math.max(2.5 * r.baud, 1.15 * r.bw);
+          const lo = 1e7, hi = 1e12;
           const db = (x) => Math.max(-60, 10 * Math.log10(Math.max(x, 1e-12)));
           const psd = [], edged = [];
-          for (let i = 0; i <= 500; i++) {
-            const f = fMax * i / 500, a = M.dataPsd(f, r.ui);
+          for (let i = 0; i <= 900; i++) {
+            const f = lo * Math.pow(hi / lo, i / 900), a = M.dataEnvelope(f, r.ui);
             psd.push([f, db(a)]); edged.push([f, db(a * M.edgeLpf(f, v.tr))]);
           }
           const P = K.plot(s, T, {
-            pad: { l: 52, r: 16, t: 20, b: 32 },
-            x: { min: 0, max: fMax, count: 5, fmt: (x) => K.si(x, 'Hz', 2), title: 'frequency' },
+            pad: { l: 52, r: 16, t: 22, b: 32 },
+            x: { min: lo, max: hi, log: true, fmt: (x) => K.si(x, 'Hz', 1), title: 'frequency' },
             y: { min: -40, max: 0, count: 4, fmt: (y) => y.toFixed(0), title: 'power, dB' }
           }).grid();
-          P.trace(psd, T.muted, { width: 1.4, dash: [4, 3], label: 'data spectrum', unit: 'dB' });
+          K.shadeX(P, lo, r.fn, K.rgba(T.signal, 0.08));
+          P.trace(psd, T.muted, { width: 1.6, dash: [4, 3], label: 'data envelope', unit: 'dB' });
           P.trace(edged, T.signal, { width: 2.2, label: 'with the edge', unit: 'dB' });
           P.vline(r.fn, T.reflect, [3, 4], 'Nyquist');
-          if (r.bw < fMax) P.vline(r.bw, T.ink2, [2, 4], '0.35/tᵣ');
+          P.vline(r.baud, T.muted, [2, 5], '1/UI');
+          P.vline(r.bw, T.ink2, [2, 4], '0.35/t\u1d63');
           P.frame();
-          return [{ label: 'random-data spectrum (sinc²)', colour: T.muted, dash: true },
-                  { label: '× single-pole edge', colour: T.signal },
-                  { label: 'Nyquist', colour: T.reflect, dash: true }];
+          return [{ label: 'random-data envelope', colour: T.muted, dash: true },
+                  { label: 'after a single-pole edge', colour: T.signal },
+                  { label: 'below Nyquist', colour: K.rgba(T.signal, 0.35) }];
         }
       }
     });

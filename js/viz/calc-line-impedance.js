@@ -9,6 +9,7 @@
   const mil = (x) => (isFinite(x) ? x.toFixed(x < 10 ? 2 : 1) + ' mil (' + (x * 25.4).toFixed(0) + ' µm)' : 'out of range');
 
   NS.viz.calcLineImpedance = function (root) {
+    const keep = {};                      // this chart's axis ranges, held while they still fit
     return K.calc(root, {
       selects: [{
         id: 'type', label: 'Structure', def: 'ms', options: [['ms', 'Microstrip'], ['sl', 'Stripline (centred)']],
@@ -42,15 +43,15 @@
       chart: {
         draw(s, T, v, r) {
           const t = v.type === 'ms' ? v.t : 0;
-          const lo = v.w / 8, hi = v.w * 8, pts = [];
+          const [lo, hi] = K.sticky(keep, 'x', v.w / 4, v.w * 4, true), pts = [];
           for (let i = 0; i <= 200; i++) {
             const w = lo * Math.pow(hi / lo, i / 200);
             pts.push([w, M.zline(v.type, w, v.h, t, v.dk).z0]);
           }
-          const top = Math.min(250, Math.max(pts[0][1], v.target) * 1.1);
+          const top = K.sticky(keep, 'y', 0, Math.min(250, Math.max(pts[0][1], v.target) * 1.05), false)[1];
           const P = K.plot(s, T, {
             pad: { l: 52, r: 16, t: 20, b: 32 },
-            x: { min: lo, max: hi, log: true, ticks: [lo, v.w / 2, v.w, v.w * 2, hi],
+            x: { min: lo, max: hi, log: true,
                  fmt: (x) => x.toPrecision(2), title: 'trace width, mil' },
             y: { min: 0, max: top, count: 5, fmt: (y) => y.toFixed(0), title: 'Z₀, Ω' }
           }).grid();

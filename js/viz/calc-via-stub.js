@@ -7,6 +7,7 @@
   const K = NS.kit, M = NS.calc;
 
   NS.viz.calcViaStub = function (root) {
+    const keep = {};                      // this chart's axis ranges, held while they still fit
     return K.calc(root, {
       inputs: [
         { id: 'len', label: 'Stub length', kind: 'length', unit: 'mil', base: 25.4e-6, dp: 1,
@@ -27,7 +28,7 @@
       ],
       chart: {
         draw(s, T, v, r) {
-          const xMax = Math.max(1.35 * r.fNotch, 1.25 * v.k * v.fn);
+          const xMax = K.sticky(keep, 'x', 0, Math.max(1.2 * r.fNotch, 1.15 * v.k * v.fn), false)[1];
           const pts = [];
           for (let i = 0; i <= 600; i++) { const f = xMax * i / 600; pts.push([f, Math.max(-40, M.stubS21(f, r.fNotch))]); }
           const P = K.plot(s, T, {

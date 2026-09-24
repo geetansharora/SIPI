@@ -101,6 +101,13 @@
     const x = Math.PI * f * ui;
     return x === 0 ? 1 : Math.pow(Math.sin(x) / x, 2);
   };
+  /* Its upper envelope, min(1, 1/(pi*f*UI)^2): flat to about Nyquist, then down
+     20 dB per decade. The sidelobes between the nulls add detail, not meaning,
+     and on a log axis they pile into a comb that hides the roll-off. */
+  C.dataEnvelope = function (f, ui) {
+    const x = Math.PI * f * ui;
+    return Math.min(1, 1 / (x * x));
+  };
   C.edgeLpf = function (f, tr) {          // single pole, |H|², corner at 0.35/tr
     return 1 / (1 + Math.pow(f * tr / 0.35, 2));
   };

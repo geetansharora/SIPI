@@ -7,6 +7,7 @@
   const K = NS.kit, M = NS.calc;
 
   NS.viz.calcTargetImpedance = function (root) {
+    const keep = {};                      // this chart's axis ranges, held while they still fit
     return K.calc(root, {
       inputs: [
         { id: 'v', label: 'Rail voltage', kind: 'si', unit: 'V', min: 0.3, max: 12, log: true, def: 0.8, positive: true },
@@ -22,7 +23,7 @@
       ],
       chart: {
         draw(s, T, v, r) {
-          const [ylo, yhi] = K.decades(r.z / 30, r.z * 30);
+          const [ylo, yhi] = K.sticky(keep, 'y', r.z / 10, r.z * 10, true);
           const P = K.plot(s, T, {
             pad: { l: 62, r: 16, t: 20, b: 32 },
             x: { min: 1e3, max: 1e9, log: true, fmt: (x) => K.si(x, 'Hz', 1), title: 'frequency' },
