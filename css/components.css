@@ -20,8 +20,7 @@
    Leaving it implicit put it beside the wordmark on desktop, which is a change
    nobody asked for. */
 .masthead nav { margin-left: auto; order: 2; }
-.masthead .search-open { order: 3; }
-.masthead .theme-toggle { order: 4; }
+.masthead .theme-toggle { order: 3; }
 .wordmark {
   display: block; flex: 0 0 auto;
   width: 7.6rem; aspect-ratio: 1200 / 319;
@@ -342,10 +341,14 @@ ul.tight li::marker { color: var(--muted); }
   /* Order reverses here: the button comes first so it lands on the wordmark's
      row, and the nav takes the full-width row beneath it. */
   .masthead .theme-toggle { order: 1; margin-left: auto; }
-  /* Search shares that row when it exists; the toggle keeps the auto margin
-     for pages where search.js has not run. */
-  .masthead .search-open { order: 1; margin-left: auto; }
-  .masthead .search-open + .theme-toggle { margin-left: 0; }
+  /* Search ends the links row and takes whatever width is left in it, so it
+     reads as a search field rather than one more word in the list. Where that
+     is too little for the label -- about 50 px at 360 px wide -- it keeps only
+     its icon instead of wrapping the bar onto a third row. */
+  .masthead nav .search-open {
+    flex: 1 1 auto; min-width: 2.25rem; justify-content: flex-start;
+    container-type: inline-size;
+  }
   .masthead nav { order: 2; flex: 1 0 100%; margin-left: 0; }
 }
 
@@ -2026,3 +2029,17 @@ html.lab-lock, html.lab-lock body { overflow: hidden; }
    f0 and Q were hidden while every tile still measured as on screen. The bar is
    ~130 px on a phone; the numbers are what the reader needs to keep. */
 .instrument--calc.is-tall .instrument__bar { position: static; }
+/* The query measures the button's CONTENT box, so the threshold is the icon, gap
+   and label alone (about 56 px), not the button's outer width. */
+@container (max-width: 3.5rem) {
+  .search-open__label { display: none; }
+}
+/* At 320 px the nav row is 280 px and the links alone end at 265, leaving 9 px
+   for a Search button that needs 32. Slightly smaller type and gap on the very
+   narrowest phones leave about 50 px, so Search stays after About as an icon
+   rather than dropping to a row of its own. */
+@media (max-width: 22rem) {
+  .masthead nav { column-gap: 4px; }
+  .masthead nav a { font-size: .7rem; }
+  .masthead nav .search-open { min-width: 2rem; }
+}

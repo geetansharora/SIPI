@@ -133,7 +133,7 @@
     const btn = document.createElement('button');
     btn.type = 'button';
     btn.className = 'search-open';
-    btn.innerHTML = '<span aria-hidden="true">⌕</span> Search <kbd>/</kbd>';
+    btn.innerHTML = '<span aria-hidden="true">⌕</span> <span class="search-open__label">Search</span> <kbd>/</kbd>';
     btn.setAttribute('aria-label', 'Search topics. Shortcut: forward slash.');
 
     dlg = document.createElement('dialog');
@@ -183,14 +183,11 @@
       if (e.key === '/' && !typing && !dlg.open) { e.preventDefault(); open(); }
     });
 
-    /* Beside the theme toggle, as a child of the bar rather than of its nav: on a
-       phone that puts Search on the wordmark's row, where there is room, and
-       leaves the nav row to the links. In the nav it was the item that wrapped
-       the bar onto a third row once Calculators joined it. On a desktop the CSS
-       order places it exactly where it was, after the links and before the toggle. */
-    const bar = document.querySelector('.masthead');
-    const toggle = bar && bar.querySelector('[data-act="theme"]');
-    if (bar) bar.insertBefore(btn, toggle || null);
+    /* Last in the nav. On a desktop that puts it after About, before the toggle;
+       on a phone it ends the links row and stretches to fill it (see
+       components.css), shrinking to its icon where the row has little left. */
+    const nav = document.querySelector('.masthead nav');
+    if (nav) nav.appendChild(btn);
   }
 
   fetch(ROOT + 'topics.json')

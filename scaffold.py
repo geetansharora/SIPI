@@ -598,8 +598,8 @@ def stamp_masthead():
         # The theme button is a direct child, not a nav item. It is a control
         # rather than a destination, and the position matters on a phone: as a
         # sibling of the wordmark it shares that row instead of taking a third
-        # one of its own. js/search.js puts its button in the bar just before the toggle,
-        # so on a phone Search shares the wordmark's row and the nav row holds only links.
+        # one of its own. js/search.js appends its button to the nav, so Search ends
+        # the links row -- after About on a desktop, stretched to the row's end on a phone.
         head = (f'<header class="masthead">\n'
                 f'  <a class="wordmark" href="{prefix}index.html">SIPI</a>\n'
                 f'  <button class="theme-toggle" data-act="theme" type="button">Light</button>\n'
