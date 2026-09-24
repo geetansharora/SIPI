@@ -13,7 +13,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
 <link rel="stylesheet" href="../../css/base.css?v=1e3ae753">
-<link rel="stylesheet" href="../../css/components.css?v=cb14484b">
+<link rel="stylesheet" href="../../css/components.css?v=52ccd5a3">
   <!-- meta:start -->
   <link rel="canonical" href="https://sipi.work/topics/tools/plane-cavity-resonance.html">
   <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
@@ -29,7 +29,7 @@
   <meta name="twitter:title" content="Power Plane Cavity Resonance Calculator | SIPI">
   <meta name="twitter:description" content="Resonant modes of a rectangular power-ground plane pair from its size and Dk: the first mode and every mode up to a chosen frequency.">
   <meta name="twitter:image" content="https://sipi.work/assets/og.png">
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Power Plane Cavity Resonance Calculator","description":"Resonant modes of a rectangular power-ground plane pair from its size and Dk: the first mode and every mode up to a chosen frequency.","url":"https://sipi.work/topics/tools/plane-cavity-resonance.html","articleSection":"Calculators","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer"},"publisher":{"@type":"Person","name":"Geetansh Arora"}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Power Plane Cavity Resonance Calculator","description":"Resonant modes of a rectangular power-ground plane pair from its size and Dk: the first mode and every mode up to a chosen frequency.","url":"https://sipi.work/topics/tools/plane-cavity-resonance.html","articleSection":"Calculators","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer"},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-09-24"}</script>
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"SIPI","item":"https://sipi.work/"},{"@type":"ListItem","position":2,"name":"Calculators","item":"https://sipi.work/#tools"},{"@type":"ListItem","position":3,"name":"Power Plane Cavity Resonance Calculator"}]}</script>
   <!-- meta:end -->
 </head>
@@ -42,6 +42,7 @@
     <a href="../../index.html#groundwork">Topics</a>
     <a href="../../start.html">Start</a>
     <a href="../../labs.html">Labs</a>
+    <a href="../../calculators.html">Calculators</a>
     <a href="../../colophon.html">About</a>
   </nav>
 </header>
@@ -51,13 +52,13 @@
     <p class="crumb"><a href="../../index.html#tools">Calculators</a> / 10</p>
     <h1>Power Plane Cavity Resonance Calculator</h1>
     <p class="byline">
-      <!-- review:start --><span>By Geetansh Arora — Principal SI/PI Engineer</span><span>Updated Sep 2026</span><span>10 min</span><!-- review:end -->
+      <!-- review:start --><span>By Geetansh Arora — Principal SI/PI Engineer</span><time datetime="2026-09-24" title="Technical review by Geetansh Arora on this date">24 Sep 2026</time><span>10 min</span><!-- review:end -->
     </p>
     <!-- share:head:start --><div class="share share--head" data-share data-share-url="https://sipi.work/topics/tools/plane-cavity-resonance.html" data-share-title="Power Plane Cavity Resonance Calculator"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Ftools%2Fplane-cavity-resonance.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Ftools%2Fplane-cavity-resonance.html&amp;text=Power%20Plane%20Cavity%20Resonance%20Calculator" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=Power%20Plane%20Cavity%20Resonance%20Calculator&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Ftools%2Fplane-cavity-resonance.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:head:end -->
   </div>
 
   <section class="instrument instrument--calc" data-viz="calcPlaneResonance" aria-label="Plane resonance calculator: enter the plane size and Dk, and read the first cavity mode and the modes below a chosen frequency">
-    <script type="application/json" data-contract>{"kind":"analytical","evidence":"independent","purpose":"Cavity modes of a rectangular plane pair.","equations":["f(m,n) = (c/(2*sqrt(Dk)))*sqrt((m/a)^2 + (n/b)^2)"],"units":"Hz, mm","validity":"Thin cavity, no fringing, no components.","numerics":"Closed form; modes enumerated to 30 per axis.","limitations":"Fringing lowers the modes slightly; capacitors and vias move and damp them.","suites":["Calculator: plane cavity resonance"],"version":"1.0","reviewed":"not yet","panel":"calcPlaneResonance"}</script>
+    <script type="application/json" data-contract>{"kind":"analytical","evidence":"independent","purpose":"Cavity modes of a rectangular plane pair.","equations":["f(m,n) = (c/(2*sqrt(Dk)))*sqrt((m/a)^2 + (n/b)^2)"],"units":"Hz, mm","validity":"Thin cavity, no fringing, no components.","numerics":"Closed form; modes enumerated to 30 per axis.","limitations":"Fringing lowers the modes slightly; capacitors and vias move and damp them.","suites":["Calculator: plane cavity resonance"],"version":"1.0","reviewed":"2026-09-24","panel":"calcPlaneResonance"}</script>
     <div class="instrument__bar">
       <span class="instrument__title">Plane-pair cavity modes</span>
         <span data-evidence="independent" data-model-version="1.0" class="model-tag model-tag--analytical" title="The ideal cavity: open edges, no fringing, no components on the planes.">analytical</span>
@@ -134,6 +135,7 @@
   <nav class="site-foot__nav" aria-label="Site, footer">
     <a href="../../start.html">Start</a>
     <a href="../../labs.html">Labs</a>
+    <a href="../../calculators.html">Calculators</a>
     <a href="../../reference.html">Reference</a>
     <a href="../../colophon.html">About &amp; AI disclosure</a>
     <a href="../../model-contract.html">Model assumptions</a>
@@ -147,6 +149,6 @@
 <script src="../../js/models/calc-models.js?v=d640a591" defer></script>
 <script src="../../js/viz/calc-plane-resonance.js?v=0bb43a2f" defer></script>
 <script src="../../js/viz-loader.js?v=8121f120" defer></script>
-<script src="../../js/search.js?v=6c93a285" defer></script>
+<script src="../../js/search.js?v=235cd7ca" defer></script>
 </body>
 </html>

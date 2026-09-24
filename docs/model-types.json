@@ -658,7 +658,8 @@
       "Calculator: LC/RLC resonance"
     ],
     "version": "1.0",
-    "reviewed": "not yet"
+    "reviewed": "2026-09-24",
+    "reviewer": "Geetansh Arora"
   },
   "calcReturnLoss": {
     "kind": "exact",
@@ -680,7 +681,8 @@
       "Calculator: return loss, reflection coefficient, VSWR"
     ],
     "version": "1.0",
-    "reviewed": "not yet"
+    "reviewed": "2026-09-24",
+    "reviewer": "Geetansh Arora"
   },
   "calcBer": {
     "kind": "analytical",
@@ -701,7 +703,8 @@
       "Calculator: BER, Q and total jitter"
     ],
     "version": "1.0",
-    "reviewed": "not yet"
+    "reviewed": "2026-09-24",
+    "reviewer": "Geetansh Arora"
   },
   "calcBitRate": {
     "kind": "exact",
@@ -723,7 +726,8 @@
       "Calculator: bit rate, UI and Nyquist"
     ],
     "version": "1.0",
-    "reviewed": "not yet"
+    "reviewed": "2026-09-24",
+    "reviewer": "Geetansh Arora"
   },
   "calcElectricalLength": {
     "kind": "exact",
@@ -744,7 +748,8 @@
       "Calculator: electrical length"
     ],
     "version": "1.0",
-    "reviewed": "not yet"
+    "reviewed": "2026-09-24",
+    "reviewer": "Geetansh Arora"
   },
   "calcViaStub": {
     "kind": "exact",
@@ -765,7 +770,8 @@
       "Calculator: via stub resonance"
     ],
     "version": "1.0",
-    "reviewed": "not yet"
+    "reviewed": "2026-09-24",
+    "reviewer": "Geetansh Arora"
   },
   "calcTargetImpedance": {
     "kind": "exact",
@@ -785,7 +791,8 @@
       "Calculator: target impedance"
     ],
     "version": "1.0",
-    "reviewed": "not yet"
+    "reviewed": "2026-09-24",
+    "reviewer": "Geetansh Arora"
   },
   "calcSkinDepth": {
     "kind": "exact",
@@ -807,7 +814,8 @@
       "Calculator: skin depth and roughness"
     ],
     "version": "1.0",
-    "reviewed": "not yet"
+    "reviewed": "2026-09-24",
+    "reviewer": "Geetansh Arora"
   },
   "calcLossBudget": {
     "kind": "analytical",
@@ -828,7 +836,8 @@
       "Calculator: loss budget"
     ],
     "version": "1.0",
-    "reviewed": "not yet"
+    "reviewed": "2026-09-24",
+    "reviewer": "Geetansh Arora"
   },
   "calcPlaneResonance": {
     "kind": "analytical",
@@ -848,7 +857,8 @@
       "Calculator: plane cavity resonance"
     ],
     "version": "1.0",
-    "reviewed": "not yet"
+    "reviewed": "2026-09-24",
+    "reviewer": "Geetansh Arora"
   },
   "calcMountingInductance": {
     "kind": "exact",
@@ -869,7 +879,8 @@
       "Calculator: mounting inductance"
     ],
     "version": "1.0",
-    "reviewed": "not yet"
+    "reviewed": "2026-09-24",
+    "reviewer": "Geetansh Arora"
   },
   "calcLineImpedance": {
     "kind": "analytical",
@@ -890,6 +901,7 @@
       "Calculator: microstrip and stripline impedance"
     ],
     "version": "1.0",
-    "reviewed": "not yet"
+    "reviewed": "2026-09-24",
+    "reviewer": "Geetansh Arora"
   }
 }

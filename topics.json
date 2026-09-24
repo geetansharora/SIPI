@@ -1171,7 +1171,9 @@
             "decap",
             "impedance",
             "calculator"
-          ]
+          ],
+          "reviewed": "2026-09-24",
+          "reviewer": "Geetansh Arora"
         },
         {
           "slug": "return-loss-vswr",
@@ -1188,7 +1190,9 @@
             "load impedance",
             "impedance mismatch",
             "calculator"
-          ]
+          ],
+          "reviewed": "2026-09-24",
+          "reviewer": "Geetansh Arora"
         },
         {
           "slug": "ber-q-jitter",
@@ -1210,7 +1214,9 @@
             "eye opening",
             "transition density",
             "calculator"
-          ]
+          ],
+          "reviewed": "2026-09-24",
+          "reviewer": "Geetansh Arora"
         },
         {
           "slug": "bit-rate-ui-nyquist",
@@ -1233,7 +1239,9 @@
             "knee frequency",
             "bits in flight",
             "calculator"
-          ]
+          ],
+          "reviewed": "2026-09-24",
+          "reviewer": "Geetansh Arora"
         },
         {
           "slug": "electrical-length",
@@ -1253,7 +1261,9 @@
             "Dk",
             "ps per inch",
             "calculator"
-          ]
+          ],
+          "reviewed": "2026-09-24",
+          "reviewer": "Geetansh Arora"
         },
         {
           "slug": "via-stub-resonance",
@@ -1272,7 +1282,9 @@
             "Nyquist",
             "via",
             "calculator"
-          ]
+          ],
+          "reviewed": "2026-09-24",
+          "reviewer": "Geetansh Arora"
         },
         {
           "slug": "target-impedance-calculator",
@@ -1290,7 +1302,9 @@
             "power integrity",
             "rail",
             "calculator"
-          ]
+          ],
+          "reviewed": "2026-09-24",
+          "reviewer": "Geetansh Arora"
         },
         {
           "slug": "skin-depth",
@@ -1309,7 +1323,9 @@
             "conductor loss",
             "AC resistance",
             "calculator"
-          ]
+          ],
+          "reviewed": "2026-09-24",
+          "reviewer": "Geetansh Arora"
         },
         {
           "slug": "loss-budget",
@@ -1329,7 +1345,9 @@
             "roughness",
             "laminate",
             "calculator"
-          ]
+          ],
+          "reviewed": "2026-09-24",
+          "reviewer": "Geetansh Arora"
         },
         {
           "slug": "plane-cavity-resonance",
@@ -1347,7 +1365,9 @@
             "PDN",
             "EMI",
             "calculator"
-          ]
+          ],
+          "reviewed": "2026-09-24",
+          "reviewer": "Geetansh Arora"
         },
         {
           "slug": "mounting-inductance",
@@ -1366,7 +1386,9 @@
             "SRF",
             "PDN",
             "calculator"
-          ]
+          ],
+          "reviewed": "2026-09-24",
+          "reviewer": "Geetansh Arora"
         },
         {
           "slug": "line-impedance",
@@ -1386,7 +1408,9 @@
             "Hammerstad",
             "Wheeler",
             "calculator"
-          ]
+          ],
+          "reviewed": "2026-09-24",
+          "reviewer": "Geetansh Arora"
         }
       ]
     }

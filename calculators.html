@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- theme:start -->
+  <meta name="theme-color" content="#F7F8FA">
+  <script>(function(){try{var t=localStorage.getItem('sipi-theme');if(t==='dark'||t==='system'){document.documentElement.setAttribute('data-theme',t);var m=document.querySelector('meta[name=theme-color]');if(m&&(t==='dark'||matchMedia('(prefers-color-scheme:dark)').matches))m.content='#0B1015';}}catch(e){}})();</script>
+  <!-- theme:end -->
+<title>SI and PI Calculators | SIPI</title>
+<meta name="description" content="Twelve signal and power integrity calculators: resonance, return loss and VSWR, BER and jitter, UI and Nyquist, electrical length, via stubs, target impedance, skin depth, loss budgets, plane resonance, mounting inductance and trace impedance.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&amp;family=IBM+Plex+Mono:wght@400;500;600&amp;family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&amp;display=swap">
+<link rel="stylesheet" href="css/base.css?v=1e3ae753">
+<link rel="stylesheet" href="css/components.css?v=52ccd5a3">
+  <!-- meta:start -->
+  <link rel="canonical" href="https://sipi.work/calculators.html">
+  <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="SIPI">
+  <meta property="og:title" content="SI and PI Calculators | SIPI">
+  <meta property="og:description" content="Twelve signal and power integrity calculators: resonance, return loss and VSWR, BER and jitter, UI and Nyquist, electrical length, via stubs, target impedance, skin depth, loss budgets, plane resonance, mounting inductance and trace impedance.">
+  <meta property="og:url" content="https://sipi.work/calculators.html">
+  <meta property="og:image" content="https://sipi.work/assets/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="SI and PI Calculators | SIPI">
+  <meta name="twitter:description" content="Twelve signal and power integrity calculators: resonance, return loss and VSWR, BER and jitter, UI and Nyquist, electrical length, via stubs, target impedance, skin depth, loss budgets, plane resonance, mounting inductance and trace impedance.">
+  <meta name="twitter:image" content="https://sipi.work/assets/og.png">
+  <!-- meta:end -->
+</head>
+<body>
+
+<header class="masthead">
+  <a class="wordmark" href="index.html">SIPI</a>
+  <button class="theme-toggle" data-act="theme" type="button">Light</button>
+  <nav aria-label="Site">
+    <a href="index.html#groundwork">Topics</a>
+    <a href="start.html">Start</a>
+    <a href="labs.html">Labs</a>
+    <a href="calculators.html">Calculators</a>
+    <a href="colophon.html">About</a>
+  </nav>
+</header>
+
+<main>
+  <div class="page-head">
+    <p class="crumb"><a href="index.html">SIPI</a> / calculators</p>
+    <h1>Signal and power integrity calculators</h1>
+    <p class="byline"><span>Twelve calculators</span><span>Each with its formula and limits</span></p>
+    <p class="answer">
+      Quick answers to the arithmetic that comes up in every SI and PI design. Each calculator
+      shows its inputs, its numbers and a live chart together, states the formula and its
+      assumptions, and keeps the calculation in its link so you can share exactly what you saw.
+    </p>
+  </div>
+
+  <div class="prose">
+    <p>
+      Every result is checked against something the code does not compute itself &#8212; an
+      analytical limit, a published value or an independently derived formula &#8212; and the
+      page for each one says what it assumes. For the models behind the site&#8217;s instruments,
+      see <a href="model-contract.html">model assumptions</a>; for longer explorations, the
+      <a href="labs.html">labs</a>.
+    </p>
+  </div>
+
+  <section class="path" id="signal">
+    <h2>Signal integrity</h2>
+    <p class="path__who">Channels, edges, reflections and the eye.</p>
+    <ol class="path__steps">
+      <li>
+        <a href="topics/tools/bit-rate-ui-nyquist.html">Bit Rate, Unit Interval and Nyquist Frequency Calculator</a>
+        <span class="path__why">What UI, Nyquist frequency and edge bandwidth does this data rate imply, NRZ or PAM4?</span>
+      </li>
+      <li>
+        <a href="topics/tools/electrical-length.html">Electrical Length and Critical Length Calculator</a>
+        <span class="path__why">Is this trace a lumped wire or a transmission line at this rise time?</span>
+      </li>
+      <li>
+        <a href="topics/tools/line-impedance.html">Microstrip and Stripline Impedance Calculator</a>
+        <span class="path__why">What impedance does this microstrip or stripline have, and what width gives 50 &#937;?</span>
+      </li>
+      <li>
+        <a href="topics/tools/return-loss-vswr.html">VSWR, Return Loss and Reflection Coefficient Calculator</a>
+        <span class="path__why">Convert between return loss, |&#915;|, VSWR and the load that caused them.</span>
+      </li>
+      <li>
+        <a href="topics/tools/via-stub-resonance.html">Via Stub Resonance Calculator</a>
+        <span class="path__why">Where does this via stub notch the channel, and does it clear Nyquist?</span>
+      </li>
+      <li>
+        <a href="topics/tools/loss-budget.html">PCB Channel Loss Budget Calculator</a>
+        <span class="path__why">How much does this channel lose at Nyquist, and what is the margin to the budget?</span>
+      </li>
+      <li>
+        <a href="topics/tools/ber-q-jitter.html">BER, Q-Factor and Total Jitter Calculator</a>
+        <span class="path__why">How much total jitter does this RJ and DJ become at the target BER?</span>
+      </li>
+    </ol>
+  </section>
+
+  <section class="path" id="power">
+    <h2>Power integrity</h2>
+    <p class="path__who">Rails, decoupling and the plane pair.</p>
+    <ol class="path__steps">
+      <li>
+        <a href="topics/tools/target-impedance-calculator.html">PDN Target Impedance Calculator</a>
+        <span class="path__why">How low must this rail's impedance be for its ripple budget?</span>
+      </li>
+      <li>
+        <a href="topics/tools/lc-rlc-resonance.html">LC and RLC Resonance Calculator</a>
+        <span class="path__why">Where does this LC resonate, how sharply, and where is a capacitor's self-resonance?</span>
+      </li>
+      <li>
+        <a href="topics/tools/mounting-inductance.html">Decoupling Capacitor Mounting Inductance Calculator</a>
+        <span class="path__why">How much inductance do the vias under a decoupling capacitor add?</span>
+      </li>
+      <li>
+        <a href="topics/tools/plane-cavity-resonance.html">Power Plane Cavity Resonance Calculator</a>
+        <span class="path__why">At which frequencies does this plane pair resonate?</span>
+      </li>
+    </ol>
+  </section>
+
+  <section class="path" id="materials">
+    <h2>Conductors</h2>
+    <p class="path__who">What the copper does at frequency.</p>
+    <ol class="path__steps">
+      <li>
+        <a href="topics/tools/skin-depth.html">Skin Depth and Surface Roughness Calculator</a>
+        <span class="path__why">How deep does current flow at this frequency, and how much does roughness add?</span>
+      </li>
+    </ol>
+  </section>
+
+</main>
+
+<footer class="site-foot">
+  <span>SIPI &#8212; signal and power integrity, visualised.</span>
+  <nav class="site-foot__nav" aria-label="Site, footer">
+    <a href="start.html">Start</a>
+    <a href="labs.html">Labs</a>
+    <a href="calculators.html">Calculators</a>
+    <a href="reference.html">Reference</a>
+    <a href="colophon.html">About &amp; AI disclosure</a>
+    <a href="model-contract.html">Model assumptions</a>
+    <a href="docs/claims.md">Claim ledger (Markdown)</a>
+  </nav>
+  <span>Created and directed by Geetansh Arora. Text <a href="LICENSE-CONTENT">CC BY 4.0</a>, code <a href="LICENSE-CODE">MIT</a>.</span>
+</footer>
+
+<script src="js/site.js?v=9ac8f8b6" defer></script>
+<script src="js/search.js?v=235cd7ca" defer></script>
+</body>
+</html>

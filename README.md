@@ -22,8 +22,8 @@ HTTP, and it hides itself when it cannot fetch `topics.json`.
 
 | | |
 |---|---|
-| Topic pages | **72**, all `live`, each with a `deeper` section; the 60 topic and lab pages carry a review date, the 12 calculators do not yet |
-| Words | 141001; median 2089 per page |
+| Topic pages | **72**, all `live`, each with a `deeper` section and its own review date |
+| Words | 141144; median 2091 per page |
 | Interactive panels | **40**, including four labs and twelve calculators |
 | SVG figures | 36 |
 | Arithmetic claims checked | **127** across 41 pages (`check-numbers.py`) |

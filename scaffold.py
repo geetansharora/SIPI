@@ -586,6 +586,7 @@ def stamp_masthead():
             (f"{prefix}index.html#groundwork", "Topics"),
             (f"{prefix}start.html", "Start"),
             (f"{prefix}labs.html", "Labs"),
+            (f"{prefix}calculators.html", "Calculators"),
             # Reference is a lookup tool rather than a route into the material,
             # and at 67 px it was the widest item in a bar that has to fit on a
             # phone. It stays in the footer, which is where a reader looks for a
@@ -597,8 +598,8 @@ def stamp_masthead():
         # The theme button is a direct child, not a nav item. It is a control
         # rather than a destination, and the position matters on a phone: as a
         # sibling of the wordmark it shares that row instead of taking a third
-        # one of its own. js/search.js inserts its button before the toggle if it
-        # finds one in the nav and appends otherwise, so Search stays last either way.
+        # one of its own. js/search.js puts its button in the bar just before the toggle,
+        # so on a phone Search shares the wordmark's row and the nav row holds only links.
         head = (f'<header class="masthead">\n'
                 f'  <a class="wordmark" href="{prefix}index.html">SIPI</a>\n'
                 f'  <button class="theme-toggle" data-act="theme" type="button">Light</button>\n'
@@ -679,6 +680,7 @@ def stamp_footer():
                   f'  <nav class="site-foot__nav" aria-label="Site, footer">\n'
                   f'    <a href="{prefix}start.html">Start</a>\n'
                   f'    <a href="{prefix}labs.html">Labs</a>\n'
+                  f'    <a href="{prefix}calculators.html">Calculators</a>\n'
                   f'    <a href="{prefix}reference.html">Reference</a>\n'
                   f'    <a href="{prefix}colophon.html">About &amp; AI disclosure</a>\n'
                   f'    <a href="{prefix}model-contract.html">Model assumptions</a>\n'
@@ -920,6 +922,12 @@ def cmd_theme():
     print(f"  theme boot stamped on {n} page(s)")
 
 
+# The pages at the site root that are not topics. One list, read by both the
+# sitemap writer and the sitemap check: they were two lists, and a new hub page
+# (calculators.html) was added to one and failed the check against the other.
+STANDALONE_PAGES = ("start", "labs", "calculators", "reference", "model-contract", "colophon")
+
+
 def cmd_meta():
     """Stamp canonical + OpenGraph tags on every page, and write sitemap/robots.
 
@@ -1036,8 +1044,8 @@ def cmd_meta():
     # which is the exact problem canonical tags exist for.
     # start, labs and reference are collections of links rather than prose, so
     # they are websites; the colophon and the model contract are documents.
-    HUBS = {"start", "labs", "reference"}
-    for stem in ("start", "labs", "reference", "model-contract", "colophon"):
+    HUBS = {"start", "labs", "calculators", "reference"}
+    for stem in STANDALONE_PAGES:
         f = ROOT / (stem + ".html")
         if f.exists():
             pages.append((f, f"{base}/{stem}.html", None, None,
@@ -1086,6 +1094,7 @@ def cmd_meta():
         "",
         f"- [Learning paths]({base}/start.html): Guided routes for students, practising SI and PI engineers, and board debug.",
         f"- [Interactive labs]({base}/labs.html): Long-form labs for transmission lines, channel response, and PDN behavior.",
+        f"- [Calculators]({base}/calculators.html): Twelve SI and PI calculators, each with its formula, assumptions and a live chart.",
         f"- [Reference]({base}/reference.html): SI/PI symbols, formulas, assumptions, and unit tools.",
         f"- [Model assumptions and evidence]({base}/model-contract.html): Scope, equations, numerics, limitations, and supporting checks for each interactive model.",
         f"- [About, review, and attribution]({base}/colophon.html): Authorship, review status, sources, licenses, and AI-assistance disclosure.",
@@ -2505,8 +2514,7 @@ def discovery_problems():
         f'{base}/topics/{t["section_id"]}/{t["slug"]}.html'
         for t in flat if t["path"].exists())
     expected.update(
-        f"{base}/{stem}.html" for stem in
-        ("start", "labs", "reference", "model-contract", "colophon")
+        f"{base}/{stem}.html" for stem in STANDALONE_PAGES
         if (ROOT / (stem + ".html")).exists())
 
     robots = ROOT / "robots.txt"

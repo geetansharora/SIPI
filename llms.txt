@@ -8,6 +8,7 @@ Created and directed by Geetansh Arora, Principal SI/PI Engineer. The site state
 
 - [Learning paths](https://sipi.work/start.html): Guided routes for students, practising SI and PI engineers, and board debug.
 - [Interactive labs](https://sipi.work/labs.html): Long-form labs for transmission lines, channel response, and PDN behavior.
+- [Calculators](https://sipi.work/calculators.html): Twelve SI and PI calculators, each with its formula, assumptions and a live chart.
 - [Reference](https://sipi.work/reference.html): SI/PI symbols, formulas, assumptions, and unit tools.
 - [Model assumptions and evidence](https://sipi.work/model-contract.html): Scope, equations, numerics, limitations, and supporting checks for each interactive model.
 - [About, review, and attribution](https://sipi.work/colophon.html): Authorship, review status, sources, licenses, and AI-assistance disclosure.

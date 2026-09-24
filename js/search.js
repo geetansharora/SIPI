@@ -183,9 +183,14 @@
       if (e.key === '/' && !typing && !dlg.open) { e.preventDefault(); open(); }
     });
 
-    const nav = document.querySelector('.masthead nav');
-    const toggle = nav && nav.querySelector('[data-act="theme"]');
-    if (nav) nav.insertBefore(btn, toggle || null);
+    /* Beside the theme toggle, as a child of the bar rather than of its nav: on a
+       phone that puts Search on the wordmark's row, where there is room, and
+       leaves the nav row to the links. In the nav it was the item that wrapped
+       the bar onto a third row once Calculators joined it. On a desktop the CSS
+       order places it exactly where it was, after the links and before the toggle. */
+    const bar = document.querySelector('.masthead');
+    const toggle = bar && bar.querySelector('[data-act="theme"]');
+    if (bar) bar.insertBefore(btn, toggle || null);
   }
 
   fetch(ROOT + 'topics.json')

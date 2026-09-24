@@ -13,7 +13,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
 <link rel="stylesheet" href="../../css/base.css?v=1e3ae753">
-<link rel="stylesheet" href="../../css/components.css?v=cb14484b">
+<link rel="stylesheet" href="../../css/components.css?v=52ccd5a3">
   <!-- meta:start -->
   <link rel="canonical" href="https://sipi.work/topics/tools/mounting-inductance.html">
   <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
@@ -29,7 +29,7 @@
   <meta name="twitter:title" content="Decoupling Capacitor Mounting Inductance Calculator | SIPI">
   <meta name="twitter:description" content="Loop inductance of the via pair under a decoupling capacitor, and how much it lowers the part's self-resonance once mounted.">
   <meta name="twitter:image" content="https://sipi.work/assets/og.png">
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Decoupling Capacitor Mounting Inductance Calculator","description":"Loop inductance of the via pair under a decoupling capacitor, and how much it lowers the part's self-resonance once mounted.","url":"https://sipi.work/topics/tools/mounting-inductance.html","articleSection":"Calculators","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer"},"publisher":{"@type":"Person","name":"Geetansh Arora"}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Decoupling Capacitor Mounting Inductance Calculator","description":"Loop inductance of the via pair under a decoupling capacitor, and how much it lowers the part's self-resonance once mounted.","url":"https://sipi.work/topics/tools/mounting-inductance.html","articleSection":"Calculators","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer"},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-09-24"}</script>
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"SIPI","item":"https://sipi.work/"},{"@type":"ListItem","position":2,"name":"Calculators","item":"https://sipi.work/#tools"},{"@type":"ListItem","position":3,"name":"Decoupling Capacitor Mounting Inductance Calculator"}]}</script>
   <!-- meta:end -->
 </head>
@@ -42,6 +42,7 @@
     <a href="../../index.html#groundwork">Topics</a>
     <a href="../../start.html">Start</a>
     <a href="../../labs.html">Labs</a>
+    <a href="../../calculators.html">Calculators</a>
     <a href="../../colophon.html">About</a>
   </nav>
 </header>
@@ -51,13 +52,13 @@
     <p class="crumb"><a href="../../index.html#tools">Calculators</a> / 11</p>
     <h1>Decoupling Capacitor Mounting Inductance Calculator</h1>
     <p class="byline">
-      <!-- review:start --><span>By Geetansh Arora — Principal SI/PI Engineer</span><span>Updated Sep 2026</span><span>10 min</span><!-- review:end -->
+      <!-- review:start --><span>By Geetansh Arora — Principal SI/PI Engineer</span><time datetime="2026-09-24" title="Technical review by Geetansh Arora on this date">24 Sep 2026</time><span>10 min</span><!-- review:end -->
     </p>
     <!-- share:head:start --><div class="share share--head" data-share data-share-url="https://sipi.work/topics/tools/mounting-inductance.html" data-share-title="Decoupling Capacitor Mounting Inductance Calculator"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Ftools%2Fmounting-inductance.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Ftools%2Fmounting-inductance.html&amp;text=Decoupling%20Capacitor%20Mounting%20Inductance%20Calculator" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=Decoupling%20Capacitor%20Mounting%20Inductance%20Calculator&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Ftools%2Fmounting-inductance.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:head:end -->
   </div>
 
   <section class="instrument instrument--calc" data-viz="calcMountingInductance" aria-label="Mounting inductance calculator: enter via length, drill diameter and pitch, capacitor ESL and capacitance, and read the loop inductance and the mounted self-resonance">
-    <script type="application/json" data-contract>{"kind":"exact","evidence":"independent","purpose":"Loop inductance of the via pair under a decoupling capacitor, and the mounted self-resonance.","equations":["L = (mu0*h/pi)*acosh(s/d)","f_SRF = 1/(2*pi*sqrt((ESL + L)*C))"],"units":"H, mil, Hz","validity":"The via pair only.","numerics":"Closed form, via K.viaLoopInductance.","limitations":"Pad, trace and plane-spreading inductance are not included; this is a lower bound.","suites":["Calculator: mounting inductance"],"version":"1.0","reviewed":"not yet","panel":"calcMountingInductance"}</script>
+    <script type="application/json" data-contract>{"kind":"exact","evidence":"independent","purpose":"Loop inductance of the via pair under a decoupling capacitor, and the mounted self-resonance.","equations":["L = (mu0*h/pi)*acosh(s/d)","f_SRF = 1/(2*pi*sqrt((ESL + L)*C))"],"units":"H, mil, Hz","validity":"The via pair only.","numerics":"Closed form, via K.viaLoopInductance.","limitations":"Pad, trace and plane-spreading inductance are not included; this is a lower bound.","suites":["Calculator: mounting inductance"],"version":"1.0","reviewed":"2026-09-24","panel":"calcMountingInductance"}</script>
     <div class="instrument__bar">
       <span class="instrument__title">The via pair under a capacitor</span>
         <span data-evidence="independent" data-model-version="1.0" class="model-tag model-tag--exact" title="Exact loop inductance of two parallel round conductors. Pads and spreading not included.">exact</span>
@@ -138,6 +139,7 @@
   <nav class="site-foot__nav" aria-label="Site, footer">
     <a href="../../start.html">Start</a>
     <a href="../../labs.html">Labs</a>
+    <a href="../../calculators.html">Calculators</a>
     <a href="../../reference.html">Reference</a>
     <a href="../../colophon.html">About &amp; AI disclosure</a>
     <a href="../../model-contract.html">Model assumptions</a>
@@ -151,6 +153,6 @@
 <script src="../../js/models/calc-models.js?v=d640a591" defer></script>
 <script src="../../js/viz/calc-mounting-inductance.js?v=95a22927" defer></script>
 <script src="../../js/viz-loader.js?v=8121f120" defer></script>
-<script src="../../js/search.js?v=6c93a285" defer></script>
+<script src="../../js/search.js?v=235cd7ca" defer></script>
 </body>
 </html>

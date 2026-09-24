@@ -13,7 +13,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
 <link rel="stylesheet" href="../../css/base.css?v=1e3ae753">
-<link rel="stylesheet" href="../../css/components.css?v=cb14484b">
+<link rel="stylesheet" href="../../css/components.css?v=52ccd5a3">
   <!-- meta:start -->
   <link rel="canonical" href="https://sipi.work/topics/tools/loss-budget.html">
   <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
@@ -29,7 +29,7 @@
   <meta name="twitter:title" content="PCB Channel Loss Budget Calculator | SIPI">
   <meta name="twitter:description" content="Insertion loss of a PCB channel from Dk, Df, trace width, impedance and copper roughness: conductor and dielectric loss per inch and over the run, against a budget.">
   <meta name="twitter:image" content="https://sipi.work/assets/og.png">
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"PCB Channel Loss Budget Calculator","description":"Insertion loss of a PCB channel from Dk, Df, trace width, impedance and copper roughness: conductor and dielectric loss per inch and over the run, against a budget.","url":"https://sipi.work/topics/tools/loss-budget.html","articleSection":"Calculators","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer"},"publisher":{"@type":"Person","name":"Geetansh Arora"}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"PCB Channel Loss Budget Calculator","description":"Insertion loss of a PCB channel from Dk, Df, trace width, impedance and copper roughness: conductor and dielectric loss per inch and over the run, against a budget.","url":"https://sipi.work/topics/tools/loss-budget.html","articleSection":"Calculators","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer"},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-09-24"}</script>
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"SIPI","item":"https://sipi.work/"},{"@type":"ListItem","position":2,"name":"Calculators","item":"https://sipi.work/#tools"},{"@type":"ListItem","position":3,"name":"PCB Channel Loss Budget Calculator"}]}</script>
   <!-- meta:end -->
 </head>
@@ -42,6 +42,7 @@
     <a href="../../index.html#groundwork">Topics</a>
     <a href="../../start.html">Start</a>
     <a href="../../labs.html">Labs</a>
+    <a href="../../calculators.html">Calculators</a>
     <a href="../../colophon.html">About</a>
   </nav>
 </header>
@@ -51,13 +52,13 @@
     <p class="crumb"><a href="../../index.html#tools">Calculators</a> / 09</p>
     <h1>PCB Channel Loss Budget Calculator</h1>
     <p class="byline">
-      <!-- review:start --><span>By Geetansh Arora — Principal SI/PI Engineer</span><span>Updated Sep 2026</span><span>10 min</span><!-- review:end -->
+      <!-- review:start --><span>By Geetansh Arora — Principal SI/PI Engineer</span><time datetime="2026-09-24" title="Technical review by Geetansh Arora on this date">24 Sep 2026</time><span>10 min</span><!-- review:end -->
     </p>
     <!-- share:head:start --><div class="share share--head" data-share data-share-url="https://sipi.work/topics/tools/loss-budget.html" data-share-title="PCB Channel Loss Budget Calculator"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Ftools%2Floss-budget.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Ftools%2Floss-budget.html&amp;text=PCB%20Channel%20Loss%20Budget%20Calculator" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=PCB%20Channel%20Loss%20Budget%20Calculator&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Ftools%2Floss-budget.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:head:end -->
   </div>
 
   <section class="instrument instrument--calc" data-viz="calcLossBudget" aria-label="Loss budget calculator: enter frequency, length, Dk, Df, trace width, impedance, roughness and a budget, and read the loss per inch, over the channel and the margin">
-    <script type="application/json" data-contract>{"kind":"analytical","evidence":"independent","purpose":"Insertion loss of a PCB channel against a budget.","equations":["alpha_d = pi*f*sqrt(Dk)*Df/c","alpha_c = Rs*K/(2*w*Z0)"],"units":"dB, dB/in, Hz","validity":"Constant Dk and Df; first-order conductor loss, roughly +/-30% of a field solve.","numerics":"Closed form.","limitations":"Conductor loss ignores current sharing between faces and return-plane loss.","suites":["Calculator: loss budget"],"version":"1.0","reviewed":"not yet","panel":"calcLossBudget"}</script>
+    <script type="application/json" data-contract>{"kind":"analytical","evidence":"independent","purpose":"Insertion loss of a PCB channel against a budget.","equations":["alpha_d = pi*f*sqrt(Dk)*Df/c","alpha_c = Rs*K/(2*w*Z0)"],"units":"dB, dB/in, Hz","validity":"Constant Dk and Df; first-order conductor loss, roughly +/-30% of a field solve.","numerics":"Closed form.","limitations":"Conductor loss ignores current sharing between faces and return-plane loss.","suites":["Calculator: loss budget"],"version":"1.0","reviewed":"2026-09-24","panel":"calcLossBudget"}</script>
     <div class="instrument__bar">
       <span class="instrument__title">Channel loss against a budget</span>
         <span data-evidence="independent" data-model-version="1.0" class="model-tag model-tag--analytical" title="First-order closed forms: exact dielectric loss, conductor loss with current on one face.">analytical</span>
@@ -140,6 +141,7 @@
   <nav class="site-foot__nav" aria-label="Site, footer">
     <a href="../../start.html">Start</a>
     <a href="../../labs.html">Labs</a>
+    <a href="../../calculators.html">Calculators</a>
     <a href="../../reference.html">Reference</a>
     <a href="../../colophon.html">About &amp; AI disclosure</a>
     <a href="../../model-contract.html">Model assumptions</a>
@@ -153,6 +155,6 @@
 <script src="../../js/models/calc-models.js?v=d640a591" defer></script>
 <script src="../../js/viz/calc-loss-budget.js?v=188d5266" defer></script>
 <script src="../../js/viz-loader.js?v=8121f120" defer></script>
-<script src="../../js/search.js?v=6c93a285" defer></script>
+<script src="../../js/search.js?v=235cd7ca" defer></script>
 </body>
 </html>
