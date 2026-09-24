@@ -11,6 +11,7 @@
   NS.viz.calcLossBudget = function (root) {
     const keep = {};                      // this chart's axis ranges, held while they still fit
     return K.calc(root, {
+      laminate: { freq: (v) => v.f },
       inputs: [
         { id: 'f', label: 'Frequency (usually Nyquist)', kind: 'si', unit: 'Hz', min: 0.1e9, max: 100e9, log: true,
           def: 16e9, positive: true },

@@ -2787,6 +2787,8 @@
        compute(v)            -> r        pure; lives in js/models/calc-models.js
        outputs(r, v)         -> [{ k, v, tone, wide }]
        chart.draw(s, T, v, r) -> legend [{ label, colour, dash }]
+       laminate { freq(v), note }  optional: a Laminate select that fills the
+                                   spec's dk and df inputs from js/models/laminates.js
      The state is also written to the URL, so a link reproduces the calculation. */
   const escHtml = (s) => String(s).replace(/[&<>"]/g, (c) =>
     ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -2854,6 +2856,12 @@
     const selects = spec.selects || [];
     selects.forEach((s) => { v[s.id] = s.def; });
     spec.inputs.forEach((q) => { v[q.id] = q.def; });
+    /* A laminate preset owns Dk and Df while it is selected. Editing either by
+       hand returns the select to Custom, so the page never attributes to a data
+       sheet a value the reader has changed. */
+    const L = NS.laminates, lam = spec.laminate && L ? spec.laminate : null;
+    const lamFields = lam ? ['dk', 'df'].filter((k) => spec.inputs.some((q) => q.id === k)) : [];
+    if (lam) v.mat = 'custom';
 
     /* ?L=1e-8&mode=parallel -- read first, so a shared link opens on its values. */
     try {
@@ -2866,6 +2874,7 @@
         const val = parseFloat(qs.get(q.id));
         if (isFinite(val) && (!q.positive || val > 0)) v[q.id] = val;
       });
+      if (lam && L.byId[qs.get('mat')]) v.mat = qs.get('mat');
     } catch (e) { /* no URL state, defaults stand */ }
 
     const label = (x) => (typeof x === 'function' ? x(v) : x);
@@ -2894,6 +2903,39 @@
       inBox.appendChild(g);
       return [s, g];
     });
+    let matSel = null, matSrc = null;
+    if (lam) {
+      const row = document.createElement('div');
+      row.className = 'calc-in calc-in--mat';
+      row.innerHTML = '<div class="calc-in__head"><label for="calc-mat">Laminate</label>'
+        + '<select id="calc-mat" class="calc-in__sel"><option value="custom">Custom</option>'
+        + L.list.map((x) => '<option value="' + x.id + '">' + escHtml(x.name) + '</option>').join('')
+        + '</select></div>';
+      matSel = row.querySelector('select');
+      /* The source goes under the chart's legend, not under the select: the input
+         column is the tall one on a laptop, and on a phone the chart sits directly
+         above the inputs, so the line still lands next to the select. */
+      matSrc = document.createElement('p');
+      matSrc.className = 'calc-src';
+      matSrc.hidden = true;
+      legendBox.after(matSrc);
+      matSel.addEventListener('change', () => { v.mat = matSel.value; m.render(); });
+      inBox.appendChild(row);
+    }
+    const lamFreq = (f) => (f >= 1e9 ? Number((f / 1e9).toPrecision(3)) + ' GHz' : Number((f / 1e6).toPrecision(3)) + ' MHz');
+    function applyLaminate() {
+      matSel.value = v.mat;
+      matSrc.hidden = v.mat === 'custom';
+      if (v.mat === 'custom') return;
+      const x = L.byId[v.mat], want = lam.freq ? lam.freq(v) : L.REF_HZ, p = L.at(v.mat, want);
+      lamFields.forEach((k) => { v[k] = p[k]; });
+      const vals = 'Dk ' + p.dk.toFixed(2) + (lamFields.includes('df') ? ', Df ' + Number(p.df.toPrecision(2)) : '');
+      const where = p.clamped ? ' at ' + lamFreq(p.f) + ', the nearest tabulated point to ' + lamFreq(want)
+        : ' at ' + lamFreq(p.f) + (lam.freq ? '' : ', the reference frequency') + (p.exact ? '' : ', interpolated');
+      matSrc.innerHTML = '<b>' + vals + where + '.</b> ' + escHtml(x.construction[0].toUpperCase() + x.construction.slice(1)) + '. '
+        + '<a href="' + x.url + '" rel="noopener">' + escHtml(x.doc) + '</a>' + (x.date ? ', ' + x.date : '')
+        + '. Typical, not guaranteed.' + (lam.note ? ' ' + lam.note : '');
+    }
     const rows = spec.inputs.map((q) => {
       const id = 'calc-' + q.id;
       const row = document.createElement('div');
@@ -2920,7 +2962,9 @@
       };
       const ok = (x) => isFinite(x) && (!q.positive || x > 0)
         && (q.lo === undefined || x >= q.lo) && (q.hi === undefined || x <= q.hi);
+      const own = lamFields.includes(q.id);
       rng.addEventListener('input', () => {
+        if (own) v.mat = 'custom';
         v[q.id] = fromT(q, +rng.value);
         box.value = K.calcFormat(q, v[q.id]);
         rng.setAttribute('aria-valuetext', box.value);
@@ -2930,6 +2974,7 @@
       box.addEventListener('input', () => {
         const x = K.parseQty(box.value, Object.assign({ scale: K.prefixScale(v[q.id]) }, q));
         if (ok(x)) {
+          if (own) v.mat = 'custom';
           v[q.id] = x; rng.value = toT(q, x);
           box.classList.remove('is-bad'); box.removeAttribute('aria-invalid');
           m.render();
@@ -2951,6 +2996,7 @@
         try {
           const qs = new URLSearchParams();
           selects.forEach((s) => qs.set(s.id, v[s.id]));
+          if (lam && v.mat !== 'custom') qs.set('mat', v.mat);
           spec.inputs.forEach((q) => qs.set(q.id, String(Number(v[q.id].toPrecision(6)))));
           window.history.replaceState(null, '', '?' + qs.toString() + window.location.hash);
         } catch (e) { /* file:// in some browsers; the calculation still works */ }
@@ -2960,6 +3006,7 @@
     function draw(T) {
       segs.forEach(([s, g]) => g.querySelectorAll('button').forEach((b) =>
         b.setAttribute('aria-pressed', String(b.dataset.val === v[s.id]))));
+      if (lam) applyLaminate();
       rows.forEach((r) => {
         r.row.hidden = r.q.when ? !r.q.when(v) : false;
         r.setLabel();
@@ -2976,7 +3023,8 @@
          chart takes what a short screen has left -- down to 150 px, where a
          curve still reads -- and the whole instrument stays in the first screen
          of a 1280 x 720 laptop as well as a 1366 x 768 one. */
-      const deskH = Math.max(150, Math.min(spec.chart.h || 200, window.innerHeight - 450));
+      const srcH = matSrc && !matSrc.hidden ? matSrc.offsetHeight + 4 : 0;   // a laminate's source line
+      const deskH = Math.max(150, Math.min(spec.chart.h || 200, window.innerHeight - 450 - srcH));
       const s = K.canvas(cv, narrow ? 210 : deskH);
       const legend = spec.chart.draw(s, T, v, res) || [];
       legendBox.innerHTML = legend.map((l) =>

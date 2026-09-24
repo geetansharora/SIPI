@@ -13,7 +13,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
 <link rel="stylesheet" href="../../css/base.css?v=1e3ae753">
-<link rel="stylesheet" href="../../css/components.css?v=0a60a1aa">
+<link rel="stylesheet" href="../../css/components.css?v=6afb77a6">
   <!-- meta:start -->
   <link rel="canonical" href="https://sipi.work/topics/tools/via-stub-resonance.html">
   <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
@@ -115,6 +115,16 @@
       stub is a half wave; it vanishes at the notch; and the notch is exactly where the stub is a quarter
       wavelength.</p>
       <p><strong>Source.</strong> D. M. Pozar, <em>Microwave Engineering</em>, 4th ed., Wiley, 2012, §2.3 and §5.2.</p>
+      <p><strong>Laminate presets.</strong> Each preset is copied from its manufacturer&#8217;s own document for
+      one named construction, and every value is typical, not guaranteed: Isola 370HR Dk/Df tables, Rev.&nbsp;C
+      (2020), core 1&#215;2116 at 51&#8201;% resin; Panasonic MEGTRON&nbsp;4 R-5725, data sheet 22040132 (2022),
+      2116 at 56&#8201;%; MEGTRON&nbsp;6 R-5775(N), 22040130 (2022), 2116 at 56&#8201;%; MEGTRON&nbsp;7
+      R-5785(GE) and (GN), 22040128 (2022), 2116 at 53&#8201;% and 55&#8201;%; and Rogers RO4350B at its design
+      Dk of 3.66, not the 3.48 process Dk. Dk and Df change with frequency, construction and test method, so the
+      preset reads them at the Nyquist frequency you set. It interpolates only between points measured by one
+      method, and outside them it uses the nearest tabulated point and says so. Two cores of the same product
+      can differ by more than two products do, so sign off with your fabricator&#8217;s stackup values. The
+      sources are rows C-27 to C-32 of the <a href="../../docs/claims.md">claim ledger</a>.</p>
     </details>
 
     <h3>Related</h3>
@@ -126,6 +136,19 @@
   </div>
 
   <!-- share:foot:start --><div class="share share--foot" data-share data-share-url="https://sipi.work/topics/tools/via-stub-resonance.html" data-share-title="Via Stub Resonance Calculator"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Ftools%2Fvia-stub-resonance.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Ftools%2Fvia-stub-resonance.html&amp;text=Via%20Stub%20Resonance%20Calculator" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=Via%20Stub%20Resonance%20Calculator&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Ftools%2Fvia-stub-resonance.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:foot:end -->
+<!-- sources:start -->
+    <section class="sources">
+      <h2 class="section-rule"><span>Sources</span></h2>
+      <ul class="sources__list">
+      <li><a href="https://www.isola-group.com/wp-content/uploads/data-sheets/370HR__Dk_Df_Tables.pdf" target="_blank" rel="noopener">Isola — 370HR Dk/Df tables</a> <span class="src__for">C-27</span></li>
+      <li><a href="https://industrial.panasonic.com/content/data/EM/PDF/ipcdatasheet_R-5725_new.pdf" target="_blank" rel="noopener">Panasonic — MEGTRON 4 data sheet</a> <span class="src__for">C-28</span></li>
+      <li><a href="https://industrial.panasonic.com/content/data/EM/PDF/CDS_MEGTRON6_R-5775(N)_220401.pdf" target="_blank" rel="noopener">Panasonic — MEGTRON 6 R-5775(N) data sheet</a> <span class="src__for">C-29</span></li>
+      <li><a href="https://industrial.panasonic.com/cdbs/www-data/pdf/EMB0000/ast-ind-232633.pdf" target="_blank" rel="noopener">Panasonic — MEGTRON 7 data sheet</a> <span class="src__for">C-30</span></li>
+      <li><a href="https://www.rogerscorp.com/advanced-electronics-solutions/ro4000-series-laminates/ro4350b-laminates" target="_blank" rel="noopener">Rogers — RO4350B laminates</a> <span class="src__for">C-32</span></li>
+      </ul>
+      <p class="sources__note">Rows marked with a claim id are tracked in <a href="../../docs/claims.md">the claim ledger</a>, which records what each source can and cannot establish.</p>
+    </section>
+    <!-- sources:end -->
   <!-- pager:start -->
   <nav class="pager" aria-label="Previous and next topic">
     <a class="prev" href="../../topics/tools/electrical-length.html"><span class="dir">Previous</span><span>Electrical Length and Critical Length Calculator</span></a>
@@ -149,9 +172,10 @@
 </footer>
 
 <script src="../../js/site.js?v=9ac8f8b6" defer></script>
-<script src="../../js/viz-kit.js?v=d5c4df68" defer></script>
+<script src="../../js/viz-kit.js?v=cb8b8b52" defer></script>
 <script src="../../js/models/calc-models.js?v=d640a591" defer></script>
-<script src="../../js/viz/calc-via-stub.js?v=2ef9ffc0" defer></script>
+<script src="../../js/models/laminates.js?v=a71de525" defer></script>
+<script src="../../js/viz/calc-via-stub.js?v=d9a2fbb2" defer></script>
 <script src="../../js/viz-loader.js?v=8121f120" defer></script>
 <script src="../../js/search.js?v=580e4b78" defer></script>
 </body>

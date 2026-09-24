@@ -18,6 +18,7 @@
           if (val === 'ms' && v.type !== 'ms') Object.assign(v, { w: 10, h: 5.5 });
         }
       }],
+      laminate: {},
       inputs: [
         { id: 'w', label: 'Trace width w', kind: 'length', unit: 'mil', base: 25.4e-6, dp: 2,
           min: 1, max: 100, log: true, def: 10, positive: true },
@@ -52,7 +53,7 @@
           const P = K.plot(s, T, {
             pad: { l: 52, r: 16, t: 20, b: 32 },
             x: { min: lo, max: hi, log: true,
-                 fmt: (x) => x.toPrecision(2), title: 'trace width, mil' },
+                 fmt: (x) => String(Number(x.toPrecision(2))), title: 'trace width, mil' },
             y: { min: 0, max: top, count: 5, fmt: (y) => y.toFixed(0), title: 'Z₀, Ω' }
           }).grid();
           P.trace(pts, T.signal, { width: 2.2, label: 'Z0', unit: 'Ω' });

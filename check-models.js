@@ -55,7 +55,7 @@ function loadSite() {
   };
   global.getComputedStyle = () => ({ getPropertyValue: () => '#000000' });
   global.fetch = () => new Promise(() => {});
-  const files = ['js/viz-kit.js', 'js/models/calc-models.js', 'js/viz/jitter.js', 'js/viz/crosstalk.js',
+  const files = ['js/viz-kit.js', 'js/models/calc-models.js', 'js/models/laminates.js', 'js/viz/jitter.js', 'js/viz/crosstalk.js',
                  'js/viz/spectrum.js', 'js/viz/pdn-extras.js',
                  'js/viz/lab-waves.js', 'js/viz/lab-channel.js', 'js/viz/lab-pdn.js',
                  'js/viz/cdr.js', 'js/models/adc-model.js',
@@ -4389,6 +4389,80 @@ suite('Calculator: microstrip and stripline impedance', () => {
   ok('Z0 falls as the trace widens', CALC.microstrip(12, 5.5, 1.4, 4.2).z0 < CALC.microstrip(10, 5.5, 1.4, 4.2).z0);
   nearRel('the solved width reproduces the target',
           CALC.zline('ms', CALC.widthFor(50, 'ms', 5.5, 1.4, 4.2), 5.5, 1.4, 4.2).z0, 50, 1e-6);
+});
+
+suite('Calculator: laminate presets', () => {
+  /* Data, not physics, so the checks are of two kinds: that every record could
+     have come from a data sheet (plausible ranges, a named document, ordered
+     frequencies), and that the lookup never states a number the source does
+     not -- exact at a tabulated point, bounded between two, and never a value
+     beyond the table or blended across two test methods. */
+  const LAM = SIPI.laminates;
+  const ledger = JSON.parse(fs.readFileSync(path.join(SRC, 'docs/claims.json'), 'utf8')).claims;
+  ok('there are laminate presets to check', LAM && LAM.list.length >= 4, LAM && String(LAM.list.length));
+  const bad = [];
+  LAM.list.forEach((m) => {
+    ['id', 'name', 'vendor', 'product', 'construction', 'doc', 'url'].forEach((k) => {
+      if (!(typeof m[k] === 'string' && m[k].length)) bad.push(m.id + ' has no ' + k);
+    });
+    if (!(m.date || /undated/.test(m.doc))) bad.push(m.id + ' has neither a date nor a note that the source is undated');
+    if (!m.series.length) bad.push(m.id + ' has no series');
+    let last = 0;
+    m.series.forEach((sr) => {
+      if (!sr.method) bad.push(m.id + ' has a series with no method');
+      if (!sr.pts.length) bad.push(m.id + ' has an empty series');
+      sr.pts.forEach(([f, dk, df]) => {
+        if (!(f > last)) bad.push(m.id + ' frequencies not strictly increasing at ' + f);
+        last = f;
+        if (!(dk >= 2 && dk <= 6)) bad.push(m.id + ' Dk ' + dk + ' outside [2, 6]');
+        if (!(df > 0 && df <= 0.05)) bad.push(m.id + ' Df ' + df + ' outside (0, 0.05]');
+      });
+    });
+    const row = ledger.find((c) => c.laminate === m.id);
+    if (!row || row.status !== 'verified') bad.push(m.id + ' has no verified row in docs/claims.json');
+  });
+  ok('every record names its source, and its points are plausible and ordered (methods do not overlap)',
+     !bad.length, bad.join('; '));
+
+  const miss = [];
+  LAM.list.forEach((m) => m.series.forEach((sr) => sr.pts.forEach(([f, dk, df]) => {
+    const p = LAM.at(m.id, f);
+    if (p.dk !== dk || p.df !== df || p.clamped) miss.push(m.id + ' @ ' + f);
+  })));
+  ok('at a tabulated frequency the lookup returns the tabulated value exactly', !miss.length, miss.join(', '));
+
+  const outside = [];
+  LAM.list.forEach((m) => {
+    const all = [].concat(...m.series.map((sr) => sr.pts));
+    const first = all[0], last = all[all.length - 1];
+    const hi = LAM.at(m.id, last[0] * 3), lo = LAM.at(m.id, first[0] / 3);
+    if (hi.dk !== last[1] || hi.df !== last[2] || !hi.clamped || hi.f !== last[0]) outside.push(m.id + ' above');
+    if (lo.dk !== first[1] || lo.df !== first[2] || !lo.clamped || lo.f !== first[0]) outside.push(m.id + ' below');
+  });
+  ok('beyond the table the lookup returns the end point and flags it, never an extrapolation',
+     !outside.length, outside.join(', '));
+
+  const blend = [], between = [];
+  LAM.list.forEach((m) => {
+    for (let k = 0; k + 1 < m.series.length; k++) {
+      const a = m.series[k].pts[m.series[k].pts.length - 1], b = m.series[k + 1].pts[0];
+      const f = Math.sqrt(a[0] * b[0]), p = LAM.at(m.id, f);
+      const isA = p.dk === a[1] && p.df === a[2], isB = p.dk === b[1] && p.df === b[2];
+      if (!p.clamped || !(isA || isB)) blend.push(m.id + ' between ' + a[0] + ' and ' + b[0]);
+    }
+    m.series.forEach((sr) => {
+      for (let i = 0; i + 1 < sr.pts.length; i++) {
+        const [fa, da, ga] = sr.pts[i], [fb, db, gb] = sr.pts[i + 1];
+        const p = LAM.at(m.id, Math.sqrt(fa * fb));
+        const inside = (x, u, v) => x >= Math.min(u, v) - 1e-15 && x <= Math.max(u, v) + 1e-15;
+        if (p.clamped || !inside(p.dk, da, db) || !inside(p.df, ga, gb)) between.push(m.id + ' @ ' + fa);
+      }
+    });
+  });
+  ok('between two test methods the lookup takes a tabulated point, never a blend of the two',
+     !blend.length, blend.join(', '));
+  ok('between two points of one method the value lies between them', !between.length, between.join(', '));
+  ok('an unknown laminate returns nothing rather than a default', LAM.at('fr4-generic', 1e9) === null);
 });
 
 if (!PASS && !FAILS.length && !PENDING.length) {

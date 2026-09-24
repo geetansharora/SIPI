@@ -1952,6 +1952,19 @@ html.lab-lock, html.lab-lock body { overflow: hidden; }
 .calc-in__num.is-bad { border-color: var(--alarm); box-shadow: inset 0 0 0 1px var(--alarm); }
 .calc-in input[type="range"] { width: 100%; min-height: 24px; margin: 0; accent-color: var(--signal); }
 .calc-in__hint { font-family: var(--font-mono); font-size: .64rem; line-height: 1.4; color: var(--muted); }
+/* The Laminate preset: a select, and under it the data sheet the values came
+   from. The source line is not a hint -- it stays on a laptop, because a number
+   attributed to a data sheet must show which one, at what frequency. */
+.calc-in__sel {
+  box-sizing: border-box; min-width: 0; min-height: 32px; max-width: 13rem; padding: .2rem .4rem;
+  color: var(--ink); background: var(--surface-2);
+  border: 1px solid var(--border); border-radius: 3px; font: .76rem var(--font-mono);
+}
+.calc-in__sel:focus-visible { outline: 2px solid var(--signal); outline-offset: 1px; }
+.calc-src { margin: 0; font-family: var(--font-mono); font-size: .64rem; line-height: 1.4; color: var(--muted); }
+.calc-src[hidden] { display: none; }
+.calc-src b { font-weight: 500; color: var(--ink-2); }
+.calc-src a { color: inherit; }
 
 .calc-seg { display: flex; flex-wrap: wrap; gap: var(--s1); }
 .calc-seg__k { flex-basis: 100%; font-family: var(--font-mono); font-size: .72rem; color: var(--ink-2); }
@@ -2000,6 +2013,9 @@ html.lab-lock, html.lab-lock body { overflow: hidden; }
   .calc-in__head label { grid-column: 1 / -1; line-height: 1.25; }
   .calc-in input[type="range"] { grid-row: 2; grid-column: 1; }
   .calc-in__num { grid-row: 2; grid-column: 2; width: auto; min-height: 26px; }   /* WCAG 2.5.8 asks 24 */
+  .calc-in--mat .calc-in__head { display: flex; grid-column: 1 / -1; }
+  .calc-in--mat .calc-in__head label { line-height: normal; }
+  .calc-in__sel { min-height: 26px; }
   .calc-out { padding: 6px var(--s3); }
   .calc-out__v { font-size: .92rem; }
   .calc-seg__b { min-height: 28px; }
@@ -2014,6 +2030,13 @@ html.lab-lock, html.lab-lock body { overflow: hidden; }
   .page-head--tool, .page-head--tool + .instrument { max-width: min(72rem, calc(100% - 2 * var(--s4))); }
   .page-head--tool + .instrument .calc__results { grid-template-columns: repeat(4, minmax(0, 1fr)); }
   .page-head--tool + .instrument .calc__inputs { gap: 3px; padding-block: var(--s2); }
+}
+/* A 1280 x 720 laptop leaves a browser about 610 px. There the breadcrumb is the
+   line to give up: the masthead's Calculators link sits directly above it, and
+   without it the loss budget -- eight inputs and a laminate -- still ends above
+   the fold with its source line on screen. */
+@media (min-width: 56rem) and (max-height: 640px) {
+  .page-head--tool .crumb { display: none; }
 }
 
 @media (max-width: 55.99rem) {

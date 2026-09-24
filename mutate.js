@@ -750,6 +750,28 @@ const MUTATIONS = [
        + 'monotonic and smooth.',
     active: true, fast: true
   },
+  {
+    id: 'laminate-extrapolates',
+    file: 'js/models/laminates.js',
+    find: '      if (f < p[0][0] || f > p[p.length - 1][0]) continue;',
+    with: '      if (p.length < 2 && (f < p[0][0] || f > p[p.length - 1][0])) continue;',
+    suite: 'Calculator: laminate presets',
+    expect: 'beyond the table the lookup returns the end point and flags it',
+    why: 'A straight line past the last tabulated point states a Dk and Df no '
+       + 'data sheet gives; the page would attribute an invented number to a vendor.',
+    active: true, fast: true
+  },
+  {
+    id: 'laminate-joins-methods',
+    file: 'js/models/laminates.js',
+    find: '    for (const s of m.series) {',
+    with: '    for (const s of [{ method: m.series[0].method, pts: [].concat(...m.series.map((x) => x.pts)) }]) {',
+    suite: 'Calculator: laminate presets',
+    expect: 'between two test methods the lookup takes a tabulated point',
+    why: 'MEGTRON 4 reads Dk 3.83 at 10 GHz by one method and 3.68 at 13 GHz by '
+       + 'another; a line between them is a number neither method measured.',
+    active: true, fast: true
+  },
 ];
 
 /* A deliberately UNDETECTABLE mutation, used only by --selftest.
@@ -813,7 +835,9 @@ function copyTree(dest) {
      page-against-model cross-check parses. */
   for (const rel of ['js', 'check-models.js', 'topics.json', 'tests', 'index.html',
                      /* the ADC scenario regressions read the page they guard */
-                     'topics/labs/adc-interference.html']) {
+                     'topics/labs/adc-interference.html',
+                     /* every laminate preset must be backed by a verified ledger row */
+                     'docs/claims.json']) {
     const from = path.join(ROOT, rel), to = path.join(dest, rel);
     fs.mkdirSync(path.dirname(to), { recursive: true });
     fs.cpSync(from, to, { recursive: true });

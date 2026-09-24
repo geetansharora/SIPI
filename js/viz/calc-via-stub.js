@@ -9,6 +9,7 @@
   NS.viz.calcViaStub = function (root) {
     const keep = {};                      // this chart's axis ranges, held while they still fit
     return K.calc(root, {
+      laminate: { freq: (v) => v.fn, note: 'This is the laminate\u2019s Dk; a via barrel\u2019s effective Dk is not simply this (Go deeper).' },
       inputs: [
         { id: 'len', label: 'Stub length', kind: 'length', unit: 'mil', base: 25.4e-6, dp: 1,
           min: 2, max: 400, log: true, def: 40, positive: true },

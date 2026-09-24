@@ -10,6 +10,7 @@
 
   NS.viz.calcElectricalLength = function (root) {
     return K.calc(root, {
+      laminate: { note: 'A stripline sees this Dk; a microstrip sees less, as part of its field is in air.' },
       inputs: [
         { id: 'len', label: 'Trace length', kind: 'length', unit: 'in', base: 0.0254, dp: 2,
           min: 0.05, max: 40, log: true, def: 3, positive: true },

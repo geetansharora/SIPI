@@ -9,6 +9,7 @@
 
   NS.viz.calcPlaneResonance = function (root) {
     return K.calc(root, {
+      laminate: {},
       inputs: [
         { id: 'a', label: 'Plane length a', kind: 'length', unit: 'mm', base: 1e-3, dp: 1,
           min: 5, max: 500, log: true, def: 100, positive: true },
