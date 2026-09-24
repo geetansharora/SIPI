@@ -775,6 +775,30 @@
       "source_title": "Rogers — RO4350B laminates",
       "source_url": "https://www.rogerscorp.com/advanced-electronics-solutions/ro4000-series-laminates/ro4350b-laminates",
       "laminate": "ro4350b"
+    },
+    {
+      "id": "C-33",
+      "statement": "Shengyi S1141, conventional FR-4 (Tg 140 °C, IPC-4101/21): Dk 4.4 and Df 0.013 at 1 GHz by IPC-TM-650 2.5.5.9, on a 1.6 mm (8×7628) specimen.",
+      "pages": [
+        "tools/loss-budget",
+        "tools/line-impedance",
+        "tools/electrical-length",
+        "tools/via-stub-resonance",
+        "tools/plane-cavity-resonance"
+      ],
+      "source_type": "commercial",
+      "source": "Shengyi Technology, S1141 technical data sheet (TDS), dated 19 January 2021",
+      "conditions": "Typical, for reference only. One GHz point, on a glass-heavy 7628 build (about 43 to 50 % resin); a resin-rich thin core runs higher in Dk and Df, and Df rises above 1 GHz.",
+      "status": "verified",
+      "note": "Read from the manufacturer's own data sheet. The 0.015 to 0.020 figures often quoted for S1141 are either its 1 MHz Df (0.015) or third-party summaries; the data sheet's 1 GHz value is 0.013. The calculators offer it as the standard-grade FR-4 beside 370HR's high-Tg one, and above 1 GHz they use this point and say so rather than extrapolate.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-09-24",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null,
+      "source_title": "Shengyi — S1141 technical data sheet",
+      "source_url": "https://www.syst.com.cn/ajax/download.aspx?name=2021/01/20210119183954576.pdf",
+      "laminate": "shengyi-s1141"
     }
   ]
 }

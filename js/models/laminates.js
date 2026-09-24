@@ -21,15 +21,25 @@
   const IPC_2555 = 'IPC-TM-650 2.5.5.5';
   const IEC_63185 = 'balanced-type circular disk resonator, IEC 63185 (2020)';
 
+  /* `group` is the heading the select files a laminate under. */
   const LIST = [
-    { id: 'isola-370hr', name: 'Isola 370HR', vendor: 'Isola', product: '370HR',
-      construction: 'core, 1×2116, 51 % resin',
+    /* Shengyi's "conventional FR-4", Tg 140 °C, the standard material at the
+       low-cost board houses. Its data sheet gives one GHz point, measured on a
+       glass-heavy 7628 board; a resin-rich thin core runs higher in Dk and Df. */
+    { id: 'shengyi-s1141', name: 'Shengyi S1141', group: 'FR-4', vendor: 'Shengyi',
+      product: 'S1141, conventional FR-4, Tg 140 °C',
+      construction: 'standard FR-4, Tg 140 °C; 1.6 mm board of 8×7628 glass (glass-heavy)',
+      doc: 'Shengyi S1141 technical data sheet', date: '2021-01-19',
+      url: 'https://www.syst.com.cn/ajax/download.aspx?name=2021/01/20210119183954576.pdf',
+      series: [{ method: IPC_2559, pts: [[1e9, 4.4, 0.013]] }] },
+    { id: 'isola-370hr', name: 'Isola 370HR', group: 'FR-4', vendor: 'Isola', product: '370HR',
+      construction: 'high-Tg FR-4; core, 1×2116, 51 % resin',
       doc: 'Isola 370HR Dk/Df tables, Revision C', date: '2020-03-16',
       url: 'https://www.isola-group.com/wp-content/uploads/data-sheets/370HR__Dk_Df_Tables.pdf',
       series: [{ method: 'not stated in the table', pts: [
         [100e6, 4.24, 0.015], [500e6, 4.19, 0.017], [1e9, 4.17, 0.019],
         [2e9, 4.14, 0.020], [5e9, 4.03, 0.023], [10e9, 4.03, 0.023]] }] },
-    { id: 'megtron4', name: 'Panasonic MEGTRON 4', vendor: 'Panasonic', product: 'MEGTRON 4 R-5725',
+    { id: 'megtron4', name: 'Panasonic MEGTRON 4', group: 'Low loss', vendor: 'Panasonic', product: 'MEGTRON 4 R-5725',
       construction: 'core, 2116×1, 56 % resin',
       doc: 'Panasonic data sheet No. 22040132', date: '2022-04',
       url: 'https://industrial.panasonic.com/content/data/EM/PDF/ipcdatasheet_R-5725_new.pdf',
@@ -39,7 +49,7 @@
                                   [8e9, 3.83, 0.007], [10e9, 3.83, 0.007]] },
         { method: IEC_63185, pts: [[13e9, 3.68, 0.0074], [23e9, 3.68, 0.0078], [34e9, 3.68, 0.0083],
                                    [45e9, 3.68, 0.0087], [55e9, 3.68, 0.0091]] }] },
-    { id: 'megtron6n', name: 'Panasonic MEGTRON 6 (N)', vendor: 'Panasonic',
+    { id: 'megtron6n', name: 'Panasonic MEGTRON 6 (N)', group: 'Low loss', vendor: 'Panasonic',
       product: 'MEGTRON 6 R-5775(N), low-Dk glass',
       construction: 'core, 2116, 56 % resin',
       doc: 'Panasonic data sheet No. 22040130', date: '2022-04',
@@ -48,7 +58,7 @@
         { method: IPC_2559, pts: [[1e9, 3.40, 0.002]] },
         { method: IEC_63185, pts: [[13e9, 3.34, 0.0037], [24e9, 3.34, 0.0040], [36e9, 3.34, 0.0042],
                                    [47e9, 3.34, 0.0044], [58e9, 3.34, 0.0046]] }] },
-    { id: 'megtron7ge', name: 'Panasonic MEGTRON 7 (GE)', vendor: 'Panasonic',
+    { id: 'megtron7ge', name: 'Panasonic MEGTRON 7 (GE)', group: 'Low loss', vendor: 'Panasonic',
       product: 'MEGTRON 7 R-5785(GE), E glass',
       construction: 'core, 2116×1, 53 % resin',
       doc: 'Panasonic data sheet No. 22040128', date: '2022-04',
@@ -57,7 +67,7 @@
         { method: IPC_2559, pts: [[1e9, 3.63, 0.002]] },
         { method: IEC_63185, pts: [[13e9, 3.60, 0.0034], [24e9, 3.60, 0.0037], [36e9, 3.60, 0.0041],
                                    [47e9, 3.60, 0.0045], [58e9, 3.60, 0.0049]] }] },
-    { id: 'megtron7gn', name: 'Panasonic MEGTRON 7 (GN)', vendor: 'Panasonic',
+    { id: 'megtron7gn', name: 'Panasonic MEGTRON 7 (GN)', group: 'Low loss', vendor: 'Panasonic',
       product: 'MEGTRON 7 R-5785(GN), low-Dk glass',
       construction: 'core, 2116, 55 % resin',
       doc: 'Panasonic data sheet No. 22040128', date: '2022-04',
@@ -68,7 +78,7 @@
                                    [48e9, 3.31, 0.0030], [59e9, 3.31, 0.0033]] }] },
     /* Rogers publishes two Dk values. 3.48 ± 0.05 is the process Dk, a quality-
        control figure; the data sheet directs circuit designers to the design Dk. */
-    { id: 'ro4350b', name: 'Rogers RO4350B', vendor: 'Rogers', product: 'RO4350B',
+    { id: 'ro4350b', name: 'Rogers RO4350B', group: 'Low loss', vendor: 'Rogers', product: 'RO4350B',
       construction: 'laminate (design Dk, not the 3.48 process Dk)',
       doc: 'Rogers RO4350B product page (undated; read 2026-09-24)', date: null,
       url: 'https://www.rogerscorp.com/advanced-electronics-solutions/ro4000-series-laminates/ro4350b-laminates',

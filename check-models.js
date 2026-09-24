@@ -4402,7 +4402,7 @@ suite('Calculator: laminate presets', () => {
   ok('there are laminate presets to check', LAM && LAM.list.length >= 4, LAM && String(LAM.list.length));
   const bad = [];
   LAM.list.forEach((m) => {
-    ['id', 'name', 'vendor', 'product', 'construction', 'doc', 'url'].forEach((k) => {
+    ['id', 'name', 'group', 'vendor', 'product', 'construction', 'doc', 'url'].forEach((k) => {
       if (!(typeof m[k] === 'string' && m[k].length)) bad.push(m.id + ' has no ' + k);
     });
     if (!(m.date || /undated/.test(m.doc))) bad.push(m.id + ' has neither a date nor a note that the source is undated');

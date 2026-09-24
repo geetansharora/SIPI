@@ -2909,7 +2909,9 @@
       row.className = 'calc-in calc-in--mat';
       row.innerHTML = '<div class="calc-in__head"><label for="calc-mat">Laminate</label>'
         + '<select id="calc-mat" class="calc-in__sel"><option value="custom">Custom</option>'
-        + L.list.map((x) => '<option value="' + x.id + '">' + escHtml(x.name) + '</option>').join('')
+        + [...new Set(L.list.map((x) => x.group))].map((g) => '<optgroup label="' + escHtml(g) + '">'
+          + L.list.filter((x) => x.group === g).map((x) =>
+            '<option value="' + x.id + '">' + escHtml(x.name) + '</option>').join('') + '</optgroup>').join('')
         + '</select></div>';
       matSel = row.querySelector('select');
       /* The source goes under the chart's legend, not under the select: the input
