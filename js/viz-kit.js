@@ -2681,4 +2681,286 @@
     };
     return api;
   };
+
+  /* ---------- the tail of a Gaussian ----------
+     Moved here from js/viz/jitter.js, unchanged, so the BER calculator and the
+     jitter panels answer from the same arithmetic rather than two copies of it.
+
+     Q(x) is evaluated in two regimes so the far tail stays accurate: a Chebyshev
+     erfc below x = 3, and the asymptotic series above it. A single erfc loses all
+     relative accuracy by 1e-12, which is exactly where the answer lives. */
+  const SQ2PI = Math.sqrt(2 * Math.PI);
+  K.erfc = function (x) {                  // Numerical Recipes, |err| < 1.2e-7
+    const z = Math.abs(x), t = 2 / (2 + z);
+    const ans = t * Math.exp(-z * z - 1.26551223 + t * (1.00002368 + t * (0.37409196
+      + t * (0.09678418 + t * (-0.18628806 + t * (0.27886807 + t * (-1.13520398
+      + t * (1.48851587 + t * (-0.82215223 + t * 0.17087277)))))))));
+    return x >= 0 ? ans : 2 - ans;
+  };
+  K.Q = function Q(x) {
+    if (x < 0) return 1 - Q(-x);
+    if (x < 3) return 0.5 * K.erfc(x / Math.SQRT2);
+    const i = 1 / (x * x);                 // asymptotic series — keeps relative accuracy in the tail
+    return Math.exp(-x * x / 2) / (x * SQ2PI) * (1 - i + 3 * i * i - 15 * i * i * i);
+  };
+  /* Inverse: the Q value a BER demands. Bisection on a monotone function is
+     plenty here and cannot diverge the way Newton can in the tail. */
+  K.Qinv = function (p) {
+    let lo = 0, hi = 12;
+    for (let i = 0; i < 80; i++) {
+      const mid = (lo + hi) / 2;
+      (K.Q(mid) > p) ? (lo = mid) : (hi = mid);
+    }
+    return (lo + hi) / 2;
+  };
+
+  /* ---------- quantities a reader types ----------
+     Engineers write values the way a schematic does: 100n, 1.2p, 3G, 50 mil.
+     K.parseQty reads that; K.si writes it back with the prefix that keeps the
+     mantissa between 1 and 1000.
+
+     A BARE number means the prefix currently on display, so typing 22 over
+     "10 nH" means 22 nH, not 22 henries -- which is what anyone retyping a
+     value intends. Lower-case m is milli and upper-case M is mega; that is the
+     SI rule and the only reading that does not guess. */
+  const PREFIX_IN = { f: 1e-15, p: 1e-12, n: 1e-9, u: 1e-6, 'µ': 1e-6, 'μ': 1e-6,
+                      m: 1e-3, '': 1, k: 1e3, K: 1e3, M: 1e6, G: 1e9, T: 1e12 };
+  const PREFIX_OUT = [[1e12, 'T'], [1e9, 'G'], [1e6, 'M'], [1e3, 'k'], [1, ''],
+                      [1e-3, 'm'], [1e-6, 'µ'], [1e-9, 'n'], [1e-12, 'p'], [1e-15, 'f']];
+  const LENGTH_M = { m: 1, cm: 1e-2, mm: 1e-3, um: 1e-6, 'µm': 1e-6, 'μm': 1e-6,
+                     mil: 25.4e-6, mils: 25.4e-6, in: 0.0254, inch: 0.0254, '"': 0.0254 };
+
+  K.prefixScale = function (v) {           // the display prefix a value would get
+    const a = Math.abs(v);
+    if (!(a > 0) || !isFinite(a)) return 1;
+    const hit = PREFIX_OUT.find(([s]) => a >= s * 0.9995);
+    return hit ? hit[0] : 1e-15;
+  };
+  K.si = function (v, unit, sig) {
+    const n = sig || 3, u = unit || '';
+    if (v === Infinity) return '∞';
+    if (!isFinite(v)) return '—';
+    if (v === 0) return '0' + (u ? ' ' + u : '');
+    const a = Math.abs(v);
+    let i = PREFIX_OUT.findIndex(([s]) => a >= s);
+    if (i < 0) i = PREFIX_OUT.length - 1;
+    let m = Number((v / PREFIX_OUT[i][0]).toPrecision(n));
+    if (Math.abs(m) >= 1000 && i > 0) { i--; m = Number((v / PREFIX_OUT[i][0]).toPrecision(n)); }
+    const t = m.toPrecision(n);
+    return (t.indexOf('e') >= 0 ? String(m) : t) + ' ' + PREFIX_OUT[i][1] + u;
+  };
+  /* q: { kind: 'si' | 'plain' | 'sci' | 'length', unit, alias: [...], base, scale } */
+  K.parseQty = function (text, q) {
+    const s = String(text).trim().replace(/−/g, '-').replace(/,/g, '.').replace(/\s+/g, '');
+    const m = s.match(/^([-+]?(?:\d+\.?\d*|\.\d+)(?:e[-+]?\d+)?)/i);
+    if (!m) return NaN;
+    const x = parseFloat(m[1]);
+    const rest = s.slice(m[1].length);
+    if (q.kind === 'length') {
+      if (!rest) return x;                               // the input's own unit
+      const f = LENGTH_M[rest] !== undefined ? LENGTH_M[rest] : LENGTH_M[rest.toLowerCase()];
+      return f === undefined ? NaN : x * f / q.base;
+    }
+    const units = [q.unit || ''].concat(q.alias || []).filter(Boolean);
+    if (q.kind !== 'si') {                               // plain and sci take no prefix
+      return (!rest || units.some((u) => rest.toLowerCase() === u.toLowerCase())) ? x : NaN;
+    }
+    if (!rest) return x * (q.scale || 1);
+    let p = rest;
+    for (const u of units) {
+      if (p.toLowerCase().endsWith(u.toLowerCase())) { p = p.slice(0, p.length - u.length); break; }
+    }
+    return Object.prototype.hasOwnProperty.call(PREFIX_IN, p) ? x * PREFIX_IN[p] : NaN;
+  };
+
+  /* ---------- the calculator engine ----------
+     Every calculator page is the same instrument: inputs on the left, the answer
+     in numbers above one chart on the right, all inside one screen on a laptop.
+     On a phone the numbers come first and stay pinned while the inputs scroll
+     beneath them, so an input and what it changes are never on different
+     screens. Building that once here is what makes it true of every page; a
+     layout rule re-implemented twelve times is twelve chances to break it.
+
+     A spec is data plus three functions:
+       selects  [{ id, label, options: [[value, text], ...], def }]
+       inputs   [{ id, label, kind, unit, min, max, log, def, when(v), hint, ... }]
+       compute(v)            -> r        pure; lives in js/models/calc-models.js
+       outputs(r, v)         -> [{ k, v, tone, wide }]
+       chart.draw(s, T, v, r) -> legend [{ label, colour, dash }]
+     The state is also written to the URL, so a link reproduces the calculation. */
+  const escHtml = (s) => String(s).replace(/[&<>"]/g, (c) =>
+    ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+  /* Whole decades around a range, for a log axis whose ticks should land on
+     1, 10, 100 rather than wherever the data happens to start. */
+  K.decades = function (lo, hi) {
+    const a = Math.pow(10, Math.floor(Math.log10(lo)));
+    let b = Math.pow(10, Math.ceil(Math.log10(hi)));
+    if (!(b > a)) b = a * 10;
+    return [a, b];
+  };
+  /* A shaded x-interval clipped to the plot box: a band, a region, a margin. */
+  K.shadeX = function (P, x1, x2, colour) {
+    const B = P.box, l = Math.max(B.L, Math.min(P.X(x1), P.X(x2)));
+    const r = Math.min(B.R, Math.max(P.X(x1), P.X(x2)));
+    if (r > l) { P.ctx.fillStyle = colour; P.ctx.fillRect(l, B.TP, r - l, B.B - B.TP); }
+  };
+  K.shadeY = function (P, y1, y2, colour) {
+    const B = P.box, top = Math.max(B.TP, Math.min(P.Y(y1), P.Y(y2)));
+    const bot = Math.min(B.B, Math.max(P.Y(y1), P.Y(y2)));
+    if (bot > top) { P.ctx.fillStyle = colour; P.ctx.fillRect(B.L, top, B.R - B.L, bot - top); }
+  };
+
+  K.calcFormat = function (q, x) {
+    if (!isFinite(x)) return '';
+    if (q.kind === 'sci') return Number(x.toPrecision(2)).toExponential().replace('e+', 'e');
+    if (q.kind === 'plain' || q.kind === 'length') {
+      const dp = q.dp !== undefined ? q.dp : 2;
+      return (+x.toFixed(dp)).toString() + (q.unit ? ' ' + q.unit : '');
+    }
+    return K.si(x, q.unit, q.sig || 3);
+  };
+
+  K.calc = function (root, spec) {
+    const $ = (s) => root.querySelector(s);
+    const inBox = $('[data-calc-inputs]'), outBox = $('[data-calc-results]');
+    const cv = $('[data-cv="calc"]'), legendBox = $('[data-calc-legend]');
+    const v = {};
+    const selects = spec.selects || [];
+    selects.forEach((s) => { v[s.id] = s.def; });
+    spec.inputs.forEach((q) => { v[q.id] = q.def; });
+
+    /* ?L=1e-8&mode=parallel -- read first, so a shared link opens on its values. */
+    try {
+      const qs = new URLSearchParams(window.location.search);
+      selects.forEach((s) => {
+        const val = qs.get(s.id);
+        if (val && s.options.some(([o]) => o === val)) v[s.id] = val;
+      });
+      spec.inputs.forEach((q) => {
+        const val = parseFloat(qs.get(q.id));
+        if (isFinite(val) && (!q.positive || val > 0)) v[q.id] = val;
+      });
+    } catch (e) { /* no URL state, defaults stand */ }
+
+    const label = (x) => (typeof x === 'function' ? x(v) : x);
+    const toT = (q, x) => {
+      const t = q.log ? Math.log(x / q.min) / Math.log(q.max / q.min) : (x - q.min) / (q.max - q.min);
+      return Math.round(1000 * Math.max(0, Math.min(1, t)));
+    };
+    const fromT = (q, t) => {
+      const u = t / 1000;
+      const x = q.log ? q.min * Math.pow(q.max / q.min, u) : q.min + (q.max - q.min) * u;
+      return q.snap ? q.snap(x) : Number(x.toPrecision(3));
+    };
+
+    /* ---- controls ---- */
+    const segs = selects.map((s) => {
+      const g = document.createElement('div');
+      g.className = 'calc-seg';
+      g.setAttribute('role', 'group');
+      g.setAttribute('aria-label', s.label);
+      g.innerHTML = '<span class="calc-seg__k">' + s.label + '</span>' + s.options.map(([val, text]) =>
+        '<button type="button" class="calc-seg__b" data-val="' + escHtml(val) + '">' + text + '</button>').join('');
+      g.querySelectorAll('button').forEach((b) => b.addEventListener('click', () => {
+        if (s.onPick) s.onPick(b.dataset.val, v);          // may load values that suit the new mode
+        v[s.id] = b.dataset.val; m.render();
+      }));
+      inBox.appendChild(g);
+      return [s, g];
+    });
+    const rows = spec.inputs.map((q) => {
+      const id = 'calc-' + q.id;
+      const row = document.createElement('div');
+      row.className = 'calc-in';
+      row.innerHTML =
+        '<div class="calc-in__head"><label for="' + id + '"></label>'
+        + '<input id="' + id + '" class="calc-in__num" type="text" inputmode="decimal" '
+        + 'autocomplete="off" spellcheck="false"></div>'
+        + '<input type="range" min="0" max="1000" step="1" data-rng>'
+        + (q.hint ? '<span class="calc-in__hint">' + q.hint + '</span>' : '');
+      const lab = row.querySelector('label'), box = row.querySelector('.calc-in__num');
+      const rng = row.querySelector('[data-rng]');
+      const setLabel = () => {
+        const t = label(q.label);
+        lab.innerHTML = t;
+        rng.setAttribute('aria-label', lab.textContent);
+      };
+      const show = () => {
+        box.value = K.calcFormat(q, v[q.id]);
+        rng.value = toT(q, v[q.id]);
+        rng.setAttribute('aria-valuetext', box.value);
+        box.classList.remove('is-bad');
+        box.removeAttribute('aria-invalid');
+      };
+      const ok = (x) => isFinite(x) && (!q.positive || x > 0)
+        && (q.lo === undefined || x >= q.lo) && (q.hi === undefined || x <= q.hi);
+      rng.addEventListener('input', () => {
+        v[q.id] = fromT(q, +rng.value);
+        box.value = K.calcFormat(q, v[q.id]);
+        rng.setAttribute('aria-valuetext', box.value);
+        box.classList.remove('is-bad');
+        m.render();
+      });
+      box.addEventListener('input', () => {
+        const x = K.parseQty(box.value, Object.assign({ scale: K.prefixScale(v[q.id]) }, q));
+        if (ok(x)) {
+          v[q.id] = x; rng.value = toT(q, x);
+          box.classList.remove('is-bad'); box.removeAttribute('aria-invalid');
+          m.render();
+        } else {
+          box.classList.add('is-bad'); box.setAttribute('aria-invalid', 'true');
+        }
+      });
+      box.addEventListener('change', show);                // canonical form once the reader is done
+      box.addEventListener('keydown', (e) => { if (e.key === 'Enter') { box.blur(); show(); } });
+      inBox.appendChild(row);
+      return { q, row, show, setLabel };
+    });
+
+    /* ---- the URL ---- */
+    let urlT = 0;
+    const writeUrl = () => {
+      clearTimeout(urlT);
+      urlT = setTimeout(() => {
+        try {
+          const qs = new URLSearchParams();
+          selects.forEach((s) => qs.set(s.id, v[s.id]));
+          spec.inputs.forEach((q) => qs.set(q.id, String(Number(v[q.id].toPrecision(6)))));
+          window.history.replaceState(null, '', '?' + qs.toString() + window.location.hash);
+        } catch (e) { /* file:// in some browsers; the calculation still works */ }
+      }, 300);
+    };
+
+    function draw(T) {
+      segs.forEach(([s, g]) => g.querySelectorAll('button').forEach((b) =>
+        b.setAttribute('aria-pressed', String(b.dataset.val === v[s.id]))));
+      rows.forEach((r) => {
+        r.row.hidden = r.q.when ? !r.q.when(v) : false;
+        r.setLabel();
+        if (document.activeElement !== r.row.querySelector('.calc-in__num')) r.show();
+      });
+      const res = spec.compute(v);
+      outBox.innerHTML = spec.outputs(res, v).map((o) =>
+        '<div class="calc-out' + (o.wide ? ' calc-out--wide' : '') + (o.tone ? ' calc-out--' + o.tone : '') + '">'
+        + '<span class="calc-out__k">' + o.k + '</span>'
+        + '<b class="calc-out__v">' + escHtml(o.v) + '</b></div>').join('');
+      const narrow = window.matchMedia('(max-width: 55.99rem)').matches;
+      /* On a laptop the chart is the one part that can give height back. The rest
+         of the instrument and the page head above it take about 450 px, so the
+         chart takes what a short screen has left -- down to 150 px, where a
+         curve still reads -- and the whole instrument stays in the first screen
+         of a 1280 x 720 laptop as well as a 1366 x 768 one. */
+      const deskH = Math.max(150, Math.min(spec.chart.h || 200, window.innerHeight - 450));
+      const s = K.canvas(cv, narrow ? 210 : deskH);
+      const legend = spec.chart.draw(s, T, v, res) || [];
+      legendBox.innerHTML = legend.map((l) =>
+        '<span><i' + (l.dash ? ' class="dash" style="color:' + l.colour + '"'
+          : ' style="background:' + l.colour + '"') + '></i>' + l.label + '</span>').join('');
+      writeUrl();
+    }
+
+    const m = K.mount({ root, params: v, draw });
+    return { start() {}, stop() {}, destroy() { clearTimeout(urlT); m.teardown(); } };
+  };
 })();

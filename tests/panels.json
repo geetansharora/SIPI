@@ -354,11 +354,95 @@
         "ufs4",
         "usb32"
       ]
+    },
+    {
+      "url": "topics/tools/ber-q-jitter.html",
+      "panels": [
+        "calcBer"
+      ],
+      "presets": []
+    },
+    {
+      "url": "topics/tools/bit-rate-ui-nyquist.html",
+      "panels": [
+        "calcBitRate"
+      ],
+      "presets": []
+    },
+    {
+      "url": "topics/tools/electrical-length.html",
+      "panels": [
+        "calcElectricalLength"
+      ],
+      "presets": []
+    },
+    {
+      "url": "topics/tools/lc-rlc-resonance.html",
+      "panels": [
+        "calcRlc"
+      ],
+      "presets": []
+    },
+    {
+      "url": "topics/tools/line-impedance.html",
+      "panels": [
+        "calcLineImpedance"
+      ],
+      "presets": []
+    },
+    {
+      "url": "topics/tools/loss-budget.html",
+      "panels": [
+        "calcLossBudget"
+      ],
+      "presets": []
+    },
+    {
+      "url": "topics/tools/mounting-inductance.html",
+      "panels": [
+        "calcMountingInductance"
+      ],
+      "presets": []
+    },
+    {
+      "url": "topics/tools/plane-cavity-resonance.html",
+      "panels": [
+        "calcPlaneResonance"
+      ],
+      "presets": []
+    },
+    {
+      "url": "topics/tools/return-loss-vswr.html",
+      "panels": [
+        "calcReturnLoss"
+      ],
+      "presets": []
+    },
+    {
+      "url": "topics/tools/skin-depth.html",
+      "panels": [
+        "calcSkinDepth"
+      ],
+      "presets": []
+    },
+    {
+      "url": "topics/tools/target-impedance-calculator.html",
+      "panels": [
+        "calcTargetImpedance"
+      ],
+      "presets": []
+    },
+    {
+      "url": "topics/tools/via-stub-resonance.html",
+      "panels": [
+        "calcViaStub"
+      ],
+      "presets": []
     }
   ],
   "totals": {
-    "pages": 28,
-    "panels": 29,
+    "pages": 40,
+    "panels": 41,
     "presets": 130
   }
 }

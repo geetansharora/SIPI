@@ -1143,6 +1143,252 @@
           "reviewer": "Geetansh Arora"
         }
       ]
+    },
+    {
+      "id": "tools",
+      "title": "Calculators",
+      "blurb": "Quick answers for SI and PI arithmetic, each with its formula, its assumptions and a live chart.",
+      "topics": [
+        {
+          "slug": "lc-rlc-resonance",
+          "title": "LC and RLC Resonance Calculator",
+          "status": "live",
+          "viz": "calcRlc",
+          "keywords": [
+            "resonance",
+            "resonant frequency",
+            "LC",
+            "RLC",
+            "tank",
+            "Q factor",
+            "quality factor",
+            "bandwidth",
+            "damping",
+            "self-resonant frequency",
+            "SRF",
+            "ESL",
+            "ESR",
+            "decap",
+            "impedance",
+            "calculator"
+          ]
+        },
+        {
+          "slug": "return-loss-vswr",
+          "title": "VSWR, Return Loss and Reflection Coefficient Calculator",
+          "status": "live",
+          "viz": "calcReturnLoss",
+          "keywords": [
+            "reflection coefficient",
+            "gamma",
+            "VSWR",
+            "SWR",
+            "standing wave ratio",
+            "mismatch loss",
+            "load impedance",
+            "impedance mismatch",
+            "calculator"
+          ]
+        },
+        {
+          "slug": "ber-q-jitter",
+          "title": "BER, Q-Factor and Total Jitter Calculator",
+          "status": "live",
+          "viz": "calcBer",
+          "keywords": [
+            "BER",
+            "bit error rate",
+            "Q factor",
+            "total jitter",
+            "TJ",
+            "random jitter",
+            "RJ",
+            "deterministic jitter",
+            "DJ",
+            "dual-Dirac",
+            "jitter extrapolation",
+            "eye opening",
+            "transition density",
+            "calculator"
+          ]
+        },
+        {
+          "slug": "bit-rate-ui-nyquist",
+          "title": "Bit Rate, Unit Interval and Nyquist Frequency Calculator",
+          "status": "live",
+          "viz": "calcBitRate",
+          "keywords": [
+            "bit rate",
+            "data rate",
+            "baud",
+            "symbol rate",
+            "unit interval",
+            "UI",
+            "Nyquist frequency",
+            "PAM4",
+            "NRZ",
+            "rise time",
+            "bandwidth",
+            "0.35",
+            "knee frequency",
+            "bits in flight",
+            "calculator"
+          ]
+        },
+        {
+          "slug": "electrical-length",
+          "title": "Electrical Length and Critical Length Calculator",
+          "status": "live",
+          "viz": "calcElectricalLength",
+          "keywords": [
+            "electrical length",
+            "critical length",
+            "propagation delay",
+            "tpd",
+            "flight time",
+            "round trip",
+            "transmission line",
+            "lumped",
+            "rise time",
+            "Dk",
+            "ps per inch",
+            "calculator"
+          ]
+        },
+        {
+          "slug": "via-stub-resonance",
+          "title": "Via Stub Resonance Calculator",
+          "status": "live",
+          "viz": "calcViaStub",
+          "keywords": [
+            "via stub",
+            "stub resonance",
+            "quarter wave",
+            "backdrill",
+            "backdrilling",
+            "notch",
+            "insertion loss",
+            "S21",
+            "Nyquist",
+            "via",
+            "calculator"
+          ]
+        },
+        {
+          "slug": "target-impedance-calculator",
+          "title": "PDN Target Impedance Calculator",
+          "status": "live",
+          "viz": "calcTargetImpedance",
+          "keywords": [
+            "target impedance",
+            "Ztarget",
+            "PDN",
+            "power distribution network",
+            "ripple",
+            "transient current",
+            "droop",
+            "power integrity",
+            "rail",
+            "calculator"
+          ]
+        },
+        {
+          "slug": "skin-depth",
+          "title": "Skin Depth and Surface Roughness Calculator",
+          "status": "live",
+          "viz": "calcSkinDepth",
+          "keywords": [
+            "skin depth",
+            "skin effect",
+            "surface resistance",
+            "copper",
+            "roughness",
+            "Rq",
+            "Rz",
+            "Hammerstad",
+            "conductor loss",
+            "AC resistance",
+            "calculator"
+          ]
+        },
+        {
+          "slug": "loss-budget",
+          "title": "PCB Channel Loss Budget Calculator",
+          "status": "live",
+          "viz": "calcLossBudget",
+          "keywords": [
+            "insertion loss",
+            "loss budget",
+            "channel loss",
+            "dB per inch",
+            "Df",
+            "loss tangent",
+            "Dk",
+            "dielectric loss",
+            "conductor loss",
+            "roughness",
+            "laminate",
+            "calculator"
+          ]
+        },
+        {
+          "slug": "plane-cavity-resonance",
+          "title": "Power Plane Cavity Resonance Calculator",
+          "status": "live",
+          "viz": "calcPlaneResonance",
+          "keywords": [
+            "plane resonance",
+            "cavity resonance",
+            "cavity mode",
+            "power plane",
+            "ground plane",
+            "plane pair",
+            "board resonance",
+            "PDN",
+            "EMI",
+            "calculator"
+          ]
+        },
+        {
+          "slug": "mounting-inductance",
+          "title": "Decoupling Capacitor Mounting Inductance Calculator",
+          "status": "live",
+          "viz": "calcMountingInductance",
+          "keywords": [
+            "mounting inductance",
+            "via inductance",
+            "loop inductance",
+            "decoupling capacitor",
+            "decap",
+            "ESL",
+            "via pitch",
+            "self-resonant frequency",
+            "SRF",
+            "PDN",
+            "calculator"
+          ]
+        },
+        {
+          "slug": "line-impedance",
+          "title": "Microstrip and Stripline Impedance Calculator",
+          "status": "live",
+          "viz": "calcLineImpedance",
+          "keywords": [
+            "microstrip",
+            "stripline",
+            "characteristic impedance",
+            "Z0",
+            "trace width",
+            "trace impedance",
+            "controlled impedance",
+            "effective dielectric constant",
+            "eeff",
+            "Hammerstad",
+            "Wheeler",
+            "calculator"
+          ]
+        }
+      ]
     }
   ]
 }

@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- theme:start -->
+  <meta name="theme-color" content="#F7F8FA">
+  <script>(function(){try{var t=localStorage.getItem('sipi-theme');if(t==='dark'||t==='system'){document.documentElement.setAttribute('data-theme',t);var m=document.querySelector('meta[name=theme-color]');if(m&&(t==='dark'||matchMedia('(prefers-color-scheme:dark)').matches))m.content='#0B1015';}}catch(e){}})();</script>
+  <!-- theme:end -->
+<title>Via Stub Resonance Calculator | SIPI</title>
+<meta name="description" content="Quarter-wave resonance of a via stub against the channel's Nyquist frequency, the insertion-loss notch it causes, and the longest stub a margin allows.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<link rel="stylesheet" href="../../css/base.css?v=1e3ae753">
+<link rel="stylesheet" href="../../css/components.css?v=a5bbfbf0">
+  <!-- meta:start -->
+  <link rel="canonical" href="https://sipi.work/topics/tools/via-stub-resonance.html">
+  <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="SIPI">
+  <meta property="og:title" content="Via Stub Resonance Calculator | SIPI">
+  <meta property="og:description" content="Quarter-wave resonance of a via stub against the channel's Nyquist frequency, the insertion-loss notch it causes, and the longest stub a margin allows.">
+  <meta property="og:url" content="https://sipi.work/topics/tools/via-stub-resonance.html">
+  <meta property="og:image" content="https://sipi.work/assets/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Via Stub Resonance Calculator | SIPI">
+  <meta name="twitter:description" content="Quarter-wave resonance of a via stub against the channel's Nyquist frequency, the insertion-loss notch it causes, and the longest stub a margin allows.">
+  <meta name="twitter:image" content="https://sipi.work/assets/og.png">
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Via Stub Resonance Calculator","description":"Quarter-wave resonance of a via stub against the channel's Nyquist frequency, the insertion-loss notch it causes, and the longest stub a margin allows.","url":"https://sipi.work/topics/tools/via-stub-resonance.html","articleSection":"Calculators","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer"},"publisher":{"@type":"Person","name":"Geetansh Arora"}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"SIPI","item":"https://sipi.work/"},{"@type":"ListItem","position":2,"name":"Calculators","item":"https://sipi.work/#tools"},{"@type":"ListItem","position":3,"name":"Via Stub Resonance Calculator"}]}</script>
+  <!-- meta:end -->
+</head>
+<body>
+
+<header class="masthead">
+  <a class="wordmark" href="../../index.html">SIPI</a>
+  <button class="theme-toggle" data-act="theme" type="button">Light</button>
+  <nav aria-label="Site">
+    <a href="../../index.html#groundwork">Topics</a>
+    <a href="../../start.html">Start</a>
+    <a href="../../labs.html">Labs</a>
+    <a href="../../colophon.html">About</a>
+  </nav>
+</header>
+
+<main>
+  <div class="page-head page-head--tool">
+    <p class="crumb"><a href="../../index.html#tools">Calculators</a> / 06</p>
+    <h1>Via Stub Resonance Calculator</h1>
+    <p class="byline">
+      <!-- review:start --><span>By Geetansh Arora — Principal SI/PI Engineer</span><span>Updated Sep 2026</span><span>10 min</span><!-- review:end -->
+    </p>
+    <!-- share:head:start --><div class="share share--head" data-share data-share-url="https://sipi.work/topics/tools/via-stub-resonance.html" data-share-title="Via Stub Resonance Calculator"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Ftools%2Fvia-stub-resonance.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Ftools%2Fvia-stub-resonance.html&amp;text=Via%20Stub%20Resonance%20Calculator" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=Via%20Stub%20Resonance%20Calculator&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Ftools%2Fvia-stub-resonance.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:head:end -->
+  </div>
+
+  <section class="instrument instrument--calc" data-viz="calcViaStub" aria-label="Via stub calculator: enter the stub length, effective Dk, Nyquist frequency and a margin, and read the notch frequency and the longest acceptable stub">
+    <script type="application/json" data-contract>{"kind":"exact","evidence":"independent","purpose":"Quarter-wave notch of a via stub against the channel's Nyquist frequency.","equations":["f_notch = c/(4*l*sqrt(Dk_eff))","S21 = 2/(2 + j*tan(pi*f/(2*f_notch)))"],"units":"Hz, mil, dB","validity":"Lossless stub of the line's impedance; the notch frequency is the robust output.","numerics":"Closed form.","limitations":"A real stub has loss and a different impedance, so its notch is finite and its shoulder shifts.","suites":["Calculator: via stub resonance"],"version":"1.0","reviewed":"not yet","panel":"calcViaStub"}</script>
+    <div class="instrument__bar">
+      <span class="instrument__title">Via stub notch against Nyquist</span>
+        <span data-evidence="independent" data-model-version="1.0" class="model-tag model-tag--exact" title="Exact for an ideal lossless open stub of the line's own impedance.">exact</span>
+    </div>
+    <div class="calc">
+      <div class="calc__inputs" data-calc-inputs></div>
+      <div class="calc__main">
+        <div class="calc__results" data-calc-results role="status" aria-live="polite" aria-label="Results"></div>
+        <div class="panel calc__chart">
+          <span class="panel__label">Insertion loss through a line with an open stub</span>
+          <canvas data-cv="calc" role="img" aria-label="Plot of insertion loss in decibels against frequency showing a deep notch at the stub's quarter-wave frequency, with Nyquist and the margin marked"></canvas>
+          <div class="legend" data-calc-legend></div>
+        </div>
+      </div>
+    </div>
+    <noscript><p class="calc-noscript">This calculator runs in your browser and needs JavaScript. Its formulas are set out below.</p></noscript>
+  </section>
+
+  <div class="prose">
+    <p class="answer">
+      The unused length of a via below the layer a signal leaves on is an open-circuited stub. At the
+      frequency where it is a quarter wavelength long it looks like a short to the line, and energy that
+      should pass through it is sent back instead. The fix is to keep that frequency well above everything
+      the channel carries &#8212; by backdrilling, or by choosing layers that leave no stub.
+    </p>
+
+    <h2>Reading the numbers</h2>
+    <ul>
+      <li>The notch falls as the stub grows: halve the length and it doubles.</li>
+      <li>Loss starts to build well below the notch. Read <b>|S21| at Nyquist</b> to see what the stub already costs where the budget is quoted.</li>
+      <li>The margin <b>k</b> is yours to set. Nothing in a specification fixes it; it depends on how much of the notch's shoulder the channel can afford.</li>
+    </ul>
+    <p>Every value is in the address bar as you change it, so a link reproduces the calculation exactly.
+      Type values with SI prefixes &#8212; <code>100n</code>, <code>2.2p</code>, <code>16G</code> &#8212; or
+      drag the sliders; a bare number keeps the prefix already shown.</p>
+
+    <h2>The formulas</h2>
+      <div class="eq">
+        <i class="var">f</i><sub>notch</sub> = <i class="var">c</i> / ( 4 &#183; <i class="var">l</i> &#183; &#8730;Dk<sub>eff</sub> ) &#160;&#8776;&#160; 2950 / ( <i class="var">l</i><sub>mil</sub> &#183; &#8730;Dk<sub>eff</sub> ) &#160;GHz
+        <span class="cap">The stub is a quarter wavelength at this frequency.</span>
+      </div>
+      <div class="eq">
+        <i class="var">S</i><sub>21</sub> = 2 / ( 2 + <i class="var">j</i> tan&#952; ), &#160; &#952; = (&#960;/2)(<i class="var">f</i>/<i class="var">f</i><sub>notch</sub>)
+        <span class="cap">An ideal open stub of the line's own impedance, shunted across a matched line.</span>
+      </div>
+
+    <details class="deeper">
+      <summary>Go deeper &#8212; assumptions, how it is checked, and sources</summary>
+      <p><strong>Assumptions.</strong> The stub is lossless and has the line's impedance, so the notch is
+      infinitely deep. A real stub has loss and a different impedance, which make the notch finite and shift
+      its shoulder; the frequency is the part to trust. The effective Dk of a via barrel is not simply the
+      laminate's, because the field around it is not uniform.</p>
+      <p><strong>How it is checked.</strong> |S21| is 0 dB at DC and at twice the notch frequency, where the
+      stub is a half wave; it vanishes at the notch; and the notch is exactly where the stub is a quarter
+      wavelength.</p>
+      <p><strong>Source.</strong> D. M. Pozar, <em>Microwave Engineering</em>, 4th ed., Wiley, 2012, §2.3 and §5.2.</p>
+    </details>
+
+    <h3>Related</h3>
+    <ul class="tight">
+      <li><a href="../fundamentals/vias.html">High-Speed Vias: Stubs, Resonance, and Backdrilling</a></li>
+      <li><a href="../package-board/layer-transitions.html">PCB Layer Transitions and Return-Path Stitching</a></li>
+      <li><a href="../signal-integrity/channel-budgeting.html">Channel Loss Budgeting Across Die, Package, and Board</a></li>
+    </ul>
+  </div>
+
+  <!-- share:foot:start --><div class="share share--foot" data-share data-share-url="https://sipi.work/topics/tools/via-stub-resonance.html" data-share-title="Via Stub Resonance Calculator"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Ftools%2Fvia-stub-resonance.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Ftools%2Fvia-stub-resonance.html&amp;text=Via%20Stub%20Resonance%20Calculator" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=Via%20Stub%20Resonance%20Calculator&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Ftools%2Fvia-stub-resonance.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:foot:end -->
+  <!-- pager:start -->
+  <nav class="pager" aria-label="Previous and next topic">
+    <a class="prev" href="../../topics/tools/electrical-length.html"><span class="dir">Previous</span><span>Electrical Length and Critical Length Calculator</span></a>
+    <a class="next" href="../../topics/tools/target-impedance-calculator.html"><span class="dir">Next</span><span>PDN Target Impedance Calculator</span></a>
+  </nav>
+  <!-- pager:end -->
+</main>
+
+<footer class="site-foot">
+  <span>SIPI &#8212; signal and power integrity, visualised.</span>
+  <nav class="site-foot__nav" aria-label="Site, footer">
+    <a href="../../start.html">Start</a>
+    <a href="../../labs.html">Labs</a>
+    <a href="../../reference.html">Reference</a>
+    <a href="../../colophon.html">About &amp; AI disclosure</a>
+    <a href="../../model-contract.html">Model assumptions</a>
+    <a href="../../docs/claims.md">Claim ledger (Markdown)</a>
+  </nav>
+  <span>Created and directed by Geetansh Arora. Text <a href="../../LICENSE-CONTENT">CC BY 4.0</a>, code <a href="../../LICENSE-CODE">MIT</a>.</span>
+</footer>
+
+<script src="../../js/site.js?v=9ac8f8b6" defer></script>
+<script src="../../js/viz-kit.js?v=80ff7520" defer></script>
+<script src="../../js/models/calc-models.js?v=f7b0daa5" defer></script>
+<script src="../../js/viz/calc-via-stub.js?v=f2882534" defer></script>
+<script src="../../js/viz-loader.js?v=8121f120" defer></script>
+<script src="../../js/search.js?v=6c93a285" defer></script>
+</body>
+</html>

@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- theme:start -->
+  <meta name="theme-color" content="#F7F8FA">
+  <script>(function(){try{var t=localStorage.getItem('sipi-theme');if(t==='dark'||t==='system'){document.documentElement.setAttribute('data-theme',t);var m=document.querySelector('meta[name=theme-color]');if(m&&(t==='dark'||matchMedia('(prefers-color-scheme:dark)').matches))m.content='#0B1015';}}catch(e){}})();</script>
+  <!-- theme:end -->
+<title>Electrical Length and Critical Length Calculator | SIPI</title>
+<meta name="description" content="Propagation delay, round trip and critical length for a PCB trace: is it a lumped wire or a transmission line at this rise time?">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<link rel="stylesheet" href="../../css/base.css?v=1e3ae753">
+<link rel="stylesheet" href="../../css/components.css?v=a5bbfbf0">
+  <!-- meta:start -->
+  <link rel="canonical" href="https://sipi.work/topics/tools/electrical-length.html">
+  <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="SIPI">
+  <meta property="og:title" content="Electrical Length and Critical Length Calculator | SIPI">
+  <meta property="og:description" content="Propagation delay, round trip and critical length for a PCB trace: is it a lumped wire or a transmission line at this rise time?">
+  <meta property="og:url" content="https://sipi.work/topics/tools/electrical-length.html">
+  <meta property="og:image" content="https://sipi.work/assets/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Electrical Length and Critical Length Calculator | SIPI">
+  <meta name="twitter:description" content="Propagation delay, round trip and critical length for a PCB trace: is it a lumped wire or a transmission line at this rise time?">
+  <meta name="twitter:image" content="https://sipi.work/assets/og.png">
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Electrical Length and Critical Length Calculator","description":"Propagation delay, round trip and critical length for a PCB trace: is it a lumped wire or a transmission line at this rise time?","url":"https://sipi.work/topics/tools/electrical-length.html","articleSection":"Calculators","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer"},"publisher":{"@type":"Person","name":"Geetansh Arora"}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"SIPI","item":"https://sipi.work/"},{"@type":"ListItem","position":2,"name":"Calculators","item":"https://sipi.work/#tools"},{"@type":"ListItem","position":3,"name":"Electrical Length and Critical Length Calculator"}]}</script>
+  <!-- meta:end -->
+</head>
+<body>
+
+<header class="masthead">
+  <a class="wordmark" href="../../index.html">SIPI</a>
+  <button class="theme-toggle" data-act="theme" type="button">Light</button>
+  <nav aria-label="Site">
+    <a href="../../index.html#groundwork">Topics</a>
+    <a href="../../start.html">Start</a>
+    <a href="../../labs.html">Labs</a>
+    <a href="../../colophon.html">About</a>
+  </nav>
+</header>
+
+<main>
+  <div class="page-head page-head--tool">
+    <p class="crumb"><a href="../../index.html#tools">Calculators</a> / 05</p>
+    <h1>Electrical Length and Critical Length Calculator</h1>
+    <p class="byline">
+      <!-- review:start --><span>By Geetansh Arora — Principal SI/PI Engineer</span><span>Updated Sep 2026</span><span>10 min</span><!-- review:end -->
+    </p>
+    <!-- share:head:start --><div class="share share--head" data-share data-share-url="https://sipi.work/topics/tools/electrical-length.html" data-share-title="Electrical Length and Critical Length Calculator"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Ftools%2Felectrical-length.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Ftools%2Felectrical-length.html&amp;text=Electrical%20Length%20and%20Critical%20Length%20Calculator" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=Electrical%20Length%20and%20Critical%20Length%20Calculator&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Ftools%2Felectrical-length.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:head:end -->
+  </div>
+
+  <section class="instrument instrument--calc" data-viz="calcElectricalLength" aria-label="Electrical length calculator: enter trace length, rise time and effective Dk, and read the delay, round trip and critical length">
+    <script type="application/json" data-contract>{"kind":"exact","evidence":"independent","purpose":"Delay, round trip and critical length of a trace at a given rise time.","equations":["tpd = 84.72*sqrt(Dk_eff) ps/in","electrically long when 2*Td > tr/3"],"units":"s, in","validity":"Uniform lossless line; the /3 is a convention.","numerics":"Closed form.","limitations":"The /3 criterion is a convention shared with the topic page, not physics.","suites":["Calculator: electrical length"],"version":"1.0","reviewed":"not yet","panel":"calcElectricalLength"}</script>
+    <div class="instrument__bar">
+      <span class="instrument__title">Lumped wire or transmission line?</span>
+        <span data-evidence="independent" data-model-version="1.0" class="model-tag model-tag--exact" title="Arithmetic on a stated rule: the round trip against a third of the rise time.">exact</span>
+    </div>
+    <div class="calc">
+      <div class="calc__inputs" data-calc-inputs></div>
+      <div class="calc__main">
+        <div class="calc__results" data-calc-results role="status" aria-live="polite" aria-label="Results"></div>
+        <div class="panel calc__chart">
+          <span class="panel__label">Round-trip delay against length, and where it overtakes tr/3</span>
+          <canvas data-cv="calc" role="img" aria-label="Plot of round-trip delay against trace length with a horizontal line at one third of the rise time; lengths beyond the crossing are shaded as transmission lines"></canvas>
+          <div class="legend" data-calc-legend></div>
+        </div>
+      </div>
+    </div>
+    <noscript><p class="calc-noscript">This calculator runs in your browser and needs JavaScript. Its formulas are set out below.</p></noscript>
+  </section>
+
+  <div class="prose">
+    <p class="answer">
+      A trace becomes a transmission line when a reflection from its far end can no longer hide inside the
+      edge that launched it. This calculator applies the rule the
+      <a href="../fundamentals/when-is-a-trace-a-transmission-line.html">topic page</a> derives &#8212; the
+      round trip against a third of the rise time &#8212; so the two can never disagree.
+    </p>
+
+    <h2>Reading the numbers</h2>
+    <ul>
+      <li>In air, light covers an inch in 84.7 ps; a dielectric slows it by &#8730;Dk.</li>
+      <li>Below the <b>critical length</b> the reflection returns while the edge is still rising and merges into it. Above it the reflection arrives as a separate step, and the line needs a controlled impedance and a termination.</li>
+      <li>It is the <b>rise time</b>, not the clock rate, that decides: a 10 MHz clock with a 100 ps edge is already electrically long on any trace longer than about 0.10 in at Dk 3.8.</li>
+    </ul>
+    <p>Every value is in the address bar as you change it, so a link reproduces the calculation exactly.
+      Type values with SI prefixes &#8212; <code>100n</code>, <code>2.2p</code>, <code>16G</code> &#8212; or
+      drag the sliders; a bare number keeps the prefix already shown.</p>
+
+    <h2>The formulas</h2>
+      <div class="eq">
+        <i class="var">t</i><sub>pd</sub> = 84.7 &#183; &#8730;Dk<sub>eff</sub> &#160; ps/in
+        <span class="cap">84.7 ps per inch is the speed of light in vacuum, inverted.</span>
+      </div>
+      <div class="eq">
+        electrically long when &#160; 2 <i class="var">T</i><sub>d</sub> &gt; <i class="var">t</i><sub>r</sub>/3 &#160;&#8660;&#160; <i class="var">l</i> &gt; <i class="var">t</i><sub>r</sub> / (6 &#183; <i class="var">t</i><sub>pd</sub>)
+        <span class="cap">The /3 is a convention, not physics: some texts use /2 or /4. It sets where the boundary is drawn, not whether reflections exist.</span>
+      </div>
+
+    <details class="deeper">
+      <summary>Go deeper &#8212; assumptions, how it is checked, and sources</summary>
+      <p><strong>Assumptions.</strong> One driver, one receiver, a uniform line. Microstrip has an effective Dk
+      below the laminate's because part of its field is in air; stripline's equals the laminate's.
+      Use the <a href="line-impedance.html">line impedance calculator</a> to get &#949;<sub>eff</sub>.</p>
+      <p><strong>How it is checked.</strong> At Dk = 1 the delay is the vacuum value; delay scales linearly
+      with length and with &#8730;Dk; and the critical length is exactly where the round trip equals
+      t<sub>r</sub>/3.</p>
+      <p><strong>Source.</strong> E. Bogatin, <em>Signal and Power Integrity &#8212; Simplified</em>, 3rd ed.,
+      Pearson, 2018, ch. 7.</p>
+    </details>
+
+    <h3>Related</h3>
+    <ul class="tight">
+      <li><a href="../fundamentals/when-is-a-trace-a-transmission-line.html">When does a trace become a transmission line?</a></li>
+      <li><a href="../fundamentals/reflections.html">Transmission-Line Reflections and Ringing</a></li>
+      <li><a href="../fundamentals/termination-schemes.html">Transmission-Line Termination Schemes</a></li>
+    </ul>
+  </div>
+
+  <!-- share:foot:start --><div class="share share--foot" data-share data-share-url="https://sipi.work/topics/tools/electrical-length.html" data-share-title="Electrical Length and Critical Length Calculator"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Ftools%2Felectrical-length.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Ftools%2Felectrical-length.html&amp;text=Electrical%20Length%20and%20Critical%20Length%20Calculator" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=Electrical%20Length%20and%20Critical%20Length%20Calculator&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Ftools%2Felectrical-length.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:foot:end -->
+  <!-- pager:start -->
+  <nav class="pager" aria-label="Previous and next topic">
+    <a class="prev" href="../../topics/tools/bit-rate-ui-nyquist.html"><span class="dir">Previous</span><span>Bit Rate, Unit Interval and Nyquist Frequency Calculator</span></a>
+    <a class="next" href="../../topics/tools/via-stub-resonance.html"><span class="dir">Next</span><span>Via Stub Resonance Calculator</span></a>
+  </nav>
+  <!-- pager:end -->
+</main>
+
+<footer class="site-foot">
+  <span>SIPI &#8212; signal and power integrity, visualised.</span>
+  <nav class="site-foot__nav" aria-label="Site, footer">
+    <a href="../../start.html">Start</a>
+    <a href="../../labs.html">Labs</a>
+    <a href="../../reference.html">Reference</a>
+    <a href="../../colophon.html">About &amp; AI disclosure</a>
+    <a href="../../model-contract.html">Model assumptions</a>
+    <a href="../../docs/claims.md">Claim ledger (Markdown)</a>
+  </nav>
+  <span>Created and directed by Geetansh Arora. Text <a href="../../LICENSE-CONTENT">CC BY 4.0</a>, code <a href="../../LICENSE-CODE">MIT</a>.</span>
+</footer>
+
+<script src="../../js/site.js?v=9ac8f8b6" defer></script>
+<script src="../../js/viz-kit.js?v=80ff7520" defer></script>
+<script src="../../js/models/calc-models.js?v=f7b0daa5" defer></script>
+<script src="../../js/viz/calc-electrical-length.js?v=7f903512" defer></script>
+<script src="../../js/viz-loader.js?v=8121f120" defer></script>
+<script src="../../js/search.js?v=6c93a285" defer></script>
+</body>
+</html>

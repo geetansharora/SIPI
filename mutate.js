@@ -616,6 +616,140 @@ const MUTATIONS = [
        + 'up as a numerical assertion.',
     active: true, fast: true
   },
+  /* ── Calculators · one planted defect each, in js/models/calc-models.js ── */
+  {
+    id: 'calc-rlc-drops-2pi',
+    file: 'js/models/calc-models.js',
+    find: 'const w0 = 1 / Math.sqrt(L * Cap), f0 = w0 / (2 * Math.PI);',
+    with: 'const w0 = 1 / Math.sqrt(L * Cap), f0 = w0;',
+    suite: 'Calculator: LC/RLC resonance',
+    expect: 'resonate at 159.155 MHz',
+    why: 'Radians per second reported as hertz: every resonance 6.28x too high, and '
+       + 'a Q and bandwidth that still look self-consistent.',
+    active: true, fast: true
+  },
+  {
+    id: 'calc-refl-sign-flipped',
+    file: 'js/models/calc-models.js',
+    find: "if (given === 'zl') { g = (value - z0) / (value + z0); zl = value; }",
+    with: "if (given === 'zl') { g = (z0 - value) / (value + z0); zl = value; }",
+    suite: 'Calculator: return loss, reflection coefficient, VSWR',
+    expect: '75 ohm on 50 ohm gives gamma = +0.2',
+    why: 'Return loss and VSWR are blind to the sign, so an inverted convention '
+       + 'survives every magnitude check and only the known-load case exposes it.',
+    active: true, fast: true
+  },
+  {
+    id: 'calc-ber-single-sided-tj',
+    file: 'js/models/calc-models.js',
+    find: 'const tj = dj + 2 * q * rj;',
+    with: 'const tj = dj + q * rj;',
+    suite: 'Calculator: BER, Q and total jitter',
+    expect: 'is the published 14.069 ps',
+    why: 'Counting the random tail on one side of the eye only halves the RJ '
+       + 'penalty, and makes a closed eye look open.',
+    active: true, fast: true
+  },
+  {
+    id: 'calc-bitrate-knee-not-3db',
+    file: 'js/models/calc-models.js',
+    find: '    const bw = 0.35 / tr;',
+    with: '    const bw = 0.5 / tr;',
+    suite: 'Calculator: bit rate, UI and Nyquist',
+    expect: 'edge bandwidth is the single pole ln(9)/(2*pi*tr)',
+    why: 'The knee frequency 0.5/tr is a different, looser rule; presenting it as '
+       + 'the -3 dB bandwidth overstates how far the spectrum reaches.',
+    active: true, fast: true
+  },
+  {
+    id: 'calc-elen-one-way-not-round-trip',
+    file: 'js/models/calc-models.js',
+    find: 'const tpd = C.tpd(dk), td = lenIn * tpd, lcrit = tr / (6 * tpd);',
+    with: 'const tpd = C.tpd(dk), td = lenIn * tpd, lcrit = tr / (3 * tpd);',
+    suite: 'Calculator: electrical length',
+    expect: 'at the critical length the round trip is exactly tr/3',
+    why: 'Forgetting that the reflection has to come back doubles the critical '
+       + 'length, and calls a transmission line a lumped wire.',
+    active: true, fast: true
+  },
+  {
+    id: 'calc-stub-half-wave',
+    file: 'js/models/calc-models.js',
+    find: 'const fNotch = C0 / (4 * lenMil * MIL * Math.sqrt(dk));',
+    with: 'const fNotch = C0 / (2 * lenMil * MIL * Math.sqrt(dk));',
+    suite: 'Calculator: via stub resonance',
+    expect: 'at the notch the stub is a quarter wavelength',
+    why: 'A half-wave stub is transparent, not resonant. Using it puts the notch '
+       + 'at twice its real frequency and approves stubs that should be backdrilled.',
+    active: true, fast: true
+  },
+  {
+    id: 'calc-ztarget-percent-as-fraction',
+    file: 'js/models/calc-models.js',
+    find: '    const dv = v * ripplePct / 100;',
+    with: '    const dv = v * ripplePct;',
+    suite: 'Calculator: target impedance',
+    expect: '0.8 V, 3%, 20 A gives 1.2 milliohm',
+    why: 'A percentage read as a fraction makes the target a hundred times too '
+       + 'lenient, and every PDN drawn against it looks comfortably compliant.',
+    active: true, fast: true
+  },
+  {
+    id: 'calc-skin-drops-pi',
+    file: 'js/models/calc-models.js',
+    find: 'C.skinDepth = (f) => Math.sqrt(RHO_CU / (Math.PI * f * MU0));',
+    with: 'C.skinDepth = (f) => Math.sqrt(RHO_CU / (f * MU0));',
+    suite: 'Calculator: skin depth and roughness',
+    expect: 'copper at 1 GHz: 2.06 um',
+    why: 'A missing pi makes the skin 1.8x too thick, which halves the roughness '
+       + 'penalty and understates conductor loss everywhere downstream.',
+    active: true, fast: true
+  },
+  {
+    id: 'calc-loss-dk-not-sqrt',
+    file: 'js/models/calc-models.js',
+    find: 'const ad = Math.PI * f * Math.sqrt(dk) * df / C0 * DB_PER_NP * IN;',
+    with: 'const ad = Math.PI * f * dk * df / C0 * DB_PER_NP * IN;',
+    suite: 'Calculator: loss budget',
+    expect: 'dielectric loss matches 2.3*f[GHz]*Df*sqrt(Dk)',
+    why: 'Dk where sqrt(Dk) belongs inflates dielectric loss by a factor of about '
+       + 'two, and blames the laminate for loss it does not cause.',
+    active: true, fast: true
+  },
+  {
+    id: 'calc-cavity-full-wave',
+    file: 'js/models/calc-models.js',
+    find: '    const f = (m, n) => (v / 2) * Math.sqrt(Math.pow(m / a, 2) + Math.pow(n / b, 2));',
+    with: '    const f = (m, n) => v * Math.sqrt(Math.pow(m / a, 2) + Math.pow(n / b, 2));',
+    suite: 'Calculator: plane cavity resonance',
+    expect: 'air, 150 mm: f(1,0) = c/2a',
+    why: 'A full wavelength across the plane instead of a half puts every mode an '
+       + 'octave high, beyond the band where the board actually rings.',
+    active: true, fast: true
+  },
+  {
+    id: 'calc-mount-diameter-as-radius',
+    file: 'js/models/calc-models.js',
+    find: 'const lVia = K.viaLoopInductance(hMil * MIL, dMil * MIL / 2, sMil * MIL);',
+    with: 'const lVia = K.viaLoopInductance(hMil * MIL, dMil * MIL, sMil * MIL);',
+    suite: 'Calculator: mounting inductance',
+    expect: 'the exact loop matches the thin-wire ln(2s/d)',
+    why: 'Passing the drill diameter where the radius belongs makes every via look '
+       + 'twice as fat, and the loop inductance optimistically small.',
+    active: true, fast: true
+  },
+  {
+    id: 'calc-microstrip-eta-over-pi',
+    file: 'js/models/calc-models.js',
+    find: '    return ETA0 / (2 * Math.PI) * Math.log(fu / u + Math.sqrt(1 + 4 / (u * u)));',
+    with: '    return ETA0 / Math.PI * Math.log(fu / u + Math.sqrt(1 + 4 / (u * u)));',
+    suite: 'Calculator: microstrip and stripline impedance',
+    expect: 'Hammerstad-Jensen agrees with Wheeler',
+    why: 'A factor of two in the air-line impedance doubles every microstrip Z0; '
+       + 'only an independent formula can see it, since the model stays '
+       + 'monotonic and smooth.',
+    active: true, fast: true
+  },
 ];
 
 /* A deliberately UNDETECTABLE mutation, used only by --selftest.

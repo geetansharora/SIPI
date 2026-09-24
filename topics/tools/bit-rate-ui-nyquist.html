@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- theme:start -->
+  <meta name="theme-color" content="#F7F8FA">
+  <script>(function(){try{var t=localStorage.getItem('sipi-theme');if(t==='dark'||t==='system'){document.documentElement.setAttribute('data-theme',t);var m=document.querySelector('meta[name=theme-color]');if(m&&(t==='dark'||matchMedia('(prefers-color-scheme:dark)').matches))m.content='#0B1015';}}catch(e){}})();</script>
+  <!-- theme:end -->
+<title>Bit Rate, Unit Interval and Nyquist Frequency Calculator | SIPI</title>
+<meta name="description" content="From a data rate and modulation, get the symbol rate, unit interval, Nyquist frequency, edge bandwidth and how many bits a trace holds in flight.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<link rel="stylesheet" href="../../css/base.css?v=1e3ae753">
+<link rel="stylesheet" href="../../css/components.css?v=a5bbfbf0">
+  <!-- meta:start -->
+  <link rel="canonical" href="https://sipi.work/topics/tools/bit-rate-ui-nyquist.html">
+  <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="SIPI">
+  <meta property="og:title" content="Bit Rate, Unit Interval and Nyquist Frequency Calculator | SIPI">
+  <meta property="og:description" content="From a data rate and modulation, get the symbol rate, unit interval, Nyquist frequency, edge bandwidth and how many bits a trace holds in flight.">
+  <meta property="og:url" content="https://sipi.work/topics/tools/bit-rate-ui-nyquist.html">
+  <meta property="og:image" content="https://sipi.work/assets/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Bit Rate, Unit Interval and Nyquist Frequency Calculator | SIPI">
+  <meta name="twitter:description" content="From a data rate and modulation, get the symbol rate, unit interval, Nyquist frequency, edge bandwidth and how many bits a trace holds in flight.">
+  <meta name="twitter:image" content="https://sipi.work/assets/og.png">
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Bit Rate, Unit Interval and Nyquist Frequency Calculator","description":"From a data rate and modulation, get the symbol rate, unit interval, Nyquist frequency, edge bandwidth and how many bits a trace holds in flight.","url":"https://sipi.work/topics/tools/bit-rate-ui-nyquist.html","articleSection":"Calculators","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer"},"publisher":{"@type":"Person","name":"Geetansh Arora"}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"SIPI","item":"https://sipi.work/"},{"@type":"ListItem","position":2,"name":"Calculators","item":"https://sipi.work/#tools"},{"@type":"ListItem","position":3,"name":"Bit Rate, Unit Interval and Nyquist Frequency Calculator"}]}</script>
+  <!-- meta:end -->
+</head>
+<body>
+
+<header class="masthead">
+  <a class="wordmark" href="../../index.html">SIPI</a>
+  <button class="theme-toggle" data-act="theme" type="button">Light</button>
+  <nav aria-label="Site">
+    <a href="../../index.html#groundwork">Topics</a>
+    <a href="../../start.html">Start</a>
+    <a href="../../labs.html">Labs</a>
+    <a href="../../colophon.html">About</a>
+  </nav>
+</header>
+
+<main>
+  <div class="page-head page-head--tool">
+    <p class="crumb"><a href="../../index.html#tools">Calculators</a> / 04</p>
+    <h1>Bit Rate, Unit Interval and Nyquist Frequency Calculator</h1>
+    <p class="byline">
+      <!-- review:start --><span>By Geetansh Arora — Principal SI/PI Engineer</span><span>Updated Sep 2026</span><span>10 min</span><!-- review:end -->
+    </p>
+    <!-- share:head:start --><div class="share share--head" data-share data-share-url="https://sipi.work/topics/tools/bit-rate-ui-nyquist.html" data-share-title="Bit Rate, Unit Interval and Nyquist Frequency Calculator"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Ftools%2Fbit-rate-ui-nyquist.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Ftools%2Fbit-rate-ui-nyquist.html&amp;text=Bit%20Rate%2C%20Unit%20Interval%20and%20Nyquist%20Frequency%20Calculator" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=Bit%20Rate%2C%20Unit%20Interval%20and%20Nyquist%20Frequency%20Calculator&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Ftools%2Fbit-rate-ui-nyquist.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:head:end -->
+  </div>
+
+  <section class="instrument instrument--calc" data-viz="calcBitRate" aria-label="Bit rate calculator: enter data rate, modulation, rise time, trace length and effective Dk, and read the symbol rate, unit interval, Nyquist frequency and edge bandwidth">
+    <script type="application/json" data-contract>{"kind":"exact","evidence":"independent","purpose":"Symbol rate, unit interval, Nyquist frequency, edge bandwidth and bits in flight from a data rate.","equations":["UI = bits_per_symbol/data_rate","f_Nyquist = 1/(2*UI)","f_3dB = 0.35/tr"],"units":"b/s, Bd, s, Hz","validity":"Random equiprobable symbols; 0.35/tr exact for a single pole only.","numerics":"Closed form; sinc^2 spectrum sampled for the plot.","limitations":"A Gaussian edge gives 0.34 rather than 0.35.","suites":["Calculator: bit rate, UI and Nyquist"],"version":"1.0","reviewed":"not yet","panel":"calcBitRate"}</script>
+    <div class="instrument__bar">
+      <span class="instrument__title">Data rate → UI, Nyquist, bandwidth</span>
+        <span data-evidence="independent" data-model-version="1.0" class="model-tag model-tag--exact" title="Arithmetic. The 0.35/tr bandwidth is exact for a single-pole edge and a rule of thumb otherwise.">exact</span>
+    </div>
+    <div class="calc">
+      <div class="calc__inputs" data-calc-inputs></div>
+      <div class="calc__main">
+        <div class="calc__results" data-calc-results role="status" aria-live="polite" aria-label="Results"></div>
+        <div class="panel calc__chart">
+          <span class="panel__label">Spectrum of random data, and what the edge leaves of it</span>
+          <canvas data-cv="calc" role="img" aria-label="Plot of the power spectrum of random data in decibels against frequency, with and without a single-pole edge, and the Nyquist frequency marked"></canvas>
+          <div class="legend" data-calc-legend></div>
+        </div>
+      </div>
+    </div>
+    <noscript><p class="calc-noscript">This calculator runs in your browser and needs JavaScript. Its formulas are set out below.</p></noscript>
+  </section>
+
+  <div class="prose">
+    <p class="answer">
+      Most channel numbers start here. The unit interval sets the time budget, the Nyquist frequency
+      sets where loss is quoted, and the rise time sets how far above Nyquist the spectrum really reaches.
+      PAM4 sends two bits per symbol, so at the same data rate it has twice the UI and half the Nyquist
+      frequency of NRZ.
+    </p>
+
+    <h2>Reading the numbers</h2>
+    <ul>
+      <li>Loss budgets are usually quoted at <b>Nyquist</b> &#8212; half the symbol rate &#8212; because that is the fastest pattern, 1010&#8230;, the channel must pass.</li>
+      <li><b>0.35/t<sub>r</sub></b> is where a single-pole edge is 3 dB down. If it sits well above Nyquist, the edge, not the data rate, decides how much bandwidth matters.</li>
+      <li><b>UIs in flight</b> is how many symbols are on the trace at once: when it passes one, a reflection lands on a later bit.</li>
+    </ul>
+    <p>Every value is in the address bar as you change it, so a link reproduces the calculation exactly.
+      Type values with SI prefixes &#8212; <code>100n</code>, <code>2.2p</code>, <code>16G</code> &#8212; or
+      drag the sliders; a bare number keeps the prefix already shown.</p>
+
+    <h2>The formulas</h2>
+      <div class="eq">
+        UI = <i class="var">bits per symbol</i> / <i class="var">data rate</i>, &#160;&#160; <i class="var">f</i><sub>Nyquist</sub> = 1 / (2 &#183; UI)
+        <span class="cap">NRZ carries one bit per symbol, PAM4 two.</span>
+      </div>
+      <div class="eq">
+        <i class="var">f</i><sub>3dB</sub> = 0.35 / <i class="var">t</i><sub>r</sub>
+        <span class="cap">A single pole rises 10–90% in 2.2τ, so f₃dB = 2.2 / (2π·tr): the 0.35 is 2.2/2π.</span>
+      </div>
+
+    <details class="deeper">
+      <summary>Go deeper &#8212; assumptions, how it is checked, and sources</summary>
+      <p><strong>Assumptions.</strong> Random, equiprobable symbols, whose spectrum has a sinc&#178; envelope
+      with nulls at multiples of the symbol rate. The edge is modelled as one pole; a Gaussian edge gives
+      0.34, and real edges sit between the two. Trace delay uses the effective Dk you enter.</p>
+      <p><strong>How it is checked.</strong> UI times symbol rate is exactly 1; PAM4 at the same bit rate has
+      twice the UI and half the Nyquist of NRZ; the data spectrum is 1 at DC and zero at the symbol rate;
+      and the edge filter is 3 dB down exactly at 0.35/t<sub>r</sub>.</p>
+      <p><strong>Source.</strong> H. Johnson and M. Graham, <em>High-Speed Digital Design</em>, Prentice Hall,
+      1993, ch. 1 (rise time and bandwidth).</p>
+    </details>
+
+    <h3>Related</h3>
+    <ul class="tight">
+      <li><a href="../signal-integrity/nrz-vs-pam4.html">NRZ and PAM4: Levels, Bandwidth, and SNR</a></li>
+      <li><a href="../fundamentals/edge-rate-not-clock-rate.html">Signal Bandwidth: Why Edge Rate Matters</a></li>
+      <li><a href="../fundamentals/isi.html">Intersymbol Interference (ISI) and Channel Memory</a></li>
+    </ul>
+  </div>
+
+  <!-- share:foot:start --><div class="share share--foot" data-share data-share-url="https://sipi.work/topics/tools/bit-rate-ui-nyquist.html" data-share-title="Bit Rate, Unit Interval and Nyquist Frequency Calculator"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Ftools%2Fbit-rate-ui-nyquist.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Ftools%2Fbit-rate-ui-nyquist.html&amp;text=Bit%20Rate%2C%20Unit%20Interval%20and%20Nyquist%20Frequency%20Calculator" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=Bit%20Rate%2C%20Unit%20Interval%20and%20Nyquist%20Frequency%20Calculator&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Ftools%2Fbit-rate-ui-nyquist.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:foot:end -->
+  <!-- pager:start -->
+  <nav class="pager" aria-label="Previous and next topic">
+    <a class="prev" href="../../topics/tools/ber-q-jitter.html"><span class="dir">Previous</span><span>BER, Q-Factor and Total Jitter Calculator</span></a>
+    <a class="next" href="../../topics/tools/electrical-length.html"><span class="dir">Next</span><span>Electrical Length and Critical Length Calculator</span></a>
+  </nav>
+  <!-- pager:end -->
+</main>
+
+<footer class="site-foot">
+  <span>SIPI &#8212; signal and power integrity, visualised.</span>
+  <nav class="site-foot__nav" aria-label="Site, footer">
+    <a href="../../start.html">Start</a>
+    <a href="../../labs.html">Labs</a>
+    <a href="../../reference.html">Reference</a>
+    <a href="../../colophon.html">About &amp; AI disclosure</a>
+    <a href="../../model-contract.html">Model assumptions</a>
+    <a href="../../docs/claims.md">Claim ledger (Markdown)</a>
+  </nav>
+  <span>Created and directed by Geetansh Arora. Text <a href="../../LICENSE-CONTENT">CC BY 4.0</a>, code <a href="../../LICENSE-CODE">MIT</a>.</span>
+</footer>
+
+<script src="../../js/site.js?v=9ac8f8b6" defer></script>
+<script src="../../js/viz-kit.js?v=80ff7520" defer></script>
+<script src="../../js/models/calc-models.js?v=f7b0daa5" defer></script>
+<script src="../../js/viz/calc-bit-rate.js?v=5525ebaf" defer></script>
+<script src="../../js/viz-loader.js?v=8121f120" defer></script>
+<script src="../../js/search.js?v=6c93a285" defer></script>
+</body>
+</html>

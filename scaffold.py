@@ -1894,7 +1894,7 @@ def cmd_contract():
       <h2>{esc(name)}</h2>
       <span class="model-tag model-tag--{esc(c['kind'])}">{esc(c['kind'])} model</span>
       <span class="ev ev--{esc(c['evidence'])}">{esc(c['evidence'])}</span>
-      <span class="contract__ver">v{esc(c['version'])} &#183; reviewed {esc(c['reviewed'])}</span>
+      <span class="contract__ver">v{esc(c['version'])} &#183; {_review_label(c['reviewed'])}</span>
     </div>
     <p class="contract__purpose">{esc(c['purpose'])}</p>
     <dl class="contract__body">
@@ -2004,6 +2004,13 @@ KIND_BLURB = {
                     "Its numbers are for teaching and are not intended for a design budget.",
     "specification": "Taken from a named, cited specification.",
 }
+
+
+def _review_label(value):
+    """A contract's review field, as the contract page prints it. A date means a
+    person reviewed the contract then; anything else ("not yet") means nobody has,
+    and the page must say so rather than print a date it does not have."""
+    return ("reviewed " + esc(value)) if re.match(r"\d{4}-\d{2}-\d{2}$", value) else "not yet reviewed"
 
 
 CONTRACT_KEYS = ("kind", "evidence", "purpose", "equations", "units", "validity",

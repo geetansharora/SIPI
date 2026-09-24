@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- theme:start -->
+  <meta name="theme-color" content="#F7F8FA">
+  <script>(function(){try{var t=localStorage.getItem('sipi-theme');if(t==='dark'||t==='system'){document.documentElement.setAttribute('data-theme',t);var m=document.querySelector('meta[name=theme-color]');if(m&&(t==='dark'||matchMedia('(prefers-color-scheme:dark)').matches))m.content='#0B1015';}}catch(e){}})();</script>
+  <!-- theme:end -->
+<title>VSWR, Return Loss and Reflection Coefficient Calculator | SIPI</title>
+<meta name="description" content="Convert between return loss, reflection coefficient, VSWR and load resistance, with reflected power and mismatch loss.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<link rel="stylesheet" href="../../css/base.css?v=1e3ae753">
+<link rel="stylesheet" href="../../css/components.css?v=a5bbfbf0">
+  <!-- meta:start -->
+  <link rel="canonical" href="https://sipi.work/topics/tools/return-loss-vswr.html">
+  <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="SIPI">
+  <meta property="og:title" content="VSWR, Return Loss and Reflection Coefficient Calculator | SIPI">
+  <meta property="og:description" content="Convert between return loss, reflection coefficient, VSWR and load resistance, with reflected power and mismatch loss.">
+  <meta property="og:url" content="https://sipi.work/topics/tools/return-loss-vswr.html">
+  <meta property="og:image" content="https://sipi.work/assets/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="VSWR, Return Loss and Reflection Coefficient Calculator | SIPI">
+  <meta name="twitter:description" content="Convert between return loss, reflection coefficient, VSWR and load resistance, with reflected power and mismatch loss.">
+  <meta name="twitter:image" content="https://sipi.work/assets/og.png">
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"VSWR, Return Loss and Reflection Coefficient Calculator","description":"Convert between return loss, reflection coefficient, VSWR and load resistance, with reflected power and mismatch loss.","url":"https://sipi.work/topics/tools/return-loss-vswr.html","articleSection":"Calculators","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer"},"publisher":{"@type":"Person","name":"Geetansh Arora"}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"SIPI","item":"https://sipi.work/"},{"@type":"ListItem","position":2,"name":"Calculators","item":"https://sipi.work/#tools"},{"@type":"ListItem","position":3,"name":"VSWR, Return Loss and Reflection Coefficient Calculator"}]}</script>
+  <!-- meta:end -->
+</head>
+<body>
+
+<header class="masthead">
+  <a class="wordmark" href="../../index.html">SIPI</a>
+  <button class="theme-toggle" data-act="theme" type="button">Light</button>
+  <nav aria-label="Site">
+    <a href="../../index.html#groundwork">Topics</a>
+    <a href="../../start.html">Start</a>
+    <a href="../../labs.html">Labs</a>
+    <a href="../../colophon.html">About</a>
+  </nav>
+</header>
+
+<main>
+  <div class="page-head page-head--tool">
+    <p class="crumb"><a href="../../index.html#tools">Calculators</a> / 02</p>
+    <h1>VSWR, Return Loss and Reflection Coefficient Calculator</h1>
+    <p class="byline">
+      <!-- review:start --><span>By Geetansh Arora — Principal SI/PI Engineer</span><span>Updated Sep 2026</span><span>10 min</span><!-- review:end -->
+    </p>
+    <!-- share:head:start --><div class="share share--head" data-share data-share-url="https://sipi.work/topics/tools/return-loss-vswr.html" data-share-title="VSWR, Return Loss and Reflection Coefficient Calculator"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Ftools%2Freturn-loss-vswr.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Ftools%2Freturn-loss-vswr.html&amp;text=VSWR%2C%20Return%20Loss%20and%20Reflection%20Coefficient%20Calculator" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=VSWR%2C%20Return%20Loss%20and%20Reflection%20Coefficient%20Calculator&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Ftools%2Freturn-loss-vswr.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:head:end -->
+  </div>
+
+  <section class="instrument instrument--calc" data-viz="calcReturnLoss" aria-label="Return loss calculator: start from return loss, reflection coefficient, VSWR or load resistance and read the others">
+    <script type="application/json" data-contract>{"kind":"exact","evidence":"independent","purpose":"Convert between return loss, reflection coefficient, VSWR and a resistive load.","equations":["Gamma = (RL - Z0)/(RL + Z0)","RL = -20*log10|Gamma|","VSWR = (1+|Gamma|)/(1-|Gamma|)"],"units":"dB, ohm","validity":"Resistive loads; for a complex load the magnitude relations hold but the load is not unique.","numerics":"Closed form.","limitations":"Return loss, |Gamma| and VSWR do not fix the sign, so two loads are reported.","suites":["Calculator: return loss, reflection coefficient, VSWR"],"version":"1.0","reviewed":"not yet","panel":"calcReturnLoss"}</script>
+    <div class="instrument__bar">
+      <span class="instrument__title">Return loss · Γ · VSWR · load</span>
+        <span data-evidence="independent" data-model-version="1.0" class="model-tag model-tag--exact" title="Closed-form. Exact for a resistive load on a lossless line.">exact</span>
+    </div>
+    <div class="calc">
+      <div class="calc__inputs" data-calc-inputs></div>
+      <div class="calc__main">
+        <div class="calc__results" data-calc-results role="status" aria-live="polite" aria-label="Results"></div>
+        <div class="panel calc__chart">
+          <span class="panel__label">Return loss against load resistance</span>
+          <canvas data-cv="calc" role="img" aria-label="Plot of return loss in decibels against load resistance on a logarithmic axis, peaking where the load equals the reference impedance, with the matching loads marked"></canvas>
+          <div class="legend" data-calc-legend></div>
+        </div>
+      </div>
+    </div>
+    <noscript><p class="calc-noscript">This calculator runs in your browser and needs JavaScript. Its formulas are set out below.</p></noscript>
+  </section>
+
+  <div class="prose">
+    <p class="answer">
+      Return loss, the reflection coefficient and VSWR are three ways of stating one number &#8212; how much
+      of an incident wave comes back. Start from whichever you have. One thing none of them can tell you is
+      whether the load is above or below Z<sub>0</sub>, so unless you start from the load itself the
+      calculator shows both loads that fit.
+    </p>
+
+    <h2>Reading the numbers</h2>
+    <ul>
+      <li>A higher return loss is a better match. 20 dB means |Γ| = 0.1: a tenth of the voltage, and 1% of the power, comes back.</li>
+      <li><b>Mismatch loss</b> is the power the reflection keeps from the load. It stays small long after the reflection itself matters for signal integrity: the echo corrupts later bits even when the lost power is negligible.</li>
+      <li>Starting from a load gives Γ its sign. Positive means the load is above Z<sub>0</sub> and the reflection has the same polarity as the incident step.</li>
+    </ul>
+    <p>Every value is in the address bar as you change it, so a link reproduces the calculation exactly.
+      Type values with SI prefixes &#8212; <code>100n</code>, <code>2.2p</code>, <code>16G</code> &#8212; or
+      drag the sliders; a bare number keeps the prefix already shown.</p>
+
+    <h2>The formulas</h2>
+      <div class="eq">
+        &#915; = ( <i class="var">R</i><sub>L</sub> &#8722; <i class="var">Z</i><sub>0</sub> ) / ( <i class="var">R</i><sub>L</sub> + <i class="var">Z</i><sub>0</sub> )
+        <span class="cap">Signed, and bounded by ±1 for any passive load.</span>
+      </div>
+      <div class="eq">
+        RL = &#8722;20 log<sub>10</sub>|&#915;| &#160;&#160; VSWR = (1 + |&#915;|) / (1 &#8722; |&#915;|)
+        <span class="cap">Both depend on |Γ| alone, which is why they cannot recover its sign.</span>
+      </div>
+      <div class="eq">
+        <i class="var">R</i><sub>L</sub> = <i class="var">Z</i><sub>0</sub>&#183;VSWR &#160; or &#160; <i class="var">Z</i><sub>0</sub>/VSWR &#160;&#160; mismatch loss = &#8722;10 log<sub>10</sub>(1 &#8722; |&#915;|&#178;)
+        <span class="cap">The two candidate loads, and the power that does not reach the load.</span>
+      </div>
+
+    <details class="deeper">
+      <summary>Go deeper &#8212; assumptions, how it is checked, and sources</summary>
+      <p><strong>Assumptions.</strong> A resistive load on a lossless line. For a complex load |&#915;|, return
+      loss and VSWR are unchanged, but the load is then any point on a circle of the Smith chart, not one of
+      two resistances.</p>
+      <p><strong>How it is checked.</strong> A matched load reflects nothing (infinite return loss, VSWR 1);
+      an open or a short reflects everything (0 dB, infinite VSWR, Γ = +1 or &#8722;1); every conversion
+      round-trips; both candidate loads reproduce the same |&#915;|; and reflected plus transmitted power is 1.</p>
+      <p><strong>Source.</strong> D. M. Pozar, <em>Microwave Engineering</em>, 4th ed., Wiley, 2012, §2.3.</p>
+    </details>
+
+    <h3>Related</h3>
+    <ul class="tight">
+      <li><a href="../fundamentals/reflections.html">Transmission-Line Reflections and Ringing</a></li>
+      <li><a href="../fundamentals/s-parameters.html">S-Parameters: Insertion Loss, Return Loss, and Mixed Mode</a></li>
+      <li><a href="../fundamentals/termination-schemes.html">Transmission-Line Termination Schemes</a></li>
+    </ul>
+  </div>
+
+  <!-- share:foot:start --><div class="share share--foot" data-share data-share-url="https://sipi.work/topics/tools/return-loss-vswr.html" data-share-title="VSWR, Return Loss and Reflection Coefficient Calculator"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Ftools%2Freturn-loss-vswr.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Ftools%2Freturn-loss-vswr.html&amp;text=VSWR%2C%20Return%20Loss%20and%20Reflection%20Coefficient%20Calculator" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=VSWR%2C%20Return%20Loss%20and%20Reflection%20Coefficient%20Calculator&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Ftools%2Freturn-loss-vswr.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:foot:end -->
+  <!-- pager:start -->
+  <nav class="pager" aria-label="Previous and next topic">
+    <a class="prev" href="../../topics/tools/lc-rlc-resonance.html"><span class="dir">Previous</span><span>LC and RLC Resonance Calculator</span></a>
+    <a class="next" href="../../topics/tools/ber-q-jitter.html"><span class="dir">Next</span><span>BER, Q-Factor and Total Jitter Calculator</span></a>
+  </nav>
+  <!-- pager:end -->
+</main>
+
+<footer class="site-foot">
+  <span>SIPI &#8212; signal and power integrity, visualised.</span>
+  <nav class="site-foot__nav" aria-label="Site, footer">
+    <a href="../../start.html">Start</a>
+    <a href="../../labs.html">Labs</a>
+    <a href="../../reference.html">Reference</a>
+    <a href="../../colophon.html">About &amp; AI disclosure</a>
+    <a href="../../model-contract.html">Model assumptions</a>
+    <a href="../../docs/claims.md">Claim ledger (Markdown)</a>
+  </nav>
+  <span>Created and directed by Geetansh Arora. Text <a href="../../LICENSE-CONTENT">CC BY 4.0</a>, code <a href="../../LICENSE-CODE">MIT</a>.</span>
+</footer>
+
+<script src="../../js/site.js?v=9ac8f8b6" defer></script>
+<script src="../../js/viz-kit.js?v=80ff7520" defer></script>
+<script src="../../js/models/calc-models.js?v=f7b0daa5" defer></script>
+<script src="../../js/viz/calc-return-loss.js?v=8bce123a" defer></script>
+<script src="../../js/viz-loader.js?v=8121f120" defer></script>
+<script src="../../js/search.js?v=6c93a285" defer></script>
+</body>
+</html>

@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- theme:start -->
+  <meta name="theme-color" content="#F7F8FA">
+  <script>(function(){try{var t=localStorage.getItem('sipi-theme');if(t==='dark'||t==='system'){document.documentElement.setAttribute('data-theme',t);var m=document.querySelector('meta[name=theme-color]');if(m&&(t==='dark'||matchMedia('(prefers-color-scheme:dark)').matches))m.content='#0B1015';}}catch(e){}})();</script>
+  <!-- theme:end -->
+<title>Skin Depth and Surface Roughness Calculator | SIPI</title>
+<meta name="description" content="Copper skin depth and surface resistance at any frequency, where skin effect starts for a given copper thickness, and the roughness loss multiplier.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<link rel="stylesheet" href="../../css/base.css?v=1e3ae753">
+<link rel="stylesheet" href="../../css/components.css?v=a5bbfbf0">
+  <!-- meta:start -->
+  <link rel="canonical" href="https://sipi.work/topics/tools/skin-depth.html">
+  <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="SIPI">
+  <meta property="og:title" content="Skin Depth and Surface Roughness Calculator | SIPI">
+  <meta property="og:description" content="Copper skin depth and surface resistance at any frequency, where skin effect starts for a given copper thickness, and the roughness loss multiplier.">
+  <meta property="og:url" content="https://sipi.work/topics/tools/skin-depth.html">
+  <meta property="og:image" content="https://sipi.work/assets/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Skin Depth and Surface Roughness Calculator | SIPI">
+  <meta name="twitter:description" content="Copper skin depth and surface resistance at any frequency, where skin effect starts for a given copper thickness, and the roughness loss multiplier.">
+  <meta name="twitter:image" content="https://sipi.work/assets/og.png">
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Skin Depth and Surface Roughness Calculator","description":"Copper skin depth and surface resistance at any frequency, where skin effect starts for a given copper thickness, and the roughness loss multiplier.","url":"https://sipi.work/topics/tools/skin-depth.html","articleSection":"Calculators","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer"},"publisher":{"@type":"Person","name":"Geetansh Arora"}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"SIPI","item":"https://sipi.work/"},{"@type":"ListItem","position":2,"name":"Calculators","item":"https://sipi.work/#tools"},{"@type":"ListItem","position":3,"name":"Skin Depth and Surface Roughness Calculator"}]}</script>
+  <!-- meta:end -->
+</head>
+<body>
+
+<header class="masthead">
+  <a class="wordmark" href="../../index.html">SIPI</a>
+  <button class="theme-toggle" data-act="theme" type="button">Light</button>
+  <nav aria-label="Site">
+    <a href="../../index.html#groundwork">Topics</a>
+    <a href="../../start.html">Start</a>
+    <a href="../../labs.html">Labs</a>
+    <a href="../../colophon.html">About</a>
+  </nav>
+</header>
+
+<main>
+  <div class="page-head page-head--tool">
+    <p class="crumb"><a href="../../index.html#tools">Calculators</a> / 08</p>
+    <h1>Skin Depth and Surface Roughness Calculator</h1>
+    <p class="byline">
+      <!-- review:start --><span>By Geetansh Arora — Principal SI/PI Engineer</span><span>Updated Sep 2026</span><span>10 min</span><!-- review:end -->
+    </p>
+    <!-- share:head:start --><div class="share share--head" data-share data-share-url="https://sipi.work/topics/tools/skin-depth.html" data-share-title="Skin Depth and Surface Roughness Calculator"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Ftools%2Fskin-depth.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Ftools%2Fskin-depth.html&amp;text=Skin%20Depth%20and%20Surface%20Roughness%20Calculator" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=Skin%20Depth%20and%20Surface%20Roughness%20Calculator&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Ftools%2Fskin-depth.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:head:end -->
+  </div>
+
+  <section class="instrument instrument--calc" data-viz="calcSkinDepth" aria-label="Skin depth calculator: enter frequency, copper thickness and RMS roughness, and read the skin depth, surface resistance and roughness multiplier">
+    <script type="application/json" data-contract>{"kind":"exact","evidence":"independent","purpose":"Copper skin depth, surface resistance, skin-effect onset and the roughness multiplier.","equations":["delta = sqrt(rho/(pi*f*mu0))","Rs = rho/delta","K = 1 + (2/pi)*atan(1.4*(Rq/delta)^2)"],"units":"m, ohm/sq, Hz","validity":"Copper, rho = 1.68e-8 ohm*m; roughness model valid to a few tens of GHz.","numerics":"Closed form.","limitations":"Hammerstad-Bekkadal roughness is a fit on RMS roughness and saturates at 2.","suites":["Calculator: skin depth and roughness"],"version":"1.0","reviewed":"not yet","panel":"calcSkinDepth"}</script>
+    <div class="instrument__bar">
+      <span class="instrument__title">Skin depth · copper</span>
+        <span data-evidence="independent" data-model-version="1.0" class="model-tag model-tag--exact" title="Exact skin depth for copper; the roughness multiplier is Hammerstad and Bekkadal's fit.">exact</span>
+    </div>
+    <div class="calc">
+      <div class="calc__inputs" data-calc-inputs></div>
+      <div class="calc__main">
+        <div class="calc__results" data-calc-results role="status" aria-live="polite" aria-label="Results"></div>
+        <div class="panel calc__chart">
+          <span class="panel__label">Skin depth against frequency</span>
+          <canvas data-cv="calc" role="img" aria-label="Log-log plot of copper skin depth against frequency, with horizontal lines at half the copper thickness and at the RMS roughness"></canvas>
+          <div class="legend" data-calc-legend></div>
+        </div>
+      </div>
+    </div>
+    <noscript><p class="calc-noscript">This calculator runs in your browser and needs JavaScript. Its formulas are set out below.</p></noscript>
+  </section>
+
+  <div class="prose">
+    <p class="answer">
+      At high frequency, current crowds into a thin layer at the conductor's surface &#8212; the skin depth
+      &#948;, which shrinks as 1/&#8730;f. Once &#948; is smaller than the copper, the copper's thickness stops
+      mattering and its surface starts to: a rough surface makes the current travel further, and loss rises.
+    </p>
+
+    <h2>Reading the numbers</h2>
+    <ul>
+      <li>Copper's skin depth is 2.06 &#181;m at 1 GHz &#8212; thinner than the roughness of standard foil.</li>
+      <li><b>Skin effect sets in</b> where &#948; falls to half the thickness: above it, resistance grows as &#8730;f.</li>
+      <li>The roughness multiplier saturates at 2: once the bumps are much taller than &#948;, the path cannot get much longer.</li>
+    </ul>
+    <p>Every value is in the address bar as you change it, so a link reproduces the calculation exactly.
+      Type values with SI prefixes &#8212; <code>100n</code>, <code>2.2p</code>, <code>16G</code> &#8212; or
+      drag the sliders; a bare number keeps the prefix already shown.</p>
+
+    <h2>The formulas</h2>
+      <div class="eq">
+        &#948; = &#8730;( &#961; / ( &#960; <i class="var">f</i> &#956;<sub>0</sub> ) ), &#160;&#160; <i class="var">R</i><sub>s</sub> = &#961; / &#948;
+        <span class="cap">ρ = 1.68×10⁻⁸ Ω·m for copper at 20 °C.</span>
+      </div>
+      <div class="eq">
+        <i class="var">K</i><sub>rough</sub> = 1 + (2/&#960;) &#183; atan( 1.4 &#183; (<i class="var">R</i><sub>q</sub>/&#948;)&#178; )
+        <span class="cap">Hammerstad and Bekkadal, written for the RMS roughness Rq — not the peak-to-valley Rz a foil datasheet often quotes.</span>
+      </div>
+
+    <details class="deeper">
+      <summary>Go deeper &#8212; assumptions, how it is checked, and sources</summary>
+      <p><strong>Assumptions.</strong> Copper at 20 &#176;C; resistivity rises about 0.4% per &#176;C. The
+      roughness model is a fit that works up to a few tens of GHz and saturates at 2; the Huray model
+      describes very rough foils better at higher frequency.</p>
+      <p><strong>How it is checked.</strong> &#948; falls as 1/&#8730;f exactly; it matches the textbook
+      8.4 mm at 60 Hz and the 2.06 &#181;m used elsewhere on this site; the roughness multiplier is 1 for smooth
+      copper and tends to 2 for very rough copper.</p>
+      <p><strong>Sources.</strong> S. Ramo, J. R. Whinnery and T. Van Duzer, <em>Fields and Waves in
+      Communication Electronics</em>, 3rd ed., Wiley, 1994; E. Hammerstad and &#216;. Bekkadal,
+      <em>Microstrip Handbook</em>, ELAB report STF44 A74169, University of Trondheim, 1975.</p>
+    </details>
+
+    <h3>Related</h3>
+    <ul class="tight">
+      <li><a href="../fundamentals/loss-mechanisms.html">PCB Transmission-Line Loss Mechanisms</a></li>
+      <li><a href="../package-board/stackup-design.html">PCB Stackup Design and Dielectric Selection</a></li>
+      <li><a href="../signal-integrity/channel-budgeting.html">Channel Loss Budgeting Across Die, Package, and Board</a></li>
+    </ul>
+  </div>
+
+  <!-- share:foot:start --><div class="share share--foot" data-share data-share-url="https://sipi.work/topics/tools/skin-depth.html" data-share-title="Skin Depth and Surface Roughness Calculator"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Ftools%2Fskin-depth.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Ftools%2Fskin-depth.html&amp;text=Skin%20Depth%20and%20Surface%20Roughness%20Calculator" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=Skin%20Depth%20and%20Surface%20Roughness%20Calculator&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Ftools%2Fskin-depth.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:foot:end -->
+  <!-- pager:start -->
+  <nav class="pager" aria-label="Previous and next topic">
+    <a class="prev" href="../../topics/tools/target-impedance-calculator.html"><span class="dir">Previous</span><span>PDN Target Impedance Calculator</span></a>
+    <a class="next" href="../../topics/tools/loss-budget.html"><span class="dir">Next</span><span>PCB Channel Loss Budget Calculator</span></a>
+  </nav>
+  <!-- pager:end -->
+</main>
+
+<footer class="site-foot">
+  <span>SIPI &#8212; signal and power integrity, visualised.</span>
+  <nav class="site-foot__nav" aria-label="Site, footer">
+    <a href="../../start.html">Start</a>
+    <a href="../../labs.html">Labs</a>
+    <a href="../../reference.html">Reference</a>
+    <a href="../../colophon.html">About &amp; AI disclosure</a>
+    <a href="../../model-contract.html">Model assumptions</a>
+    <a href="../../docs/claims.md">Claim ledger (Markdown)</a>
+  </nav>
+  <span>Created and directed by Geetansh Arora. Text <a href="../../LICENSE-CONTENT">CC BY 4.0</a>, code <a href="../../LICENSE-CODE">MIT</a>.</span>
+</footer>
+
+<script src="../../js/site.js?v=9ac8f8b6" defer></script>
+<script src="../../js/viz-kit.js?v=80ff7520" defer></script>
+<script src="../../js/models/calc-models.js?v=f7b0daa5" defer></script>
+<script src="../../js/viz/calc-skin-depth.js?v=86d366ce" defer></script>
+<script src="../../js/viz-loader.js?v=8121f120" defer></script>
+<script src="../../js/search.js?v=6c93a285" defer></script>
+</body>
+</html>

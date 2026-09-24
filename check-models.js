@@ -55,7 +55,7 @@ function loadSite() {
   };
   global.getComputedStyle = () => ({ getPropertyValue: () => '#000000' });
   global.fetch = () => new Promise(() => {});
-  const files = ['js/viz-kit.js', 'js/viz/jitter.js', 'js/viz/crosstalk.js',
+  const files = ['js/viz-kit.js', 'js/models/calc-models.js', 'js/viz/jitter.js', 'js/viz/crosstalk.js',
                  'js/viz/spectrum.js', 'js/viz/pdn-extras.js',
                  'js/viz/lab-waves.js', 'js/viz/lab-channel.js', 'js/viz/lab-pdn.js',
                  'js/viz/cdr.js', 'js/models/adc-model.js',
@@ -147,6 +147,12 @@ suite('Search — equivalents, ranking, acronym boundaries', () => {
   ok('return loss and S11 resolve to the same first result',
      slugs('return loss')[0] === 's-parameters' && slugs('S11')[0] === 's-parameters',
      `return loss=${slugs('return loss')[0]}, S11=${slugs('S11')[0]}`);
+  /* The calculators must not take a concept query from the page that explains
+     the concept -- but asking for the calculator has to find it. */
+  ok('asking for a return loss calculator finds the calculator',
+     slugs('return loss calculator')[0] === 'return-loss-vswr', `got ${slugs('return loss calculator')[0]}`);
+  ok('asking for a resonance calculator finds the calculator',
+     slugs('resonance calculator')[0] === 'lc-rlc-resonance', `got ${slugs('resonance calculator')[0]}`);
   ok('anti-resonance and PDN peak resolve to the same first result',
      slugs('anti-resonance')[0] === 'anti-resonance' && slugs('PDN peak')[0] === 'anti-resonance');
   ok('reference plane includes de-embedding as a relevant result',
@@ -4168,6 +4174,215 @@ suite('One result, one truth — the trace contract (N4)', () => {
     ok('a published result comes back identically', K.published(fake) === cases.cdr);
     ok('and an unpublished root returns null, not undefined', K.published({}) === null);
   }
+});
+
+/* ═════════ Calculators · twelve closed forms ═════════
+   Each suite tests js/models/calc-models.js against something it does not
+   compute itself: an analytical limit, a published value, a conservation law,
+   or a second, independently derived formula written out here. Where an
+   assertion restates the formula it tests, it says so -- a regression guard. */
+const CALC = SIPI.calc;
+
+suite('Calculator: LC/RLC resonance', () => {
+  const L = 10e-9, Cp = 100e-12, R = 1;
+  const r = CALC.rlc('series', R, L, Cp);
+  const at = CALC.rlcZ('series', R, L, Cp, r.f0);
+  nearRel('series |Z| at f0 equals R: the reactances cancel', at.mag, R, 1e-9);
+  nearAbs('and the phase there is zero', at.phase, 0, 1e-9, ' rad');
+  nearRel('parallel |Z| at f0 equals R', CALC.rlcZ('parallel', 1000, L, Cp, r.f0).mag, 1000, 1e-9);
+  nearRel('series |Z| at f1 is sqrt(2)*R, half power', CALC.rlcZ('series', R, L, Cp, r.f1).mag, Math.SQRT2 * R, 1e-9);
+  nearRel('series |Z| at f2 is sqrt(2)*R, half power', CALC.rlcZ('series', R, L, Cp, r.f2).mag, Math.SQRT2 * R, 1e-9);
+  const p = CALC.rlc('parallel', 1000, L, Cp);
+  nearRel('parallel |Z| at f1 is R/sqrt(2), half power', CALC.rlcZ('parallel', 1000, L, Cp, p.f1).mag, 1000 / Math.SQRT2, 1e-9);
+  nearRel('band edges are geometric about f0: f1*f2 = f0^2', r.f1 * r.f2, r.f0 * r.f0, 1e-12);
+  nearRel('the band is f0/Q wide', r.f2 - r.f1, r.f0 / r.Q, 1e-9);
+  nearRel('10 nH and 100 pF resonate at 159.155 MHz', r.f0, 159.1549431e6, 1e-8);
+  const lo1 = CALC.rlcZ('series', R, L, Cp, r.f0 / 1e3).mag, lo2 = CALC.rlcZ('series', R, L, Cp, r.f0 / 1e4).mag;
+  nearRel('far below f0 |Z| rises tenfold per decade down: capacitive', lo2 / lo1, 10, 1e-3);
+  const hi1 = CALC.rlcZ('series', R, L, Cp, r.f0 * 1e3).mag, hi2 = CALC.rlcZ('series', R, L, Cp, r.f0 * 1e4).mag;
+  nearRel('far above f0 |Z| rises tenfold per decade up: inductive', hi2 / hi1, 10, 1e-3);
+  nearRel('f0 depends on L*C only: L x4 and C /4 leave it unchanged', CALC.rlc('series', R, 4 * L, Cp / 4).f0, r.f0, 1e-12);
+  ok('series Q falls as R rises', CALC.rlc('series', 2, L, Cp).Q < r.Q);
+  ok('parallel Q rises as R rises', CALC.rlc('parallel', 2000, L, Cp).Q > p.Q);
+});
+
+suite('Calculator: return loss, reflection coefficient, VSWR', () => {
+  const m = CALC.refl(50, 'zl', 50);
+  ok('a matched load reflects nothing: gamma = 0', m.gamma === 0);
+  ok('its return loss is infinite', m.rl === Infinity);
+  nearAbs('its VSWR is 1', m.vswr, 1, 1e-12);
+  nearAbs('an open reflects everything with gamma = +1', CALC.refl(50, 'zl', 1e12).gamma, 1, 1e-9);
+  nearAbs('a short reflects everything with gamma = -1', CALC.refl(50, 'zl', 1e-12).gamma, -1, 1e-9);
+  nearAbs('total reflection is 0 dB return loss', CALC.refl(50, 'zl', 1e12).rl, 0, 1e-6, ' dB');
+  nearRel('20 dB return loss is |gamma| = 0.1', CALC.refl(50, 'rl', 20).mag, 0.1, 1e-12);
+  nearRel('VSWR 2 is |gamma| = 1/3', CALC.refl(50, 'vswr', 2).mag, 1 / 3, 1e-12);
+  nearRel('75 ohm on 50 ohm gives gamma = +0.2', CALC.refl(50, 'zl', 75).gamma, 0.2, 1e-12);
+  ok('a load below Z0 gives a negative gamma', CALC.refl(50, 'zl', 25).gamma < 0);
+  const g = CALC.refl(50, 'gamma', 0.3);
+  nearRel('|gamma| -> return loss -> |gamma| round-trips', CALC.refl(50, 'rl', g.rl).mag, 0.3, 1e-12);
+  nearRel('|gamma| -> VSWR -> |gamma| round-trips', CALC.refl(50, 'vswr', g.vswr).mag, 0.3, 1e-12);
+  nearRel('the higher candidate load reproduces |gamma|', Math.abs(CALC.refl(50, 'zl', g.zHigh).gamma), 0.3, 1e-12);
+  nearRel('the lower candidate load reproduces |gamma|', Math.abs(CALC.refl(50, 'zl', g.zLow).gamma), 0.3, 1e-12);
+  nearAbs('reflected plus transmitted power is 1', g.pRefl + g.pTrans, 1, 1e-15);
+  // regression guard: restates the definition of mismatch loss
+  nearRel('mismatch loss is -10*log10(1 - |gamma|^2)', g.ml, -10 * Math.log10(1 - 0.09), 1e-12);
+});
+
+suite('Calculator: BER, Q and total jitter', () => {
+  nearAbs('Q(0) = 1/2', K.Q(0), 0.5, 1e-7);
+  nearAbs('Q(-x) = 1 - Q(x)', K.Q(-1.3) + K.Q(1.3), 1, 1e-12);
+  nearRel('Q(1) matches the normal table, 0.158655', K.Q(1), 0.158655, 1e-5);
+  /* The tail is evaluated by a Chebyshev erfc below x = 3 and a four-term
+     asymptotic series above it. The series' first omitted term, 105/x^8, is
+     1.6% at x = 3, so the two branches differ by about 0.9% where they meet.
+     This asserts that bound rather than a flattering one; by BER 1e-12 (x ~ 7)
+     the omitted term is below 2e-5. */
+  nearRel('the two tail branches agree within 1% where they meet at x = 3', K.Q(3 - 1e-9), K.Q(3 + 1e-9), 0.01);
+  nearRel('BER 1e-12 at rho = 1 gives the published multiplier 14.069', CALC.ber(1e-12, 1, 1e-12, 0, 1e-10).alpha, 14.069, 3e-4);
+  const r = CALC.ber(1e-12, 0.5, 1e-12, 5e-12, 31.25e-12);
+  nearRel('the inverse round-trips: rho*Q(Q_BER) = BER', 0.5 * K.Q(r.q), 1e-12, 1e-4);
+  // regression guard: restates the dual-Dirac sum
+  nearRel('TJ = DJ + 2*Q*RJ', r.tj, 5e-12 + 2 * r.q * 1e-12, 1e-12);
+  ok('a lower BER needs a larger Q', CALC.ber(1e-15, 0.5, 1e-12, 0, 1e-10).q > r.q);
+  ok('rho = 0.5 needs a smaller Q than rho = 1 at the same BER', r.q < CALC.ber(1e-12, 1, 1e-12, 0, 1e-10).q);
+  ok('jitter wider than the UI closes the eye', CALC.ber(1e-12, 0.5, 5e-12, 0, 31.25e-12).open < 0);
+  /* Independent of the TJ formula: 1 ps RMS at 1e-12 and rho = 1 is the published
+     14.069 ps, straight from the multiplier table. */
+  nearRel('TJ for 1 ps RJ at 1e-12, rho = 1, is the published 14.069 ps',
+          CALC.ber(1e-12, 1, 1e-12, 0, 1e-10).tj, 14.069e-12, 3e-4);
+});
+
+suite('Calculator: bit rate, UI and Nyquist', () => {
+  const n = CALC.bitrate(32e9, 1, 15e-12, 10, 3.8), p = CALC.bitrate(32e9, 2, 15e-12, 10, 3.8);
+  nearRel('UI x symbol rate = 1', n.ui * n.baud, 1, 1e-15);
+  nearRel('32 Gb/s NRZ has a 31.25 ps UI', n.ui, 31.25e-12, 1e-12);
+  nearRel('PAM4 at the same bit rate has twice the UI', p.ui, 2 * n.ui, 1e-15);
+  nearRel('and half the Nyquist frequency', p.fn, n.fn / 2, 1e-15);
+  /* A single pole rises 10-90% in tau*ln(9), so f3dB*tr = ln(9)/(2*pi) = 0.3497. */
+  nearRel('edge bandwidth is the single pole ln(9)/(2*pi*tr)', n.bw * 15e-12, Math.log(9) / (2 * Math.PI), 1e-3);
+  nearAbs('the edge filter is 3 dB down at 0.35/tr', 10 * Math.log10(CALC.edgeLpf(0.35 / 15e-12, 15e-12)), -3.0103, 1e-3, ' dB');
+  nearAbs('random data has a spectral null at the symbol rate', CALC.dataPsd(n.baud, n.ui), 0, 1e-20);
+  nearAbs('and unit density at DC', CALC.dataPsd(0, n.ui), 1, 0);
+  nearRel('10 in at Dk 1 takes 0.254 m / c', CALC.bitrate(1e9, 1, 1e-11, 10, 1).td, 0.254 / 299792458, 1e-12);
+});
+
+suite('Calculator: electrical length', () => {
+  const air = CALC.elen(1, 100e-12, 1);
+  nearRel('at Dk 1 an inch takes 0.0254 m / c', air.tpd, 0.0254 / 299792458, 1e-12);
+  nearRel('delay scales with sqrt(Dk)', CALC.elen(1, 100e-12, 4).tpd, 2 * air.tpd, 1e-12);
+  const r = CALC.elen(3, 100e-12, 3.8);
+  nearRel('delay is linear in length', CALC.elen(6, 100e-12, 3.8).td, 2 * r.td, 1e-12);
+  nearRel('at the critical length the round trip is exactly tr/3', CALC.elen(r.lcrit, 100e-12, 3.8).round, 100e-12 / 3, 1e-12);
+  ok('just below the critical length the trace is lumped', !CALC.elen(r.lcrit * 0.99, 100e-12, 3.8).long);
+  ok('just above it the trace is a transmission line', CALC.elen(r.lcrit * 1.01, 100e-12, 3.8).long);
+  /* The topic page's panel states the same rule as 2*Td > tr/3 with tpd =
+     84.72*sqrt(Dk) ps/in; the calculator must agree with it to the picosecond. */
+  nearRel('agrees with the topic page: tpd = 84.72*sqrt(Dk) ps/in', r.tpd * 1e12, 84.72 * Math.sqrt(3.8), 1e-4);
+});
+
+suite('Calculator: via stub resonance', () => {
+  const r = CALC.stub(40, 3.8, 16e9, 3);
+  const lambda = 299792458 / (r.fNotch * Math.sqrt(3.8));
+  nearRel('at the notch the stub is a quarter wavelength', 40 * 25.4e-6, lambda / 4, 1e-12);
+  nearRel('halving the stub doubles the notch', CALC.stub(20, 3.8, 16e9, 3).fNotch, 2 * r.fNotch, 1e-12);
+  nearRel('matches the 2950/(mil*sqrt(Dk)) GHz rule', r.fNotch / 1e9, 2950 / (40 * Math.sqrt(3.8)), 1e-3);
+  nearAbs('|S21| is 0 dB at DC', CALC.stubS21(0, r.fNotch), 0, 1e-12, ' dB');
+  ok('|S21| collapses at the notch', CALC.stubS21(r.fNotch, r.fNotch) < -100);
+  nearAbs('a half-wave stub is transparent: 0 dB at twice the notch', CALC.stubS21(2 * r.fNotch, r.fNotch), 0, 1e-9, ' dB');
+  /* Halfway to the notch, tan(theta) = 1, so |S21|^2 = 4/5. */
+  nearAbs('at half the notch |S21| is 10*log10(4/5)', CALC.stubS21(r.fNotch / 2, r.fNotch), 10 * Math.log10(0.8), 1e-9, ' dB');
+  nearRel('the longest stub for the margin puts the notch exactly at k x Nyquist',
+          CALC.stub(r.lMaxMil, 3.8, 16e9, 3).fNotch, 3 * 16e9, 1e-12);
+});
+
+suite('Calculator: target impedance', () => {
+  const r = CALC.ztarget(0.8, 3, 20);
+  nearRel('0.8 V, 3%, 20 A gives 1.2 milliohm', r.z, 0.0012, 1e-12);
+  nearRel('the step through the target reproduces the ripple budget', 20 * r.z, 0.8 * 0.03, 1e-12);
+  nearRel('halving the voltage halves the target', CALC.ztarget(0.4, 3, 20).z, r.z / 2, 1e-12);
+  nearRel('doubling the step halves the target', CALC.ztarget(0.8, 3, 40).z, r.z / 2, 1e-12);
+});
+
+suite('Calculator: skin depth and roughness', () => {
+  nearRel('copper at 1 GHz: 2.06 um, as the loss pages state', CALC.skinDepth(1e9) * 1e6, 2.06, 3e-3);
+  nearRel('copper at 60 Hz: 8.4 mm', CALC.skinDepth(60) * 1e3, 8.42, 3e-3);
+  nearRel('delta falls as 1/sqrt(f): four times the frequency halves it', CALC.skinDepth(4e9), CALC.skinDepth(1e9) / 2, 1e-12);
+  nearAbs('smooth copper has no roughness penalty', CALC.roughK(0, 1e-6), 1, 1e-12);
+  nearRel('very rough copper saturates at twice the loss', CALC.roughK(1e-3, 1e-6), 2, 1e-6);
+  ok('the roughness multiplier rises with roughness', CALC.roughK(1e-6, 2e-6) < CALC.roughK(2e-6, 2e-6));
+  const s = CALC.skin(1e9, 35, 0.5);
+  nearRel('at the onset frequency delta is exactly half the thickness', CALC.skinDepth(s.fHalf), 17.5e-6, 1e-12);
+});
+
+suite('Calculator: loss budget', () => {
+  const a = CALC.loss(16e9, 10, 3.7, 0.004, 5, 50, 0.5);
+  nearAbs('zero Df gives zero dielectric loss', CALC.loss(16e9, 10, 3.7, 0, 5, 50, 0.5).ad, 0, 1e-15, ' dB/in');
+  nearRel('dielectric loss is linear in f', CALC.loss(32e9, 10, 3.7, 0.004, 5, 50, 0.5).ad, 2 * a.ad, 1e-12);
+  nearRel('dielectric loss matches 2.3*f[GHz]*Df*sqrt(Dk) dB/in', a.ad, 2.3 * 16 * 0.004 * Math.sqrt(3.7), 6e-3);
+  nearRel('smooth-copper conductor loss grows exactly as sqrt(f)',
+          CALC.loss(4e9, 1, 3.7, 0, 5, 50, 0).ac, 2 * CALC.loss(1e9, 1, 3.7, 0, 5, 50, 0).ac, 1e-12);
+  /* Bogatin's rule of thumb, 36*sqrt(f[GHz])/(w[mil]*Z0) dB/in, is a separately
+     published statement of the same physics with its own rounding. */
+  nearRel('conductor loss within 5% of Bogatin 36*sqrt(f)/(w*Z0)', CALC.loss(1e9, 1, 3.7, 0, 5, 50, 0).ac, 36 / (5 * 50), 0.05);
+  nearRel('the channel total is per inch x length', a.total, a.per * 10, 1e-12);
+  ok('a wider trace loses less in the copper', CALC.loss(16e9, 10, 3.7, 0.004, 8, 50, 0.5).ac < a.ac);
+});
+
+suite('Calculator: plane cavity resonance', () => {
+  nearRel('air, 150 mm: f(1,0) = c/2a', CALC.cavity(150, 100, 1, 1e10).f10, 299792458 / 0.3, 1e-12);
+  const sq = CALC.cavity(100, 100, 4.2, 1e10);
+  nearRel('a square plane has (1,0) and (0,1) together', sq.f01, sq.f10, 1e-12);
+  nearRel('and (1,1) at sqrt(2) times it', sq.f11, Math.SQRT2 * sq.f10, 1e-12);
+  nearRel('(2,0) is exactly twice (1,0)', sq.f(2, 0), 2 * sq.f10, 1e-12);
+  nearRel('Dk 4 halves every mode', CALC.cavity(150, 100, 4, 1e10).f10, 299792458 / 0.3 / 2, 1e-12);
+  ok('modes are listed in ascending frequency', sq.modes.every((q, i) => !i || q.f >= sq.modes[i - 1].f));
+  ok('nothing above the limit is listed', sq.modes.every((q) => q.f <= 1e10));
+});
+
+suite('Calculator: mounting inductance', () => {
+  const r = CALC.mount(20, 8, 40, 300e-12, 100e-9);
+  const far = CALC.mount(20, 8, 400, 300e-12, 100e-9).lVia;
+  /* acosh(x) -> ln(2x) for x >> 1: the thin-wire formula (mu0*h/pi)*ln(2s/d). */
+  nearRel('at s = 50 d the exact loop matches the thin-wire ln(2s/d)', far, 4e-7 * 20 * 25.4e-6 * Math.log(2 * 400 / 8), 1e-3);
+  nearRel('loop inductance is linear in via length', CALC.mount(40, 8, 40, 300e-12, 100e-9).lVia, 2 * r.lVia, 1e-12);
+  ok('touching vias enclose no loop', CALC.mount(20, 8, 8.000001, 300e-12, 100e-9).lVia < 1e-12);
+  nearRel('the mounted SRF uses ESL plus the vias', r.srf, 1 / (2 * Math.PI * Math.sqrt((300e-12 + r.lVia) * 100e-9)), 1e-12);
+  ok('mounting always lowers the self-resonance', r.srf < r.srfPart);
+});
+
+suite('Calculator: microstrip and stripline impedance', () => {
+  const ETA0 = 4e-7 * Math.PI * 299792458;
+  /* Wheeler (1977), derived independently of Hammerstad-Jensen and claimed
+     accurate to about 1%. Written out here so that agreement means something. */
+  const wheeler = (u, er) => {
+    const k = (14 + 8 / er) / 11, x = 4 / u;
+    return ETA0 / (2 * Math.PI * Math.sqrt(2 * (er + 1)))
+      * Math.log(1 + x * (k * x + Math.sqrt(k * k * x * x + Math.PI * Math.PI * (1 + 1 / er) / 2)));
+  };
+  let worst = 0;
+  for (const er of [1, 2.2, 4.4, 10]) {
+    for (const u of [0.1, 0.3, 1, 3, 10]) {
+      const hj = CALC.microstrip(u, 1, 0, er).z0;
+      worst = Math.max(worst, Math.abs(hj - wheeler(u, er)) / hj);
+    }
+  }
+  ok('Hammerstad-Jensen agrees with Wheeler within 1% over 20 cases', worst < 0.01, (worst * 100).toFixed(2) + '% worst');
+  nearAbs('in air the effective permittivity is exactly 1', CALC.microstrip(1, 1, 0, 1).eeff, 1, 1e-12);
+  const e = CALC.microstrip(2, 1, 0, 4.4).eeff;
+  ok('eeff lies between (er+1)/2 and er', e > 2.7 && e < 4.4, e.toFixed(3));
+  const w50 = CALC.widthFor(50, 'ms', 1, 0, 4.4);
+  ok('50 ohm microstrip on er 4.4 needs w/h near 1.9, the published design value', w50 > 1.85 && w50 < 1.97, w50.toFixed(3));
+  ok('thicker copper lowers microstrip Z0', CALC.microstrip(10, 5.5, 1.4, 4.2).z0 < CALC.microstrip(10, 5.5, 0, 4.2).z0);
+  const ratio = CALC.stripline(20, 1, 1).z0 / (ETA0 / (4 * 20));
+  ok('a very wide stripline approaches the parallel-plate limit from below', ratio > 0.95 && ratio < 1, ratio.toFixed(4));
+  const ipc = (wb, er) => 60 / Math.sqrt(er) * Math.log(4 / (0.67 * Math.PI * 0.8 * wb));
+  nearRel('stripline agrees with IPC-2141 within 5% at w/b = 0.3', CALC.stripline(0.3, 1, 4).z0, ipc(0.3, 4), 0.05);
+  /* K(1/sqrt 2) is the lemniscate constant, Gamma(1/4)^2 / (4*sqrt(pi)). */
+  nearRel('the elliptic integral gives K(1/sqrt2) = 1.8540746773', CALC.ellipK(Math.SQRT1_2), 1.8540746773, 1e-9);
+  nearRel('stripline scales as 1/sqrt(er)', CALC.stripline(0.5, 1, 4).z0, CALC.stripline(0.5, 1, 1).z0 / 2, 1e-12);
+  ok('Z0 falls as the trace widens', CALC.microstrip(12, 5.5, 1.4, 4.2).z0 < CALC.microstrip(10, 5.5, 1.4, 4.2).z0);
+  nearRel('the solved width reproduces the target',
+          CALC.zline('ms', CALC.widthFor(50, 'ms', 5.5, 1.4, 4.2), 5.5, 1.4, 4.2).z0, 50, 1e-6);
 });
 
 if (!PASS && !FAILS.length && !PENDING.length) {

@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- theme:start -->
+  <meta name="theme-color" content="#F7F8FA">
+  <script>(function(){try{var t=localStorage.getItem('sipi-theme');if(t==='dark'||t==='system'){document.documentElement.setAttribute('data-theme',t);var m=document.querySelector('meta[name=theme-color]');if(m&&(t==='dark'||matchMedia('(prefers-color-scheme:dark)').matches))m.content='#0B1015';}}catch(e){}})();</script>
+  <!-- theme:end -->
+<title>LC and RLC Resonance Calculator | SIPI</title>
+<meta name="description" content="Resonant frequency, Q, bandwidth and impedance of a series or parallel RLC circuit, or a real capacitor's self-resonance, with a live |Z| plot.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<link rel="stylesheet" href="../../css/base.css?v=1e3ae753">
+<link rel="stylesheet" href="../../css/components.css?v=a5bbfbf0">
+  <!-- meta:start -->
+  <link rel="canonical" href="https://sipi.work/topics/tools/lc-rlc-resonance.html">
+  <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="SIPI">
+  <meta property="og:title" content="LC and RLC Resonance Calculator | SIPI">
+  <meta property="og:description" content="Resonant frequency, Q, bandwidth and impedance of a series or parallel RLC circuit, or a real capacitor's self-resonance, with a live |Z| plot.">
+  <meta property="og:url" content="https://sipi.work/topics/tools/lc-rlc-resonance.html">
+  <meta property="og:image" content="https://sipi.work/assets/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="LC and RLC Resonance Calculator | SIPI">
+  <meta name="twitter:description" content="Resonant frequency, Q, bandwidth and impedance of a series or parallel RLC circuit, or a real capacitor's self-resonance, with a live |Z| plot.">
+  <meta name="twitter:image" content="https://sipi.work/assets/og.png">
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"LC and RLC Resonance Calculator","description":"Resonant frequency, Q, bandwidth and impedance of a series or parallel RLC circuit, or a real capacitor's self-resonance, with a live |Z| plot.","url":"https://sipi.work/topics/tools/lc-rlc-resonance.html","articleSection":"Calculators","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer"},"publisher":{"@type":"Person","name":"Geetansh Arora"}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"SIPI","item":"https://sipi.work/"},{"@type":"ListItem","position":2,"name":"Calculators","item":"https://sipi.work/#tools"},{"@type":"ListItem","position":3,"name":"LC and RLC Resonance Calculator"}]}</script>
+  <!-- meta:end -->
+</head>
+<body>
+
+<header class="masthead">
+  <a class="wordmark" href="../../index.html">SIPI</a>
+  <button class="theme-toggle" data-act="theme" type="button">Light</button>
+  <nav aria-label="Site">
+    <a href="../../index.html#groundwork">Topics</a>
+    <a href="../../start.html">Start</a>
+    <a href="../../labs.html">Labs</a>
+    <a href="../../colophon.html">About</a>
+  </nav>
+</header>
+
+<main>
+  <div class="page-head page-head--tool">
+    <p class="crumb"><a href="../../index.html#tools">Calculators</a> / 01</p>
+    <h1>LC and RLC Resonance Calculator</h1>
+    <p class="byline">
+      <!-- review:start --><span>By Geetansh Arora — Principal SI/PI Engineer</span><span>Updated Sep 2026</span><span>10 min</span><!-- review:end -->
+    </p>
+    <!-- share:head:start --><div class="share share--head" data-share data-share-url="https://sipi.work/topics/tools/lc-rlc-resonance.html" data-share-title="LC and RLC Resonance Calculator"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Ftools%2Flc-rlc-resonance.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Ftools%2Flc-rlc-resonance.html&amp;text=LC%20and%20RLC%20Resonance%20Calculator" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=LC%20and%20RLC%20Resonance%20Calculator&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Ftools%2Flc-rlc-resonance.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:head:end -->
+  </div>
+
+  <section class="instrument instrument--calc" data-viz="calcRlc" aria-label="Resonance calculator: enter resistance, inductance and capacitance and read the resonant frequency, Q, bandwidth and impedance">
+    <script type="application/json" data-contract>{"kind":"exact","evidence":"independent","purpose":"Resonant frequency, Q, bandwidth and impedance of an RLC circuit or a real capacitor.","equations":["f0 = 1/(2*pi*sqrt(L*C))","Q = sqrt(L/C)/R (series), R/sqrt(L/C) (parallel)","f1,2 = f0*(sqrt(1+1/4Q^2) -/+ 1/2Q)"],"units":"Hz, ohm, H, F","validity":"Frequency-independent R, L and C.","numerics":"Closed form; |Z| sampled on a log grid for the plot.","limitations":"Constant ESR in capacitor mode; no DC-bias derating.","suites":["Calculator: LC/RLC resonance"],"version":"1.0","reviewed":"not yet","panel":"calcRlc"}</script>
+    <div class="instrument__bar">
+      <span class="instrument__title">Resonance · series, parallel or a real capacitor</span>
+        <span data-evidence="independent" data-model-version="1.0" class="model-tag model-tag--exact" title="Closed-form circuit theory. Exact for ideal R, L and C.">exact</span>
+    </div>
+    <div class="calc">
+      <div class="calc__inputs" data-calc-inputs></div>
+      <div class="calc__main">
+        <div class="calc__results" data-calc-results role="status" aria-live="polite" aria-label="Results"></div>
+        <div class="panel calc__chart">
+          <span class="panel__label">Impedance magnitude against frequency</span>
+          <canvas data-cv="calc" role="img" aria-label="Log-log plot of impedance magnitude against frequency, with the resonant frequency marked and the half-power band shaded"></canvas>
+          <div class="legend" data-calc-legend></div>
+        </div>
+      </div>
+    </div>
+    <noscript><p class="calc-noscript">This calculator runs in your browser and needs JavaScript. Its formulas are set out below.</p></noscript>
+  </section>
+
+  <div class="prose">
+    <p class="answer">
+      An inductor and a capacitor trade energy back and forth at one frequency, where their reactances
+      cancel. What the resistance decides is how sharply: a small series resistance gives a deep, narrow
+      dip; a large one flattens it. Choose <b>Capacitor</b> to treat a decoupling part as what it
+      really is &#8212; a series RLC whose inductance is its ESL.
+    </p>
+
+    <h2>Reading the numbers</h2>
+    <ul>
+      <li><b>Series</b> circuits dip to their lowest impedance, R, at f<sub>0</sub>; <b>parallel</b> circuits peak at R there. The shaded band spans the two half-power points.</li>
+      <li><b>Q</b> is how many times narrower than f<sub>0</sub> that band is. Above about 10 the dip or peak is sharp enough that a small shift in L or C moves the answer a long way.</li>
+      <li><b>&#8730;(L/C)</b> is the impedance at which the inductive and capacitive branches are equal. A decoupling capacitor whose ESR is far below it resonates sharply &#8212; the root of anti-resonance peaks between capacitors.</li>
+    </ul>
+    <p>Every value is in the address bar as you change it, so a link reproduces the calculation exactly.
+      Type values with SI prefixes &#8212; <code>100n</code>, <code>2.2p</code>, <code>16G</code> &#8212; or
+      drag the sliders; a bare number keeps the prefix already shown.</p>
+
+    <h2>The formulas</h2>
+      <div class="eq">
+        <i class="var">f</i><sub>0</sub> = 1 / ( 2&#960; &#8730;(<i class="var">L</i><i class="var">C</i>) )
+        <span class="cap">Independent of R, and the same for series and parallel.</span>
+      </div>
+      <div class="eq">
+        <i class="var">Q</i> = &#8730;(<i class="var">L</i>/<i class="var">C</i>) / <i class="var">R</i> (series) &#160;&#160; <i class="var">Q</i> = <i class="var">R</i> / &#8730;(<i class="var">L</i>/<i class="var">C</i>) (parallel)
+        <span class="cap">A series circuit needs a small R to be sharp; a parallel one needs a large R.</span>
+      </div>
+      <div class="eq">
+        <i class="var">f</i><sub>1,2</sub> = <i class="var">f</i><sub>0</sub> ( &#8730;(1 + 1/4<i class="var">Q</i>&#178;) &#8723; 1/2<i class="var">Q</i> ) &#160;&#160; so &#160; <i class="var">f</i><sub>2</sub> &#8722; <i class="var">f</i><sub>1</sub> = <i class="var">f</i><sub>0</sub>/<i class="var">Q</i>
+        <span class="cap">Exact half-power points. They sit symmetrically about f₀ on a log axis: f₁·f₂ = f₀².</span>
+      </div>
+
+    <details class="deeper">
+      <summary>Go deeper &#8212; assumptions, how it is checked, and sources</summary>
+      <p><strong>Assumptions.</strong> Ideal, frequency-independent R, L and C. In capacitor mode the
+      ESR is held constant; a real part's ESR falls and then rises with frequency, and its capacitance
+      drops with DC bias &#8212; <a href="../power-integrity/real-capacitors.html">Real Capacitors</a> models
+      both. The plot runs two decades either side of f<sub>0</sub>.</p>
+      <p><strong>How it is checked.</strong> <code>check-models.js</code> asserts that the series circuit
+      is purely resistive at f<sub>0</sub> (|Z| = R, zero phase), that f<sub>1</sub>&#183;f<sub>2</sub> =
+      f<sub>0</sub>&#178;, that the band is exactly f<sub>0</sub>/Q wide, that |Z| falls as 1/f far below
+      resonance and rises as f far above it, and that scaling L up and C down by the same factor leaves
+      f<sub>0</sub> unchanged.</p>
+      <p><strong>Source.</strong> D. M. Pozar, <em>Microwave Engineering</em>, 4th ed., Wiley, 2012,
+      §6.1 (series and parallel resonant circuits).</p>
+    </details>
+
+    <h3>Related</h3>
+    <ul class="tight">
+      <li><a href="../power-integrity/real-capacitors.html">Real Capacitors: Bias, Tolerance, Temperature, and Mounting</a></li>
+      <li><a href="../power-integrity/anti-resonance.html">PDN Anti-Resonance and Impedance Peaks</a></li>
+      <li><a href="../power-integrity/decoupling-capacitors.html">Decoupling Capacitors: ESR, ESL, and Placement</a></li>
+    </ul>
+  </div>
+
+  <!-- share:foot:start --><div class="share share--foot" data-share data-share-url="https://sipi.work/topics/tools/lc-rlc-resonance.html" data-share-title="LC and RLC Resonance Calculator"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Ftools%2Flc-rlc-resonance.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Ftools%2Flc-rlc-resonance.html&amp;text=LC%20and%20RLC%20Resonance%20Calculator" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=LC%20and%20RLC%20Resonance%20Calculator&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Ftools%2Flc-rlc-resonance.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:foot:end -->
+  <!-- pager:start -->
+  <nav class="pager" aria-label="Previous and next topic">
+    <a class="prev" href="../../topics/labs/adc-interference.html"><span class="dir">Previous</span><span>Lab D: ADC Interference, Aliasing and Reference Noise</span></a>
+    <a class="next" href="../../topics/tools/return-loss-vswr.html"><span class="dir">Next</span><span>VSWR, Return Loss and Reflection Coefficient Calculator</span></a>
+  </nav>
+  <!-- pager:end -->
+</main>
+
+<footer class="site-foot">
+  <span>SIPI &#8212; signal and power integrity, visualised.</span>
+  <nav class="site-foot__nav" aria-label="Site, footer">
+    <a href="../../start.html">Start</a>
+    <a href="../../labs.html">Labs</a>
+    <a href="../../reference.html">Reference</a>
+    <a href="../../colophon.html">About &amp; AI disclosure</a>
+    <a href="../../model-contract.html">Model assumptions</a>
+    <a href="../../docs/claims.md">Claim ledger (Markdown)</a>
+  </nav>
+  <span>Created and directed by Geetansh Arora. Text <a href="../../LICENSE-CONTENT">CC BY 4.0</a>, code <a href="../../LICENSE-CODE">MIT</a>.</span>
+</footer>
+
+<script src="../../js/site.js?v=9ac8f8b6" defer></script>
+<script src="../../js/viz-kit.js?v=80ff7520" defer></script>
+<script src="../../js/models/calc-models.js?v=f7b0daa5" defer></script>
+<script src="../../js/viz/calc-rlc.js?v=dfc09723" defer></script>
+<script src="../../js/viz-loader.js?v=8121f120" defer></script>
+<script src="../../js/search.js?v=6c93a285" defer></script>
+</body>
+</html>

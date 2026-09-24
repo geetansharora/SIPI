@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- theme:start -->
+  <meta name="theme-color" content="#F7F8FA">
+  <script>(function(){try{var t=localStorage.getItem('sipi-theme');if(t==='dark'||t==='system'){document.documentElement.setAttribute('data-theme',t);var m=document.querySelector('meta[name=theme-color]');if(m&&(t==='dark'||matchMedia('(prefers-color-scheme:dark)').matches))m.content='#0B1015';}}catch(e){}})();</script>
+  <!-- theme:end -->
+<title>PCB Channel Loss Budget Calculator | SIPI</title>
+<meta name="description" content="Insertion loss of a PCB channel from Dk, Df, trace width, impedance and copper roughness: conductor and dielectric loss per inch and over the run, against a budget.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<link rel="stylesheet" href="../../css/base.css?v=1e3ae753">
+<link rel="stylesheet" href="../../css/components.css?v=a5bbfbf0">
+  <!-- meta:start -->
+  <link rel="canonical" href="https://sipi.work/topics/tools/loss-budget.html">
+  <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="SIPI">
+  <meta property="og:title" content="PCB Channel Loss Budget Calculator | SIPI">
+  <meta property="og:description" content="Insertion loss of a PCB channel from Dk, Df, trace width, impedance and copper roughness: conductor and dielectric loss per inch and over the run, against a budget.">
+  <meta property="og:url" content="https://sipi.work/topics/tools/loss-budget.html">
+  <meta property="og:image" content="https://sipi.work/assets/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="PCB Channel Loss Budget Calculator | SIPI">
+  <meta name="twitter:description" content="Insertion loss of a PCB channel from Dk, Df, trace width, impedance and copper roughness: conductor and dielectric loss per inch and over the run, against a budget.">
+  <meta name="twitter:image" content="https://sipi.work/assets/og.png">
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"PCB Channel Loss Budget Calculator","description":"Insertion loss of a PCB channel from Dk, Df, trace width, impedance and copper roughness: conductor and dielectric loss per inch and over the run, against a budget.","url":"https://sipi.work/topics/tools/loss-budget.html","articleSection":"Calculators","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer"},"publisher":{"@type":"Person","name":"Geetansh Arora"}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"SIPI","item":"https://sipi.work/"},{"@type":"ListItem","position":2,"name":"Calculators","item":"https://sipi.work/#tools"},{"@type":"ListItem","position":3,"name":"PCB Channel Loss Budget Calculator"}]}</script>
+  <!-- meta:end -->
+</head>
+<body>
+
+<header class="masthead">
+  <a class="wordmark" href="../../index.html">SIPI</a>
+  <button class="theme-toggle" data-act="theme" type="button">Light</button>
+  <nav aria-label="Site">
+    <a href="../../index.html#groundwork">Topics</a>
+    <a href="../../start.html">Start</a>
+    <a href="../../labs.html">Labs</a>
+    <a href="../../colophon.html">About</a>
+  </nav>
+</header>
+
+<main>
+  <div class="page-head page-head--tool">
+    <p class="crumb"><a href="../../index.html#tools">Calculators</a> / 09</p>
+    <h1>PCB Channel Loss Budget Calculator</h1>
+    <p class="byline">
+      <!-- review:start --><span>By Geetansh Arora — Principal SI/PI Engineer</span><span>Updated Sep 2026</span><span>10 min</span><!-- review:end -->
+    </p>
+    <!-- share:head:start --><div class="share share--head" data-share data-share-url="https://sipi.work/topics/tools/loss-budget.html" data-share-title="PCB Channel Loss Budget Calculator"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Ftools%2Floss-budget.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Ftools%2Floss-budget.html&amp;text=PCB%20Channel%20Loss%20Budget%20Calculator" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=PCB%20Channel%20Loss%20Budget%20Calculator&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Ftools%2Floss-budget.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:head:end -->
+  </div>
+
+  <section class="instrument instrument--calc" data-viz="calcLossBudget" aria-label="Loss budget calculator: enter frequency, length, Dk, Df, trace width, impedance, roughness and a budget, and read the loss per inch, over the channel and the margin">
+    <script type="application/json" data-contract>{"kind":"analytical","evidence":"independent","purpose":"Insertion loss of a PCB channel against a budget.","equations":["alpha_d = pi*f*sqrt(Dk)*Df/c","alpha_c = Rs*K/(2*w*Z0)"],"units":"dB, dB/in, Hz","validity":"Constant Dk and Df; first-order conductor loss, roughly +/-30% of a field solve.","numerics":"Closed form.","limitations":"Conductor loss ignores current sharing between faces and return-plane loss.","suites":["Calculator: loss budget"],"version":"1.0","reviewed":"not yet","panel":"calcLossBudget"}</script>
+    <div class="instrument__bar">
+      <span class="instrument__title">Channel loss against a budget</span>
+        <span data-evidence="independent" data-model-version="1.0" class="model-tag model-tag--analytical" title="First-order closed forms: exact dielectric loss, conductor loss with current on one face.">analytical</span>
+    </div>
+    <div class="calc">
+      <div class="calc__inputs" data-calc-inputs></div>
+      <div class="calc__main">
+        <div class="calc__results" data-calc-results role="status" aria-live="polite" aria-label="Results"></div>
+        <div class="panel calc__chart">
+          <span class="panel__label">Insertion loss over the channel against frequency</span>
+          <canvas data-cv="calc" role="img" aria-label="Plot of insertion loss in decibels against frequency over the channel, split into conductor and dielectric parts, with the budget marked"></canvas>
+          <div class="legend" data-calc-legend></div>
+        </div>
+      </div>
+    </div>
+    <noscript><p class="calc-noscript">This calculator runs in your browser and needs JavaScript. Its formulas are set out below.</p></noscript>
+  </section>
+
+  <div class="prose">
+    <p class="answer">
+      A PCB trace loses signal two ways: in the copper, where skin effect and roughness raise the resistance,
+      and in the laminate, where the field does work on the dielectric. The copper term grows as &#8730;f and the
+      dielectric term as f, so at high enough frequency the laminate always wins &#8212; and which one dominates
+      your channel decides whether a wider trace or a better laminate is the fix.
+    </p>
+
+    <h2>Reading the numbers</h2>
+    <ul>
+      <li>The dielectric loss is 2.3&#183;f&#183;Df&#183;&#8730;Dk dB per inch with f in GHz: halving Df halves it.</li>
+      <li>A wider trace lowers only the conductor term. It is a real fix only while the conductor term is the larger one.</li>
+      <li>The <b>margin</b> is the budget minus the loss; a negative margin means the channel needs a better laminate, smoother copper, a shorter run or more equalisation.</li>
+    </ul>
+    <p>Every value is in the address bar as you change it, so a link reproduces the calculation exactly.
+      Type values with SI prefixes &#8212; <code>100n</code>, <code>2.2p</code>, <code>16G</code> &#8212; or
+      drag the sliders; a bare number keeps the prefix already shown.</p>
+
+    <h2>The formulas</h2>
+      <div class="eq">
+        &#945;<sub>d</sub> = &#960; <i class="var">f</i> &#8730;Dk &#183; Df / <i class="var">c</i> &#160; Np/m &#160; &#8776; &#160; 2.3 &#183; <i class="var">f</i><sub>GHz</sub> &#183; Df &#183; &#8730;Dk &#160; dB/in
+        <span class="cap">Exact for a TEM line whose field lies wholly in one dielectric.</span>
+      </div>
+      <div class="eq">
+        &#945;<sub>c</sub> = <i class="var">R</i>&#8242; / 2<i class="var">Z</i><sub>0</sub>, &#160; <i class="var">R</i>&#8242; = <i class="var">R</i><sub>s</sub> &#183; <i class="var">K</i><sub>rough</sub> / <i class="var">w</i>
+        <span class="cap">Current on one face of the strip, the return path lossless.</span>
+      </div>
+
+    <details class="deeper">
+      <summary>Go deeper &#8212; assumptions, how it is checked, and sources</summary>
+      <p><strong>Assumptions.</strong> The conductor term is first-order: it puts the current on one face of the
+      strip and treats the return path as lossless. In stripline the current splits across both faces, which
+      halves the strip's resistance, while the planes add some back; the combination lands within roughly
+      &#177;30% of a field solve. Dk and Df are taken as constant with frequency, and roughness uses the
+      Hammerstad&#8211;Bekkadal multiplier on the RMS roughness.</p>
+      <p><strong>How it is checked.</strong> Zero Df gives zero dielectric loss; dielectric loss is linear in f
+      and in length; smooth-copper conductor loss is exactly &#8730;f; and the conductor term agrees with the
+      published rule of thumb 36&#183;&#8730;f / (w&#183;Z<sub>0</sub>) dB/in to within 5%.</p>
+      <p><strong>Sources.</strong> D. M. Pozar, <em>Microwave Engineering</em>, 4th ed., Wiley, 2012, §2.7;
+      E. Bogatin, <em>Signal and Power Integrity &#8212; Simplified</em>, 3rd ed., Pearson, 2018, ch. 9.</p>
+    </details>
+
+    <h3>Related</h3>
+    <ul class="tight">
+      <li><a href="../fundamentals/loss-mechanisms.html">PCB Transmission-Line Loss Mechanisms</a></li>
+      <li><a href="../signal-integrity/channel-budgeting.html">Channel Loss Budgeting Across Die, Package, and Board</a></li>
+      <li><a href="../package-board/stackup-design.html">PCB Stackup Design and Dielectric Selection</a></li>
+    </ul>
+  </div>
+
+  <!-- share:foot:start --><div class="share share--foot" data-share data-share-url="https://sipi.work/topics/tools/loss-budget.html" data-share-title="PCB Channel Loss Budget Calculator"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Ftools%2Floss-budget.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Ftools%2Floss-budget.html&amp;text=PCB%20Channel%20Loss%20Budget%20Calculator" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=PCB%20Channel%20Loss%20Budget%20Calculator&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Ftools%2Floss-budget.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:foot:end -->
+  <!-- pager:start -->
+  <nav class="pager" aria-label="Previous and next topic">
+    <a class="prev" href="../../topics/tools/skin-depth.html"><span class="dir">Previous</span><span>Skin Depth and Surface Roughness Calculator</span></a>
+    <a class="next" href="../../topics/tools/plane-cavity-resonance.html"><span class="dir">Next</span><span>Power Plane Cavity Resonance Calculator</span></a>
+  </nav>
+  <!-- pager:end -->
+</main>
+
+<footer class="site-foot">
+  <span>SIPI &#8212; signal and power integrity, visualised.</span>
+  <nav class="site-foot__nav" aria-label="Site, footer">
+    <a href="../../start.html">Start</a>
+    <a href="../../labs.html">Labs</a>
+    <a href="../../reference.html">Reference</a>
+    <a href="../../colophon.html">About &amp; AI disclosure</a>
+    <a href="../../model-contract.html">Model assumptions</a>
+    <a href="../../docs/claims.md">Claim ledger (Markdown)</a>
+  </nav>
+  <span>Created and directed by Geetansh Arora. Text <a href="../../LICENSE-CONTENT">CC BY 4.0</a>, code <a href="../../LICENSE-CODE">MIT</a>.</span>
+</footer>
+
+<script src="../../js/site.js?v=9ac8f8b6" defer></script>
+<script src="../../js/viz-kit.js?v=80ff7520" defer></script>
+<script src="../../js/models/calc-models.js?v=f7b0daa5" defer></script>
+<script src="../../js/viz/calc-loss-budget.js?v=3dc31046" defer></script>
+<script src="../../js/viz-loader.js?v=8121f120" defer></script>
+<script src="../../js/search.js?v=6c93a285" defer></script>
+</body>
+</html>

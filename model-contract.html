@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
 <link rel="stylesheet" href="css/base.css?v=1e3ae753">
-<link rel="stylesheet" href="css/components.css?v=ff7a7e06">
+<link rel="stylesheet" href="css/components.css?v=a5bbfbf0">
   <!-- meta:start -->
   <link rel="canonical" href="https://sipi.work/model-contract.html">
   <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
@@ -46,10 +46,10 @@
   <div class="page-head">
     <p class="crumb"><a href="index.html">SIPI</a> / model contracts</p>
     <h1>Interactive model assumptions and evidence</h1>
-    <p class="byline"><span>Generated from <code>docs/model-types.json</code></span><span>28 panels</span><span>fidelity: 12 analytical, 4 exact, 6 illustrative, 6 numerical · evidence: 2 computed, 22 independent, 4 plausible</span></p>
+    <p class="byline"><span>Generated from <code>docs/model-types.json</code></span><span>40 panels</span><span>fidelity: 16 analytical, 12 exact, 6 illustrative, 6 numerical · evidence: 2 computed, 34 independent, 4 plausible</span></p>
     <p class="answer">
       Each interactive panel uses a model with a defined scope. This page publishes the
-      contract for all 28 panels: the
+      contract for all 40 panels: the
       topology, the reference planes, the equations, the units, the range over which it is
       valid, how it is computed, and the evidence available for its behavior.
     </p>
@@ -178,6 +178,234 @@
       <dt>Numerics</dt><dd>erfc below x=3, asymptotic series above; explicit empty result when no interval meets the target.</dd>
       <dt>Known limitations</dt><dd>Dual-Dirac is a FIT, not a measurement of the deterministic width.</dd>
       <dt>Evidence</dt><dd>check-models.js — Bathtub (closed eye returns no interval; crossings match the analytic Q inverse).</dd>
+    </dl>
+  </section>
+  <section class="contract" id="calcBer">
+    <div class="contract__head">
+      <h2>calcBer</h2>
+      <span class="model-tag model-tag--analytical">analytical model</span>
+      <span class="ev ev--independent">independent</span>
+      <span class="contract__ver">v1.0 &#183; not yet reviewed</span>
+    </div>
+    <p class="contract__purpose">Q factor and total jitter implied by a target BER under the dual-Dirac model.</p>
+    <dl class="contract__body">
+      <dt>Topology</dt><dd>Gaussian random jitter plus dual-Dirac deterministic jitter, transition density 0.5 or 1.</dd>
+      <dt>Reference planes</dt><dd>The receiver's sampling point.</dd>
+      <dt>Equations</dt><dd><ul class="tight"><li><code>BER = rho*Q(Q_BER)</code></li><li><code>TJ = DJ(dd) + 2*Q_BER*RJ</code></li></ul></dd>
+      <dt>Units</dt><dd>s, dimensionless</dd>
+      <dt>Validity</dt><dd>RJ Gaussian into the extrapolated tail; DJ given as its dual-Dirac value.</dd>
+      <dt>Numerics</dt><dd>Chebyshev erfc below x = 3, four-term asymptotic series above; the branches differ by about 0.9% at x = 3. Inverse by bisection.</dd>
+      <dt>Known limitations</dt><dd>Dual-Dirac DJ is a fitted quantity, smaller than peak-to-peak DJ; no amplitude noise.</dd>
+      <dt>Evidence</dt><dd>check-models.js — Calculator: BER, Q and total jitter (tail identities, normal table, the published 14.069 multiplier).</dd>
+    </dl>
+  </section>
+  <section class="contract" id="calcBitRate">
+    <div class="contract__head">
+      <h2>calcBitRate</h2>
+      <span class="model-tag model-tag--exact">exact model</span>
+      <span class="ev ev--independent">independent</span>
+      <span class="contract__ver">v1.0 &#183; not yet reviewed</span>
+    </div>
+    <p class="contract__purpose">Symbol rate, unit interval, Nyquist frequency, edge bandwidth and bits in flight from a data rate.</p>
+    <dl class="contract__body">
+      <dt>Topology</dt><dd>NRZ or PAM4 random data; a single-pole edge; a uniform trace.</dd>
+      <dt>Reference planes</dt><dd>Transmitter output.</dd>
+      <dt>Equations</dt><dd><ul class="tight"><li><code>UI = bits_per_symbol/data_rate</code></li><li><code>f_Nyquist = 1/(2*UI)</code></li><li><code>f_3dB = 0.35/tr</code></li></ul></dd>
+      <dt>Units</dt><dd>b/s, Bd, s, Hz</dd>
+      <dt>Validity</dt><dd>Random equiprobable symbols; 0.35/tr exact for a single pole only.</dd>
+      <dt>Numerics</dt><dd>Closed form; sinc^2 spectrum sampled for the plot.</dd>
+      <dt>Known limitations</dt><dd>A Gaussian edge gives 0.34 rather than 0.35.</dd>
+      <dt>Evidence</dt><dd>check-models.js — Calculator: bit rate, UI and Nyquist (UI x baud = 1, PAM4 vs NRZ, single-pole ln(9)/2pi, spectral null).</dd>
+    </dl>
+  </section>
+  <section class="contract" id="calcElectricalLength">
+    <div class="contract__head">
+      <h2>calcElectricalLength</h2>
+      <span class="model-tag model-tag--exact">exact model</span>
+      <span class="ev ev--independent">independent</span>
+      <span class="contract__ver">v1.0 &#183; not yet reviewed</span>
+    </div>
+    <p class="contract__purpose">Delay, round trip and critical length of a trace at a given rise time.</p>
+    <dl class="contract__body">
+      <dt>Topology</dt><dd>One driver, one receiver, a uniform line.</dd>
+      <dt>Reference planes</dt><dd>Driver and receiver pins.</dd>
+      <dt>Equations</dt><dd><ul class="tight"><li><code>tpd = 84.72*sqrt(Dk_eff) ps/in</code></li><li><code>electrically long when 2*Td &gt; tr/3</code></li></ul></dd>
+      <dt>Units</dt><dd>s, in</dd>
+      <dt>Validity</dt><dd>Uniform lossless line; the /3 is a convention.</dd>
+      <dt>Numerics</dt><dd>Closed form.</dd>
+      <dt>Known limitations</dt><dd>The /3 criterion is a convention shared with the topic page, not physics.</dd>
+      <dt>Evidence</dt><dd>check-models.js — Calculator: electrical length (speed of light at Dk 1, round trip exactly tr/3 at the critical length, agreement with the topic page).</dd>
+    </dl>
+  </section>
+  <section class="contract" id="calcLineImpedance">
+    <div class="contract__head">
+      <h2>calcLineImpedance</h2>
+      <span class="model-tag model-tag--analytical">analytical model</span>
+      <span class="ev ev--independent">independent</span>
+      <span class="contract__ver">v1.0 &#183; not yet reviewed</span>
+    </div>
+    <p class="contract__purpose">Characteristic impedance, effective permittivity and delay of microstrip and centred stripline.</p>
+    <dl class="contract__body">
+      <dt>Topology</dt><dd>Microstrip on a homogeneous dielectric; zero-thickness stripline centred between planes.</dd>
+      <dt>Reference planes</dt><dd>The line cross-section.</dd>
+      <dt>Equations</dt><dd><ul class="tight"><li><code>microstrip: Hammerstad-Jensen (1980) with thickness correction</code></li><li><code>stripline: Z0 = (eta0/(4*sqrt(er)))*K(k)/K(k'), k = sech(pi*w/2b)</code></li></ul></dd>
+      <dt>Units</dt><dd>ohm, mil</dd>
+      <dt>Validity</dt><dd>Quasi-static; no dispersion, no solder mask, rectangular copper.</dd>
+      <dt>Numerics</dt><dd>Closed form; elliptic integrals by the arithmetic-geometric mean; width solved by bisection.</dd>
+      <dt>Known limitations</dt><dd>Stripline is zero-thickness; real copper reads a few ohms lower.</dd>
+      <dt>Evidence</dt><dd>check-models.js — Calculator: microstrip and stripline impedance (Wheeler within 1%, air limit, parallel-plate limit, IPC-2141, lemniscate constant).</dd>
+    </dl>
+  </section>
+  <section class="contract" id="calcLossBudget">
+    <div class="contract__head">
+      <h2>calcLossBudget</h2>
+      <span class="model-tag model-tag--analytical">analytical model</span>
+      <span class="ev ev--independent">independent</span>
+      <span class="contract__ver">v1.0 &#183; not yet reviewed</span>
+    </div>
+    <p class="contract__purpose">Insertion loss of a PCB channel against a budget.</p>
+    <dl class="contract__body">
+      <dt>Topology</dt><dd>A uniform TEM line in one dielectric; current on one face of the strip; lossless return path.</dd>
+      <dt>Reference planes</dt><dd>Channel ends.</dd>
+      <dt>Equations</dt><dd><ul class="tight"><li><code>alpha_d = pi*f*sqrt(Dk)*Df/c</code></li><li><code>alpha_c = Rs*K/(2*w*Z0)</code></li></ul></dd>
+      <dt>Units</dt><dd>dB, dB/in, Hz</dd>
+      <dt>Validity</dt><dd>Constant Dk and Df; first-order conductor loss, roughly +/-30% of a field solve.</dd>
+      <dt>Numerics</dt><dd>Closed form.</dd>
+      <dt>Known limitations</dt><dd>Conductor loss ignores current sharing between faces and return-plane loss.</dd>
+      <dt>Evidence</dt><dd>check-models.js — Calculator: loss budget (zero Df, linear dielectric loss, sqrt(f) conductor loss, Bogatin rule within 5%).</dd>
+    </dl>
+  </section>
+  <section class="contract" id="calcMountingInductance">
+    <div class="contract__head">
+      <h2>calcMountingInductance</h2>
+      <span class="model-tag model-tag--exact">exact model</span>
+      <span class="ev ev--independent">independent</span>
+      <span class="contract__ver">v1.0 &#183; not yet reviewed</span>
+    </div>
+    <p class="contract__purpose">Loop inductance of the via pair under a decoupling capacitor, and the mounted self-resonance.</p>
+    <dl class="contract__body">
+      <dt>Topology</dt><dd>Two parallel round vias of equal length down to a plane pair.</dd>
+      <dt>Reference planes</dt><dd>Capacitor pads to the plane pair.</dd>
+      <dt>Equations</dt><dd><ul class="tight"><li><code>L = (mu0*h/pi)*acosh(s/d)</code></li><li><code>f_SRF = 1/(2*pi*sqrt((ESL + L)*C))</code></li></ul></dd>
+      <dt>Units</dt><dd>H, mil, Hz</dd>
+      <dt>Validity</dt><dd>The via pair only.</dd>
+      <dt>Numerics</dt><dd>Closed form, via K.viaLoopInductance.</dd>
+      <dt>Known limitations</dt><dd>Pad, trace and plane-spreading inductance are not included; this is a lower bound.</dd>
+      <dt>Evidence</dt><dd>check-models.js — Calculator: mounting inductance (thin-wire limit at s = 50d, linear in length, touching vias).</dd>
+    </dl>
+  </section>
+  <section class="contract" id="calcPlaneResonance">
+    <div class="contract__head">
+      <h2>calcPlaneResonance</h2>
+      <span class="model-tag model-tag--analytical">analytical model</span>
+      <span class="ev ev--independent">independent</span>
+      <span class="contract__ver">v1.0 &#183; not yet reviewed</span>
+    </div>
+    <p class="contract__purpose">Cavity modes of a rectangular plane pair.</p>
+    <dl class="contract__body">
+      <dt>Topology</dt><dd>A bare rectangular plane pair with open (magnetic-wall) edges.</dd>
+      <dt>Reference planes</dt><dd>The plane pair.</dd>
+      <dt>Equations</dt><dd><ul class="tight"><li><code>f(m,n) = (c/(2*sqrt(Dk)))*sqrt((m/a)^2 + (n/b)^2)</code></li></ul></dd>
+      <dt>Units</dt><dd>Hz, mm</dd>
+      <dt>Validity</dt><dd>Thin cavity, no fringing, no components.</dd>
+      <dt>Numerics</dt><dd>Closed form; modes enumerated to 30 per axis.</dd>
+      <dt>Known limitations</dt><dd>Fringing lowers the modes slightly; capacitors and vias move and damp them.</dd>
+      <dt>Evidence</dt><dd>check-models.js — Calculator: plane cavity resonance (c/2a in air, square-plate degeneracy, harmonic ratios).</dd>
+    </dl>
+  </section>
+  <section class="contract" id="calcReturnLoss">
+    <div class="contract__head">
+      <h2>calcReturnLoss</h2>
+      <span class="model-tag model-tag--exact">exact model</span>
+      <span class="ev ev--independent">independent</span>
+      <span class="contract__ver">v1.0 &#183; not yet reviewed</span>
+    </div>
+    <p class="contract__purpose">Convert between return loss, reflection coefficient, VSWR and a resistive load.</p>
+    <dl class="contract__body">
+      <dt>Topology</dt><dd>A resistive load on a lossless line of reference impedance Z0.</dd>
+      <dt>Reference planes</dt><dd>The load terminals.</dd>
+      <dt>Equations</dt><dd><ul class="tight"><li><code>Gamma = (RL - Z0)/(RL + Z0)</code></li><li><code>RL = -20*log10|Gamma|</code></li><li><code>VSWR = (1+|Gamma|)/(1-|Gamma|)</code></li></ul></dd>
+      <dt>Units</dt><dd>dB, ohm</dd>
+      <dt>Validity</dt><dd>Resistive loads; for a complex load the magnitude relations hold but the load is not unique.</dd>
+      <dt>Numerics</dt><dd>Closed form.</dd>
+      <dt>Known limitations</dt><dd>Return loss, |Gamma| and VSWR do not fix the sign, so two loads are reported.</dd>
+      <dt>Evidence</dt><dd>check-models.js — Calculator: return loss, reflection coefficient, VSWR (matched, open and short limits; round trips; power conservation).</dd>
+    </dl>
+  </section>
+  <section class="contract" id="calcRlc">
+    <div class="contract__head">
+      <h2>calcRlc</h2>
+      <span class="model-tag model-tag--exact">exact model</span>
+      <span class="ev ev--independent">independent</span>
+      <span class="contract__ver">v1.0 &#183; not yet reviewed</span>
+    </div>
+    <p class="contract__purpose">Resonant frequency, Q, bandwidth and impedance of an RLC circuit or a real capacitor.</p>
+    <dl class="contract__body">
+      <dt>Topology</dt><dd>Ideal series or parallel R, L and C; capacitor mode is series R = ESR, L = ESL.</dd>
+      <dt>Reference planes</dt><dd>The two terminals of the circuit.</dd>
+      <dt>Equations</dt><dd><ul class="tight"><li><code>f0 = 1/(2*pi*sqrt(L*C))</code></li><li><code>Q = sqrt(L/C)/R (series), R/sqrt(L/C) (parallel)</code></li><li><code>f1,2 = f0*(sqrt(1+1/4Q^2) -/+ 1/2Q)</code></li></ul></dd>
+      <dt>Units</dt><dd>Hz, ohm, H, F</dd>
+      <dt>Validity</dt><dd>Frequency-independent R, L and C.</dd>
+      <dt>Numerics</dt><dd>Closed form; |Z| sampled on a log grid for the plot.</dd>
+      <dt>Known limitations</dt><dd>Constant ESR in capacitor mode; no DC-bias derating.</dd>
+      <dt>Evidence</dt><dd>check-models.js — Calculator: LC/RLC resonance (purely resistive at f0, half-power edges, f1*f2 = f0^2, asymptotes).</dd>
+    </dl>
+  </section>
+  <section class="contract" id="calcSkinDepth">
+    <div class="contract__head">
+      <h2>calcSkinDepth</h2>
+      <span class="model-tag model-tag--exact">exact model</span>
+      <span class="ev ev--independent">independent</span>
+      <span class="contract__ver">v1.0 &#183; not yet reviewed</span>
+    </div>
+    <p class="contract__purpose">Copper skin depth, surface resistance, skin-effect onset and the roughness multiplier.</p>
+    <dl class="contract__body">
+      <dt>Topology</dt><dd>A copper conductor at 20 C, thick compared with the skin depth above onset.</dd>
+      <dt>Reference planes</dt><dd>The conductor surface.</dd>
+      <dt>Equations</dt><dd><ul class="tight"><li><code>delta = sqrt(rho/(pi*f*mu0))</code></li><li><code>Rs = rho/delta</code></li><li><code>K = 1 + (2/pi)*atan(1.4*(Rq/delta)^2)</code></li></ul></dd>
+      <dt>Units</dt><dd>m, ohm/sq, Hz</dd>
+      <dt>Validity</dt><dd>Copper, rho = 1.68e-8 ohm*m; roughness model valid to a few tens of GHz.</dd>
+      <dt>Numerics</dt><dd>Closed form.</dd>
+      <dt>Known limitations</dt><dd>Hammerstad-Bekkadal roughness is a fit on RMS roughness and saturates at 2.</dd>
+      <dt>Evidence</dt><dd>check-models.js — Calculator: skin depth and roughness (2.06 um at 1 GHz, 1/sqrt(f), roughness limits).</dd>
+    </dl>
+  </section>
+  <section class="contract" id="calcTargetImpedance">
+    <div class="contract__head">
+      <h2>calcTargetImpedance</h2>
+      <span class="model-tag model-tag--exact">exact model</span>
+      <span class="ev ev--independent">independent</span>
+      <span class="contract__ver">v1.0 &#183; not yet reviewed</span>
+    </div>
+    <p class="contract__purpose">Target impedance of a rail from voltage, ripple and current step.</p>
+    <dl class="contract__body">
+      <dt>Topology</dt><dd>A linear network and a current step with a flat spectrum.</dd>
+      <dt>Reference planes</dt><dd>The load's supply pins.</dd>
+      <dt>Equations</dt><dd><ul class="tight"><li><code>Z_target = V*ripple/dI</code></li></ul></dd>
+      <dt>Units</dt><dd>V, A, ohm</dd>
+      <dt>Validity</dt><dd>One ripple figure at all frequencies.</dd>
+      <dt>Numerics</dt><dd>Closed form.</dd>
+      <dt>Known limitations</dt><dd>A flat target ignores the load's current spectrum; staying under it is sufficient, not necessary.</dd>
+      <dt>Evidence</dt><dd>check-models.js — Calculator: target impedance (the step through the target reproduces the ripple budget; scaling).</dd>
+    </dl>
+  </section>
+  <section class="contract" id="calcViaStub">
+    <div class="contract__head">
+      <h2>calcViaStub</h2>
+      <span class="model-tag model-tag--exact">exact model</span>
+      <span class="ev ev--independent">independent</span>
+      <span class="contract__ver">v1.0 &#183; not yet reviewed</span>
+    </div>
+    <p class="contract__purpose">Quarter-wave notch of a via stub against the channel's Nyquist frequency.</p>
+    <dl class="contract__body">
+      <dt>Topology</dt><dd>An ideal open stub of the line's impedance shunted across a matched line.</dd>
+      <dt>Reference planes</dt><dd>The via's through-path.</dd>
+      <dt>Equations</dt><dd><ul class="tight"><li><code>f_notch = c/(4*l*sqrt(Dk_eff))</code></li><li><code>S21 = 2/(2 + j*tan(pi*f/(2*f_notch)))</code></li></ul></dd>
+      <dt>Units</dt><dd>Hz, mil, dB</dd>
+      <dt>Validity</dt><dd>Lossless stub of the line's impedance; the notch frequency is the robust output.</dd>
+      <dt>Numerics</dt><dd>Closed form.</dd>
+      <dt>Known limitations</dt><dd>A real stub has loss and a different impedance, so its notch is finite and its shoulder shifts.</dd>
+      <dt>Evidence</dt><dd>check-models.js — Calculator: via stub resonance (quarter wavelength at the notch, half-wave transparency, 4/5 at half the notch).</dd>
     </dl>
   </section>
   <section class="contract" id="cdr">

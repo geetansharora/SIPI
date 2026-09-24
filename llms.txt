@@ -112,6 +112,23 @@ Four long-form instruments with linked views, stated assumptions, and documented
 - [Lab C: PDN Impedance, Current Sharing, and Transient Droop](https://sipi.work/topics/labs/pdn-chain.html)
 - [Lab D: ADC Interference, Aliasing and Reference Noise](https://sipi.work/topics/labs/adc-interference.html)
 
+## Calculators
+
+Quick answers for SI and PI arithmetic, each with its formula, its assumptions and a live chart.
+
+- [LC and RLC Resonance Calculator](https://sipi.work/topics/tools/lc-rlc-resonance.html)
+- [VSWR, Return Loss and Reflection Coefficient Calculator](https://sipi.work/topics/tools/return-loss-vswr.html)
+- [BER, Q-Factor and Total Jitter Calculator](https://sipi.work/topics/tools/ber-q-jitter.html)
+- [Bit Rate, Unit Interval and Nyquist Frequency Calculator](https://sipi.work/topics/tools/bit-rate-ui-nyquist.html)
+- [Electrical Length and Critical Length Calculator](https://sipi.work/topics/tools/electrical-length.html)
+- [Via Stub Resonance Calculator](https://sipi.work/topics/tools/via-stub-resonance.html)
+- [PDN Target Impedance Calculator](https://sipi.work/topics/tools/target-impedance-calculator.html)
+- [Skin Depth and Surface Roughness Calculator](https://sipi.work/topics/tools/skin-depth.html)
+- [PCB Channel Loss Budget Calculator](https://sipi.work/topics/tools/loss-budget.html)
+- [Power Plane Cavity Resonance Calculator](https://sipi.work/topics/tools/plane-cavity-resonance.html)
+- [Decoupling Capacitor Mounting Inductance Calculator](https://sipi.work/topics/tools/mounting-inductance.html)
+- [Microstrip and Stripline Impedance Calculator](https://sipi.work/topics/tools/line-impedance.html)
+
 ## Supporting records
 
 - [Claim ledger](https://sipi.work/docs/claims.md): Source scope and verification state for tracked specification claims.

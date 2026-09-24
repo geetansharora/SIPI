@@ -1875,3 +1875,128 @@ html.lab-lock, html.lab-lock body { overflow: hidden; }
 .share--head { margin-top: var(--s3); }
 .share--foot { margin-top: var(--s6); padding-top: var(--s4); border-top: 1px solid var(--border-soft); }
 @media (max-width: 34rem) { .share__label { flex-basis: 100%; } }
+
+/* ── CALCULATORS ────────────────────────────────────────────────────────────
+   One rule drives this whole block: an input and what it changes must never be
+   on different screens. On a laptop that means inputs, numbers and chart all in
+   one frame -- inputs down the left, the numbers directly above the chart on
+   the right, the chart short enough that the whole instrument clears a 768 px
+   laptop screen. On a phone the numbers come first and stay pinned to the top
+   while the chart and inputs scroll beneath them, so whatever the reader is
+   dragging, the answer it changes is in view. The engine that fills this is
+   K.calc in viz-kit.js; every calculator page uses it, so the rule is kept in
+   one place rather than twelve. */
+.calc { display: flex; flex-direction: column; }
+.calc__inputs { display: grid; gap: var(--s3); align-content: start; padding: var(--s3) var(--s4) var(--s4); background: var(--surface); }
+.calc__main { display: contents; }
+.calc__results {
+  order: -2;
+  position: sticky; top: 0; z-index: 2;
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 8.5rem), 1fr));
+  gap: 0; background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+.calc__chart { order: -1; padding: var(--s2) var(--s3) var(--s3); gap: var(--s1); border-bottom: 1px solid var(--border); }
+.calc-out { display: flex; flex-direction: column; gap: 2px; min-width: 0; padding: var(--s2) var(--s3); background: var(--surface);
+  /* Rules drawn by each tile, not by a gap showing the grid's background, so an
+     empty cell at the end of a row stays blank instead of turning grey. */
+  box-shadow: inset -1px -1px 0 var(--border-soft); }
+.calc-out--wide { grid-column: 1 / -1; }
+.calc-out__k { font-family: var(--font-mono); font-size: .66rem; letter-spacing: .03em; color: var(--muted); }
+.calc-out__v { font-family: var(--font-mono); font-size: .84rem; font-weight: 500; color: var(--ink); font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.calc-out--wide .calc-out__v { font-size: .8rem; font-weight: 400; }
+.calc-out--ok .calc-out__v { color: var(--signal-text); }
+.calc-out--alarm .calc-out__v { color: var(--alarm-text); }
+
+.calc-in { display: grid; gap: 3px; min-width: 0; }
+.calc-in[hidden] { display: none; }
+.calc-in__head { display: flex; align-items: center; justify-content: space-between; gap: var(--s2); }
+.calc-in__head label { font-family: var(--font-mono); font-size: .72rem; color: var(--ink-2); }
+.calc-in__num {
+  box-sizing: border-box; flex: 0 0 8.2rem; width: 8.2rem; min-width: 0; min-height: 32px;
+  padding: .2rem .5rem; text-align: right;
+  color: var(--ink); background: var(--surface-2);
+  border: 1px solid var(--border); border-radius: 3px;
+  font: .8rem var(--font-mono); font-variant-numeric: tabular-nums;
+}
+.calc-in__num:focus-visible { outline: 2px solid var(--signal); outline-offset: 1px; }
+.calc-in__num.is-bad { border-color: var(--alarm); box-shadow: inset 0 0 0 1px var(--alarm); }
+.calc-in input[type="range"] { width: 100%; min-height: 24px; margin: 0; accent-color: var(--signal); }
+.calc-in__hint { font-family: var(--font-mono); font-size: .64rem; line-height: 1.4; color: var(--muted); }
+
+.calc-seg { display: flex; flex-wrap: wrap; gap: var(--s1); }
+.calc-seg__k { flex-basis: 100%; font-family: var(--font-mono); font-size: .72rem; color: var(--ink-2); }
+.calc-seg__b {
+  min-height: 32px; padding: .25rem .6rem; cursor: pointer;
+  font: .72rem var(--font-mono); color: var(--ink-2);
+  background: var(--surface-2); border: 1px solid var(--border); border-radius: 3px;
+}
+.calc-seg__b[aria-pressed="true"] { color: var(--surface); background: var(--signal); border-color: var(--signal); }
+.calc-seg__b:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
+
+@media (min-width: 56rem) {
+  /* Two columns, and nothing pinned: here everything already fits one frame. */
+  .calc { display: grid; grid-template-columns: minmax(15rem, 18.5rem) minmax(0, 1fr); }
+  .calc__inputs { border-right: 1px solid var(--border); padding-top: var(--s3); gap: var(--s2); }
+  .calc__main { display: flex; flex-direction: column; min-width: 0; }
+  .calc__results { position: static; order: 0; }
+  .calc__chart { order: 0; border-bottom: 0; }
+  .calc-in__hint { display: none; }                 /* the prose below carries it; height is the budget here */
+}
+
+/* A calculator page puts its instrument in the first screen. The head is one
+   tight block as wide as the instrument: a title on one line, and the byline and
+   share row side by side instead of stacked. Measured, not guessed: the stock
+   head is 293 px tall, which alone pushed the instrument's bottom 278 px below
+   the fold on a 1366 x 768 laptop. */
+.page-head--tool {
+  max-width: var(--wide); padding-block: var(--s5) var(--s3); gap: var(--s2) var(--s5);
+  display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center;
+}
+.page-head--tool .crumb, .page-head--tool h1 { grid-column: 1 / -1; }
+.page-head--tool h1 { font-size: clamp(1.5rem, 3.4vw, 2rem); }
+.page-head--tool .share--head { margin-top: 0; justify-self: end; }
+.page-head--tool + .instrument { margin-top: 0; }
+.page-head--tool { padding-block: var(--s4) var(--s2); }
+.page-head--tool + .instrument > .instrument__bar { padding-block: var(--s2); }
+@media (max-width: 47.99rem) {
+  .page-head--tool { grid-template-columns: minmax(0, 1fr); }
+  .page-head--tool .share--head { justify-self: start; }
+}
+@media (min-width: 56rem) {
+  /* Slider and number on one line under the label: 45 px an input instead of 70,
+     which is what lets the eight-input loss budget fit beside its chart. */
+  .calc-in { grid-template-columns: minmax(0, 1fr) 7.4rem; align-items: center; column-gap: var(--s2); row-gap: 1px; }
+  .calc-in__head { display: contents; }
+  .calc-in__head label { grid-column: 1 / -1; line-height: 1.25; }
+  .calc-in input[type="range"] { grid-row: 2; grid-column: 1; }
+  .calc-in__num { grid-row: 2; grid-column: 2; width: auto; min-height: 26px; }   /* WCAG 2.5.8 asks 24 */
+  .calc-out { padding: 6px var(--s3); }
+  .calc-out__v { font-size: .92rem; }
+  .calc-seg__b { min-height: 28px; }
+}
+
+/* The calculator instrument is wider than the reading column. 60rem suits prose
+   and a two-up plot; here it left result tiles 165 px wide, so "40.9 Ω or
+   61.1 Ω" and "0.101 in (2.56 mm)" wrapped, every tile in the row grew to match,
+   and the instrument ran off a 768 px laptop screen. Four fixed columns at
+   72rem give each tile about 213 px. */
+@media (min-width: 56rem) {
+  .page-head--tool, .page-head--tool + .instrument { max-width: min(72rem, calc(100% - 2 * var(--s4))); }
+  .page-head--tool + .instrument .calc__results { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .page-head--tool + .instrument .calc__inputs { gap: 3px; padding-block: var(--s2); }
+}
+
+@media (max-width: 55.99rem) {
+  /* The pinned numbers must stay small enough that the inputs still have most of
+     the screen: tighter tiles, and a value never wraps into a second line. */
+  .calc-out { padding: 5px var(--s2) 6px; gap: 1px; }
+  .calc__results { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+/* A tall instrument on a phone pins its title bar (M5-5) so a lab keeps its
+   name in view. A calculator pins its numbers instead, and the two cannot share
+   top: 0 -- the bar, higher in the stack, covered the first rows of results, so
+   f0 and Q were hidden while every tile still measured as on screen. The bar is
+   ~130 px on a phone; the numbers are what the reader needs to keep. */
+.instrument--calc.is-tall .instrument__bar { position: static; }

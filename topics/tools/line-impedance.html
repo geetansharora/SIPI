@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- theme:start -->
+  <meta name="theme-color" content="#F7F8FA">
+  <script>(function(){try{var t=localStorage.getItem('sipi-theme');if(t==='dark'||t==='system'){document.documentElement.setAttribute('data-theme',t);var m=document.querySelector('meta[name=theme-color]');if(m&&(t==='dark'||matchMedia('(prefers-color-scheme:dark)').matches))m.content='#0B1015';}}catch(e){}})();</script>
+  <!-- theme:end -->
+<title>Microstrip and Stripline Impedance Calculator | SIPI</title>
+<meta name="description" content="Characteristic impedance, effective dielectric constant and delay of a microstrip or centred stripline, and the trace width for a target impedance.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<link rel="stylesheet" href="../../css/base.css?v=1e3ae753">
+<link rel="stylesheet" href="../../css/components.css?v=a5bbfbf0">
+  <!-- meta:start -->
+  <link rel="canonical" href="https://sipi.work/topics/tools/line-impedance.html">
+  <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="SIPI">
+  <meta property="og:title" content="Microstrip and Stripline Impedance Calculator | SIPI">
+  <meta property="og:description" content="Characteristic impedance, effective dielectric constant and delay of a microstrip or centred stripline, and the trace width for a target impedance.">
+  <meta property="og:url" content="https://sipi.work/topics/tools/line-impedance.html">
+  <meta property="og:image" content="https://sipi.work/assets/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Microstrip and Stripline Impedance Calculator | SIPI">
+  <meta name="twitter:description" content="Characteristic impedance, effective dielectric constant and delay of a microstrip or centred stripline, and the trace width for a target impedance.">
+  <meta name="twitter:image" content="https://sipi.work/assets/og.png">
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Microstrip and Stripline Impedance Calculator","description":"Characteristic impedance, effective dielectric constant and delay of a microstrip or centred stripline, and the trace width for a target impedance.","url":"https://sipi.work/topics/tools/line-impedance.html","articleSection":"Calculators","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer"},"publisher":{"@type":"Person","name":"Geetansh Arora"}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"SIPI","item":"https://sipi.work/"},{"@type":"ListItem","position":2,"name":"Calculators","item":"https://sipi.work/#tools"},{"@type":"ListItem","position":3,"name":"Microstrip and Stripline Impedance Calculator"}]}</script>
+  <!-- meta:end -->
+</head>
+<body>
+
+<header class="masthead">
+  <a class="wordmark" href="../../index.html">SIPI</a>
+  <button class="theme-toggle" data-act="theme" type="button">Light</button>
+  <nav aria-label="Site">
+    <a href="../../index.html#groundwork">Topics</a>
+    <a href="../../start.html">Start</a>
+    <a href="../../labs.html">Labs</a>
+    <a href="../../colophon.html">About</a>
+  </nav>
+</header>
+
+<main>
+  <div class="page-head page-head--tool">
+    <p class="crumb"><a href="../../index.html#tools">Calculators</a> / 12</p>
+    <h1>Microstrip and Stripline Impedance Calculator</h1>
+    <p class="byline">
+      <!-- review:start --><span>By Geetansh Arora — Principal SI/PI Engineer</span><span>Updated Sep 2026</span><span>10 min</span><!-- review:end -->
+    </p>
+    <!-- share:head:start --><div class="share share--head" data-share data-share-url="https://sipi.work/topics/tools/line-impedance.html" data-share-title="Microstrip and Stripline Impedance Calculator"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Ftools%2Fline-impedance.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Ftools%2Fline-impedance.html&amp;text=Microstrip%20and%20Stripline%20Impedance%20Calculator" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=Microstrip%20and%20Stripline%20Impedance%20Calculator&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Ftools%2Fline-impedance.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:head:end -->
+  </div>
+
+  <section class="instrument instrument--calc" data-viz="calcLineImpedance" aria-label="Line impedance calculator: choose microstrip or stripline, enter width, dielectric height or plane spacing, copper thickness and Dk, and read the impedance and the width for a target">
+    <script type="application/json" data-contract>{"kind":"analytical","evidence":"independent","purpose":"Characteristic impedance, effective permittivity and delay of microstrip and centred stripline.","equations":["microstrip: Hammerstad-Jensen (1980) with thickness correction","stripline: Z0 = (eta0/(4*sqrt(er)))*K(k)/K(k'), k = sech(pi*w/2b)"],"units":"ohm, mil","validity":"Quasi-static; no dispersion, no solder mask, rectangular copper.","numerics":"Closed form; elliptic integrals by the arithmetic-geometric mean; width solved by bisection.","limitations":"Stripline is zero-thickness; real copper reads a few ohms lower.","suites":["Calculator: microstrip and stripline impedance"],"version":"1.0","reviewed":"not yet","panel":"calcLineImpedance"}</script>
+    <div class="instrument__bar">
+      <span class="instrument__title">Microstrip · stripline impedance</span>
+        <span data-evidence="independent" data-model-version="1.0" class="model-tag model-tag--analytical" title="Hammerstad–Jensen for microstrip; Cohn's exact result for a zero-thickness centred stripline.">analytical</span>
+    </div>
+    <div class="calc">
+      <div class="calc__inputs" data-calc-inputs></div>
+      <div class="calc__main">
+        <div class="calc__results" data-calc-results role="status" aria-live="polite" aria-label="Results"></div>
+        <div class="panel calc__chart">
+          <span class="panel__label">Impedance against trace width</span>
+          <canvas data-cv="calc" role="img" aria-label="Plot of characteristic impedance against trace width on a logarithmic axis, with the current width marked and the width for the target impedance shown"></canvas>
+          <div class="legend" data-calc-legend></div>
+        </div>
+      </div>
+    </div>
+    <noscript><p class="calc-noscript">This calculator runs in your browser and needs JavaScript. Its formulas are set out below.</p></noscript>
+  </section>
+
+  <div class="prose">
+    <p class="answer">
+      A trace's impedance is set by how much capacitance and inductance it has per unit length, and both
+      come from geometry: wider traces and thinner dielectrics add capacitance and lower the impedance. These
+      are the closed forms that field solvers are checked against. Use them to get close, then confirm with
+      your fabricator's solver, which knows the real stackup.
+    </p>
+
+    <h2>Reading the numbers</h2>
+    <ul>
+      <li>Impedance falls with width roughly logarithmically: doubling the width takes off far less than half the ohms.</li>
+      <li><b>&#949;<sub>eff</sub></b> is the Dk the wave actually sees. For microstrip it is lower than the laminate's, because part of the field is in air.</li>
+      <li>Fabricators etch trapezoids, not rectangles, and plating adds copper. Expect their solver to differ by a few ohms.</li>
+    </ul>
+    <p>Every value is in the address bar as you change it, so a link reproduces the calculation exactly.
+      Type values with SI prefixes &#8212; <code>100n</code>, <code>2.2p</code>, <code>16G</code> &#8212; or
+      drag the sliders; a bare number keeps the prefix already shown.</p>
+
+    <h2>The formulas</h2>
+      <div class="eq">
+        microstrip: &#160; <i class="var">Z</i><sub>0</sub> = <i class="var">Z</i><sub>01</sub>(<i class="var">u</i>) / &#8730;&#949;<sub>eff</sub>(<i class="var">u</i>), &#160; <i class="var">u</i> = <i class="var">w</i>/<i class="var">h</i>
+        <span class="cap">Hammerstad and Jensen's air-line impedance and effective permittivity, with their thickness correction.</span>
+      </div>
+      <div class="eq">
+        stripline: &#160; <i class="var">Z</i><sub>0</sub> = ( &#951;<sub>0</sub> / 4&#8730;&#949;<sub>r</sub> ) &#183; <i class="var">K</i>(<i class="var">k</i>) / <i class="var">K</i>(<i class="var">k</i>&#8242;), &#160; <i class="var">k</i> = sech(&#960;<i class="var">w</i>/2<i class="var">b</i>)
+        <span class="cap">Cohn's conformal-mapping result, exact for a zero-thickness strip centred between planes b apart.</span>
+      </div>
+
+    <details class="deeper">
+      <summary>Go deeper &#8212; assumptions, how it is checked, and sources</summary>
+      <p><strong>Assumptions.</strong> Quasi-static: no dispersion, which raises microstrip's &#949;<sub>eff</sub>
+      a little at high frequency. Rectangular copper, a homogeneous dielectric, and no solder mask &#8212; mask
+      lowers a surface trace's impedance by a few ohms. Stripline is centred and zero-thickness; real copper
+      reads a few ohms lower.</p>
+      <p><strong>How it is checked.</strong> For microstrip, Hammerstad&#8211;Jensen and Wheeler's independently
+      derived 1977 formula agree within 1% across widths and Dk values, &#949;<sub>eff</sub> is exactly 1 in air
+      and lies between (&#949;<sub>r</sub>+1)/2 and &#949;<sub>r</sub>, and a 50 &#937; line on &#949;<sub>r</sub> 4.4
+      lands on the widely published w/h. For stripline, a very wide strip approaches the parallel-plate
+      limit, and the result agrees with the IPC-2141 approximation within its stated range.</p>
+      <p><strong>Sources.</strong> E. Hammerstad and O. Jensen, &#8220;Accurate models for microstrip
+      computer-aided design,&#8221; <em>IEEE MTT-S Int. Microwave Symp. Digest</em>, 1980; H. A. Wheeler,
+      &#8220;Transmission-line properties of a strip on a dielectric sheet on a plane,&#8221; <em>IEEE Trans.
+      Microwave Theory Tech.</em>, vol. 25, no. 8, 1977; S. B. Cohn, &#8220;Characteristic impedance of the
+      shielded-strip transmission line,&#8221; <em>IRE Trans. Microwave Theory Tech.</em>, vol. 2, no. 2, 1954.</p>
+    </details>
+
+    <h3>Related</h3>
+    <ul class="tight">
+      <li><a href="../fundamentals/characteristic-impedance.html">Transmission-Line Characteristic Impedance</a></li>
+      <li><a href="../package-board/stackup-design.html">PCB Stackup Design and Dielectric Selection</a></li>
+      <li><a href="../package-board/manufacturing-tolerance.html">PCB Manufacturing Variation: Etch, Glass Weave, and Impedance</a></li>
+    </ul>
+  </div>
+
+  <!-- share:foot:start --><div class="share share--foot" data-share data-share-url="https://sipi.work/topics/tools/line-impedance.html" data-share-title="Microstrip and Stripline Impedance Calculator"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Ftools%2Fline-impedance.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Ftools%2Fline-impedance.html&amp;text=Microstrip%20and%20Stripline%20Impedance%20Calculator" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=Microstrip%20and%20Stripline%20Impedance%20Calculator&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Ftools%2Fline-impedance.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:foot:end -->
+  <!-- pager:start -->
+  <nav class="pager" aria-label="Previous and next topic">
+    <a class="prev" href="../../topics/tools/mounting-inductance.html"><span class="dir">Previous</span><span>Decoupling Capacitor Mounting Inductance Calculator</span></a>
+    <a class="next pager__end" href="../../index.html#tools"><span class="dir">End of the sequence</span><span>Back to the topic map</span></a>
+  </nav>
+  <!-- pager:end -->
+</main>
+
+<footer class="site-foot">
+  <span>SIPI &#8212; signal and power integrity, visualised.</span>
+  <nav class="site-foot__nav" aria-label="Site, footer">
+    <a href="../../start.html">Start</a>
+    <a href="../../labs.html">Labs</a>
+    <a href="../../reference.html">Reference</a>
+    <a href="../../colophon.html">About &amp; AI disclosure</a>
+    <a href="../../model-contract.html">Model assumptions</a>
+    <a href="../../docs/claims.md">Claim ledger (Markdown)</a>
+  </nav>
+  <span>Created and directed by Geetansh Arora. Text <a href="../../LICENSE-CONTENT">CC BY 4.0</a>, code <a href="../../LICENSE-CODE">MIT</a>.</span>
+</footer>
+
+<script src="../../js/site.js?v=9ac8f8b6" defer></script>
+<script src="../../js/viz-kit.js?v=80ff7520" defer></script>
+<script src="../../js/models/calc-models.js?v=f7b0daa5" defer></script>
+<script src="../../js/viz/calc-line-impedance.js?v=32a82033" defer></script>
+<script src="../../js/viz-loader.js?v=8121f120" defer></script>
+<script src="../../js/search.js?v=6c93a285" defer></script>
+</body>
+</html>

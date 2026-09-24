@@ -19,29 +19,9 @@
 
   const SQ2PI = Math.sqrt(2 * Math.PI);
 
-  function erfcc(x) {                    // Numerical Recipes, |err| < 1.2e-7
-    const z = Math.abs(x), t = 2 / (2 + z);
-    const ans = t * Math.exp(-z * z - 1.26551223 + t * (1.00002368 + t * (0.37409196
-      + t * (0.09678418 + t * (-0.18628806 + t * (0.27886807 + t * (-1.13520398
-      + t * (1.48851587 + t * (-0.82215223 + t * 0.17087277)))))))));
-    return x >= 0 ? ans : 2 - ans;
-  }
-  function Q(x) {
-    if (x < 0) return 1 - Q(-x);
-    if (x < 3) return 0.5 * erfcc(x / Math.SQRT2);
-    const i = 1 / (x * x);               // asymptotic series — keeps relative accuracy in the tail
-    return Math.exp(-x * x / 2) / (x * SQ2PI) * (1 - i + 3 * i * i - 15 * i * i * i);
-  }
-  /* Inverse: the Q value a BER demands. Bisection on a monotone function is
-     plenty here and cannot diverge the way Newton can in the tail. */
-  function Qinv(p) {
-    let lo = 0, hi = 12;
-    for (let i = 0; i < 80; i++) {
-      const mid = (lo + hi) / 2;
-      (Q(mid) > p) ? (lo = mid) : (hi = mid);
-    }
-    return (lo + hi) / 2;
-  }
+  /* The tail maths moved to viz-kit.js (K.erfc, K.Q, K.Qinv) so the BER
+     calculator shares it rather than copying it. Same code, one place. */
+  const Q = K.Q, Qinv = K.Qinv;
 
   /* The sampling interval that meets a target BER, or null when there is none.
      Returns an explicit empty result rather than a sentinel: this previously

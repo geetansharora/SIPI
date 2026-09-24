@@ -637,5 +637,259 @@
     "version": "1.0",
     "reviewed": "2026-09-18",
     "reviewer": "Geetansh"
+  },
+  "calcRlc": {
+    "kind": "exact",
+    "evidence": "independent",
+    "purpose": "Resonant frequency, Q, bandwidth and impedance of an RLC circuit or a real capacitor.",
+    "topology": "Ideal series or parallel R, L and C; capacitor mode is series R = ESR, L = ESL.",
+    "planes": "The two terminals of the circuit.",
+    "equations": [
+      "f0 = 1/(2*pi*sqrt(L*C))",
+      "Q = sqrt(L/C)/R (series), R/sqrt(L/C) (parallel)",
+      "f1,2 = f0*(sqrt(1+1/4Q^2) -/+ 1/2Q)"
+    ],
+    "units": "Hz, ohm, H, F",
+    "validity": "Frequency-independent R, L and C.",
+    "numerics": "Closed form; |Z| sampled on a log grid for the plot.",
+    "limitations": "Constant ESR in capacitor mode; no DC-bias derating.",
+    "verified": "check-models.js — Calculator: LC/RLC resonance (purely resistive at f0, half-power edges, f1*f2 = f0^2, asymptotes).",
+    "suites": [
+      "Calculator: LC/RLC resonance"
+    ],
+    "version": "1.0",
+    "reviewed": "not yet"
+  },
+  "calcReturnLoss": {
+    "kind": "exact",
+    "evidence": "independent",
+    "purpose": "Convert between return loss, reflection coefficient, VSWR and a resistive load.",
+    "topology": "A resistive load on a lossless line of reference impedance Z0.",
+    "planes": "The load terminals.",
+    "equations": [
+      "Gamma = (RL - Z0)/(RL + Z0)",
+      "RL = -20*log10|Gamma|",
+      "VSWR = (1+|Gamma|)/(1-|Gamma|)"
+    ],
+    "units": "dB, ohm",
+    "validity": "Resistive loads; for a complex load the magnitude relations hold but the load is not unique.",
+    "numerics": "Closed form.",
+    "limitations": "Return loss, |Gamma| and VSWR do not fix the sign, so two loads are reported.",
+    "verified": "check-models.js — Calculator: return loss, reflection coefficient, VSWR (matched, open and short limits; round trips; power conservation).",
+    "suites": [
+      "Calculator: return loss, reflection coefficient, VSWR"
+    ],
+    "version": "1.0",
+    "reviewed": "not yet"
+  },
+  "calcBer": {
+    "kind": "analytical",
+    "evidence": "independent",
+    "purpose": "Q factor and total jitter implied by a target BER under the dual-Dirac model.",
+    "topology": "Gaussian random jitter plus dual-Dirac deterministic jitter, transition density 0.5 or 1.",
+    "planes": "The receiver's sampling point.",
+    "equations": [
+      "BER = rho*Q(Q_BER)",
+      "TJ = DJ(dd) + 2*Q_BER*RJ"
+    ],
+    "units": "s, dimensionless",
+    "validity": "RJ Gaussian into the extrapolated tail; DJ given as its dual-Dirac value.",
+    "numerics": "Chebyshev erfc below x = 3, four-term asymptotic series above; the branches differ by about 0.9% at x = 3. Inverse by bisection.",
+    "limitations": "Dual-Dirac DJ is a fitted quantity, smaller than peak-to-peak DJ; no amplitude noise.",
+    "verified": "check-models.js — Calculator: BER, Q and total jitter (tail identities, normal table, the published 14.069 multiplier).",
+    "suites": [
+      "Calculator: BER, Q and total jitter"
+    ],
+    "version": "1.0",
+    "reviewed": "not yet"
+  },
+  "calcBitRate": {
+    "kind": "exact",
+    "evidence": "independent",
+    "purpose": "Symbol rate, unit interval, Nyquist frequency, edge bandwidth and bits in flight from a data rate.",
+    "topology": "NRZ or PAM4 random data; a single-pole edge; a uniform trace.",
+    "planes": "Transmitter output.",
+    "equations": [
+      "UI = bits_per_symbol/data_rate",
+      "f_Nyquist = 1/(2*UI)",
+      "f_3dB = 0.35/tr"
+    ],
+    "units": "b/s, Bd, s, Hz",
+    "validity": "Random equiprobable symbols; 0.35/tr exact for a single pole only.",
+    "numerics": "Closed form; sinc^2 spectrum sampled for the plot.",
+    "limitations": "A Gaussian edge gives 0.34 rather than 0.35.",
+    "verified": "check-models.js — Calculator: bit rate, UI and Nyquist (UI x baud = 1, PAM4 vs NRZ, single-pole ln(9)/2pi, spectral null).",
+    "suites": [
+      "Calculator: bit rate, UI and Nyquist"
+    ],
+    "version": "1.0",
+    "reviewed": "not yet"
+  },
+  "calcElectricalLength": {
+    "kind": "exact",
+    "evidence": "independent",
+    "purpose": "Delay, round trip and critical length of a trace at a given rise time.",
+    "topology": "One driver, one receiver, a uniform line.",
+    "planes": "Driver and receiver pins.",
+    "equations": [
+      "tpd = 84.72*sqrt(Dk_eff) ps/in",
+      "electrically long when 2*Td > tr/3"
+    ],
+    "units": "s, in",
+    "validity": "Uniform lossless line; the /3 is a convention.",
+    "numerics": "Closed form.",
+    "limitations": "The /3 criterion is a convention shared with the topic page, not physics.",
+    "verified": "check-models.js — Calculator: electrical length (speed of light at Dk 1, round trip exactly tr/3 at the critical length, agreement with the topic page).",
+    "suites": [
+      "Calculator: electrical length"
+    ],
+    "version": "1.0",
+    "reviewed": "not yet"
+  },
+  "calcViaStub": {
+    "kind": "exact",
+    "evidence": "independent",
+    "purpose": "Quarter-wave notch of a via stub against the channel's Nyquist frequency.",
+    "topology": "An ideal open stub of the line's impedance shunted across a matched line.",
+    "planes": "The via's through-path.",
+    "equations": [
+      "f_notch = c/(4*l*sqrt(Dk_eff))",
+      "S21 = 2/(2 + j*tan(pi*f/(2*f_notch)))"
+    ],
+    "units": "Hz, mil, dB",
+    "validity": "Lossless stub of the line's impedance; the notch frequency is the robust output.",
+    "numerics": "Closed form.",
+    "limitations": "A real stub has loss and a different impedance, so its notch is finite and its shoulder shifts.",
+    "verified": "check-models.js — Calculator: via stub resonance (quarter wavelength at the notch, half-wave transparency, 4/5 at half the notch).",
+    "suites": [
+      "Calculator: via stub resonance"
+    ],
+    "version": "1.0",
+    "reviewed": "not yet"
+  },
+  "calcTargetImpedance": {
+    "kind": "exact",
+    "evidence": "independent",
+    "purpose": "Target impedance of a rail from voltage, ripple and current step.",
+    "topology": "A linear network and a current step with a flat spectrum.",
+    "planes": "The load's supply pins.",
+    "equations": [
+      "Z_target = V*ripple/dI"
+    ],
+    "units": "V, A, ohm",
+    "validity": "One ripple figure at all frequencies.",
+    "numerics": "Closed form.",
+    "limitations": "A flat target ignores the load's current spectrum; staying under it is sufficient, not necessary.",
+    "verified": "check-models.js — Calculator: target impedance (the step through the target reproduces the ripple budget; scaling).",
+    "suites": [
+      "Calculator: target impedance"
+    ],
+    "version": "1.0",
+    "reviewed": "not yet"
+  },
+  "calcSkinDepth": {
+    "kind": "exact",
+    "evidence": "independent",
+    "purpose": "Copper skin depth, surface resistance, skin-effect onset and the roughness multiplier.",
+    "topology": "A copper conductor at 20 C, thick compared with the skin depth above onset.",
+    "planes": "The conductor surface.",
+    "equations": [
+      "delta = sqrt(rho/(pi*f*mu0))",
+      "Rs = rho/delta",
+      "K = 1 + (2/pi)*atan(1.4*(Rq/delta)^2)"
+    ],
+    "units": "m, ohm/sq, Hz",
+    "validity": "Copper, rho = 1.68e-8 ohm*m; roughness model valid to a few tens of GHz.",
+    "numerics": "Closed form.",
+    "limitations": "Hammerstad-Bekkadal roughness is a fit on RMS roughness and saturates at 2.",
+    "verified": "check-models.js — Calculator: skin depth and roughness (2.06 um at 1 GHz, 1/sqrt(f), roughness limits).",
+    "suites": [
+      "Calculator: skin depth and roughness"
+    ],
+    "version": "1.0",
+    "reviewed": "not yet"
+  },
+  "calcLossBudget": {
+    "kind": "analytical",
+    "evidence": "independent",
+    "purpose": "Insertion loss of a PCB channel against a budget.",
+    "topology": "A uniform TEM line in one dielectric; current on one face of the strip; lossless return path.",
+    "planes": "Channel ends.",
+    "equations": [
+      "alpha_d = pi*f*sqrt(Dk)*Df/c",
+      "alpha_c = Rs*K/(2*w*Z0)"
+    ],
+    "units": "dB, dB/in, Hz",
+    "validity": "Constant Dk and Df; first-order conductor loss, roughly +/-30% of a field solve.",
+    "numerics": "Closed form.",
+    "limitations": "Conductor loss ignores current sharing between faces and return-plane loss.",
+    "verified": "check-models.js — Calculator: loss budget (zero Df, linear dielectric loss, sqrt(f) conductor loss, Bogatin rule within 5%).",
+    "suites": [
+      "Calculator: loss budget"
+    ],
+    "version": "1.0",
+    "reviewed": "not yet"
+  },
+  "calcPlaneResonance": {
+    "kind": "analytical",
+    "evidence": "independent",
+    "purpose": "Cavity modes of a rectangular plane pair.",
+    "topology": "A bare rectangular plane pair with open (magnetic-wall) edges.",
+    "planes": "The plane pair.",
+    "equations": [
+      "f(m,n) = (c/(2*sqrt(Dk)))*sqrt((m/a)^2 + (n/b)^2)"
+    ],
+    "units": "Hz, mm",
+    "validity": "Thin cavity, no fringing, no components.",
+    "numerics": "Closed form; modes enumerated to 30 per axis.",
+    "limitations": "Fringing lowers the modes slightly; capacitors and vias move and damp them.",
+    "verified": "check-models.js — Calculator: plane cavity resonance (c/2a in air, square-plate degeneracy, harmonic ratios).",
+    "suites": [
+      "Calculator: plane cavity resonance"
+    ],
+    "version": "1.0",
+    "reviewed": "not yet"
+  },
+  "calcMountingInductance": {
+    "kind": "exact",
+    "evidence": "independent",
+    "purpose": "Loop inductance of the via pair under a decoupling capacitor, and the mounted self-resonance.",
+    "topology": "Two parallel round vias of equal length down to a plane pair.",
+    "planes": "Capacitor pads to the plane pair.",
+    "equations": [
+      "L = (mu0*h/pi)*acosh(s/d)",
+      "f_SRF = 1/(2*pi*sqrt((ESL + L)*C))"
+    ],
+    "units": "H, mil, Hz",
+    "validity": "The via pair only.",
+    "numerics": "Closed form, via K.viaLoopInductance.",
+    "limitations": "Pad, trace and plane-spreading inductance are not included; this is a lower bound.",
+    "verified": "check-models.js — Calculator: mounting inductance (thin-wire limit at s = 50d, linear in length, touching vias).",
+    "suites": [
+      "Calculator: mounting inductance"
+    ],
+    "version": "1.0",
+    "reviewed": "not yet"
+  },
+  "calcLineImpedance": {
+    "kind": "analytical",
+    "evidence": "independent",
+    "purpose": "Characteristic impedance, effective permittivity and delay of microstrip and centred stripline.",
+    "topology": "Microstrip on a homogeneous dielectric; zero-thickness stripline centred between planes.",
+    "planes": "The line cross-section.",
+    "equations": [
+      "microstrip: Hammerstad-Jensen (1980) with thickness correction",
+      "stripline: Z0 = (eta0/(4*sqrt(er)))*K(k)/K(k'), k = sech(pi*w/2b)"
+    ],
+    "units": "ohm, mil",
+    "validity": "Quasi-static; no dispersion, no solder mask, rectangular copper.",
+    "numerics": "Closed form; elliptic integrals by the arithmetic-geometric mean; width solved by bisection.",
+    "limitations": "Stripline is zero-thickness; real copper reads a few ohms lower.",
+    "verified": "check-models.js — Calculator: microstrip and stripline impedance (Wheeler within 1%, air limit, parallel-plate limit, IPC-2141, lemniscate constant).",
+    "suites": [
+      "Calculator: microstrip and stripline impedance"
+    ],
+    "version": "1.0",
+    "reviewed": "not yet"
   }
 }

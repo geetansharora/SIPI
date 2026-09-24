@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- theme:start -->
+  <meta name="theme-color" content="#F7F8FA">
+  <script>(function(){try{var t=localStorage.getItem('sipi-theme');if(t==='dark'||t==='system'){document.documentElement.setAttribute('data-theme',t);var m=document.querySelector('meta[name=theme-color]');if(m&&(t==='dark'||matchMedia('(prefers-color-scheme:dark)').matches))m.content='#0B1015';}}catch(e){}})();</script>
+  <!-- theme:end -->
+<title>BER, Q-Factor and Total Jitter Calculator | SIPI</title>
+<meta name="description" content="Turn a target bit error rate into the Q factor and total jitter it implies, using the dual-Dirac model, and see the eye opening that remains.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<link rel="stylesheet" href="../../css/base.css?v=1e3ae753">
+<link rel="stylesheet" href="../../css/components.css?v=a5bbfbf0">
+  <!-- meta:start -->
+  <link rel="canonical" href="https://sipi.work/topics/tools/ber-q-jitter.html">
+  <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="SIPI">
+  <meta property="og:title" content="BER, Q-Factor and Total Jitter Calculator | SIPI">
+  <meta property="og:description" content="Turn a target bit error rate into the Q factor and total jitter it implies, using the dual-Dirac model, and see the eye opening that remains.">
+  <meta property="og:url" content="https://sipi.work/topics/tools/ber-q-jitter.html">
+  <meta property="og:image" content="https://sipi.work/assets/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="BER, Q-Factor and Total Jitter Calculator | SIPI">
+  <meta name="twitter:description" content="Turn a target bit error rate into the Q factor and total jitter it implies, using the dual-Dirac model, and see the eye opening that remains.">
+  <meta name="twitter:image" content="https://sipi.work/assets/og.png">
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"BER, Q-Factor and Total Jitter Calculator","description":"Turn a target bit error rate into the Q factor and total jitter it implies, using the dual-Dirac model, and see the eye opening that remains.","url":"https://sipi.work/topics/tools/ber-q-jitter.html","articleSection":"Calculators","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer"},"publisher":{"@type":"Person","name":"Geetansh Arora"}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"SIPI","item":"https://sipi.work/"},{"@type":"ListItem","position":2,"name":"Calculators","item":"https://sipi.work/#tools"},{"@type":"ListItem","position":3,"name":"BER, Q-Factor and Total Jitter Calculator"}]}</script>
+  <!-- meta:end -->
+</head>
+<body>
+
+<header class="masthead">
+  <a class="wordmark" href="../../index.html">SIPI</a>
+  <button class="theme-toggle" data-act="theme" type="button">Light</button>
+  <nav aria-label="Site">
+    <a href="../../index.html#groundwork">Topics</a>
+    <a href="../../start.html">Start</a>
+    <a href="../../labs.html">Labs</a>
+    <a href="../../colophon.html">About</a>
+  </nav>
+</header>
+
+<main>
+  <div class="page-head page-head--tool">
+    <p class="crumb"><a href="../../index.html#tools">Calculators</a> / 03</p>
+    <h1>BER, Q-Factor and Total Jitter Calculator</h1>
+    <p class="byline">
+      <!-- review:start --><span>By Geetansh Arora — Principal SI/PI Engineer</span><span>Updated Sep 2026</span><span>10 min</span><!-- review:end -->
+    </p>
+    <!-- share:head:start --><div class="share share--head" data-share data-share-url="https://sipi.work/topics/tools/ber-q-jitter.html" data-share-title="BER, Q-Factor and Total Jitter Calculator"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Ftools%2Fber-q-jitter.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Ftools%2Fber-q-jitter.html&amp;text=BER%2C%20Q-Factor%20and%20Total%20Jitter%20Calculator" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=BER%2C%20Q-Factor%20and%20Total%20Jitter%20Calculator&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Ftools%2Fber-q-jitter.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:head:end -->
+  </div>
+
+  <section class="instrument instrument--calc" data-viz="calcBer" aria-label="BER and jitter calculator: enter a target bit error rate, random and deterministic jitter and the unit interval, and read Q, total jitter and the remaining eye opening">
+    <script type="application/json" data-contract>{"kind":"analytical","evidence":"independent","purpose":"Q factor and total jitter implied by a target BER under the dual-Dirac model.","equations":["BER = rho*Q(Q_BER)","TJ = DJ(dd) + 2*Q_BER*RJ"],"units":"s, dimensionless","validity":"RJ Gaussian into the extrapolated tail; DJ given as its dual-Dirac value.","numerics":"Chebyshev erfc below x = 3, four-term asymptotic series above; the branches differ by about 0.9% at x = 3. Inverse by bisection.","limitations":"Dual-Dirac DJ is a fitted quantity, smaller than peak-to-peak DJ; no amplitude noise.","suites":["Calculator: BER, Q and total jitter"],"version":"1.0","reviewed":"not yet","panel":"calcBer"}</script>
+    <div class="instrument__bar">
+      <span class="instrument__title">BER → Q → total jitter</span>
+        <span data-evidence="independent" data-model-version="1.0" class="model-tag model-tag--analytical" title="The dual-Dirac model: Gaussian random jitter plus two-impulse deterministic jitter.">analytical</span>
+    </div>
+    <div class="calc">
+      <div class="calc__inputs" data-calc-inputs></div>
+      <div class="calc__main">
+        <div class="calc__results" data-calc-results role="status" aria-live="polite" aria-label="Results"></div>
+        <div class="panel calc__chart">
+          <span class="panel__label">Gaussian tail: error probability against distance from the edge</span>
+          <canvas data-cv="calc" role="img" aria-label="Logarithmic plot of bit error rate against distance from the edge in units of random-jitter sigma, with the target bit error rate and the required Q marked"></canvas>
+          <div class="legend" data-calc-legend></div>
+        </div>
+      </div>
+    </div>
+    <noscript><p class="calc-noscript">This calculator runs in your browser and needs JavaScript. Its formulas are set out below.</p></noscript>
+  </section>
+
+  <div class="prose">
+    <p class="answer">
+      Random jitter has no hard edge &#8212; its Gaussian tail reaches every distance with some probability.
+      A target BER picks the distance: how many standard deviations out the tail has thinned to that
+      probability. That multiplier, Q, is why a 1 ps RMS jitter costs about 14 ps of eye at 10<sup>&#8722;12</sup>.
+    </p>
+
+    <h2>Reading the numbers</h2>
+    <ul>
+      <li><b>Total jitter</b> is DJ plus 2&#183;Q times RJ: the deterministic part once, and the random tail on both sides of the eye.</li>
+      <li><b>Transition density.</b> Random data changes state on about half its bits, so only half the bits can fail at an edge: ρ = 0.5, the convention the <a href="../fundamentals/bathtub-curves.html">bathtub</a> panels use. The multiplier tables quote Q for ρ = 1; at 10<sup>&#8722;12</sup> that is 2Q = 14.07.</li>
+      <li>A closed eye here means the extrapolated jitter alone exceeds the UI &#8212; before any amplitude noise.</li>
+    </ul>
+    <p>Every value is in the address bar as you change it, so a link reproduces the calculation exactly.
+      Type values with SI prefixes &#8212; <code>100n</code>, <code>2.2p</code>, <code>16G</code> &#8212; or
+      drag the sliders; a bare number keeps the prefix already shown.</p>
+
+    <h2>The formulas</h2>
+      <div class="eq">
+        BER = &#961; &#183; Q(<i class="var">Q</i><sub>BER</sub>), &#160;&#160; Q(<i class="var">x</i>) = &#189; erfc( <i class="var">x</i> / &#8730;2 )
+        <span class="cap">Q(x) is the Gaussian tail beyond x standard deviations. At ρ = 1 and 10⁻¹², Q_BER = 7.03.</span>
+      </div>
+      <div class="eq">
+        TJ = DJ(&#948;&#948;) + 2 &#183; <i class="var">Q</i><sub>BER</sub> &#183; RJ<sub>rms</sub>
+        <span class="cap">Dual-Dirac: deterministic jitter enters once, the random tail twice.</span>
+      </div>
+
+    <details class="deeper">
+      <summary>Go deeper &#8212; assumptions, how it is checked, and sources</summary>
+      <p><strong>Assumptions.</strong> RJ is Gaussian and DJ is well described by its dual-Dirac value
+      DJ(&#948;&#948;), which is a model-fitted quantity and is smaller than the peak-to-peak DJ a scope reports.
+      Extrapolating a Gaussian to 10<sup>&#8722;15</sup> assumes nothing else lives out there.</p>
+      <p><strong>How it is checked.</strong> Q(0) = &#189;; Q is antisymmetric about 0; the two numerical
+      branches of the tail agree where they meet at x = 3; the inverse round-trips; and at 10<sup>&#8722;12</sup>
+      the multiplier matches the published 14.069.</p>
+      <p><strong>Source.</strong> INCITS TR-35-2004, <em>Fibre Channel &#8212; Methodologies for Jitter and
+      Signal Quality Specification (MJSQ)</em>.</p>
+    </details>
+
+    <h3>Related</h3>
+    <ul class="tight">
+      <li><a href="../fundamentals/jitter-taxonomy.html">Jitter Components: RJ, DJ, DCD, PJ, and TJ</a></li>
+      <li><a href="../fundamentals/bathtub-curves.html">Bathtub curves and BER extrapolation</a></li>
+      <li><a href="../fundamentals/eye-diagram.html">Eye Diagrams: Construction and Interpretation</a></li>
+    </ul>
+  </div>
+
+  <!-- share:foot:start --><div class="share share--foot" data-share data-share-url="https://sipi.work/topics/tools/ber-q-jitter.html" data-share-title="BER, Q-Factor and Total Jitter Calculator"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Ftools%2Fber-q-jitter.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Ftools%2Fber-q-jitter.html&amp;text=BER%2C%20Q-Factor%20and%20Total%20Jitter%20Calculator" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=BER%2C%20Q-Factor%20and%20Total%20Jitter%20Calculator&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Ftools%2Fber-q-jitter.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:foot:end -->
+  <!-- pager:start -->
+  <nav class="pager" aria-label="Previous and next topic">
+    <a class="prev" href="../../topics/tools/return-loss-vswr.html"><span class="dir">Previous</span><span>VSWR, Return Loss and Reflection Coefficient Calculator</span></a>
+    <a class="next" href="../../topics/tools/bit-rate-ui-nyquist.html"><span class="dir">Next</span><span>Bit Rate, Unit Interval and Nyquist Frequency Calculator</span></a>
+  </nav>
+  <!-- pager:end -->
+</main>
+
+<footer class="site-foot">
+  <span>SIPI &#8212; signal and power integrity, visualised.</span>
+  <nav class="site-foot__nav" aria-label="Site, footer">
+    <a href="../../start.html">Start</a>
+    <a href="../../labs.html">Labs</a>
+    <a href="../../reference.html">Reference</a>
+    <a href="../../colophon.html">About &amp; AI disclosure</a>
+    <a href="../../model-contract.html">Model assumptions</a>
+    <a href="../../docs/claims.md">Claim ledger (Markdown)</a>
+  </nav>
+  <span>Created and directed by Geetansh Arora. Text <a href="../../LICENSE-CONTENT">CC BY 4.0</a>, code <a href="../../LICENSE-CODE">MIT</a>.</span>
+</footer>
+
+<script src="../../js/site.js?v=9ac8f8b6" defer></script>
+<script src="../../js/viz-kit.js?v=80ff7520" defer></script>
+<script src="../../js/models/calc-models.js?v=f7b0daa5" defer></script>
+<script src="../../js/viz/calc-ber.js?v=1a5deba3" defer></script>
+<script src="../../js/viz-loader.js?v=8121f120" defer></script>
+<script src="../../js/search.js?v=6c93a285" defer></script>
+</body>
+</html>

@@ -227,9 +227,47 @@ I = "interfaces"
 LAB = "labs"
 G = "groundwork"
 M = "methodology"
+T = "tools"
 
 #          page, description, computed value, pattern with one group, tolerance %
 CLAIMS = [
+
+    # ── Calculators ─────────────────────────────────────────────────────────
+    # The numbers the calculator pages state in prose. Each value is computed
+    # here from first principles -- c, mu0, the copper resistivity and the
+    # Gaussian tail -- rather than from the rounded helpers above, so a helper
+    # constant cannot vouch for itself.
+    (T + "/return-loss-vswr", "|gamma| at 20 dB return loss",
+     10 ** (-20 / 20), r"20 dB means \|G\| = (\d+\.\d+)", 0.01),
+    (T + "/return-loss-vswr", "reflected power at 20 dB return loss (%)",
+     100 * (10 ** (-20 / 20)) ** 2, r"and ([\d.]+)% of the power", 0.01),
+    (T + "/ber-q-jitter", "eye cost of 1 ps RMS jitter at 1e-12 (ps)",
+     2 * qinv(1e-12), r"costs about ([\d.]+) ps of eye", 1.0),
+    (T + "/ber-q-jitter", "2Q at 1e-12, transition density 1",
+     2 * qinv(1e-12), r"that is 2Q = (\d+\.\d+)", 0.05),
+    (T + "/ber-q-jitter", "Q_BER at 1e-12, transition density 1",
+     qinv(1e-12), r"Q_BER = (\d+\.\d+)", 0.1),
+    (T + "/bit-rate-ui-nyquist", "single-pole f3dB x tr(10-90) = ln9/2pi",
+     math.log(9) / (2 * math.pi), r"the ([\d.]+) is 2\.2/2π", 0.2),
+    (T + "/bit-rate-ui-nyquist", "Gaussian-edge f3dB x tr(10-90)",
+     math.sqrt(math.log(2)) / (2 * math.pi) * 2 * 1.2815515655446004,
+     r"a Gaussian edge gives ([\d.]+)", 0.5),
+    (T + "/electrical-length", "vacuum delay per inch (ps)",
+     1e12 * 0.0254 / 299792458, r"covers an inch in ([\d.]+) ps", 0.05),
+    (T + "/electrical-length", "critical length, 100 ps edge at Dk 3.8 (in)",
+     100e-12 / (6 * 0.0254 / 299792458 * math.sqrt(3.8)),
+     r"longer than about ([\d.]+) in at Dk 3\.8", 2.0),
+    (T + "/via-stub-resonance", "quarter-wave constant (GHz x mil)",
+     299792458 / (4 * 25.4e-6) / 1e9, r"~ (\d+) / \(", 0.05),
+    (T + "/skin-depth", "copper skin depth at 1 GHz (um)",
+     math.sqrt(1.68e-8 / (math.pi * 1e9 * 4e-7 * math.pi)) * 1e6,
+     r"skin depth is (\d+\.\d+) um at 1 GHz", 0.5),
+    (T + "/skin-depth", "copper skin depth at 60 Hz (mm)",
+     math.sqrt(1.68e-8 / (math.pi * 60 * 4e-7 * math.pi)) * 1e3,
+     r"textbook ([\d.]+) mm at 60 Hz", 1.0),
+    (T + "/loss-budget", "dielectric loss constant (dB/in per GHz)",
+     20 / math.log(10) * math.pi * 1e9 / (299792458 / 0.0254),
+     r"dielectric loss is (\d+\.\d+)\.f", 1.0),
 
     # ── Lab D · ADC interference ────────────────────────────────────────────
     # The closed-form group of this page: folds, beats, quantization limits, the
