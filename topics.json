@@ -194,6 +194,31 @@
           "reviewer": "Geetansh Arora"
         },
         {
+          "slug": "capacitive-inductive-coupling",
+          "title": "Capacitive and Inductive Coupling: Voltage Slew vs Current Slew",
+          "status": "live",
+          "viz": "coupling",
+          "keywords": [
+            "capacitive coupling",
+            "inductive coupling",
+            "mutual capacitance",
+            "mutual inductance",
+            "dv/dt",
+            "di/dt",
+            "slew rate",
+            "victim impedance",
+            "high-impedance node",
+            "shared impedance",
+            "common-impedance coupling",
+            "coupling path",
+            "aggressor",
+            "victim",
+            "noise coupling"
+          ],
+          "reviewed": "2026-09-25",
+          "reviewer": "Geetansh Arora"
+        },
+        {
           "slug": "loss-mechanisms",
           "title": "PCB Transmission-Line Loss Mechanisms",
           "status": "live",

@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
 <link rel="stylesheet" href="css/base.css?v=1e3ae753">
-<link rel="stylesheet" href="css/components.css?v=6afb77a6">
+<link rel="stylesheet" href="css/components.css?v=d2602263">
   <!-- meta:start -->
   <link rel="canonical" href="https://sipi.work/model-contract.html">
   <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
@@ -46,10 +46,10 @@
   <div class="page-head">
     <p class="crumb"><a href="index.html">SIPI</a> / model contracts</p>
     <h1>Interactive model assumptions and evidence</h1>
-    <p class="byline"><span>Generated from <code>docs/model-types.json</code></span><span>40 panels</span><span>fidelity: 16 analytical, 12 exact, 6 illustrative, 6 numerical · evidence: 2 computed, 34 independent, 4 plausible</span></p>
+    <p class="byline"><span>Generated from <code>docs/model-types.json</code></span><span>41 panels</span><span>fidelity: 17 analytical, 12 exact, 6 illustrative, 6 numerical · evidence: 2 computed, 35 independent, 4 plausible</span></p>
     <p class="answer">
       Each interactive panel uses a model with a defined scope. This page publishes the
-      contract for all 40 panels: the
+      contract for all 41 panels: the
       topology, the reference planes, the equations, the units, the range over which it is
       valid, how it is computed, and the evidence available for its behavior.
     </p>
@@ -425,6 +425,25 @@
       <dt>Numerics</dt><dd>Direct complex evaluation on 340 log-spaced points from 1 kHz to 1 GHz; 181 analytic sinusoidal samples over three periods at the selected frequency.</dd>
       <dt>Known limitations</dt><dd>Not a lock or acquisition transient, cycle-slip model, BER simulation, or compliance jitter-tolerance mask. A mask carries a BER target, a defined pattern, the phase detector's own characteristic and usually a measured low-frequency corner. This model has none of those, and the dashed part of the tolerance curve is an assumption drawn as one. No noise model: the panel makes no claim about how much of the loop's own reference noise reaches the recovered clock, because that needs a spectrum and an injection point and neither is here. The tracking ceiling is a DECLARED assumption, not a derived result, and where it binds the tolerance no longer scales with the sampling margin.</dd>
       <dt>Evidence</dt><dd>check-models.js — CDR loop: the analytic asymptotes (|1-H| -&gt; 1 far above the loop so tolerance equals the bare margin; |1-H| -&gt; (f/fn)^2 far below), H(0) = 1 exactly, the complex complement distinguished from 1 - |H|, and type-2 peaking present at every damping. N3-1: the -3 dB bandwidth is checked against a closed form solved by hand from |H|^2 = 1/2 and, independently, against where the swept |H| crosses 1/sqrt(2) with log-interpolation between grid samples. The residual peak is asserted to EXCEED unity whenever the loop is underdamped, and the worst tolerance to fall below the sampling margin with it. Three assertions record that a fixed axis limit of 3, and a tolerance floor of half the margin, would clip the extrema the damping control exists to produce.</dd>
+    </dl>
+  </section>
+  <section class="contract" id="coupling">
+    <div class="contract__head">
+      <h2>coupling</h2>
+      <span class="model-tag model-tag--analytical">analytical model</span>
+      <span class="ev ev--independent">independent</span>
+      <span class="contract__ver">v1.0 &#183; reviewed 2026-09-25</span>
+    </div>
+    <p class="contract__purpose">Show capacitive pickup following the aggressor's voltage slew and the victim's impedance, and inductive pickup following its current slew, from one aggressor, in time and in frequency.</p>
+    <dl class="contract__body">
+      <dt>Topology</dt><dd>One trapezoidal aggressor (resistive or capacitive load); mutual capacitance into a victim node R_v ∥ C_v; mutual inductance into a victim loop with one pole.</dd>
+      <dt>Reference planes</dt><dd>The victim node (capacitive) and the victim loop (inductive).</dd>
+      <dt>Equations</dt><dd><ul class="tight"><li><code>capacitive: H_C(s) = s*R_v*Cm / (1 + s*R_v*(Cm + Cv))</code></li><li><code>inductive, resistive load: EMF = M*dI/dt = (M/R_L)*dV/dt, through one pole at f_L</code></li><li><code>inductive, capacitive load: EMF = M*C_L*d2V/dt2, through one pole at f_L</code></li><li><code>crossover (resistive load): Z* = M/(Cm*R_L)</code></li></ul></dd>
+      <dt>Units</dt><dd>V, A, s, ohm, F, H, dBV</dd>
+      <dt>Validity</dt><dd>Lumped: the coupled structure is short against the edge. Cm = 0.5 pF, M = 1 nH, Cv = 5 pF, f_L = 1 GHz and a 10 MHz, 50% duty aggressor are held fixed and stated on the panel.</dd>
+      <dt>Numerics</dt><dd>Exact periodic steady state, segment by segment (piecewise-constant slope, or impulses for a capacitive load); spectrum from the transfer functions.</dd>
+      <dt>Known limitations</dt><dd>No distributed (transmission-line) coupling, no path resonance, no shared-impedance path; one pole per path.</dd>
+      <dt>Evidence</dt><dd>check-models.js — Coupling (20 and 40 dB/decade slopes, the Cm/(Cm+Cv) plateau, slow-edge closed forms, independence of each path from the other driver, the Z* crossover, an exact Fourier integral of the time-domain solution against the transfer functions, zero mean, 6.02 and 12.04 dB edge-rate bounds).</dd>
     </dl>
   </section>
   <section class="contract" id="crosstalk">

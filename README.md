@@ -22,13 +22,13 @@ HTTP, and it hides itself when it cannot fetch `topics.json`.
 
 | | |
 |---|---|
-| Topic pages | **72**, all `live`, each with a `deeper` section and its own review date |
-| Words | 142306; median 2091 per page |
-| Interactive panels | **40**, including four labs and twelve calculators |
-| SVG figures | 36 |
-| Arithmetic claims checked | **127** across 41 pages (`check-numbers.py`) |
-| Model assertions | **965** (`check-models.js`), with **0 claims pending** |
-| Mutation coverage | **58 of 58** known defects have an assertion that provably catches them (`mutate.js`) |
+| Topic pages | **73**, all `live`, each with a `deeper` section and its own review date |
+| Words | 144979; median 2092 per page |
+| Interactive panels | **41**, including four labs and twelve calculators |
+| SVG figures | 38 |
+| Arithmetic claims checked | **137** across 42 pages (`check-numbers.py`) |
+| Model assertions | **987** (`check-models.js`), with **0 claims pending** |
+| Mutation coverage | **61 of 61** known defects have an assertion that provably catches them (`mutate.js`) |
 | Specification claims | **41 tracked: 18 verified, 21 scoped, 2 awaiting a primary source** | <!-- generated from docs/claims.json -->
 
 ## How it is checked

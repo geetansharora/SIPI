@@ -232,6 +232,30 @@ T = "tools"
 #          page, description, computed value, pattern with one group, tolerance %
 CLAIMS = [
 
+    # ── Capacitive and inductive coupling ───────────────────────────────────
+    # First principles only: i = C dV/dt, v = M dI/dt, a capacitive divider, and
+    # a linear edge that covers its swing in t_r / 0.8.
+    (F + "/capacitive-inductive-coupling", "crossover Z* = M/(Cm R_L), 1 nH, 0.5 pF, 50 ohm",
+     1e-9 / (0.5e-12 * 50), r"50 ohm load give Z\* = (\d+) ohm", 0.01),
+    (F + "/capacitive-inductive-coupling", "dV/dt of a 3.3 V, 1 ns (10-90) edge, V/ns",
+     3.3 / (1e-9 / 0.8) / 1e9, r"1 ns edge slews ([\d.]+) V/ns", 0.1),
+    (F + "/capacitive-inductive-coupling", "edge current into 10 pF at that slew, mA",
+     10e-12 * 3.3 / (1e-9 / 0.8) * 1e3, r"into 10 pF it\s+draws ([\d.]+) mA", 0.1),
+    (F + "/capacitive-inductive-coupling", "divider 0.5 pF into 5 pF, %",
+     100 * 0.5 / 5.5, r"into a 5 pF node that is ([\d.]+)%", 0.2),
+    (F + "/capacitive-inductive-coupling", "plateau: 3.3 V times the divider, mV",
+     3.3 * 0.5 / 5.5 * 1e3, r"lift the victim by at most (\d+) mV", 0.2),
+    (F + "/capacitive-inductive-coupling", "victim corner, 10 kohm and 5.5 pF, MHz",
+     1 / (2 * math.pi * 10e3 * 5.5e-12) / 1e6, r"which is only ([\d.]+) MHz for a 10 kohm node", 0.2),
+    (F + "/capacitive-inductive-coupling", "first-derivative bound for 4x faster edges, dB",
+     10 * math.log10(4), r"Four times\s+faster is 10.log 4 = ([\d.]+) dB", 0.05),
+    (F + "/capacitive-inductive-coupling", "second-derivative bound for 4x faster edges, dB",
+     20 * math.log10(4), r"Four times faster is 20.log 4 = ([\d.]+) dB", 0.05),
+    (F + "/capacitive-inductive-coupling", "regulator loop dI/dt: 3 A in a 5 ns (10-90) edge, A/ns",
+     3 / (5e-9 / 0.8) / 1e9, r"5 ns edge moves ([\d.]+) A/ns", 0.1),
+    (F + "/capacitive-inductive-coupling", "M dI/dt through 1 nH at that slew, mV",
+     1e-9 * 3 / (5e-9 / 0.8) * 1e3, r"through 1 nH of mutual inductance that is (\d+) mV", 0.1),
+
     # ── Calculators ─────────────────────────────────────────────────────────
     # The numbers the calculator pages state in prose. Each value is computed
     # here from first principles -- c, mu0, the copper resistivity and the

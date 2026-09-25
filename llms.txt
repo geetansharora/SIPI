@@ -31,6 +31,7 @@ Build intuition for transmission lines, loss, coupling, sampling, and measuremen
 - [Transmission-Line Termination Schemes](https://sipi.work/topics/fundamentals/termination-schemes.html)
 - [Return-Current Paths and Reference Continuity](https://sipi.work/topics/fundamentals/return-current-paths.html)
 - [PCB Crosstalk: NEXT, FEXT, and Mutual Coupling](https://sipi.work/topics/fundamentals/crosstalk.html)
+- [Capacitive and Inductive Coupling: Voltage Slew vs Current Slew](https://sipi.work/topics/fundamentals/capacitive-inductive-coupling.html)
 - [PCB Transmission-Line Loss Mechanisms](https://sipi.work/topics/fundamentals/loss-mechanisms.html)
 - [Intersymbol Interference (ISI) and Channel Memory](https://sipi.work/topics/fundamentals/isi.html)
 - [Eye Diagrams: Construction and Interpretation](https://sipi.work/topics/fundamentals/eye-diagram.html)

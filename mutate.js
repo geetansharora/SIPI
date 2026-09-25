@@ -772,6 +772,39 @@ const MUTATIONS = [
        + 'another; a line between them is a number neither method measured.',
     active: true, fast: true
   },
+  {
+    id: 'coupling-cap-not-derivative',
+    file: 'js/models/coupling-model.js',
+    find: '    const cap = q.kc * w * q.tauC / Math.sqrt(1 + (w * q.tauC) * (w * q.tauC));',
+    with: '    const cap = q.kc * q.tauC / Math.sqrt(1 + (w * q.tauC) * (w * q.tauC));',
+    suite: 'Coupling',
+    expect: 'capacitive coupling rises 20 dB/decade below its corner',
+    why: 'Without the factor of frequency, capacitive coupling stops being a derivative '
+       + 'and edge rate stops mattering; the page would teach the opposite of the physics.',
+    active: true, fast: true
+  },
+  {
+    id: 'coupling-corner-ignores-victim-c',
+    file: 'js/models/coupling-model.js',
+    find: '      tauC: q.Rv * (q.Cm + q.Cv), kc: q.Cm / (q.Cm + q.Cv),',
+    with: '      tauC: q.Rv * q.Cm, kc: q.Cm / (q.Cm + q.Cv),',
+    suite: 'Coupling',
+    expect: 'slow edge: capacitive pickup is R_v·Cm·dV/dt',
+    why: 'The corner is set by all the capacitance at the node; leaving out the victim\u2019s '
+       + 'own C_v moves it by 11× here and scales every slow-edge pickup by Cm/(Cm + Cv).',
+    active: true, fast: true
+  },
+  {
+    id: 'coupling-inductive-from-voltage',
+    file: 'js/models/coupling-model.js',
+    find: '      dIdt: q.load === \'r\' ? q.I / E.ramp : null,             // current slew, resistive load',
+    with: '      dIdt: q.load === \'r\' ? q.V / E.ramp * 1e-3 : null,      // current slew, resistive load',
+    suite: 'Coupling',
+    expect: 'doubling the load current doubles inductive pickup',
+    why: 'Driving the inductive path from the voltage slew is the exact confusion the page '
+       + 'exists to remove: inductive pickup follows how much current moves, not the swing.',
+    active: true, fast: true
+  },
 ];
 
 /* A deliberately UNDETECTABLE mutation, used only by --selftest.

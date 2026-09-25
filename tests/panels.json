@@ -21,6 +21,18 @@
       ]
     },
     {
+      "url": "topics/fundamentals/capacitive-inductive-coupling.html",
+      "panels": [
+        "coupling"
+      ],
+      "presets": [
+        "gpio",
+        "lowz",
+        "reg",
+        "slow"
+      ]
+    },
+    {
       "url": "topics/fundamentals/crosstalk.html",
       "panels": [
         "crosstalk"
@@ -441,8 +453,8 @@
     }
   ],
   "totals": {
-    "pages": 40,
-    "panels": 41,
-    "presets": 130
+    "pages": 41,
+    "panels": 42,
+    "presets": 134
   }
 }

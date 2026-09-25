@@ -13,7 +13,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
 <link rel="stylesheet" href="../../css/base.css?v=1e3ae753">
-<link rel="stylesheet" href="../../css/components.css?v=6afb77a6">
+<link rel="stylesheet" href="../../css/components.css?v=d2602263">
   <!-- meta:start -->
   <link rel="canonical" href="https://sipi.work/topics/fundamentals/crosstalk.html">
   <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
@@ -161,6 +161,12 @@
       Both coupling mechanisms are present, but their relative strengths depend on geometry and
       dielectric distribution. The terms do not point the same way, which produces different
       near-end and far-end behavior.
+    </p>
+
+    <p>
+      This page is about two long traces running side by side. When the aggressor couples into a node that is
+      not a matched line, such as a reference pin, a loop filter or a sense line, the coupling is lumped instead,
+      and what decides it is covered in <a href="capacitive-inductive-coupling.html">Capacitive and Inductive Coupling: Voltage Slew vs Current Slew</a>.
     </p>
 
     <h2 class="section-rule"><span>Two couplings, two directions</span></h2>
@@ -391,6 +397,7 @@
 
     <h3>Related</h3>
     <ul class="tight">
+      <li><a href="capacitive-inductive-coupling.html">Capacitive and Inductive Coupling: Voltage Slew vs Current Slew</a> — the same two mechanisms, into a node that is not a line</li>
       <li><a href="../fundamentals/return-current-paths.html">Return-Current Paths and Reference Continuity</a></li>
       <li><a href="../fundamentals/differential-signalling.html">Differential Signaling and Mode Conversion</a></li>
       <li><a href="../package-board/stackup-design.html">PCB Stackup Design and Dielectric Selection</a></li>
@@ -404,7 +411,7 @@
   <!-- pager:start -->
   <nav class="pager" aria-label="Previous and next topic">
     <a class="prev" href="../../topics/fundamentals/return-current-paths.html"><span class="dir">Previous</span><span>Return-Current Paths and Reference Continuity</span></a>
-    <a class="next" href="../../topics/fundamentals/loss-mechanisms.html"><span class="dir">Next</span><span>PCB Transmission-Line Loss Mechanisms</span></a>
+    <a class="next" href="../../topics/fundamentals/capacitive-inductive-coupling.html"><span class="dir">Next</span><span>Capacitive and Inductive Coupling: Voltage Slew vs Current Slew</span></a>
   </nav>
   <!-- pager:end -->
 </main>
@@ -424,7 +431,7 @@
 </footer>
 
 <script src="../../js/site.js?v=9ac8f8b6" defer></script>
-<script src="../../js/viz-kit.js?v=4e9e2fc6" defer></script>
+<script src="../../js/viz-kit.js?v=5da3ab7a" defer></script>
 <script src="../../js/viz/crosstalk.js?v=d47b7e2d" defer></script>
 <script src="../../js/viz-loader.js?v=8121f120" defer></script>
 <script src="../../js/search.js?v=580e4b78" defer></script>

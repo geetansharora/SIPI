@@ -1,0 +1,464 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- theme:start -->
+  <meta name="theme-color" content="#F7F8FA">
+  <script>(function(){try{var t=localStorage.getItem('sipi-theme');if(t==='dark'||t==='system'){document.documentElement.setAttribute('data-theme',t);var m=document.querySelector('meta[name=theme-color]');if(m&&(t==='dark'||matchMedia('(prefers-color-scheme:dark)').matches))m.content='#0B1015';}}catch(e){}})();</script>
+  <!-- theme:end -->
+<title>Capacitive and Inductive Coupling: Voltage Slew vs Current Slew | SIPI</title>
+<meta name="description" content="Why capacitive coupling follows an aggressor's voltage slew and the victim's impedance, while inductive coupling follows how much current moves and how fast, with both shown in time and frequency.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<link rel="stylesheet" href="../../css/base.css?v=1e3ae753">
+<link rel="stylesheet" href="../../css/components.css?v=d2602263">
+  <!-- meta:start -->
+  <link rel="canonical" href="https://sipi.work/topics/fundamentals/capacitive-inductive-coupling.html">
+  <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="SIPI">
+  <meta property="og:title" content="Capacitive and Inductive Coupling: Voltage Slew vs Current Slew | SIPI">
+  <meta property="og:description" content="Why capacitive coupling follows an aggressor's voltage slew and the victim's impedance, while inductive coupling follows how much current moves and how fast, with both shown in time and frequency.">
+  <meta property="og:url" content="https://sipi.work/topics/fundamentals/capacitive-inductive-coupling.html">
+  <meta property="og:image" content="https://sipi.work/assets/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Capacitive and Inductive Coupling: Voltage Slew vs Current Slew | SIPI">
+  <meta name="twitter:description" content="Why capacitive coupling follows an aggressor's voltage slew and the victim's impedance, while inductive coupling follows how much current moves and how fast, with both shown in time and frequency.">
+  <meta name="twitter:image" content="https://sipi.work/assets/og.png">
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Capacitive and Inductive Coupling: Voltage Slew vs Current Slew","description":"Why capacitive coupling follows an aggressor's voltage slew and the victim's impedance, while inductive coupling follows how much current moves and how fast, with both shown in time and frequency.","url":"https://sipi.work/topics/fundamentals/capacitive-inductive-coupling.html","articleSection":"Fundamentals","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer"},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-09-25"}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"SIPI","item":"https://sipi.work/"},{"@type":"ListItem","position":2,"name":"Fundamentals","item":"https://sipi.work/#fundamentals"},{"@type":"ListItem","position":3,"name":"Capacitive and Inductive Coupling: Voltage Slew vs Current Slew"}]}</script>
+  <!-- meta:end -->
+</head>
+<body>
+
+<header class="masthead">
+  <a class="wordmark" href="../../index.html">SIPI</a>
+  <button class="theme-toggle" data-act="theme" type="button">Light</button>
+  <nav aria-label="Site">
+    <a href="../../index.html#groundwork">Topics</a>
+    <a href="../../start.html">Start</a>
+    <a href="../../labs.html">Labs</a>
+    <a href="../../calculators.html">Calculators</a>
+    <a href="../../colophon.html">About</a>
+  </nav>
+</header>
+
+<main>
+  <div class="page-head">
+    <p class="crumb"><a href="../../index.html#fundamentals">Fundamentals</a> / 08</p>
+    <h1>Capacitive and Inductive Coupling: Voltage Slew vs Current Slew</h1>
+    <p class="byline">
+      <!-- review:start --><span>By Geetansh Arora — Principal SI/PI Engineer</span><time datetime="2026-09-25" title="Technical review by Geetansh Arora on this date">25 Sep 2026</time><span>10 min</span><!-- review:end -->
+    </p>
+    <!-- share:head:start --><div class="share share--head" data-share data-share-url="https://sipi.work/topics/fundamentals/capacitive-inductive-coupling.html" data-share-title="Capacitive and Inductive Coupling: Voltage Slew vs Current Slew"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Ffundamentals%2Fcapacitive-inductive-coupling.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Ffundamentals%2Fcapacitive-inductive-coupling.html&amp;text=Capacitive%20and%20Inductive%20Coupling%3A%20Voltage%20Slew%20vs%20Current%20Slew" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=Capacitive%20and%20Inductive%20Coupling%3A%20Voltage%20Slew%20vs%20Current%20Slew&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Ffundamentals%2Fcapacitive-inductive-coupling.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:head:end -->
+    <p class="answer">
+      Noise crosses from one net to another in two ways, and they answer to different things. Capacitive coupling is
+      driven by how fast the aggressor's <em>voltage</em> changes, and it grows with the victim's impedance. Inductive
+      coupling is driven by how much <em>current</em> moves and how fast, and it does not care about the victim node's
+      impedance at all. Which one you see depends on both the aggressor and the victim.
+    </p>
+  </div>
+
+  <!-- ───────────── the picture ───────────── -->
+  <!-- mobilenote:start -->
+  <p class="mobile-note" role="note">
+    <b>Best viewed on a laptop or desktop.</b>
+    These panels are built so you can move a slider and watch several charts
+    answer at once. A phone has no room to put them side by side.
+  </p>
+  <!-- mobilenote:end -->
+  <section class="instrument lab" data-viz="coupling" aria-label="Interactive capacitive and inductive coupling from one aggressor into a victim, in time and in frequency">
+    <script type="application/json" data-contract>{"kind":"analytical","evidence":"independent","purpose":"Show capacitive pickup following the aggressor's voltage slew and the victim's impedance, and inductive pickup following its current slew, from one aggressor, in time and in frequency.","equations":["capacitive: H_C(s) = s*R_v*Cm / (1 + s*R_v*(Cm + Cv))","inductive, resistive load: EMF = M*dI/dt = (M/R_L)*dV/dt, through one pole at f_L","inductive, capacitive load: EMF = M*C_L*d2V/dt2, through one pole at f_L","crossover (resistive load): Z* = M/(Cm*R_L)"],"units":"V, A, s, ohm, F, H, dBV","validity":"Lumped: the coupled structure is short against the edge. Cm = 0.5 pF, M = 1 nH, Cv = 5 pF, f_L = 1 GHz and a 10 MHz, 50% duty aggressor are held fixed and stated on the panel.","numerics":"Exact periodic steady state, segment by segment (piecewise-constant slope, or impulses for a capacitive load); spectrum from the transfer functions.","limitations":"No distributed (transmission-line) coupling, no path resonance, no shared-impedance path; one pole per path.","suites":["Coupling"],"version":"1.0","reviewed":"2026-09-25","panel":"coupling"}</script>
+<div class="lab-frame">
+<div class="instrument__bar">
+      <span class="instrument__title">One aggressor · two ways into the victim</span>
+      <span data-evidence="independent" data-model-version="1.0" class="model-tag model-tag--analytical" title="Lumped model, exact periodic steady state. One aggressor, one pole per path.">analytical</span>
+      <span class="instrument__readout" role="status" aria-live="polite" aria-label="Current values">
+        <span>dV/dt <b data-out="dvdt">—</b></span>
+        <span>dI/dt <b data-out="didt">—</b></span>
+        <span>capacitive <b data-out="cap">—</b></span>
+        <span>inductive <b data-out="ind">—</b></span>
+        <span>dominant <b data-out="dom">—</b></span>
+        <span>Z* <b data-out="zstar">—</b></span>
+        <span>2× faster edge <b data-out="faster">—</b></span>
+      </span>
+    <button type="button" class="tool-btn lab-full" data-lab-full aria-pressed="false">full screen</button>
+</div>
+<aside class="lab-rail lab-rail--left" aria-label="Aggressor controls">
+<p class="lab-rail__side">Aggressor <span>what switches</span></p>
+<details class="control-group lab-group" open><summary class="lab-group__title" id="lab-left-0">Scenarios</summary><div class="control-group__grid lab-group__body"><div class="presets">
+      <button class="preset" type="button" data-preset="gpio" aria-pressed="true">GPIO beside a reference</button>
+      <button class="preset" type="button" data-preset="lowz" aria-pressed="false">Same GPIO, 50 Ω victim</button>
+      <button class="preset" type="button" data-preset="slow" aria-pressed="false">Same GPIO, 4 ns edges</button>
+      <button class="preset" type="button" data-preset="reg" aria-pressed="false">Regulator loop beside a sense line</button>
+    </div>
+    <div class="transport"><span data-out="note">—</span> <span data-out="clamp"></span></div></div></details>
+<details class="control-group lab-group" open><summary class="lab-group__title" id="lab-left-1">Voltage</summary><div class="control-group__grid lab-group__body"><div class="ctl">
+        <div class="ctl__head"><label for="cp-v">Aggressor swing</label><output id="cp-v-out" for="cp-v">3.3 V</output></div>
+        <input type="range" id="cp-v" aria-describedby="cp-v-note" min="5" max="120" step="1" value="33">
+        <span class="ctl__note" id="cp-v-note">Moves the capacitive pickup only</span>
+      </div>
+      <div class="ctl">
+        <div class="ctl__head"><label for="cp-tr">Edge, 10–90%</label><output id="cp-tr-out" for="cp-tr">1 ns</output></div>
+        <input type="range" id="cp-tr" aria-describedby="cp-tr-note" min="0" max="1000" step="1" value="500">
+        <span class="ctl__note" id="cp-tr-note">Moves both slews at once</span>
+      </div></div></details>
+<details class="control-group lab-group" open><summary class="lab-group__title" id="lab-left-2">Current</summary><div class="control-group__grid lab-group__body"><div class="ctl">
+        <div class="ctl__head"><span class="ctl__label">Aggressor load</span></div>
+        <div class="presets">
+          <button class="preset preset--act" type="button" data-act="load" data-load="r" aria-pressed="false">Resistive</button>
+          <button class="preset preset--act" type="button" data-act="load" data-load="c" aria-pressed="true">Capacitive</button>
+        </div>
+        <span class="ctl__note">Decides what the current does on an edge</span>
+      </div>
+      <div class="ctl" data-ctl="i" hidden>
+        <div class="ctl__head"><label for="cp-i">Load current</label><output id="cp-i-out" for="cp-i">20 mA</output></div>
+        <input type="range" id="cp-i" aria-describedby="cp-i-note" min="0" max="1000" step="1" value="336">
+        <span class="ctl__note" id="cp-i-note">Moves the inductive pickup only</span>
+      </div>
+      <div class="ctl" data-ctl="cl">
+        <div class="ctl__head"><label for="cp-cl">Load capacitance</label><output id="cp-cl-out" for="cp-cl">10 pF</output></div>
+        <input type="range" id="cp-cl" aria-describedby="cp-cl-note" min="0" max="1000" step="1" value="333">
+        <span class="ctl__note" id="cp-cl-note">Current = C<sub>L</sub>·dV/dt, only on the edge</span>
+      </div></div></details>
+<p class="lab-help" aria-hidden="true">Point at or focus a control to see what it changes.</p>
+</aside>
+<div class="lab-stage">
+<div class="lab-row lab-row--anchor" style="--anchor-columns: minmax(0, 1fr)">
+<div data-lab-unit="time" data-lab-name="Pickup against time" class="panel">
+        <div class="lab-panel-head"><span class="panel__label">What the victim sees, over one aggressor period</span><button type="button" class="tool-btn lab-expand" data-lab-expand aria-pressed="false" aria-label="Expand pickup against time">expand</button></div>
+        <canvas data-cv="time" role="img" aria-label="Capacitive and inductive pickup in millivolts against time over one period of the aggressor, with the aggressor's rising and falling edges shaded."></canvas>
+        <div class="legend"><span><i style="background:var(--signal)"></i>capacitive pickup</span><span><i style="background:var(--reflect)"></i>inductive pickup</span></div>
+      </div>
+<div data-lab-unit="spec" data-lab-name="Pickup by harmonic" class="panel">
+        <div class="lab-panel-head"><span class="panel__label">The same, harmonic by harmonic</span><button type="button" class="tool-btn lab-expand" data-lab-expand aria-pressed="false" aria-label="Expand pickup by harmonic">expand</button></div>
+        <canvas data-cv="spec" role="img" aria-label="The aggressor's harmonics in dBV against frequency on a logarithmic axis, with the capacitive and inductive pickup at each harmonic and the edge, victim and loop corners marked."></canvas>
+        <div class="legend"><span><i style="background:var(--muted)"></i>aggressor harmonics</span><span><i style="background:var(--signal)"></i>capacitive</span><span><i style="background:var(--reflect)"></i>inductive</span></div>
+      </div>
+</div>
+</div>
+<aside class="lab-rail lab-rail--right" aria-label="Victim controls">
+<p class="lab-rail__side">Victim <span>what picks it up</span></p>
+<details class="control-group lab-group" open><summary class="lab-group__title" id="lab-right-0">Victim node</summary><div class="control-group__grid lab-group__body"><div class="ctl">
+        <div class="ctl__head"><label for="cp-rv">Victim impedance</label><output id="cp-rv-out" for="cp-rv">10 kΩ</output></div>
+        <input type="range" id="cp-rv" aria-describedby="cp-rv-note" min="0" max="1000" step="1" value="667">
+        <span class="ctl__note" id="cp-rv-note">Moves the capacitive pickup only</span>
+      </div></div></details>
+<details class="control-group lab-group" open><summary class="lab-group__title" id="lab-right-1">Held fixed</summary><div class="control-group__grid lab-group__body">
+      <p class="instrument__hint">Mutual capacitance C<sub>m</sub> 0.5 pF, mutual inductance M 1 nH, victim node capacitance 5 pF,
+        victim loop bandwidth 1 GHz, aggressor 10 MHz at 50% duty. They scale the answer, not the lesson.</p></div></details>
+<p class="lab-help" aria-hidden="true">Point at or focus a control to see what it changes.</p>
+</aside>
+</div>
+</section>
+
+  <div class="prose">
+    <h2>Two fields, two drivers</h2>
+
+    <p>
+      Every conductor carrying a signal has two fields around it. The <strong>electric field</strong> comes from its
+      voltage, and it reaches any nearby conductor through a small <strong>mutual capacitance</strong>,
+      C<sub>m</sub>. The <strong>magnetic field</strong> comes from its current, and it threads any nearby loop
+      through a <strong>mutual inductance</strong>, M. Each field only couples when it <em>changes</em>, which is why
+      both kinds of noise appear on edges and nowhere else.
+    </p>
+
+    <figure class="figure">
+      <div class="figure__bar"><span>Two traces over a ground plane &#183; the same pair, seen through each field</span></div>
+      <div class="figure__pair figure__pair--stack">
+        <div><span class="figure__label">Electric field &#8212; follows the voltage</span><svg viewBox="0 52 400 162" role="img" aria-label="Cross-section of an aggressor trace and a victim trace over a ground plane. Electric field lines run from the aggressor mostly down to the plane, but some run across to the victim: that share is the mutual capacitance.">
+  <rect class="dielectric" x="20" y="100" width="360" height="58"/>
+  <rect class="plane" x="20" y="158" width="360" height="9"/>
+  <path d="M132,100 C130,122 110,142 96,158" class="field-2"/>
+  <path d="M140,102 C139,125 128,145 122,158" class="field-2"/>
+  <path d="M147,104 L147,158" class="field-2"/>
+  <path d="M154,102 C156,128 166,146 172,158" class="field-2"/>
+  <path d="M162,98 C192,84 214,84 242,96" class="flow-2"/>
+  <path d="M162,94 C190,72 216,72 242,90" class="flow-2"/>
+  <path d="M162,100 C194,108 212,108 242,100" class="flow-2"/>
+  <path d="M258,104 L258,158" class="field"/>
+  <path d="M266,102 C268,128 280,146 288,158" class="field"/>
+  <rect class="copper-2" x="132" y="88" width="30" height="12" rx="1"/>
+  <rect class="copper" x="242" y="88" width="30" height="12" rx="1"/>
+  <text class="lbl-ref" x="147" y="78" text-anchor="middle">aggressor</text>
+  <text class="lbl-sig" x="257" y="78" text-anchor="middle">victim</text>
+  <text class="lbl-hi" x="202" y="64" text-anchor="middle">C&#8344;</text>
+  <text class="lbl" x="24" y="182">GND</text>
+  <text class="lbl-hi" x="200" y="194" text-anchor="middle">dV/dt pushes i = C&#8344;&#183;dV/dt into the victim</text>
+  <text class="lbl" x="200" y="208" text-anchor="middle">the voltage it makes = that current &#215; the victim&#8217;s impedance</text>
+</svg></div>
+        <div><span class="figure__label">Magnetic field &#8212; follows the current</span><svg viewBox="0 0 400 214" role="img" aria-label="The same cross-section. Magnetic field lines circle the aggressor's current. The loop formed by the victim trace and the plane beneath it is threaded by part of that field: that share is the mutual inductance.">
+  <rect class="dielectric" x="20" y="100" width="360" height="58"/>
+  <rect class="plane" x="20" y="158" width="360" height="9"/>
+  <circle cx="147" cy="94" r="22" class="field-2"/>
+  <circle cx="147" cy="94" r="40" class="field-2"/>
+  <path d="M147,34 A60,60 0 1 1 146.9,34" class="field-2"/>
+  <path d="M233,54 A96,96 0 0 1 225,150" class="flow-2"/>
+  <path d="M252,46 A114,114 0 0 1 240,158" class="flow-2"/>
+  <rect x="242" y="100" width="30" height="58" class="flow dash" fill="none"/>
+  <rect class="copper-2" x="132" y="88" width="30" height="12" rx="1"/>
+  <rect class="copper" x="242" y="88" width="30" height="12" rx="1"/>
+  <circle cx="147" cy="94" r="3.2" class="flow-2"/><circle cx="147" cy="94" r="1" class="copper-2"/>
+  <text class="lbl-ref" x="147" y="28" text-anchor="middle">aggressor current I</text>
+  <text class="lbl-sig" x="300" y="116">victim&#8217;s</text>
+  <text class="lbl-sig" x="300" y="128">loop</text>
+  <text class="lbl-hi" x="266" y="50">M</text>
+  <text class="lbl" x="24" y="182">GND (return)</text>
+  <text class="lbl-hi" x="200" y="194" text-anchor="middle">dI/dt changes the flux through the victim&#8217;s loop</text>
+  <text class="lbl" x="200" y="208" text-anchor="middle">it induces v = M&#183;dI/dt around the loop, whatever the node&#8217;s impedance</text>
+</svg></div>
+      </div>
+      <figcaption><b>One pair of traces, two couplings.</b> At the top, the aggressor&#8217;s <b>voltage</b> sets up an electric field. Most of it ends on the ground plane, but the share that ends on the victim (amber, bold) is the mutual capacitance C&#8344;. Whenever that voltage changes, a current C&#8344;&#183;dV/dt flows into the victim, and it makes a voltage in proportion to whatever impedance the victim presents. At the bottom, the aggressor&#8217;s <b>current</b> sets up a magnetic field that circles it. The victim and the plane beneath it form a loop (dashed), and the share of the aggressor&#8217;s field that threads that loop is the mutual inductance M. Whenever the current changes, the flux through the loop changes, and it induces M&#183;dI/dt around the loop, in series, whatever the node&#8217;s impedance. Both fields are present at once. Which coupling you see depends on which one the aggressor is changing faster, and on the victim&#8217;s impedance.</figcaption>
+    </figure>
+
+    <p>
+      <strong>Capacitive coupling follows the voltage slew.</strong> A capacitor passes a current
+      <span class="num">i = C·dV/dt</span>, so the aggressor pushes <span class="num">C<sub>m</sub>·dV/dt</span> into
+      the victim every time its voltage moves. How much current the aggressor is carrying does not enter at all. That
+      injected current then has to flow through whatever impedance the victim node presents, and the voltage it makes
+      there is that current times the impedance.
+    </p>
+
+    <p>
+      <strong>Inductive coupling follows the current slew.</strong> A changing magnetic flux through a loop induces
+      <span class="num">v = M·dI/dt</span> in it. What matters is how much current moves in the aggressor's loop and how
+      quickly; the aggressor's voltage does not enter. The induced voltage appears in series around the victim's loop,
+      so it does not depend on the impedance of the node you happen to be watching.
+    </p>
+
+    <div class="eq">
+      <span class="eq__main"><i class="var">v</i><sub>cap</sub> ≈ <i class="var">Z</i><sub>victim</sub> · <i class="var">C</i><sub>m</sub> · d<i class="var">V</i>/d<i class="var">t</i>
+        &nbsp;&nbsp;&nbsp;&nbsp; <i class="var">v</i><sub>ind</sub> = <i class="var">M</i> · d<i class="var">I</i>/d<i class="var">t</i></span>
+      <span class="eq__note">the capacitive form holds below the victim's corner, where the node has not yet charged up</span>
+    </div>
+
+    <p>
+      The contrast is easy to test in the panel above. Switch to a resistive load and double the load current: the
+      inductive pickup doubles and the capacitive pickup does not move. Double the swing instead, at the same current:
+      the capacitive pickup doubles and the inductive pickup does not move. Lower the victim's impedance: only the
+      capacitive trace shrinks.
+    </p>
+
+    <h2 class="section-rule"><span>Which aggressors are which</span></h2>
+
+    <p>
+      Classify an aggressor by what it moves. A lightly loaded GPIO or clock swings its full voltage in a nanosecond but
+      carries little current: it is a <strong>dV/dt aggressor</strong>. A switching regulator's input loop, a heavily
+      loaded or wide bus, and the ground and supply returns of anything that switches move large currents: they are
+      <strong>dI/dt aggressors</strong>. One circuit can be both, in different places. A buck converter's switch node
+      slews several volts per nanosecond, while its input loop carries the full switched current. The first couples
+      capacitively into anything nearby; the second couples inductively into any loop that shares its field.
+    </p>
+
+    <p>
+      The load decides what the current does. With a <strong>resistive load</strong> the current follows the voltage,
+      so dI/dt has the same shape as dV/dt: a pulse as long as the edge. With a <strong>capacitive load</strong>, which is what
+      most GPIOs and clocks actually drive, the current is <span class="num">C<sub>L</sub>·dV/dt</span>: nothing
+      between edges, and a burst during each one. A 3.3 V output with a 1 ns edge slews 2.64 V/ns, so into 10 pF it
+      draws 26.4 mA for the duration of every edge. The inductive coupling then differentiates that burst again. The
+      victim sees a spike at each corner of the edge, and the spike's shape is set by the victim's loop, not by the aggressor.
+      Choose “Capacitive” in the panel and watch the amber trace turn into spikes.
+    </p>
+
+    <h2 class="section-rule"><span>Which one the victim sees</span></h2>
+
+    <p>
+      The victim's impedance is the other half. Capacitive coupling is a small current, so it only makes a large voltage
+      where the node has a high impedance: a reference pin behind a resistor, a PLL loop filter, a crystal, a sensor
+      input. Inductive coupling is a voltage in series with the loop, so it is the one that shows up in low-impedance
+      circuits: supply and ground returns, current-sense lines, terminated signals.
+    </p>
+
+    <p>
+      For an aggressor driving a resistive load R<sub>L</sub>, the current slew is simply
+      dV/dt divided by R<sub>L</sub>, and the two pickups are equal at one victim impedance:
+    </p>
+
+    <div class="eq">
+      <span class="eq__main"><i class="var">Z</i>* = <i class="var">M</i> / ( <i class="var">C</i><sub>m</sub> · <i class="var">R</i><sub>L</sub> )</span>
+      <span class="eq__note">1 nH, 0.5 pF and a 50 Ω load give Z* = 40 Ω; above it capacitive dominates, below it inductive</span>
+    </div>
+
+    <div class="table-wrap"><table>
+      <thead><tr><th></th><th>High-impedance victim</th><th>Low-impedance victim</th></tr></thead>
+      <tbody>
+        <tr><th>dV/dt aggressor</th><td>capacitive, and large. Fix: distance, a grounded shield between them, a lower node impedance, a slower edge.</td><td>little of either. The small current finds nowhere to make a voltage.</td></tr>
+        <tr><th>dI/dt aggressor</th><td>both can matter. Compare them with Z* above and fix the larger one first.</td><td>inductive. Fix: smaller loops, a return path directly under the aggressor, loops at right angles, a slower or more local dI/dt.</td></tr>
+      </tbody>
+    </table></div>
+
+    <h2 class="section-rule"><span>Derivative, then plateau</span></h2>
+
+    <p>
+      Capacitive coupling is only a derivative up to a point. The mutual capacitance and the victim node's own
+      capacitance, C<sub>v</sub>, form a divider, and once an edge is fast enough to charge the node through that divider
+      before its impedance can drain it, the pickup stops growing and becomes a fixed fraction of the swing,
+      C<sub>m</sub>/(C<sub>m</sub> + C<sub>v</sub>). With 0.5 pF of coupling into a 5 pF node that is 9.1%: a 3.3 V edge
+      can lift the victim by at most 300 mV, however fast it is. The corner between the two regimes is
+      1/(2π·Z·(C<sub>m</sub> + C<sub>v</sub>)), which is only 2.89 MHz for a 10 kΩ node. So on a high-impedance node, any
+      nanosecond edge is already on the plateau, and slowing it barely helps. Watch the “2× faster edge” readout for the
+      capacitive path.
+    </p>
+
+    <p>
+      Inductive coupling has its own ceiling: the victim loop's own inductance and resistance limit how fast its induced
+      voltage can develop. The panel models it as a 1 GHz loop bandwidth.
+    </p>
+
+    <h2 class="section-rule"><span>Edge rate, in frequency</span></h2>
+
+    <p>
+      The lower chart shows why the two couplings respond differently to edge rate. A trapezoidal clock's harmonics fall
+      as 1/<i>n</i> until the edge corner and faster beyond it (see
+      <a href="edge-rate-not-clock-rate.html">Edge Rate, Not Clock Rate</a>). Differentiating multiplies each harmonic
+      by its frequency. After one derivative, capacitive coupling and inductive coupling into a resistive load, the
+      harmonics stop falling and run level up to the edge corner. After two, inductive coupling into a capacitive load,
+      they <em>rise</em> up to it. Faster edges push that corner, and the energy with it, higher.
+    </p>
+
+    <p>
+      That is why edge rate matters so much more for coupling than for the signal itself, but only while the victim's
+      path stays open past the edge corner. For edges 4× faster, a first derivative can add at most 6 dB of pickup
+      power, and a second derivative 12 dB, provided nothing in the path rolls off first. A capacitive path that has
+      already reached its plateau adds almost nothing.
+    </p>
+
+    <p>
+      One related mechanism is not on this page: <strong>shared-impedance</strong> coupling, where two circuits share a
+      piece of return path and one's current develops a voltage across the other's ground. It looks like inductive
+      coupling, and it is fixed differently: give each circuit its own return. It is covered in
+      <a href="../power-integrity/ssn-ground-bounce.html">Simultaneous Switching Noise and Ground Bounce</a>.
+    </p>
+
+    <details class="deeper">
+      <summary>Go deeper — the transfer functions, the bounds, and where the lumped picture ends</summary>
+
+      <p>
+        <strong>Capacitive path.</strong> C<sub>m</sub> drives a node of impedance R<sub>v</sub> in parallel with
+        C<sub>v</sub>. Writing the charge balance at the node gives a first-order high-pass:
+      </p>
+      <div class="eq">
+        <span class="eq__main"><i class="var">H</i><sub>C</sub>(<i class="var">s</i>) = <i class="var">s</i>·<i class="var">R</i><sub>v</sub>·<i class="var">C</i><sub>m</sub> / ( 1 + <i class="var">s</i>·<i class="var">R</i><sub>v</sub>·(<i class="var">C</i><sub>m</sub> + <i class="var">C</i><sub>v</sub>) )</span>
+        <span class="eq__note">a derivative, R<sub>v</sub>·C<sub>m</sub>·s, below the corner; the divider C<sub>m</sub>/(C<sub>m</sub> + C<sub>v</sub>) above it</span>
+      </div>
+
+      <p>
+        <strong>Inductive path.</strong> The EMF is <span class="num">M·dI/dt</span>, passed through one pole at the
+        victim loop's bandwidth. With a resistive load, I = V/R<sub>L</sub> and the path is
+        <span class="num">(M/R<sub>L</sub>)·s</span> up to the pole: a first derivative of the voltage. With a capacitive
+        load, I = C<sub>L</sub>·dV/dt and the path is <span class="num">M·C<sub>L</sub>·s²</span>: a second derivative.
+      </p>
+
+      <p>
+        <strong>How the panel computes it.</strong> Each path is a first-order system, and a trapezoid's slope is
+        piecewise constant, so the steady state is solved exactly, segment by segment: no time step and no truncated
+        series. For a capacitive load, the current steps at each end of the edge, its derivative is an impulse, and the
+        pickup jumps by <span class="num">M·C<sub>L</sub>·(dV/dt)/τ</span> and then decays with the loop's time
+        constant τ. The spectrum is computed separately, from the transfer functions, and the site's model gate checks
+        that an exact Fourier integral of the time-domain solution reproduces it harmonic by harmonic.
+      </p>
+
+      <p>
+        <strong>The edge-rate bounds.</strong> A first-derivative pickup is a pulse as long as the edge whose height
+        follows the slew, so its energy per edge goes as (dV/dt)² times the edge length, or 1/t<sub>r</sub>. Four times
+        faster is 10·log 4 = 6.02 dB. A second-derivative pickup is a pulse whose shape the path sets and whose height
+        follows the slew, so its energy goes as (dV/dt)². Four times faster is 20·log 4 = 12.04 dB. Both are reached only
+        while the path is faster than the edge. A harmonic count suggests a larger figure for the second derivative, but
+        that sum diverges without the path's roll-off, and the time-domain picture is the right one.
+      </p>
+
+      <p>
+        <strong>Telling them apart on the bench.</strong> Change the victim's impedance: capacitive pickup scales with it
+        and inductive pickup does not. Change the load current at the same edge: only inductive pickup follows. Move or
+        reroute the victim's return: inductive pickup changes with the loop's area and orientation, and can change sign.
+      </p>
+
+      <p>
+        <strong>Where this picture ends.</strong> Everything here is lumped: the coupled structure is short against the
+        edge (see <a href="when-is-a-trace-a-transmission-line.html">When Is a Trace a Transmission Line?</a>). Once two
+        long traces run side by side, the coupling is distributed, arrives at both ends at different times, and
+        becomes <a href="crosstalk.html">near-end and far-end crosstalk</a>. And a real path is rarely one clean pole.
+        Bond-wire or package inductance against decoupling capacitance resonates, and a harmonic that lands on the
+        resonance can dominate everything else (see <a href="../package-board/package-and-system.html">Package
+        Interconnects as Transmission Lines</a>).
+      </p>
+
+      <p>
+        <strong>Sources.</strong> H. W. Ott, <em>Electromagnetic Compatibility Engineering</em>, Wiley, 2009, ch. 2
+        (capacitive and inductive coupling, and the victim-impedance rule); E. Bogatin, <em>Signal and Power
+        Integrity — Simplified</em>, 3rd ed., Pearson, 2018, the crosstalk chapter.
+      </p>
+    </details>
+
+    <h2 class="section-rule"><span>In the real world</span></h2>
+
+    <p>
+      The most common surprise is a converter's <strong>reference or input pin next to a GPIO</strong>. The GPIO is a
+      dV/dt aggressor and the reference node is high-impedance, so the coupling is capacitive and it sits on the
+      plateau. Slowing the GPIO's edge does little there. Distance, a grounded guard, or a lower-impedance reference
+      (a buffer, or more decoupling right at the pin) do a lot. The same pattern applies to PLL loop filters and crystal
+      pins beside clocks.
+    </p>
+
+    <p>
+      The opposite case is a <strong>switching regulator's loop beside a current-sense line</strong>. A 12 V, 3 A
+      switch with a 5 ns edge moves 0.48 A/ns; through 1 nH of mutual inductance that is 480 mV in the sense loop,
+      while the same edge's capacitive pickup into a 10 Ω sense node is under 10 mV. Here, spacing the traces helps
+      only as far as it reduces M. Shrinking both loops, running the sense pair tightly together, and keeping the
+      regulator's hot loop compact are the fixes.
+    </p>
+
+    <p>
+      In packages and ball maps the same reasoning decides pin assignment. A quiet analog pin should not share a
+      high-impedance neighbourhood with a fast output, and a sensitive loop should not share its return with a
+      high-current one. Both are decided before layout, and both are nearly free to get right at that stage.
+    </p>
+
+    <h3>Related</h3>
+    <ul class="tight">
+      <li><a href="crosstalk.html">PCB Crosstalk: NEXT, FEXT, and Mutual Coupling</a> — the same two mechanisms, distributed along coupled transmission lines</li>
+      <li><a href="edge-rate-not-clock-rate.html">Edge Rate, Not Clock Rate</a> — where the harmonics come from</li>
+      <li><a href="../power-integrity/ssn-ground-bounce.html">Simultaneous Switching Noise and Ground Bounce</a> — shared-impedance coupling</li>
+      <li><a href="../package-board/package-and-system.html">Package Interconnects as Transmission Lines</a> — mutual inductance between pins</li>
+      <li><a href="../labs/adc-interference.html">Lab D: ADC Interference, Aliasing and Reference Noise</a> — coupling that arrives at a converter's input or reference</li>
+    </ul>
+  </div>
+
+  <!-- share:foot:start --><div class="share share--foot" data-share data-share-url="https://sipi.work/topics/fundamentals/capacitive-inductive-coupling.html" data-share-title="Capacitive and Inductive Coupling: Voltage Slew vs Current Slew"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Ffundamentals%2Fcapacitive-inductive-coupling.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Ffundamentals%2Fcapacitive-inductive-coupling.html&amp;text=Capacitive%20and%20Inductive%20Coupling%3A%20Voltage%20Slew%20vs%20Current%20Slew" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=Capacitive%20and%20Inductive%20Coupling%3A%20Voltage%20Slew%20vs%20Current%20Slew&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Ffundamentals%2Fcapacitive-inductive-coupling.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:foot:end -->
+
+  <!-- pager:start -->
+  <nav class="pager" aria-label="Previous and next topic">
+    <a class="prev" href="../../topics/fundamentals/crosstalk.html"><span class="dir">Previous</span><span>PCB Crosstalk: NEXT, FEXT, and Mutual Coupling</span></a>
+    <a class="next" href="../../topics/fundamentals/loss-mechanisms.html"><span class="dir">Next</span><span>PCB Transmission-Line Loss Mechanisms</span></a>
+  </nav>
+  <!-- pager:end -->
+</main>
+
+
+<footer class="site-foot">
+  <span>SIPI &#8212; signal and power integrity, visualised.</span>
+  <nav class="site-foot__nav" aria-label="Site, footer">
+    <a href="../../start.html">Start</a>
+    <a href="../../labs.html">Labs</a>
+    <a href="../../calculators.html">Calculators</a>
+    <a href="../../reference.html">Reference</a>
+    <a href="../../colophon.html">About &amp; AI disclosure</a>
+    <a href="../../model-contract.html">Model assumptions</a>
+    <a href="../../docs/claims.md">Claim ledger (Markdown)</a>
+  </nav>
+  <span>Created and directed by Geetansh Arora. Text <a href="../../LICENSE-CONTENT">CC BY 4.0</a>, code <a href="../../LICENSE-CODE">MIT</a>.</span>
+</footer>
+
+<script src="../../js/site.js?v=9ac8f8b6" defer></script>
+<script src="../../js/viz-kit.js?v=5da3ab7a" defer></script>
+<script src="../../js/models/coupling-model.js?v=07df1d35" defer></script>
+<script src="../../js/viz/coupling.js?v=503990b3" defer></script>
+<script src="../../js/lab-workspace.js?v=49b1d309" defer></script>
+<script src="../../js/viz-loader.js?v=8121f120" defer></script>
+<script src="../../js/search.js?v=580e4b78" defer></script>
+</body>
+</html>

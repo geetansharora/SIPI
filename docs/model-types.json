@@ -903,5 +903,29 @@
     "version": "1.0",
     "reviewed": "2026-09-24",
     "reviewer": "Geetansh Arora"
+  },
+  "coupling": {
+    "kind": "analytical",
+    "evidence": "independent",
+    "purpose": "Show capacitive pickup following the aggressor's voltage slew and the victim's impedance, and inductive pickup following its current slew, from one aggressor, in time and in frequency.",
+    "topology": "One trapezoidal aggressor (resistive or capacitive load); mutual capacitance into a victim node R_v ∥ C_v; mutual inductance into a victim loop with one pole.",
+    "planes": "The victim node (capacitive) and the victim loop (inductive).",
+    "equations": [
+      "capacitive: H_C(s) = s*R_v*Cm / (1 + s*R_v*(Cm + Cv))",
+      "inductive, resistive load: EMF = M*dI/dt = (M/R_L)*dV/dt, through one pole at f_L",
+      "inductive, capacitive load: EMF = M*C_L*d2V/dt2, through one pole at f_L",
+      "crossover (resistive load): Z* = M/(Cm*R_L)"
+    ],
+    "units": "V, A, s, ohm, F, H, dBV",
+    "validity": "Lumped: the coupled structure is short against the edge. Cm = 0.5 pF, M = 1 nH, Cv = 5 pF, f_L = 1 GHz and a 10 MHz, 50% duty aggressor are held fixed and stated on the panel.",
+    "numerics": "Exact periodic steady state, segment by segment (piecewise-constant slope, or impulses for a capacitive load); spectrum from the transfer functions.",
+    "limitations": "No distributed (transmission-line) coupling, no path resonance, no shared-impedance path; one pole per path.",
+    "verified": "check-models.js — Coupling (20 and 40 dB/decade slopes, the Cm/(Cm+Cv) plateau, slow-edge closed forms, independence of each path from the other driver, the Z* crossover, an exact Fourier integral of the time-domain solution against the transfer functions, zero mean, 6.02 and 12.04 dB edge-rate bounds).",
+    "suites": [
+      "Coupling"
+    ],
+    "version": "1.0",
+    "reviewed": "2026-09-25",
+    "reviewer": "Geetansh Arora"
   }
 }

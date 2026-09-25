@@ -33,11 +33,27 @@ ROOT = Path(__file__).parent
 NON_PAGE_DIRS = {"tests"}
 
 
+def _public_docs():
+    """The docs/ files .assetsignore re-includes with a `!docs/...` line. Every other
+    file under docs/ is private: the publish rule keeps it out of the public repository
+    and the deploy does not serve it, so it is not a site page and no page gate applies."""
+    f = ROOT / ".assetsignore"
+    lines = f.read_text(encoding="utf-8").splitlines() if f.exists() else []
+    return {l.strip()[1:] for l in lines if l.strip().startswith("!docs/")}
+
+
+def is_private_doc(rel):
+    rel = Path(rel).as_posix()
+    return rel.startswith("docs/") and rel not in _public_docs()
+
+
 def site_html():
     """Every HTML file the site actually publishes."""
     for f in sorted(ROOT.rglob("*.html")):
         rel = f.relative_to(ROOT)
         if rel.parts and rel.parts[0] in NON_PAGE_DIRS:
+            continue
+        if is_private_doc(rel):
             continue
         yield f
 TOPICS = ROOT / "topics.json"
@@ -912,7 +928,7 @@ def cmd_theme():
     n = 0
     for f in sorted(ROOT.rglob("*.html")):
         rel = f.relative_to(ROOT).as_posix()
-        if rel.startswith("tests/") or "experimental" in rel:
+        if rel.startswith("tests/") or "experimental" in rel or is_private_doc(rel):
             continue
         html = f.read_text(encoding="utf-8")
         new = stamp_theme_boot(html)

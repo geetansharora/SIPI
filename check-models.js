@@ -55,7 +55,7 @@ function loadSite() {
   };
   global.getComputedStyle = () => ({ getPropertyValue: () => '#000000' });
   global.fetch = () => new Promise(() => {});
-  const files = ['js/viz-kit.js', 'js/models/calc-models.js', 'js/models/laminates.js', 'js/viz/jitter.js', 'js/viz/crosstalk.js',
+  const files = ['js/viz-kit.js', 'js/models/calc-models.js', 'js/models/laminates.js', 'js/models/coupling-model.js', 'js/viz/jitter.js', 'js/viz/crosstalk.js',
                  'js/viz/spectrum.js', 'js/viz/pdn-extras.js',
                  'js/viz/lab-waves.js', 'js/viz/lab-channel.js', 'js/viz/lab-pdn.js',
                  'js/viz/cdr.js', 'js/models/adc-model.js',
@@ -153,6 +153,12 @@ suite('Search — equivalents, ranking, acronym boundaries', () => {
      slugs('return loss calculator')[0] === 'return-loss-vswr', `got ${slugs('return loss calculator')[0]}`);
   ok('asking for a resonance calculator finds the calculator',
      slugs('resonance calculator')[0] === 'lc-rlc-resonance', `got ${slugs('resonance calculator')[0]}`);
+  /* Lumped coupling and line-to-line crosstalk share vocabulary; each query must
+     land on the page that answers it. */
+  ok('capacitive coupling finds the coupling page', slugs('capacitive coupling')[0] === 'capacitive-inductive-coupling', `got ${slugs('capacitive coupling')[0]}`);
+  ok('inductive coupling finds the coupling page', slugs('inductive coupling')[0] === 'capacitive-inductive-coupling', `got ${slugs('inductive coupling')[0]}`);
+  ok('NEXT and FEXT still find the crosstalk page',
+     ['NEXT', 'FEXT'].every((q) => slugs(q)[0] === 'crosstalk'), ['NEXT', 'FEXT'].map((q) => q + '=' + slugs(q)[0]).join(' '));
   ok('anti-resonance and PDN peak resolve to the same first result',
      slugs('anti-resonance')[0] === 'anti-resonance' && slugs('PDN peak')[0] === 'anti-resonance');
   ok('reference plane includes de-embedding as a relevant result',
@@ -4463,6 +4469,93 @@ suite('Calculator: laminate presets', () => {
      !blend.length, blend.join(', '));
   ok('between two points of one method the value lies between them', !between.length, between.join(', '));
   ok('an unknown laminate returns nothing rather than a default', LAM.at('fr4-generic', 1e9) === null);
+});
+
+suite('Coupling — voltage slew, current slew, and the victim', () => {
+  /* The page's claims, each tested against something the model does not compute
+     the same way: closed-form limits, the crossover formula, and an exact Fourier
+     integral of the time-domain solution held against the frequency-domain
+     transfer functions. */
+  const C = SIPI.models.coupling;
+  const base = { V: 3.3, tr: 1e-9, load: 'r', I: 20e-3, CL: 20e-12, Rv: 10e3 };
+
+  // slopes and plateau, from the transfer functions
+  const q0 = C.params({ V: 1, tr: 1e-9, load: 'r', I: 1e-3, Rv: 50, Cv: 1e-15, fL: 1e12 });
+  const r10 = (key, f) => C.transfer(q0, 10 * f)[key] / C.transfer(q0, f)[key];
+  nearRel('capacitive coupling rises 20 dB/decade below its corner', r10('cap', 1e6), 10, 0.01);
+  nearRel('inductive coupling into a resistive load rises 20 dB/decade', r10('ind', 1e6), 10, 0.01);
+  const qc = C.params({ V: 1, tr: 1e-9, load: 'c', CL: 10e-12, Rv: 50, fL: 1e12 });
+  nearRel('inductive coupling into a capacitive load rises 40 dB/decade (a second derivative)',
+          C.transfer(qc, 1e7).ind / C.transfer(qc, 1e6).ind, 100, 0.01);
+  const qp = C.params(base);
+  nearRel('above its corner, capacitive coupling is the divider Cm/(Cm + Cv)', C.transfer(qp, 1e12).cap, qp.kc, 1e-3);
+
+  // slow-edge closed forms, with the victim's own capacitance present
+  const slow = C.run({ V: 3.3, tr: 20e-9, load: 'r', I: 20e-3, Rv: 50, fL: 1e12 });
+  nearRel('slow edge: capacitive pickup is R_v·Cm·dV/dt', slow.capPeak, 50 * slow.q.Cm * slow.q.S, 0.01);
+  nearRel('slow edge: inductive pickup is M·dI/dt', slow.indPeak, slow.q.M * slow.q.dIdt, 0.01);
+
+  // independence: the page's central claim
+  const a1 = C.run(base), a2 = C.run(Object.assign({}, base, { I: 40e-3 }));
+  nearRel('doubling the load current leaves capacitive pickup unchanged', a2.capPeak, a1.capPeak, 1e-12);
+  nearRel('doubling the load current doubles inductive pickup (+6.02 dB)', a2.indPeak, 2 * a1.indPeak, 1e-9);
+  const v2 = C.run(Object.assign({}, base, { V: 6.6 }));
+  nearRel('doubling the swing at the same current leaves inductive pickup unchanged', v2.indPeak, a1.indPeak, 1e-12);
+  nearRel('doubling the swing doubles capacitive pickup', v2.capPeak, 2 * a1.capPeak, 1e-9);
+  const lo = C.run(Object.assign({}, base, { Rv: 100 }));
+  ok('a lower victim impedance never raises capacitive pickup, and leaves inductive alone',
+     lo.capPeak < a1.capPeak && Math.abs(lo.indPeak / a1.indPeak - 1) < 1e-12);
+
+  // the crossover Z* = M/(Cm·R_L)
+  const zq = { V: 3.3, tr: 20e-9, load: 'r', I: 20e-3, Cv: 1e-15, fL: 1e12 };
+  const Z = C.crossover(C.params(Object.assign({ Rv: 1 }, zq)));
+  nearRel('the crossover is Z* = M/(Cm·R_L)', Z, 1e-9 / (0.5e-12 * (3.3 / 20e-3)), 1e-12);
+  const at = C.run(Object.assign({ Rv: Z }, zq)), above = C.run(Object.assign({ Rv: 3 * Z }, zq)), below = C.run(Object.assign({ Rv: Z / 3 }, zq));
+  nearRel('at Z* the two pickups are equal', at.capPeak, at.indPeak, 1e-3);
+  ok('above Z* capacitive dominates, below it inductive', above.dominant === 'capacitive' && below.dominant === 'inductive');
+
+  // exact Fourier integral of the time-domain solution against the transfer functions
+  const coef = (segs, T, n) => {
+    const w = 2 * Math.PI * n / T; let re = 0, im = 0;
+    for (const g of segs) {
+      if (g.t0 >= T - 1e-18) continue;
+      const c0 = Math.cos(w * g.t0), s0 = -Math.sin(w * g.t0), c1 = Math.cos(w * (g.t0 + g.dur)), s1 = -Math.sin(w * (g.t0 + g.dur));
+      if (w === 0) { re += g.yInf * g.dur + (g.y0 - g.yInf) * g.tau * (1 - Math.exp(-g.dur / g.tau)); continue; }
+      re += g.yInf * (s0 - s1) / w; im += -g.yInf * (c0 - c1) / w;                 // yInf·(e0 − e1)/(jω)
+      const d = Math.exp(-g.dur / g.tau), er = 1 - d * Math.cos(w * g.dur), ei = d * Math.sin(w * g.dur);
+      const nr = (c0 * er - s0 * ei) * (g.y0 - g.yInf), ni = (c0 * ei + s0 * er) * (g.y0 - g.yInf);
+      const a = 1 / g.tau, m = a * a + w * w;
+      re += (nr * a + ni * w) / m; im += (ni * a - nr * w) / m;
+    }
+    return n === 0 ? re / T : 2 * Math.hypot(re, im) / T;
+  };
+  let worst = 0, meanWorst = 0;
+  for (const load of ['r', 'c']) {
+    const p = C.params(Object.assign({}, base, { load }));
+    const W = C.waveform(p, 64, 1), H = C.harmonics(p, 2e9);
+    for (const path of ['cap', 'ind']) {
+      for (const n of [1, 3, 5, 7, 99]) worst = Math.max(worst, Math.abs(coef(W[path].segs, p.T, n) / H.find((h) => h.n === n)[path] - 1));
+      meanWorst = Math.max(meanWorst, Math.abs(coef(W[path].segs, p.T, 0)) / W[path].peak);
+    }
+  }
+  ok('the time-domain solution’s harmonics equal the transfer functions (both loads, both paths)', worst < 1e-9, worst.toExponential(1));
+  ok('every coupled waveform has zero mean: a derivative carries no DC', meanWorst < 1e-12, meanWorst.toExponential(1));
+
+  // edge-rate bounds for 4× faster edges, from the harmonic powers
+  const power = (p, key) => C.harmonics(C.params(p), 2e11).reduce((acc, h) => acc + h[key] * h[key] / 2, 0);
+  const g4 = (p, key) => 10 * Math.log10(power(Object.assign({}, p, { tr: 0.5e-9 }), key) / power(Object.assign({}, p, { tr: 2e-9 }), key));
+  const open = { V: 3.3, load: 'r', I: 20e-3, Rv: 0.2, Cv: 1e-15, fL: 1e13 };
+  const dCap = g4(open, 'cap'), dInd = g4(open, 'ind'), dSec = g4(Object.assign({}, open, { load: 'c', CL: 20e-12, fL: 20e9 }), 'ind');
+  ok('first derivative: 4× faster edges add at most 6.02 dB, and near it when the path is open', dCap > 5 && dCap <= 6.03 && dInd > 5 && dInd <= 6.03, dCap.toFixed(2) + ' / ' + dInd.toFixed(2) + ' dB');
+  /* A second derivative of a trapezoid is a train of impulses of area ∝ dV/dt. Through
+     any finite path the pickup is pulses whose SHAPE the path sets and whose HEIGHT
+     follows dV/dt, so power goes as (dV/dt)²: +12.04 dB (20·log 4), not the N³ a
+     harmonic count would suggest — that sum diverges without the path. */
+  nearAbs('second derivative: 4× faster edges add 20·log 4 = 12.04 dB of power', dSec, 20 * Math.log10(4), 0.02, 'dB');
+
+  // monotonicity in the coupling elements
+  const bigger = C.run(Object.assign({}, base, { Cm: 1e-12, M: 2e-9 }));
+  ok('more Cm and more M never reduce pickup', bigger.capPeak > a1.capPeak && bigger.indPeak > a1.indPeak);
 });
 
 if (!PASS && !FAILS.length && !PENDING.length) {

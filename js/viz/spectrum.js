@@ -17,7 +17,7 @@
   const F_LO = 1e6, F_HI = 2e11; // 1 MHz – 200 GHz
   const DB_LO = -80, DB_HI = 6;
 
-  function sinc(x) { return x === 0 ? 1 : Math.sin(Math.PI * x) / (Math.PI * x); }
+  const sinc = K.sincPi;         // the shared definition, in viz-kit.js
 
   /* ONE edge definition, shared by the waveform and the spectrum.
 
@@ -29,12 +29,9 @@
      clamped only in the time view: the waveform flattened into a triangle while
      the harmonics kept using the uncapped value, so the two panels could describe
      different edges. Both now read the same number. */
-  const RAMP_FROM_1090 = 1 / 0.8;
   function edges(p) {
     const T = 1 / p.fclk;
-    const wanted = p.tr * RAMP_FROM_1090;
-    const ramp = Math.min(wanted, T * 0.45);
-    return { T, ramp, clamped: ramp < wanted - 1e-18, tr1090: ramp * 0.8 };
+    return Object.assign({ T }, K.edgeRamp(p.tr, T));   // viz-kit.js holds the convention
   }
 
   function harmonics(p) {
@@ -43,7 +40,7 @@
     for (let n = 1; n < NH; n++) {
       const f = n * p.fclk;
       if (f > F_HI) break;
-      const a = 2 * d * Math.abs(sinc(n * d)) * Math.abs(sinc(n * ramp / T));
+      const a = K.trapezoidHarmonic(n, ramp / T, d);
       if (a > 1e-6) out.push([f, 20 * Math.log10(a)]);
     }
     return out;

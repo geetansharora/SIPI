@@ -147,6 +147,11 @@
 .ctl__note { font-family: var(--font-mono); font-size: .66rem; color: var(--muted); }
 
 .presets { display: flex; flex-wrap: wrap; gap: var(--s2); padding: 0 var(--s4) var(--s4); background: var(--surface); }
+/* A two-way choice inside one control (e.g. a load type): the preset buttons'
+   look, without the preset row's padding and ground. */
+.ctl .presets { padding: 0; background: none; gap: var(--s1); }
+.ctl[hidden] { display: none; }
+.ctl__head .ctl__label { color: var(--ink-2); }
 .preset {
   font-family: var(--font-mono); font-size: .72rem;
   background: var(--surface-2); color: var(--ink-2);
@@ -520,6 +525,10 @@ dialog.searchbox::backdrop { background: rgba(4, 8, 11, .58); }
 @media (min-width: 46rem) { .figure__pair { grid-template-columns: 1fr 1fr; } }
 .figure__pair > div { min-width: 0; display: flex; flex-direction: column; gap: var(--s2); align-items: center; }
 .figure__pair .figure__label { font-family: var(--font-mono); font-size: .7rem; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+/* Two diagrams too detailed to share a row: stacked at any width, each wide
+   enough that its 10 px labels read at about 13 px. */
+.figure__pair--stack, .figure__pair.figure__pair--stack { grid-template-columns: minmax(0, 1fr); }
+.figure__pair--stack svg { max-width: 34rem; }
 
 /* select control — same visual weight as a slider's row, for discrete choices
    where a range input would imply a continuum that does not exist */
@@ -975,6 +984,10 @@ dialog.searchbox::backdrop { background: rgba(4, 8, 11, .58); }
 .probe__x { font-weight: 600; }
 .probe__t { display: inline-flex; align-items: center; gap: .22rem; }
 .probe__t i { width: .5rem; height: .5rem; border-radius: 1px; display: inline-block; }
+/* The swatch sits in the text flow. `.probe i` positions the crosshair lines
+   absolutely, and without this reset it lifted every swatch out of the row and
+   onto the first letter of its label. */
+.probe__t i { position: static; flex: none; opacity: 1; }
 .probe__free { color: var(--muted); font-weight: 400; }
 .probe__dot { position: absolute; width: .42rem; height: .42rem; border-radius: 50%;
               transform: translate(-50%, -50%); box-shadow: 0 0 0 1.5px var(--surface);

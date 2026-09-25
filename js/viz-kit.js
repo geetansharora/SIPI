@@ -2714,6 +2714,25 @@
     return (lo + hi) / 2;
   };
 
+  /* ---------- a trapezoidal clock ----------
+     One edge convention for every page that draws a clock. A rise time is the
+     10-90% figure a datasheet quotes; a linear ramp covers the full swing in
+     that time / 0.8. The ramp is held to `cap` of the period (45% by default), so
+     a slow edge on a fast clock becomes a near-triangle instead of overlapping
+     itself. The nth harmonic of a trapezoidal pulse train of duty d is
+         |c_n| = 2·d·|sinc(n·d)|·|sinc(n·ramp/T)|   relative to the swing,
+     the first sinc from the pulse width, the second from the edge. */
+  K.sincPi = (x) => (x === 0 ? 1 : Math.sin(Math.PI * x) / (Math.PI * x));
+  K.edgeRamp = function (tr1090, period, cap) {
+    const wanted = tr1090 / 0.8;
+    const ramp = Math.min(wanted, period * (cap === undefined ? 0.45 : cap));
+    return { ramp, clamped: ramp < wanted - 1e-18, tr1090: ramp * 0.8 };
+  };
+  K.trapezoidHarmonic = function (n, rampOverT, duty) {
+    const d = duty === undefined ? 0.5 : duty;
+    return 2 * d * Math.abs(K.sincPi(n * d)) * Math.abs(K.sincPi(n * rampOverT));
+  };
+
   /* ---------- quantities a reader types ----------
      Engineers write values the way a schematic does: 100n, 1.2p, 3G, 50 mil.
      K.parseQty reads that; K.si writes it back with the prefix that keeps the
