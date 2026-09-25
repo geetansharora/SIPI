@@ -18,6 +18,7 @@ wrangler.jsonc
 check
 *.py
 mutate.js
+og-cards.mjs
 check-models.js
 tests/*.js
 tests/*.html

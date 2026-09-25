@@ -964,26 +964,34 @@ def cmd_meta():
                  .replace(">", "&gt;").replace('"', "&quot;"))
 
     def block(url, title, desc, is_home=False, kind="article", crumb=None,
-              reviewed=None):
+              reviewed=None, image=None):
         """kind is the Open Graph type, and it is not decorative.
+
+        image is the page's own preview card (see og-cards.mjs), when it has one.
+        A shared card made every link to the site look identical in a feed, which
+        told a reader nothing about which page it was.
 
         Every page declared og:type="article", including the homepage and the
         three hub pages, which are collections rather than articles. `website`
         is the type for those, and telling an aggregator that a site root is an
         article is telling it something untrue.
         """
+        img = base + "/" + (image or "assets/og.png")
+        alt = (f"{title.split(' | ')[0]}: a figure from the page, on SIPI" if image
+               else "SIPI: signal and power integrity, explained with interactive graphics")
         og = "\n".join(
             f'  <meta property="{k}" content="{v}">' for k, v in [
                 ("og:type", kind), ("og:site_name", esc(name)),
                 ("og:title", esc(title)), ("og:description", esc(desc)),
-                ("og:url", url), ("og:image", base + "/assets/og.png"),
+                ("og:url", url), ("og:image", img),
                 ("og:image:width", "1200"), ("og:image:height", "630"),
+                ("og:image:alt", esc(alt)),
             ])
         tw = "\n".join(
             f'  <meta name="{k}" content="{v}">' for k, v in [
                 ("twitter:card", "summary_large_image"),
                 ("twitter:title", esc(title)), ("twitter:description", esc(desc)),
-                ("twitter:image", base + "/assets/og.png"),
+                ("twitter:image", img), ("twitter:image:alt", esc(alt)),
             ])
         website = ""
         if is_home:
@@ -1023,6 +1031,7 @@ def cmd_meta():
             }
             if reviewed:
                 art["dateModified"] = reviewed
+            art["image"] = img
             crumbs = {
                 "@context": "https://schema.org",
                 "@type": "BreadcrumbList",
@@ -1046,14 +1055,16 @@ def cmd_meta():
                 f'{og}\n{tw}{website}\n'
                 '  <!-- meta:end -->')
 
-    pages = [(ROOT / "index.html", base + "/", None, None, "website", None, None)]
+    pages = [(ROOT / "index.html", base + "/", None, None, "website", None, None, None)]
     for t in flat:
         if not t["path"].exists():
             continue
+        card = og_card(t)
         pages.append((t["path"],
                       f'{base}/topics/{t["section_id"]}/{t["slug"]}.html',
                       None, None, "article",
-                      (t["section"], t["section_id"]), t.get("reviewed")))
+                      (t["section"], t["section_id"]), t.get("reviewed"),
+                      card if (ROOT / card).exists() else None))
     # M5-7 · The standalone pages are not topics, so they were not in this list
     # and quietly shipped with no canonical URL and no card. A Pages preview
     # domain then serves each of them twice as far as a crawler is concerned,
@@ -1065,10 +1076,10 @@ def cmd_meta():
         f = ROOT / (stem + ".html")
         if f.exists():
             pages.append((f, f"{base}/{stem}.html", None, None,
-                          "website" if stem in HUBS else "article", None, None))
+                          "website" if stem in HUBS else "article", None, None, None))
 
     n = 0
-    for path, url, title, desc, kind, crumb, reviewed in pages:
+    for path, url, title, desc, kind, crumb, reviewed, image in pages:
         html = path.read_text(encoding="utf-8")
         if title is None:
             m = re.search(r"<title>(.*?)</title>", html, re.S)
@@ -1076,7 +1087,7 @@ def cmd_meta():
             m = re.search(r'<meta name="description" content="(.*?)">', html, re.S)
             desc = m.group(1).strip() if m else ""
         b = block(url, title, desc, path.name == "index.html", kind, crumb,
-                  reviewed)
+                  reviewed, image)
         new, hits = re.subn(r"  <!-- meta:start -->.*?<!-- meta:end -->", lambda _m: b, html, flags=re.S)
         if not hits:                       # first run: insert just before </head>
             new = html.replace("</head>", b + "\n</head>", 1)
@@ -2355,6 +2366,33 @@ def figure_problems():
     return out
 
 
+def og_card(t):
+    """Where a topic's own preview card lives. og-cards.mjs writes it; cmd_meta
+    points the page's og:image at it once it exists."""
+    return f"assets/og/{t['section_id']}/{t['slug']}.png"
+
+
+def og_card_problems():
+    """Every topic page has its own preview card, and every og:image on the site
+    names a file that is in the repository. A new page without a card would share
+    the generic one silently; a card that points at a missing file 404s in every
+    feed it is shared to."""
+    out = []
+    _data, flat = load()
+    for t in flat:
+        if t["path"].exists() and not (ROOT / og_card(t)).exists():
+            out.append(f"{t['path'].relative_to(ROOT)}: no preview card at {og_card(t)} "
+                       f"- run `node og-cards.mjs` with the dev server up, then "
+                       f"`python3 scaffold.py meta`")
+    for f in site_html():
+        text = f.read_text(encoding="utf-8")
+        for m in re.finditer(r'<meta (?:property="og:image"|name="twitter:image") content="([^"]+)"', text):
+            rel = m.group(1).split("//", 1)[-1].split("/", 1)[-1]
+            if not (ROOT / rel).exists():
+                out.append(f"{f.relative_to(ROOT)}: preview image {rel!r} is not in the repository")
+    return out
+
+
 def asset_reference_problems():
     """M5-11. Every page's OpenGraph block points at an image. If that file is
     not in the repository the miss is invisible locally — nothing fetches it —
@@ -2696,6 +2734,7 @@ def cmd_check():
                   + source_gaps() + review_problems()
                   + banned_phrase_problems() + metadata_problems() + discovery_problems()
                   + table_problems() + css_class_problems() + figure_problems()
+                  + og_card_problems()
                   + asset_reference_problems()
                   + path_problems() + scenario_link_problems()
                   + guide_problems() + preset_problems()
