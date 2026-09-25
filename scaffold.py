@@ -2332,6 +2332,29 @@ def table_problems():
     return out
 
 
+def figure_problems():
+    """A figure is inline SVG, so it has no alt attribute. What stands in for one:
+    role="img" and an aria-label on every <svg>, which is what a screen reader
+    announces and what a crawler reads as the description, and a <figcaption>,
+    which is the paragraph that teaches. A figure without either is a picture
+    nobody can read without seeing it."""
+    out = []
+    for f in site_html():
+        rel = f.relative_to(ROOT)
+        text = f.read_text(encoding="utf-8")
+        for i, fig in enumerate(re.findall(r'<figure class="figure[^"]*">.*?</figure>', text, re.S), 1):
+            for svg in re.findall(r"<svg\b[^>]*>", fig):
+                if 'role="img"' not in svg:
+                    out.append(f"{rel}: figure {i} has an <svg> without role=\"img\"")
+                m = re.search(r'aria-label="([^"]*)"', svg)
+                if not m or len(m.group(1).split()) < 6:
+                    out.append(f"{rel}: figure {i} has an <svg> without a descriptive aria-label "
+                               f"(say what it shows, in a sentence)")
+            if "<figcaption" not in fig:
+                out.append(f"{rel}: figure {i} has no <figcaption>")
+    return out
+
+
 def asset_reference_problems():
     """M5-11. Every page's OpenGraph block points at an image. If that file is
     not in the repository the miss is invisible locally — nothing fetches it —
@@ -2672,7 +2695,7 @@ def cmd_check():
                   + readme_problems() + claim_problems() + ledger_drift()
                   + source_gaps() + review_problems()
                   + banned_phrase_problems() + metadata_problems() + discovery_problems()
-                  + table_problems() + css_class_problems()
+                  + table_problems() + css_class_problems() + figure_problems()
                   + asset_reference_problems()
                   + path_problems() + scenario_link_problems()
                   + guide_problems() + preset_problems()

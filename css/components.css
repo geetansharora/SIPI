@@ -518,7 +518,7 @@ dialog.searchbox::backdrop { background: rgba(4, 8, 11, .58); }
 .figure .lbl-sig    { font-family: var(--font-mono); font-size: 10px; fill: var(--signal); }
 .figure .lbl-ref    { font-family: var(--font-mono); font-size: 10px; fill: var(--reflect); }
 .figure .lbl-bad    { font-family: var(--font-mono); font-size: 10px; fill: var(--alarm); }
-.figure .tick       { stroke: var(--border); stroke-width: 1; }
+.figure .tick       { stroke: var(--border); stroke-width: 1; fill: none; }
 
 /* two diagrams side by side — the compare-and-contrast case */
 .figure__pair { display: grid; gap: var(--s4); grid-template-columns: 1fr; padding: var(--s5) var(--s4) var(--s4); }

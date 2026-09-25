@@ -232,6 +232,21 @@ T = "tools"
 #          page, description, computed value, pattern with one group, tolerance %
 CLAIMS = [
 
+    # ── Figures ─────────────────────────────────────────────────────────────
+    # Numbers drawn on, or captioned under, the Batch 1 figures.
+    (M + "/measurement-practice", "probe resonance, 20 nH clip lead with 5 pF tip, MHz",
+     1 / (2 * math.pi * math.sqrt(20e-9 * 5e-12)) / 1e6, r"rings near (\d+) MHz", 0.2),
+    (M + "/measurement-practice", "probe resonance, 2 nH spring with 5 pF tip, GHz",
+     1 / (2 * math.pi * math.sqrt(2e-9 * 5e-12)) / 1e9, r"rings near ([\d.]+) GHz", 0.2),
+    (M + "/measurement-practice", "TDR resolution, 20 ps edge at 0.15 mm/ps, mm",
+     20 * 0.15 / 2, r"20 ps step resolves [^=]*= ([\d.]+) mm", 0.1),
+    (M + "/measurement-practice", "TDR resolution, 100 ps edge at 0.15 mm/ps, mm",
+     100 * 0.15 / 2, r"100 ps step resolves ([\d.]+) mm", 0.1),
+    (G + "/units-and-conventions", "RMS of a sine as a fraction of its peak",
+     1 / math.sqrt(2), r"RMS = ([\d.]+) x peak", 0.1),
+    (G + "/units-and-conventions", "two sigma-1 Gaussians convolved: sigma",
+     math.sqrt(2), r"combine into a Gaussian of s = .2 = ([\d.]+)", 0.5),
+
     # ── Capacitive and inductive coupling ───────────────────────────────────
     # First principles only: i = C dV/dt, v = M dI/dt, a capacitive divider, and
     # a linear edge that covers its swing in t_r / 0.8.

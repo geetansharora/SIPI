@@ -13,7 +13,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
 <link rel="stylesheet" href="../../css/base.css?v=1e3ae753">
-<link rel="stylesheet" href="../../css/components.css?v=d2602263">
+<link rel="stylesheet" href="../../css/components.css?v=f9d67091">
   <!-- meta:start -->
   <link rel="canonical" href="https://sipi.work/topics/package-board/package-and-system.html">
   <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
@@ -143,6 +143,65 @@
       nearly free at the moment it is decided.
     </p>
 
+    <figure class="figure">
+      <div class="figure__bar"><span>One row of balls &#183; where each current comes back</span></div>
+      <div class="figure__pair figure__pair--stack">
+        <div><span class="figure__label">Signals clustered, one return</span><svg viewBox="0 0 400 214" role="img" aria-label="Side view of five package balls between a package and a board. Four adjacent signal balls carry current up and share one return ball at the end, so each signal's loop is large and the loops overlap.">
+  <defs><marker id="pk-upa" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="copper"/></marker>
+  <marker id="pk-dna" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="copper-2"/></marker></defs>
+  <rect class="dielectric" x="20" y="40" width="360" height="24"/>
+  <rect class="dielectric" x="20" y="148" width="360" height="24"/>
+  <rect x="80" y="70" width="240" height="72" class="flow-2 dash" fill="none"/>
+  <rect class="copper" x="74" y="64" width="12" height="84" rx="2"/>
+  <path d="M95,136 L95,78" class="flow" marker-end="url(#pk-upa)"/>
+  <text class="lbl-sig" x="80" y="30" text-anchor="middle">signal</text>
+  <rect class="copper" x="134" y="64" width="12" height="84" rx="2"/>
+  <path d="M155,136 L155,78" class="flow" marker-end="url(#pk-upa)"/>
+  <text class="lbl-sig" x="140" y="30" text-anchor="middle">signal</text>
+  <rect class="copper" x="194" y="64" width="12" height="84" rx="2"/>
+  <path d="M215,136 L215,78" class="flow" marker-end="url(#pk-upa)"/>
+  <text class="lbl-sig" x="200" y="30" text-anchor="middle">signal</text>
+  <rect class="copper" x="254" y="64" width="12" height="84" rx="2"/>
+  <path d="M275,136 L275,78" class="flow" marker-end="url(#pk-upa)"/>
+  <text class="lbl-sig" x="260" y="30" text-anchor="middle">signal</text>
+  <rect class="plane" x="314" y="64" width="12" height="84" rx="2"/>
+  <path d="M335,76 L335,134" class="flow-2" marker-end="url(#pk-dna)"/>
+  <text class="lbl-ref" x="320" y="30" text-anchor="middle">return</text>
+  <text class="lbl" x="26" y="56">package</text>
+  <text class="lbl" x="26" y="164">board</text>
+  <text class="lbl-hi" x="200" y="192" text-anchor="middle">four signals share one return: large loops that overlap</text>
+  <text class="lbl" x="200" y="206" text-anchor="middle">same-direction neighbours add: L + M</text>
+</svg></div>
+        <div><span class="figure__label">Power and ground interleaved</span><svg viewBox="0 0 400 214" role="img" aria-label="The same row with ground interleaved: signal, return, signal, return, signal. Each signal's current returns through the ball beside it, so each loop is small, and adjacent currents flow in opposite directions.">
+  <defs><marker id="pk-upb" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="copper"/></marker>
+  <marker id="pk-dnb" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="copper-2"/></marker></defs>
+  <rect class="dielectric" x="20" y="40" width="360" height="24"/>
+  <rect class="dielectric" x="20" y="148" width="360" height="24"/>
+  <rect x="80" y="70" width="60" height="72" class="flow-2 dash" fill="none"/>
+  <rect class="copper" x="74" y="64" width="12" height="84" rx="2"/>
+  <path d="M95,136 L95,78" class="flow" marker-end="url(#pk-upb)"/>
+  <text class="lbl-sig" x="80" y="30" text-anchor="middle">signal</text>
+  <rect class="plane" x="134" y="64" width="12" height="84" rx="2"/>
+  <path d="M155,76 L155,134" class="flow-2" marker-end="url(#pk-dnb)"/>
+  <text class="lbl-ref" x="140" y="30" text-anchor="middle">return</text>
+  <rect class="copper" x="194" y="64" width="12" height="84" rx="2"/>
+  <path d="M215,136 L215,78" class="flow" marker-end="url(#pk-upb)"/>
+  <text class="lbl-sig" x="200" y="30" text-anchor="middle">signal</text>
+  <rect class="plane" x="254" y="64" width="12" height="84" rx="2"/>
+  <path d="M275,76 L275,134" class="flow-2" marker-end="url(#pk-dnb)"/>
+  <text class="lbl-ref" x="260" y="30" text-anchor="middle">return</text>
+  <rect class="copper" x="314" y="64" width="12" height="84" rx="2"/>
+  <path d="M335,136 L335,78" class="flow" marker-end="url(#pk-upb)"/>
+  <text class="lbl-sig" x="320" y="30" text-anchor="middle">signal</text>
+  <text class="lbl" x="26" y="56">package</text>
+  <text class="lbl" x="26" y="164">board</text>
+  <text class="lbl-hi" x="200" y="192" text-anchor="middle">a return beside every signal: each loop spans one pitch</text>
+  <text class="lbl" x="200" y="206" text-anchor="middle">opposite neighbours cancel: L − M</text>
+</svg></div>
+      </div>
+      <figcaption><b>Pin assignment is an inductance decision.</b> Every signal current (blue, up) comes back through a return ball (amber, down), and the area between them, dashed, is its loop. At the top, four signals share the one return at the end of the row. Each loop is large, and because neighbouring signals carry current the same way, each one&#8217;s changing field links the others&#8217; loops and adds to them: this is the off-diagonal term in the equation above. At the bottom, a return sits beside every signal. Each loop spans one pitch, and a current always has an opposite current next to it, so their fields largely cancel a short distance away. Both the self-inductance and the coupling fall, and the only cost is deciding the ball map before anyone has routed it.</figcaption>
+    </figure>
+
     <h2 class="section-rule"><span>Return via placement, quantified</span></h2>
 
     <p>
@@ -188,6 +247,39 @@
       <li>Fixing a peak seen at one port can move it to another, because the
         currents circulating in a resonance are local.</li>
     </ul>
+
+        <figure class="figure">
+      <div class="figure__bar"><span>One plane, two ports &#183; the number a target impedance does not check</span></div>
+      <div class="figure__body"><svg viewBox="0 0 400 222" role="img" aria-label="A power plane drawn as a chain of five nodes joined by series inductances, each with a capacitance to the ground plane below. A noisy block draws current at the first node; a quiet block reads the voltage at the last.">
+  
+  <rect class="plane" x="40" y="160" width="340" height="8"/>
+  <path d="M110,90 L110,120 M100,120 L120,120 M100,126 L120,126 M110,126 L110,160" class="flow"/>
+  <circle cx="110" cy="90" r="3" class="copper"/>
+  <path d="M110,90 L120,90 a5.00,7 0 0 1 10.00,0 a5.00,7 0 0 1 10.00,0 a5.00,7 0 0 1 10.00,0 a5.00,7 0 0 1 10.00,0 L170,90" class="flow"/>
+  <path d="M170,90 L170,120 M160,120 L180,120 M160,126 L180,126 M170,126 L170,160" class="flow"/>
+  <circle cx="170" cy="90" r="3" class="copper"/>
+  <path d="M170,90 L180,90 a5.00,7 0 0 1 10.00,0 a5.00,7 0 0 1 10.00,0 a5.00,7 0 0 1 10.00,0 a5.00,7 0 0 1 10.00,0 L230,90" class="flow"/>
+  <path d="M230,90 L230,120 M220,120 L240,120 M220,126 L240,126 M230,126 L230,160" class="flow"/>
+  <circle cx="230" cy="90" r="3" class="copper"/>
+  <path d="M230,90 L240,90 a5.00,7 0 0 1 10.00,0 a5.00,7 0 0 1 10.00,0 a5.00,7 0 0 1 10.00,0 a5.00,7 0 0 1 10.00,0 L290,90" class="flow"/>
+  <path d="M290,90 L290,120 M280,120 L300,120 M280,126 L300,126 M290,126 L290,160" class="flow"/>
+  <circle cx="290" cy="90" r="3" class="copper"/>
+  <path d="M290,90 L300,90 a5.00,7 0 0 1 10.00,0 a5.00,7 0 0 1 10.00,0 a5.00,7 0 0 1 10.00,0 a5.00,7 0 0 1 10.00,0 L350,90" class="flow"/>
+  <path d="M350,90 L350,120 M340,120 L360,120 M340,126 L360,126 M350,126 L350,160" class="flow"/>
+  <circle cx="350" cy="90" r="3" class="copper"/>
+  <path d="M110,90 L110,61" class="flow-2"/><circle cx="110" cy="50" r="11" class="flow-2" fill="none"/>
+  <path d="M110,56 L110,44 M106,48 L110,43 L114,48" class="flow-2"/>
+  <path d="M350,90 L350,61" class="flow"/><circle cx="350" cy="50" r="11" class="flow" fill="none"/>
+  <text class="lbl-sig" x="350" y="54" text-anchor="middle">V</text>
+  <text class="lbl-ref" x="40" y="24">noisy block A draws I&#8321;</text>
+  <text class="lbl-sig" x="380" y="24" text-anchor="end">quiet block B reads V&#8322;</text>
+  <text class="lbl" x="24" y="94">power</text>
+  <text class="lbl" x="24" y="182">ground</text>
+  <text class="lbl-hi" x="200" y="200" text-anchor="middle">Z&#8321;&#8321; = V&#8321;/I&#8321;: what A&#8217;s own target impedance checks</text>
+  <text class="lbl-hi" x="200" y="216" text-anchor="middle">Z&#8322;&#8321; = V&#8322;/I&#8321;: what actually reaches B</text>
+</svg></div>
+      <figcaption><b>A driving-point impedance and a transfer impedance are different measurements of the same plane.</b> Drawn as the site&#8217;s PDN lab draws it, a plane pair is a chain of lumped inductances with capacitance to ground at every node. Block A&#8217;s current, I&#8321;, makes a voltage at its own node, and Z&#8321;&#8321; is what its target-impedance check looks at. The same current also flows through the mesh and makes a voltage at block B&#8217;s node, and the ratio of the two is the transfer impedance Z&#8322;&#8321;. Nothing in A&#8217;s check constrains it. A resonance of the mesh can make Z&#8322;&#8321; large at a frequency where Z&#8321;&#8321; looks fine, which is how two blocks with no shared net end up coupled.</figcaption>
+    </figure>
 
     <h2 class="section-rule"><span>Where the lumped abstraction stops</span></h2>
 
