@@ -32,7 +32,7 @@
   <meta name="twitter:description" content="A GPIO switching beside a converter arrives somewhere in its output. Drive a SAR or delta-sigma converter with a coupled aggressor and watch SNR and offset move.">
   <meta name="twitter:image" content="https://sipi.work/assets/og/labs/adc-interference.png">
   <meta name="twitter:image:alt" content="Lab D: ADC Interference, Aliasing and Reference Noise: a figure from the page, on SIPI">
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Lab D: ADC Interference, Aliasing and Reference Noise","description":"A GPIO switching beside a converter arrives somewhere in its output. Drive a SAR or delta-sigma converter with a coupled aggressor and watch SNR and offset move.","url":"https://sipi.work/topics/labs/adc-interference.html","articleSection":"Labs","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer"},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-09-18","image":"https://sipi.work/assets/og/labs/adc-interference.png"}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Lab D: ADC Interference, Aliasing and Reference Noise","description":"A GPIO switching beside a converter arrives somewhere in its output. Drive a SAR or delta-sigma converter with a coupled aggressor and watch SNR and offset move.","url":"https://sipi.work/topics/labs/adc-interference.html","articleSection":"Labs","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer"},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-09-26","image":"https://sipi.work/assets/og/labs/adc-interference.png"}</script>
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"SIPI","item":"https://sipi.work/"},{"@type":"ListItem","position":2,"name":"Labs","item":"https://sipi.work/#labs"},{"@type":"ListItem","position":3,"name":"Lab D: ADC Interference, Aliasing and Reference Noise"}]}</script>
   <!-- meta:end -->
 </head>
@@ -55,7 +55,7 @@
     <p class="crumb"><a href="../../index.html#labs">Labs</a> / 04</p>
     <h1>Lab D: ADC Interference, Aliasing and Reference Noise</h1>
     <p class="byline">
-      <!-- review:start --><span>By Geetansh Arora — Principal SI/PI Engineer</span><time datetime="2026-09-18" title="Technical review by Geetansh Arora on this date">18 Sep 2026</time><span>18 min</span><!-- review:end -->
+      <!-- review:start --><span>By Geetansh Arora — Principal SI/PI Engineer</span><time datetime="2026-09-26" title="Technical review by Geetansh Arora on this date">26 Sep 2026</time><span>18 min</span><!-- review:end -->
     </p>
     <!-- share:head:start --><div class="share share--head" data-share data-share-url="https://sipi.work/topics/labs/adc-interference.html" data-share-title="Lab D: ADC Interference, Aliasing and Reference Noise"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Flabs%2Fadc-interference.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Flabs%2Fadc-interference.html&amp;text=Lab%20D%3A%20ADC%20Interference%2C%20Aliasing%20and%20Reference%20Noise" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=Lab%20D%3A%20ADC%20Interference%2C%20Aliasing%20and%20Reference%20Noise&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Flabs%2Fadc-interference.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:head:end -->
     <p class="answer">
@@ -246,9 +246,9 @@
           <div class="ctl__head"><label for="adc-coupling-type">Mechanism</label></div>
           <select class="sel" id="adc-coupling-type">
             <option value="flat">flat</option>
-            <option value="capacitive">capacitive</option>
+            <option value="capacitive" selected>capacitive</option>
           </select>
-          <p class="ctl__note">Flat: a shared impedance passes every harmonic at one ratio. Capacitive: coupling follows the rate of change, so faster edges and higher harmonics arrive larger.</p>
+          <p class="ctl__note">Flat: a shared impedance passes every harmonic at one ratio. Capacitive: coupling follows the rate of change, so faster edges and higher harmonics arrive larger. Neighbouring traces and pins couple capacitively; flat is a shared ground, supply or reference.</p>
         </div>
 </div>
 <div class="adc-pair">
@@ -399,7 +399,7 @@
   "title": "Where interference lands",
   "steps": [
     {
-      "say": "A 16-bit SAR at 1 MS/s, converting a 10 kHz tone at −1 dBFS. A 1.8 V clock at 4.1273 MHz, on its own oscillator, couples 80 dB down into its input: 112 µV at the pin. SNR is 85.2 dB against 97.1 dB with nothing coupled.",
+      "say": "A 16-bit SAR at 1 MS/s, converting a 10 kHz tone at −1 dBFS. A 1.8 V clock at 4.1273 MHz, on its own oscillator, couples capacitively into its input, 80 dB down at 1 MHz: 463 µV at the pin. SNR is 67.9 dB against 97.1 dB with nothing coupled.",
       "set": {
         "_p": "sar-fold"
       },
@@ -412,7 +412,7 @@
         "_p": "sar-gpio"
       },
       "ask": "An aggressor at exactly the sample rate would fold to DC. Does this one leave SNR alone?",
-      "answer": "No. 20 ppm off, it beats at 20 Hz. That is slower than the 65.5 ms record resolves, so the fundamental lands in the DC bins and reads as offset — an offset that wanders in any real measurement — while harmonics 5, 7 and 9 land at 100, 140 and 180 Hz. SNR 74.7 dB. A nominal match between independent clocks puts the interference near DC, where slow measurements live."
+      "answer": "No. 20 ppm off, it beats at 20 Hz. That is slower than the 65.5 ms record resolves, so the fundamental lands in the DC bins and reads as offset — an offset that wanders in any real measurement — while harmonics 5, 7 and 9 land at 100, 140 and 180 Hz. SNR 54.0 dB. A nominal match between independent clocks puts the interference near DC, where slow measurements live."
     },
     {
       "say": "Now make the aggressor share the converter's clock, at exactly 4 × the sample rate.",
@@ -644,7 +644,9 @@
       away; it costs SNR instead. An aggressor that shares the converter's clock is different. Its error repeats
       identically on every conversion, so it behaves like a flaw in the converter itself &#8212; and which flaw
       depends on where it couples and when it arrives. For the 16-bit SAR at 1 MS/s, with a 1.8 V aggressor
-      sharing its clock at exactly 1 MHz:
+      sharing its clock at exactly 1 MHz and coupled flat, through a shared impedance such as a common ground or
+      reference supply (coupled capacitively, the same aggressor adds almost no offset, because a capacitor passes
+      only its edges):
     </p>
 
     <div class="table-scroll">
@@ -684,7 +686,7 @@
     <p>
       An aggressor on its own oscillator repeats nothing. Near a multiple of the clock its error drifts at the
       beat frequency, so a DC measurement sees an offset that wanders: <b>GPIO at 1 MHz</b> reads anywhere between
-      &#8722;0.21 and +0.21 mV, depending on where the aggressor is when the record starts. A histogram test of INL
+      &#8722;0.22 and +0.22 mV, depending on where the aggressor is when the record starts. A histogram test of INL
       sees its code bins smeared differently every time. Static specifications assume an error that repeats, and
       an independent aggressor never does.
     </p>
@@ -766,7 +768,7 @@
       <h3>A clock's harmonics</h3>
       <div class="eq">
         |<i class="var">c</i><sub>n</sub>| = (2<i class="var">A</i> / n&#960;) &#183; | sin(n&#960;<i class="var">t</i><sub>e</sub>/<i class="var">T</i>) / (n&#960;<i class="var">t</i><sub>e</sub>/<i class="var">T</i>) |
-        <span class="cap">Odd n only, for a 50%-duty trapezoid of A peak to peak whose linear edges each last t<sub>e</sub> = t<sub>r</sub>/0.8, for a 10&#8211;90% rise time t<sub>r</sub>. A 1.8 V swing has a 1.146 V fundamental; coupled 80 dB down that is 114.6 &#181;V, &#8722;86.8 dBFS on a &#177;2.5 V converter. The lab's 20 MHz path pole takes another 0.2 dB, so it reads &#8722;87.0 dBFS.</span>
+        <span class="cap">Odd n only, for a 50%-duty trapezoid of A peak to peak whose linear edges each last t<sub>e</sub> = t<sub>r</sub>/0.8, for a 10&#8211;90% rise time t<sub>r</sub>. A 1.8 V swing has a 1.146 V fundamental. Coupled capacitively, 80 dB down at 1 MHz, it arrives 4.1273 times larger at 4.1273 MHz, because capacitive coupling grows with frequency: that is 473.0 &#181;V, &#8722;74.5 dBFS on a &#177;2.5 V converter. The lab's 20 MHz path pole takes another 0.2 dB, so it reads &#8722;74.6 dBFS.</span>
       </div>
 
       <h3>The sinc&#179; response</h3>
@@ -889,7 +891,7 @@
 <script src="../../js/site.js?v=9ac8f8b6" defer></script>
 <script src="../../js/viz-kit.js?v=5da3ab7a" defer></script>
 <script src="../../js/models/adc-model.js?v=0d3c17ea" defer></script>
-<script src="../../js/viz/adc-lab.js?v=edb74527" defer></script>
+<script src="../../js/viz/adc-lab.js?v=9c8c5d8c" defer></script>
 <script src="../../js/lab-workspace.js?v=49b1d309" defer></script>
 <script src="../../js/viz-loader.js?v=847283c5" defer></script>
 <script src="../../js/search.js?v=f57dea26" defer></script>

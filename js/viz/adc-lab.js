@@ -46,7 +46,7 @@
     arch: 'sar', bits: 16, fs: 1e6, fmod: 256e3, osr: 128, vref: 2.5, noiseUv: 0,
     inFreq: 10e3, inDbfs: -1,
     aggAmp: 1.8, aggMode: 'free', aggFreq: 4.1273e6, aggMultiple: 4, aggPpm: 20, aggPhase: 90,
-    edge: 1e-9, path: 'none', couplingDb: -80, couplingType: 'flat', pathBw: 20e6
+    edge: 1e-9, path: 'none', couplingDb: -80, couplingType: 'capacitive', pathBw: 20e6
   };
   const DS = { arch: 'ds', fmod: 256e3, osr: 128, inFreq: 50, inDbfs: -6 };
   const NOTCH = Object.assign({}, DS, { fmod: 2560, osr: 256, inFreq: 1.13 });
@@ -55,27 +55,27 @@
     'sar-clean': { set: {},
       note: 'A 16-bit SAR with nothing coupled. SNR is 97.1 dB: 6.02 × 16 + 1.76 dB, less the 1 dB the input sits below full scale. Quantization is the only noise.' },
     'sar-fold': { set: { path: 'input' },
-      note: 'A 1.8 V clock at 4.1273 MHz on its own oscillator, 20 ppm off the converter’s crystal, coupled 80 dB down: 112 µV at the pin, −87.0 dBFS. It runs 127.4 kHz from the nearest multiple of 1 MS/s, so that is where its fundamental lands, and every odd harmonic folds somewhere too. SNR falls from 97.1 to 85.2 dB — interference counts as noise.' },
+      note: 'A 1.8 V clock at 4.1273 MHz on its own oscillator, 20 ppm off the converter’s crystal, coupled capacitively, 80 dB down at 1 MHz. Capacitive coupling grows with frequency, so its fundamental arrives about four times larger: 463 µV at the pin, −74.6 dBFS. It runs 127.4 kHz from the nearest multiple of 1 MS/s, so that is where its fundamental lands, and every odd harmonic folds somewhere too. SNR falls from 97.1 to 67.9 dB — interference counts as noise.' },
     'sar-gpio': { set: { path: 'input', aggFreq: 1e6, couplingDb: -60 },
-      note: 'A GPIO toggling at 1 MHz beside a 1 MS/s SAR: a nominal match, but on its own oscillator, 20 ppm off. It beats at 20 Hz — slower than this 65.5 ms record resolves — so its fundamental lands in the DC bins and reads as offset, +0.14 mV here and wandering in practice, while harmonics 5, 7 and 9 land at 100, 140 and 180 Hz. SNR 74.7 dB. Tick “Shares the converter’s clock” to see an exact match instead.' },
-    'sar-locked': { set: { path: 'input', aggMode: 'clock', couplingDb: -60 },
-      note: 'The aggressor now shares the converter’s clock, at exactly 4 × the sample rate. Every sample catches it at the same phase, so all of it folds to DC: SNR is back to 97.1 dB and the output carries a +0.90 mV offset (11.8 LSB) instead. Move the phase to 0° and the offset flips to −0.90 mV. Only a shared clock holds a ratio this exact.' },
+      note: 'A GPIO toggling at 1 MHz beside a 1 MS/s SAR: a nominal match, but on its own oscillator, 20 ppm off. It beats at 20 Hz — slower than this 65.5 ms record resolves — so its fundamental lands in the DC bins and reads as offset, −0.22 mV here and wandering in practice, while harmonics 5, 7 and 9 land at 100, 140 and 180 Hz, larger than they would be flat because the coupling is capacitive. SNR 54.0 dB. Tick “Shares the converter’s clock” to see an exact match instead.' },
+    'sar-locked': { set: { path: 'input', aggMode: 'clock', couplingType: 'flat', couplingDb: -60 },
+      note: 'The aggressor now shares the converter’s clock, at exactly 4 × the sample rate, coupled flat through a shared ground or supply. Every sample catches it at the same phase, so all of it folds to DC: SNR is back to 97.1 dB and the output carries a +0.90 mV offset (11.8 LSB) instead. Move the phase to 0° and the offset flips to −0.90 mV. Only a shared clock holds a ratio this exact. Switch the mechanism to capacitive and the offset all but vanishes: a capacitor passes only the edges, and these samples fall between them.' },
     'sar-slow': { set: { path: 'input', couplingType: 'capacitive', couplingDb: -60, pathBw: 200e6, edge: 10e-9 },
       note: 'Capacitive coupling, −60 dB at 1 MHz, into a 200 MHz path, with 10 ns edges. Coupling through a capacitor grows with frequency, so each harmonic arrives larger than it otherwise would until the edge rolls the series off above 25 MHz. SNR 46.9 dB.' },
     'sar-fast': { set: { path: 'input', couplingType: 'capacitive', couplingDb: -60, pathBw: 200e6, edge: 1e-9 },
       note: 'The same, with 1 ns edges. The fundamental is unchanged, but the series now runs flat to the 200 MHz path pole instead of rolling off at 25 MHz, and every one of those harmonics folds into band. SNR 39.6 dB — 7.2 dB worse, from edge rate alone. Try flat coupling: the edges then barely matter.' },
-    'sar-ref': { set: { path: 'reference', aggFreq: 131e3, couplingDb: -60 },
-      note: 'A 131 kHz ripple on the reference. The code is the input divided by the reference, so the error is a product: sidebands at the input ± 131 kHz, not a tone at 131 kHz. Lower the input by 6 dB and the sidebands fall 6 dB with it — SNR stays at 69 dB, because the error scales with the signal.' },
+    'sar-ref': { set: { path: 'reference', couplingType: 'flat', aggFreq: 131e3, couplingDb: -60 },
+      note: 'A 131 kHz ripple on the reference, arriving through the supply it shares, so the coupling is flat. The code is the input divided by the reference, so the error is a product: sidebands at the input ± 131 kHz, not a tone at 131 kHz. Lower the input by 6 dB and the sidebands fall 6 dB with it — SNR stays at 69 dB, because the error scales with the signal.' },
     'ds-clean': { set: DS,
       note: 'A second-order, 1-bit Delta-Sigma: 256 kHz modulator clock, oversampling 128, so a 2 kHz output data rate. SNR 90.1 dB — 4.1 dB under the 94.2 dB the linear noise-shaping formula gives, which is typical of a 1-bit loop.' },
-    'ds-notch': { set: Object.assign({}, NOTCH, { aggFreq: 50, path: 'input', couplingDb: -40 }),
-      note: 'Output data rate 10 Hz (2.56 kHz clock, oversampling 256), and a 50 Hz square wave on its own oscillator, 20 ppm off, coupled 40 dB down: −46.8 dBFS at the pin. The sinc³ filter nulls every multiple of the data rate, and the fundamental sits 1 mHz from one. Yet SNR falls from 104.7 to 101.8 dB: harmonic n sits n mHz from its null, and far enough up the series that is in the passband. Share the converter’s clock, or slow the rise and fall to 1 ms, and the loss goes.' },
-    'ds-offnotch': { set: Object.assign({}, NOTCH, { aggFreq: 51, path: 'input', couplingDb: -40 }),
+    'ds-notch': { set: Object.assign({}, NOTCH, { aggFreq: 50, path: 'input', couplingType: 'flat', couplingDb: -40 }),
+      note: 'Output data rate 10 Hz (2.56 kHz clock, oversampling 256), and a 50 Hz square wave on its own oscillator, 20 ppm off, coupled flat, 40 dB down, as mains-rate interference arrives through shared ground and supply: −46.8 dBFS at the pin. The sinc³ filter nulls every multiple of the data rate, and the fundamental sits 1 mHz from one. Yet SNR falls from 104.7 to 101.8 dB: harmonic n sits n mHz from its null, and far enough up the series that is in the passband. Share the converter’s clock, or slow the rise and fall to 1 ms, and the loss goes.' },
+    'ds-offnotch': { set: Object.assign({}, NOTCH, { aggFreq: 51, path: 'input', couplingType: 'flat', couplingDb: -40 }),
       note: 'One hertz off the notch. A 51 Hz sine would be rejected by 103 dB here — but this is a square wave, and its 251st harmonic, at 12,801.3 Hz, sits 1.26 Hz from 5 × the modulator clock. Sampling folds it to 1.26 Hz, where the filter passes it. SNR 88.3 dB. Slow the rise and fall to 2 ms and that harmonic, and the spur, disappear.' },
     'ds-clock': { set: Object.assign({}, DS, { aggFreq: 256e3, path: 'input', couplingDb: -60 }),
-      note: 'An aggressor at a nominal 256 kHz, 20 ppm off the modulator clock. The modulator samples it 5.12 Hz from DC, inside the band, before any filter runs — and the decimation filter passes everything near DC. SNR falls from 90.1 to 59.8 dB. No digital filter can separate this from the signal.' },
-    'ds-ref': { set: Object.assign({}, DS, { path: 'reference', aggFreq: 127993, couplingDb: -50 }),
-      note: 'Reference ripple 4.4 Hz below half the modulator clock. That is far outside the 1 kHz band — but the feedback DAC multiplies the bitstream by the reference, and the bitstream holds its shaped quantization noise right there. The product shifts that noise down into the band. No spur: the floor rises, and SNR falls from 90.1 to 72.2 dB.' }
+      note: 'An aggressor at a nominal 256 kHz, 20 ppm off the modulator clock. The modulator samples it 5.12 Hz from DC, inside the band, before any filter runs — and the decimation filter passes everything near DC. SNR falls from 90.1 to 57.4 dB. No digital filter can separate this from the signal.' },
+    'ds-ref': { set: Object.assign({}, DS, { path: 'reference', couplingType: 'flat', aggFreq: 127993, couplingDb: -50 }),
+      note: 'Reference ripple, through the shared supply, 4.4 Hz below half the modulator clock. That is far outside the 1 kHz band — but the feedback DAC multiplies the bitstream by the reference, and the bitstream holds its shaped quantization noise right there. The product shifts that noise down into the band. No spur: the floor rises, and SNR falls from 90.1 to 72.2 dB.' }
   };
 
   NS.viz.adcLab = function (root) {

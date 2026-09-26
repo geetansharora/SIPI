@@ -639,8 +639,8 @@ const MUTATIONS = [
   {
     id: 'adc-scenario-note-stale',
     file: 'js/viz/adc-lab.js',
-    find: 'SNR falls from 97.1 to 85.2 dB',
-    with: 'SNR falls from 97.1 to 86.2 dB',
+    find: 'SNR falls from 97.1 to 67.9 dB',
+    with: 'SNR falls from 97.1 to 68.9 dB',
     runner: 'tests/check-adc-integration.js',
     expect: 'every simulated number in the lesson, the guide and the scenario notes',
     why: 'The defect this catches is prose, not arithmetic: a scenario note left '

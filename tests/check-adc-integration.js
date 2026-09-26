@@ -88,7 +88,8 @@ check('every simulated number in the lesson, the guide and the scenario notes ma
   const sharedRuns = {};
   const shared = (o) => {
     const key = JSON.stringify(o);
-    return sharedRuns[key] || (sharedRuns[key] = A.run(Object.assign({}, lab.base, { aggMode: 'clock', aggMultiple: 1 }, o)).measurements);
+    // the offset, gain and linearity table is a shared-impedance lesson, so it is coupled flat
+    return sharedRuns[key] || (sharedRuns[key] = A.run(Object.assign({}, lab.base, { aggMode: 'clock', aggMultiple: 1, couplingType: 'flat' }, o)).measurements);
   };
   const neg = (s) => s.replace(/^-/, '−');
   const sinc3dB = (f) => 20 * Math.log10(Math.pow(Math.abs(Math.sin(Math.PI * f / 10) / (256 * Math.sin(Math.PI * f / 2560))), 3));
@@ -103,7 +104,7 @@ check('every simulated number in the lesson, the guide and the scenario notes ma
     ['page', 'harmonic 251 of 51 Hz, 20 ppm off', 251 * 51 * (1 + 20e-6), (v) => v.toLocaleString('en-GB', { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + ' Hz'],
     ['page', 'ideal 16-bit SNR 1 dB below full scale', ideal16 - 1, (v) => v.toFixed(1) + ' dB'],
     ['page', 'second-order limit at OSR 64', 20 * Math.log10(2) + 10 * Math.log10(1.5) - 10 * Math.log10(Math.pow(Math.PI, 4) / 5) + 50 * Math.log10(64), (v) => v.toFixed(1) + ' dB'],
-    ['page', 'in dBFS for ±2.5 V', 20 * Math.log10(fund * 1e-4 / 2.5), (v) => neg(v.toFixed(1)) + ' dBFS'],
+    ['page', 'in dBFS for ±2.5 V, capacitive at 4.1273 MHz', 20 * Math.log10(fund * 1e-4 * 4.1273 / 2.5), (v) => neg(v.toFixed(1)) + ' dBFS'],
     ['page', 'a 20 MHz pole at 4.1273 MHz', 10 * Math.log10(1 + Math.pow(4.1273 / 20, 2)), (v) => v.toFixed(1) + ' dB'],
     ['page', 'sinc³ response at 51 Hz', sinc3dB(51), (v) => neg(v.toFixed(1)) + ' dB'],
     ['page', 'sinc³ response at 55 Hz', sinc3dB(55), (v) => neg(v.toFixed(1)) + ' dB'],
@@ -142,7 +143,7 @@ check('every simulated number in the lesson, the guide and the scenario notes ma
     ['note:sar-locked', 'offset in LSB', m('sar-locked').offsetLsb, (v) => v.toFixed(1) + ' LSB'],
     ['note:sar-locked', 'offset at 0°', m('sar-locked', { aggPhase: 0 }).offset * 1e3, (v) => neg(v.toFixed(2)) + ' mV'],
     ['note:sar-gpio', 'beat', m('sar-gpio').slowBeat, (v) => 'beats at ' + v.toFixed(0) + ' Hz'],
-    ['note:sar-gpio', 'offset in this record', m('sar-gpio').offset * 1e3, (v) => '+' + v.toFixed(2) + ' mV'],
+    ['note:sar-gpio', 'offset in this record', m('sar-gpio').offset * 1e3, (v) => (v < 0 ? '−' + (-v).toFixed(2) : '+' + v.toFixed(2)) + ' mV'],
     ['note:sar-gpio', 'SNR', m('sar-gpio').snr, (v) => 'SNR ' + v.toFixed(1) + ' dB'],
     ['note:ds-notch', 'SNR fall', null, () => m('ds-notch').snrClean.toFixed(1) + ' to ' + m('ds-notch').snr.toFixed(1) + ' dB'],
     ['note:ds-offnotch', 'harmonic 251', 251 * m('ds-offnotch').aggressorFrequency, (v) => v.toLocaleString('en-GB', { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + ' Hz'],
