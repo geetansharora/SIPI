@@ -31,7 +31,7 @@
   <meta name="twitter:description" content="Near-end and far-end crosstalk from mutual L and C, why NEXT saturates with length and FEXT does not, and why stripline and microstrip behave differently.">
   <meta name="twitter:image" content="https://sipi.work/assets/og/fundamentals/crosstalk.png">
   <meta name="twitter:image:alt" content="PCB Crosstalk: NEXT, FEXT, and Mutual Coupling: a figure from the page, on SIPI">
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"PCB Crosstalk: NEXT, FEXT, and Mutual Coupling","description":"Near-end and far-end crosstalk from mutual L and C, why NEXT saturates with length and FEXT does not, and why stripline and microstrip behave differently.","url":"https://sipi.work/topics/fundamentals/crosstalk.html","articleSection":"Fundamentals","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer"},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-09-13","image":"https://sipi.work/assets/og/fundamentals/crosstalk.png"}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"PCB Crosstalk: NEXT, FEXT, and Mutual Coupling","description":"Near-end and far-end crosstalk from mutual L and C, why NEXT saturates with length and FEXT does not, and why stripline and microstrip behave differently.","url":"https://sipi.work/topics/fundamentals/crosstalk.html","articleSection":"Fundamentals","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer"},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-09-26","image":"https://sipi.work/assets/og/fundamentals/crosstalk.png"}</script>
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"SIPI","item":"https://sipi.work/"},{"@type":"ListItem","position":2,"name":"Fundamentals","item":"https://sipi.work/#fundamentals"},{"@type":"ListItem","position":3,"name":"PCB Crosstalk: NEXT, FEXT, and Mutual Coupling"}]}</script>
   <!-- meta:end -->
 </head>
@@ -54,7 +54,7 @@
     <p class="crumb"><a href="../../index.html#fundamentals">Fundamentals</a> / 07</p>
     <h1>PCB Crosstalk: NEXT, FEXT, and Mutual Coupling</h1>
     <p class="byline">
-      <!-- review:start --><span>By Geetansh Arora — Principal SI/PI Engineer</span><time datetime="2026-09-13" title="Technical review by Geetansh Arora on this date">13 Sep 2026</time><span>11 min</span><!-- review:end -->
+      <!-- review:start --><span>By Geetansh Arora — Principal SI/PI Engineer</span><time datetime="2026-09-26" title="Technical review by Geetansh Arora on this date">26 Sep 2026</time><span>11 min</span><!-- review:end -->
     </p>
     <!-- share:head:start --><div class="share share--head" data-share data-share-url="https://sipi.work/topics/fundamentals/crosstalk.html" data-share-title="PCB Crosstalk: NEXT, FEXT, and Mutual Coupling"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Ffundamentals%2Fcrosstalk.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Ffundamentals%2Fcrosstalk.html&amp;text=PCB%20Crosstalk%3A%20NEXT%2C%20FEXT%2C%20and%20Mutual%20Coupling" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=PCB%20Crosstalk%3A%20NEXT%2C%20FEXT%2C%20and%20Mutual%20Coupling&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Ffundamentals%2Fcrosstalk.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:head:end -->
     <p class="answer">
@@ -234,6 +234,52 @@
       quarters the coupling — or bury the run. Guard traces are a distant last resort and are actively
       harmful unless stitched to ground densely along their whole length.
     </p>
+    <figure class="figure">
+      <div class="figure__bar"><span>Two directions, and one cancellation &#183; where crosstalk goes</span></div>
+      <div class="figure__pair figure__pair--stack">
+        <div><span class="figure__label">Seen from above</span><svg viewBox="0 0 400 194" role="img" aria-label="Top view of an aggressor and a victim trace. As the aggressor edge travels right, coupled noise on the victim runs backwards to the near end, where capacitive and inductive parts add, and forwards with the edge to the far end, where they subtract.">
+  <defs><marker id="xt-s" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="copper"/></marker><marker id="xt-r" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="copper-2"/></marker><marker id="xt-k" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="plane"/></marker></defs>
+  <path d="M40,60 L360,60" class="flow-2" style="stroke-width: 3"/>
+  <path d="M40,110 L360,110" class="flow" style="stroke-width: 3"/>
+  <text class="lbl-ref" x="40.0" y="48.0">aggressor</text>
+  <text class="lbl-sig" x="40.0" y="132.0">victim</text>
+  <text class="lbl" x="40.0" y="150.0">near end</text>
+  <text class="lbl" x="360.0" y="150.0" text-anchor="end">far end</text>
+  <path d="M190,46 L200,46 L205,74 L215,74" class="flow-2" style="stroke-width: 2"/>
+  <path d="M220.0,60.0 L262.0,60.0" class="flow-2" marker-end="url(#xt-r)"/>
+  <text class="lbl-ref" x="240.0" y="40.0" text-anchor="middle">the edge travels →</text>
+  <path d="M120,66 L120,104" class="field-2" style="stroke-dasharray: 2 3"/>
+  <path d="M160,66 L160,104" class="field-2" style="stroke-dasharray: 2 3"/>
+  <path d="M200,66 L200,104" class="field-2" style="stroke-dasharray: 2 3"/>
+  <path d="M170.0,100.0 L70.0,100.0" class="flow" marker-end="url(#xt-s)"/>
+  <text class="lbl-sig" x="120.0" y="94.0" text-anchor="middle">NEXT: C and L add</text>
+  <path d="M230.0,100.0 L330.0,100.0" class="flow" marker-end="url(#xt-s)"/>
+  <text class="lbl-sig" x="280.0" y="94.0" text-anchor="middle">FEXT: C minus L</text>
+  <text class="lbl" x="200.0" y="172.0" text-anchor="middle">near end: a low plateau, 2·T_d long</text>
+  <text class="lbl" x="200.0" y="186.0" text-anchor="middle">far end: a narrow pulse that grows with length</text>
+</svg></div>
+        <div><span class="figure__label">Microstrip: two dielectrics</span><svg viewBox="0 0 400 176" role="img" aria-label="Microstrip cross-section: two traces on the surface, the coupling field partly in the air above and partly in the laminate below.">
+  <defs><marker id="xsm-s" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="copper"/></marker><marker id="xsm-r" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="copper-2"/></marker><marker id="xsm-k" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="plane"/></marker></defs>
+  <rect class="dielectric" x="20" y="92" width="360" height="48"/><rect class="plane" x="20" y="140" width="360" height="6"/>
+  <text class="lbl" x="24.0" y="50.0">air</text>
+  <rect class="copper-2" x="150" y="80" width="28" height="12" rx="1"/><rect class="copper" x="222" y="80" width="28" height="12" rx="1"/>
+  <path d="M178,83 C196,68 206,68 222,83" class="field-2"/>
+  <path d="M178,89 C196,102 206,102 222,89" class="field-2"/>
+  <text class="lbl" x="200.0" y="168.0" text-anchor="middle">air and laminate: the ratios differ, FEXT survives</text>
+</svg></div>
+        <div><span class="figure__label">Stripline: one dielectric</span><svg viewBox="0 0 400 176" role="img" aria-label="Stripline cross-section: two traces buried between planes, the coupling field entirely inside one dielectric.">
+  <defs><marker id="xss-s" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="copper"/></marker><marker id="xss-r" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="copper-2"/></marker><marker id="xss-k" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="plane"/></marker></defs>
+  <rect class="dielectric" x="20" y="30" width="360" height="110"/>
+  <rect class="plane" x="20" y="24" width="360" height="6"/><rect class="plane" x="20" y="140" width="360" height="6"/>
+  <rect class="copper-2" x="150" y="79" width="28" height="12" rx="1"/><rect class="copper" x="222" y="79" width="28" height="12" rx="1"/>
+  <path d="M178,82 C196,67 206,67 222,82" class="field-2"/>
+  <path d="M178,88 C196,101 206,101 222,88" class="field-2"/>
+  <text class="lbl" x="200.0" y="168.0" text-anchor="middle">one dielectric: Lm/L0 = Cm/C0, FEXT cancels</text>
+</svg></div>
+      </div>
+      <figcaption><b>Crosstalk splits at the victim into two waves that behave differently.</b> As the aggressor&#8217;s edge travels along, each slice of coupled length pushes noise onto the victim. The part heading back towards the near end sees the capacitive and inductive contributions add, and because slices farther along arrive later, it smears into a low plateau twice the coupled delay long. The part travelling forward rides with the edge, sees the two contributions subtract, and piles up into one narrow pulse that grows with length. Whether that subtraction reaches zero depends on the dielectric: buried between planes, the field sits in one material and the two ratios match; on the surface, part of the field is in air, the ratios differ, and far-end crosstalk remains.</figcaption>
+    </figure>
+
 
     <h2 class="section-rule"><span>Why this decides how your board behaves</span></h2>
 

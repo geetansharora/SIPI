@@ -31,7 +31,7 @@
   <meta name="twitter:description" content="Why simultaneously switching outputs shift the local reference, a worked di/dt number, and the mitigations that actually move it.">
   <meta name="twitter:image" content="https://sipi.work/assets/og/power-integrity/ssn-ground-bounce.png">
   <meta name="twitter:image:alt" content="Simultaneous Switching Noise and Ground Bounce: a figure from the page, on SIPI">
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Simultaneous Switching Noise and Ground Bounce","description":"Why simultaneously switching outputs shift the local reference, a worked di/dt number, and the mitigations that actually move it.","url":"https://sipi.work/topics/power-integrity/ssn-ground-bounce.html","articleSection":"Power Integrity","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer"},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-09-15","image":"https://sipi.work/assets/og/power-integrity/ssn-ground-bounce.png"}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Simultaneous Switching Noise and Ground Bounce","description":"Why simultaneously switching outputs shift the local reference, a worked di/dt number, and the mitigations that actually move it.","url":"https://sipi.work/topics/power-integrity/ssn-ground-bounce.html","articleSection":"Power Integrity","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer"},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-09-26","image":"https://sipi.work/assets/og/power-integrity/ssn-ground-bounce.png"}</script>
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"SIPI","item":"https://sipi.work/"},{"@type":"ListItem","position":2,"name":"Power Integrity","item":"https://sipi.work/#power-integrity"},{"@type":"ListItem","position":3,"name":"Simultaneous Switching Noise and Ground Bounce"}]}</script>
   <!-- meta:end -->
 </head>
@@ -54,7 +54,7 @@
     <p class="crumb"><a href="../../index.html#power-integrity">Power Integrity</a> / 08</p>
     <h1>Simultaneous Switching Noise and Ground Bounce</h1>
     <p class="byline">
-      <!-- review:start --><span>By Geetansh Arora — Principal SI/PI Engineer</span><time datetime="2026-09-15" title="Technical review by Geetansh Arora on this date">15 Sep 2026</time><span>9 min</span><!-- review:end -->
+      <!-- review:start --><span>By Geetansh Arora — Principal SI/PI Engineer</span><time datetime="2026-09-26" title="Technical review by Geetansh Arora on this date">26 Sep 2026</time><span>9 min</span><!-- review:end -->
     </p>
     <!-- share:head:start --><div class="share share--head" data-share data-share-url="https://sipi.work/topics/power-integrity/ssn-ground-bounce.html" data-share-title="Simultaneous Switching Noise and Ground Bounce"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Fpower-integrity%2Fssn-ground-bounce.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Fpower-integrity%2Fssn-ground-bounce.html&amp;text=Simultaneous%20Switching%20Noise%20and%20Ground%20Bounce" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=Simultaneous%20Switching%20Noise%20and%20Ground%20Bounce&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Fpower-integrity%2Fssn-ground-bounce.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:head:end -->
     <p class="answer">
@@ -155,6 +155,42 @@
       the ground everything else is referenced to. Nothing has gone wrong; this is just what an
       inductor does.
     </p>
+    <figure class="figure">
+      <div class="figure__bar"><span>One return, shared &#183; where ground bounce comes from</span></div>
+      <div class="figure__body"><svg viewBox="0 0 400 266" role="img" aria-label="Three switching output drivers and one quiet driver inside a die, their return currents merging on the die ground, which reaches the board ground through one shared inductance. The quiet output is referenced to the die ground and moves with it.">
+  <defs><marker id="ss-s" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="copper"/></marker><marker id="ss-r" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="copper-2"/></marker><marker id="ss-k" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="plane"/></marker></defs>
+  <rect x="20" y="20" width="250" height="160" rx="6" style="fill: var(--surface-2); stroke: var(--border)"/>
+  <text class="lbl-hi" x="30.0" y="36.0">die</text>
+  <path d="M60,42 L60,62 L84,52 Z" class="flow" style="fill: none"/>
+  <path d="M84,52 L300,52" class="flow"/>
+  <path d="M60,58 L50,58 L50,164" class="flow-2"/>
+  <path d="M50.0,82.0 L50.0,96.0" class="flow-2" marker-end="url(#ss-r)"/>
+  <path d="M60,74 L60,94 L84,84 Z" class="flow" style="fill: none"/>
+  <path d="M84,84 L300,84" class="flow"/>
+  <path d="M60,90 L43,90 L43,164" class="flow-2"/>
+  <path d="M43.0,114.0 L43.0,128.0" class="flow-2" marker-end="url(#ss-r)"/>
+  <path d="M60,106 L60,126 L84,116 Z" class="flow" style="fill: none"/>
+  <path d="M84,116 L300,116" class="flow"/>
+  <path d="M60,122 L36,122 L36,164" class="flow-2"/>
+  <path d="M36.0,146.0 L36.0,160.0" class="flow-2" marker-end="url(#ss-r)"/>
+  <path d="M60,138 L60,158 L84,148 Z" class="flow" style="fill: none"/>
+  <path d="M84,148 L300,148" class="flow" style="stroke-dasharray: 3 3"/>
+  <text class="lbl-sig" x="304.0" y="56.0">switching outputs</text>
+  <text class="lbl" x="304.0" y="152.0">a quiet output</text>
+  <path d="M30,164 L230,164" class="flow-2" style="stroke-width: 2.4"/>
+  <text class="lbl-ref" x="120.0" y="176.0">die ground</text>
+  <path d="M230,164 L230,176" class="flow-2" style="stroke-width: 2"/>
+  <path d="M230,176 a7,4.00 0 0 1 0,8.00 a7,4.00 0 0 1 0,8.00 a7,4.00 0 0 1 0,8.00 a7,4.00 0 0 1 0,8.00" class="flow-2"/>
+  <path d="M230,208 L230,216" class="flow-2"/>
+  <rect class="plane" x="150" y="216" width="160" height="6"/>
+  <text class="lbl-ref" x="242.0" y="196.0">shared L_gnd</text>
+  <text class="lbl" x="318.0" y="222.0">board ground</text>
+  <text class="lbl-hi" x="200.0" y="244.0" text-anchor="middle">v = L_gnd · N · di/dt</text>
+  <text class="lbl" x="200.0" y="258.0" text-anchor="middle">the quiet output rides on the moving die ground</text>
+</svg></div>
+      <figcaption><b>Every switching driver sends its current home through the same few ground connections.</b> Inside the die the returns merge on one ground network, then leave through the package and balls, which have inductance. Each driver alone makes a small L&#183;di/dt across it; N drivers switching on the same edge make N times the di/dt through the same inductance. For the length of that edge the die&#8217;s ground is no longer at the board&#8217;s zero. A quiet output, which is driving a steady low, is referenced to that moving ground, so the bounce appears on its pin as a glitch it never drove. More ground balls divide L; slew-rate control and DBI cut di/dt; both appear in the panel above.</figcaption>
+    </figure>
+
 
     <h2 class="section-rule"><span>The reference is not fixed</span></h2>
 

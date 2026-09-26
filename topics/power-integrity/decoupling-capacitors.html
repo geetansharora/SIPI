@@ -31,7 +31,7 @@
   <meta name="twitter:description" content="How capacitance, ESR, ESL, mounting-loop geometry, placement, and anti-resonance shape a practical decoupling network.">
   <meta name="twitter:image" content="https://sipi.work/assets/og/power-integrity/decoupling-capacitors.png">
   <meta name="twitter:image:alt" content="Decoupling Capacitors: ESR, ESL, and Placement: a figure from the page, on SIPI">
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Decoupling Capacitors: ESR, ESL, and Placement","description":"How capacitance, ESR, ESL, mounting-loop geometry, placement, and anti-resonance shape a practical decoupling network.","url":"https://sipi.work/topics/power-integrity/decoupling-capacitors.html","articleSection":"Power Integrity","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer"},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-09-14","image":"https://sipi.work/assets/og/power-integrity/decoupling-capacitors.png"}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Decoupling Capacitors: ESR, ESL, and Placement","description":"How capacitance, ESR, ESL, mounting-loop geometry, placement, and anti-resonance shape a practical decoupling network.","url":"https://sipi.work/topics/power-integrity/decoupling-capacitors.html","articleSection":"Power Integrity","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer"},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-09-26","image":"https://sipi.work/assets/og/power-integrity/decoupling-capacitors.png"}</script>
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"SIPI","item":"https://sipi.work/"},{"@type":"ListItem","position":2,"name":"Power Integrity","item":"https://sipi.work/#power-integrity"},{"@type":"ListItem","position":3,"name":"Decoupling Capacitors: ESR, ESL, and Placement"}]}</script>
   <!-- meta:end -->
 </head>
@@ -54,7 +54,7 @@
     <p class="crumb"><a href="../../index.html#power-integrity">Power Integrity</a> / 03</p>
     <h1>Decoupling Capacitors: ESR, ESL, and Placement</h1>
     <p class="byline">
-      <!-- review:start --><span>By Geetansh Arora — Principal SI/PI Engineer</span><time datetime="2026-09-14" title="Technical review by Geetansh Arora on this date">14 Sep 2026</time><span>10 min</span><!-- review:end -->
+      <!-- review:start --><span>By Geetansh Arora — Principal SI/PI Engineer</span><time datetime="2026-09-26" title="Technical review by Geetansh Arora on this date">26 Sep 2026</time><span>10 min</span><!-- review:end -->
     </p>
     <!-- share:head:start --><div class="share share--head" data-share data-share-url="https://sipi.work/topics/power-integrity/decoupling-capacitors.html" data-share-title="Decoupling Capacitors: ESR, ESL, and Placement"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Fpower-integrity%2Fdecoupling-capacitors.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Fpower-integrity%2Fdecoupling-capacitors.html&amp;text=Decoupling%20Capacitors%3A%20ESR%2C%20ESL%2C%20and%20Placement" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=Decoupling%20Capacitors%3A%20ESR%2C%20ESL%2C%20and%20Placement&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Fpower-integrity%2Fdecoupling-capacitors.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:head:end -->
     <p class="answer">
@@ -249,6 +249,47 @@
       and taller, sharper peaks between the floors. Controlled-ESR capacitors exist precisely for this,
       and on some rails deliberately choosing a lossier part is a practical way to flatten a curve.
     </p>
+    <figure class="figure">
+      <div class="figure__bar"><span>The inductance you built &#183; the loop a capacitor&#8217;s current has to go round</span></div>
+      <div class="figure__pair figure__pair--stack">
+        <div><span class="figure__label">Fanout traces, distant vias, deep planes</span><svg viewBox="0 0 400 200" role="img" aria-label="A capacitor mounted with fanout traces to vias some distance away, down to power and ground planes deep in the board. The current loop, shaded, is large.">
+  <defs><marker id="dcf-s" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="copper"/></marker><marker id="dcf-r" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="copper-2"/></marker><marker id="dcf-k" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="plane"/></marker></defs>
+  <rect class="dielectric" x="20" y="60" width="360" height="90"/>
+  <rect class="copper" x="20" y="118" width="360" height="5"/>
+  <rect class="plane" x="20" y="136" width="360" height="5"/>
+  <text class="lbl-sig" x="376.0" y="115.0" text-anchor="end">power</text>
+  <text class="lbl" x="376.0" y="152.0" text-anchor="end">ground</text>
+  <rect x="170" y="36" width="60" height="18" rx="2" class="dielectric" style="stroke: var(--ink-2)"/>
+  <text class="lbl-hi" x="200.0" y="30.0" text-anchor="middle">capacitor</text>
+  <rect class="copper" x="162" y="54" width="18" height="6"/><rect class="plane" x="220" y="54" width="18" height="6"/>
+  <rect class="copper" x="97" y="54" width="71" height="6"/>
+  <rect class="plane" x="229" y="54" width="74" height="6"/>
+  <rect class="copper" x="96" y="54" width="8" height="69"/>
+  <rect class="plane" x="296" y="54" width="8" height="87"/>
+  <path d="M104,60 L296,60 L296,136 L104,136 Z" style="fill: var(--reflect); fill-opacity: .16; stroke: var(--reflect); stroke-dasharray: 4 3"/>
+  <text class="lbl" x="200.0" y="176.0" text-anchor="middle">the shaded loop is the mounting inductance</text>
+  <text class="lbl-hi" x="200.0" y="192.0" text-anchor="middle">≈ 1.2 nH: three times the part</text>
+</svg></div>
+        <div><span class="figure__label">Vias at the pads, planes near the surface</span><svg viewBox="0 0 400 200" role="img" aria-label="The same capacitor with its vias at the pads and the planes just under the surface. The loop is small.">
+  <defs><marker id="dcn-s" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="copper"/></marker><marker id="dcn-r" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="copper-2"/></marker><marker id="dcn-k" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="plane"/></marker></defs>
+  <rect class="dielectric" x="20" y="60" width="360" height="90"/>
+  <rect class="copper" x="20" y="84" width="360" height="5"/>
+  <rect class="plane" x="20" y="96" width="360" height="5"/>
+  <text class="lbl-sig" x="376.0" y="81.0" text-anchor="end">power</text>
+  <text class="lbl" x="376.0" y="112.0" text-anchor="end">ground</text>
+  <rect x="170" y="36" width="60" height="18" rx="2" class="dielectric" style="stroke: var(--ink-2)"/>
+  <text class="lbl-hi" x="200.0" y="30.0" text-anchor="middle">capacitor</text>
+  <rect class="copper" x="162" y="54" width="18" height="6"/><rect class="plane" x="220" y="54" width="18" height="6"/>
+  <rect class="copper" x="167" y="54" width="8" height="35"/>
+  <rect class="plane" x="225" y="54" width="8" height="47"/>
+  <path d="M175,60 L225,60 L225,96 L175,96 Z" style="fill: var(--reflect); fill-opacity: .16; stroke: var(--reflect); stroke-dasharray: 4 3"/>
+  <text class="lbl" x="200.0" y="176.0" text-anchor="middle">the shaded loop is the mounting inductance</text>
+  <text class="lbl-hi" x="200.0" y="192.0" text-anchor="middle">a much smaller loop</text>
+</svg></div>
+      </div>
+      <figcaption><b>A capacitor&#8217;s current flows round a loop, and the loop is on the board, not in the part.</b> From the power plane up a via, along the pad and trace, through the capacitor, and back down to the ground plane: the area that path encloses (shaded) sets the mounting inductance. With fanout traces and planes deep in the stackup it is about 1.2 nH, three times the 0.4 nH inside a typical 0402, and it pulls the resonance from 25 MHz down to 12.6 MHz. Vias at the pads and planes near the surface shrink the loop in both directions, which is why the fixes on this page are all layout: short vias, vias at the pads, planes close to the capacitor&#8217;s side of the board.</figcaption>
+    </figure>
+
 
     <h2 class="section-rule"><span>Why this decides how your board behaves</span></h2>
 

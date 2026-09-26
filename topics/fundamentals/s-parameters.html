@@ -31,7 +31,7 @@
   <meta name="twitter:description" content="What S21 and S11 actually measure, how mixed-mode parameters work, and the passivity and causality checks that catch a bad model.">
   <meta name="twitter:image" content="https://sipi.work/assets/og/fundamentals/s-parameters.png">
   <meta name="twitter:image:alt" content="S-Parameters: Insertion Loss, Return Loss, and Mixed Mode: a figure from the page, on SIPI">
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"S-Parameters: Insertion Loss, Return Loss, and Mixed Mode","description":"What S21 and S11 actually measure, how mixed-mode parameters work, and the passivity and causality checks that catch a bad model.","url":"https://sipi.work/topics/fundamentals/s-parameters.html","articleSection":"Fundamentals","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer"},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-09-13","image":"https://sipi.work/assets/og/fundamentals/s-parameters.png"}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"S-Parameters: Insertion Loss, Return Loss, and Mixed Mode","description":"What S21 and S11 actually measure, how mixed-mode parameters work, and the passivity and causality checks that catch a bad model.","url":"https://sipi.work/topics/fundamentals/s-parameters.html","articleSection":"Fundamentals","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer"},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-09-26","image":"https://sipi.work/assets/og/fundamentals/s-parameters.png"}</script>
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"SIPI","item":"https://sipi.work/"},{"@type":"ListItem","position":2,"name":"Fundamentals","item":"https://sipi.work/#fundamentals"},{"@type":"ListItem","position":3,"name":"S-Parameters: Insertion Loss, Return Loss, and Mixed Mode"}]}</script>
   <!-- meta:end -->
 </head>
@@ -54,7 +54,7 @@
     <p class="crumb"><a href="../../index.html#fundamentals">Fundamentals</a> / 15</p>
     <h1>S-Parameters: Insertion Loss, Return Loss, and Mixed Mode</h1>
     <p class="byline">
-      <!-- review:start --><span>By Geetansh Arora — Principal SI/PI Engineer</span><time datetime="2026-09-13" title="Technical review by Geetansh Arora on this date">13 Sep 2026</time><span>11 min</span><!-- review:end -->
+      <!-- review:start --><span>By Geetansh Arora — Principal SI/PI Engineer</span><time datetime="2026-09-26" title="Technical review by Geetansh Arora on this date">26 Sep 2026</time><span>11 min</span><!-- review:end -->
     </p>
     <!-- share:head:start --><div class="share share--head" data-share data-share-url="https://sipi.work/topics/fundamentals/s-parameters.html" data-share-title="S-Parameters: Insertion Loss, Return Loss, and Mixed Mode"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Ffundamentals%2Fs-parameters.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Ffundamentals%2Fs-parameters.html&amp;text=S-Parameters%3A%20Insertion%20Loss%2C%20Return%20Loss%2C%20and%20Mixed%20Mode" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=S-Parameters%3A%20Insertion%20Loss%2C%20Return%20Loss%2C%20and%20Mixed%20Mode&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Ffundamentals%2Fs-parameters.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:head:end -->
     <p class="answer">
@@ -237,6 +237,54 @@
       support a time-domain simulation with a 20 ps edge, and a file with no DC point forces the
       simulator to extrapolate one — badly. Both produce results that look plausible and are not.
     </p>
+    <figure class="figure">
+      <div class="figure__bar"><span>Waves at ports &#183; and the four blocks of a differential pair</span></div>
+      <div class="figure__pair figure__pair--stack">
+        <div><span class="figure__label">Two ports, three waves</span><svg viewBox="0 0 400 166" role="img" aria-label="A two-port network with an incident wave entering port 1, a reflected wave leaving port 1, and a transmitted wave leaving port 2. S11 is the ratio of reflected to incident, S21 of transmitted to incident.">
+  <defs><marker id="sp-s" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="copper"/></marker><marker id="sp-r" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="copper-2"/></marker><marker id="sp-k" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="plane"/></marker></defs>
+  <rect class="dielectric" x="160" y="44" width="80" height="70" rx="5"/><text class="lbl-hi" x="200.0" y="76.0" text-anchor="middle">network</text><text class="lbl" x="200.0" y="90.0" text-anchor="middle">passive</text>
+  <path d="M62,79 L160,79 M240,79 L336,79" class="tick"/>
+  <text class="lbl-hi" x="20.0" y="83.0">port 1</text>
+  <text class="lbl-hi" x="380.0" y="83.0" text-anchor="end">port 2</text>
+  <path d="M70.0,64.0 L150.0,64.0" class="flow" marker-end="url(#sp-s)"/>
+  <text class="lbl-sig" x="110.0" y="56.0" text-anchor="middle">a₁ incident</text>
+  <path d="M150.0,94.0 L70.0,94.0" class="flow-2" marker-end="url(#sp-r)"/>
+  <text class="lbl-ref" x="110.0" y="112.0" text-anchor="middle">b₁ reflected</text>
+  <path d="M250.0,94.0 L330.0,94.0" class="flow" marker-end="url(#sp-s)"/>
+  <text class="lbl-sig" x="290.0" y="112.0" text-anchor="middle">b₂ transmitted</text>
+  <path d="M330.0,64.0 L250.0,64.0" class="tick" marker-end="url(#sp-k)"/>
+  <text class="lbl" x="290.0" y="56.0" text-anchor="middle">a₂ = 0 if matched</text>
+  <text class="lbl-hi" x="200.0" y="142.0" text-anchor="middle">S₁₁ = b₁ / a₁: return loss  ·  S₂₁ = b₂ / a₁: insertion loss</text>
+  <text class="lbl" x="200.0" y="158.0" text-anchor="middle">each against a reference impedance, usually 50 Ω</text>
+</svg></div>
+        <div><span class="figure__label">A differential pair, regrouped by mode</span><svg viewBox="0 0 400 184" role="img" aria-label="A two-by-two block matrix for a differential pair: differential to differential, the pair itself; common to differential, noise getting in; differential to common, mode conversion; and common to common.">
+  <defs><marker id="mm-s" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="copper"/></marker><marker id="mm-r" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="copper-2"/></marker><marker id="mm-k" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="plane"/></marker></defs>
+  <rect x="90" y="34" width="130" height="54" rx="4" class="dielectric"/>
+  <text class="lbl-hi" x="155.0" y="52.0" text-anchor="middle">SDD</text>
+  <text class="lbl" x="155.0" y="66.0" text-anchor="middle">diff → diff</text>
+  <text class="lbl-sig" x="155.0" y="80.0" text-anchor="middle">the pair itself</text>
+  <rect x="230" y="34" width="130" height="54" rx="4" class="dielectric"/>
+  <text class="lbl-hi" x="295.0" y="52.0" text-anchor="middle">SDC</text>
+  <text class="lbl" x="295.0" y="66.0" text-anchor="middle">common → diff</text>
+  <text class="lbl" x="295.0" y="80.0" text-anchor="middle">noise getting in</text>
+  <rect x="90" y="96" width="130" height="54" rx="4" class="dielectric"/>
+  <text class="lbl-hi" x="155.0" y="114.0" text-anchor="middle">SCD</text>
+  <text class="lbl" x="155.0" y="128.0" text-anchor="middle">diff → common</text>
+  <text class="lbl-ref" x="155.0" y="142.0" text-anchor="middle">mode conversion</text>
+  <rect x="230" y="96" width="130" height="54" rx="4" class="dielectric"/>
+  <text class="lbl-hi" x="295.0" y="114.0" text-anchor="middle">SCC</text>
+  <text class="lbl" x="295.0" y="128.0" text-anchor="middle">common → common</text>
+  <text class="lbl" x="295.0" y="142.0" text-anchor="middle">common-mode path</text>
+  <text class="lbl" x="160.0" y="26.0" text-anchor="middle">differential in</text>
+  <text class="lbl" x="300.0" y="26.0" text-anchor="middle">common in</text>
+  <text class="lbl" x="84.0" y="64.0" text-anchor="end">diff out</text>
+  <text class="lbl" x="84.0" y="126.0" text-anchor="end">common out</text>
+  <text class="lbl" x="200.0" y="176.0" text-anchor="middle">first letter: output mode · second: input mode</text>
+</svg></div>
+      </div>
+      <figcaption><b>An S-parameter is a ratio of two waves.</b> Send a wave into port 1 (a₁) with the far port terminated in its reference impedance, so nothing comes back into port 2. Part of the wave reflects (b₁) and part gets through (b₂). S₁₁ and S₂₁ are those two ratios, and the reference impedance is part of their definition. A differential pair has four ports, and regrouping its sixteen terms by mode gives four readable blocks: the differential response of the pair, how common-mode noise converts into the differential signal, how an asymmetric pair leaks the differential signal into common mode, and how common mode travels. The two off-diagonal blocks are where a pair that looks fine differentially is quietly failing.</figcaption>
+    </figure>
+
 
     <h2 class="section-rule"><span>Why this decides how your board behaves</span></h2>
 

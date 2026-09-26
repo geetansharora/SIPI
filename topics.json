@@ -141,7 +141,7 @@
             "lattice",
             "TDR"
           ],
-          "reviewed": "2026-09-12",
+          "reviewed": "2026-09-26",
           "reviewer": "Geetansh Arora"
         },
         {
@@ -190,7 +190,7 @@
             "mutual capacitance",
             "spacing"
           ],
-          "reviewed": "2026-09-13",
+          "reviewed": "2026-09-26",
           "reviewer": "Geetansh Arora"
         },
         {
@@ -233,7 +233,7 @@
             "dB per inch",
             "Dk"
           ],
-          "reviewed": "2026-09-13",
+          "reviewed": "2026-09-26",
           "reviewer": "Geetansh Arora"
         },
         {
@@ -265,7 +265,7 @@
             "UI",
             "eye opening"
           ],
-          "reviewed": "2026-09-13",
+          "reviewed": "2026-09-26",
           "reviewer": "Geetansh Arora"
         },
         {
@@ -284,7 +284,7 @@
             "dual dirac",
             "BER"
           ],
-          "reviewed": "2026-09-13",
+          "reviewed": "2026-09-26",
           "reviewer": "Geetansh Arora"
         },
         {
@@ -338,7 +338,7 @@
             "passivity",
             "causality"
           ],
-          "reviewed": "2026-09-13",
+          "reviewed": "2026-09-26",
           "reviewer": "Geetansh Arora"
         },
         {
@@ -409,7 +409,7 @@
             "placement",
             "SRF"
           ],
-          "reviewed": "2026-09-14",
+          "reviewed": "2026-09-26",
           "reviewer": "Geetansh Arora"
         },
         {
@@ -455,7 +455,7 @@
             "EMI",
             "modal"
           ],
-          "reviewed": "2026-09-14",
+          "reviewed": "2026-09-26",
           "reviewer": "Geetansh Arora"
         },
         {
@@ -486,7 +486,7 @@
             "di/dt",
             "rail collapse"
           ],
-          "reviewed": "2026-09-15",
+          "reviewed": "2026-09-26",
           "reviewer": "Geetansh Arora"
         },
         {
@@ -519,7 +519,7 @@
             "AVP",
             "compensation"
           ],
-          "reviewed": "2026-09-15",
+          "reviewed": "2026-09-26",
           "reviewer": "Geetansh Arora"
         },
         {
@@ -617,7 +617,7 @@
             "de-emphasis",
             "tap"
           ],
-          "reviewed": "2026-09-15",
+          "reviewed": "2026-09-26",
           "reviewer": "Geetansh Arora"
         },
         {
@@ -717,7 +717,7 @@
             "DC balance"
           ],
           "status": "live",
-          "reviewed": "2026-09-16",
+          "reviewed": "2026-09-26",
           "reviewer": "Geetansh Arora"
         }
       ]
