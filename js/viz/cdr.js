@@ -245,14 +245,18 @@
       /* Two different frequencies, named apart. fn is where the loop's poles sit;
          the -3 dB bandwidth is 1.58x to 3.37x higher depending on damping. */
       P.vline(p.fn * 1e6, T.ink2, [3, 3], 'fn');
-      P.vline(M.measurements.bandwidth3dB, T.muted, [2, 4], '−3 dB');
+      /* One line below fn's label: on a phone the two sit ~20 px apart. */
+      P.vline(M.measurements.bandwidth3dB, T.muted, [2, 4]);
+      K.text(s.ctx, '−3 dB', P.X(M.measurements.bandwidth3dB) + 4, P.box.TP + 18, T.muted, 10, 'left');
       P.vline(p.jitterFrequency * 1e6, T.alarm, [5, 3]);
       if (M.measurements.peakTransfer > 1.01) {
         K.dot(s.ctx, P.X(M.measurements.peakAt), P.Y(M.measurements.peakTransfer),
               T.alarm, T.surface, 4);
+        /* On whichever side of the dot has room, so it never runs off the plot. */
+        const px = P.X(M.measurements.peakAt), right = px > (P.box.L + P.box.R) / 2;
         K.text(s.ctx, '+' + M.measurements.peakTransferDb.toFixed(1) + ' dB of peaking',
-               P.X(M.measurements.peakAt) + 8, P.Y(M.measurements.peakTransfer) - 8,
-               T.alarm, 10, 'left');
+               right ? px - 8 : px + 8, P.Y(M.measurements.peakTransfer) - 8,
+               T.alarm, 10, right ? 'right' : 'left');
       }
       P.frame();
     }

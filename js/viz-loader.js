@@ -690,7 +690,10 @@
       coupling: ['cp-tr', 'cp-rv', 'cp-load'],
       /* Where the spurs land, how high the harmonics reach, and whether the
          coupling tilts them: the three things the output spectrum answers. */
-      adcLab: ['adc-agg-f', 'adc-edge', 'adc-coupling-type']
+      adcLab: ['adc-agg-f', 'adc-edge', 'adc-coupling-type'],
+      /* The transfer curve's corner, its peaking, and a tone to slide along it:
+         what the loop tracks, what it amplifies, and where a given jitter sits. */
+      cdr: ['cdr-fn', 'cdr-zeta', 'cdr-jitter-f']
     };
     if (!(el.dataset.viz in defaults)) return;
     const K = window.SIPI.kit;

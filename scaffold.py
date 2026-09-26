@@ -74,15 +74,14 @@ PAGE = '''<!doctype html>
 <body>
 
 <header class="masthead">
-  <a class="wordmark" href="../../index.html">SI<span class="amp">&amp;</span>PI</a>
-  <nav>
-    <a href="../../index.html#fundamentals">Fundamentals</a>
-    <a href="../../index.html#power-integrity">Power</a>
-    <a href="../../index.html#interfaces">Interfaces</a>
+  <a class="wordmark" href="../../index.html">SIPI</a>
+  <button class="theme-toggle" data-act="theme" type="button">Light</button>
+  <nav aria-label="Site">
     <a href="../../start.html">Start</a>
+    <a href="../../index.html#groundwork">Topics</a>
     <a href="../../labs.html">Labs</a>
-    <a href="../../reference.html">Reference</a>
-    <button class="theme-toggle" data-act="theme" type="button">System</button>
+    <a href="../../calculators.html">Calculators</a>
+    <a href="../../colophon.html">About</a>
   </nav>
 </header>
 
@@ -849,42 +848,6 @@ def _stamp_all():
     return n, files
 
 
-def _meta_block(url, title, desc):
-    """The canonical + OpenGraph block for one page. Factored out of cmd_meta
-    because a GENERATED page has to stamp its own — the same reason _stamp_one
-    exists. `scaffold.py contract` rewrites model-contract.html from a template,
-    and a template with no meta fence silently undid `scaffold.py meta` every
-    time it ran. That is the unversioned-asset bug wearing different clothes,
-    and the metadata gate is what surfaced it."""
-    data, _flat = load()
-    site = data["site"]
-    base = site["url"].rstrip("/")
-
-    def e(t):
-        return (str(t).replace("&", "&amp;").replace("<", "&lt;")
-                .replace(">", "&gt;").replace('"', "&quot;"))
-
-    og = "\n".join(
-        f'  <meta property="{k}" content="{v}">' for k, v in [
-            ("og:type", "article"), ("og:site_name", e(site["name"])),
-            ("og:title", e(title)), ("og:description", e(desc)),
-            ("og:url", url), ("og:image", base + "/assets/og.png"),
-            ("og:image:width", "1200"), ("og:image:height", "630"),
-        ])
-    tw = "\n".join(
-        f'  <meta name="{k}" content="{v}">' for k, v in [
-            ("twitter:card", "summary_large_image"),
-            ("twitter:title", e(title)), ("twitter:description", e(desc)),
-            ("twitter:image", base + "/assets/og.png"),
-        ])
-    return ("  <!-- meta:start -->\n"
-            f'  <link rel="canonical" href="{url}">\n'
-            f'  <link rel="describedby" href="{base}/llms.txt" type="text/markdown">\n'
-            f'{og}\n{tw}\n'
-            "  <!-- meta:end -->")
-
-
-
 THEME_MARKERS = ("  <!-- theme:start -->", "  <!-- theme:end -->")
 
 # Inline, blocking, and in <head> on purpose. The theme used to be applied by
@@ -1260,15 +1223,14 @@ CONTRACT_PAGE = """<!doctype html>
 <body>
 
 <header class="masthead">
-  <a class="wordmark" href="index.html">SI<span class="amp">&amp;</span>PI</a>
-  <nav>
-    <a href="index.html#fundamentals">Fundamentals</a>
-    <a href="index.html#power-integrity">Power</a>
-    <a href="index.html#interfaces">Interfaces</a>
+  <a class="wordmark" href="index.html">SIPI</a>
+  <button class="theme-toggle" data-act="theme" type="button">Light</button>
+  <nav aria-label="Site">
     <a href="start.html">Start</a>
+    <a href="index.html#groundwork">Topics</a>
     <a href="labs.html">Labs</a>
-    <a href="reference.html">Reference</a>
-    <button class="theme-toggle" data-act="theme" type="button">System</button>
+    <a href="calculators.html">Calculators</a>
+    <a href="colophon.html">About</a>
   </nav>
 </header>
 
@@ -1964,18 +1926,18 @@ def cmd_contract():
     page = CONTRACT_PAGE.format(n=len(order), tally=esc(tally),
                                 levels=levels, rows="".join(rows))
     page, _ = _stamp_one(page, "model-contract.html", {})
-    # and its own metadata, for the same reason
-    data, _f = load()
-    base = data["site"]["url"].rstrip("/")
-    blk = _meta_block(base + "/model-contract.html", "Interactive Model Assumptions and Evidence | SIPI",
-                      "What each interactive model on this site assumes, how it "
-                      "is computed, what it is known not to do, and which test "
-                      "suites its evidence rests on.")
-    if "<!-- meta:start -->" in page:
-        page = re.sub(r"  <!-- meta:start -->[\s\S]*?<!-- meta:end -->", blk, page)
-    else:
-        page = page.replace("</head>", blk + "\n</head>", 1)
-    (ROOT / "model-contract.html").write_text(page, encoding="utf-8")
+    # The metadata block belongs to `scaffold.py meta`. Carry over whatever it last
+    # stamped rather than writing a second version here: two writers with two
+    # descriptions undid each other on every run.
+    out = ROOT / "model-contract.html"
+    prev = out.read_text(encoding="utf-8") if out.exists() else ""
+    m = re.search(r"  <!-- meta:start -->[\s\S]*?<!-- meta:end -->", prev)
+    if m:
+        if "<!-- meta:start -->" in page:
+            page = re.sub(r"  <!-- meta:start -->[\s\S]*?<!-- meta:end -->", lambda _m: m.group(0), page)
+        else:
+            page = page.replace("</head>", m.group(0) + "\n</head>", 1)
+    out.write_text(page, encoding="utf-8")
     k = stamp_badges()
     print(f"  model-contract.html \u2014 {len(order)} panels ({tally})")
     if k:

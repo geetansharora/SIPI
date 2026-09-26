@@ -23,9 +23,9 @@ HTTP, and it hides itself when it cannot fetch `topics.json`.
 | | |
 |---|---|
 | Topic pages | **73**, all `live`, each with a `deeper` section and its own review date |
-| Words | 149507; median 2202 per page |
+| Words | 149692; median 2202 per page |
 | Interactive panels | **41**, including four labs and twelve calculators |
-| SVG figures | 84 |
+| SVG figures | 85 |
 | Arithmetic claims checked | **159** across 42 pages (`check-numbers.py`) |
 | Model assertions | **991** (`check-models.js`), with **0 claims pending** |
 | Mutation coverage | **64 of 64** known defects have an assertion that provably catches them (`mutate.js`) |

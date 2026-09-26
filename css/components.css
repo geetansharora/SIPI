@@ -2079,3 +2079,20 @@ html.lab-lock, html.lab-lock body { overflow: hidden; }
   .masthead nav a { font-size: .7rem; }
   .masthead nav .search-open { min-width: 2rem; }
 }
+
+/* ---------- print ----------
+   Paper gets the article: text, equations, figures and the charts as they stand.
+   The controls, sharing and navigation are for a screen. site.js switches to the
+   light palette and opens the "go deeper" sections before printing, so a reader on
+   the dark theme does not get pale text on white paper. */
+@media print {
+  .masthead nav, .theme-toggle, .searchbox, .share, .pager, .site-foot__nav,
+  .controls, .controls-toggle, .control-group, .lab-rail, .instrument__tools,
+  .workspace-picker, .lab-swipe__dots, .lab-primary, .lab-expand, .tool-btn,
+  .panel-tabs, .modes, .transport, .mobile-note, .presets, .exercises { display: none !important; }
+  body { background: #fff; }
+  a { color: inherit; text-decoration: underline; }
+  h2, h3 { break-after: avoid; }
+  figure, .figure, .panel, .eq, table, pre, .callout { break-inside: avoid; }
+  .lab-swipe { display: block !important; height: auto !important; overflow: visible !important; }
+}

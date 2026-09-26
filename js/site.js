@@ -68,6 +68,24 @@
     window.dispatchEvent(new CustomEvent('sipi:theme', { detail: { mode: mode || 'light' } }));
   }
 
+  /* Paper is white. Printing switches to the light palette (the charts repaint on
+     sipi:theme), opens the "go deeper" sections so the maths comes too, and puts
+     both back afterwards. */
+  let printing = null;
+  window.addEventListener('beforeprint', () => {
+    if (printing) return;                  // it can fire twice; keep the first record
+    const shut = [...document.querySelectorAll('details.deeper:not([open])')];
+    printing = { mode: stored(), shut };
+    shut.forEach((d) => { d.open = true; });
+    apply(null);
+  });
+  window.addEventListener('afterprint', () => {
+    if (!printing) return;
+    printing.shut.forEach((d) => { d.open = false; });
+    apply(printing.mode);
+    printing = null;
+  });
+
   const ORDER = [null, 'dark', 'system'];
   function init() {
     apply(stored());

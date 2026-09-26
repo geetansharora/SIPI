@@ -10,6 +10,9 @@
   NS.viz.calcBitRate = function (root) {
     return K.calc(root, {
       selects: [{ id: 'mod', label: 'Modulation', def: '1', options: [['1', 'NRZ'], ['2', 'PAM4']] }],
+      /* Dk read at Nyquist: half the symbol rate, which is where the channel's
+         loss and delay are usually quoted. */
+      laminate: { freq: (v) => v.rate / (2 * +v.mod), note: 'A stripline sees this Dk; a microstrip sees less, as part of its field is in air.' },
       inputs: [
         { id: 'rate', label: 'Data rate', kind: 'si', unit: 'b/s', alias: ['bps', 'bit/s', 'b'],
           min: 1e8, max: 4e11, log: true, def: 32e9, positive: true },
