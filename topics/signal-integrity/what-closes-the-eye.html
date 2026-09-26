@@ -31,7 +31,7 @@
   <meta name="twitter:description" content="Four channel impairments on one eye diagram: insertion loss, reflections, an impedance discontinuity and crosstalk, with representative numbers for each.">
   <meta name="twitter:image" content="https://sipi.work/assets/og/signal-integrity/what-closes-the-eye.png">
   <meta name="twitter:image:alt" content="Eye Closure: Loss, Reflections, Discontinuities, and Crosstalk: a figure from the page, on SIPI">
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Eye Closure: Loss, Reflections, Discontinuities, and Crosstalk","description":"Four channel impairments on one eye diagram: insertion loss, reflections, an impedance discontinuity and crosstalk, with representative numbers for each.","url":"https://sipi.work/topics/signal-integrity/what-closes-the-eye.html","articleSection":"SI in practice","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer"},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-09-15","image":"https://sipi.work/assets/og/signal-integrity/what-closes-the-eye.png"}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Eye Closure: Loss, Reflections, Discontinuities, and Crosstalk","description":"Four channel impairments on one eye diagram: insertion loss, reflections, an impedance discontinuity and crosstalk, with representative numbers for each.","url":"https://sipi.work/topics/signal-integrity/what-closes-the-eye.html","articleSection":"SI in practice","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer"},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-09-26","image":"https://sipi.work/assets/og/signal-integrity/what-closes-the-eye.png"}</script>
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"SIPI","item":"https://sipi.work/"},{"@type":"ListItem","position":2,"name":"SI in practice","item":"https://sipi.work/#signal-integrity"},{"@type":"ListItem","position":3,"name":"Eye Closure: Loss, Reflections, Discontinuities, and Crosstalk"}]}</script>
   <!-- meta:end -->
 </head>
@@ -54,7 +54,7 @@
     <p class="crumb"><a href="../../index.html#signal-integrity">SI in practice</a> / 02</p>
     <h1>Eye Closure: Loss, Reflections, Discontinuities, and Crosstalk</h1>
     <p class="byline">
-      <!-- review:start --><span>By Geetansh Arora — Principal SI/PI Engineer</span><time datetime="2026-09-15" title="Technical review by Geetansh Arora on this date">15 Sep 2026</time><span>12 min</span><!-- review:end -->
+      <!-- review:start --><span>By Geetansh Arora — Principal SI/PI Engineer</span><time datetime="2026-09-26" title="Technical review by Geetansh Arora on this date">26 Sep 2026</time><span>12 min</span><!-- review:end -->
     </p>
     <!-- share:head:start --><div class="share share--head" data-share data-share-url="https://sipi.work/topics/signal-integrity/what-closes-the-eye.html" data-share-title="Eye Closure: Loss, Reflections, Discontinuities, and Crosstalk"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Fsignal-integrity%2Fwhat-closes-the-eye.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Fsignal-integrity%2Fwhat-closes-the-eye.html&amp;text=Eye%20Closure%3A%20Loss%2C%20Reflections%2C%20Discontinuities%2C%20and%20Crosstalk" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=Eye%20Closure%3A%20Loss%2C%20Reflections%2C%20Discontinuities%2C%20and%20Crosstalk&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Fsignal-integrity%2Fwhat-closes-the-eye.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:head:end -->
     <p class="answer">
@@ -73,9 +73,10 @@
     answer at once. A phone has no room to put them side by side.
   </p>
   <!-- mobilenote:end -->
-  <section class="instrument" data-viz="impairments" aria-label="Interactive eye diagram with independent controls for insertion loss, termination mismatch, an impedance discontinuity and crosstalk, plus interface presets and a sensitivity breakdown">
+  <section class="instrument lab" data-viz="impairments" aria-label="Interactive eye diagram with independent controls for insertion loss, termination mismatch, an impedance discontinuity and crosstalk, plus interface presets and a sensitivity breakdown">
     <script type="application/json" data-contract>{"kind":"analytical","evidence":"independent","purpose":"Compare four impairments on one consistent channel, as counterfactuals rather than a decomposition.","equations":["S21_disc=2/(2cos+j(r+1/r)sin)","S11_in=S11_disc*e^-j2wTd1 + S21_disc^2*GL*H^2*e^-j2wTd","echo = Gs.GL * H^2 * direct, delayed by 2*Td  (first term of a geometric series in Gs.GL)"],"units":"s, V, ohm, dB","validity":"FIRST ORDER in the reflection coefficients: one source-load round trip is kept and the (Gs.GL)^2 terms and beyond are dropped. The relative size of what is dropped is |Gs.GL|, measured at 0.06% to 0.71% of the retained echo across the released presets and 6.3% at the controls' extremes — so it is accurate here, but it is an expansion and not a cascade. Single-ended; fixed CTLE+DFE, not adapting. For a network with every internal re-reflection included exactly, see labChannel, which cascades ABCD matrices instead.","numerics":"4096-point FFT, 32 samples/UI, 420 symbols.","limitations":"An expansion truncated at first order, not an exact network. It also uses the two-term magnitude loss law with a minimum phase, not the causal material model that labChannel now uses, so its phase is reconstructed rather than derived.","suites":["Networks","Impairment chain"],"version":"2.0","reviewed":"2026-09-12","panel":"impairments"}</script>
-    <div class="instrument__bar">
+<div class="lab-frame">
+<div class="instrument__bar">
       <span class="instrument__title">Four impairments &#183; one eye &#183; pick an interface</span>
         <span data-evidence="independent" data-model-version="2.0" class="model-tag model-tag--analytical" title="One channel: loss, a through-section discontinuity, source and load mismatch, FEXT. FIRST ORDER in the reflection coefficients — one source-load round trip is kept and the (ΓsΓL)² terms are dropped, which is 0.06% to 0.71% of the retained echo across these presets. For a network with every re-reflection included exactly, see Lab B.">analytical</span>
       <span class="instrument__readout" role="status" aria-live="polite" aria-label="Current values">
@@ -87,43 +88,26 @@
         <span>echo returns <b data-out="echo">—</b></span>
         <span class="evidence" data-out="evidence">—</span>
       </span>
+    <button type="button" class="tool-btn lab-full" data-lab-full aria-pressed="false">full screen</button>
+</div>
+<aside class="lab-rail lab-rail--left" aria-label="Channel controls">
+<p class="lab-rail__side">Channel <span>what the signal crosses</span></p>
+<details class="control-group lab-group" open><summary class="lab-group__title" id="lab-left-0">Interface</summary><div class="control-group__grid lab-group__body"><div class="presets">
+      <button class="preset" type="button" data-preset="pcie4" aria-pressed="true">PCIe Gen 4</button>
+      <button class="preset" type="button" data-preset="pcie5" aria-pressed="false">PCIe Gen 5</button>
+      <button class="preset" type="button" data-preset="lpddr5x" aria-pressed="false">LPDDR5X 8533</button>
+      <button class="preset" type="button" data-preset="ufs4" aria-pressed="false">UFS 4.0 HS-G5</button>
+      <button class="preset" type="button" data-preset="usb32" aria-pressed="false">USB 3.2 Gen 2</button>
     </div>
-    <div class="panels">
-      <div class="panel">
-        <span class="panel__label">The eye, with everything applied</span>
-        <canvas data-cv="eye" role="img" aria-label="An eye diagram formed from a pseudo-random bit sequence through a channel carrying insertion loss, reflections, an impedance discontinuity and crosstalk, with the measured opening marked."></canvas>
-        <div class="legend"><span><i style="background:var(--signal)"></i>overlaid bits</span><span><i class="dash" style="color:var(--reflect)"></i>measured opening</span></div>
-      </div>
-    </div>
-    <div class="panels two-up">
-      <div class="panel">
-        <span class="panel__label">TDR &#8212; impedance against round-trip time</span>
-        <canvas data-cv="tdr" role="img" aria-label="A time-domain reflectometry trace showing the line impedance against round-trip time, with a dip at the discontinuity and a step at the termination."></canvas>
-        <div class="legend"><span><i style="background:var(--signal)"></i>impedance profile</span><span><i class="dash" style="color:var(--muted)"></i>50 ohm</span></div>
-      </div>
-      <div class="panel">
-        <span class="panel__label">Sensitivity &#8212; remove one, see what comes back</span>
-        <canvas data-cv="bars" role="img" aria-label="A bar for each impairment showing how much eye height is regained if that impairment alone is removed."></canvas>
-        <div class="legend"><span><i style="background:var(--alarm)"></i>the dominant one</span><span><i style="background:var(--signal)"></i>the others</span></div>
-      </div>
-    </div>
-    <div class="controls">
-      <div class="ctl">
+    <div class="transport"><span data-out="note">—</span></div>
+    </div></details>
+<details class="control-group lab-group" open><summary class="lab-group__title" id="lab-left-1">Loss</summary><div class="control-group__grid lab-group__body"><div class="ctl">
         <div class="ctl__head"><label for="im-il">Insertion loss at Nyquist</label><output id="im-il-out" for="im-il">18 dB</output></div>
         <input type="range" id="im-il" min="0" max="36" step="1" value="18">
         <span class="ctl__note">The one equalisation is for</span>
       </div>
-      <div class="ctl">
-        <div class="ctl__head"><label for="im-rt">Far-end termination</label><output id="im-rt-out" for="im-rt">48 ohm</output></div>
-        <input type="range" id="im-rt" min="30" max="70" step="1" value="48">
-        <span class="ctl__note">Away from 50 and it reflects &#8212; but a round trip needs BOTH ends</span>
-      </div>
-      <div class="ctl">
-        <div class="ctl__head"><label for="im-rs">Source impedance</label><output id="im-rs-out" for="im-rs">47 ohm</output></div>
-        <input type="range" id="im-rs" min="30" max="70" step="1" value="47">
-        <span class="ctl__note">A matched source cannot re-reflect &#8212; set it to 50 and the echo disappears</span>
-      </div>
-      <div class="ctl">
+    </div></details>
+<details class="control-group lab-group" open><summary class="lab-group__title" id="lab-left-2">Discontinuity</summary><div class="control-group__grid lab-group__body"><div class="ctl">
         <div class="ctl__head"><label for="im-dz">Discontinuity impedance</label><output id="im-dz-out" for="im-dz">45 ohm</output></div>
         <input type="range" id="im-dz" min="25" max="75" step="1" value="45">
         <span class="ctl__note">A via, a footprint, a connector</span>
@@ -133,7 +117,47 @@
         <input type="range" id="im-dp" min="0" max="60" step="1" value="15">
         <span class="ctl__note">Worst mismatch loss is 2/(r + 1/r) &#8212; a through-section cannot notch</span>
       </div>
+    </div></details>
+<p class="lab-help" aria-hidden="true">Point at or focus a control to see what it changes.</p>
+</aside>
+<div class="lab-stage">
+<div class="lab-row lab-row--anchor" style="--anchor-columns: minmax(0, 1fr)">
+<div data-lab-unit="eye" data-lab-name="Eye" class="panel">
+        <div class="lab-panel-head"><span class="panel__label">The eye, with everything applied</span><button type="button" class="tool-btn lab-expand" data-lab-expand aria-pressed="false" aria-label="Expand eye">expand</button></div>
+
+        <canvas data-cv="eye" role="img" aria-label="An eye diagram formed from a pseudo-random bit sequence through a channel carrying insertion loss, reflections, an impedance discontinuity and crosstalk, with the measured opening marked."></canvas>
+        <div class="legend"><span><i style="background:var(--signal)"></i>overlaid bits</span><span><i class="dash" style="color:var(--reflect)"></i>measured opening</span></div>
+      </div>
+</div>
+<div class="lab-row lab-row--anchor" style="--anchor-columns: minmax(0, 1fr)">
+<div data-lab-unit="tdr" data-lab-name="TDR" class="panel">
+        <div class="lab-panel-head"><span class="panel__label">TDR &#8212; impedance against round-trip time</span><button type="button" class="tool-btn lab-expand" data-lab-expand aria-pressed="false" aria-label="Expand tdr">expand</button></div>
+
+        <canvas data-cv="tdr" role="img" aria-label="A time-domain reflectometry trace showing the line impedance against round-trip time, with a dip at the discontinuity and a step at the termination."></canvas>
+        <div class="legend"><span><i style="background:var(--signal)"></i>impedance profile</span><span><i class="dash" style="color:var(--muted)"></i>50 ohm</span></div>
+      </div>
+<div data-lab-unit="bars" data-lab-name="Sensitivity" class="panel">
+        <div class="lab-panel-head"><span class="panel__label">Sensitivity &#8212; remove one, see what comes back</span><button type="button" class="tool-btn lab-expand" data-lab-expand aria-pressed="false" aria-label="Expand sensitivity">expand</button></div>
+
+        <canvas data-cv="bars" role="img" aria-label="A bar for each impairment showing how much eye height is regained if that impairment alone is removed."></canvas>
+        <div class="legend"><span><i style="background:var(--alarm)"></i>the dominant one</span><span><i style="background:var(--signal)"></i>the others</span><span><i style="background:var(--reflect)"></i>removing it lowers the eye</span></div>
+      </div>
+</div>
+</div>
+<aside class="lab-rail lab-rail--right" aria-label="Ends and receiver controls">
+<p class="lab-rail__side">Ends and receiver <span>what meets it</span></p>
+<details class="control-group lab-group" open><summary class="lab-group__title" id="lab-right-0">Terminations</summary><div class="control-group__grid lab-group__body"><div class="ctl">
+        <div class="ctl__head"><label for="im-rt">Far-end termination</label><output id="im-rt-out" for="im-rt">48 ohm</output></div>
+        <input type="range" id="im-rt" min="30" max="70" step="1" value="48">
+        <span class="ctl__note">Away from 50 and it reflects &#8212; but a round trip needs BOTH ends</span>
+      </div>
       <div class="ctl">
+        <div class="ctl__head"><label for="im-rs">Source impedance</label><output id="im-rs-out" for="im-rs">47 ohm</output></div>
+        <input type="range" id="im-rs" min="30" max="70" step="1" value="47">
+        <span class="ctl__note">A matched source cannot re-reflect &#8212; set it to 50 and the echo disappears</span>
+      </div>
+    </div></details>
+<details class="control-group lab-group" open><summary class="lab-group__title" id="lab-right-1">Crosstalk</summary><div class="control-group__grid lab-group__body"><div class="ctl">
         <div class="ctl__head"><label for="im-na">Aggressors</label><output id="im-na-out" for="im-na">2 aggressors</output></div>
         <input type="range" id="im-na" min="0" max="4" step="1" value="2">
         <span class="ctl__note">Independent data, so it reads as noise</span>
@@ -143,20 +167,16 @@
         <input type="range" id="im-co" min="0" max="80" step="1" value="20">
         <span class="ctl__note">A field solve gives you this</span>
       </div>
-      <div class="ctl">
+    </div></details>
+<details class="control-group lab-group" open><summary class="lab-group__title" id="lab-right-2">Receiver</summary><div class="control-group__grid lab-group__body"><div class="ctl">
         <div class="ctl__head"><label for="im-eq">Receiver</label></div>
         <label class="check" for="im-eq"><input type="checkbox" id="im-eq" checked> CTLE + 4-tap DFE</label>
         <span class="ctl__note">Fixes loss. Does nothing for a notch, and lifts crosstalk with the signal.</span>
       </div>
-    </div>
-    <div class="presets">
-      <button class="preset" type="button" data-preset="pcie4" aria-pressed="true">PCIe Gen 4</button>
-      <button class="preset" type="button" data-preset="pcie5" aria-pressed="false">PCIe Gen 5</button>
-      <button class="preset" type="button" data-preset="lpddr5x" aria-pressed="false">LPDDR5X 8533</button>
-      <button class="preset" type="button" data-preset="ufs4" aria-pressed="false">UFS 4.0 HS-G5</button>
-      <button class="preset" type="button" data-preset="usb32" aria-pressed="false">USB 3.2 Gen 2</button>
-    </div>
-    <div class="transport"><span data-out="note">—</span></div>
+    </div></details>
+<p class="lab-help" aria-hidden="true">Point at or focus a control to see what it changes.</p>
+</aside>
+</div>
   
     <script type="application/json" data-guide>
 {
@@ -565,8 +585,8 @@
 </footer>
 
 <script src="../../js/site.js?v=61b8ff31" defer></script>
-<script src="../../js/viz-kit.js?v=5da3ab7a" defer></script>
-<script src="../../js/viz/impairments.js?v=32580c18" defer></script>
+<script src="../../js/viz-kit.js?v=024034c9" defer></script>
+<script src="../../js/viz/impairments.js?v=667fd2a6" defer></script>
 <script src="../../js/viz-loader.js?v=cc004bcb" defer></script>
 <script src="../../js/search.js?v=f57dea26" defer></script>
 </body>

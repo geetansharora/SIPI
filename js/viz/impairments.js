@@ -266,7 +266,9 @@
        That cannot demonstrate the receiver chain the prose describes, and it
        flatters the equaliser: in real silicon the CTLE amplifies crosstalk along
        with the signal, which is one of the page's central claims. */
-    function run(use, fixedCursor) {
+    /* rel: where to sample, as an offset from this channel's own pulse peak. Left
+       out, the eye is searched for its centre, as a CDR would. */
+    function run(use, rel) {
       const h0 = K.channelImpulse(use.il ? p.il : 0, SPS, NFFT);
       const sc = shapeChannel(h0, p, use);
       const lv = Array.from(bits, (b) => (b ? 1 : -1) * SWING / 2);
@@ -311,10 +313,10 @@
         hEff = conv(sc.h, hCtle);                    // taps must match the equalised pulse
       }
       const sb = K.pulseResponse(hEff, SPS, 0.3);
-      const cur = (fixedCursor === undefined) ? bestCursor(y, bits, sb.cursor) : fixedCursor;
+      const cur = (rel === undefined) ? bestCursor(y, bits, sb.cursor) : sb.cursor + rel;
       if (p.eq) y = K.applyDFE(y, lv, sb.sbr, cur, 4, SPS, { mode: 'ideal' });
 
-      return { y, cur, height: eyeOpen(y, bits, cur), width: eyeWidth(y, bits, cur),
+      return { y, cur, rel: cur - sb.cursor, height: eyeOpen(y, bits, cur), width: eyeWidth(y, bits, cur),
                rlDb: sc.rlDb, echoUI: sc.echoUI, echoOK: sc.echoOK, s11Imp: sc.s11Imp };
     }
 
@@ -324,7 +326,10 @@
       M = run(ALL);
       SENS = ['il', 'rl', 'tdr', 'xt'].map((k) => {
         const use = Object.assign({}, ALL); use[k] = 0;
-        return { key: k, height: run(use, M.cur).height };   // same sampling point
+        /* The same sampling PHASE, not the same sample: loss delays the pulse by
+           more than a UI at 18 dB, so removing it at a fixed sample read the next
+           bit and reported the loss as helping. */
+        return { key: k, height: run(use, M.rel).height };
       });
     }
 
@@ -337,7 +342,7 @@
       // control does anyway.
       let amp = 0;
       for (let b = SKIP; b < NB - 2; b++) {
-        for (let k = -SPS / 2; k <= SPS / 2; k += 4) {
+        for (let k = -SPS / 2; k < SPS / 2; k += 4) {
           const v = M.y[b * SPS + M.cur + k];
           if (v !== undefined && Math.abs(v) > amp) amp = Math.abs(v);
         }
@@ -353,9 +358,11 @@
       const ctx = s.ctx;
       ctx.save();
       ctx.strokeStyle = K.rgba(T.signal, 0.13); ctx.lineWidth = 1; ctx.lineJoin = 'round';
+      /* Half-open, like the DFE's window: sample +SPS/2 is the next bit's, with the
+         next correction already subtracted, and drawing it put a false step at +0.5 UI. */
       for (let b = SKIP; b < NB - 2; b++) {
         ctx.beginPath();
-        for (let k = -SPS / 2; k <= SPS / 2; k++) {
+        for (let k = -SPS / 2; k < SPS / 2; k++) {
           const v = M.y[b * SPS + M.cur + k];
           if (v === undefined) continue;
           const x = P.X(k / SPS), yy = P.Y(v);
@@ -364,12 +371,9 @@
         ctx.stroke();
       }
       ctx.restore();
-      if (M.height > 0 && M.width > 0) {
-        const x0 = P.X(-M.width / 2), x1 = P.X(M.width / 2);
-        const y0 = P.Y(M.height / 2), y1 = P.Y(-M.height / 2);
-        ctx.save();
-        ctx.strokeStyle = T.reflect; ctx.lineWidth = 1.5; ctx.setLineDash([4, 3]);
-        ctx.strokeRect(x0, y0, x1 - x0, y1 - y0); ctx.restore();
+      const open = K.eyeContour((b, k) => M.y[b * SPS + M.cur + k], bits, SKIP, NB - 2, -SPS / 2, SPS / 2 - 1);
+      if (M.height > 0 && open.pts) {
+        K.strokeEyeOpening(ctx, P.X, P.Y, open, SPS, T.reflect);
       } else {
         K.text(ctx, 'EYE CLOSED', (P.box.L + P.box.R) / 2, (P.box.TP + P.box.B) / 2, T.alarm, 13, 'center');
       }
@@ -428,14 +432,17 @@
       const L = 124, R = w - 84, MIDW = R - L;
       const names = { il: 'insertion loss', rl: 'reflections (RL)', tdr: 'the discontinuity', xt: 'crosstalk' };
       const costs = SENS.map((x) => ({ key: x.key, cost: x.height - M.height }));
-      const span = Math.max(1e-6, ...costs.map((c) => Math.abs(c.cost)));
-      const anyNeg = costs.some((c) => c.cost < -1e-9);
-      const zero = anyNeg ? L + MIDW * 0.28 : L;         // room for negatives when needed
-      const scale = anyNeg ? (MIDW * 0.72) / span : MIDW / span;
+      /* Each side gets width in proportion to its own largest bar. A fixed 28/72
+         split scaled both sides by the larger one, so a big negative bar ran left
+         past the names. */
+      const neg = Math.max(0, ...costs.map((c) => -c.cost)), pos = Math.max(0, ...costs.map((c) => c.cost));
+      const anyNeg = neg > 1e-9;
+      const scale = MIDW / Math.max(1e-6, neg + pos);
+      const zero = L + neg * scale;
       const worst = Math.max(...costs.map((c) => c.cost));
 
       K.text(ctx, 'removing one, holding EQ fixed', L - 116, 16, T.ink2, 11, 'left');
-      K.text(ctx, 'eye height regained', R + 4, 16, T.muted, 9, 'left');
+      if (w >= 460) K.text(ctx, 'eye height regained', w - 4, 16, T.muted, 9, 'right');   // no room beside the title on a phone
       if (anyNeg) K.line(ctx, zero, 28, zero, 178, T.border, 1);
 
       costs.forEach((c, i) => {
@@ -448,8 +455,8 @@
         ctx.restore();
         K.text(ctx, names[c.key], L - 8, y + 11, T.ink2, 10, 'right');
         const lbl = (c.cost >= 0 ? '+' : '−') + Math.abs(c.cost * 1000).toFixed(0) + ' mV';
-        const lx = wpx >= 0 ? zero + Math.max(1, wpx) + 6 : zero + wpx - 6;
-        K.text(ctx, lbl, lx, y + 11, colour, 10, wpx >= 0 ? 'left' : 'right');
+        // a negative bar's value sits just right of zero, clear of the names
+        K.text(ctx, lbl, wpx >= 0 ? zero + Math.max(1, wpx) + 6 : zero + 6, y + 11, colour, 10, 'left');
       });
       K.text(ctx, 'they do not add up — impairments interact',
              L - 116, 190, T.muted, 9, 'left');

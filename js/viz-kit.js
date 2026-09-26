@@ -2350,6 +2350,59 @@
     return out;
   };
 
+  /* The eye's inner contour, measured rather than drawn. At each offset s samples
+     from the sampling instant it is the lowest trace of a '1' (top) and the
+     highest trace of a '0' (bottom); the opening is the run of offsets around
+     s = 0 where top stays above bottom, closed at each end where they meet.
+     A rectangle of eye height by eye width is not this: an eye narrows away from
+     its centre, so a rectangle's corners sit on traces.
+       sample(b, s)  bit b's waveform s samples from its sampling instant, or undefined
+     Returns [] when the eye is shut at s = 0, else { pts: [[s, top, bottom]...],
+     left: [s, v], right: [s, v] } with s fractional at the two tips. */
+  K.eyeContour = function (sample, bits, from, to, sMin, sMax) {
+    const col = [];
+    for (let s = sMin; s <= sMax; s++) {
+      let top = Infinity, bottom = -Infinity;
+      for (let b = from; b < to; b++) {
+        const v = sample(b, s);
+        if (v === undefined) continue;
+        if (bits[b]) { if (v < top) top = v; } else if (v > bottom) bottom = v;
+      }
+      col.push([s, top, bottom]);
+    }
+    const open = (q) => isFinite(q[1]) && isFinite(q[2]) && q[1] > q[2];
+    const c = col.findIndex((q) => q[0] === 0);
+    if (c < 0 || !open(col[c])) return [];
+    let a = c, z = c;
+    while (a > 0 && open(col[a - 1])) a--;
+    while (z < col.length - 1 && open(col[z + 1])) z++;
+    /* Each tip lies between the last open column and the first shut one, where
+       the gap top - bottom falls through zero. */
+    const tip = (i, j) => {
+      const q = col[i], r = col[j];
+      if (!r || !isFinite(r[1]) || !isFinite(r[2])) return [q[0], (q[1] + q[2]) / 2];
+      const g0 = q[1] - q[2], g1 = r[1] - r[2], t = g0 / (g0 - g1);
+      return [q[0] + t * (r[0] - q[0]), q[1] + t * (r[1] - q[1])];
+    };
+    return { pts: col.slice(a, z + 1), left: tip(a, a - 1), right: tip(z, z + 1) };
+  };
+
+  /* Outline an eyeContour. X takes UI, so s is divided by sps. */
+  K.strokeEyeOpening = function (ctx, X, Y, contour, sps, colour) {
+    if (!contour.pts) return;
+    ctx.save();
+    ctx.strokeStyle = colour; ctx.lineWidth = 1.5; ctx.setLineDash([4, 3]); ctx.lineJoin = 'round';
+    ctx.beginPath();
+    ctx.moveTo(X(contour.left[0] / sps), Y(contour.left[1]));
+    contour.pts.forEach(([s, top]) => ctx.lineTo(X(s / sps), Y(top)));
+    ctx.lineTo(X(contour.right[0] / sps), Y(contour.right[1]));
+    for (let i = contour.pts.length - 1; i >= 0; i--) {
+      const [s, , bottom] = contour.pts[i];
+      ctx.lineTo(X(s / sps), Y(bottom));
+    }
+    ctx.closePath(); ctx.stroke(); ctx.restore();
+  };
+
   /* ---------- reproducible scenarios ----------
      A panel is only useful in a design discussion if the other person can open
      exactly what you were looking at. These read and write every control in a

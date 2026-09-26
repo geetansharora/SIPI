@@ -450,6 +450,18 @@ const MUTATIONS = [
     active: true, fast: true
   },
   {
+    id: 'eye-contour-best-one',
+    file: 'js/viz-kit.js',
+    find: '        if (bits[b]) { if (v < top) top = v; } else if (v > bottom) bottom = v;',
+    with: '        if (bits[b]) { if (v > top || top === Infinity) top = v; } else if (v > bottom) bottom = v;',
+    suite: 'Eye contour',
+    expect: 'a quarter UI out it is half height',
+    why: 'The opening is bounded by the WORST 1, not the best. Taking the highest 1 '
+       + 'draws an eye wider open than any receiver sees, which is the rectangle '
+       + 'overlay\u2019s error in a subtler form.',
+    active: true, fast: true
+  },
+  {
     id: 'search-keyword-double-count',
     file: 'js/search.js',
     find: "        s: score(it, tokens) - (it.kw.includes(query) || named(it, query) ? 8 : 0)",

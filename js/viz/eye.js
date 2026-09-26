@@ -169,6 +169,10 @@
       const cursor = findCursor(h);
       meas = measure(y, bits, SKIP, cursor, jit, (p.rj / ui()) * SPS);
       meas.cursor = cursor;
+      /* the opening itself, from the same bits and the same jittered instants */
+      const js = (p.rj / ui()) * SPS;
+      meas.contour = K.eyeContour((b, s) => y[b * SPS + Math.round(cursor + jit[b] * js) + s],
+                                  bits, SKIP, NBITS - 2, -SPS / 2, SPS / 2);
       syncOut();
     }
 
@@ -256,15 +260,12 @@
 
     function overlay() {
       const { ctx, X, Y, L, R, TP, B } = geom;
-      if (meas.height > 0 && meas.width > 0) {
-        const x0 = X(-meas.width / 2), x1 = X(meas.width / 2);
-        const y0 = Y(meas.height / 2), y1 = Y(-meas.height / 2);
-        ctx.save();
-        ctx.strokeStyle = T.reflect; ctx.lineWidth = 1.5; ctx.setLineDash([4, 3]);
-        ctx.strokeRect(x0, y0, x1 - x0, y1 - y0);
-        ctx.restore();
-        label(ctx, 'measured opening', x1 + 6 > R - 60 ? x0 - 6 : x1 + 6, y0 - 8,
-              T.reflect, 10, x1 + 6 > R - 60 ? 'right' : 'left');
+      const c = meas.contour;
+      if (meas.height > 0 && c.pts) {
+        K.strokeEyeOpening(ctx, X, Y, c, SPS, T.reflect);
+        /* named at its upper edge, just right of the sampling instant */
+        const top = c.pts.find((q) => q[0] === 0) || c.pts[0];
+        label(ctx, 'measured opening', X(0) + 6, Y(top[1]) + 14, T.reflect, 10, 'left');
       } else {
         label(ctx, 'EYE CLOSED at the pad', (L + R) / 2, (TP + B) / 2, T.alarm, 12, 'center');
       }

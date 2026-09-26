@@ -138,6 +138,34 @@ const SIPI = loadSite();
 const K = SIPI.kit, MODELS = SIPI.models || {};
 
 /* ═════════ N6-3 · Search vocabulary and ranking ═════════ */
+/* ═════════ The eye's measured opening ═════════ */
+suite('Eye contour — the opening is the eye, not a rectangle', () => {
+  /* INDEPENDENT: a waveform that moves linearly between ±1 at bit centres makes an
+     exact diamond. The worst neighbour of a 1 is a 0, so the lowest 1 at offset s
+     is 1 - 2|s|/SPS: height 2 at the centre, closing to a point at ±0.5 UI. */
+  const S = 32;
+  const bits = Array.from({ length: 400 }, (_, i) => ((i * 2654435761) >>> 16) & 1);   // every neighbour pair occurs
+  const lv = bits.map((b) => (b ? 1 : -1));
+  const at = (b, s) => {                         // linear between centres b and b±1
+    const n = s >= 0 ? b + 1 : b - 1;
+    if (n < 0 || n >= lv.length) return undefined;
+    const t = Math.abs(s) / S;
+    return lv[b] * (1 - t) + lv[n] * t;
+  };
+  const c = K.eyeContour(at, bits, 2, bits.length - 2, -S / 2, S / 2);
+  const mid = c.pts && c.pts.find((q) => q[0] === 0);
+  ok('the diamond is full height at the sampling instant', !!mid && Math.abs(mid[1] - 1) < 1e-12 && Math.abs(mid[2] + 1) < 1e-12,
+     mid ? `top ${mid[1]}, bottom ${mid[2]}` : 'no contour');
+  const q = c.pts && c.pts.find((r) => r[0] === 8);
+  ok('a quarter UI out it is half height, as 1 - 2|s|/UI says', !!q && Math.abs(q[1] - 0.5) < 1e-12 && Math.abs(q[2] + 0.5) < 1e-12,
+     q ? `top ${q[1]}, bottom ${q[2]}` : 'no column');
+  ok('its tips close at the bit boundaries, ±0.5 UI, on the threshold',
+     !!c.left && Math.abs(c.left[0] + S / 2) < 1e-9 && Math.abs(c.right[0] - S / 2) < 1e-9
+       && Math.abs(c.left[1]) < 1e-9 && Math.abs(c.right[1]) < 1e-9,
+     c.left ? `left ${c.left}, right ${c.right}` : 'no tips');
+  ok('a shut eye has no opening to draw', K.eyeContour(() => 0, bits, 2, bits.length - 2, -S / 2, S / 2).length === 0);
+});
+
 suite('Search — equivalents, ranking, acronym boundaries', () => {
   const data = JSON.parse(fs.readFileSync(path.join(SRC, 'topics.json'), 'utf8'));
   const model = SIPI.searchModel;
