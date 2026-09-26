@@ -31,7 +31,7 @@
   <meta name="twitter:description" content="Real Capacitors: Bias, Tolerance, Temperature, and Mounting">
   <meta name="twitter:image" content="https://sipi.work/assets/og/power-integrity/real-capacitors.png">
   <meta name="twitter:image:alt" content="Real Capacitors: Bias, Tolerance, Temperature, and Mounting: a figure from the page, on SIPI">
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Real Capacitors: Bias, Tolerance, Temperature, and Mounting","description":"Real Capacitors: Bias, Tolerance, Temperature, and Mounting","url":"https://sipi.work/topics/power-integrity/real-capacitors.html","articleSection":"Power Integrity","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer"},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-09-15","image":"https://sipi.work/assets/og/power-integrity/real-capacitors.png"}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Real Capacitors: Bias, Tolerance, Temperature, and Mounting","description":"Real Capacitors: Bias, Tolerance, Temperature, and Mounting","url":"https://sipi.work/topics/power-integrity/real-capacitors.html","articleSection":"Power Integrity","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer"},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-09-26","image":"https://sipi.work/assets/og/power-integrity/real-capacitors.png"}</script>
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"SIPI","item":"https://sipi.work/"},{"@type":"ListItem","position":2,"name":"Power Integrity","item":"https://sipi.work/#power-integrity"},{"@type":"ListItem","position":3,"name":"Real Capacitors: Bias, Tolerance, Temperature, and Mounting"}]}</script>
   <!-- meta:end -->
 </head>
@@ -54,7 +54,7 @@
     <p class="crumb"><a href="../../index.html#power-integrity">Power Integrity</a> / 12</p>
     <h1>Real Capacitors: Bias, Tolerance, Temperature, and Mounting</h1>
     <p class="byline">
-      <!-- review:start --><span>By Geetansh Arora — Principal SI/PI Engineer</span><time datetime="2026-09-15" title="Technical review by Geetansh Arora on this date">15 Sep 2026</time><span>10 min</span><!-- review:end -->
+      <!-- review:start --><span>By Geetansh Arora — Principal SI/PI Engineer</span><time datetime="2026-09-26" title="Technical review by Geetansh Arora on this date">26 Sep 2026</time><span>10 min</span><!-- review:end -->
     </p>
     <!-- share:head:start --><div class="share share--head" data-share data-share-url="https://sipi.work/topics/power-integrity/real-capacitors.html" data-share-title="Real Capacitors: Bias, Tolerance, Temperature, and Mounting"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Fpower-integrity%2Freal-capacitors.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Fpower-integrity%2Freal-capacitors.html&amp;text=Real%20Capacitors%3A%20Bias%2C%20Tolerance%2C%20Temperature%2C%20and%20Mounting" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=Real%20Capacitors%3A%20Bias%2C%20Tolerance%2C%20Temperature%2C%20and%20Mounting&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Fpower-integrity%2Freal-capacitors.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:head:end -->
     <p class="answer">
@@ -207,6 +207,83 @@
       flatters the design. It does not, and the next section is about why that
       matters more than if it did.
     </div>
+    <figure class="figure">
+      <div class="figure__bar"><span>Why DC bias steals capacitance &#183; inside a class II dielectric</span></div>
+      <div class="figure__pair figure__pair--stack">
+        <div><span class="figure__label">the stack</span><svg viewBox="0 0 400 148" role="img" aria-label="A multilayer ceramic capacitor in cross-section: two end terminations, with thin metal electrodes alternately connected to each, interleaved through a ceramic dielectric.">
+  <defs><marker id="mc-s" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="copper"/></marker><marker id="mc-r" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="copper-2"/></marker><marker id="mc-k" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="plane"/></marker></defs>
+  <rect x="40" y="20" width="320" height="100" class="dielectric"/>
+  <rect x="24" y="16" width="18" height="108" rx="3" class="plane"/>
+  <rect x="358" y="16" width="18" height="108" rx="3" class="plane"/>
+  <rect x="40" y="28.5" width="290" height="3" class="copper"/>
+  <rect x="70" y="38.5" width="290" height="3" class="copper-2"/>
+  <rect x="40" y="48.5" width="290" height="3" class="copper"/>
+  <rect x="70" y="58.5" width="290" height="3" class="copper-2"/>
+  <rect x="40" y="68.5" width="290" height="3" class="copper"/>
+  <rect x="70" y="78.5" width="290" height="3" class="copper-2"/>
+  <rect x="40" y="88.5" width="290" height="3" class="copper"/>
+  <rect x="70" y="98.5" width="290" height="3" class="copper-2"/>
+  <rect x="40" y="108.5" width="290" height="3" class="copper"/>
+  <rect x="170" y="60.0" width="60" height="10.0" style="fill: none; stroke: var(--ink); stroke-width: 1.2; stroke-dasharray: 3 2"/>
+  <text class="lbl" x="200.0" y="140.0" text-anchor="middle">hundreds of layers, electrodes alternating + and &#8722;</text>
+  <text class="lbl-sig" x="33.0" y="11.0" text-anchor="middle">+</text>
+  <text class="lbl-ref" x="367.0" y="11.0" text-anchor="middle">&#8722;</text>
+</svg></div>
+        <div><span class="figure__label">one layer, magnified</span><svg viewBox="0 0 400 148" role="img" aria-label="Two magnified dielectric layers. With only a small signal applied, the polarised domains point in random directions and are free to swing with the signal. At rated DC bias most domains are pinned along the field, so they barely respond to the signal and the effective permittivity falls.">
+  <defs><marker id="dm-s" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="copper"/></marker><marker id="dm-r" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="copper-2"/></marker><marker id="dm-k" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="plane"/></marker></defs>
+  <rect x="14" y="18" width="170" height="8" class="copper"/>
+  <rect x="14" y="104" width="170" height="8" class="copper-2"/>
+  <rect x="14" y="26" width="170" height="78" class="dielectric"/>
+  <path d="M29.3,31.0 L30.7,49.0" class="flow" style="stroke: var(--ink-2); stroke-width: 1.4" marker-end="url(#dm-k)"/>
+  <path d="M66.2,42.5 L48.8,37.5" class="flow" style="stroke: var(--ink-2); stroke-width: 1.4" marker-end="url(#dm-k)"/>
+  <path d="M91.2,33.4 L78.8,46.6" class="flow" style="stroke: var(--ink-2); stroke-width: 1.4" marker-end="url(#dm-k)"/>
+  <path d="M119.6,45.5 L105.4,34.5" class="flow" style="stroke: var(--ink-2); stroke-width: 1.4" marker-end="url(#dm-k)"/>
+  <path d="M146.3,46.4 L133.7,33.6" class="flow" style="stroke: var(--ink-2); stroke-width: 1.4" marker-end="url(#dm-k)"/>
+  <path d="M159.3,36.4 L175.7,43.6" class="flow" style="stroke: var(--ink-2); stroke-width: 1.4" marker-end="url(#dm-k)"/>
+  <path d="M21.0,64.3 L39.0,65.7" class="flow" style="stroke: var(--ink-2); stroke-width: 1.4" marker-end="url(#dm-k)"/>
+  <path d="M52.8,72.7 L62.2,57.3" class="flow" style="stroke: var(--ink-2); stroke-width: 1.4" marker-end="url(#dm-k)"/>
+  <path d="M85.5,56.0 L84.5,74.0" class="flow" style="stroke: var(--ink-2); stroke-width: 1.4" marker-end="url(#dm-k)"/>
+  <path d="M111.6,56.0 L113.4,74.0" class="flow" style="stroke: var(--ink-2); stroke-width: 1.4" marker-end="url(#dm-k)"/>
+  <path d="M131.0,65.2 L149.0,64.8" class="flow" style="stroke: var(--ink-2); stroke-width: 1.4" marker-end="url(#dm-k)"/>
+  <path d="M176.3,63.3 L158.7,66.7" class="flow" style="stroke: var(--ink-2); stroke-width: 1.4" marker-end="url(#dm-k)"/>
+  <path d="M25.3,97.7 L34.7,82.3" class="flow" style="stroke: var(--ink-2); stroke-width: 1.4" marker-end="url(#dm-k)"/>
+  <path d="M66.4,88.7 L48.6,91.3" class="flow" style="stroke: var(--ink-2); stroke-width: 1.4" marker-end="url(#dm-k)"/>
+  <path d="M90.8,96.9 L79.2,83.1" class="flow" style="stroke: var(--ink-2); stroke-width: 1.4" marker-end="url(#dm-k)"/>
+  <path d="M107.2,82.7 L117.8,97.3" class="flow" style="stroke: var(--ink-2); stroke-width: 1.4" marker-end="url(#dm-k)"/>
+  <path d="M146.0,96.7 L134.0,83.3" class="flow" style="stroke: var(--ink-2); stroke-width: 1.4" marker-end="url(#dm-k)"/>
+  <path d="M161.4,96.6 L173.6,83.4" class="flow" style="stroke: var(--ink-2); stroke-width: 1.4" marker-end="url(#dm-k)"/>
+  <rect x="216" y="18" width="170" height="8" class="copper"/>
+  <rect x="216" y="104" width="170" height="8" class="copper-2"/>
+  <rect x="216" y="26" width="170" height="78" class="dielectric"/>
+  <path d="M229.1,31.5 L234.9,48.5" class="flow" style="stroke: var(--ink-2); stroke-width: 1.4" marker-end="url(#dm-k)"/>
+  <path d="M256.7,31.5 L262.3,48.5" class="flow" style="stroke: var(--ink-2); stroke-width: 1.4" marker-end="url(#dm-k)"/>
+  <path d="M288.7,31.2 L285.3,48.8" class="flow" style="stroke: var(--ink-2); stroke-width: 1.4" marker-end="url(#dm-k)"/>
+  <path d="M309.1,32.8 L319.9,47.2" class="flow" style="stroke: var(--ink-2); stroke-width: 1.4" marker-end="url(#dm-k)"/>
+  <path d="M341.6,31.0 L342.4,49.0" class="flow" style="stroke: var(--ink-2); stroke-width: 1.4" marker-end="url(#dm-k)"/>
+  <path d="M364.2,32.7 L374.8,47.3" class="flow" style="stroke: var(--ink-2); stroke-width: 1.4" marker-end="url(#dm-k)"/>
+  <path d="M234.7,56.4 L229.3,73.6" class="flow" style="stroke: var(--ink-2); stroke-width: 1.4" marker-end="url(#dm-k)"/>
+  <path d="M260.0,56.0 L259.0,74.0" class="flow" style="stroke: var(--ink-2); stroke-width: 1.4" marker-end="url(#dm-k)"/>
+  <path d="M290.3,56.6 L283.7,73.4" class="flow" style="stroke: var(--ink-2); stroke-width: 1.4" marker-end="url(#dm-k)"/>
+  <path d="M313.2,56.1 L315.8,73.9" class="flow" style="stroke: var(--ink-2); stroke-width: 1.4" marker-end="url(#dm-k)"/>
+  <path d="M343.0,56.1 L341.0,73.9" class="flow" style="stroke: var(--ink-2); stroke-width: 1.4" marker-end="url(#dm-k)"/>
+  <path d="M368.8,56.0 L370.2,74.0" class="flow" style="stroke: var(--ink-2); stroke-width: 1.4" marker-end="url(#dm-k)"/>
+  <path d="M230.2,81.2 L233.8,98.8" class="flow" style="stroke: var(--ink-2); stroke-width: 1.4" marker-end="url(#dm-k)"/>
+  <path d="M259.9,81.0 L259.1,99.0" class="flow" style="stroke: var(--ink-2); stroke-width: 1.4" marker-end="url(#dm-k)"/>
+  <path d="M283.9,81.6 L290.1,98.4" class="flow" style="stroke: var(--ink-2); stroke-width: 1.4" marker-end="url(#dm-k)"/>
+  <path d="M313.6,81.0 L315.4,99.0" class="flow" style="stroke: var(--ink-2); stroke-width: 1.4" marker-end="url(#dm-k)"/>
+  <path d="M343.7,81.2 L340.3,98.8" class="flow" style="stroke: var(--ink-2); stroke-width: 1.4" marker-end="url(#dm-k)"/>
+  <path d="M369.6,81.0 L369.4,99.0" class="flow" style="stroke: var(--ink-2); stroke-width: 1.4" marker-end="url(#dm-k)"/>
+  <text class="lbl-hi" x="99.0" y="12.0" text-anchor="middle">small signal only</text>
+  <text class="lbl-hi" x="301.0" y="12.0" text-anchor="middle">at rated DC bias</text>
+  <text class="lbl-sig" x="99.0" y="128.0" text-anchor="middle">domains free to follow the signal</text>
+  <text class="lbl-sig" x="99.0" y="140.0" text-anchor="middle">high permittivity</text>
+  <text class="lbl-ref" x="301.0" y="128.0" text-anchor="middle">domains pinned along the field</text>
+  <text class="lbl-ref" x="301.0" y="140.0" text-anchor="middle">little left to respond</text>
+</svg></div>
+      </div>
+      <figcaption><b>The capacitance of an X5R or X7R part comes from the dielectric&#8217;s ability to respond, and a DC bias uses that ability up.</b> Top: an MLCC is a stack of thin ceramic layers between interleaved electrodes. Bottom: a magnified layer. The barium titanate in class II dielectrics is ferroelectric: it is made of small polarised regions (domains) that can re-orient. With only a small signal across it, they are free to swing back and forth with the signal, and that swing is the high permittivity on the data sheet. A DC bias drives most of them into line with the field and holds them there, so the small signal on top has little left to move, and the effective capacitance falls. A thinner layer puts more volts per micron across it at the same voltage, which is why a smaller case loses more at the same rating. Class I (C0G) ceramics do not work this way and barely move with bias. Schematic: real domains are not arrows on a grid.</figcaption>
+    </figure>
+
 
     <h2 class="section-rule"><span>Derating does not simply make things worse</span></h2>
 

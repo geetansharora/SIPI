@@ -31,7 +31,7 @@
   <meta name="twitter:description" content="One network definition, shown in six domains at once: S-parameters and group delay, impulse and single-bit response, a TDR profile, and the eye they produce.">
   <meta name="twitter:image" content="https://sipi.work/assets/og/labs/one-channel.png">
   <meta name="twitter:image:alt" content="Lab B: Channel Response, ISI, and Eye Diagrams: a figure from the page, on SIPI">
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Lab B: Channel Response, ISI, and Eye Diagrams","description":"One network definition, shown in six domains at once: S-parameters and group delay, impulse and single-bit response, a TDR profile, and the eye they produce.","url":"https://sipi.work/topics/labs/one-channel.html","articleSection":"Labs","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer"},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-09-18","image":"https://sipi.work/assets/og/labs/one-channel.png"}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Lab B: Channel Response, ISI, and Eye Diagrams","description":"One network definition, shown in six domains at once: S-parameters and group delay, impulse and single-bit response, a TDR profile, and the eye they produce.","url":"https://sipi.work/topics/labs/one-channel.html","articleSection":"Labs","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer"},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-09-26","image":"https://sipi.work/assets/og/labs/one-channel.png"}</script>
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"SIPI","item":"https://sipi.work/"},{"@type":"ListItem","position":2,"name":"Labs","item":"https://sipi.work/#labs"},{"@type":"ListItem","position":3,"name":"Lab B: Channel Response, ISI, and Eye Diagrams"}]}</script>
   <!-- meta:end -->
 </head>
@@ -54,7 +54,7 @@
     <p class="crumb"><a href="../../index.html#labs">Labs</a> / 02</p>
     <h1>Lab B: Channel Response, ISI, and Eye Diagrams</h1>
     <p class="byline">
-      <!-- review:start --><span>By Geetansh Arora — Principal SI/PI Engineer</span><time datetime="2026-09-18" title="Technical review by Geetansh Arora on this date">18 Sep 2026</time><span>15 min</span><!-- review:end -->
+      <!-- review:start --><span>By Geetansh Arora — Principal SI/PI Engineer</span><time datetime="2026-09-26" title="Technical review by Geetansh Arora on this date">26 Sep 2026</time><span>15 min</span><!-- review:end -->
     </p>
     <!-- share:head:start --><div class="share share--head" data-share data-share-url="https://sipi.work/topics/labs/one-channel.html" data-share-title="Lab B: Channel Response, ISI, and Eye Diagrams"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Flabs%2Fone-channel.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Flabs%2Fone-channel.html&amp;text=Lab%20B%3A%20Channel%20Response%2C%20ISI%2C%20and%20Eye%20Diagrams" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=Lab%20B%3A%20Channel%20Response%2C%20ISI%2C%20and%20Eye%20Diagrams&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Flabs%2Fone-channel.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:head:end -->
     <p class="answer">
@@ -445,6 +445,38 @@
       gets the main features right and the ripple either side of a notch wrong,
       because the ripple <em>is</em> the higher-order terms interfering.
     </p>
+    <figure class="figure">
+      <div class="figure__bar"><span>The channel as a chain &#183; one matrix per section, multiplied</span></div>
+      <div class="figure__body"><svg viewBox="0 0 400 214" role="img" aria-label="A channel drawn as a chain: a 50 ohm source, a lossy trace, a shunt stub at a junction, a short line at the step impedance, another lossy trace, and a 50 ohm load, each section labelled with its own ABCD matrix. Below: the total matrix is the product of the four, and S21 follows from its entries.">
+  <defs><marker id="cb-s" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="copper"/></marker><marker id="cb-r" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="copper-2"/></marker><marker id="cb-k" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="plane"/></marker></defs>
+  <path d="M18,64 L382,64" class="tick" style="stroke: var(--ink-2); stroke-width: 1.4"/>
+  <circle cx="26" cy="64" r="10" class="flow" style="fill: var(--surface)"/>
+  <text class="lbl" x="26.0" y="48.0" text-anchor="middle">50 &#937;</text>
+  <rect class="dielectric" x="46" y="46" width="74" height="36" rx="5"/><text class="lbl-hi" x="83.0" y="68.0" text-anchor="middle">trace</text>
+  <text class="lbl" x="83.0" y="96.0" text-anchor="middle">lossy line</text>
+  <text class="lbl-sig" x="83.0" y="38.0" text-anchor="middle">[ABCD]&#8321;</text>
+  <rect class="dielectric" x="168" y="46" width="52" height="36" rx="5"/><text class="lbl-hi" x="194.0" y="68.0" text-anchor="middle">step</text>
+  <text class="lbl" x="194.0" y="96.0" text-anchor="middle">line at Z</text>
+  <text class="lbl-sig" x="194.0" y="38.0" text-anchor="middle">[ABCD]&#8323;</text>
+  <rect class="dielectric" x="262" y="46" width="74" height="36" rx="5"/><text class="lbl-hi" x="299.0" y="68.0" text-anchor="middle">trace</text>
+  <text class="lbl" x="299.0" y="96.0" text-anchor="middle">lossy line</text>
+  <text class="lbl-sig" x="299.0" y="38.0" text-anchor="middle">[ABCD]&#8324;</text>
+  <circle cx="142" cy="64" r="2.5" class="copper"/>
+  <path d="M142,64 L142,82" class="tick" style="stroke: var(--ink-2); stroke-width: 1.4"/>
+  <rect x="137" y="82" width="10" height="26" rx="2" class="copper-2"/>
+  <text class="lbl-ref" x="142.0" y="122.0" text-anchor="middle">stub</text>
+  <text class="lbl-ref" x="142.0" y="134.0" text-anchor="middle">[ABCD]&#8322;</text>
+  <circle cx="374" cy="64" r="3" class="copper"/>
+  <rect x="366" y="72" width="16" height="6" class="plane"/>
+  <text class="lbl" x="374.0" y="48.0" text-anchor="middle">50 &#937;</text>
+  <text class="lbl-hi" x="200.0" y="152.0" text-anchor="middle">[ABCD]total = [ABCD]&#8321; &#183; [ABCD]&#8322; &#183; [ABCD]&#8323; &#183; [ABCD]&#8324;</text>
+  <text class="lbl-hi" x="200.0" y="170.0" text-anchor="middle">S21 = 2 / (A + B/Z0 + C&#183;Z0 + D)</text>
+  <text class="lbl" x="200.0" y="192.0" text-anchor="middle">line: A = D = cosh &#947;l, B = Z sinh &#947;l, C = sinh &#947;l / Z</text>
+  <text class="lbl" x="200.0" y="206.0" text-anchor="middle">shunt stub: A = D = 1, B = 0, C = its input admittance</text>
+</svg></div>
+      <figcaption><b>Every section is a two-port, and the output of one is the input of the next, so the whole channel is one matrix product.</b> This is the chain the panels above compute: a lossy trace, an optional stub hanging off the line, a short section at the step impedance, and another lossy trace, between 50 &#937; ends. Each section is an ABCD matrix relating the voltage and current on its left to those on its right. A line section is fixed by its impedance Z and its propagation constant &#947;, which carries the loss; a stub is a shunt element, so its matrix only adds its admittance. Multiply them in order and every re-reflection between every pair of boundaries is already inside the product, with nothing traced by hand. S21 then follows from the four entries of the total.</figcaption>
+    </figure>
+
 
     <details class="deeper">
       <summary>Go deeper — group delay, and what this model still leaves out</summary>

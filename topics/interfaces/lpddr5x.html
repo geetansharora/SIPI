@@ -31,7 +31,7 @@
   <meta name="twitter:description" content="How an LPDDR5X channel is signed off: WCK/CK architecture, why training exists, and why the enemies are crosstalk and SSN rather than loss.">
   <meta name="twitter:image" content="https://sipi.work/assets/og/interfaces/lpddr5x.png">
   <meta name="twitter:image:alt" content="LPDDR5 and LPDDR5X Signal Integrity: Timing, ODT, and Training: a figure from the page, on SIPI">
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"LPDDR5 and LPDDR5X Signal Integrity: Timing, ODT, and Training","description":"How an LPDDR5X channel is signed off: WCK/CK architecture, why training exists, and why the enemies are crosstalk and SSN rather than loss.","url":"https://sipi.work/topics/interfaces/lpddr5x.html","articleSection":"Interface sign-off","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer"},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-09-17","image":"https://sipi.work/assets/og/interfaces/lpddr5x.png"}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"LPDDR5 and LPDDR5X Signal Integrity: Timing, ODT, and Training","description":"How an LPDDR5X channel is signed off: WCK/CK architecture, why training exists, and why the enemies are crosstalk and SSN rather than loss.","url":"https://sipi.work/topics/interfaces/lpddr5x.html","articleSection":"Interface sign-off","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer"},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-09-26","image":"https://sipi.work/assets/og/interfaces/lpddr5x.png"}</script>
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"SIPI","item":"https://sipi.work/"},{"@type":"ListItem","position":2,"name":"Interface sign-off","item":"https://sipi.work/#interfaces"},{"@type":"ListItem","position":3,"name":"LPDDR5 and LPDDR5X Signal Integrity: Timing, ODT, and Training"}]}</script>
   <!-- meta:end -->
 </head>
@@ -54,7 +54,7 @@
     <p class="crumb"><a href="../../index.html#interfaces">Interface sign-off</a> / 01</p>
     <h1>LPDDR5 and LPDDR5X Signal Integrity: Timing, ODT, and Training</h1>
     <p class="byline">
-      <!-- review:start --><span>By Geetansh Arora — Principal SI/PI Engineer</span><time datetime="2026-09-17" title="Technical review by Geetansh Arora on this date">17 Sep 2026</time><span>10 min</span><!-- review:end -->
+      <!-- review:start --><span>By Geetansh Arora — Principal SI/PI Engineer</span><time datetime="2026-09-26" title="Technical review by Geetansh Arora on this date">26 Sep 2026</time><span>10 min</span><!-- review:end -->
     </p>
     <!-- share:head:start --><div class="share share--head" data-share data-share-url="https://sipi.work/topics/interfaces/lpddr5x.html" data-share-title="LPDDR5 and LPDDR5X Signal Integrity: Timing, ODT, and Training"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Flpddr5x.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Flpddr5x.html&amp;text=LPDDR5%20and%20LPDDR5X%20Signal%20Integrity%3A%20Timing%2C%20ODT%2C%20and%20Training" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=LPDDR5%20and%20LPDDR5X%20Signal%20Integrity%3A%20Timing%2C%20ODT%2C%20and%20Training&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Flpddr5x.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:head:end -->
     <p class="answer">
@@ -184,6 +184,50 @@
       between bits, spends budget directly. So a DRAM channel is not really about loss — it is
       short — it is about everything that makes one wire different from another.
     </p>
+    <figure class="figure">
+      <div class="figure__bar"><span>Source-synchronous &#183; the strobe travels with the data, so only the difference costs</span></div>
+      <div class="figure__pair figure__pair--stack">
+        <div><span class="figure__label">the wires</span><svg viewBox="0 0 400 162" role="img" aria-label="A controller and a DRAM joined point to point: CK and command/address run to the DRAM at a slower rate, WCK is the fast write strobe from the controller, sixteen data wires run both ways, and RDQS is the read strobe from the DRAM back to the controller.">
+  <defs><marker id="ld-s" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="copper"/></marker><marker id="ld-r" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="copper-2"/></marker><marker id="ld-k" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="plane"/></marker></defs>
+  <rect class="dielectric" x="14" y="18" width="86" height="120" rx="5"/><text class="lbl-hi" x="57.0" y="75.0" text-anchor="middle">controller</text><text class="lbl" x="57.0" y="89.0" text-anchor="middle">PHY</text>
+  <rect class="dielectric" x="300" y="18" width="86" height="120" rx="5"/><text class="lbl-hi" x="343.0" y="82.0" text-anchor="middle">DRAM</text>
+  <path d="M102.0,34.0 L298.0,34.0" class="tick" marker-end="url(#ld-k)"/>
+  <text class="lbl" x="200.0" y="29.0" text-anchor="middle">CK, CA: command, slower</text>
+  <path d="M102.0,58.0 L298.0,58.0" class="flow" marker-end="url(#ld-s)"/>
+  <text class="lbl-sig" x="200.0" y="53.0" text-anchor="middle">WCK: write strobe</text>
+  <path d="M298.0,122.0 L102.0,122.0" class="flow-2" marker-end="url(#ld-r)"/>
+  <text class="lbl-ref" x="200.0" y="117.0" text-anchor="middle">RDQS: read strobe</text>
+  <path d="M104,74 L296,74" class="flow" style="stroke: var(--ink-2); stroke-width: 1.2"/>
+  <path d="M104,78 L296,78" class="flow" style="stroke: var(--ink-2); stroke-width: 1.2"/>
+  <path d="M104,82 L296,82" class="flow" style="stroke: var(--ink-2); stroke-width: 1.2"/>
+  <path d="M104,86 L296,86" class="flow" style="stroke: var(--ink-2); stroke-width: 1.2"/>
+  <text class="lbl-hi" x="200.0" y="100.0" text-anchor="middle">DQ[15:0]: data, both directions</text>
+  <text class="lbl" x="200.0" y="154.0" text-anchor="middle">point to point, roughly 10&#8211;30 mm, or stacked on the package</text>
+</svg></div>
+        <div><span class="figure__label">what cancels and what does not</span><svg viewBox="0 0 400 234" role="img" aria-label="Three timing rows. As trained, the strobe edge sits in the middle of the data eye. With a common delay, eye and strobe both shift by the same amount and the edge stays mid-eye. With skew, only the data eye shifts, so the strobe edge sits off-centre and one side of the margin is gone.">
+  <text class="lbl-hi" x="14.0" y="28.0">as trained</text>
+  <path d="M130,28.0 L144,14 L212,14 L226,28.0 L212,42 L144,42 z" style="fill: var(--signal); fill-opacity: .1; stroke: var(--signal); stroke-width: 1.3"/>
+  <path d="M152.0,62 L178.0,62 L178.0,50 L204.0,50" class="flow-2" style="stroke-width: 1.8"/><path d="M178.0,16 L178.0,62" class="tick" style="stroke: var(--reflect); stroke-dasharray: 3 3"/>
+  <text class="lbl-sig" x="14.0" y="42.0">DQ eye</text>
+  <text class="lbl-ref" x="14.0" y="60.0">strobe</text>
+  <text class="lbl" x="110.0" y="78.0">the strobe edge sits mid-eye</text>
+  <text class="lbl-hi" x="14.0" y="106.0">common delay</text>
+  <path d="M166,106.0 L180,92 L248,92 L262,106.0 L248,120 L180,120 z" style="fill: var(--signal); fill-opacity: .1; stroke: var(--signal); stroke-width: 1.3"/>
+  <path d="M188.0,140 L214.0,140 L214.0,128 L240.0,128" class="flow-2" style="stroke-width: 1.8"/><path d="M214.0,94 L214.0,140" class="tick" style="stroke: var(--reflect); stroke-dasharray: 3 3"/>
+  <text class="lbl-sig" x="14.0" y="120.0">DQ eye</text>
+  <text class="lbl-ref" x="14.0" y="138.0">strobe</text>
+  <text class="lbl-sig" x="110.0" y="156.0">both move: the sample stays mid-eye</text>
+  <text class="lbl-hi" x="14.0" y="184.0">skew</text>
+  <path d="M166,184.0 L180,170 L248,170 L262,184.0 L248,198 L180,198 z" style="fill: var(--signal); fill-opacity: .1; stroke: var(--signal); stroke-width: 1.3"/>
+  <path d="M152.0,218 L178.0,218 L178.0,206 L204.0,206" class="flow-2" style="stroke-width: 1.8"/><path d="M178.0,172 L178.0,218" class="tick" style="stroke: var(--reflect); stroke-dasharray: 3 3"/>
+  <text class="lbl-sig" x="14.0" y="198.0">DQ eye</text>
+  <text class="lbl-ref" x="14.0" y="216.0">strobe</text>
+  <text class="lbl-bad" x="110.0" y="234.0">data moves, strobe does not: margin spent</text>
+</svg></div>
+      </div>
+      <figcaption><b>Delay that data and strobe share cancels; any difference between them is spent from a 117 ps bit.</b> Top: the LPDDR5X wiring. Command and address run on CK at a comparatively slow rate; writes are timed by WCK from the controller; reads come back with their own strobe from the DRAM; sixteen data wires carry both. Bottom: what the receiver cares about. Training places the strobe edge in the middle of the data eye. A delay common to both, from a longer route, a slower corner or a shared supply droop, moves them together, and the edge stays mid-eye. A delay on the data alone (skew between a bit and its strobe, or between bits) moves the eye out from under the edge and eats margin on one side. That is why a DRAM channel is a matching problem more than a loss problem. Schematic: the eyes are idealised and not to scale.</figcaption>
+    </figure>
+
 
     <h2 class="section-rule"><span>What it is</span></h2>
 

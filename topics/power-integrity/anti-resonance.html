@@ -31,7 +31,7 @@
   <meta name="twitter:description" content="How two capacitors that both look fine on their own create an impedance peak between them, and why the biggest peaks come from structure rather than components.">
   <meta name="twitter:image" content="https://sipi.work/assets/og/power-integrity/anti-resonance.png">
   <meta name="twitter:image:alt" content="PDN Anti-Resonance and Impedance Peaks: a figure from the page, on SIPI">
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"PDN Anti-Resonance and Impedance Peaks","description":"How two capacitors that both look fine on their own create an impedance peak between them, and why the biggest peaks come from structure rather than components.","url":"https://sipi.work/topics/power-integrity/anti-resonance.html","articleSection":"Power Integrity","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer"},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-09-14","image":"https://sipi.work/assets/og/power-integrity/anti-resonance.png"}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"PDN Anti-Resonance and Impedance Peaks","description":"How two capacitors that both look fine on their own create an impedance peak between them, and why the biggest peaks come from structure rather than components.","url":"https://sipi.work/topics/power-integrity/anti-resonance.html","articleSection":"Power Integrity","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer"},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-09-26","image":"https://sipi.work/assets/og/power-integrity/anti-resonance.png"}</script>
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"SIPI","item":"https://sipi.work/"},{"@type":"ListItem","position":2,"name":"Power Integrity","item":"https://sipi.work/#power-integrity"},{"@type":"ListItem","position":3,"name":"PDN Anti-Resonance and Impedance Peaks"}]}</script>
   <!-- meta:end -->
 </head>
@@ -54,7 +54,7 @@
     <p class="crumb"><a href="../../index.html#power-integrity">Power Integrity</a> / 04</p>
     <h1>PDN Anti-Resonance and Impedance Peaks</h1>
     <p class="byline">
-      <!-- review:start --><span>By Geetansh Arora — Principal SI/PI Engineer</span><time datetime="2026-09-14" title="Technical review by Geetansh Arora on this date">14 Sep 2026</time><span>9 min</span><!-- review:end -->
+      <!-- review:start --><span>By Geetansh Arora — Principal SI/PI Engineer</span><time datetime="2026-09-26" title="Technical review by Geetansh Arora on this date">26 Sep 2026</time><span>9 min</span><!-- review:end -->
     </p>
     <!-- share:head:start --><div class="share share--head" data-share data-share-url="https://sipi.work/topics/power-integrity/anti-resonance.html" data-share-title="PDN Anti-Resonance and Impedance Peaks"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Fpower-integrity%2Fanti-resonance.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Fpower-integrity%2Fanti-resonance.html&amp;text=PDN%20Anti-Resonance%20and%20Impedance%20Peaks" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=PDN%20Anti-Resonance%20and%20Impedance%20Peaks&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Fpower-integrity%2Fanti-resonance.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:head:end -->
     <p class="answer">
@@ -187,6 +187,54 @@
       changes bank ESR, ESL, and interaction with shared mounting paths. Recompute the mounted network
       after either change.
     </div>
+    <figure class="figure">
+      <div class="figure__bar"><span>The tank inside two good capacitors &#183; how a peak appears</span></div>
+      <div class="figure__body"><svg viewBox="0 0 400 212" role="img" aria-label="Two capacitors in parallel between rail and ground, each drawn as ESR, ESL and capacitance in series. Between their self-resonant frequencies, the 10 microfarad part acts as its inductance and the 100 nanofarad part as its capacitance; redrawn, they form a parallel tank with energy ringing between them, peaking where the reactances cancel.">
+  <defs><marker id="ar-s" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="copper"/></marker><marker id="ar-r" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="copper-2"/></marker><marker id="ar-k" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="plane"/></marker></defs>
+  <path d="M20,26 L184,26" class="tick" style="stroke: var(--ink-2); stroke-width: 1.4"/>
+  <path d="M20,170 L184,170" class="tick" style="stroke: var(--ink-2); stroke-width: 1.4"/>
+  <text class="lbl" x="20.0" y="18.0">rail</text>
+  <text class="lbl" x="20.0" y="184.0">ground</text>
+  <path d="M70,26 L70,38" class="tick" style="stroke: var(--ink-2); stroke-width: 1.4"/>
+  <path d="M70,38 L75,42 L65,47 L75,52 L65,57 L75,62 L70,67" class="tick" style="stroke: var(--ink-2); stroke-width: 1.4"/>
+  <path d="M70,67 L70,73" class="tick" style="stroke: var(--ink-2); stroke-width: 1.4"/>
+  <path d="M70,73 a7,4.50 0 0 1 0,9.00 a7,4.50 0 0 1 0,9.00 a7,4.50 0 0 1 0,9.00 a7,4.50 0 0 1 0,9.00" class="flow-2"/>
+  <path d="M70,109 L70,123" class="tick" style="stroke: var(--ink-2); stroke-width: 1.4"/>
+  <path d="M58,123 L82,123 M58,130 L82,130" class="tick"/>
+  <path d="M70,130 L70,170" class="tick" style="stroke: var(--ink-2); stroke-width: 1.4"/>
+  <path d="M150,26 L150,38" class="tick" style="stroke: var(--ink-2); stroke-width: 1.4"/>
+  <path d="M150,38 L155,42 L145,47 L155,52 L145,57 L155,62 L150,67" class="tick" style="stroke: var(--ink-2); stroke-width: 1.4"/>
+  <path d="M150,67 L150,73" class="tick" style="stroke: var(--ink-2); stroke-width: 1.4"/>
+  <path d="M150,73 a7,4.50 0 0 1 0,9.00 a7,4.50 0 0 1 0,9.00 a7,4.50 0 0 1 0,9.00 a7,4.50 0 0 1 0,9.00" class="tick"/>
+  <path d="M150,109 L150,123" class="tick" style="stroke: var(--ink-2); stroke-width: 1.4"/>
+  <path d="M138,123 L162,123 M138,130 L162,130" class="flow"/>
+  <path d="M150,130 L150,170" class="tick" style="stroke: var(--ink-2); stroke-width: 1.4"/>
+  <text class="lbl" x="80.0" y="52.0">ESR</text>
+  <text class="lbl-ref" x="80.0" y="93.0">ESL</text>
+  <text class="lbl" x="88.0" y="129.0">10 µF</text>
+  <text class="lbl" x="160.0" y="52.0">ESR</text>
+  <text class="lbl" x="160.0" y="93.0">ESL</text>
+  <text class="lbl-sig" x="168.0" y="129.0">100 nF</text>
+  <text class="lbl-hi" x="102.0" y="198.0" text-anchor="middle">between the two SRFs</text>
+  <path d="M250,50 L342,50" class="tick" style="stroke: var(--ink-2); stroke-width: 1.4"/>
+  <path d="M250,146 L342,146" class="tick" style="stroke: var(--ink-2); stroke-width: 1.4"/>
+  <path d="M250,50 L250,80" class="tick" style="stroke: var(--ink-2); stroke-width: 1.4"/>
+  <path d="M250,80 a7,4.50 0 0 1 0,9.00 a7,4.50 0 0 1 0,9.00 a7,4.50 0 0 1 0,9.00 a7,4.50 0 0 1 0,9.00" class="flow-2"/>
+  <path d="M250,116 L250,146" class="tick" style="stroke: var(--ink-2); stroke-width: 1.4"/>
+  <path d="M342,50 L342,94" class="tick" style="stroke: var(--ink-2); stroke-width: 1.4"/>
+  <path d="M330,94 L354,94 M330,101 L354,101" class="flow"/>
+  <path d="M342,101 L342,146" class="tick" style="stroke: var(--ink-2); stroke-width: 1.4"/>
+  <path d="M278,114 A 20 20 0 1 1 314,114" class="flow" style="stroke: var(--ink); stroke-width: 1.3" marker-end="url(#ar-k)"/>
+  <text class="lbl-ref" x="250.0" y="160.0" text-anchor="middle">L of the 10 µF</text>
+  <text class="lbl-sig" x="348.0" y="174.0" text-anchor="middle">C of the 100 nF</text>
+  <text class="lbl" x="296.0" y="42.0" text-anchor="middle">energy rings between them</text>
+  <text class="lbl-hi" x="296.0" y="26.0" text-anchor="middle">what is left: a tank</text>
+  <text class="lbl" x="296.0" y="192.0" text-anchor="middle">peaks where the reactances cancel;</text>
+  <text class="lbl" x="296.0" y="204.0" text-anchor="middle">height set by R = ESR + ESR</text>
+</svg></div>
+      <figcaption><b>Between the two self-resonant frequencies, one capacitor has become an inductor and the other has not.</b> Left: a 10 &#181;F bulk part and a 100 nF ceramic in parallel, each a real capacitor with its own ESR and ESL. In the band between their SRFs the 10 &#181;F is past resonance, so its capacitance no longer matters and it behaves as its ESL (amber); the 100 nF has not reached resonance, so it is still a capacitor and its ESL is small beside it (blue). Right: what is left is an inductor in parallel with a capacitor, a tank. At the frequency where their reactances are equal and opposite, energy sloshes between them, the current drawn from outside is at a minimum, and the impedance seen from the rail is at a maximum. The only thing limiting that peak is the resistance in the loop, mostly the two ESRs, which is why lower-loss parts can make a taller peak.</figcaption>
+    </figure>
+
 
     <h2 class="section-rule"><span>Structural peaks need structural context</span></h2>
 

@@ -93,7 +93,7 @@
             "knee frequency",
             "bandwidth"
           ],
-          "reviewed": "2026-09-12",
+          "reviewed": "2026-09-26",
           "reviewer": "Geetansh Arora"
         },
         {
@@ -108,7 +108,7 @@
             "distributed",
             "rule of thumb"
           ],
-          "reviewed": "2026-09-12",
+          "reviewed": "2026-09-26",
           "reviewer": "Geetansh Arora"
         },
         {
@@ -248,7 +248,7 @@
             "pattern",
             "PRBS"
           ],
-          "reviewed": "2026-09-13",
+          "reviewed": "2026-09-26",
           "reviewer": "Geetansh Arora"
         },
         {
@@ -300,7 +300,7 @@
             "CDF",
             "confidence"
           ],
-          "reviewed": "2026-09-13",
+          "reviewed": "2026-09-26",
           "reviewer": "Geetansh Arora"
         },
         {
@@ -390,7 +390,7 @@
             "transient current",
             "ohms law"
           ],
-          "reviewed": "2026-09-14",
+          "reviewed": "2026-09-26",
           "reviewer": "Geetansh Arora"
         },
         {
@@ -425,7 +425,7 @@
             "PDN peak",
             "two caps"
           ],
-          "reviewed": "2026-09-14",
+          "reviewed": "2026-09-26",
           "reviewer": "Geetansh Arora"
         },
         {
@@ -556,7 +556,7 @@
             "multiport"
           ],
           "status": "live",
-          "reviewed": "2026-09-15",
+          "reviewed": "2026-09-26",
           "reviewer": "Geetansh Arora"
         }
       ]
@@ -870,7 +870,7 @@
             "tDQS2DQ",
             "x16"
           ],
-          "reviewed": "2026-09-17",
+          "reviewed": "2026-09-26",
           "reviewer": "Geetansh Arora"
         },
         {
@@ -1103,7 +1103,7 @@
             "post-cursor"
           ],
           "viz": "labChannel",
-          "reviewed": "2026-09-18",
+          "reviewed": "2026-09-26",
           "reviewer": "Geetansh Arora"
         },
         {
