@@ -667,11 +667,11 @@
        spatial plot: it is the one that looks like a scope, it is what the time
        scrubber drives, and it is the only view whose meaning survives being 356 px
        wide. The wide layout shows every panel, so this only decides the phone. */
-    const defaults = { labWaves: 'probe', labChannel: 'eye', labPdn: 'z', cdr: 'transfer' };
+    const defaults = { labWaves: 'probe', labChannel: 'eye', labPdn: 'z', cdr: 'transfer', coupling: 'time', adcLab: 'spectrum' };
 
     /* Controls that earn a place directly under the chart on a phone, by lab.
-       A lab with no entry keeps its rails as they are. Chosen by Geetansh for
-       labWaves; the rest are deliberately not guessed at. */
+       A lab with no entry keeps its rails as they are. Every set here was chosen
+       by Geetansh; a new instrument's are not guessed at. */
     const PRIMARY = {
       labWaves: ['lw-rs', 'lw-z0', 'lw-xp'],
       /* One per feature of the impedance curve, which is why these three and not
@@ -684,7 +684,13 @@
          length set what the reflection does to it. Between them they move the
          eye, the insertion loss and the TDR trace, which are the three things
          the charts on this lab show. */
-      labChannel: ['lc-loss', 'lc-dz', 'lc-dlen']
+      labChannel: ['lc-loss', 'lc-dz', 'lc-dlen'],
+      /* The page's two halves: edge rate moves both pickups, victim impedance
+         only the capacitive one, and the load decides what the current does. */
+      coupling: ['cp-tr', 'cp-rv', 'cp-load'],
+      /* Where the spurs land, how high the harmonics reach, and whether the
+         coupling tilts them: the three things the output spectrum answers. */
+      adcLab: ['adc-agg-f', 'adc-edge', 'adc-coupling-type']
     };
     if (!(el.dataset.viz in defaults)) return;
     const K = window.SIPI.kit;
@@ -715,7 +721,10 @@
       const caption = panel.querySelector('.panel__label, figcaption');
       const option = document.createElement('option');
       option.value = String(i);
-      option.textContent = titles[cv.dataset.cv] || (caption ? caption.textContent : cv.getAttribute('aria-label') || cv.dataset.cv).trim().split(/[—.]/)[0];
+      /* These two name their own panels; the table above predates that and
+         would call their 'time', 'spec' and 'sweep' something else. */
+      const own = (el.dataset.viz === 'coupling' || el.dataset.viz === 'adcLab') && panel.dataset.labName;
+      option.textContent = own || titles[cv.dataset.cv] || (caption ? caption.textContent : cv.getAttribute('aria-label') || cv.dataset.cv).trim().split(/[—.]/)[0];
       select.appendChild(option);
       if (cv.dataset.cv === defaults[el.dataset.viz]) active = i;
     });
@@ -738,7 +747,9 @@
     const fields = { labWaves: [['vp', 'Probe V'], ['ip', 'Probe I']],
       labChannel: [['eh', 'Eye height'], ['il', 'Nyquist S21']],
       labPdn: [['droop', 'combined die droop'], ['zpk', 'Peak impedance']],
-      cdr: [['peak', 'Peak transfer'], ['floor', 'Worst tolerance']] }[el.dataset.viz];
+      cdr: [['peak', 'Peak transfer'], ['floor', 'Worst tolerance']],
+      coupling: [['cap', 'Capacitive'], ['ind', 'Inductive']],
+      adcLab: [['snr', 'SNR'], ['loss', 'Lost to aggressor']] }[el.dataset.viz];
     const outputs = fields.map(([key, title]) => {
       const source = el.querySelector('[data-out="' + key + '"]');
       const item = document.createElement('span');
