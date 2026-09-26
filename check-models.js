@@ -169,6 +169,20 @@ suite('Search — equivalents, ranking, acronym boundaries', () => {
   ok('a short acronym ranks its exact topic and does not match inside an ordinary word',
      slugs('SSO')[0] === 'ssn-ground-bounce' && !slugs('SSO').includes('crosstalk'));
   ok('an absent token returns no results', model.search(items, 'zzznomatch').length === 0);
+
+  /* A page named for the term outranks a page whose keywords merely repeat it. */
+  const firsts = { crosstalk: 'crosstalk', jitter: 'jitter-taxonomy', backdrill: 'vias', pdn: 'target-impedance' };
+  ok('a term finds the page named for it, not one that mentions it',
+     Object.keys(firsts).every((q) => slugs(q)[0] === firsts[q]),
+     Object.keys(firsts).map((q) => q + '=' + slugs(q)[0]).join(' '));
+  ok('"coupling" is not matched inside "decoupling"', slugs('coupling')[0] !== 'decoupling-capacitors');
+  /* A concept query goes to the lesson; naming the calculator still finds it. */
+  ok('concept queries rank the lesson above its calculator',
+     ['pdn', 'plane resonance', 'stripline', 'roughness'].every((q) => !items.find((it) => it.href === model.search(items, q)[0].href).tool),
+     ['pdn', 'plane resonance', 'stripline', 'roughness'].map((q) => q + '=' + slugs(q)[0]).join(' '));
+  ok('asking for a calculator by name still finds it',
+     slugs('via stub calculator')[0] === 'via-stub-resonance' && slugs('skin depth calculator')[0] === 'skin-depth',
+     `via stub calculator=${slugs('via stub calculator')[0]}, skin depth calculator=${slugs('skin depth calculator')[0]}`);
 });
 
 /* ═════════ P2-5 · CTLE ═════════ */

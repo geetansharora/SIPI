@@ -27,8 +27,8 @@ HTTP, and it hides itself when it cannot fetch `topics.json`.
 | Interactive panels | **41**, including four labs and twelve calculators |
 | SVG figures | 71 |
 | Arithmetic claims checked | **154** across 42 pages (`check-numbers.py`) |
-| Model assertions | **987** (`check-models.js`), with **0 claims pending** |
-| Mutation coverage | **61 of 61** known defects have an assertion that provably catches them (`mutate.js`) |
+| Model assertions | **991** (`check-models.js`), with **0 claims pending** |
+| Mutation coverage | **64 of 64** known defects have an assertion that provably catches them (`mutate.js`) |
 | Specification claims | **41 tracked: 18 verified, 21 scoped, 2 awaiting a primary source** | <!-- generated from docs/claims.json -->
 
 ## How it is checked

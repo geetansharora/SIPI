@@ -12,7 +12,7 @@
   if (!me) return;
   const ROOT = me.replace(/js\/search\.js(?:[?#].*)?$/, '');
 
-  let index = null;   // flat [{ title, section, status, num, href, kw, hay, words }]
+  let index = null;   // flat [{ title, section, status, num, href, tool, kw, hay, words }]
   let dlg = null, input = null, list = null, rows = [], cursor = -1;
 
   /* ---------- index ---------- */
@@ -27,6 +27,7 @@
           status: t.status,
           num: String(i + 1).padStart(2, '0'),
           href: ROOT + 'topics/' + s.id + '/' + t.slug + '.html',
+          tool: s.id === 'tools',
           kw: (t.keywords || []).map((k) => k.toLowerCase()),
           hay: hay,
           words: hay.split(/[^a-z0-9.]+/).filter(Boolean)
@@ -34,6 +35,12 @@
       });
     });
     return out;
+  }
+
+  /* The title names the term at a word start: "coupling" is named by "Inductive
+     Coupling", not by "Decoupling". */
+  function named(item, tk) {
+    return new RegExp('(^|[^a-z0-9])' + escRe(tk)).test(item.title.toLowerCase());
   }
 
   /* Score: every query token must appear. Earlier matches and title-start
@@ -68,10 +75,17 @@
       ['anti-resonance', 'pdn peak'],
       ['reference plane', 'de-embedding']
     ].find((group) => group.includes(query));
+    /* A calculator answers "how much", the lesson answers "what". A concept query
+       goes to the lesson; asking for a calculator still finds it. */
+    const wantsTool = /\b(calc|calculator|tool)/.test(query);
     return items
       .map((it) => ({
         it,
-        s: score(it, tokens) - (it.kw.includes(query) ? 8 : 0)
+        /* Keywords carry the jargon a title doesn't contain, so the page named for
+           the term earns the same bonus as a keyword hit; otherwise a page that only
+           lists "crosstalk" as a keyword outranks the crosstalk page. */
+        s: score(it, tokens) - (it.kw.includes(query) || named(it, query) ? 8 : 0)
+          + (it.tool && !wantsTool ? 8 : 0)
           - (equivalents ? 12 * equivalents.filter((term) => it.kw.includes(term)).length : 0)
       }))
       .filter((r) => Number.isFinite(r.s))

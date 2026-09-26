@@ -450,6 +450,39 @@ const MUTATIONS = [
     active: true, fast: true
   },
   {
+    id: 'search-keyword-double-count',
+    file: 'js/search.js',
+    find: "        s: score(it, tokens) - (it.kw.includes(query) || named(it, query) ? 8 : 0)",
+    with: "        s: score(it, tokens) - (it.kw.includes(query) ? 8 : 0)",
+    suite: 'Search',
+    expect: 'a term finds the page named for it',
+    why: 'The original ranking: a keyword hit earned a bonus the page named for the '
+       + 'term did not, so "crosstalk" opened the eye-closure page.',
+    active: true, fast: true
+  },
+  {
+    id: 'search-calculator-takes-concept',
+    file: 'js/search.js',
+    find: "          + (it.tool && !wantsTool ? 8 : 0)",
+    with: "          + 0",
+    suite: 'Search',
+    expect: 'concept queries rank the lesson above its calculator',
+    why: 'Without the demotion a calculator, whose keywords repeat the concept, took '
+       + '"pdn" and "plane resonance" from the lessons that explain them.',
+    active: true, fast: true
+  },
+  {
+    id: 'search-title-substring',
+    file: 'js/search.js',
+    find: "    return new RegExp('(^|[^a-z0-9])' + escRe(tk)).test(item.title.toLowerCase());",
+    with: "    return item.title.toLowerCase().includes(tk);",
+    suite: 'Search',
+    expect: 'is not matched inside',
+    why: 'A substring title match made "Decoupling Capacitors" a page named for '
+       + '"coupling".',
+    active: true, fast: true
+  },
+  {
     id: 'eye-scale-clips-tall-signals',
     file: 'js/viz/lab-channel.js',
     find: "  const eyeStep = (need) => EYE_STEPS.find((v) => v >= need) || Math.ceil(need * 2) / 2;",
