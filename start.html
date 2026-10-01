@@ -51,7 +51,7 @@
   <div class="page-head">
     <p class="crumb"><a href="index.html">SIPI</a> / where to start</p>
     <h1>Choose a signal or power integrity learning path</h1>
-    <p class="byline"><span>59 pages</span><span>Pick a route, or ignore all of them</span></p>
+    <p class="byline"><span>73 pages</span><span>Pick a route, or ignore all of them</span></p>
     <p class="answer">
       Every page here stands on its own and links to what it leans on, so you can
       start anywhere and follow your nose. But if you would rather be given an
@@ -155,11 +155,11 @@
 
       <li>
         <a href="topics/power-integrity/anti-resonance.html">Decoupling, and why more capacitance can fail</a>
-        <span class="path__why">The one result in power integrity that is genuinely counter-intuitive, and it is measurable.</span>
+        <span class="path__why">A counter-intuitive result you can measure: more capacitance can raise an impedance peak.</span>
         <dl class="step">
           <dt>assumes</dt><dd>step 5</dd>
           <dt>you will be able to</dt><dd>look at two capacitor banks and predict where they will fight, and know which knob damps it</dd>
-          <dt>corrects</dt><dd>that adding decoupling always helps. In <a href="topics/labs/pdn-chain.html">Lab C</a>, quadrupling the board capacitors raises the mid-band peak from 57 to 61 mΩ, because parts in parallel divide the ESR that was damping it</dd>
+          <dt>corrects</dt><dd>that adding decoupling always helps. In <a href="topics/labs/pdn-chain.html">Lab C</a>, going from 20 to 50 board capacitors halves the peak just below 1 MHz but raises the one near 7 MHz from 57 to 61 mΩ, because parts in parallel divide the ESR that was damping it. The rise is modest; the point is its direction</dd>
           <dt>five minutes</dt><dd>Lab C: predict the direction before you change the capacitor count, then use the result to refine your reasoning</dd>
           <dt>transfer check</dt><dd>you need to lower a 60 mΩ peak at 7 MHz. You may add parts, change their ESR, or move them. Which helps, and why do the other two not?</dd>
         </dl>
@@ -361,7 +361,7 @@
     <a href="model-contract.html">Model assumptions</a>
     <a href="docs/claims.md">Claim ledger (Markdown)</a>
   </nav>
-  <span>Created and directed by Geetansh Arora. Text <a href="LICENSE-CONTENT">CC BY 4.0</a>, code <a href="LICENSE-CODE">MIT</a>.</span>
+  <span>Created and directed by <a href="https://www.linkedin.com/in/geetansh-arora-a645714a/" target="_blank" rel="author noopener">Geetansh Arora</a>. Text <a href="LICENSE-CONTENT">CC BY 4.0</a>, code <a href="LICENSE-CODE">MIT</a>.</span>
 </footer>
 
 <script src="js/site.js?v=61b8ff31" defer></script>

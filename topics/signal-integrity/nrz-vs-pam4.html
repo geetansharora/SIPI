@@ -31,7 +31,7 @@
   <meta name="twitter:description" content="Why PAM4 halves the Nyquist frequency, what the 9.5 dB amplitude penalty buys and costs, and why FEC stops being optional.">
   <meta name="twitter:image" content="https://sipi.work/assets/og/signal-integrity/nrz-vs-pam4.png">
   <meta name="twitter:image:alt" content="NRZ and PAM4: Levels, Bandwidth, and SNR: a figure from the page, on SIPI">
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"NRZ and PAM4: Levels, Bandwidth, and SNR","description":"Why PAM4 halves the Nyquist frequency, what the 9.5 dB amplitude penalty buys and costs, and why FEC stops being optional.","url":"https://sipi.work/topics/signal-integrity/nrz-vs-pam4.html","articleSection":"SI in practice","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer"},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-09-16","image":"https://sipi.work/assets/og/signal-integrity/nrz-vs-pam4.png"}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"NRZ and PAM4: Levels, Bandwidth, and SNR","description":"Why PAM4 halves the Nyquist frequency, what the 9.5 dB amplitude penalty buys and costs, and why FEC stops being optional.","url":"https://sipi.work/topics/signal-integrity/nrz-vs-pam4.html","articleSection":"SI in practice","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer","url":"https://www.linkedin.com/in/geetansh-arora-a645714a/","sameAs":["https://www.linkedin.com/in/geetansh-arora-a645714a/"]},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-09-16","image":"https://sipi.work/assets/og/signal-integrity/nrz-vs-pam4.png"}</script>
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"SIPI","item":"https://sipi.work/"},{"@type":"ListItem","position":2,"name":"SI in practice","item":"https://sipi.work/#signal-integrity"},{"@type":"ListItem","position":3,"name":"NRZ and PAM4: Levels, Bandwidth, and SNR"}]}</script>
   <!-- meta:end -->
 </head>
@@ -54,7 +54,7 @@
     <p class="crumb"><a href="../../index.html#signal-integrity">SI in practice</a> / 04</p>
     <h1>NRZ and PAM4: Levels, Bandwidth, and SNR</h1>
     <p class="byline">
-      <!-- review:start --><span>By Geetansh Arora — Principal SI/PI Engineer</span><time datetime="2026-09-16" title="Technical review by Geetansh Arora on this date">16 Sep 2026</time><span>10 min</span><!-- review:end -->
+      <!-- review:start --><span>By <a href="https://www.linkedin.com/in/geetansh-arora-a645714a/" target="_blank" rel="author noopener">Geetansh Arora</a> — Principal SI/PI Engineer</span><time datetime="2026-09-16" title="Technical review by Geetansh Arora on this date">16 Sep 2026</time><span>10 min</span><!-- review:end -->
     </p>
     <!-- share:head:start --><div class="share share--head" data-share data-share-url="https://sipi.work/topics/signal-integrity/nrz-vs-pam4.html" data-share-title="NRZ and PAM4: Levels, Bandwidth, and SNR"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Fsignal-integrity%2Fnrz-vs-pam4.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Fsignal-integrity%2Fnrz-vs-pam4.html&amp;text=NRZ%20and%20PAM4%3A%20Levels%2C%20Bandwidth%2C%20and%20SNR" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=NRZ%20and%20PAM4%3A%20Levels%2C%20Bandwidth%2C%20and%20SNR&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Fsignal-integrity%2Fnrz-vs-pam4.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:head:end -->
     <p class="answer">
@@ -122,8 +122,7 @@
     <p>
       Traditional digital communications rely on Non-Return-to-Zero (NRZ) signalling: two voltage
       states representing a binary 0 or 1. To transmit more data across an NRZ interconnect, the
-      intuitive approach is to clock the bits faster. But copper transmission lines push back ruthlessly
-      against higher toggle rates: conductor skin-effect and dielectric loss scale aggressively with
+      intuitive approach is to clock the bits faster. But copper transmission lines lose more at higher toggle rates: conductor skin-effect and dielectric loss scale aggressively with
       frequency. Doubling a lane's throughput from 28 Gbps to 56 Gbps under NRZ would require doubling
       the Nyquist frequency from 14 GHz to 28 GHz, often introducing 15 to 25 dB of additional loss
       that completely swallows the signal.
@@ -327,7 +326,7 @@
         up to 15 ten-bit symbols per 544-symbol codeword). But if a receiver DFE makes an error on an inner PAM4 eye,
         feedback tap propagation causes the decision slicer to misfire on successive unit intervals, producing a
         concentrated burst of consecutive bit errors. If a single burst corrupts more symbols than the FEC's correction
-        budget, the entire codeword fails, causing a catastrophic packet drop. To mitigate this, modern protocols
+        budget, the entire codeword fails, and the packet is lost. To mitigate this, modern protocols
         use 1-to-2 or 1-to-4 symbol interleaving, distributing adjacent temporal bits across distinct FEC codewords
         so no single burst overwhelms a single decoder block.
       </p>
@@ -401,7 +400,7 @@
     <a href="../../model-contract.html">Model assumptions</a>
     <a href="../../docs/claims.md">Claim ledger (Markdown)</a>
   </nav>
-  <span>Created and directed by Geetansh Arora. Text <a href="../../LICENSE-CONTENT">CC BY 4.0</a>, code <a href="../../LICENSE-CODE">MIT</a>.</span>
+  <span>Created and directed by <a href="https://www.linkedin.com/in/geetansh-arora-a645714a/" target="_blank" rel="author noopener">Geetansh Arora</a>. Text <a href="../../LICENSE-CONTENT">CC BY 4.0</a>, code <a href="../../LICENSE-CODE">MIT</a>.</span>
 </footer>
 
 <script src="../../js/site.js?v=61b8ff31" defer></script>

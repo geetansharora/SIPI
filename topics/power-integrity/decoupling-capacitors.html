@@ -31,7 +31,7 @@
   <meta name="twitter:description" content="How capacitance, ESR, ESL, mounting-loop geometry, placement, and anti-resonance shape a practical decoupling network.">
   <meta name="twitter:image" content="https://sipi.work/assets/og/power-integrity/decoupling-capacitors.png">
   <meta name="twitter:image:alt" content="Decoupling Capacitors: ESR, ESL, and Placement: a figure from the page, on SIPI">
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Decoupling Capacitors: ESR, ESL, and Placement","description":"How capacitance, ESR, ESL, mounting-loop geometry, placement, and anti-resonance shape a practical decoupling network.","url":"https://sipi.work/topics/power-integrity/decoupling-capacitors.html","articleSection":"Power Integrity","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer"},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-09-26","image":"https://sipi.work/assets/og/power-integrity/decoupling-capacitors.png"}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Decoupling Capacitors: ESR, ESL, and Placement","description":"How capacitance, ESR, ESL, mounting-loop geometry, placement, and anti-resonance shape a practical decoupling network.","url":"https://sipi.work/topics/power-integrity/decoupling-capacitors.html","articleSection":"Power Integrity","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer","url":"https://www.linkedin.com/in/geetansh-arora-a645714a/","sameAs":["https://www.linkedin.com/in/geetansh-arora-a645714a/"]},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-10-01","image":"https://sipi.work/assets/og/power-integrity/decoupling-capacitors.png"}</script>
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"SIPI","item":"https://sipi.work/"},{"@type":"ListItem","position":2,"name":"Power Integrity","item":"https://sipi.work/#power-integrity"},{"@type":"ListItem","position":3,"name":"Decoupling Capacitors: ESR, ESL, and Placement"}]}</script>
   <!-- meta:end -->
 </head>
@@ -54,7 +54,7 @@
     <p class="crumb"><a href="../../index.html#power-integrity">Power Integrity</a> / 03</p>
     <h1>Decoupling Capacitors: ESR, ESL, and Placement</h1>
     <p class="byline">
-      <!-- review:start --><span>By Geetansh Arora — Principal SI/PI Engineer</span><time datetime="2026-09-26" title="Technical review by Geetansh Arora on this date">26 Sep 2026</time><span>10 min</span><!-- review:end -->
+      <!-- review:start --><span>By <a href="https://www.linkedin.com/in/geetansh-arora-a645714a/" target="_blank" rel="author noopener">Geetansh Arora</a> — Principal SI/PI Engineer</span><time datetime="2026-10-01" title="Technical review by Geetansh Arora on this date">1 Oct 2026</time><span>10 min</span><!-- review:end -->
     </p>
     <!-- share:head:start --><div class="share share--head" data-share data-share-url="https://sipi.work/topics/power-integrity/decoupling-capacitors.html" data-share-title="Decoupling Capacitors: ESR, ESL, and Placement"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Fpower-integrity%2Fdecoupling-capacitors.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Fpower-integrity%2Fdecoupling-capacitors.html&amp;text=Decoupling%20Capacitors%3A%20ESR%2C%20ESL%2C%20and%20Placement" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=Decoupling%20Capacitors%3A%20ESR%2C%20ESL%2C%20and%20Placement&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Fpower-integrity%2Fdecoupling-capacitors.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:head:end -->
     <p class="answer">
@@ -141,18 +141,10 @@
     </p>
 
     <p>
-      When clock gates fire and millions of transistors switch simultaneously, they demand an immediate surge of
-      charge within tens of picoseconds. The main voltage regulator is parked centimetres away; hindered by signal
-      propagation delays and the series inductance of power planes, it cannot respond for hundreds of nanoseconds or
-      microseconds. During that critical window, the decoupling capacitor stands in for the regulator, dumping its
-      stored charge directly into the rail to keep the voltage from collapsing.
-    </p>
-
-    <p>
-      When the load suddenly demands more current, that current has to come from somewhere. The
-      regulator is centimetres away behind a lot of inductance, so it cannot respond quickly. A
-      capacitor sitting next to the load already holds charge, and charge that is already there can
-      move immediately.
+      When the load suddenly demands more current, that current has to come from somewhere. A clock edge can
+      ask for it within tens of picoseconds. The regulator is centimetres away behind the inductance of planes
+      and vias, and its control loop takes from hundreds of nanoseconds to microseconds to react. A capacitor
+      sitting next to the load already holds charge, and charge that is already there can move immediately.
     </p>
 
     <p>
@@ -178,7 +170,7 @@
 
     <div class="eq">
       <i class="var">f</i><sub>SRF</sub> = 1 / ( 2π √( <i class="var">L</i>·<i class="var">C</i> ) )
-      <span class="cap">A 100 nF 0402 with 1.5 nH of total loop inductance resonates at about 13 MHz. Above that the inductive term dominates the branch's own impedance. Not a cliff: near resonance the capacitive and inductive reactances are comparable and ESR sets the floor, and the capacitance still matters in the NETWORK &#8212; it is what resonates against the next stage's inductance to make an anti-resonance. What stops scaling with C, well above the SRF, is that branch's contribution to lowering the impedance.</span>
+      <span class="cap">A 100 nF 0402 with 1.6 nH of total loop inductance resonates at about 13 MHz. Above that the inductive term dominates the branch's own impedance. Not a cliff: near resonance the capacitive and inductive reactances are comparable and ESR sets the floor, and the capacitance still matters in the NETWORK &#8212; it is what resonates against the next stage's inductance to make an anti-resonance. What stops scaling with C, well above the SRF, is that branch's contribution to lowering the impedance.</span>
     </div>
 
     <p>
@@ -211,7 +203,7 @@
       <span class="num">f<sub>SRF</sub> = 1 / (2&#960; &#8730;(0.4 nH &#215; 100 nF)) &#8776; 25.2 MHz</span>.
       In reality, with the 1.2 nH mounting loop included, the true resonance collapses to
       <span class="num">f<sub>SRF</sub> = 1 / (2&#960; &#8730;(1.6 nH &#215; 100 nF)) &#8776; 12.6 MHz</span>.
-      At 50 MHz, the mounted capacitor's impedance is four times higher than the datasheet curve promised &#8212; entirely
+      At 50 MHz, the mounted capacitor's impedance is about 5&#215; higher than the datasheet curve promised &#8212; entirely
       because of the loop you etched into the board.
     </p>
 
@@ -333,15 +325,16 @@
 
     <p>
       <strong>Check the capacitance you will actually get.</strong> Class II ceramics lose
-      capacitance with applied DC bias — often half of it or more at rated voltage — and with
-      temperature and age. A 100 nF part biased at 0.75 V may be delivering 50 nF. Use the vendor's
-      bias curve, not the marking.
+      capacitance with applied DC bias, and the loss grows with the field across the dielectric: with
+      the voltage, and with a smaller case. Near its rated voltage a part can keep half its marked value
+      or less; on a low-voltage core rail, well below its rating, it loses much less. Tolerance,
+      temperature and ageing stack on top. Use the vendor's bias curve at your voltage, not the marking.
     </p>
 
     <div class="note">
       <b>Using this to find a fault</b>
       <ul class="tight">
-        <li><b>Adding capacitors made it worse.</b> Almost certainly damping. More parts in
+        <li><b>Adding capacitors made it worse.</b> Usually damping. More parts in
           parallel lowered the bank's ESR, and ESR is what was flattening the anti-resonance.</li>
         <li><b>Two boards with the same BOM behave differently.</b> Look at the mounting, not the
           parts — via length, via spacing, which plane pair each capacitor reaches.</li>
@@ -447,7 +440,7 @@
     <a href="../../model-contract.html">Model assumptions</a>
     <a href="../../docs/claims.md">Claim ledger (Markdown)</a>
   </nav>
-  <span>Created and directed by Geetansh Arora. Text <a href="../../LICENSE-CONTENT">CC BY 4.0</a>, code <a href="../../LICENSE-CODE">MIT</a>.</span>
+  <span>Created and directed by <a href="https://www.linkedin.com/in/geetansh-arora-a645714a/" target="_blank" rel="author noopener">Geetansh Arora</a>. Text <a href="../../LICENSE-CONTENT">CC BY 4.0</a>, code <a href="../../LICENSE-CODE">MIT</a>.</span>
 </footer>
 
 <script src="../../js/site.js?v=61b8ff31" defer></script>

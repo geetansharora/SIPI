@@ -31,7 +31,7 @@
   <meta name="twitter:description" content="How an LPDDR5X channel is signed off: WCK/CK architecture, why training exists, and why the enemies are crosstalk and SSN rather than loss.">
   <meta name="twitter:image" content="https://sipi.work/assets/og/interfaces/lpddr5x.png">
   <meta name="twitter:image:alt" content="LPDDR5 and LPDDR5X Signal Integrity: Timing, ODT, and Training: a figure from the page, on SIPI">
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"LPDDR5 and LPDDR5X Signal Integrity: Timing, ODT, and Training","description":"How an LPDDR5X channel is signed off: WCK/CK architecture, why training exists, and why the enemies are crosstalk and SSN rather than loss.","url":"https://sipi.work/topics/interfaces/lpddr5x.html","articleSection":"Interface sign-off","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer"},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-09-26","image":"https://sipi.work/assets/og/interfaces/lpddr5x.png"}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"LPDDR5 and LPDDR5X Signal Integrity: Timing, ODT, and Training","description":"How an LPDDR5X channel is signed off: WCK/CK architecture, why training exists, and why the enemies are crosstalk and SSN rather than loss.","url":"https://sipi.work/topics/interfaces/lpddr5x.html","articleSection":"Interface sign-off","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer","url":"https://www.linkedin.com/in/geetansh-arora-a645714a/","sameAs":["https://www.linkedin.com/in/geetansh-arora-a645714a/"]},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-10-01","image":"https://sipi.work/assets/og/interfaces/lpddr5x.png"}</script>
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"SIPI","item":"https://sipi.work/"},{"@type":"ListItem","position":2,"name":"Interface sign-off","item":"https://sipi.work/#interfaces"},{"@type":"ListItem","position":3,"name":"LPDDR5 and LPDDR5X Signal Integrity: Timing, ODT, and Training"}]}</script>
   <!-- meta:end -->
 </head>
@@ -54,7 +54,7 @@
     <p class="crumb"><a href="../../index.html#interfaces">Interface sign-off</a> / 01</p>
     <h1>LPDDR5 and LPDDR5X Signal Integrity: Timing, ODT, and Training</h1>
     <p class="byline">
-      <!-- review:start --><span>By Geetansh Arora — Principal SI/PI Engineer</span><time datetime="2026-09-26" title="Technical review by Geetansh Arora on this date">26 Sep 2026</time><span>10 min</span><!-- review:end -->
+      <!-- review:start --><span>By <a href="https://www.linkedin.com/in/geetansh-arora-a645714a/" target="_blank" rel="author noopener">Geetansh Arora</a> — Principal SI/PI Engineer</span><time datetime="2026-10-01" title="Technical review by Geetansh Arora on this date">1 Oct 2026</time><span>10 min</span><!-- review:end -->
     </p>
     <!-- share:head:start --><div class="share share--head" data-share data-share-url="https://sipi.work/topics/interfaces/lpddr5x.html" data-share-title="LPDDR5 and LPDDR5X Signal Integrity: Timing, ODT, and Training"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Flpddr5x.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Flpddr5x.html&amp;text=LPDDR5%20and%20LPDDR5X%20Signal%20Integrity%3A%20Timing%2C%20ODT%2C%20and%20Training" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=LPDDR5%20and%20LPDDR5X%20Signal%20Integrity%3A%20Timing%2C%20ODT%2C%20and%20Training&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Flpddr5x.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:head:end -->
     <p class="answer">
@@ -141,16 +141,14 @@
 
   <div class="prose">
     <p>
-      Every modern flagship smartphone, ultra-thin laptop, and edge-AI processor relies on Low-Power Double
-      Data Rate 5X (LPDDR5X) SDRAM to feed high-bandwidth memory to multi-core CPU, GPU, and NPU engines.
-      Running memory at up to <span class="num">8533 MT/s</span> (Megatransfers per second) presents one of
-      the most unforgiving timing environments in hardware engineering: at 8533 MT/s, the unit interval
-      (UI) — the total time a bit is valid — collapses to a microscopic <span class="num">117 picoseconds</span>.
+      Low-Power Double Data Rate 5X (LPDDR5X) SDRAM feeds the CPU, GPU and NPU engines in phones, thin laptops
+      and edge-AI processors. At up to <span class="num">8533 MT/s</span> (megatransfers per second), the unit
+      interval (UI), the time each bit is valid, is <span class="num">117 picoseconds</span>.
     </p>
 
     <p>
-      In high-speed serial links (such as PCIe or USB3), speeds beyond 5 Gbps universally switch to differential
-      signalling, where balanced two-wire pairs cancel common-mode noise and reject ground bounce. But memory
+      High-speed serial links such as PCIe and USB use differential signalling, where a balanced pair rejects
+      common-mode noise and ground bounce. But memory
       architectures cannot afford the pin penalty of differential routing: an LPDDR5X interface must route 16
       or 32 parallel data lines (DQ) across cramped mobile board real estate. As a result, data lanes remain strictly
       <strong>single-ended</strong>, while the forwarded high-speed write clock (WCK) is differential.
@@ -158,7 +156,7 @@
 
     <p>
       This hybrid architecture creates an intense signal integrity cross-pressure: raw single-ended data bits
-      must survive violent simultaneous switching noise (SSN), dense trace-to-trace crosstalk, and power supply
+      must tolerate simultaneous switching noise (SSN), dense trace-to-trace crosstalk, and power supply
       droop, yet arrive at the receiver aligned within single-digit picoseconds of the differential WCK strobe.
       LPDDR5X is not an interface you design simply with trace geometry; it is an active, trained subsystem
       where silicon calibration and board layout must operate as a unified machine.
@@ -174,7 +172,7 @@
     </p>
 
     <p>
-      That is called <strong>source-synchronous</strong>, and it has one enormous advantage: the
+      That is called <strong>source-synchronous</strong>, and it has one large advantage: the
       strobe travels the same path as the data, so anything that delays the data delays the strobe
       too and cancels. Common-mode delay is free.
     </p>
@@ -409,7 +407,7 @@
       <p>
         Because WCK and DQ originate from the controller's PHY but traverse different driver stages, package balls,
         and receiver buffers inside the DRAM, the static phase offset (<span class="num">t<sub>WCK2DQ</sub></span>)
-        can consume a massive fraction of the 117 ps bit period. Maintaining alignment across temperature drift
+        can consume a large fraction of the 117 ps bit period. Maintaining alignment across temperature drift
         requires continuous background tracking: the memory controller monitors phase drift and dynamically adjusts
         internal delay lines to keep the sampling edge locked to the eye center.
       </p>
@@ -444,7 +442,7 @@
       <p>
         The timing hazard is ODT turn-on and turn-off latency (<span class="num">t<sub>ODTon</sub>, t<sub>ODToff</sub></span>).
         If the termination does not settle to its target impedance before the first symbol of a burst arrives, that initial
-        bit encounters an open-circuit boundary and generates a massive reflection spike that corrupts the preamble.
+        bit encounters an open-circuit boundary and reflects strongly, which can corrupt the preamble.
       </p>
 
       <p>
@@ -516,7 +514,7 @@
     <a href="../../model-contract.html">Model assumptions</a>
     <a href="../../docs/claims.md">Claim ledger (Markdown)</a>
   </nav>
-  <span>Created and directed by Geetansh Arora. Text <a href="../../LICENSE-CONTENT">CC BY 4.0</a>, code <a href="../../LICENSE-CODE">MIT</a>.</span>
+  <span>Created and directed by <a href="https://www.linkedin.com/in/geetansh-arora-a645714a/" target="_blank" rel="author noopener">Geetansh Arora</a>. Text <a href="../../LICENSE-CONTENT">CC BY 4.0</a>, code <a href="../../LICENSE-CODE">MIT</a>.</span>
 </footer>
 
 <script src="../../js/site.js?v=61b8ff31" defer></script>

@@ -598,8 +598,9 @@ def stamp_masthead():
         rel = f.relative_to(ROOT)
         prefix = "../../" if rel.parts and rel.parts[0] == "topics" else ""
         links = [
-            (f"{prefix}index.html#groundwork", "Topics"),
+            # Start first: most readers arrive new, and the logo already leads to the map.
             (f"{prefix}start.html", "Start"),
+            (f"{prefix}index.html#groundwork", "Topics"),
             (f"{prefix}labs.html", "Labs"),
             (f"{prefix}calculators.html", "Calculators"),
             # Reference is a lookup tool rather than a route into the material,
@@ -680,9 +681,23 @@ def cmd_mobilenote():
     print(f"  mobile note stamped on {stamp_mobile_note()} page(s)")
 
 
+def author_link(name=None, cls=""):
+    """The author's name, linked to the profile in topics.json when one is set.
+    External, so it opens in a new tab and says who it is about (rel=author)."""
+    data, _flat = load()
+    site = data["site"]
+    name = name or site.get("author", "Geetansh Arora")
+    url = site.get("linkedin", "")
+    if not url:
+        return name
+    c = f' class="{cls}"' if cls else ""
+    return f'<a{c} href="{url}" target="_blank" rel="author noopener">{name}</a>'
+
+
 def stamp_footer():
     """Keep authorship concise in the footer and detailed in the colophon."""
     n = 0
+    who = author_link()
     for f in site_html():
         rel = f.relative_to(ROOT)
         prefix = "../../" if rel.parts and rel.parts[0] == "topics" else ""
@@ -701,7 +716,7 @@ def stamp_footer():
                   f'    <a href="{prefix}model-contract.html">Model assumptions</a>\n'
                   f'    <a href="{prefix}docs/claims.md">Claim ledger (Markdown)</a>\n'
                   f'  </nav>\n'
-                  f'  <span>Created and directed by Geetansh Arora. '
+                  f'  <span>Created and directed by {who}. '
                   f'Text <a href="{prefix}LICENSE-CONTENT">CC BY 4.0</a>, '
                   f'code <a href="{prefix}LICENSE-CODE">MIT</a>.</span>\n'
                   f'</footer>')
@@ -988,8 +1003,10 @@ def cmd_meta():
                 "url": url,
                 "articleSection": crumb[0],
                 "isPartOf": {"@type": "WebSite", "name": "SIPI", "url": base + "/"},
-                "author": {"@type": "Person", "name": "Geetansh Arora",
-                           "jobTitle": "Principal SI/PI Engineer"},
+                "author": dict({"@type": "Person", "name": "Geetansh Arora",
+                                "jobTitle": "Principal SI/PI Engineer"},
+                               **({"url": site["linkedin"], "sameAs": [site["linkedin"]]}
+                                  if site.get("linkedin") else {})),
                 "publisher": {"@type": "Person", "name": "Geetansh Arora"},
             }
             if reviewed:
@@ -1260,8 +1277,7 @@ CONTRACT_PAGE = """<!doctype html>
       The fourth level is listed for reference and is currently unused. These model labels do not
       claim validation against a published specification. Where a page states a
       specification claim, it is recorded in the
-      <a href="docs/claims.md">claim ledger</a> with its status, and most of those are still
-      awaiting a primary source.
+      <a href="docs/claims.md">claim ledger</a> with its status. {ledger}
     </p>
     <p>
       <em>Kind</em> and <em>evidence</em> answer different questions. A deliberately
@@ -1281,7 +1297,7 @@ CONTRACT_PAGE = """<!doctype html>
 
 <footer class="site-foot">
   <span>SIPI &#8212; signal and power integrity, visualised.</span>
-  <span>Created and directed by Geetansh Arora. <a href="colophon.html">About, review &amp; AI assistance</a> &#183; <a href="model-contract.html">Model assumptions</a> &#183; <a href="docs/claims.md">Claim ledger</a></span>
+  <span>Created and directed by {author}. <a href="colophon.html">About, review &amp; AI assistance</a> &#183; <a href="model-contract.html">Model assumptions</a> &#183; <a href="docs/claims.md">Claim ledger</a></span>
 </footer>
 
 <script src="js/site.js"></script>
@@ -1793,7 +1809,7 @@ def stamp_review():
             when = "<span>Updated Sep 2026</span>"
 
         blk = (REVIEW_START
-               + f"<span>By {esc(author)} — Principal SI/PI Engineer</span>"
+               + f"<span>By {author_link(esc(author))} — Principal SI/PI Engineer</span>"
                + when + f"<span>{mins} min</span>" + REVIEW_END)
         out = re.sub(r'<p class="byline">[\s\S]*?</p>',
                      lambda _m: f'<p class="byline">\n      {blk}\n    </p>', html, count=1)
@@ -1923,7 +1939,18 @@ def cmd_contract():
              + ", ".join(f"{n} {k}" for k, n in sorted(evs.items())))
     counts = evs
 
-    page = CONTRACT_PAGE.format(n=len(order), tally=esc(tally),
+    # What the ledger can and cannot vouch for, counted rather than characterised.
+    cl, cc = _claims(), claim_counts()
+    normative_ok = sum(1 for c in cl if c.get("status") == "verified" and c.get("source_type") == "normative")
+    ledger = (f"Of its {cc['total']} claims, {cc['verified']} have been read against the source they cite, "
+              f"{cc['scoped']} have been narrowed to what their source supports, and {cc['awaiting']} still "
+              f"await a source. "
+              + ("None of the verified ones rests on the normative text of a standard; they rest on vendor "
+                 "documents, public announcements and measured data, "
+                 if normative_ok == 0 else
+                 f"{normative_ok} of the verified ones rest on the normative text of a standard, ")
+              + "and the source checks were made by an AI model, not by a person.")
+    page = CONTRACT_PAGE.format(n=len(order), tally=esc(tally), ledger=esc(ledger), author=author_link(),
                                 levels=levels, rows="".join(rows))
     page, _ = _stamp_one(page, "model-contract.html", {})
     # The metadata block belongs to `scaffold.py meta`. Carry over whatever it last
@@ -2204,6 +2231,15 @@ def cmd_stats():
         if new != text:
             readme.write_text(new, encoding="utf-8")
             print("  README.md    updated")
+    # The Start page's page count, from the same number rather than typed beside it.
+    start = ROOT / "start.html"
+    if start.exists():
+        text = start.read_text(encoding="utf-8")
+        new = re.sub(r'(<p class="byline"><span>)\d+( pages</span>)',
+                     lambda m: f"{m.group(1)}{st['pages']}{m.group(2)}", text, count=1)
+        if new != text:
+            start.write_text(new, encoding="utf-8")
+            print("  start.html   updated")
     return 0
 
 
@@ -2616,6 +2652,12 @@ def readme_problems():
                        f"`python3 scaffold.py stats`")
 
     want("topic pages", r"\| Topic pages \| \*\*(\d+)\*\*", st["pages"])
+    start = ROOT / "start.html"
+    if start.exists():
+        m = re.search(r'<p class="byline"><span>(\d+) pages</span>', start.read_text(encoding="utf-8"))
+        if m and int(m.group(1)) != st["pages"]:
+            out.append(f"start.html: says {m.group(1)} pages, site has {st['pages']} — run "
+                       f"`python3 scaffold.py stats`")
     want("words", r"\| Words \| ~?([\d,]+)", st["words"])
     want("median words", r"\| Words \|.*?median ([\d,]+)", st["median"])
     want("interactive panels", r"\| Interactive panels \| \*\*(\d+)\*\*", st["panels"])

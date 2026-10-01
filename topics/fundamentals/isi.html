@@ -31,7 +31,7 @@
   <meta name="twitter:description" content="Why frequency-dependent loss makes each bit depend on the bits before it, and how that becomes data-dependent jitter.">
   <meta name="twitter:image" content="https://sipi.work/assets/og/fundamentals/isi.png">
   <meta name="twitter:image:alt" content="Intersymbol Interference (ISI) and Channel Memory: a figure from the page, on SIPI">
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Intersymbol Interference (ISI) and Channel Memory","description":"Why frequency-dependent loss makes each bit depend on the bits before it, and how that becomes data-dependent jitter.","url":"https://sipi.work/topics/fundamentals/isi.html","articleSection":"Fundamentals","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer"},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-09-26","image":"https://sipi.work/assets/og/fundamentals/isi.png"}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Intersymbol Interference (ISI) and Channel Memory","description":"Why frequency-dependent loss makes each bit depend on the bits before it, and how that becomes data-dependent jitter.","url":"https://sipi.work/topics/fundamentals/isi.html","articleSection":"Fundamentals","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer","url":"https://www.linkedin.com/in/geetansh-arora-a645714a/","sameAs":["https://www.linkedin.com/in/geetansh-arora-a645714a/"]},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-09-26","image":"https://sipi.work/assets/og/fundamentals/isi.png"}</script>
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"SIPI","item":"https://sipi.work/"},{"@type":"ListItem","position":2,"name":"Fundamentals","item":"https://sipi.work/#fundamentals"},{"@type":"ListItem","position":3,"name":"Intersymbol Interference (ISI) and Channel Memory"}]}</script>
   <!-- meta:end -->
 </head>
@@ -54,7 +54,7 @@
     <p class="crumb"><a href="../../index.html#fundamentals">Fundamentals</a> / 10</p>
     <h1>Intersymbol Interference (ISI) and Channel Memory</h1>
     <p class="byline">
-      <!-- review:start --><span>By Geetansh Arora — Principal SI/PI Engineer</span><time datetime="2026-09-26" title="Technical review by Geetansh Arora on this date">26 Sep 2026</time><span>10 min</span><!-- review:end -->
+      <!-- review:start --><span>By <a href="https://www.linkedin.com/in/geetansh-arora-a645714a/" target="_blank" rel="author noopener">Geetansh Arora</a> — Principal SI/PI Engineer</span><time datetime="2026-09-26" title="Technical review by Geetansh Arora on this date">26 Sep 2026</time><span>10 min</span><!-- review:end -->
     </p>
     <!-- share:head:start --><div class="share share--head" data-share data-share-url="https://sipi.work/topics/fundamentals/isi.html" data-share-title="Intersymbol Interference (ISI) and Channel Memory"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Ffundamentals%2Fisi.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Ffundamentals%2Fisi.html&amp;text=Intersymbol%20Interference%20%28ISI%29%20and%20Channel%20Memory" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=Intersymbol%20Interference%20%28ISI%29%20and%20Channel%20Memory&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Ffundamentals%2Fisi.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:head:end -->
     <p class="answer">
@@ -75,10 +75,10 @@
   </p>
   <!-- mobilenote:end -->
   <section class="instrument" data-viz="isi" aria-label="Interactive plot of a single bit response through a lossy channel and the different voltages two data patterns produce at the sampling instant">
-    <script type="application/json" data-contract>{"kind":"numerical","evidence":"independent","purpose":"Show a channel's memory as specific earlier bits.","equations":["y[n]=h0*a[n] + sum h[k]*a[n-k]"],"units":"UI, mV","validity":"Linear time-invariant channel; no equaliser unless stated.","numerics":"Shared kit channel; cursor at the single-bit peak.","limitations":"Linear time-invariant channel; no equaliser unless stated.","suites":["Convergence","DFE"],"version":"2.0","reviewed":"2026-09-12","panel":"isi"}</script>
+    <script type="application/json" data-contract>{"kind":"numerical","evidence":"computed","purpose":"Show a channel's memory as specific earlier bits.","equations":["y[n]=h0*a[n] + sum h[k]*a[n-k]"],"units":"UI, mV","validity":"Linear time-invariant channel; no equaliser unless stated.","numerics":"Shared kit channel; cursor at the single-bit peak.","limitations":"Linear time-invariant channel; no equaliser unless stated.","suites":["Convergence","DFE"],"version":"2.0","reviewed":"2026-09-12","panel":"isi"}</script>
     <div class="instrument__bar">
       <span class="instrument__title">One bit's response &#183; and what it does to its neighbours</span>
-        <span data-evidence="independent" data-model-version="2.0" class="model-tag model-tag--numerical" title="Same channel model as the eye lab, single-bit response decomposition.">numerical</span>
+        <span data-evidence="computed" data-model-version="2.0" class="model-tag model-tag--numerical" title="Same channel model as the eye lab, single-bit response decomposition.">numerical</span>
       <span class="instrument__readout" role="status" aria-live="polite" aria-label="Current values">
         <span>cursor <b data-out="cursor">—</b></span>
         <span>worst post-cursor <b data-out="post">—</b></span>
@@ -485,7 +485,7 @@
     <a href="../../model-contract.html">Model assumptions</a>
     <a href="../../docs/claims.md">Claim ledger (Markdown)</a>
   </nav>
-  <span>Created and directed by Geetansh Arora. Text <a href="../../LICENSE-CONTENT">CC BY 4.0</a>, code <a href="../../LICENSE-CODE">MIT</a>.</span>
+  <span>Created and directed by <a href="https://www.linkedin.com/in/geetansh-arora-a645714a/" target="_blank" rel="author noopener">Geetansh Arora</a>. Text <a href="../../LICENSE-CONTENT">CC BY 4.0</a>, code <a href="../../LICENSE-CODE">MIT</a>.</span>
 </footer>
 
 <script src="../../js/site.js?v=61b8ff31" defer></script>

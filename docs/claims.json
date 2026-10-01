@@ -225,6 +225,23 @@
       "source_title": "Synopsys — PCIe 6.0 verification of FEC and CRC"
     },
     {
+      "id": "C-8d",
+      "statement": "A PCIe 6.0 FLIT is 256 bytes: 236 of transaction-layer data, 6 of data-link information, 8 of CRC and 6 of FEC.",
+      "pages": [
+        "interfaces/pcie-gen6"
+      ],
+      "source_type": "normative",
+      "source": "PCI-SIG PCI Express Base Specification 6.0, FLIT mode",
+      "conditions": "FLIT mode, as defined in Base 6.0; later revisions may differ",
+      "status": "awaiting",
+      "note": "The page states this as a vendor description and labels it unchecked. The byte split appears consistently in vendor material, but the normative layout is in the Base specification, which has not been read.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": null,
+      "sourceCheckedOn": null,
+      "humanReviewedBy": null,
+      "humanReviewedOn": null
+    },
+    {
       "id": "C-9",
       "statement": "PCIe 6.0 tolerates a raw error rate near 1e-6 and delivers about 1e-12 after correction.",
       "pages": [
@@ -799,6 +816,23 @@
       "source_title": "Shengyi — S1141 technical data sheet",
       "source_url": "https://www.syst.com.cn/ajax/download.aspx?name=2021/01/20210119183954576.pdf",
       "laminate": "shengyi-s1141"
+    },
+    {
+      "id": "C-34",
+      "statement": "PCIe 6.0 specifies transmitter linearity as a level-separation mismatch ratio and as a signal-to-noise-and-distortion ratio, each with a minimum.",
+      "pages": [
+        "interfaces/pcie-gen6"
+      ],
+      "source_type": "normative",
+      "source": "PCI-SIG PCI Express Base Specification 6.0, transmitter electrical specifications",
+      "conditions": "64 GT/s PAM4, measured through the specified test setup",
+      "status": "awaiting",
+      "note": "The page names the two metrics and deliberately gives no limits. An earlier version quoted R_LM >= 0.95 and SNDR of 31.5 to 32 dB with no source; both were removed until the specification is read.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": null,
+      "sourceCheckedOn": null,
+      "humanReviewedBy": null,
+      "humanReviewedOn": null
     }
   ]
 }

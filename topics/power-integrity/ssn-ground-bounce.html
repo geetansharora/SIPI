@@ -31,7 +31,7 @@
   <meta name="twitter:description" content="Why simultaneously switching outputs shift the local reference, a worked di/dt number, and the mitigations that actually move it.">
   <meta name="twitter:image" content="https://sipi.work/assets/og/power-integrity/ssn-ground-bounce.png">
   <meta name="twitter:image:alt" content="Simultaneous Switching Noise and Ground Bounce: a figure from the page, on SIPI">
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Simultaneous Switching Noise and Ground Bounce","description":"Why simultaneously switching outputs shift the local reference, a worked di/dt number, and the mitigations that actually move it.","url":"https://sipi.work/topics/power-integrity/ssn-ground-bounce.html","articleSection":"Power Integrity","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer"},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-09-26","image":"https://sipi.work/assets/og/power-integrity/ssn-ground-bounce.png"}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Simultaneous Switching Noise and Ground Bounce","description":"Why simultaneously switching outputs shift the local reference, a worked di/dt number, and the mitigations that actually move it.","url":"https://sipi.work/topics/power-integrity/ssn-ground-bounce.html","articleSection":"Power Integrity","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer","url":"https://www.linkedin.com/in/geetansh-arora-a645714a/","sameAs":["https://www.linkedin.com/in/geetansh-arora-a645714a/"]},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-10-01","image":"https://sipi.work/assets/og/power-integrity/ssn-ground-bounce.png"}</script>
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"SIPI","item":"https://sipi.work/"},{"@type":"ListItem","position":2,"name":"Power Integrity","item":"https://sipi.work/#power-integrity"},{"@type":"ListItem","position":3,"name":"Simultaneous Switching Noise and Ground Bounce"}]}</script>
   <!-- meta:end -->
 </head>
@@ -54,7 +54,7 @@
     <p class="crumb"><a href="../../index.html#power-integrity">Power Integrity</a> / 08</p>
     <h1>Simultaneous Switching Noise and Ground Bounce</h1>
     <p class="byline">
-      <!-- review:start --><span>By Geetansh Arora — Principal SI/PI Engineer</span><time datetime="2026-09-26" title="Technical review by Geetansh Arora on this date">26 Sep 2026</time><span>9 min</span><!-- review:end -->
+      <!-- review:start --><span>By <a href="https://www.linkedin.com/in/geetansh-arora-a645714a/" target="_blank" rel="author noopener">Geetansh Arora</a> — Principal SI/PI Engineer</span><time datetime="2026-10-01" title="Technical review by Geetansh Arora on this date">1 Oct 2026</time><span>9 min</span><!-- review:end -->
     </p>
     <!-- share:head:start --><div class="share share--head" data-share data-share-url="https://sipi.work/topics/power-integrity/ssn-ground-bounce.html" data-share-title="Simultaneous Switching Noise and Ground Bounce"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Fpower-integrity%2Fssn-ground-bounce.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Fpower-integrity%2Fssn-ground-bounce.html&amp;text=Simultaneous%20Switching%20Noise%20and%20Ground%20Bounce" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=Simultaneous%20Switching%20Noise%20and%20Ground%20Bounce&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Fpower-integrity%2Fssn-ground-bounce.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:head:end -->
     <p class="answer">
@@ -132,7 +132,7 @@
       ground pins and package balls to return that current to the board, their switching currents combine. That rapid,
       collective change in current (<span class="num">di/dt</span>) rushing through the shared return inductance
       (<span class="num">L</span>) generates a sudden voltage spike: <span class="num">V = L &#183; di/dt</span>. For a
-      few hundred picoseconds, the chip's internal ground plane is thrown violently off zero, an effect known as
+      few hundred picoseconds, the chip's internal ground plane is pushed away from zero, an effect known as
       ground bounce or simultaneous switching noise (SSN).
     </p>
 
@@ -227,10 +227,10 @@
     </p>
 
     <p>
-      When the other 31 bits fire, the collective return current spikes through the shared package inductance,
-      and the chip's internal ground violently bounces up by 300 to 500 mV. Because bit 0 is clamped to that internal
-      ground, its external pin is dragged upward along with it. To a receiver on the other end of the board whose ground
-      remained at a quiet 0 V, that 400 mV glitch appears as an unprompted pulse. If it crosses the receiver's
+      When the other 31 bits fire, their combined return current flows through the shared package inductance,
+      and the chip's internal ground moves up by that inductance times the total di/dt. Because bit 0 is clamped to
+      that internal ground, its external pin moves with it. To a receiver on the other end of the board whose ground
+      stayed at 0 V, the bounce appears as an unprompted pulse. If it crosses the receiver's
       logic-low threshold (<span class="num">V<sub>IL</sub></span>), a quiet control line triggers a false clock edge,
       a memory read gets corrupted, or a state machine takes a phantom step &#8212; while the switching data lines
       themselves appear perfectly healthy.
@@ -458,7 +458,7 @@
     <a href="../../model-contract.html">Model assumptions</a>
     <a href="../../docs/claims.md">Claim ledger (Markdown)</a>
   </nav>
-  <span>Created and directed by Geetansh Arora. Text <a href="../../LICENSE-CONTENT">CC BY 4.0</a>, code <a href="../../LICENSE-CODE">MIT</a>.</span>
+  <span>Created and directed by <a href="https://www.linkedin.com/in/geetansh-arora-a645714a/" target="_blank" rel="author noopener">Geetansh Arora</a>. Text <a href="../../LICENSE-CONTENT">CC BY 4.0</a>, code <a href="../../LICENSE-CODE">MIT</a>.</span>
 </footer>
 
 <script src="../../js/site.js?v=61b8ff31" defer></script>

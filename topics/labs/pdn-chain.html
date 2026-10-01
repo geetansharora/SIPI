@@ -31,7 +31,7 @@
   <meta name="twitter:description" content="One PDN ladder shown six ways: impedance magnitude and phase, which bank supplies the current at each frequency, the transient droop, and what excites it.">
   <meta name="twitter:image" content="https://sipi.work/assets/og/labs/pdn-chain.png">
   <meta name="twitter:image:alt" content="Lab C: PDN Impedance, Current Sharing, and Transient Droop: a figure from the page, on SIPI">
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Lab C: PDN Impedance, Current Sharing, and Transient Droop","description":"One PDN ladder shown six ways: impedance magnitude and phase, which bank supplies the current at each frequency, the transient droop, and what excites it.","url":"https://sipi.work/topics/labs/pdn-chain.html","articleSection":"Labs","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer"},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-09-26","image":"https://sipi.work/assets/og/labs/pdn-chain.png"}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Lab C: PDN Impedance, Current Sharing, and Transient Droop","description":"One PDN ladder shown six ways: impedance magnitude and phase, which bank supplies the current at each frequency, the transient droop, and what excites it.","url":"https://sipi.work/topics/labs/pdn-chain.html","articleSection":"Labs","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer","url":"https://www.linkedin.com/in/geetansh-arora-a645714a/","sameAs":["https://www.linkedin.com/in/geetansh-arora-a645714a/"]},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-10-01","image":"https://sipi.work/assets/og/labs/pdn-chain.png"}</script>
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"SIPI","item":"https://sipi.work/"},{"@type":"ListItem","position":2,"name":"Labs","item":"https://sipi.work/#labs"},{"@type":"ListItem","position":3,"name":"Lab C: PDN Impedance, Current Sharing, and Transient Droop"}]}</script>
   <!-- meta:end -->
 </head>
@@ -54,7 +54,7 @@
     <p class="crumb"><a href="../../index.html#labs">Labs</a> / 03</p>
     <h1>Lab C: PDN Impedance, Current Sharing, and Transient Droop</h1>
     <p class="byline">
-      <!-- review:start --><span>By Geetansh Arora — Principal SI/PI Engineer</span><time datetime="2026-09-26" title="Technical review by Geetansh Arora on this date">26 Sep 2026</time><span>14 min</span><!-- review:end -->
+      <!-- review:start --><span>By <a href="https://www.linkedin.com/in/geetansh-arora-a645714a/" target="_blank" rel="author noopener">Geetansh Arora</a> — Principal SI/PI Engineer</span><time datetime="2026-10-01" title="Technical review by Geetansh Arora on this date">1 Oct 2026</time><span>14 min</span><!-- review:end -->
     </p>
     <!-- share:head:start --><div class="share share--head" data-share data-share-url="https://sipi.work/topics/labs/pdn-chain.html" data-share-title="Lab C: PDN Impedance, Current Sharing, and Transient Droop"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Flabs%2Fpdn-chain.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Flabs%2Fpdn-chain.html&amp;text=Lab%20C%3A%20PDN%20Impedance%2C%20Current%20Sharing%2C%20and%20Transient%20Droop" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=Lab%20C%3A%20PDN%20Impedance%2C%20Current%20Sharing%2C%20and%20Transient%20Droop&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Flabs%2Fpdn-chain.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:head:end -->
     <p class="answer">
@@ -322,11 +322,11 @@
     </p>
 
     <p>
-      In high-speed digital systems, this reservoir analogy collapses. Current cannot travel across a circuit board
-      instantaneously, and parasitic loop inductance (<span class="num">L</span>) fiercely opposes rapid changes in
-      current (<span class="num">V = L &middot; di/dt</span>). In electrical terms, the VRM is miles away, bulk capacitors
-      are hundreds of millimetres away, surface-mount ceramic capacitors are centimetres away, and on-die capacitance
-      sits right at the transistors.
+      In high-speed digital systems, the reservoir picture leaves out how fast the charge can arrive. Loop
+      inductance (<span class="num">L</span>) opposes rapid changes in current
+      (<span class="num">V = L &middot; di/dt</span>), so what matters is not only how much charge each stage holds
+      but how much inductance stands between it and the load. Measured that way, the VRM is furthest from the die,
+      then the bulk capacitors, then the board ceramics, with on-die capacitance right at the transistors.
     </p>
 
     <p>
@@ -503,7 +503,7 @@
     <a href="../../model-contract.html">Model assumptions</a>
     <a href="../../docs/claims.md">Claim ledger (Markdown)</a>
   </nav>
-  <span>Created and directed by Geetansh Arora. Text <a href="../../LICENSE-CONTENT">CC BY 4.0</a>, code <a href="../../LICENSE-CODE">MIT</a>.</span>
+  <span>Created and directed by <a href="https://www.linkedin.com/in/geetansh-arora-a645714a/" target="_blank" rel="author noopener">Geetansh Arora</a>. Text <a href="../../LICENSE-CONTENT">CC BY 4.0</a>, code <a href="../../LICENSE-CODE">MIT</a>.</span>
 </footer>
 
 <script src="../../js/site.js?v=61b8ff31" defer></script>

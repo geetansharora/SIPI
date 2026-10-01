@@ -47,7 +47,7 @@
   <div class="page-head">
     <p class="crumb"><a href="index.html">SIPI</a> / model contracts</p>
     <h1>Interactive model assumptions and evidence</h1>
-    <p class="byline"><span>Generated from <code>docs/model-types.json</code></span><span>41 panels</span><span>fidelity: 17 analytical, 12 exact, 6 illustrative, 6 numerical · evidence: 2 computed, 35 independent, 4 plausible</span></p>
+    <p class="byline"><span>Generated from <code>docs/model-types.json</code></span><span>41 panels</span><span>fidelity: 17 analytical, 12 exact, 6 illustrative, 6 numerical · evidence: 5 computed, 31 independent, 5 plausible</span></p>
     <p class="answer">
       Each interactive panel uses a model with a defined scope. This page publishes the
       contract for all 41 panels: the
@@ -69,8 +69,7 @@
       The fourth level is listed for reference and is currently unused. These model labels do not
       claim validation against a published specification. Where a page states a
       specification claim, it is recorded in the
-      <a href="docs/claims.md">claim ledger</a> with its status, and most of those are still
-      awaiting a primary source.
+      <a href="docs/claims.md">claim ledger</a> with its status. Of its 43 claims, 18 have been read against the source they cite, 21 have been narrowed to what their source supports, and 4 still await a source. None of the verified ones rests on the normative text of a standard; they rest on vendor documents, public announcements and measured data, and the source checks were made by an AI model, not by a person.
     </p>
     <p>
       <em>Kind</em> and <em>evidence</em> answer different questions. A deliberately
@@ -86,6 +85,25 @@
     </p>
   </div>
 
+  <section class="contract" id="calcTargetImpedance">
+    <div class="contract__head">
+      <h2>calcTargetImpedance</h2>
+      <span class="model-tag model-tag--exact">exact model</span>
+      <span class="ev ev--computed">computed</span>
+      <span class="contract__ver">v1.0 &#183; reviewed 2026-09-24</span>
+    </div>
+    <p class="contract__purpose">Target impedance of a rail from voltage, ripple and current step.</p>
+    <dl class="contract__body">
+      <dt>Topology</dt><dd>A linear network and a current step with a flat spectrum.</dd>
+      <dt>Reference planes</dt><dd>The load's supply pins.</dd>
+      <dt>Equations</dt><dd><ul class="tight"><li><code>Z_target = V*ripple/dI</code></li></ul></dd>
+      <dt>Units</dt><dd>V, A, ohm</dd>
+      <dt>Validity</dt><dd>One ripple figure at all frequencies.</dd>
+      <dt>Numerics</dt><dd>Closed form.</dd>
+      <dt>Known limitations</dt><dd>A flat target ignores the load's current spectrum; staying under it is sufficient, not necessary.</dd>
+      <dt>Evidence</dt><dd>check-models.js — Calculator: target impedance (the step through the target reproduces the ripple budget; scaling).</dd>
+    </dl>
+  </section>
   <section class="contract" id="criticalLength">
     <div class="contract__head">
       <h2>criticalLength</h2>
@@ -103,6 +121,44 @@
       <dt>Numerics</dt><dd>Exact arithmetic.</dd>
       <dt>Known limitations</dt><dd>One driver, one receiver, uniform line, lossless.</dd>
       <dt>Evidence</dt><dd>check-numbers.py — tpd for stripline and microstrip recomputed.</dd>
+    </dl>
+  </section>
+  <section class="contract" id="isi">
+    <div class="contract__head">
+      <h2>isi</h2>
+      <span class="model-tag model-tag--numerical">numerical model</span>
+      <span class="ev ev--computed">computed</span>
+      <span class="contract__ver">v2.0 &#183; reviewed 2026-09-12</span>
+    </div>
+    <p class="contract__purpose">Show a channel's memory as specific earlier bits.</p>
+    <dl class="contract__body">
+      <dt>Topology</dt><dd>Shared channel impulse; cursor and neighbours.</dd>
+      <dt>Reference planes</dt><dd>Receiver sampling instant.</dd>
+      <dt>Equations</dt><dd><ul class="tight"><li><code>y[n]=h0*a[n] + sum h[k]*a[n-k]</code></li></ul></dd>
+      <dt>Units</dt><dd>UI, mV</dd>
+      <dt>Validity</dt><dd>Linear time-invariant channel; no equaliser unless stated.</dd>
+      <dt>Numerics</dt><dd>Shared kit channel; cursor at the single-bit peak.</dd>
+      <dt>Known limitations</dt><dd>Linear time-invariant channel; no equaliser unless stated.</dd>
+      <dt>Evidence</dt><dd>check-models.js — CTLE and DFE suites share this channel model.</dd>
+    </dl>
+  </section>
+  <section class="contract" id="jitter">
+    <div class="contract__head">
+      <h2>jitter</h2>
+      <span class="model-tag model-tag--analytical">analytical model</span>
+      <span class="ev ev--computed">computed</span>
+      <span class="contract__ver">v2.0 &#183; reviewed 2026-09-12</span>
+    </div>
+    <p class="contract__purpose">Show how TJ depends on the BER you name.</p>
+    <dl class="contract__body">
+      <dt>Topology</dt><dd>As bathtub.</dd>
+      <dt>Reference planes</dt><dd>Receiver decision point.</dd>
+      <dt>Equations</dt><dd><ul class="tight"><li><code>Q(BER) by bisection on the Gaussian tail integral</code></li></ul></dd>
+      <dt>Units</dt><dd>ps, UI</dd>
+      <dt>Validity</dt><dd>Gaussian tails assumed; a periodic component is fitted badly.</dd>
+      <dt>Numerics</dt><dd>Same erfc treatment as the bathtub.</dd>
+      <dt>Known limitations</dt><dd>Gaussian tails assumed; a periodic component is fitted badly.</dd>
+      <dt>Evidence</dt><dd>check-models.js — Bathtub suite, shared model.</dd>
     </dl>
   </section>
   <section class="contract" id="loss">
@@ -371,25 +427,6 @@
       <dt>Evidence</dt><dd>check-models.js — Calculator: skin depth and roughness (2.06 um at 1 GHz, 1/sqrt(f), roughness limits).</dd>
     </dl>
   </section>
-  <section class="contract" id="calcTargetImpedance">
-    <div class="contract__head">
-      <h2>calcTargetImpedance</h2>
-      <span class="model-tag model-tag--exact">exact model</span>
-      <span class="ev ev--independent">independent</span>
-      <span class="contract__ver">v1.0 &#183; reviewed 2026-09-24</span>
-    </div>
-    <p class="contract__purpose">Target impedance of a rail from voltage, ripple and current step.</p>
-    <dl class="contract__body">
-      <dt>Topology</dt><dd>A linear network and a current step with a flat spectrum.</dd>
-      <dt>Reference planes</dt><dd>The load's supply pins.</dd>
-      <dt>Equations</dt><dd><ul class="tight"><li><code>Z_target = V*ripple/dI</code></li></ul></dd>
-      <dt>Units</dt><dd>V, A, ohm</dd>
-      <dt>Validity</dt><dd>One ripple figure at all frequencies.</dd>
-      <dt>Numerics</dt><dd>Closed form.</dd>
-      <dt>Known limitations</dt><dd>A flat target ignores the load's current spectrum; staying under it is sufficient, not necessary.</dd>
-      <dt>Evidence</dt><dd>check-models.js — Calculator: target impedance (the step through the target reproduces the ripple budget; scaling).</dd>
-    </dl>
-  </section>
   <section class="contract" id="calcViaStub">
     <div class="contract__head">
       <h2>calcViaStub</h2>
@@ -523,44 +560,6 @@
       <dt>Evidence</dt><dd>check-models.js — Networks and Impairment chain: the through-section loses at most 0.0481 dB and never notches, the echo is Gs.GL rather than GL^2, and the truncated series is bounded by |Gs.GL| of the retained term over the whole released range.</dd>
     </dl>
   </section>
-  <section class="contract" id="isi">
-    <div class="contract__head">
-      <h2>isi</h2>
-      <span class="model-tag model-tag--numerical">numerical model</span>
-      <span class="ev ev--independent">independent</span>
-      <span class="contract__ver">v2.0 &#183; reviewed 2026-09-12</span>
-    </div>
-    <p class="contract__purpose">Show a channel's memory as specific earlier bits.</p>
-    <dl class="contract__body">
-      <dt>Topology</dt><dd>Shared channel impulse; cursor and neighbours.</dd>
-      <dt>Reference planes</dt><dd>Receiver sampling instant.</dd>
-      <dt>Equations</dt><dd><ul class="tight"><li><code>y[n]=h0*a[n] + sum h[k]*a[n-k]</code></li></ul></dd>
-      <dt>Units</dt><dd>UI, mV</dd>
-      <dt>Validity</dt><dd>Linear time-invariant channel; no equaliser unless stated.</dd>
-      <dt>Numerics</dt><dd>Shared kit channel; cursor at the single-bit peak.</dd>
-      <dt>Known limitations</dt><dd>Linear time-invariant channel; no equaliser unless stated.</dd>
-      <dt>Evidence</dt><dd>check-models.js — CTLE and DFE suites share this channel model.</dd>
-    </dl>
-  </section>
-  <section class="contract" id="jitter">
-    <div class="contract__head">
-      <h2>jitter</h2>
-      <span class="model-tag model-tag--analytical">analytical model</span>
-      <span class="ev ev--independent">independent</span>
-      <span class="contract__ver">v2.0 &#183; reviewed 2026-09-12</span>
-    </div>
-    <p class="contract__purpose">Show how TJ depends on the BER you name.</p>
-    <dl class="contract__body">
-      <dt>Topology</dt><dd>As bathtub.</dd>
-      <dt>Reference planes</dt><dd>Receiver decision point.</dd>
-      <dt>Equations</dt><dd><ul class="tight"><li><code>Q(BER) by bisection on the Gaussian tail integral</code></li></ul></dd>
-      <dt>Units</dt><dd>ps, UI</dd>
-      <dt>Validity</dt><dd>Gaussian tails assumed; a periodic component is fitted badly.</dd>
-      <dt>Numerics</dt><dd>Same erfc treatment as the bathtub.</dd>
-      <dt>Known limitations</dt><dd>Gaussian tails assumed; a periodic component is fitted badly.</dd>
-      <dt>Evidence</dt><dd>check-models.js — Bathtub suite, shared model.</dd>
-    </dl>
-  </section>
   <section class="contract" id="labChannel">
     <div class="contract__head">
       <h2>labChannel</h2>
@@ -654,25 +653,6 @@
       <dt>Numerics</dt><dd>Direct complex evaluation.</dd>
       <dt>Known limitations</dt><dd>Lumped; no plane modes; no package.</dd>
       <dt>Evidence</dt><dd>check-models.js — PDN (RLC limits and damping).</dd>
-    </dl>
-  </section>
-  <section class="contract" id="pdnJitter">
-    <div class="contract__head">
-      <h2>pdnJitter</h2>
-      <span class="model-tag model-tag--illustrative">illustrative model</span>
-      <span class="ev ev--independent">independent</span>
-      <span class="contract__ver">v1.0 &#183; reviewed 2026-09-12</span>
-    </div>
-    <p class="contract__purpose">Show that where supply noise enters decides whether the loop removes it.</p>
-    <dl class="contract__body">
-      <dt>Topology</dt><dd>First-order PLL, three injection points: VCO, reference, output buffer.</dd>
-      <dt>Reference planes</dt><dd>Clock output.</dd>
-      <dt>Equations</dt><dd><ul class="tight"><li><code>VCO noise high-passed at the loop bandwidth; reference noise low-passed; buffer noise uncorrected</code></li></ul></dd>
-      <dt>Units</dt><dd>Hz, V, s</dd>
-      <dt>Validity</dt><dd>ILLUSTRATIVE topology — a first-order loop, not a solved PLL, and a linear small-signal sensitivity. What IS independently checked is the behaviour that matters: the three injection points are treated oppositely, and the units are dimensionally correct.</dd>
-      <dt>Numerics</dt><dd>Closed-form transfer functions.</dd>
-      <dt>Known limitations</dt><dd>ILLUSTRATIVE topology — a first-order loop, not a solved PLL, and a linear small-signal sensitivity. What IS independently checked is the behaviour that matters: the three injection points are treated oppositely, and the units are dimensionally correct.</dd>
-      <dt>Evidence</dt><dd>check-models.js — PSIJ suite. The assertions cover units and the three transfer paths; they do not validate the loop order.</dd>
     </dl>
   </section>
   <section class="contract" id="realCaps">
@@ -808,6 +788,25 @@
       <dt>Evidence</dt><dd>check-numbers.py — the UI at 8533 MT/s is recomputed. The allocation is not sourced; see docs/claims.md.</dd>
     </dl>
   </section>
+  <section class="contract" id="pdnJitter">
+    <div class="contract__head">
+      <h2>pdnJitter</h2>
+      <span class="model-tag model-tag--illustrative">illustrative model</span>
+      <span class="ev ev--plausible">plausible</span>
+      <span class="contract__ver">v1.0 &#183; reviewed 2026-09-12</span>
+    </div>
+    <p class="contract__purpose">Show that where supply noise enters decides whether the loop removes it.</p>
+    <dl class="contract__body">
+      <dt>Topology</dt><dd>First-order PLL, three injection points: VCO, reference, output buffer.</dd>
+      <dt>Reference planes</dt><dd>Clock output.</dd>
+      <dt>Equations</dt><dd><ul class="tight"><li><code>VCO noise high-passed at the loop bandwidth; reference noise low-passed; buffer noise uncorrected</code></li></ul></dd>
+      <dt>Units</dt><dd>Hz, V, s</dd>
+      <dt>Validity</dt><dd>ILLUSTRATIVE topology — a first-order loop, not a solved PLL, and a linear small-signal sensitivity. What IS independently checked is the behaviour that matters: the three injection points are treated oppositely, and the units are dimensionally correct.</dd>
+      <dt>Numerics</dt><dd>Closed-form transfer functions.</dd>
+      <dt>Known limitations</dt><dd>ILLUSTRATIVE topology — a first-order loop, not a solved PLL, and a linear small-signal sensitivity. What IS independently checked is the behaviour that matters: the three injection points are treated oppositely, and the units are dimensionally correct.</dd>
+      <dt>Evidence</dt><dd>check-models.js — PSIJ suite. The assertions cover units and the three transfer paths; they do not validate the loop order.</dd>
+    </dl>
+  </section>
   <section class="contract" id="planeResonance">
     <div class="contract__head">
       <h2>planeResonance</h2>
@@ -869,7 +868,7 @@
 
 <footer class="site-foot">
   <span>SIPI &#8212; signal and power integrity, visualised.</span>
-  <span>Created and directed by Geetansh Arora. <a href="colophon.html">About, review &amp; AI assistance</a> &#183; <a href="model-contract.html">Model assumptions</a> &#183; <a href="docs/claims.md">Claim ledger</a></span>
+  <span>Created and directed by <a href="https://www.linkedin.com/in/geetansh-arora-a645714a/" target="_blank" rel="author noopener">Geetansh Arora</a>. <a href="colophon.html">About, review &amp; AI assistance</a> &#183; <a href="model-contract.html">Model assumptions</a> &#183; <a href="docs/claims.md">Claim ledger</a></span>
 </footer>
 
 <script src="js/site.js?v=61b8ff31"></script>

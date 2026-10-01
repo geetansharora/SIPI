@@ -31,7 +31,7 @@
   <meta name="twitter:description" content="Where the classic target impedance formula comes from, a worked number, and the three assumptions that make a flat target both over- and under-conservative.">
   <meta name="twitter:image" content="https://sipi.work/assets/og/power-integrity/target-impedance.png">
   <meta name="twitter:image:alt" content="PDN Target Impedance: Use and Limitations: a figure from the page, on SIPI">
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"PDN Target Impedance: Use and Limitations","description":"Where the classic target impedance formula comes from, a worked number, and the three assumptions that make a flat target both over- and under-conservative.","url":"https://sipi.work/topics/power-integrity/target-impedance.html","articleSection":"Power Integrity","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer"},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-09-26","image":"https://sipi.work/assets/og/power-integrity/target-impedance.png"}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"PDN Target Impedance: Use and Limitations","description":"Where the classic target impedance formula comes from, a worked number, and the three assumptions that make a flat target both over- and under-conservative.","url":"https://sipi.work/topics/power-integrity/target-impedance.html","articleSection":"Power Integrity","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer","url":"https://www.linkedin.com/in/geetansh-arora-a645714a/","sameAs":["https://www.linkedin.com/in/geetansh-arora-a645714a/"]},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-10-01","image":"https://sipi.work/assets/og/power-integrity/target-impedance.png"}</script>
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"SIPI","item":"https://sipi.work/"},{"@type":"ListItem","position":2,"name":"Power Integrity","item":"https://sipi.work/#power-integrity"},{"@type":"ListItem","position":3,"name":"PDN Target Impedance: Use and Limitations"}]}</script>
   <!-- meta:end -->
 </head>
@@ -54,7 +54,7 @@
     <p class="crumb"><a href="../../index.html#power-integrity">Power Integrity</a> / 02</p>
     <h1>PDN Target Impedance: Use and Limitations</h1>
     <p class="byline">
-      <!-- review:start --><span>By Geetansh Arora — Principal SI/PI Engineer</span><time datetime="2026-09-26" title="Technical review by Geetansh Arora on this date">26 Sep 2026</time><span>10 min</span><!-- review:end -->
+      <!-- review:start --><span>By <a href="https://www.linkedin.com/in/geetansh-arora-a645714a/" target="_blank" rel="author noopener">Geetansh Arora</a> — Principal SI/PI Engineer</span><time datetime="2026-10-01" title="Technical review by Geetansh Arora on this date">1 Oct 2026</time><span>10 min</span><!-- review:end -->
     </p>
     <!-- share:head:start --><div class="share share--head" data-share data-share-url="https://sipi.work/topics/power-integrity/target-impedance.html" data-share-title="PDN Target Impedance: Use and Limitations"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Fpower-integrity%2Ftarget-impedance.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Fpower-integrity%2Ftarget-impedance.html&amp;text=PDN%20Target%20Impedance%3A%20Use%20and%20Limitations" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=PDN%20Target%20Impedance%3A%20Use%20and%20Limitations&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Fpower-integrity%2Ftarget-impedance.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:head:end -->
     <p class="answer">
@@ -245,11 +245,6 @@
       Be explicit about <em>± tolerance versus peak-to-peak</em> too — they differ by a factor of two.
       Recording which convention the budget uses prevents a corresponding factor-of-two error in the
       target.
-      <br><br>
-      And one driving-point impedance is not the PDN. A die has many loads and many observation points;
-      properly it is <span class="num">V = Z·I</span> with Z a multiport matrix, where noise injected at
-      one location appears at another through a <em>transfer</em> impedance. A single Z(f) at one port
-      is a screening tool, and a good one — it is not the whole answer.
     </div>
 
     <p>
@@ -366,8 +361,9 @@
       <p>
         A flat impedance requirement is equivalent to assuming the load's current spectrum is flat —
         that the worst case at every frequency could coincide. Real loads are not flat, so the flat
-        target over-specifies at frequencies where the load is quiet and, more dangerously,
-        remains conservative across the band. That makes it a common and useful screening convention.
+        target over-specifies at frequencies where the load is quiet and, more dangerously, gives no
+        extra weight to a peak that lands where the load is busy. It remains a common and useful
+        screening convention.
       </p>
 
       <p>
@@ -437,7 +433,7 @@
     <a href="../../model-contract.html">Model assumptions</a>
     <a href="../../docs/claims.md">Claim ledger (Markdown)</a>
   </nav>
-  <span>Created and directed by Geetansh Arora. Text <a href="../../LICENSE-CONTENT">CC BY 4.0</a>, code <a href="../../LICENSE-CODE">MIT</a>.</span>
+  <span>Created and directed by <a href="https://www.linkedin.com/in/geetansh-arora-a645714a/" target="_blank" rel="author noopener">Geetansh Arora</a>. Text <a href="../../LICENSE-CONTENT">CC BY 4.0</a>, code <a href="../../LICENSE-CODE">MIT</a>.</span>
 </footer>
 
 <script src="../../js/site.js?v=61b8ff31" defer></script>

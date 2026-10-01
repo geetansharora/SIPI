@@ -170,7 +170,7 @@
   },
   "jitter": {
     "kind": "analytical",
-    "evidence": "independent",
+    "evidence": "computed",
     "purpose": "Show how TJ depends on the BER you name.",
     "topology": "As bathtub.",
     "planes": "Receiver decision point.",
@@ -275,7 +275,7 @@
   },
   "pdnJitter": {
     "kind": "illustrative",
-    "evidence": "independent",
+    "evidence": "plausible",
     "purpose": "Show that where supply noise enters decides whether the loop removes it.",
     "topology": "First-order PLL, three injection points: VCO, reference, output buffer.",
     "planes": "Clock output.",
@@ -440,7 +440,7 @@
   },
   "isi": {
     "kind": "numerical",
-    "evidence": "independent",
+    "evidence": "computed",
     "purpose": "Show a channel's memory as specific earlier bits.",
     "topology": "Shared channel impulse; cursor and neighbours.",
     "planes": "Receiver sampling instant.",
@@ -775,7 +775,7 @@
   },
   "calcTargetImpedance": {
     "kind": "exact",
-    "evidence": "independent",
+    "evidence": "computed",
     "purpose": "Target impedance of a rail from voltage, ripple and current step.",
     "topology": "A linear network and a current step with a flat spectrum.",
     "planes": "The load's supply pins.",

@@ -3,7 +3,9 @@
 Signal and power integrity, explained with interactive models you can drive yourself.
 Live at [sipi.work](https://sipi.work).
 
-Plain HTML, CSS and JavaScript. No framework, no build step, no dependencies — every
+Plain HTML, CSS and JavaScript. No framework, no dependencies, and nothing compiled or bundled: the
+files served are the files in the repository. Python scripts stamp shared parts (navigation,
+metadata, the model and claim pages) into those files before they are committed. Every
 visualisation is hand-written Canvas or inline SVG, and the maths is hand-set rather than
 rendered by a library.
 
@@ -23,13 +25,13 @@ HTTP, and it hides itself when it cannot fetch `topics.json`.
 | | |
 |---|---|
 | Topic pages | **73**, all `live`, each with a `deeper` section and its own review date |
-| Words | 149741; median 2202 per page |
+| Words | 149320; median 2191 per page |
 | Interactive panels | **41**, including four labs and twelve calculators |
 | SVG figures | 85 |
-| Arithmetic claims checked | **159** across 42 pages (`check-numbers.py`) |
+| Arithmetic claims checked | **160** across 42 pages (`check-numbers.py`) |
 | Model assertions | **995** (`check-models.js`), with **0 claims pending** |
-| Mutation coverage | **65 of 65** known defects have an assertion that provably catches them (`mutate.js`) |
-| Specification claims | **41 tracked: 18 verified, 21 scoped, 2 awaiting a primary source** | <!-- generated from docs/claims.json -->
+| Mutation coverage | **65 of 65** known defects have an assertion that provably catches them (`mutate.js`). This is regression coverage for defects already found, not a measure of what the gates would catch in general |
+| Specification claims | **43 tracked: 18 verified, 21 scoped, 4 awaiting a primary source** | <!-- generated from docs/claims.json -->
 
 ## How it is checked
 

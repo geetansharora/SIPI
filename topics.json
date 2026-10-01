@@ -6,7 +6,7 @@
     "url": "https://sipi.work",
     "repo": "https://github.com/geetansharora/SIPI",
     "author": "Geetansh Arora",
-    "linkedin": "",
+    "linkedin": "https://www.linkedin.com/in/geetansh-arora-a645714a/",
     "technicalReview": {
       "reviewer": "Geetansh Arora",
       "date": "2026-09-18",
@@ -390,7 +390,7 @@
             "transient current",
             "ohms law"
           ],
-          "reviewed": "2026-09-26",
+          "reviewed": "2026-10-01",
           "reviewer": "Geetansh Arora"
         },
         {
@@ -409,7 +409,7 @@
             "placement",
             "SRF"
           ],
-          "reviewed": "2026-09-26",
+          "reviewed": "2026-10-01",
           "reviewer": "Geetansh Arora"
         },
         {
@@ -486,7 +486,7 @@
             "di/dt",
             "rail collapse"
           ],
-          "reviewed": "2026-09-26",
+          "reviewed": "2026-10-01",
           "reviewer": "Geetansh Arora"
         },
         {
@@ -870,7 +870,7 @@
             "tDQS2DQ",
             "x16"
           ],
-          "reviewed": "2026-09-26",
+          "reviewed": "2026-10-01",
           "reviewer": "Geetansh Arora"
         },
         {
@@ -905,7 +905,7 @@
             "FEC",
             "precoding"
           ],
-          "reviewed": "2026-09-17",
+          "reviewed": "2026-10-01",
           "reviewer": "Geetansh Arora"
         },
         {
@@ -1125,7 +1125,7 @@
             "board"
           ],
           "viz": "labPdn",
-          "reviewed": "2026-09-26",
+          "reviewed": "2026-10-01",
           "reviewer": "Geetansh Arora"
         },
         {
