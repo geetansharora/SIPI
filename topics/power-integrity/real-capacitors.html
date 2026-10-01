@@ -7,8 +7,8 @@
   <meta name="theme-color" content="#F7F8FA">
   <script>(function(){try{var t=localStorage.getItem('sipi-theme');if(t==='dark'||t==='system'){document.documentElement.setAttribute('data-theme',t);var m=document.querySelector('meta[name=theme-color]');if(m&&(t==='dark'||matchMedia('(prefers-color-scheme:dark)').matches))m.content='#0B1015';}}catch(e){}})();</script>
   <!-- theme:end -->
-<title>Real Capacitors: Bias, Tolerance, Temperature, and Mounting | SIPI</title>
-<meta name="description" content="Real Capacitors: Bias, Tolerance, Temperature, and Mounting">
+<title>MLCC Derating: DC Bias, Tolerance, Temperature, Ageing | SIPI</title>
+<meta name="description" content="Why an MLCC delivers less than its marking: DC-bias derating, tolerance, temperature and ageing, and why ESR, mounting and the regulator change the picture too.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
@@ -19,20 +19,20 @@
   <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
   <meta property="og:type" content="article">
   <meta property="og:site_name" content="SIPI">
-  <meta property="og:title" content="Real Capacitors: Bias, Tolerance, Temperature, and Mounting | SIPI">
-  <meta property="og:description" content="Real Capacitors: Bias, Tolerance, Temperature, and Mounting">
+  <meta property="og:title" content="MLCC Derating: DC Bias, Tolerance, Temperature, Ageing | SIPI">
+  <meta property="og:description" content="Why an MLCC delivers less than its marking: DC-bias derating, tolerance, temperature and ageing, and why ESR, mounting and the regulator change the picture too.">
   <meta property="og:url" content="https://sipi.work/topics/power-integrity/real-capacitors.html">
   <meta property="og:image" content="https://sipi.work/assets/og/power-integrity/real-capacitors.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
-  <meta property="og:image:alt" content="Real Capacitors: Bias, Tolerance, Temperature, and Mounting: a figure from the page, on SIPI">
+  <meta property="og:image:alt" content="MLCC Derating: DC Bias, Tolerance, Temperature, Ageing: a figure from the page, on SIPI">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Real Capacitors: Bias, Tolerance, Temperature, and Mounting | SIPI">
-  <meta name="twitter:description" content="Real Capacitors: Bias, Tolerance, Temperature, and Mounting">
+  <meta name="twitter:title" content="MLCC Derating: DC Bias, Tolerance, Temperature, Ageing | SIPI">
+  <meta name="twitter:description" content="Why an MLCC delivers less than its marking: DC-bias derating, tolerance, temperature and ageing, and why ESR, mounting and the regulator change the picture too.">
   <meta name="twitter:image" content="https://sipi.work/assets/og/power-integrity/real-capacitors.png">
-  <meta name="twitter:image:alt" content="Real Capacitors: Bias, Tolerance, Temperature, and Mounting: a figure from the page, on SIPI">
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Real Capacitors: Bias, Tolerance, Temperature, and Mounting","description":"Real Capacitors: Bias, Tolerance, Temperature, and Mounting","url":"https://sipi.work/topics/power-integrity/real-capacitors.html","articleSection":"Power Integrity","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer","url":"https://www.linkedin.com/in/geetansh-arora-a645714a/","sameAs":["https://www.linkedin.com/in/geetansh-arora-a645714a/"]},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-09-26","image":"https://sipi.work/assets/og/power-integrity/real-capacitors.png"}</script>
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"SIPI","item":"https://sipi.work/"},{"@type":"ListItem","position":2,"name":"Power Integrity","item":"https://sipi.work/#power-integrity"},{"@type":"ListItem","position":3,"name":"Real Capacitors: Bias, Tolerance, Temperature, and Mounting"}]}</script>
+  <meta name="twitter:image:alt" content="MLCC Derating: DC Bias, Tolerance, Temperature, Ageing: a figure from the page, on SIPI">
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"MLCC Derating: DC Bias, Tolerance, Temperature, Ageing","description":"Why an MLCC delivers less than its marking: DC-bias derating, tolerance, temperature and ageing, and why ESR, mounting and the regulator change the picture too.","url":"https://sipi.work/topics/power-integrity/real-capacitors.html","articleSection":"Power Integrity","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer","url":"https://www.linkedin.com/in/geetansh-arora-a645714a/","sameAs":["https://www.linkedin.com/in/geetansh-arora-a645714a/"]},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-09-26","image":"https://sipi.work/assets/og/power-integrity/real-capacitors.png"}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"SIPI","item":"https://sipi.work/"},{"@type":"ListItem","position":2,"name":"Power Integrity","item":"https://sipi.work/#power-integrity"},{"@type":"ListItem","position":3,"name":"MLCC Derating: DC Bias, Tolerance, Temperature, Ageing"}]}</script>
   <!-- meta:end -->
 </head>
 <body>
@@ -52,11 +52,11 @@
 <main>
   <div class="page-head">
     <p class="crumb"><a href="../../index.html#power-integrity">Power Integrity</a> / 12</p>
-    <h1>Real Capacitors: Bias, Tolerance, Temperature, and Mounting</h1>
+    <h1>MLCC Derating: DC Bias, Tolerance, Temperature, Ageing</h1>
     <p class="byline">
       <!-- review:start --><span>By <a href="https://www.linkedin.com/in/geetansh-arora-a645714a/" target="_blank" rel="author noopener">Geetansh Arora</a> — Principal SI/PI Engineer</span><time datetime="2026-09-26" title="Technical review by Geetansh Arora on this date">26 Sep 2026</time><span>10 min</span><!-- review:end -->
     </p>
-    <!-- share:head:start --><div class="share share--head" data-share data-share-url="https://sipi.work/topics/power-integrity/real-capacitors.html" data-share-title="Real Capacitors: Bias, Tolerance, Temperature, and Mounting"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Fpower-integrity%2Freal-capacitors.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Fpower-integrity%2Freal-capacitors.html&amp;text=Real%20Capacitors%3A%20Bias%2C%20Tolerance%2C%20Temperature%2C%20and%20Mounting" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=Real%20Capacitors%3A%20Bias%2C%20Tolerance%2C%20Temperature%2C%20and%20Mounting&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Fpower-integrity%2Freal-capacitors.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:head:end -->
+    <!-- share:head:start --><div class="share share--head" data-share data-share-url="https://sipi.work/topics/power-integrity/real-capacitors.html" data-share-title="MLCC Derating: DC Bias, Tolerance, Temperature, Ageing"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Fpower-integrity%2Freal-capacitors.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Fpower-integrity%2Freal-capacitors.html&amp;text=MLCC%20Derating%3A%20DC%20Bias%2C%20Tolerance%2C%20Temperature%2C%20Ageing" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=MLCC%20Derating%3A%20DC%20Bias%2C%20Tolerance%2C%20Temperature%2C%20Ageing&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Fpower-integrity%2Freal-capacitors.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:head:end -->
     <p class="answer">
       The capacitance printed on a decoupling capacitor is not the capacitance
       you get. DC bias can remove half of it, temperature moves it, ageing moves
@@ -540,8 +540,8 @@
       <li><a href="decoupling-capacitors.html">Decoupling Capacitors: ESR, ESL, and Placement</a> — the mounting loop in detail</li>
       <li><a href="anti-resonance.html">PDN Anti-Resonance and Impedance Peaks</a> — why ESR is the term that matters</li>
       <li><a href="vrm-loop-bandwidth.html">VRM Control-Loop Bandwidth and Load Transients</a> — the regulator's output impedance shape</li>
-      <li><a href="cps-co-analysis.html">Chip-Package-System Power Integrity Co-Analysis</a> — why one port is not the PDN</li>
-      <li><a href="../labs/pdn-chain.html">Lab C: PDN Impedance, Current Sharing, and Transient Droop</a> — the whole ladder, with branch currents</li>
+      <li><a href="cps-co-analysis.html">Chip-Package-System (CPS) Power Integrity Co-Simulation</a> — why one port is not the PDN</li>
+      <li><a href="../labs/pdn-chain.html">Lab C: PDN Impedance and Transient Droop</a> — the whole ladder, with branch currents</li>
       <li><a href="../tools/lc-rlc-resonance.html">LC and RLC Resonance Calculator</a></li>
       <li><a href="../tools/mounting-inductance.html">Decoupling Capacitor Mounting Inductance Calculator</a></li>
     </ul>
@@ -556,11 +556,11 @@
       <p class="sources__note">Rows marked with a claim id are tracked in <a href="../../docs/claims.md">the claim ledger</a>, which records what each source can and cannot establish.</p>
     </section>
     <!-- sources:end -->
-  <!-- share:foot:start --><div class="share share--foot" data-share data-share-url="https://sipi.work/topics/power-integrity/real-capacitors.html" data-share-title="Real Capacitors: Bias, Tolerance, Temperature, and Mounting"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Fpower-integrity%2Freal-capacitors.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Fpower-integrity%2Freal-capacitors.html&amp;text=Real%20Capacitors%3A%20Bias%2C%20Tolerance%2C%20Temperature%2C%20and%20Mounting" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=Real%20Capacitors%3A%20Bias%2C%20Tolerance%2C%20Temperature%2C%20and%20Mounting&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Fpower-integrity%2Freal-capacitors.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:foot:end -->
+  <!-- share:foot:start --><div class="share share--foot" data-share data-share-url="https://sipi.work/topics/power-integrity/real-capacitors.html" data-share-title="MLCC Derating: DC Bias, Tolerance, Temperature, Ageing"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Fpower-integrity%2Freal-capacitors.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Fpower-integrity%2Freal-capacitors.html&amp;text=MLCC%20Derating%3A%20DC%20Bias%2C%20Tolerance%2C%20Temperature%2C%20Ageing" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=MLCC%20Derating%3A%20DC%20Bias%2C%20Tolerance%2C%20Temperature%2C%20Ageing&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Fpower-integrity%2Freal-capacitors.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:foot:end -->
 
   <!-- pager:start -->
   <nav class="pager" aria-label="Previous and next topic">
-    <a class="prev" href="../../topics/power-integrity/cps-co-analysis.html"><span class="dir">Previous</span><span>Chip-Package-System Power Integrity Co-Analysis</span></a>
+    <a class="prev" href="../../topics/power-integrity/cps-co-analysis.html"><span class="dir">Previous</span><span>Chip-Package-System (CPS) Power Integrity Co-Simulation</span></a>
     <a class="next" href="../../topics/signal-integrity/channel-budgeting.html"><span class="dir">Next</span><span>Channel Loss Budgeting Across Die, Package, and Board</span></a>
   </nav>
   <!-- pager:end -->

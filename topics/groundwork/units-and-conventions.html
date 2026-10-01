@@ -7,8 +7,8 @@
   <meta name="theme-color" content="#F7F8FA">
   <script>(function(){try{var t=localStorage.getItem('sipi-theme');if(t==='dark'||t==='system'){document.documentElement.setAttribute('data-theme',t);var m=document.querySelector('meta[name=theme-color]');if(m&&(t==='dark'||matchMedia('(prefers-color-scheme:dark)').matches))m.content='#0B1015';}}catch(e){}})();</script>
   <!-- theme:end -->
-<title>SI/PI Units, Conventions, and Reference Planes | SIPI</title>
-<meta name="description" content="SI/PI Units, Conventions, and Reference Planes">
+<title>SI/PI Units and Conventions: dB, Rise Time, RMS | SIPI</title>
+<meta name="description" content="dB and dBm, 10-90% and 20-80% rise times, RMS and peak-to-peak, and reference planes: the conventions SI/PI numbers depend on, and how to convert between them.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
@@ -19,20 +19,20 @@
   <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
   <meta property="og:type" content="article">
   <meta property="og:site_name" content="SIPI">
-  <meta property="og:title" content="SI/PI Units, Conventions, and Reference Planes | SIPI">
-  <meta property="og:description" content="SI/PI Units, Conventions, and Reference Planes">
+  <meta property="og:title" content="SI/PI Units and Conventions: dB, Rise Time, RMS | SIPI">
+  <meta property="og:description" content="dB and dBm, 10-90% and 20-80% rise times, RMS and peak-to-peak, and reference planes: the conventions SI/PI numbers depend on, and how to convert between them.">
   <meta property="og:url" content="https://sipi.work/topics/groundwork/units-and-conventions.html">
   <meta property="og:image" content="https://sipi.work/assets/og/groundwork/units-and-conventions.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
-  <meta property="og:image:alt" content="SI/PI Units, Conventions, and Reference Planes: a figure from the page, on SIPI">
+  <meta property="og:image:alt" content="SI/PI Units and Conventions: dB, Rise Time, RMS: a figure from the page, on SIPI">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="SI/PI Units, Conventions, and Reference Planes | SIPI">
-  <meta name="twitter:description" content="SI/PI Units, Conventions, and Reference Planes">
+  <meta name="twitter:title" content="SI/PI Units and Conventions: dB, Rise Time, RMS | SIPI">
+  <meta name="twitter:description" content="dB and dBm, 10-90% and 20-80% rise times, RMS and peak-to-peak, and reference planes: the conventions SI/PI numbers depend on, and how to convert between them.">
   <meta name="twitter:image" content="https://sipi.work/assets/og/groundwork/units-and-conventions.png">
-  <meta name="twitter:image:alt" content="SI/PI Units, Conventions, and Reference Planes: a figure from the page, on SIPI">
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"SI/PI Units, Conventions, and Reference Planes","description":"SI/PI Units, Conventions, and Reference Planes","url":"https://sipi.work/topics/groundwork/units-and-conventions.html","articleSection":"Groundwork","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer","url":"https://www.linkedin.com/in/geetansh-arora-a645714a/","sameAs":["https://www.linkedin.com/in/geetansh-arora-a645714a/"]},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-09-12","image":"https://sipi.work/assets/og/groundwork/units-and-conventions.png"}</script>
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"SIPI","item":"https://sipi.work/"},{"@type":"ListItem","position":2,"name":"Groundwork","item":"https://sipi.work/#groundwork"},{"@type":"ListItem","position":3,"name":"SI/PI Units, Conventions, and Reference Planes"}]}</script>
+  <meta name="twitter:image:alt" content="SI/PI Units and Conventions: dB, Rise Time, RMS: a figure from the page, on SIPI">
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"SI/PI Units and Conventions: dB, Rise Time, RMS","description":"dB and dBm, 10-90% and 20-80% rise times, RMS and peak-to-peak, and reference planes: the conventions SI/PI numbers depend on, and how to convert between them.","url":"https://sipi.work/topics/groundwork/units-and-conventions.html","articleSection":"Groundwork","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer","url":"https://www.linkedin.com/in/geetansh-arora-a645714a/","sameAs":["https://www.linkedin.com/in/geetansh-arora-a645714a/"]},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-09-12","image":"https://sipi.work/assets/og/groundwork/units-and-conventions.png"}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"SIPI","item":"https://sipi.work/"},{"@type":"ListItem","position":2,"name":"Groundwork","item":"https://sipi.work/#groundwork"},{"@type":"ListItem","position":3,"name":"SI/PI Units and Conventions: dB, Rise Time, RMS"}]}</script>
   <!-- meta:end -->
 </head>
 <body>
@@ -52,11 +52,11 @@
 <main>
   <div class="page-head">
     <p class="crumb"><a href="../../index.html#groundwork">Groundwork</a> / 01</p>
-    <h1>SI/PI Units, Conventions, and Reference Planes</h1>
+    <h1>SI/PI Units and Conventions: dB, Rise Time, RMS</h1>
     <p class="byline">
       <!-- review:start --><span>By <a href="https://www.linkedin.com/in/geetansh-arora-a645714a/" target="_blank" rel="author noopener">Geetansh Arora</a> — Principal SI/PI Engineer</span><time datetime="2026-09-12" title="Technical review by Geetansh Arora on this date">12 Sep 2026</time><span>11 min</span><!-- review:end -->
     </p>
-    <!-- share:head:start --><div class="share share--head" data-share data-share-url="https://sipi.work/topics/groundwork/units-and-conventions.html" data-share-title="SI/PI Units, Conventions, and Reference Planes"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Fgroundwork%2Funits-and-conventions.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Fgroundwork%2Funits-and-conventions.html&amp;text=SI%2FPI%20Units%2C%20Conventions%2C%20and%20Reference%20Planes" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=SI%2FPI%20Units%2C%20Conventions%2C%20and%20Reference%20Planes&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Fgroundwork%2Funits-and-conventions.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:head:end -->
+    <!-- share:head:start --><div class="share share--head" data-share data-share-url="https://sipi.work/topics/groundwork/units-and-conventions.html" data-share-title="SI/PI Units and Conventions: dB, Rise Time, RMS"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Fgroundwork%2Funits-and-conventions.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Fgroundwork%2Funits-and-conventions.html&amp;text=SI%2FPI%20Units%20and%20Conventions%3A%20dB%2C%20Rise%20Time%2C%20RMS" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=SI%2FPI%20Units%20and%20Conventions%3A%20dB%2C%20Rise%20Time%2C%20RMS&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Fgroundwork%2Funits-and-conventions.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:head:end -->
     <p class="answer">
       Most arguments in signal integrity that look like disagreements about
       physics turn out to be disagreements about definitions. Two people quote a
@@ -485,11 +485,11 @@
 
     <h3>Related</h3>
     <ul class="tight">
-      <li><a href="../fundamentals/edge-rate-not-clock-rate.html">Signal Bandwidth: Why Edge Rate Matters</a> — where rise time actually matters</li>
+      <li><a href="../fundamentals/edge-rate-not-clock-rate.html">Rise Time and Bandwidth: Edge Rate, Not Clock Rate</a> — where rise time actually matters</li>
       <li><a href="../fundamentals/jitter-taxonomy.html">Jitter — RJ, DJ, DCD, PJ and TJ</a> — why RMS and peak-to-peak cannot be added</li>
-      <li><a href="../fundamentals/s-parameters.html">S-Parameters: Insertion Loss, Return Loss, and Mixed Mode</a> — reference planes, port order, normalisation</li>
+      <li><a href="../fundamentals/s-parameters.html">S-Parameters Explained: S11, S21 and Mixed-Mode</a> — reference planes, port order, normalisation</li>
       <li><a href="../fundamentals/differential-signalling.html">Differential signalling</a> — odd, even, differential and common</li>
-      <li><a href="domain-bridges.html">Time-Domain and Frequency-Domain Analysis</a> — the transforms these units describe</li>
+      <li><a href="domain-bridges.html">Time vs Frequency Domain: Impulse, Step, Convolution</a> — the transforms these units describe</li>
     </ul>
   </div>
 
@@ -534,12 +534,12 @@
 }
   </script>
 
-  <!-- share:foot:start --><div class="share share--foot" data-share data-share-url="https://sipi.work/topics/groundwork/units-and-conventions.html" data-share-title="SI/PI Units, Conventions, and Reference Planes"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Fgroundwork%2Funits-and-conventions.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Fgroundwork%2Funits-and-conventions.html&amp;text=SI%2FPI%20Units%2C%20Conventions%2C%20and%20Reference%20Planes" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=SI%2FPI%20Units%2C%20Conventions%2C%20and%20Reference%20Planes&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Fgroundwork%2Funits-and-conventions.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:foot:end -->
+  <!-- share:foot:start --><div class="share share--foot" data-share data-share-url="https://sipi.work/topics/groundwork/units-and-conventions.html" data-share-title="SI/PI Units and Conventions: dB, Rise Time, RMS"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Fgroundwork%2Funits-and-conventions.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Fgroundwork%2Funits-and-conventions.html&amp;text=SI%2FPI%20Units%20and%20Conventions%3A%20dB%2C%20Rise%20Time%2C%20RMS" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=SI%2FPI%20Units%20and%20Conventions%3A%20dB%2C%20Rise%20Time%2C%20RMS&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Fgroundwork%2Funits-and-conventions.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:foot:end -->
 
   <!-- pager:start -->
   <nav class="pager" aria-label="Previous and next topic">
     <a class="prev pager__end" href="../../index.html#groundwork"><span class="dir">Start of the sequence</span><span>Back to the topic map</span></a>
-    <a class="next" href="../../topics/groundwork/domain-bridges.html"><span class="dir">Next</span><span>Time-Domain and Frequency-Domain Analysis</span></a>
+    <a class="next" href="../../topics/groundwork/domain-bridges.html"><span class="dir">Next</span><span>Time vs Frequency Domain: Impulse, Step, Convolution</span></a>
   </nav>
   <!-- pager:end -->
 </main>

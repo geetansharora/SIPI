@@ -7,7 +7,7 @@
   <meta name="theme-color" content="#F7F8FA">
   <script>(function(){try{var t=localStorage.getItem('sipi-theme');if(t==='dark'||t==='system'){document.documentElement.setAttribute('data-theme',t);var m=document.querySelector('meta[name=theme-color]');if(m&&(t==='dark'||matchMedia('(prefers-color-scheme:dark)').matches))m.content='#0B1015';}}catch(e){}})();</script>
   <!-- theme:end -->
-<title>Signal and Power Integrity Learning Labs | SIPI</title>
+<title>Signal Integrity and Power Integrity: Interactive Guide | SIPI</title>
 <meta name="description" content="Learn signal and power integrity with interactive models, clear explanations, engineering examples, and explicit assumptions.">
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="assets/favicon-32.png" sizes="32x32" type="image/png">
@@ -45,7 +45,7 @@
   <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="SIPI">
-  <meta property="og:title" content="Signal and Power Integrity Learning Labs | SIPI">
+  <meta property="og:title" content="Signal Integrity and Power Integrity: Interactive Guide | SIPI">
   <meta property="og:description" content="Learn signal and power integrity with interactive models, clear explanations, engineering examples, and explicit assumptions.">
   <meta property="og:url" content="https://sipi.work/">
   <meta property="og:image" content="https://sipi.work/assets/og.png">
@@ -53,7 +53,7 @@
   <meta property="og:image:height" content="630">
   <meta property="og:image:alt" content="SIPI: signal and power integrity, explained with interactive graphics">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Signal and Power Integrity Learning Labs | SIPI">
+  <meta name="twitter:title" content="Signal Integrity and Power Integrity: Interactive Guide | SIPI">
   <meta name="twitter:description" content="Learn signal and power integrity with interactive models, clear explanations, engineering examples, and explicit assumptions.">
   <meta name="twitter:image" content="https://sipi.work/assets/og.png">
   <meta name="twitter:image:alt" content="SIPI: signal and power integrity, explained with interactive graphics">
@@ -181,80 +181,80 @@
     <section class="sec" id="groundwork">
       <div class="sec__head"><h2>Groundwork</h2><p>Vocabulary, conventions, and mathematical connections used throughout the site.</p></div>
       <div class="topic-grid">
-        <div class="topic is-live"><a href="topics/groundwork/units-and-conventions.html">SI/PI Units, Conventions, and Reference Planes</a></div>
-        <div class="topic is-live"><a href="topics/groundwork/domain-bridges.html">Time-Domain and Frequency-Domain Analysis</a></div>
+        <div class="topic is-live"><a href="topics/groundwork/units-and-conventions.html">SI/PI Units and Conventions: dB, Rise Time, RMS</a></div>
+        <div class="topic is-live"><a href="topics/groundwork/domain-bridges.html">Time vs Frequency Domain: Impulse, Step, Convolution</a></div>
       </div>
     </section>
     <section class="sec" id="fundamentals">
       <div class="sec__head"><h2>Fundamentals</h2><p>Build intuition for transmission lines, loss, coupling, sampling, and measurement.</p></div>
       <div class="topic-grid">
-        <div class="topic is-live"><a href="topics/fundamentals/edge-rate-not-clock-rate.html">Signal Bandwidth: Why Edge Rate Matters</a></div>
-        <div class="topic is-live"><a href="topics/fundamentals/when-is-a-trace-a-transmission-line.html">When does a trace become a transmission line?</a></div>
-        <div class="topic is-live"><a href="topics/fundamentals/characteristic-impedance.html">Transmission-Line Characteristic Impedance</a></div>
+        <div class="topic is-live"><a href="topics/fundamentals/edge-rate-not-clock-rate.html">Rise Time and Bandwidth: Edge Rate, Not Clock Rate</a></div>
+        <div class="topic is-live"><a href="topics/fundamentals/when-is-a-trace-a-transmission-line.html">When Is a Trace a Transmission Line? Critical Length</a></div>
+        <div class="topic is-live"><a href="topics/fundamentals/characteristic-impedance.html">Characteristic Impedance (Z0) of PCB Transmission Lines</a></div>
         <div class="topic is-live"><a href="topics/fundamentals/reflections.html">Transmission-Line Reflections and Ringing</a></div>
-        <div class="topic is-live"><a href="topics/fundamentals/tdr.html">TDR (Time-Domain Reflectometry): How to Read PCB Impedance</a></div>
-        <div class="topic is-live"><a href="topics/fundamentals/termination-schemes.html">Transmission-Line Termination Schemes</a></div>
-        <div class="topic is-live"><a href="topics/fundamentals/return-current-paths.html">Return-Current Paths and Reference Continuity</a></div>
+        <div class="topic is-live"><a href="topics/fundamentals/tdr.html">TDR (Time-Domain Reflectometry): Reading PCB Impedance</a></div>
+        <div class="topic is-live"><a href="topics/fundamentals/termination-schemes.html">Termination Schemes: Series, Parallel, Thevenin and AC</a></div>
+        <div class="topic is-live"><a href="topics/fundamentals/return-current-paths.html">Return Current Paths: Reference Planes, Splits and Gaps</a></div>
         <div class="topic is-live"><a href="topics/fundamentals/crosstalk.html">PCB Crosstalk: NEXT, FEXT, and Mutual Coupling</a></div>
-        <div class="topic is-live"><a href="topics/fundamentals/capacitive-inductive-coupling.html">Capacitive and Inductive Coupling: Voltage Slew vs Current Slew</a></div>
-        <div class="topic is-live"><a href="topics/fundamentals/loss-mechanisms.html">PCB Transmission-Line Loss Mechanisms</a></div>
+        <div class="topic is-live"><a href="topics/fundamentals/capacitive-inductive-coupling.html">Capacitive vs Inductive Coupling: dV/dt and dI/dt Noise</a></div>
+        <div class="topic is-live"><a href="topics/fundamentals/loss-mechanisms.html">PCB Trace Loss: Skin Effect, Dielectric Loss, Roughness</a></div>
         <div class="topic is-live"><a href="topics/fundamentals/isi.html">Intersymbol Interference (ISI) and Channel Memory</a></div>
-        <div class="topic is-live"><a href="topics/fundamentals/eye-diagram.html">Eye Diagrams: Construction and Interpretation</a></div>
+        <div class="topic is-live"><a href="topics/fundamentals/eye-diagram.html">Eye Diagram: How to Read Eye Height and Eye Width</a></div>
         <div class="topic is-live"><a href="topics/fundamentals/jitter-taxonomy.html">Jitter Components: RJ, DJ, DCD, PJ, and TJ</a></div>
-        <div class="topic is-live"><a href="topics/fundamentals/bathtub-curves.html">Bathtub curves and BER extrapolation</a></div>
-        <div class="topic is-live"><a href="topics/fundamentals/differential-signalling.html">Differential Signaling and Mode Conversion</a></div>
-        <div class="topic is-live"><a href="topics/fundamentals/s-parameters.html">S-Parameters: Insertion Loss, Return Loss, and Mixed Mode</a></div>
+        <div class="topic is-live"><a href="topics/fundamentals/bathtub-curves.html">Bathtub Curves and BER Extrapolation</a></div>
+        <div class="topic is-live"><a href="topics/fundamentals/differential-signalling.html">Differential Signaling: Common Mode and Mode Conversion</a></div>
+        <div class="topic is-live"><a href="topics/fundamentals/s-parameters.html">S-Parameters Explained: S11, S21 and Mixed-Mode</a></div>
         <div class="topic is-live"><a href="topics/fundamentals/vias.html">High-Speed Vias: Stubs, Resonance, and Backdrilling</a></div>
       </div>
     </section>
     <section class="sec" id="power-integrity">
       <div class="sec__head"><h2>Power Integrity</h2><p>Follow rail impedance and transient current from the regulator to the die.</p></div>
       <div class="topic-grid">
-        <div class="topic is-live"><a href="topics/power-integrity/what-is-the-pdn.html">Power Delivery Networks: From Regulator to Die</a></div>
-        <div class="topic is-live"><a href="topics/power-integrity/target-impedance.html">PDN Target Impedance: Use and Limitations</a></div>
+        <div class="topic is-live"><a href="topics/power-integrity/what-is-the-pdn.html">Power Delivery Network (PDN) Basics: VRM to Die</a></div>
+        <div class="topic is-live"><a href="topics/power-integrity/target-impedance.html">PDN Target Impedance: Calculation and Limitations</a></div>
         <div class="topic is-live"><a href="topics/power-integrity/decoupling-capacitors.html">Decoupling Capacitors: ESR, ESL, and Placement</a></div>
         <div class="topic is-live"><a href="topics/power-integrity/anti-resonance.html">PDN Anti-Resonance and Impedance Peaks</a></div>
-        <div class="topic is-live"><a href="topics/power-integrity/three-frequency-domains.html">PDN Frequency Regions: Board, Package, and Die</a></div>
+        <div class="topic is-live"><a href="topics/power-integrity/three-frequency-domains.html">First, Second and Third Droop: PDN Frequency Regions</a></div>
         <div class="topic is-live"><a href="topics/power-integrity/plane-resonance.html">Power-Plane Cavity Resonance and Edge Radiation</a></div>
         <div class="topic is-live"><a href="topics/power-integrity/ir-drop-electromigration.html">DC IR Drop and Electromigration</a></div>
         <div class="topic is-live"><a href="topics/power-integrity/ssn-ground-bounce.html">Simultaneous Switching Noise and Ground Bounce</a></div>
-        <div class="topic is-live"><a href="topics/power-integrity/pdn-induced-jitter.html">Power-Supply-Induced Jitter: Connecting PI and SI</a></div>
+        <div class="topic is-live"><a href="topics/power-integrity/pdn-induced-jitter.html">PSIJ: How Power Supply Noise Becomes Jitter</a></div>
         <div class="topic is-live"><a href="topics/power-integrity/vrm-loop-bandwidth.html">VRM Control-Loop Bandwidth and Load Transients</a></div>
-        <div class="topic is-live"><a href="topics/power-integrity/cps-co-analysis.html">Chip-Package-System Power Integrity Co-Analysis</a></div>
-        <div class="topic is-live"><a href="topics/power-integrity/real-capacitors.html">Real Capacitors: Bias, Tolerance, Temperature, and Mounting</a></div>
+        <div class="topic is-live"><a href="topics/power-integrity/cps-co-analysis.html">Chip-Package-System (CPS) Power Integrity Co-Simulation</a></div>
+        <div class="topic is-live"><a href="topics/power-integrity/real-capacitors.html">MLCC Derating: DC Bias, Tolerance, Temperature, Ageing</a></div>
       </div>
     </section>
     <section class="sec" id="signal-integrity">
       <div class="sec__head"><h2>SI in practice</h2><p>Apply channel budgeting, equalization, receiver, and simulation methods.</p></div>
       <div class="topic-grid">
         <div class="topic is-live"><a href="topics/signal-integrity/channel-budgeting.html">Channel Loss Budgeting Across Die, Package, and Board</a></div>
-        <div class="topic is-live"><a href="topics/signal-integrity/what-closes-the-eye.html">Eye Closure: Loss, Reflections, Discontinuities, and Crosstalk</a></div>
-        <div class="topic is-live"><a href="topics/signal-integrity/equalization.html">Equalization and Clock Recovery: CTLE, FFE, DFE, and CDR</a></div>
-        <div class="topic is-live"><a href="topics/signal-integrity/nrz-vs-pam4.html">NRZ and PAM4: Levels, Bandwidth, and SNR</a></div>
-        <div class="topic is-live"><a href="topics/signal-integrity/statistical-vs-time-domain.html">Statistical and Time-Domain Channel Simulation</a></div>
-        <div class="topic is-live"><a href="topics/signal-integrity/ibis-ami-spice.html">IBIS, IBIS-AMI, and SPICE Model Selection</a></div>
+        <div class="topic is-live"><a href="topics/signal-integrity/what-closes-the-eye.html">Eye Closure Causes: Loss, Reflections and Crosstalk</a></div>
+        <div class="topic is-live"><a href="topics/signal-integrity/equalization.html">SerDes Equalization: CTLE, FFE, DFE and CDR</a></div>
+        <div class="topic is-live"><a href="topics/signal-integrity/nrz-vs-pam4.html">NRZ vs PAM4 Signaling: Bandwidth and SNR Trade-off</a></div>
+        <div class="topic is-live"><a href="topics/signal-integrity/statistical-vs-time-domain.html">Statistical vs Bit-by-Bit Channel Simulation</a></div>
+        <div class="topic is-live"><a href="topics/signal-integrity/ibis-ami-spice.html">IBIS vs IBIS-AMI vs SPICE: Choosing SI Models</a></div>
         <div class="topic is-live"><a href="topics/signal-integrity/de-embedding.html">S-Parameter De-Embedding and Fixture Removal</a></div>
         <div class="topic is-live"><a href="topics/signal-integrity/compliance-masks.html">Transmitter Compliance Masks and Receiver Eye Masks</a></div>
-        <div class="topic is-live"><a href="topics/signal-integrity/receiver-and-clock.html">Receiver Sampling, Clock Recovery, and Jitter Tolerance</a></div>
+        <div class="topic is-live"><a href="topics/signal-integrity/receiver-and-clock.html">CDR, Jitter Transfer and Jitter Tolerance (JTOL)</a></div>
       </div>
     </section>
     <section class="sec" id="package-board">
       <div class="sec__head"><h2>Package & board</h2><p>Where the electrical design meets manufacturing.</p></div>
       <div class="topic-grid">
-        <div class="topic is-live"><a href="topics/package-board/package-families.html">IC Package Interconnects: Wirebond, Flip-Chip, FOWLP, Interposers, and Chiplets</a></div>
+        <div class="topic is-live"><a href="topics/package-board/package-families.html">IC Package Types: Wirebond, Flip-Chip, FOWLP, Chiplets</a></div>
         <div class="topic is-live"><a href="topics/package-board/stackup-design.html">PCB Stackup Design and Dielectric Selection</a></div>
         <div class="topic is-live"><a href="topics/package-board/bga-escape-routing.html">BGA Escape Routing and Breakout Congestion</a></div>
-        <div class="topic is-live"><a href="topics/package-board/layer-transitions.html">PCB Layer Transitions and Return-Path Stitching</a></div>
+        <div class="topic is-live"><a href="topics/package-board/layer-transitions.html">Stitching Vias and PCB Layer Transitions</a></div>
         <div class="topic is-live"><a href="topics/package-board/connectors-cables.html">High-Speed Connectors and Cables</a></div>
-        <div class="topic is-live"><a href="topics/package-board/manufacturing-tolerance.html">PCB Manufacturing Variation: Etch, Glass Weave, and Impedance</a></div>
+        <div class="topic is-live"><a href="topics/package-board/manufacturing-tolerance.html">PCB Impedance Tolerance: Etch, Glass Weave, Stackup</a></div>
         <div class="topic is-live"><a href="topics/package-board/package-and-system.html">Package Interconnects as Transmission Lines</a></div>
       </div>
     </section>
     <section class="sec" id="interfaces">
       <div class="sec__head"><h2>Interface sign-off</h2><p>Interface-specific data rates, channel considerations, and source boundaries.</p></div>
       <div class="topic-grid">
-        <div class="topic is-live"><a href="topics/interfaces/lpddr5x.html">LPDDR5 and LPDDR5X Signal Integrity: Timing, ODT, and Training</a></div>
-        <div class="topic is-live"><a href="topics/interfaces/pcie-gen4-gen5.html">PCIe 4.0 and 5.0 Signal Integrity: Loss and Equalization</a></div>
+        <div class="topic is-live"><a href="topics/interfaces/lpddr5x.html">LPDDR5/5X Signal Integrity: WCK, ODT and Training</a></div>
+        <div class="topic is-live"><a href="topics/interfaces/pcie-gen4-gen5.html">PCIe Gen 4 and Gen 5 Signal Integrity: Loss and EQ</a></div>
         <div class="topic is-live"><a href="topics/interfaces/pcie-gen6.html">PCIe 6.0 Signal Integrity: PAM4, FLIT, and FEC</a></div>
         <div class="topic is-live"><a href="topics/interfaces/usb-3x.html">USB 3.1 and 3.2 Signal Integrity: SSC and Compliance</a></div>
         <div class="topic is-live"><a href="topics/interfaces/ufs4.html">UFS 4.0 Signal Integrity: M-PHY Gear 5</a></div>
@@ -265,10 +265,10 @@
       <div class="topic-grid">
         <div class="topic is-live"><a href="topics/methodology/simulation-flow.html">Signal Integrity Simulation Workflow</a></div>
         <div class="topic is-live"><a href="topics/methodology/field-solvers.html">Field Solvers for SI/PI: 2D, 2.5D, and 3D</a></div>
-        <div class="topic is-live"><a href="topics/methodology/correlation.html">Correlating Simulation and Measurement</a></div>
+        <div class="topic is-live"><a href="topics/methodology/correlation.html">Simulation-to-Measurement Correlation for SI/PI</a></div>
         <div class="topic is-live"><a href="topics/methodology/reporting-margin.html">Reporting Signal and Power Integrity Margin</a></div>
         <div class="topic is-live"><a href="topics/methodology/debug-playbook.html">SI/PI Debugging: From Symptom to Cause</a></div>
-        <div class="topic is-live"><a href="topics/methodology/measurement-practice.html">SI/PI Measurement: Fixtures, Calibration, and Instrument Effects</a></div>
+        <div class="topic is-live"><a href="topics/methodology/measurement-practice.html">SI/PI Measurement: Probes, Fixtures and Calibration</a></div>
       </div>
     </section>
     <section class="sec" id="labs">
@@ -276,7 +276,7 @@
       <div class="topic-grid">
         <div class="topic is-live"><a href="topics/labs/travelling-waves.html">Lab A: Transmission-Line Reflections and Energy Flow</a></div>
         <div class="topic is-live"><a href="topics/labs/one-channel.html">Lab B: Channel Response, ISI, and Eye Diagrams</a></div>
-        <div class="topic is-live"><a href="topics/labs/pdn-chain.html">Lab C: PDN Impedance, Current Sharing, and Transient Droop</a></div>
+        <div class="topic is-live"><a href="topics/labs/pdn-chain.html">Lab C: PDN Impedance and Transient Droop</a></div>
         <div class="topic is-live"><a href="topics/labs/adc-interference.html">Lab D: ADC Interference, Aliasing and Reference Noise</a></div>
       </div>
     </section>
@@ -286,7 +286,7 @@
         <div class="topic is-live"><a href="topics/tools/lc-rlc-resonance.html">LC and RLC Resonance Calculator</a></div>
         <div class="topic is-live"><a href="topics/tools/return-loss-vswr.html">VSWR, Return Loss and Reflection Coefficient Calculator</a></div>
         <div class="topic is-live"><a href="topics/tools/ber-q-jitter.html">BER, Q-Factor and Total Jitter Calculator</a></div>
-        <div class="topic is-live"><a href="topics/tools/bit-rate-ui-nyquist.html">Bit Rate, Unit Interval and Nyquist Frequency Calculator</a></div>
+        <div class="topic is-live"><a href="topics/tools/bit-rate-ui-nyquist.html">Bit Rate, UI and Nyquist Frequency Calculator</a></div>
         <div class="topic is-live"><a href="topics/tools/electrical-length.html">Electrical Length and Critical Length Calculator</a></div>
         <div class="topic is-live"><a href="topics/tools/via-stub-resonance.html">Via Stub Resonance Calculator</a></div>
         <div class="topic is-live"><a href="topics/tools/target-impedance-calculator.html">PDN Target Impedance Calculator</a></div>

@@ -7,7 +7,7 @@
   <meta name="theme-color" content="#F7F8FA">
   <script>(function(){try{var t=localStorage.getItem('sipi-theme');if(t==='dark'||t==='system'){document.documentElement.setAttribute('data-theme',t);var m=document.querySelector('meta[name=theme-color]');if(m&&(t==='dark'||matchMedia('(prefers-color-scheme:dark)').matches))m.content='#0B1015';}}catch(e){}})();</script>
   <!-- theme:end -->
-<title>Chip-Package-System Power Integrity Co-Analysis | SIPI</title>
+<title>Chip-Package-System (CPS) Power Integrity Co-Simulation | SIPI</title>
 <meta name="description" content="Why die, package and board have to be simulated together, what a chip power model contains, and what the approach actually costs.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -19,20 +19,20 @@
   <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
   <meta property="og:type" content="article">
   <meta property="og:site_name" content="SIPI">
-  <meta property="og:title" content="Chip-Package-System Power Integrity Co-Analysis | SIPI">
+  <meta property="og:title" content="Chip-Package-System (CPS) Power Integrity Co-Simulation | SIPI">
   <meta property="og:description" content="Why die, package and board have to be simulated together, what a chip power model contains, and what the approach actually costs.">
   <meta property="og:url" content="https://sipi.work/topics/power-integrity/cps-co-analysis.html">
   <meta property="og:image" content="https://sipi.work/assets/og/power-integrity/cps-co-analysis.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
-  <meta property="og:image:alt" content="Chip-Package-System Power Integrity Co-Analysis: a figure from the page, on SIPI">
+  <meta property="og:image:alt" content="Chip-Package-System (CPS) Power Integrity Co-Simulation: a figure from the page, on SIPI">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Chip-Package-System Power Integrity Co-Analysis | SIPI">
+  <meta name="twitter:title" content="Chip-Package-System (CPS) Power Integrity Co-Simulation | SIPI">
   <meta name="twitter:description" content="Why die, package and board have to be simulated together, what a chip power model contains, and what the approach actually costs.">
   <meta name="twitter:image" content="https://sipi.work/assets/og/power-integrity/cps-co-analysis.png">
-  <meta name="twitter:image:alt" content="Chip-Package-System Power Integrity Co-Analysis: a figure from the page, on SIPI">
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Chip-Package-System Power Integrity Co-Analysis","description":"Why die, package and board have to be simulated together, what a chip power model contains, and what the approach actually costs.","url":"https://sipi.work/topics/power-integrity/cps-co-analysis.html","articleSection":"Power Integrity","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer","url":"https://www.linkedin.com/in/geetansh-arora-a645714a/","sameAs":["https://www.linkedin.com/in/geetansh-arora-a645714a/"]},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-09-15","image":"https://sipi.work/assets/og/power-integrity/cps-co-analysis.png"}</script>
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"SIPI","item":"https://sipi.work/"},{"@type":"ListItem","position":2,"name":"Power Integrity","item":"https://sipi.work/#power-integrity"},{"@type":"ListItem","position":3,"name":"Chip-Package-System Power Integrity Co-Analysis"}]}</script>
+  <meta name="twitter:image:alt" content="Chip-Package-System (CPS) Power Integrity Co-Simulation: a figure from the page, on SIPI">
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Chip-Package-System (CPS) Power Integrity Co-Simulation","description":"Why die, package and board have to be simulated together, what a chip power model contains, and what the approach actually costs.","url":"https://sipi.work/topics/power-integrity/cps-co-analysis.html","articleSection":"Power Integrity","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer","url":"https://www.linkedin.com/in/geetansh-arora-a645714a/","sameAs":["https://www.linkedin.com/in/geetansh-arora-a645714a/"]},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-09-15","image":"https://sipi.work/assets/og/power-integrity/cps-co-analysis.png"}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"SIPI","item":"https://sipi.work/"},{"@type":"ListItem","position":2,"name":"Power Integrity","item":"https://sipi.work/#power-integrity"},{"@type":"ListItem","position":3,"name":"Chip-Package-System (CPS) Power Integrity Co-Simulation"}]}</script>
   <!-- meta:end -->
 </head>
 <body>
@@ -52,11 +52,11 @@
 <main>
   <div class="page-head">
     <p class="crumb"><a href="../../index.html#power-integrity">Power Integrity</a> / 11</p>
-    <h1>Chip-Package-System Power Integrity Co-Analysis</h1>
+    <h1>Chip-Package-System (CPS) Power Integrity Co-Simulation</h1>
     <p class="byline">
       <!-- review:start --><span>By <a href="https://www.linkedin.com/in/geetansh-arora-a645714a/" target="_blank" rel="author noopener">Geetansh Arora</a> — Principal SI/PI Engineer</span><time datetime="2026-09-15" title="Technical review by Geetansh Arora on this date">15 Sep 2026</time><span>9 min</span><!-- review:end -->
     </p>
-    <!-- share:head:start --><div class="share share--head" data-share data-share-url="https://sipi.work/topics/power-integrity/cps-co-analysis.html" data-share-title="Chip-Package-System Power Integrity Co-Analysis"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Fpower-integrity%2Fcps-co-analysis.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Fpower-integrity%2Fcps-co-analysis.html&amp;text=Chip-Package-System%20Power%20Integrity%20Co-Analysis" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=Chip-Package-System%20Power%20Integrity%20Co-Analysis&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Fpower-integrity%2Fcps-co-analysis.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:head:end -->
+    <!-- share:head:start --><div class="share share--head" data-share data-share-url="https://sipi.work/topics/power-integrity/cps-co-analysis.html" data-share-title="Chip-Package-System (CPS) Power Integrity Co-Simulation"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Fpower-integrity%2Fcps-co-analysis.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Fpower-integrity%2Fcps-co-analysis.html&amp;text=Chip-Package-System%20%28CPS%29%20Power%20Integrity%20Co-Simulation" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=Chip-Package-System%20%28CPS%29%20Power%20Integrity%20Co-Simulation&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Fpower-integrity%2Fcps-co-analysis.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:head:end -->
     <p class="answer">
       Every significant PDN resonance lives at a boundary &#8212; between the board and the
       package, or the package and the die. A model that stops at one of those boundaries cannot
@@ -347,19 +347,19 @@
 
     <h3>Related</h3>
     <ul class="tight">
-      <li><a href="../power-integrity/three-frequency-domains.html">PDN Frequency Regions: Board, Package, and Die</a></li>
+      <li><a href="../power-integrity/three-frequency-domains.html">First, Second and Third Droop: PDN Frequency Regions</a></li>
       <li><a href="../power-integrity/ir-drop-electromigration.html">DC IR Drop and Electromigration</a></li>
       <li><a href="../power-integrity/ssn-ground-bounce.html">Simultaneous Switching Noise and Ground Bounce</a></li>
       <li><a href="../methodology/simulation-flow.html">Signal Integrity Simulation Workflow</a></li>
     </ul>
   </div>
 
-  <!-- share:foot:start --><div class="share share--foot" data-share data-share-url="https://sipi.work/topics/power-integrity/cps-co-analysis.html" data-share-title="Chip-Package-System Power Integrity Co-Analysis"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Fpower-integrity%2Fcps-co-analysis.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Fpower-integrity%2Fcps-co-analysis.html&amp;text=Chip-Package-System%20Power%20Integrity%20Co-Analysis" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=Chip-Package-System%20Power%20Integrity%20Co-Analysis&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Fpower-integrity%2Fcps-co-analysis.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:foot:end -->
+  <!-- share:foot:start --><div class="share share--foot" data-share data-share-url="https://sipi.work/topics/power-integrity/cps-co-analysis.html" data-share-title="Chip-Package-System (CPS) Power Integrity Co-Simulation"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Fpower-integrity%2Fcps-co-analysis.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Fpower-integrity%2Fcps-co-analysis.html&amp;text=Chip-Package-System%20%28CPS%29%20Power%20Integrity%20Co-Simulation" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=Chip-Package-System%20%28CPS%29%20Power%20Integrity%20Co-Simulation&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Fpower-integrity%2Fcps-co-analysis.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:foot:end -->
 
   <!-- pager:start -->
   <nav class="pager" aria-label="Previous and next topic">
     <a class="prev" href="../../topics/power-integrity/vrm-loop-bandwidth.html"><span class="dir">Previous</span><span>VRM Control-Loop Bandwidth and Load Transients</span></a>
-    <a class="next" href="../../topics/power-integrity/real-capacitors.html"><span class="dir">Next</span><span>Real Capacitors: Bias, Tolerance, Temperature, and Mounting</span></a>
+    <a class="next" href="../../topics/power-integrity/real-capacitors.html"><span class="dir">Next</span><span>MLCC Derating: DC Bias, Tolerance, Temperature, Ageing</span></a>
   </nav>
   <!-- pager:end -->
 </main>

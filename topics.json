@@ -21,7 +21,7 @@
       "topics": [
         {
           "slug": "units-and-conventions",
-          "title": "SI/PI Units, Conventions, and Reference Planes",
+          "title": "SI/PI Units and Conventions: dB, Rise Time, RMS",
           "status": "live",
           "keywords": [
             "SI units",
@@ -52,7 +52,7 @@
         },
         {
           "slug": "domain-bridges",
-          "title": "Time-Domain and Frequency-Domain Analysis",
+          "title": "Time vs Frequency Domain: Impulse, Step, Convolution",
           "status": "live",
           "keywords": [
             "Fourier",
@@ -83,7 +83,7 @@
       "topics": [
         {
           "slug": "edge-rate-not-clock-rate",
-          "title": "Signal Bandwidth: Why Edge Rate Matters",
+          "title": "Rise Time and Bandwidth: Edge Rate, Not Clock Rate",
           "status": "live",
           "viz": "spectrum",
           "keywords": [
@@ -98,7 +98,7 @@
         },
         {
           "slug": "when-is-a-trace-a-transmission-line",
-          "title": "When does a trace become a transmission line?",
+          "title": "When Is a Trace a Transmission Line? Critical Length",
           "status": "live",
           "viz": "criticalLength",
           "keywords": [
@@ -113,7 +113,7 @@
         },
         {
           "slug": "characteristic-impedance",
-          "title": "Transmission-Line Characteristic Impedance",
+          "title": "Characteristic Impedance (Z0) of PCB Transmission Lines",
           "status": "live",
           "keywords": [
             "Z0",
@@ -146,7 +146,7 @@
         },
         {
           "slug": "tdr",
-          "title": "TDR (Time-Domain Reflectometry): How to Read PCB Impedance",
+          "title": "TDR (Time-Domain Reflectometry): Reading PCB Impedance",
           "status": "live",
           "viz": "tdr",
           "keywords": [
@@ -172,7 +172,7 @@
         },
         {
           "slug": "termination-schemes",
-          "title": "Transmission-Line Termination Schemes",
+          "title": "Termination Schemes: Series, Parallel, Thevenin and AC",
           "status": "live",
           "keywords": [
             "series",
@@ -188,7 +188,7 @@
         },
         {
           "slug": "return-current-paths",
-          "title": "Return-Current Paths and Reference Continuity",
+          "title": "Return Current Paths: Reference Planes, Splits and Gaps",
           "status": "live",
           "keywords": [
             "return path",
@@ -221,7 +221,7 @@
         },
         {
           "slug": "capacitive-inductive-coupling",
-          "title": "Capacitive and Inductive Coupling: Voltage Slew vs Current Slew",
+          "title": "Capacitive vs Inductive Coupling: dV/dt and dI/dt Noise",
           "status": "live",
           "viz": "coupling",
           "keywords": [
@@ -246,7 +246,7 @@
         },
         {
           "slug": "loss-mechanisms",
-          "title": "PCB Transmission-Line Loss Mechanisms",
+          "title": "PCB Trace Loss: Skin Effect, Dielectric Loss, Roughness",
           "status": "live",
           "viz": "loss",
           "keywords": [
@@ -279,7 +279,7 @@
         },
         {
           "slug": "eye-diagram",
-          "title": "Eye Diagrams: Construction and Interpretation",
+          "title": "Eye Diagram: How to Read Eye Height and Eye Width",
           "status": "live",
           "viz": "eye",
           "keywords": [
@@ -315,7 +315,7 @@
         },
         {
           "slug": "bathtub-curves",
-          "title": "Bathtub curves and BER extrapolation",
+          "title": "Bathtub Curves and BER Extrapolation",
           "status": "live",
           "viz": "bathtub",
           "keywords": [
@@ -331,7 +331,7 @@
         },
         {
           "slug": "differential-signalling",
-          "title": "Differential Signaling and Mode Conversion",
+          "title": "Differential Signaling: Common Mode and Mode Conversion",
           "status": "live",
           "keywords": [
             "odd mode",
@@ -347,7 +347,7 @@
         },
         {
           "slug": "s-parameters",
-          "title": "S-Parameters: Insertion Loss, Return Loss, and Mixed Mode",
+          "title": "S-Parameters Explained: S11, S21 and Mixed-Mode",
           "status": "live",
           "viz": "sparams",
           "keywords": [
@@ -392,7 +392,7 @@
       "topics": [
         {
           "slug": "what-is-the-pdn",
-          "title": "Power Delivery Networks: From Regulator to Die",
+          "title": "Power Delivery Network (PDN) Basics: VRM to Die",
           "status": "live",
           "keywords": [
             "PDN",
@@ -406,7 +406,7 @@
         },
         {
           "slug": "target-impedance",
-          "title": "PDN Target Impedance: Use and Limitations",
+          "title": "PDN Target Impedance: Calculation and Limitations",
           "status": "live",
           "viz": "targetZ",
           "keywords": [
@@ -456,7 +456,7 @@
         },
         {
           "slug": "three-frequency-domains",
-          "title": "PDN Frequency Regions: Board, Package, and Die",
+          "title": "First, Second and Third Droop: PDN Frequency Regions",
           "status": "live",
           "keywords": [
             "board",
@@ -517,7 +517,7 @@
         },
         {
           "slug": "pdn-induced-jitter",
-          "title": "Power-Supply-Induced Jitter: Connecting PI and SI",
+          "title": "PSIJ: How Power Supply Noise Becomes Jitter",
           "status": "live",
           "viz": "pdnJitter",
           "keywords": [
@@ -550,7 +550,7 @@
         },
         {
           "slug": "cps-co-analysis",
-          "title": "Chip-Package-System Power Integrity Co-Analysis",
+          "title": "Chip-Package-System (CPS) Power Integrity Co-Simulation",
           "status": "live",
           "keywords": [
             "chip package system",
@@ -564,7 +564,7 @@
         },
         {
           "slug": "real-capacitors",
-          "title": "Real Capacitors: Bias, Tolerance, Temperature, and Mounting",
+          "title": "MLCC Derating: DC Bias, Tolerance, Temperature, Ageing",
           "keywords": [
             "DC bias",
             "derating",
@@ -607,7 +607,7 @@
         },
         {
           "slug": "what-closes-the-eye",
-          "title": "Eye Closure: Loss, Reflections, Discontinuities, and Crosstalk",
+          "title": "Eye Closure Causes: Loss, Reflections and Crosstalk",
           "status": "live",
           "viz": "impairments",
           "keywords": [
@@ -628,7 +628,7 @@
         },
         {
           "slug": "equalization",
-          "title": "Equalization and Clock Recovery: CTLE, FFE, DFE, and CDR",
+          "title": "SerDes Equalization: CTLE, FFE, DFE and CDR",
           "status": "live",
           "viz": "equalizer",
           "keywords": [
@@ -648,7 +648,7 @@
         },
         {
           "slug": "nrz-vs-pam4",
-          "title": "NRZ and PAM4: Levels, Bandwidth, and SNR",
+          "title": "NRZ vs PAM4 Signaling: Bandwidth and SNR Trade-off",
           "status": "live",
           "viz": "pam4",
           "keywords": [
@@ -665,7 +665,7 @@
         },
         {
           "slug": "statistical-vs-time-domain",
-          "title": "Statistical and Time-Domain Channel Simulation",
+          "title": "Statistical vs Bit-by-Bit Channel Simulation",
           "status": "live",
           "keywords": [
             "statistical",
@@ -680,7 +680,7 @@
         },
         {
           "slug": "ibis-ami-spice",
-          "title": "IBIS, IBIS-AMI, and SPICE Model Selection",
+          "title": "IBIS vs IBIS-AMI vs SPICE: Choosing SI Models",
           "status": "live",
           "keywords": [
             "IBIS",
@@ -727,7 +727,7 @@
         },
         {
           "slug": "receiver-and-clock",
-          "title": "Receiver Sampling, Clock Recovery, and Jitter Tolerance",
+          "title": "CDR, Jitter Transfer and Jitter Tolerance (JTOL)",
           "keywords": [
             "sampling phase",
             "threshold",
@@ -755,7 +755,7 @@
       "topics": [
         {
           "slug": "package-families",
-          "title": "IC Package Interconnects: Wirebond, Flip-Chip, FOWLP, Interposers, and Chiplets",
+          "title": "IC Package Types: Wirebond, Flip-Chip, FOWLP, Chiplets",
           "status": "live",
           "keywords": [
             "FCBGA",
@@ -807,7 +807,7 @@
         },
         {
           "slug": "layer-transitions",
-          "title": "PCB Layer Transitions and Return-Path Stitching",
+          "title": "Stitching Vias and PCB Layer Transitions",
           "status": "live",
           "keywords": [
             "stitching via",
@@ -836,7 +836,7 @@
         },
         {
           "slug": "manufacturing-tolerance",
-          "title": "PCB Manufacturing Variation: Etch, Glass Weave, and Impedance",
+          "title": "PCB Impedance Tolerance: Etch, Glass Weave, Stackup",
           "status": "live",
           "keywords": [
             "etch",
@@ -879,7 +879,7 @@
       "topics": [
         {
           "slug": "lpddr5x",
-          "title": "LPDDR5 and LPDDR5X Signal Integrity: Timing, ODT, and Training",
+          "title": "LPDDR5/5X Signal Integrity: WCK, ODT and Training",
           "status": "live",
           "viz": "lpddrBudget",
           "keywords": [
@@ -901,7 +901,7 @@
         },
         {
           "slug": "pcie-gen4-gen5",
-          "title": "PCIe 4.0 and 5.0 Signal Integrity: Loss and Equalization",
+          "title": "PCIe Gen 4 and Gen 5 Signal Integrity: Loss and EQ",
           "status": "live",
           "keywords": [
             "PCIe",
@@ -1009,7 +1009,7 @@
         },
         {
           "slug": "correlation",
-          "title": "Correlating Simulation and Measurement",
+          "title": "Simulation-to-Measurement Correlation for SI/PI",
           "status": "live",
           "keywords": [
             "correlation",
@@ -1057,7 +1057,7 @@
         },
         {
           "slug": "measurement-practice",
-          "title": "SI/PI Measurement: Fixtures, Calibration, and Instrument Effects",
+          "title": "SI/PI Measurement: Probes, Fixtures and Calibration",
           "keywords": [
             "TDR",
             "bandwidth",
@@ -1134,7 +1134,7 @@
         },
         {
           "slug": "pdn-chain",
-          "title": "Lab C: PDN Impedance, Current Sharing, and Transient Droop",
+          "title": "Lab C: PDN Impedance and Transient Droop",
           "status": "live",
           "keywords": [
             "PDN",
@@ -1271,7 +1271,7 @@
         },
         {
           "slug": "bit-rate-ui-nyquist",
-          "title": "Bit Rate, Unit Interval and Nyquist Frequency Calculator",
+          "title": "Bit Rate, UI and Nyquist Frequency Calculator",
           "status": "live",
           "viz": "calcBitRate",
           "keywords": [

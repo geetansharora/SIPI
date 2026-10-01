@@ -8,7 +8,7 @@
   <script>(function(){try{var t=localStorage.getItem('sipi-theme');if(t==='dark'||t==='system'){document.documentElement.setAttribute('data-theme',t);var m=document.querySelector('meta[name=theme-color]');if(m&&(t==='dark'||matchMedia('(prefers-color-scheme:dark)').matches))m.content='#0B1015';}}catch(e){}})();</script>
   <!-- theme:end -->
 <title>Package Interconnects as Transmission Lines | SIPI</title>
-<meta name="description" content="Package Interconnects as Transmission Lines">
+<meta name="description" content="Package balls, bumps and vias as transmission lines: where two boundaries meet, mutual inductance between pins, return-via placement and transfer impedance.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
@@ -20,7 +20,7 @@
   <meta property="og:type" content="article">
   <meta property="og:site_name" content="SIPI">
   <meta property="og:title" content="Package Interconnects as Transmission Lines | SIPI">
-  <meta property="og:description" content="Package Interconnects as Transmission Lines">
+  <meta property="og:description" content="Package balls, bumps and vias as transmission lines: where two boundaries meet, mutual inductance between pins, return-via placement and transfer impedance.">
   <meta property="og:url" content="https://sipi.work/topics/package-board/package-and-system.html">
   <meta property="og:image" content="https://sipi.work/assets/og/package-board/package-and-system.png">
   <meta property="og:image:width" content="1200">
@@ -28,10 +28,10 @@
   <meta property="og:image:alt" content="Package Interconnects as Transmission Lines: a figure from the page, on SIPI">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Package Interconnects as Transmission Lines | SIPI">
-  <meta name="twitter:description" content="Package Interconnects as Transmission Lines">
+  <meta name="twitter:description" content="Package balls, bumps and vias as transmission lines: where two boundaries meet, mutual inductance between pins, return-via placement and transfer impedance.">
   <meta name="twitter:image" content="https://sipi.work/assets/og/package-board/package-and-system.png">
   <meta name="twitter:image:alt" content="Package Interconnects as Transmission Lines: a figure from the page, on SIPI">
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Package Interconnects as Transmission Lines","description":"Package Interconnects as Transmission Lines","url":"https://sipi.work/topics/package-board/package-and-system.html","articleSection":"Package & board","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer","url":"https://www.linkedin.com/in/geetansh-arora-a645714a/","sameAs":["https://www.linkedin.com/in/geetansh-arora-a645714a/"]},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-09-17","image":"https://sipi.work/assets/og/package-board/package-and-system.png"}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Package Interconnects as Transmission Lines","description":"Package balls, bumps and vias as transmission lines: where two boundaries meet, mutual inductance between pins, return-via placement and transfer impedance.","url":"https://sipi.work/topics/package-board/package-and-system.html","articleSection":"Package & board","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer","url":"https://www.linkedin.com/in/geetansh-arora-a645714a/","sameAs":["https://www.linkedin.com/in/geetansh-arora-a645714a/"]},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-09-17","image":"https://sipi.work/assets/og/package-board/package-and-system.png"}</script>
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"SIPI","item":"https://sipi.work/"},{"@type":"ListItem","position":2,"name":"Package & board","item":"https://sipi.work/#package-board"},{"@type":"ListItem","position":3,"name":"Package Interconnects as Transmission Lines"}]}</script>
   <!-- meta:end -->
 </head>
@@ -455,10 +455,10 @@
 
     <h3>Related</h3>
     <ul class="tight">
-      <li><a href="../fundamentals/capacitive-inductive-coupling.html">Capacitive and Inductive Coupling: Voltage Slew vs Current Slew</a> — why mutual inductance follows the current and mutual capacitance the voltage</li>
+      <li><a href="../fundamentals/capacitive-inductive-coupling.html">Capacitive vs Inductive Coupling: dV/dt and dI/dt Noise</a> — why mutual inductance follows the current and mutual capacitance the voltage</li>
       <li><a href="package-families.html">Package families</a> — where the inductance comes from</li>
-      <li><a href="layer-transitions.html">PCB Layer Transitions and Return-Path Stitching</a> — the return via, in detail</li>
-      <li><a href="../power-integrity/cps-co-analysis.html">Chip-Package-System Power Integrity Co-Analysis</a> — the partition problem</li>
+      <li><a href="layer-transitions.html">Stitching Vias and PCB Layer Transitions</a> — the return via, in detail</li>
+      <li><a href="../power-integrity/cps-co-analysis.html">Chip-Package-System (CPS) Power Integrity Co-Simulation</a> — the partition problem</li>
       <li><a href="../power-integrity/ssn-ground-bounce.html">Simultaneous Switching Noise and Ground Bounce</a> — what mutual inductance does</li>
       <li><a href="../power-integrity/plane-resonance.html">Plane resonance</a> — where lumped stops working</li>
     </ul>
@@ -468,8 +468,8 @@
 
   <!-- pager:start -->
   <nav class="pager" aria-label="Previous and next topic">
-    <a class="prev" href="../../topics/package-board/manufacturing-tolerance.html"><span class="dir">Previous</span><span>PCB Manufacturing Variation: Etch, Glass Weave, and Impedance</span></a>
-    <a class="next" href="../../topics/interfaces/lpddr5x.html"><span class="dir">Next</span><span>LPDDR5 and LPDDR5X Signal Integrity: Timing, ODT, and Training</span></a>
+    <a class="prev" href="../../topics/package-board/manufacturing-tolerance.html"><span class="dir">Previous</span><span>PCB Impedance Tolerance: Etch, Glass Weave, Stackup</span></a>
+    <a class="next" href="../../topics/interfaces/lpddr5x.html"><span class="dir">Next</span><span>LPDDR5/5X Signal Integrity: WCK, ODT and Training</span></a>
   </nav>
   <!-- pager:end -->
 </main>

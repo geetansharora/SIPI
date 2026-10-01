@@ -7,7 +7,7 @@
   <meta name="theme-color" content="#F7F8FA">
   <script>(function(){try{var t=localStorage.getItem('sipi-theme');if(t==='dark'||t==='system'){document.documentElement.setAttribute('data-theme',t);var m=document.querySelector('meta[name=theme-color]');if(m&&(t==='dark'||matchMedia('(prefers-color-scheme:dark)').matches))m.content='#0B1015';}}catch(e){}})();</script>
   <!-- theme:end -->
-<title>Transmission-Line Characteristic Impedance | SIPI</title>
+<title>Characteristic Impedance (Z0) of PCB Transmission Lines | SIPI</title>
 <meta name="description" content="Z₀ is not a resistance you can measure with a meter — it is the ratio the geometry forces on a wave while it is still travelling.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -19,20 +19,20 @@
   <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
   <meta property="og:type" content="article">
   <meta property="og:site_name" content="SIPI">
-  <meta property="og:title" content="Transmission-Line Characteristic Impedance | SIPI">
+  <meta property="og:title" content="Characteristic Impedance (Z0) of PCB Transmission Lines | SIPI">
   <meta property="og:description" content="Z₀ is not a resistance you can measure with a meter — it is the ratio the geometry forces on a wave while it is still travelling.">
   <meta property="og:url" content="https://sipi.work/topics/fundamentals/characteristic-impedance.html">
   <meta property="og:image" content="https://sipi.work/assets/og/fundamentals/characteristic-impedance.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
-  <meta property="og:image:alt" content="Transmission-Line Characteristic Impedance: a figure from the page, on SIPI">
+  <meta property="og:image:alt" content="Characteristic Impedance (Z0) of PCB Transmission Lines: a figure from the page, on SIPI">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Transmission-Line Characteristic Impedance | SIPI">
+  <meta name="twitter:title" content="Characteristic Impedance (Z0) of PCB Transmission Lines | SIPI">
   <meta name="twitter:description" content="Z₀ is not a resistance you can measure with a meter — it is the ratio the geometry forces on a wave while it is still travelling.">
   <meta name="twitter:image" content="https://sipi.work/assets/og/fundamentals/characteristic-impedance.png">
-  <meta name="twitter:image:alt" content="Transmission-Line Characteristic Impedance: a figure from the page, on SIPI">
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Transmission-Line Characteristic Impedance","description":"Z₀ is not a resistance you can measure with a meter — it is the ratio the geometry forces on a wave while it is still travelling.","url":"https://sipi.work/topics/fundamentals/characteristic-impedance.html","articleSection":"Fundamentals","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer","url":"https://www.linkedin.com/in/geetansh-arora-a645714a/","sameAs":["https://www.linkedin.com/in/geetansh-arora-a645714a/"]},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-09-12","image":"https://sipi.work/assets/og/fundamentals/characteristic-impedance.png"}</script>
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"SIPI","item":"https://sipi.work/"},{"@type":"ListItem","position":2,"name":"Fundamentals","item":"https://sipi.work/#fundamentals"},{"@type":"ListItem","position":3,"name":"Transmission-Line Characteristic Impedance"}]}</script>
+  <meta name="twitter:image:alt" content="Characteristic Impedance (Z0) of PCB Transmission Lines: a figure from the page, on SIPI">
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Characteristic Impedance (Z0) of PCB Transmission Lines","description":"Z₀ is not a resistance you can measure with a meter — it is the ratio the geometry forces on a wave while it is still travelling.","url":"https://sipi.work/topics/fundamentals/characteristic-impedance.html","articleSection":"Fundamentals","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer","url":"https://www.linkedin.com/in/geetansh-arora-a645714a/","sameAs":["https://www.linkedin.com/in/geetansh-arora-a645714a/"]},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-09-12","image":"https://sipi.work/assets/og/fundamentals/characteristic-impedance.png"}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"SIPI","item":"https://sipi.work/"},{"@type":"ListItem","position":2,"name":"Fundamentals","item":"https://sipi.work/#fundamentals"},{"@type":"ListItem","position":3,"name":"Characteristic Impedance (Z0) of PCB Transmission Lines"}]}</script>
   <!-- meta:end -->
 </head>
 <body>
@@ -52,11 +52,11 @@
 <main>
   <div class="page-head">
     <p class="crumb"><a href="../../index.html#fundamentals">Fundamentals</a> / 03</p>
-    <h1>Transmission-Line Characteristic Impedance</h1>
+    <h1>Characteristic Impedance (Z0) of PCB Transmission Lines</h1>
     <p class="byline">
       <!-- review:start --><span>By <a href="https://www.linkedin.com/in/geetansh-arora-a645714a/" target="_blank" rel="author noopener">Geetansh Arora</a> — Principal SI/PI Engineer</span><time datetime="2026-09-12" title="Technical review by Geetansh Arora on this date">12 Sep 2026</time><span>10 min</span><!-- review:end -->
     </p>
-    <!-- share:head:start --><div class="share share--head" data-share data-share-url="https://sipi.work/topics/fundamentals/characteristic-impedance.html" data-share-title="Transmission-Line Characteristic Impedance"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Ffundamentals%2Fcharacteristic-impedance.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Ffundamentals%2Fcharacteristic-impedance.html&amp;text=Transmission-Line%20Characteristic%20Impedance" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=Transmission-Line%20Characteristic%20Impedance&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Ffundamentals%2Fcharacteristic-impedance.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:head:end -->
+    <!-- share:head:start --><div class="share share--head" data-share data-share-url="https://sipi.work/topics/fundamentals/characteristic-impedance.html" data-share-title="Characteristic Impedance (Z0) of PCB Transmission Lines"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Ffundamentals%2Fcharacteristic-impedance.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Ffundamentals%2Fcharacteristic-impedance.html&amp;text=Characteristic%20Impedance%20%28Z0%29%20of%20PCB%20Transmission%20Lines" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=Characteristic%20Impedance%20%28Z0%29%20of%20PCB%20Transmission%20Lines&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Ffundamentals%2Fcharacteristic-impedance.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:head:end -->
     <p class="answer">
       Put a multimeter on a 50 Ω trace and it will not read 50 Ω. It reads almost zero, or
       infinity. That is not a faulty meter &#8212; Z<sub>0</sub> is not a resistance you can
@@ -363,20 +363,20 @@
 
     <h3>Related</h3>
     <ul class="tight">
-      <li><a href="when-is-a-trace-a-transmission-line.html">When does a trace become a transmission line?</a> — when the number starts to matter</li>
+      <li><a href="when-is-a-trace-a-transmission-line.html">When Is a Trace a Transmission Line? Critical Length</a> — when the number starts to matter</li>
       <li><a href="reflections.html">Transmission-Line Reflections and Ringing</a> — what a mismatch costs</li>
-      <li><a href="return-current-paths.html">Return-Current Paths and Reference Continuity</a> — the other half of every impedance</li>
-      <li><a href="differential-signalling.html">Differential Signaling and Mode Conversion</a> — odd and even mode impedance</li>
-      <li><a href="../package-board/manufacturing-tolerance.html">PCB Manufacturing Variation: Etch, Glass Weave, and Impedance</a> — the window you actually get</li>
+      <li><a href="return-current-paths.html">Return Current Paths: Reference Planes, Splits and Gaps</a> — the other half of every impedance</li>
+      <li><a href="differential-signalling.html">Differential Signaling: Common Mode and Mode Conversion</a> — odd and even mode impedance</li>
+      <li><a href="../package-board/manufacturing-tolerance.html">PCB Impedance Tolerance: Etch, Glass Weave, Stackup</a> — the window you actually get</li>
       <li><a href="../tools/line-impedance.html">Microstrip and Stripline Impedance Calculator</a></li>
     </ul>
   </div>
 
-  <!-- share:foot:start --><div class="share share--foot" data-share data-share-url="https://sipi.work/topics/fundamentals/characteristic-impedance.html" data-share-title="Transmission-Line Characteristic Impedance"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Ffundamentals%2Fcharacteristic-impedance.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Ffundamentals%2Fcharacteristic-impedance.html&amp;text=Transmission-Line%20Characteristic%20Impedance" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=Transmission-Line%20Characteristic%20Impedance&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Ffundamentals%2Fcharacteristic-impedance.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:foot:end -->
+  <!-- share:foot:start --><div class="share share--foot" data-share data-share-url="https://sipi.work/topics/fundamentals/characteristic-impedance.html" data-share-title="Characteristic Impedance (Z0) of PCB Transmission Lines"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Ffundamentals%2Fcharacteristic-impedance.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Ffundamentals%2Fcharacteristic-impedance.html&amp;text=Characteristic%20Impedance%20%28Z0%29%20of%20PCB%20Transmission%20Lines" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=Characteristic%20Impedance%20%28Z0%29%20of%20PCB%20Transmission%20Lines&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Ffundamentals%2Fcharacteristic-impedance.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:foot:end -->
 
   <!-- pager:start -->
   <nav class="pager" aria-label="Previous and next topic">
-    <a class="prev" href="../../topics/fundamentals/when-is-a-trace-a-transmission-line.html"><span class="dir">Previous</span><span>When does a trace become a transmission line?</span></a>
+    <a class="prev" href="../../topics/fundamentals/when-is-a-trace-a-transmission-line.html"><span class="dir">Previous</span><span>When Is a Trace a Transmission Line? Critical Length</span></a>
     <a class="next" href="../../topics/fundamentals/reflections.html"><span class="dir">Next</span><span>Transmission-Line Reflections and Ringing</span></a>
   </nav>
   <!-- pager:end -->

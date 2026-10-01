@@ -7,7 +7,7 @@
   <meta name="theme-color" content="#F7F8FA">
   <script>(function(){try{var t=localStorage.getItem('sipi-theme');if(t==='dark'||t==='system'){document.documentElement.setAttribute('data-theme',t);var m=document.querySelector('meta[name=theme-color]');if(m&&(t==='dark'||matchMedia('(prefers-color-scheme:dark)').matches))m.content='#0B1015';}}catch(e){}})();</script>
   <!-- theme:end -->
-<title>Transmission-Line Termination Schemes | SIPI</title>
+<title>Termination Schemes: Series, Parallel, Thevenin and AC | SIPI</title>
 <meta name="description" content="Series, parallel, Thevenin, AC and on-die termination — what each one kills, what it costs in power, and where each belongs.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -19,20 +19,20 @@
   <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
   <meta property="og:type" content="article">
   <meta property="og:site_name" content="SIPI">
-  <meta property="og:title" content="Transmission-Line Termination Schemes | SIPI">
+  <meta property="og:title" content="Termination Schemes: Series, Parallel, Thevenin and AC | SIPI">
   <meta property="og:description" content="Series, parallel, Thevenin, AC and on-die termination — what each one kills, what it costs in power, and where each belongs.">
   <meta property="og:url" content="https://sipi.work/topics/fundamentals/termination-schemes.html">
   <meta property="og:image" content="https://sipi.work/assets/og/fundamentals/termination-schemes.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
-  <meta property="og:image:alt" content="Transmission-Line Termination Schemes: a figure from the page, on SIPI">
+  <meta property="og:image:alt" content="Termination Schemes: Series, Parallel, Thevenin and AC: a figure from the page, on SIPI">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Transmission-Line Termination Schemes | SIPI">
+  <meta name="twitter:title" content="Termination Schemes: Series, Parallel, Thevenin and AC | SIPI">
   <meta name="twitter:description" content="Series, parallel, Thevenin, AC and on-die termination — what each one kills, what it costs in power, and where each belongs.">
   <meta name="twitter:image" content="https://sipi.work/assets/og/fundamentals/termination-schemes.png">
-  <meta name="twitter:image:alt" content="Transmission-Line Termination Schemes: a figure from the page, on SIPI">
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Transmission-Line Termination Schemes","description":"Series, parallel, Thevenin, AC and on-die termination — what each one kills, what it costs in power, and where each belongs.","url":"https://sipi.work/topics/fundamentals/termination-schemes.html","articleSection":"Fundamentals","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer","url":"https://www.linkedin.com/in/geetansh-arora-a645714a/","sameAs":["https://www.linkedin.com/in/geetansh-arora-a645714a/"]},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-09-12","image":"https://sipi.work/assets/og/fundamentals/termination-schemes.png"}</script>
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"SIPI","item":"https://sipi.work/"},{"@type":"ListItem","position":2,"name":"Fundamentals","item":"https://sipi.work/#fundamentals"},{"@type":"ListItem","position":3,"name":"Transmission-Line Termination Schemes"}]}</script>
+  <meta name="twitter:image:alt" content="Termination Schemes: Series, Parallel, Thevenin and AC: a figure from the page, on SIPI">
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Termination Schemes: Series, Parallel, Thevenin and AC","description":"Series, parallel, Thevenin, AC and on-die termination — what each one kills, what it costs in power, and where each belongs.","url":"https://sipi.work/topics/fundamentals/termination-schemes.html","articleSection":"Fundamentals","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer","url":"https://www.linkedin.com/in/geetansh-arora-a645714a/","sameAs":["https://www.linkedin.com/in/geetansh-arora-a645714a/"]},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-09-12","image":"https://sipi.work/assets/og/fundamentals/termination-schemes.png"}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"SIPI","item":"https://sipi.work/"},{"@type":"ListItem","position":2,"name":"Fundamentals","item":"https://sipi.work/#fundamentals"},{"@type":"ListItem","position":3,"name":"Termination Schemes: Series, Parallel, Thevenin and AC"}]}</script>
   <!-- meta:end -->
 </head>
 <body>
@@ -52,11 +52,11 @@
 <main>
   <div class="page-head">
     <p class="crumb"><a href="../../index.html#fundamentals">Fundamentals</a> / 06</p>
-    <h1>Transmission-Line Termination Schemes</h1>
+    <h1>Termination Schemes: Series, Parallel, Thevenin and AC</h1>
     <p class="byline">
       <!-- review:start --><span>By <a href="https://www.linkedin.com/in/geetansh-arora-a645714a/" target="_blank" rel="author noopener">Geetansh Arora</a> — Principal SI/PI Engineer</span><time datetime="2026-09-12" title="Technical review by Geetansh Arora on this date">12 Sep 2026</time><span>11 min</span><!-- review:end -->
     </p>
-    <!-- share:head:start --><div class="share share--head" data-share data-share-url="https://sipi.work/topics/fundamentals/termination-schemes.html" data-share-title="Transmission-Line Termination Schemes"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Ffundamentals%2Ftermination-schemes.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Ffundamentals%2Ftermination-schemes.html&amp;text=Transmission-Line%20Termination%20Schemes" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=Transmission-Line%20Termination%20Schemes&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Ffundamentals%2Ftermination-schemes.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:head:end -->
+    <!-- share:head:start --><div class="share share--head" data-share data-share-url="https://sipi.work/topics/fundamentals/termination-schemes.html" data-share-title="Termination Schemes: Series, Parallel, Thevenin and AC"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Ffundamentals%2Ftermination-schemes.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Ffundamentals%2Ftermination-schemes.html&amp;text=Termination%20Schemes%3A%20Series%2C%20Parallel%2C%20Thevenin%20and%20AC" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=Termination%20Schemes%3A%20Series%2C%20Parallel%2C%20Thevenin%20and%20AC&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Ffundamentals%2Ftermination-schemes.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:head:end -->
     <p class="answer">
       A reflection needs two mismatched ends to keep bouncing. Kill either one and the ringing
       stops. Which end you kill decides what it costs you &#8212; in power, in signal swing, in
@@ -365,20 +365,20 @@
     <h3>Related</h3>
     <ul class="tight">
       <li><a href="reflections.html">Transmission-Line Reflections and Ringing</a> — what you are fixing</li>
-      <li><a href="when-is-a-trace-a-transmission-line.html">When does a trace become a transmission line?</a> — whether you need to fix it</li>
-      <li><a href="return-current-paths.html">Return-Current Paths and Reference Continuity</a> — why a terminator's ground matters</li>
-      <li><a href="characteristic-impedance.html">Transmission-Line Characteristic Impedance</a> — the number you are matching to</li>
+      <li><a href="when-is-a-trace-a-transmission-line.html">When Is a Trace a Transmission Line? Critical Length</a> — whether you need to fix it</li>
+      <li><a href="return-current-paths.html">Return Current Paths: Reference Planes, Splits and Gaps</a> — why a terminator's ground matters</li>
+      <li><a href="characteristic-impedance.html">Characteristic Impedance (Z0) of PCB Transmission Lines</a> — the number you are matching to</li>
       <li><a href="../labs/travelling-waves.html">Lab A — travelling waves</a> — step through each scheme and watch the energy account</li>
       <li><a href="../tools/return-loss-vswr.html">VSWR, Return Loss and Reflection Coefficient Calculator</a></li>
     </ul>
   </div>
 
-  <!-- share:foot:start --><div class="share share--foot" data-share data-share-url="https://sipi.work/topics/fundamentals/termination-schemes.html" data-share-title="Transmission-Line Termination Schemes"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Ffundamentals%2Ftermination-schemes.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Ffundamentals%2Ftermination-schemes.html&amp;text=Transmission-Line%20Termination%20Schemes" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=Transmission-Line%20Termination%20Schemes&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Ffundamentals%2Ftermination-schemes.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:foot:end -->
+  <!-- share:foot:start --><div class="share share--foot" data-share data-share-url="https://sipi.work/topics/fundamentals/termination-schemes.html" data-share-title="Termination Schemes: Series, Parallel, Thevenin and AC"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Ffundamentals%2Ftermination-schemes.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Ffundamentals%2Ftermination-schemes.html&amp;text=Termination%20Schemes%3A%20Series%2C%20Parallel%2C%20Thevenin%20and%20AC" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=Termination%20Schemes%3A%20Series%2C%20Parallel%2C%20Thevenin%20and%20AC&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Ffundamentals%2Ftermination-schemes.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:foot:end -->
 
   <!-- pager:start -->
   <nav class="pager" aria-label="Previous and next topic">
-    <a class="prev" href="../../topics/fundamentals/tdr.html"><span class="dir">Previous</span><span>TDR (Time-Domain Reflectometry): How to Read PCB Impedance</span></a>
-    <a class="next" href="../../topics/fundamentals/return-current-paths.html"><span class="dir">Next</span><span>Return-Current Paths and Reference Continuity</span></a>
+    <a class="prev" href="../../topics/fundamentals/tdr.html"><span class="dir">Previous</span><span>TDR (Time-Domain Reflectometry): Reading PCB Impedance</span></a>
+    <a class="next" href="../../topics/fundamentals/return-current-paths.html"><span class="dir">Next</span><span>Return Current Paths: Reference Planes, Splits and Gaps</span></a>
   </nav>
   <!-- pager:end -->
 </main>

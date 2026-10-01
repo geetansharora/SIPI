@@ -7,8 +7,8 @@
   <meta name="theme-color" content="#F7F8FA">
   <script>(function(){try{var t=localStorage.getItem('sipi-theme');if(t==='dark'||t==='system'){document.documentElement.setAttribute('data-theme',t);var m=document.querySelector('meta[name=theme-color]');if(m&&(t==='dark'||matchMedia('(prefers-color-scheme:dark)').matches))m.content='#0B1015';}}catch(e){}})();</script>
   <!-- theme:end -->
-<title>Capacitive and Inductive Coupling: Voltage Slew vs Current Slew | SIPI</title>
-<meta name="description" content="Why capacitive coupling follows an aggressor's voltage slew and the victim's impedance, while inductive coupling follows how much current moves and how fast, with both shown in time and frequency.">
+<title>Capacitive vs Inductive Coupling: dV/dt and dI/dt Noise | SIPI</title>
+<meta name="description" content="Capacitive coupling follows dV/dt and the victim&#x27;s impedance; inductive coupling follows dI/dt. How to tell them apart in time and frequency, and fix each.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
@@ -19,20 +19,20 @@
   <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
   <meta property="og:type" content="article">
   <meta property="og:site_name" content="SIPI">
-  <meta property="og:title" content="Capacitive and Inductive Coupling: Voltage Slew vs Current Slew | SIPI">
-  <meta property="og:description" content="Why capacitive coupling follows an aggressor's voltage slew and the victim's impedance, while inductive coupling follows how much current moves and how fast, with both shown in time and frequency.">
+  <meta property="og:title" content="Capacitive vs Inductive Coupling: dV/dt and dI/dt Noise | SIPI">
+  <meta property="og:description" content="Capacitive coupling follows dV/dt and the victim&amp;#x27;s impedance; inductive coupling follows dI/dt. How to tell them apart in time and frequency, and fix each.">
   <meta property="og:url" content="https://sipi.work/topics/fundamentals/capacitive-inductive-coupling.html">
   <meta property="og:image" content="https://sipi.work/assets/og/fundamentals/capacitive-inductive-coupling.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
-  <meta property="og:image:alt" content="Capacitive and Inductive Coupling: Voltage Slew vs Current Slew: a figure from the page, on SIPI">
+  <meta property="og:image:alt" content="Capacitive vs Inductive Coupling: dV/dt and dI/dt Noise: a figure from the page, on SIPI">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Capacitive and Inductive Coupling: Voltage Slew vs Current Slew | SIPI">
-  <meta name="twitter:description" content="Why capacitive coupling follows an aggressor's voltage slew and the victim's impedance, while inductive coupling follows how much current moves and how fast, with both shown in time and frequency.">
+  <meta name="twitter:title" content="Capacitive vs Inductive Coupling: dV/dt and dI/dt Noise | SIPI">
+  <meta name="twitter:description" content="Capacitive coupling follows dV/dt and the victim&amp;#x27;s impedance; inductive coupling follows dI/dt. How to tell them apart in time and frequency, and fix each.">
   <meta name="twitter:image" content="https://sipi.work/assets/og/fundamentals/capacitive-inductive-coupling.png">
-  <meta name="twitter:image:alt" content="Capacitive and Inductive Coupling: Voltage Slew vs Current Slew: a figure from the page, on SIPI">
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Capacitive and Inductive Coupling: Voltage Slew vs Current Slew","description":"Why capacitive coupling follows an aggressor's voltage slew and the victim's impedance, while inductive coupling follows how much current moves and how fast, with both shown in time and frequency.","url":"https://sipi.work/topics/fundamentals/capacitive-inductive-coupling.html","articleSection":"Fundamentals","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer","url":"https://www.linkedin.com/in/geetansh-arora-a645714a/","sameAs":["https://www.linkedin.com/in/geetansh-arora-a645714a/"]},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-09-25","image":"https://sipi.work/assets/og/fundamentals/capacitive-inductive-coupling.png"}</script>
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"SIPI","item":"https://sipi.work/"},{"@type":"ListItem","position":2,"name":"Fundamentals","item":"https://sipi.work/#fundamentals"},{"@type":"ListItem","position":3,"name":"Capacitive and Inductive Coupling: Voltage Slew vs Current Slew"}]}</script>
+  <meta name="twitter:image:alt" content="Capacitive vs Inductive Coupling: dV/dt and dI/dt Noise: a figure from the page, on SIPI">
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Capacitive vs Inductive Coupling: dV/dt and dI/dt Noise","description":"Capacitive coupling follows dV/dt and the victim&#x27;s impedance; inductive coupling follows dI/dt. How to tell them apart in time and frequency, and fix each.","url":"https://sipi.work/topics/fundamentals/capacitive-inductive-coupling.html","articleSection":"Fundamentals","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer","url":"https://www.linkedin.com/in/geetansh-arora-a645714a/","sameAs":["https://www.linkedin.com/in/geetansh-arora-a645714a/"]},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-09-25","image":"https://sipi.work/assets/og/fundamentals/capacitive-inductive-coupling.png"}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"SIPI","item":"https://sipi.work/"},{"@type":"ListItem","position":2,"name":"Fundamentals","item":"https://sipi.work/#fundamentals"},{"@type":"ListItem","position":3,"name":"Capacitive vs Inductive Coupling: dV/dt and dI/dt Noise"}]}</script>
   <!-- meta:end -->
 </head>
 <body>
@@ -52,11 +52,11 @@
 <main>
   <div class="page-head">
     <p class="crumb"><a href="../../index.html#fundamentals">Fundamentals</a> / 09</p>
-    <h1>Capacitive and Inductive Coupling: Voltage Slew vs Current Slew</h1>
+    <h1>Capacitive vs Inductive Coupling: dV/dt and dI/dt Noise</h1>
     <p class="byline">
       <!-- review:start --><span>By <a href="https://www.linkedin.com/in/geetansh-arora-a645714a/" target="_blank" rel="author noopener">Geetansh Arora</a> — Principal SI/PI Engineer</span><time datetime="2026-09-25" title="Technical review by Geetansh Arora on this date">25 Sep 2026</time><span>10 min</span><!-- review:end -->
     </p>
-    <!-- share:head:start --><div class="share share--head" data-share data-share-url="https://sipi.work/topics/fundamentals/capacitive-inductive-coupling.html" data-share-title="Capacitive and Inductive Coupling: Voltage Slew vs Current Slew"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Ffundamentals%2Fcapacitive-inductive-coupling.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Ffundamentals%2Fcapacitive-inductive-coupling.html&amp;text=Capacitive%20and%20Inductive%20Coupling%3A%20Voltage%20Slew%20vs%20Current%20Slew" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=Capacitive%20and%20Inductive%20Coupling%3A%20Voltage%20Slew%20vs%20Current%20Slew&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Ffundamentals%2Fcapacitive-inductive-coupling.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:head:end -->
+    <!-- share:head:start --><div class="share share--head" data-share data-share-url="https://sipi.work/topics/fundamentals/capacitive-inductive-coupling.html" data-share-title="Capacitive vs Inductive Coupling: dV/dt and dI/dt Noise"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Ffundamentals%2Fcapacitive-inductive-coupling.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Ffundamentals%2Fcapacitive-inductive-coupling.html&amp;text=Capacitive%20vs%20Inductive%20Coupling%3A%20dV%2Fdt%20and%20dI%2Fdt%20Noise" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=Capacitive%20vs%20Inductive%20Coupling%3A%20dV%2Fdt%20and%20dI%2Fdt%20Noise&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Ffundamentals%2Fcapacitive-inductive-coupling.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:head:end -->
     <p class="answer">
       Noise crosses from one net to another in two ways, and they answer to different things. Capacitive coupling is
       driven by how fast the aggressor's <em>voltage</em> changes, and it grows with the victim's impedance. Inductive
@@ -430,12 +430,12 @@
     </ul>
   </div>
 
-  <!-- share:foot:start --><div class="share share--foot" data-share data-share-url="https://sipi.work/topics/fundamentals/capacitive-inductive-coupling.html" data-share-title="Capacitive and Inductive Coupling: Voltage Slew vs Current Slew"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Ffundamentals%2Fcapacitive-inductive-coupling.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Ffundamentals%2Fcapacitive-inductive-coupling.html&amp;text=Capacitive%20and%20Inductive%20Coupling%3A%20Voltage%20Slew%20vs%20Current%20Slew" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=Capacitive%20and%20Inductive%20Coupling%3A%20Voltage%20Slew%20vs%20Current%20Slew&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Ffundamentals%2Fcapacitive-inductive-coupling.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:foot:end -->
+  <!-- share:foot:start --><div class="share share--foot" data-share data-share-url="https://sipi.work/topics/fundamentals/capacitive-inductive-coupling.html" data-share-title="Capacitive vs Inductive Coupling: dV/dt and dI/dt Noise"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Ffundamentals%2Fcapacitive-inductive-coupling.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Ffundamentals%2Fcapacitive-inductive-coupling.html&amp;text=Capacitive%20vs%20Inductive%20Coupling%3A%20dV%2Fdt%20and%20dI%2Fdt%20Noise" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=Capacitive%20vs%20Inductive%20Coupling%3A%20dV%2Fdt%20and%20dI%2Fdt%20Noise&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Ffundamentals%2Fcapacitive-inductive-coupling.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:foot:end -->
 
   <!-- pager:start -->
   <nav class="pager" aria-label="Previous and next topic">
     <a class="prev" href="../../topics/fundamentals/crosstalk.html"><span class="dir">Previous</span><span>PCB Crosstalk: NEXT, FEXT, and Mutual Coupling</span></a>
-    <a class="next" href="../../topics/fundamentals/loss-mechanisms.html"><span class="dir">Next</span><span>PCB Transmission-Line Loss Mechanisms</span></a>
+    <a class="next" href="../../topics/fundamentals/loss-mechanisms.html"><span class="dir">Next</span><span>PCB Trace Loss: Skin Effect, Dielectric Loss, Roughness</span></a>
   </nav>
   <!-- pager:end -->
 </main>

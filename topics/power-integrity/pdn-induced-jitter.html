@@ -7,7 +7,7 @@
   <meta name="theme-color" content="#F7F8FA">
   <script>(function(){try{var t=localStorage.getItem('sipi-theme');if(t==='dark'||t==='system'){document.documentElement.setAttribute('data-theme',t);var m=document.querySelector('meta[name=theme-color]');if(m&&(t==='dark'||matchMedia('(prefers-color-scheme:dark)').matches))m.content='#0B1015';}}catch(e){}})();</script>
   <!-- theme:end -->
-<title>Power-Supply-Induced Jitter: Connecting PI and SI | SIPI</title>
+<title>PSIJ: How Power Supply Noise Becomes Jitter | SIPI</title>
 <meta name="description" content="How supply noise becomes timing error, why the eye diagram hides the cause, and the debug signature that identifies it.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -19,20 +19,20 @@
   <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
   <meta property="og:type" content="article">
   <meta property="og:site_name" content="SIPI">
-  <meta property="og:title" content="Power-Supply-Induced Jitter: Connecting PI and SI | SIPI">
+  <meta property="og:title" content="PSIJ: How Power Supply Noise Becomes Jitter | SIPI">
   <meta property="og:description" content="How supply noise becomes timing error, why the eye diagram hides the cause, and the debug signature that identifies it.">
   <meta property="og:url" content="https://sipi.work/topics/power-integrity/pdn-induced-jitter.html">
   <meta property="og:image" content="https://sipi.work/assets/og/power-integrity/pdn-induced-jitter.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
-  <meta property="og:image:alt" content="Power-Supply-Induced Jitter: Connecting PI and SI: a figure from the page, on SIPI">
+  <meta property="og:image:alt" content="PSIJ: How Power Supply Noise Becomes Jitter: a figure from the page, on SIPI">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Power-Supply-Induced Jitter: Connecting PI and SI | SIPI">
+  <meta name="twitter:title" content="PSIJ: How Power Supply Noise Becomes Jitter | SIPI">
   <meta name="twitter:description" content="How supply noise becomes timing error, why the eye diagram hides the cause, and the debug signature that identifies it.">
   <meta name="twitter:image" content="https://sipi.work/assets/og/power-integrity/pdn-induced-jitter.png">
-  <meta name="twitter:image:alt" content="Power-Supply-Induced Jitter: Connecting PI and SI: a figure from the page, on SIPI">
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Power-Supply-Induced Jitter: Connecting PI and SI","description":"How supply noise becomes timing error, why the eye diagram hides the cause, and the debug signature that identifies it.","url":"https://sipi.work/topics/power-integrity/pdn-induced-jitter.html","articleSection":"Power Integrity","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer","url":"https://www.linkedin.com/in/geetansh-arora-a645714a/","sameAs":["https://www.linkedin.com/in/geetansh-arora-a645714a/"]},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-09-15","image":"https://sipi.work/assets/og/power-integrity/pdn-induced-jitter.png"}</script>
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"SIPI","item":"https://sipi.work/"},{"@type":"ListItem","position":2,"name":"Power Integrity","item":"https://sipi.work/#power-integrity"},{"@type":"ListItem","position":3,"name":"Power-Supply-Induced Jitter: Connecting PI and SI"}]}</script>
+  <meta name="twitter:image:alt" content="PSIJ: How Power Supply Noise Becomes Jitter: a figure from the page, on SIPI">
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"PSIJ: How Power Supply Noise Becomes Jitter","description":"How supply noise becomes timing error, why the eye diagram hides the cause, and the debug signature that identifies it.","url":"https://sipi.work/topics/power-integrity/pdn-induced-jitter.html","articleSection":"Power Integrity","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer","url":"https://www.linkedin.com/in/geetansh-arora-a645714a/","sameAs":["https://www.linkedin.com/in/geetansh-arora-a645714a/"]},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-09-15","image":"https://sipi.work/assets/og/power-integrity/pdn-induced-jitter.png"}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"SIPI","item":"https://sipi.work/"},{"@type":"ListItem","position":2,"name":"Power Integrity","item":"https://sipi.work/#power-integrity"},{"@type":"ListItem","position":3,"name":"PSIJ: How Power Supply Noise Becomes Jitter"}]}</script>
   <!-- meta:end -->
 </head>
 <body>
@@ -52,11 +52,11 @@
 <main>
   <div class="page-head">
     <p class="crumb"><a href="../../index.html#power-integrity">Power Integrity</a> / 09</p>
-    <h1>Power-Supply-Induced Jitter: Connecting PI and SI</h1>
+    <h1>PSIJ: How Power Supply Noise Becomes Jitter</h1>
     <p class="byline">
       <!-- review:start --><span>By <a href="https://www.linkedin.com/in/geetansh-arora-a645714a/" target="_blank" rel="author noopener">Geetansh Arora</a> — Principal SI/PI Engineer</span><time datetime="2026-09-15" title="Technical review by Geetansh Arora on this date">15 Sep 2026</time><span>10 min</span><!-- review:end -->
     </p>
-    <!-- share:head:start --><div class="share share--head" data-share data-share-url="https://sipi.work/topics/power-integrity/pdn-induced-jitter.html" data-share-title="Power-Supply-Induced Jitter: Connecting PI and SI"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Fpower-integrity%2Fpdn-induced-jitter.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Fpower-integrity%2Fpdn-induced-jitter.html&amp;text=Power-Supply-Induced%20Jitter%3A%20Connecting%20PI%20and%20SI" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=Power-Supply-Induced%20Jitter%3A%20Connecting%20PI%20and%20SI&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Fpower-integrity%2Fpdn-induced-jitter.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:head:end -->
+    <!-- share:head:start --><div class="share share--head" data-share data-share-url="https://sipi.work/topics/power-integrity/pdn-induced-jitter.html" data-share-title="PSIJ: How Power Supply Noise Becomes Jitter"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Fpower-integrity%2Fpdn-induced-jitter.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Fpower-integrity%2Fpdn-induced-jitter.html&amp;text=PSIJ%3A%20How%20Power%20Supply%20Noise%20Becomes%20Jitter" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=PSIJ%3A%20How%20Power%20Supply%20Noise%20Becomes%20Jitter&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Fpower-integrity%2Fpdn-induced-jitter.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:head:end -->
     <p class="answer">
       A gate switches faster when its supply is higher and slower when it is lower. So noise on a
       power rail does not stay in the power domain &#8212; it comes out of the clock tree as
@@ -407,7 +407,7 @@
       <p class="sources__note">Rows marked with a claim id are tracked in <a href="../../docs/claims.md">the claim ledger</a>, which records what each source can and cannot establish.</p>
     </section>
     <!-- sources:end -->
-  <!-- share:foot:start --><div class="share share--foot" data-share data-share-url="https://sipi.work/topics/power-integrity/pdn-induced-jitter.html" data-share-title="Power-Supply-Induced Jitter: Connecting PI and SI"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Fpower-integrity%2Fpdn-induced-jitter.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Fpower-integrity%2Fpdn-induced-jitter.html&amp;text=Power-Supply-Induced%20Jitter%3A%20Connecting%20PI%20and%20SI" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=Power-Supply-Induced%20Jitter%3A%20Connecting%20PI%20and%20SI&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Fpower-integrity%2Fpdn-induced-jitter.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:foot:end -->
+  <!-- share:foot:start --><div class="share share--foot" data-share data-share-url="https://sipi.work/topics/power-integrity/pdn-induced-jitter.html" data-share-title="PSIJ: How Power Supply Noise Becomes Jitter"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Fpower-integrity%2Fpdn-induced-jitter.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Fpower-integrity%2Fpdn-induced-jitter.html&amp;text=PSIJ%3A%20How%20Power%20Supply%20Noise%20Becomes%20Jitter" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=PSIJ%3A%20How%20Power%20Supply%20Noise%20Becomes%20Jitter&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Fpower-integrity%2Fpdn-induced-jitter.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:foot:end -->
 
   <!-- pager:start -->
   <nav class="pager" aria-label="Previous and next topic">

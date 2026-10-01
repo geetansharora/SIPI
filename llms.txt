@@ -17,80 +17,80 @@ Created and directed by Geetansh Arora, Principal SI/PI Engineer. The site state
 
 Vocabulary, conventions, and mathematical connections used throughout the site.
 
-- [SI/PI Units, Conventions, and Reference Planes](https://sipi.work/topics/groundwork/units-and-conventions.html)
-- [Time-Domain and Frequency-Domain Analysis](https://sipi.work/topics/groundwork/domain-bridges.html)
+- [SI/PI Units and Conventions: dB, Rise Time, RMS](https://sipi.work/topics/groundwork/units-and-conventions.html)
+- [Time vs Frequency Domain: Impulse, Step, Convolution](https://sipi.work/topics/groundwork/domain-bridges.html)
 
 ## Fundamentals
 
 Build intuition for transmission lines, loss, coupling, sampling, and measurement.
 
-- [Signal Bandwidth: Why Edge Rate Matters](https://sipi.work/topics/fundamentals/edge-rate-not-clock-rate.html)
-- [When does a trace become a transmission line?](https://sipi.work/topics/fundamentals/when-is-a-trace-a-transmission-line.html)
-- [Transmission-Line Characteristic Impedance](https://sipi.work/topics/fundamentals/characteristic-impedance.html)
+- [Rise Time and Bandwidth: Edge Rate, Not Clock Rate](https://sipi.work/topics/fundamentals/edge-rate-not-clock-rate.html)
+- [When Is a Trace a Transmission Line? Critical Length](https://sipi.work/topics/fundamentals/when-is-a-trace-a-transmission-line.html)
+- [Characteristic Impedance (Z0) of PCB Transmission Lines](https://sipi.work/topics/fundamentals/characteristic-impedance.html)
 - [Transmission-Line Reflections and Ringing](https://sipi.work/topics/fundamentals/reflections.html)
-- [TDR (Time-Domain Reflectometry): How to Read PCB Impedance](https://sipi.work/topics/fundamentals/tdr.html)
-- [Transmission-Line Termination Schemes](https://sipi.work/topics/fundamentals/termination-schemes.html)
-- [Return-Current Paths and Reference Continuity](https://sipi.work/topics/fundamentals/return-current-paths.html)
+- [TDR (Time-Domain Reflectometry): Reading PCB Impedance](https://sipi.work/topics/fundamentals/tdr.html)
+- [Termination Schemes: Series, Parallel, Thevenin and AC](https://sipi.work/topics/fundamentals/termination-schemes.html)
+- [Return Current Paths: Reference Planes, Splits and Gaps](https://sipi.work/topics/fundamentals/return-current-paths.html)
 - [PCB Crosstalk: NEXT, FEXT, and Mutual Coupling](https://sipi.work/topics/fundamentals/crosstalk.html)
-- [Capacitive and Inductive Coupling: Voltage Slew vs Current Slew](https://sipi.work/topics/fundamentals/capacitive-inductive-coupling.html)
-- [PCB Transmission-Line Loss Mechanisms](https://sipi.work/topics/fundamentals/loss-mechanisms.html)
+- [Capacitive vs Inductive Coupling: dV/dt and dI/dt Noise](https://sipi.work/topics/fundamentals/capacitive-inductive-coupling.html)
+- [PCB Trace Loss: Skin Effect, Dielectric Loss, Roughness](https://sipi.work/topics/fundamentals/loss-mechanisms.html)
 - [Intersymbol Interference (ISI) and Channel Memory](https://sipi.work/topics/fundamentals/isi.html)
-- [Eye Diagrams: Construction and Interpretation](https://sipi.work/topics/fundamentals/eye-diagram.html)
+- [Eye Diagram: How to Read Eye Height and Eye Width](https://sipi.work/topics/fundamentals/eye-diagram.html)
 - [Jitter Components: RJ, DJ, DCD, PJ, and TJ](https://sipi.work/topics/fundamentals/jitter-taxonomy.html)
-- [Bathtub curves and BER extrapolation](https://sipi.work/topics/fundamentals/bathtub-curves.html)
-- [Differential Signaling and Mode Conversion](https://sipi.work/topics/fundamentals/differential-signalling.html)
-- [S-Parameters: Insertion Loss, Return Loss, and Mixed Mode](https://sipi.work/topics/fundamentals/s-parameters.html)
+- [Bathtub Curves and BER Extrapolation](https://sipi.work/topics/fundamentals/bathtub-curves.html)
+- [Differential Signaling: Common Mode and Mode Conversion](https://sipi.work/topics/fundamentals/differential-signalling.html)
+- [S-Parameters Explained: S11, S21 and Mixed-Mode](https://sipi.work/topics/fundamentals/s-parameters.html)
 - [High-Speed Vias: Stubs, Resonance, and Backdrilling](https://sipi.work/topics/fundamentals/vias.html)
 
 ## Power Integrity
 
 Follow rail impedance and transient current from the regulator to the die.
 
-- [Power Delivery Networks: From Regulator to Die](https://sipi.work/topics/power-integrity/what-is-the-pdn.html)
-- [PDN Target Impedance: Use and Limitations](https://sipi.work/topics/power-integrity/target-impedance.html)
+- [Power Delivery Network (PDN) Basics: VRM to Die](https://sipi.work/topics/power-integrity/what-is-the-pdn.html)
+- [PDN Target Impedance: Calculation and Limitations](https://sipi.work/topics/power-integrity/target-impedance.html)
 - [Decoupling Capacitors: ESR, ESL, and Placement](https://sipi.work/topics/power-integrity/decoupling-capacitors.html)
 - [PDN Anti-Resonance and Impedance Peaks](https://sipi.work/topics/power-integrity/anti-resonance.html)
-- [PDN Frequency Regions: Board, Package, and Die](https://sipi.work/topics/power-integrity/three-frequency-domains.html)
+- [First, Second and Third Droop: PDN Frequency Regions](https://sipi.work/topics/power-integrity/three-frequency-domains.html)
 - [Power-Plane Cavity Resonance and Edge Radiation](https://sipi.work/topics/power-integrity/plane-resonance.html)
 - [DC IR Drop and Electromigration](https://sipi.work/topics/power-integrity/ir-drop-electromigration.html)
 - [Simultaneous Switching Noise and Ground Bounce](https://sipi.work/topics/power-integrity/ssn-ground-bounce.html)
-- [Power-Supply-Induced Jitter: Connecting PI and SI](https://sipi.work/topics/power-integrity/pdn-induced-jitter.html)
+- [PSIJ: How Power Supply Noise Becomes Jitter](https://sipi.work/topics/power-integrity/pdn-induced-jitter.html)
 - [VRM Control-Loop Bandwidth and Load Transients](https://sipi.work/topics/power-integrity/vrm-loop-bandwidth.html)
-- [Chip-Package-System Power Integrity Co-Analysis](https://sipi.work/topics/power-integrity/cps-co-analysis.html)
-- [Real Capacitors: Bias, Tolerance, Temperature, and Mounting](https://sipi.work/topics/power-integrity/real-capacitors.html)
+- [Chip-Package-System (CPS) Power Integrity Co-Simulation](https://sipi.work/topics/power-integrity/cps-co-analysis.html)
+- [MLCC Derating: DC Bias, Tolerance, Temperature, Ageing](https://sipi.work/topics/power-integrity/real-capacitors.html)
 
 ## SI in practice
 
 Apply channel budgeting, equalization, receiver, and simulation methods.
 
 - [Channel Loss Budgeting Across Die, Package, and Board](https://sipi.work/topics/signal-integrity/channel-budgeting.html)
-- [Eye Closure: Loss, Reflections, Discontinuities, and Crosstalk](https://sipi.work/topics/signal-integrity/what-closes-the-eye.html)
-- [Equalization and Clock Recovery: CTLE, FFE, DFE, and CDR](https://sipi.work/topics/signal-integrity/equalization.html)
-- [NRZ and PAM4: Levels, Bandwidth, and SNR](https://sipi.work/topics/signal-integrity/nrz-vs-pam4.html)
-- [Statistical and Time-Domain Channel Simulation](https://sipi.work/topics/signal-integrity/statistical-vs-time-domain.html)
-- [IBIS, IBIS-AMI, and SPICE Model Selection](https://sipi.work/topics/signal-integrity/ibis-ami-spice.html)
+- [Eye Closure Causes: Loss, Reflections and Crosstalk](https://sipi.work/topics/signal-integrity/what-closes-the-eye.html)
+- [SerDes Equalization: CTLE, FFE, DFE and CDR](https://sipi.work/topics/signal-integrity/equalization.html)
+- [NRZ vs PAM4 Signaling: Bandwidth and SNR Trade-off](https://sipi.work/topics/signal-integrity/nrz-vs-pam4.html)
+- [Statistical vs Bit-by-Bit Channel Simulation](https://sipi.work/topics/signal-integrity/statistical-vs-time-domain.html)
+- [IBIS vs IBIS-AMI vs SPICE: Choosing SI Models](https://sipi.work/topics/signal-integrity/ibis-ami-spice.html)
 - [S-Parameter De-Embedding and Fixture Removal](https://sipi.work/topics/signal-integrity/de-embedding.html)
 - [Transmitter Compliance Masks and Receiver Eye Masks](https://sipi.work/topics/signal-integrity/compliance-masks.html)
-- [Receiver Sampling, Clock Recovery, and Jitter Tolerance](https://sipi.work/topics/signal-integrity/receiver-and-clock.html)
+- [CDR, Jitter Transfer and Jitter Tolerance (JTOL)](https://sipi.work/topics/signal-integrity/receiver-and-clock.html)
 
 ## Package & board
 
 Where the electrical design meets manufacturing.
 
-- [IC Package Interconnects: Wirebond, Flip-Chip, FOWLP, Interposers, and Chiplets](https://sipi.work/topics/package-board/package-families.html)
+- [IC Package Types: Wirebond, Flip-Chip, FOWLP, Chiplets](https://sipi.work/topics/package-board/package-families.html)
 - [PCB Stackup Design and Dielectric Selection](https://sipi.work/topics/package-board/stackup-design.html)
 - [BGA Escape Routing and Breakout Congestion](https://sipi.work/topics/package-board/bga-escape-routing.html)
-- [PCB Layer Transitions and Return-Path Stitching](https://sipi.work/topics/package-board/layer-transitions.html)
+- [Stitching Vias and PCB Layer Transitions](https://sipi.work/topics/package-board/layer-transitions.html)
 - [High-Speed Connectors and Cables](https://sipi.work/topics/package-board/connectors-cables.html)
-- [PCB Manufacturing Variation: Etch, Glass Weave, and Impedance](https://sipi.work/topics/package-board/manufacturing-tolerance.html)
+- [PCB Impedance Tolerance: Etch, Glass Weave, Stackup](https://sipi.work/topics/package-board/manufacturing-tolerance.html)
 - [Package Interconnects as Transmission Lines](https://sipi.work/topics/package-board/package-and-system.html)
 
 ## Interface sign-off
 
 Interface-specific data rates, channel considerations, and source boundaries.
 
-- [LPDDR5 and LPDDR5X Signal Integrity: Timing, ODT, and Training](https://sipi.work/topics/interfaces/lpddr5x.html)
-- [PCIe 4.0 and 5.0 Signal Integrity: Loss and Equalization](https://sipi.work/topics/interfaces/pcie-gen4-gen5.html)
+- [LPDDR5/5X Signal Integrity: WCK, ODT and Training](https://sipi.work/topics/interfaces/lpddr5x.html)
+- [PCIe Gen 4 and Gen 5 Signal Integrity: Loss and EQ](https://sipi.work/topics/interfaces/pcie-gen4-gen5.html)
 - [PCIe 6.0 Signal Integrity: PAM4, FLIT, and FEC](https://sipi.work/topics/interfaces/pcie-gen6.html)
 - [USB 3.1 and 3.2 Signal Integrity: SSC and Compliance](https://sipi.work/topics/interfaces/usb-3x.html)
 - [UFS 4.0 Signal Integrity: M-PHY Gear 5](https://sipi.work/topics/interfaces/ufs4.html)
@@ -101,10 +101,10 @@ Plan simulations and measurements, compare evidence, report margin, and debug ef
 
 - [Signal Integrity Simulation Workflow](https://sipi.work/topics/methodology/simulation-flow.html)
 - [Field Solvers for SI/PI: 2D, 2.5D, and 3D](https://sipi.work/topics/methodology/field-solvers.html)
-- [Correlating Simulation and Measurement](https://sipi.work/topics/methodology/correlation.html)
+- [Simulation-to-Measurement Correlation for SI/PI](https://sipi.work/topics/methodology/correlation.html)
 - [Reporting Signal and Power Integrity Margin](https://sipi.work/topics/methodology/reporting-margin.html)
 - [SI/PI Debugging: From Symptom to Cause](https://sipi.work/topics/methodology/debug-playbook.html)
-- [SI/PI Measurement: Fixtures, Calibration, and Instrument Effects](https://sipi.work/topics/methodology/measurement-practice.html)
+- [SI/PI Measurement: Probes, Fixtures and Calibration](https://sipi.work/topics/methodology/measurement-practice.html)
 
 ## Labs
 
@@ -112,7 +112,7 @@ Four long-form instruments with linked views, stated assumptions, and documented
 
 - [Lab A: Transmission-Line Reflections and Energy Flow](https://sipi.work/topics/labs/travelling-waves.html)
 - [Lab B: Channel Response, ISI, and Eye Diagrams](https://sipi.work/topics/labs/one-channel.html)
-- [Lab C: PDN Impedance, Current Sharing, and Transient Droop](https://sipi.work/topics/labs/pdn-chain.html)
+- [Lab C: PDN Impedance and Transient Droop](https://sipi.work/topics/labs/pdn-chain.html)
 - [Lab D: ADC Interference, Aliasing and Reference Noise](https://sipi.work/topics/labs/adc-interference.html)
 
 ## Calculators
@@ -122,7 +122,7 @@ Quick answers for SI and PI arithmetic, each with its formula, its assumptions a
 - [LC and RLC Resonance Calculator](https://sipi.work/topics/tools/lc-rlc-resonance.html)
 - [VSWR, Return Loss and Reflection Coefficient Calculator](https://sipi.work/topics/tools/return-loss-vswr.html)
 - [BER, Q-Factor and Total Jitter Calculator](https://sipi.work/topics/tools/ber-q-jitter.html)
-- [Bit Rate, Unit Interval and Nyquist Frequency Calculator](https://sipi.work/topics/tools/bit-rate-ui-nyquist.html)
+- [Bit Rate, UI and Nyquist Frequency Calculator](https://sipi.work/topics/tools/bit-rate-ui-nyquist.html)
 - [Electrical Length and Critical Length Calculator](https://sipi.work/topics/tools/electrical-length.html)
 - [Via Stub Resonance Calculator](https://sipi.work/topics/tools/via-stub-resonance.html)
 - [PDN Target Impedance Calculator](https://sipi.work/topics/tools/target-impedance-calculator.html)

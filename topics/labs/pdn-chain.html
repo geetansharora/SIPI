@@ -7,7 +7,7 @@
   <meta name="theme-color" content="#F7F8FA">
   <script>(function(){try{var t=localStorage.getItem('sipi-theme');if(t==='dark'||t==='system'){document.documentElement.setAttribute('data-theme',t);var m=document.querySelector('meta[name=theme-color]');if(m&&(t==='dark'||matchMedia('(prefers-color-scheme:dark)').matches))m.content='#0B1015';}}catch(e){}})();</script>
   <!-- theme:end -->
-<title>Lab C: PDN Impedance, Current Sharing, and Transient Droop | SIPI</title>
+<title>Lab C: PDN Impedance and Transient Droop | SIPI</title>
 <meta name="description" content="One PDN ladder shown six ways: impedance magnitude and phase, which bank supplies the current at each frequency, the transient droop, and what excites it.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -19,20 +19,20 @@
   <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
   <meta property="og:type" content="article">
   <meta property="og:site_name" content="SIPI">
-  <meta property="og:title" content="Lab C: PDN Impedance, Current Sharing, and Transient Droop | SIPI">
+  <meta property="og:title" content="Lab C: PDN Impedance and Transient Droop | SIPI">
   <meta property="og:description" content="One PDN ladder shown six ways: impedance magnitude and phase, which bank supplies the current at each frequency, the transient droop, and what excites it.">
   <meta property="og:url" content="https://sipi.work/topics/labs/pdn-chain.html">
   <meta property="og:image" content="https://sipi.work/assets/og/labs/pdn-chain.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
-  <meta property="og:image:alt" content="Lab C: PDN Impedance, Current Sharing, and Transient Droop: a figure from the page, on SIPI">
+  <meta property="og:image:alt" content="Lab C: PDN Impedance and Transient Droop: a figure from the page, on SIPI">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Lab C: PDN Impedance, Current Sharing, and Transient Droop | SIPI">
+  <meta name="twitter:title" content="Lab C: PDN Impedance and Transient Droop | SIPI">
   <meta name="twitter:description" content="One PDN ladder shown six ways: impedance magnitude and phase, which bank supplies the current at each frequency, the transient droop, and what excites it.">
   <meta name="twitter:image" content="https://sipi.work/assets/og/labs/pdn-chain.png">
-  <meta name="twitter:image:alt" content="Lab C: PDN Impedance, Current Sharing, and Transient Droop: a figure from the page, on SIPI">
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Lab C: PDN Impedance, Current Sharing, and Transient Droop","description":"One PDN ladder shown six ways: impedance magnitude and phase, which bank supplies the current at each frequency, the transient droop, and what excites it.","url":"https://sipi.work/topics/labs/pdn-chain.html","articleSection":"Labs","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer","url":"https://www.linkedin.com/in/geetansh-arora-a645714a/","sameAs":["https://www.linkedin.com/in/geetansh-arora-a645714a/"]},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-10-01","image":"https://sipi.work/assets/og/labs/pdn-chain.png"}</script>
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"SIPI","item":"https://sipi.work/"},{"@type":"ListItem","position":2,"name":"Labs","item":"https://sipi.work/#labs"},{"@type":"ListItem","position":3,"name":"Lab C: PDN Impedance, Current Sharing, and Transient Droop"}]}</script>
+  <meta name="twitter:image:alt" content="Lab C: PDN Impedance and Transient Droop: a figure from the page, on SIPI">
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Lab C: PDN Impedance and Transient Droop","description":"One PDN ladder shown six ways: impedance magnitude and phase, which bank supplies the current at each frequency, the transient droop, and what excites it.","url":"https://sipi.work/topics/labs/pdn-chain.html","articleSection":"Labs","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer","url":"https://www.linkedin.com/in/geetansh-arora-a645714a/","sameAs":["https://www.linkedin.com/in/geetansh-arora-a645714a/"]},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-10-01","image":"https://sipi.work/assets/og/labs/pdn-chain.png"}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"SIPI","item":"https://sipi.work/"},{"@type":"ListItem","position":2,"name":"Labs","item":"https://sipi.work/#labs"},{"@type":"ListItem","position":3,"name":"Lab C: PDN Impedance and Transient Droop"}]}</script>
   <!-- meta:end -->
 </head>
 <body>
@@ -52,11 +52,11 @@
 <main>
   <div class="page-head">
     <p class="crumb"><a href="../../index.html#labs">Labs</a> / 03</p>
-    <h1>Lab C: PDN Impedance, Current Sharing, and Transient Droop</h1>
+    <h1>Lab C: PDN Impedance and Transient Droop</h1>
     <p class="byline">
       <!-- review:start --><span>By <a href="https://www.linkedin.com/in/geetansh-arora-a645714a/" target="_blank" rel="author noopener">Geetansh Arora</a> — Principal SI/PI Engineer</span><time datetime="2026-10-01" title="Technical review by Geetansh Arora on this date">1 Oct 2026</time><span>14 min</span><!-- review:end -->
     </p>
-    <!-- share:head:start --><div class="share share--head" data-share data-share-url="https://sipi.work/topics/labs/pdn-chain.html" data-share-title="Lab C: PDN Impedance, Current Sharing, and Transient Droop"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Flabs%2Fpdn-chain.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Flabs%2Fpdn-chain.html&amp;text=Lab%20C%3A%20PDN%20Impedance%2C%20Current%20Sharing%2C%20and%20Transient%20Droop" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=Lab%20C%3A%20PDN%20Impedance%2C%20Current%20Sharing%2C%20and%20Transient%20Droop&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Flabs%2Fpdn-chain.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:head:end -->
+    <!-- share:head:start --><div class="share share--head" data-share data-share-url="https://sipi.work/topics/labs/pdn-chain.html" data-share-title="Lab C: PDN Impedance and Transient Droop"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Flabs%2Fpdn-chain.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Flabs%2Fpdn-chain.html&amp;text=Lab%20C%3A%20PDN%20Impedance%20and%20Transient%20Droop" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=Lab%20C%3A%20PDN%20Impedance%20and%20Transient%20Droop&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Flabs%2Fpdn-chain.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:head:end -->
     <p class="answer">
       A power delivery network passes current through different paths as frequency changes.
       Impedance peaks often appear near the handover between paths, where one capacitor bank
@@ -482,7 +482,7 @@
     </ul>
   </div>
 
-  <!-- share:foot:start --><div class="share share--foot" data-share data-share-url="https://sipi.work/topics/labs/pdn-chain.html" data-share-title="Lab C: PDN Impedance, Current Sharing, and Transient Droop"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Flabs%2Fpdn-chain.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Flabs%2Fpdn-chain.html&amp;text=Lab%20C%3A%20PDN%20Impedance%2C%20Current%20Sharing%2C%20and%20Transient%20Droop" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=Lab%20C%3A%20PDN%20Impedance%2C%20Current%20Sharing%2C%20and%20Transient%20Droop&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Flabs%2Fpdn-chain.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:foot:end -->
+  <!-- share:foot:start --><div class="share share--foot" data-share data-share-url="https://sipi.work/topics/labs/pdn-chain.html" data-share-title="Lab C: PDN Impedance and Transient Droop"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Flabs%2Fpdn-chain.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Flabs%2Fpdn-chain.html&amp;text=Lab%20C%3A%20PDN%20Impedance%20and%20Transient%20Droop" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=Lab%20C%3A%20PDN%20Impedance%20and%20Transient%20Droop&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Flabs%2Fpdn-chain.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:foot:end -->
 
   <!-- pager:start -->
   <nav class="pager" aria-label="Previous and next topic">

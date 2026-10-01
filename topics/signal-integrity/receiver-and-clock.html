@@ -7,8 +7,8 @@
   <meta name="theme-color" content="#F7F8FA">
   <script>(function(){try{var t=localStorage.getItem('sipi-theme');if(t==='dark'||t==='system'){document.documentElement.setAttribute('data-theme',t);var m=document.querySelector('meta[name=theme-color]');if(m&&(t==='dark'||matchMedia('(prefers-color-scheme:dark)').matches))m.content='#0B1015';}}catch(e){}})();</script>
   <!-- theme:end -->
-<title>Receiver Sampling, Clock Recovery, and Jitter Tolerance | SIPI</title>
-<meta name="description" content="Receiver Sampling, Clock Recovery, and Jitter Tolerance">
+<title>CDR, Jitter Transfer and Jitter Tolerance (JTOL) | SIPI</title>
+<meta name="description" content="How a CDR recovers the clock from data: jitter transfer, jitter tolerance (JTOL), and the loop bandwidth that splits tracked jitter from jitter left in the eye.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
@@ -19,20 +19,20 @@
   <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
   <meta property="og:type" content="article">
   <meta property="og:site_name" content="SIPI">
-  <meta property="og:title" content="Receiver Sampling, Clock Recovery, and Jitter Tolerance | SIPI">
-  <meta property="og:description" content="Receiver Sampling, Clock Recovery, and Jitter Tolerance">
+  <meta property="og:title" content="CDR, Jitter Transfer and Jitter Tolerance (JTOL) | SIPI">
+  <meta property="og:description" content="How a CDR recovers the clock from data: jitter transfer, jitter tolerance (JTOL), and the loop bandwidth that splits tracked jitter from jitter left in the eye.">
   <meta property="og:url" content="https://sipi.work/topics/signal-integrity/receiver-and-clock.html">
   <meta property="og:image" content="https://sipi.work/assets/og/signal-integrity/receiver-and-clock.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
-  <meta property="og:image:alt" content="Receiver Sampling, Clock Recovery, and Jitter Tolerance: a figure from the page, on SIPI">
+  <meta property="og:image:alt" content="CDR, Jitter Transfer and Jitter Tolerance (JTOL): a figure from the page, on SIPI">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Receiver Sampling, Clock Recovery, and Jitter Tolerance | SIPI">
-  <meta name="twitter:description" content="Receiver Sampling, Clock Recovery, and Jitter Tolerance">
+  <meta name="twitter:title" content="CDR, Jitter Transfer and Jitter Tolerance (JTOL) | SIPI">
+  <meta name="twitter:description" content="How a CDR recovers the clock from data: jitter transfer, jitter tolerance (JTOL), and the loop bandwidth that splits tracked jitter from jitter left in the eye.">
   <meta name="twitter:image" content="https://sipi.work/assets/og/signal-integrity/receiver-and-clock.png">
-  <meta name="twitter:image:alt" content="Receiver Sampling, Clock Recovery, and Jitter Tolerance: a figure from the page, on SIPI">
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Receiver Sampling, Clock Recovery, and Jitter Tolerance","description":"Receiver Sampling, Clock Recovery, and Jitter Tolerance","url":"https://sipi.work/topics/signal-integrity/receiver-and-clock.html","articleSection":"SI in practice","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer","url":"https://www.linkedin.com/in/geetansh-arora-a645714a/","sameAs":["https://www.linkedin.com/in/geetansh-arora-a645714a/"]},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-09-26","image":"https://sipi.work/assets/og/signal-integrity/receiver-and-clock.png"}</script>
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"SIPI","item":"https://sipi.work/"},{"@type":"ListItem","position":2,"name":"SI in practice","item":"https://sipi.work/#signal-integrity"},{"@type":"ListItem","position":3,"name":"Receiver Sampling, Clock Recovery, and Jitter Tolerance"}]}</script>
+  <meta name="twitter:image:alt" content="CDR, Jitter Transfer and Jitter Tolerance (JTOL): a figure from the page, on SIPI">
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"CDR, Jitter Transfer and Jitter Tolerance (JTOL)","description":"How a CDR recovers the clock from data: jitter transfer, jitter tolerance (JTOL), and the loop bandwidth that splits tracked jitter from jitter left in the eye.","url":"https://sipi.work/topics/signal-integrity/receiver-and-clock.html","articleSection":"SI in practice","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer","url":"https://www.linkedin.com/in/geetansh-arora-a645714a/","sameAs":["https://www.linkedin.com/in/geetansh-arora-a645714a/"]},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-09-26","image":"https://sipi.work/assets/og/signal-integrity/receiver-and-clock.png"}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"SIPI","item":"https://sipi.work/"},{"@type":"ListItem","position":2,"name":"SI in practice","item":"https://sipi.work/#signal-integrity"},{"@type":"ListItem","position":3,"name":"CDR, Jitter Transfer and Jitter Tolerance (JTOL)"}]}</script>
   <!-- meta:end -->
 </head>
 <body>
@@ -52,11 +52,11 @@
 <main>
   <div class="page-head">
     <p class="crumb"><a href="../../index.html#signal-integrity">SI in practice</a> / 09</p>
-    <h1>Receiver Sampling, Clock Recovery, and Jitter Tolerance</h1>
+    <h1>CDR, Jitter Transfer and Jitter Tolerance (JTOL)</h1>
     <p class="byline">
       <!-- review:start --><span>By <a href="https://www.linkedin.com/in/geetansh-arora-a645714a/" target="_blank" rel="author noopener">Geetansh Arora</a> — Principal SI/PI Engineer</span><time datetime="2026-09-26" title="Technical review by Geetansh Arora on this date">26 Sep 2026</time><span>11 min</span><!-- review:end -->
     </p>
-    <!-- share:head:start --><div class="share share--head" data-share data-share-url="https://sipi.work/topics/signal-integrity/receiver-and-clock.html" data-share-title="Receiver Sampling, Clock Recovery, and Jitter Tolerance"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Fsignal-integrity%2Freceiver-and-clock.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Fsignal-integrity%2Freceiver-and-clock.html&amp;text=Receiver%20Sampling%2C%20Clock%20Recovery%2C%20and%20Jitter%20Tolerance" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=Receiver%20Sampling%2C%20Clock%20Recovery%2C%20and%20Jitter%20Tolerance&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Fsignal-integrity%2Freceiver-and-clock.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:head:end -->
+    <!-- share:head:start --><div class="share share--head" data-share data-share-url="https://sipi.work/topics/signal-integrity/receiver-and-clock.html" data-share-title="CDR, Jitter Transfer and Jitter Tolerance (JTOL)"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Fsignal-integrity%2Freceiver-and-clock.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Fsignal-integrity%2Freceiver-and-clock.html&amp;text=CDR%2C%20Jitter%20Transfer%20and%20Jitter%20Tolerance%20%28JTOL%29" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=CDR%2C%20Jitter%20Transfer%20and%20Jitter%20Tolerance%20%28JTOL%29&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Fsignal-integrity%2Freceiver-and-clock.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:head:end -->
     <p class="answer">
       Everything else on this site describes what happens to a signal on its way
       to the receiver. This page is about what the receiver then does with it
@@ -642,7 +642,7 @@
     <h3>Related</h3>
     <ul class="tight">
       <li><a href="../../reference.html#experiment-cdr-natural-frequency">CDR natural-frequency reference</a> — a steady-state complex-phase example with explicit UI units and tolerances</li>
-      <li><a href="equalization.html">Equalization and Clock Recovery: CTLE, FFE, DFE, and CDR</a> — the blocks in detail</li>
+      <li><a href="equalization.html">SerDes Equalization: CTLE, FFE, DFE and CDR</a> — the blocks in detail</li>
       <li><a href="../fundamentals/eye-diagram.html">The eye diagram</a> — why the reference plane changes the picture</li>
       <li><a href="../fundamentals/jitter-taxonomy.html">Jitter taxonomy</a> — what the CDR does and does not remove</li>
       <li><a href="../power-integrity/pdn-induced-jitter.html">PDN-induced jitter</a> — why the threshold moves</li>
@@ -650,12 +650,12 @@
     </ul>
   </div>
 
-  <!-- share:foot:start --><div class="share share--foot" data-share data-share-url="https://sipi.work/topics/signal-integrity/receiver-and-clock.html" data-share-title="Receiver Sampling, Clock Recovery, and Jitter Tolerance"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Fsignal-integrity%2Freceiver-and-clock.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Fsignal-integrity%2Freceiver-and-clock.html&amp;text=Receiver%20Sampling%2C%20Clock%20Recovery%2C%20and%20Jitter%20Tolerance" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=Receiver%20Sampling%2C%20Clock%20Recovery%2C%20and%20Jitter%20Tolerance&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Fsignal-integrity%2Freceiver-and-clock.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:foot:end -->
+  <!-- share:foot:start --><div class="share share--foot" data-share data-share-url="https://sipi.work/topics/signal-integrity/receiver-and-clock.html" data-share-title="CDR, Jitter Transfer and Jitter Tolerance (JTOL)"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Fsignal-integrity%2Freceiver-and-clock.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Fsignal-integrity%2Freceiver-and-clock.html&amp;text=CDR%2C%20Jitter%20Transfer%20and%20Jitter%20Tolerance%20%28JTOL%29" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=CDR%2C%20Jitter%20Transfer%20and%20Jitter%20Tolerance%20%28JTOL%29&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Fsignal-integrity%2Freceiver-and-clock.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:foot:end -->
 
   <!-- pager:start -->
   <nav class="pager" aria-label="Previous and next topic">
     <a class="prev" href="../../topics/signal-integrity/compliance-masks.html"><span class="dir">Previous</span><span>Transmitter Compliance Masks and Receiver Eye Masks</span></a>
-    <a class="next" href="../../topics/package-board/package-families.html"><span class="dir">Next</span><span>IC Package Interconnects: Wirebond, Flip-Chip, FOWLP, Interposers, and Chiplets</span></a>
+    <a class="next" href="../../topics/package-board/package-families.html"><span class="dir">Next</span><span>IC Package Types: Wirebond, Flip-Chip, FOWLP, Chiplets</span></a>
   </nav>
   <!-- pager:end -->
 </main>

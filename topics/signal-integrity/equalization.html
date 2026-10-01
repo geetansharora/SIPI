@@ -7,7 +7,7 @@
   <meta name="theme-color" content="#F7F8FA">
   <script>(function(){try{var t=localStorage.getItem('sipi-theme');if(t==='dark'||t==='system'){document.documentElement.setAttribute('data-theme',t);var m=document.querySelector('meta[name=theme-color]');if(m&&(t==='dark'||matchMedia('(prefers-color-scheme:dark)').matches))m.content='#0B1015';}}catch(e){}})();</script>
   <!-- theme:end -->
-<title>Equalization and Clock Recovery: CTLE, FFE, DFE, and CDR | SIPI</title>
+<title>SerDes Equalization: CTLE, FFE, DFE and CDR | SIPI</title>
 <meta name="description" content="The four blocks that reopen a closed eye, what each is physically able to correct, and the three impairments none of them touch.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -19,20 +19,20 @@
   <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
   <meta property="og:type" content="article">
   <meta property="og:site_name" content="SIPI">
-  <meta property="og:title" content="Equalization and Clock Recovery: CTLE, FFE, DFE, and CDR | SIPI">
+  <meta property="og:title" content="SerDes Equalization: CTLE, FFE, DFE and CDR | SIPI">
   <meta property="og:description" content="The four blocks that reopen a closed eye, what each is physically able to correct, and the three impairments none of them touch.">
   <meta property="og:url" content="https://sipi.work/topics/signal-integrity/equalization.html">
   <meta property="og:image" content="https://sipi.work/assets/og/signal-integrity/equalization.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
-  <meta property="og:image:alt" content="Equalization and Clock Recovery: CTLE, FFE, DFE, and CDR: a figure from the page, on SIPI">
+  <meta property="og:image:alt" content="SerDes Equalization: CTLE, FFE, DFE and CDR: a figure from the page, on SIPI">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Equalization and Clock Recovery: CTLE, FFE, DFE, and CDR | SIPI">
+  <meta name="twitter:title" content="SerDes Equalization: CTLE, FFE, DFE and CDR | SIPI">
   <meta name="twitter:description" content="The four blocks that reopen a closed eye, what each is physically able to correct, and the three impairments none of them touch.">
   <meta name="twitter:image" content="https://sipi.work/assets/og/signal-integrity/equalization.png">
-  <meta name="twitter:image:alt" content="Equalization and Clock Recovery: CTLE, FFE, DFE, and CDR: a figure from the page, on SIPI">
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Equalization and Clock Recovery: CTLE, FFE, DFE, and CDR","description":"The four blocks that reopen a closed eye, what each is physically able to correct, and the three impairments none of them touch.","url":"https://sipi.work/topics/signal-integrity/equalization.html","articleSection":"SI in practice","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer","url":"https://www.linkedin.com/in/geetansh-arora-a645714a/","sameAs":["https://www.linkedin.com/in/geetansh-arora-a645714a/"]},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-09-26","image":"https://sipi.work/assets/og/signal-integrity/equalization.png"}</script>
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"SIPI","item":"https://sipi.work/"},{"@type":"ListItem","position":2,"name":"SI in practice","item":"https://sipi.work/#signal-integrity"},{"@type":"ListItem","position":3,"name":"Equalization and Clock Recovery: CTLE, FFE, DFE, and CDR"}]}</script>
+  <meta name="twitter:image:alt" content="SerDes Equalization: CTLE, FFE, DFE and CDR: a figure from the page, on SIPI">
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"SerDes Equalization: CTLE, FFE, DFE and CDR","description":"The four blocks that reopen a closed eye, what each is physically able to correct, and the three impairments none of them touch.","url":"https://sipi.work/topics/signal-integrity/equalization.html","articleSection":"SI in practice","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer","url":"https://www.linkedin.com/in/geetansh-arora-a645714a/","sameAs":["https://www.linkedin.com/in/geetansh-arora-a645714a/"]},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-09-26","image":"https://sipi.work/assets/og/signal-integrity/equalization.png"}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"SIPI","item":"https://sipi.work/"},{"@type":"ListItem","position":2,"name":"SI in practice","item":"https://sipi.work/#signal-integrity"},{"@type":"ListItem","position":3,"name":"SerDes Equalization: CTLE, FFE, DFE and CDR"}]}</script>
   <!-- meta:end -->
 </head>
 <body>
@@ -52,11 +52,11 @@
 <main>
   <div class="page-head">
     <p class="crumb"><a href="../../index.html#signal-integrity">SI in practice</a> / 03</p>
-    <h1>Equalization and Clock Recovery: CTLE, FFE, DFE, and CDR</h1>
+    <h1>SerDes Equalization: CTLE, FFE, DFE and CDR</h1>
     <p class="byline">
       <!-- review:start --><span>By <a href="https://www.linkedin.com/in/geetansh-arora-a645714a/" target="_blank" rel="author noopener">Geetansh Arora</a> — Principal SI/PI Engineer</span><time datetime="2026-09-26" title="Technical review by Geetansh Arora on this date">26 Sep 2026</time><span>10 min</span><!-- review:end -->
     </p>
-    <!-- share:head:start --><div class="share share--head" data-share data-share-url="https://sipi.work/topics/signal-integrity/equalization.html" data-share-title="Equalization and Clock Recovery: CTLE, FFE, DFE, and CDR"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Fsignal-integrity%2Fequalization.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Fsignal-integrity%2Fequalization.html&amp;text=Equalization%20and%20Clock%20Recovery%3A%20CTLE%2C%20FFE%2C%20DFE%2C%20and%20CDR" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=Equalization%20and%20Clock%20Recovery%3A%20CTLE%2C%20FFE%2C%20DFE%2C%20and%20CDR&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Fsignal-integrity%2Fequalization.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:head:end -->
+    <!-- share:head:start --><div class="share share--head" data-share data-share-url="https://sipi.work/topics/signal-integrity/equalization.html" data-share-title="SerDes Equalization: CTLE, FFE, DFE and CDR"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Fsignal-integrity%2Fequalization.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Fsignal-integrity%2Fequalization.html&amp;text=SerDes%20Equalization%3A%20CTLE%2C%20FFE%2C%20DFE%20and%20CDR" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=SerDes%20Equalization%3A%20CTLE%2C%20FFE%2C%20DFE%20and%20CDR&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Fsignal-integrity%2Fequalization.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:head:end -->
     <p class="answer">
       Equalisation is the receiver and transmitter conspiring to undo what the copper did. There
       are four blocks in the standard toolkit, they fix genuinely different things, and the single
@@ -525,18 +525,18 @@
     <h3>Related</h3>
     <ul class="tight">
       <li><a href="../fundamentals/isi.html">Intersymbol Interference (ISI) and Channel Memory</a></li>
-      <li><a href="../signal-integrity/nrz-vs-pam4.html">NRZ and PAM4: Levels, Bandwidth, and SNR</a></li>
-      <li><a href="../interfaces/pcie-gen4-gen5.html">PCIe 4.0 and 5.0 Signal Integrity: Loss and Equalization</a></li>
-      <li><a href="../signal-integrity/ibis-ami-spice.html">IBIS, IBIS-AMI, and SPICE Model Selection</a></li>
+      <li><a href="../signal-integrity/nrz-vs-pam4.html">NRZ vs PAM4 Signaling: Bandwidth and SNR Trade-off</a></li>
+      <li><a href="../interfaces/pcie-gen4-gen5.html">PCIe Gen 4 and Gen 5 Signal Integrity: Loss and EQ</a></li>
+      <li><a href="../signal-integrity/ibis-ami-spice.html">IBIS vs IBIS-AMI vs SPICE: Choosing SI Models</a></li>
     </ul>
   </div>
 
-  <!-- share:foot:start --><div class="share share--foot" data-share data-share-url="https://sipi.work/topics/signal-integrity/equalization.html" data-share-title="Equalization and Clock Recovery: CTLE, FFE, DFE, and CDR"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Fsignal-integrity%2Fequalization.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Fsignal-integrity%2Fequalization.html&amp;text=Equalization%20and%20Clock%20Recovery%3A%20CTLE%2C%20FFE%2C%20DFE%2C%20and%20CDR" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=Equalization%20and%20Clock%20Recovery%3A%20CTLE%2C%20FFE%2C%20DFE%2C%20and%20CDR&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Fsignal-integrity%2Fequalization.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:foot:end -->
+  <!-- share:foot:start --><div class="share share--foot" data-share data-share-url="https://sipi.work/topics/signal-integrity/equalization.html" data-share-title="SerDes Equalization: CTLE, FFE, DFE and CDR"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Fsignal-integrity%2Fequalization.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Fsignal-integrity%2Fequalization.html&amp;text=SerDes%20Equalization%3A%20CTLE%2C%20FFE%2C%20DFE%20and%20CDR" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=SerDes%20Equalization%3A%20CTLE%2C%20FFE%2C%20DFE%20and%20CDR&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Fsignal-integrity%2Fequalization.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:foot:end -->
 
   <!-- pager:start -->
   <nav class="pager" aria-label="Previous and next topic">
-    <a class="prev" href="../../topics/signal-integrity/what-closes-the-eye.html"><span class="dir">Previous</span><span>Eye Closure: Loss, Reflections, Discontinuities, and Crosstalk</span></a>
-    <a class="next" href="../../topics/signal-integrity/nrz-vs-pam4.html"><span class="dir">Next</span><span>NRZ and PAM4: Levels, Bandwidth, and SNR</span></a>
+    <a class="prev" href="../../topics/signal-integrity/what-closes-the-eye.html"><span class="dir">Previous</span><span>Eye Closure Causes: Loss, Reflections and Crosstalk</span></a>
+    <a class="next" href="../../topics/signal-integrity/nrz-vs-pam4.html"><span class="dir">Next</span><span>NRZ vs PAM4 Signaling: Bandwidth and SNR Trade-off</span></a>
   </nav>
   <!-- pager:end -->
 </main>

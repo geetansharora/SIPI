@@ -7,7 +7,7 @@
   <meta name="theme-color" content="#F7F8FA">
   <script>(function(){try{var t=localStorage.getItem('sipi-theme');if(t==='dark'||t==='system'){document.documentElement.setAttribute('data-theme',t);var m=document.querySelector('meta[name=theme-color]');if(m&&(t==='dark'||matchMedia('(prefers-color-scheme:dark)').matches))m.content='#0B1015';}}catch(e){}})();</script>
   <!-- theme:end -->
-<title>PCB Transmission-Line Loss Mechanisms | SIPI</title>
+<title>PCB Trace Loss: Skin Effect, Dielectric Loss, Roughness | SIPI</title>
 <meta name="description" content="Skin effect, dielectric loss and copper roughness — the three loss terms, how each scales with frequency, and where the crossover sits.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -19,20 +19,20 @@
   <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
   <meta property="og:type" content="article">
   <meta property="og:site_name" content="SIPI">
-  <meta property="og:title" content="PCB Transmission-Line Loss Mechanisms | SIPI">
+  <meta property="og:title" content="PCB Trace Loss: Skin Effect, Dielectric Loss, Roughness | SIPI">
   <meta property="og:description" content="Skin effect, dielectric loss and copper roughness — the three loss terms, how each scales with frequency, and where the crossover sits.">
   <meta property="og:url" content="https://sipi.work/topics/fundamentals/loss-mechanisms.html">
   <meta property="og:image" content="https://sipi.work/assets/og/fundamentals/loss-mechanisms.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
-  <meta property="og:image:alt" content="PCB Transmission-Line Loss Mechanisms: a figure from the page, on SIPI">
+  <meta property="og:image:alt" content="PCB Trace Loss: Skin Effect, Dielectric Loss, Roughness: a figure from the page, on SIPI">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="PCB Transmission-Line Loss Mechanisms | SIPI">
+  <meta name="twitter:title" content="PCB Trace Loss: Skin Effect, Dielectric Loss, Roughness | SIPI">
   <meta name="twitter:description" content="Skin effect, dielectric loss and copper roughness — the three loss terms, how each scales with frequency, and where the crossover sits.">
   <meta name="twitter:image" content="https://sipi.work/assets/og/fundamentals/loss-mechanisms.png">
-  <meta name="twitter:image:alt" content="PCB Transmission-Line Loss Mechanisms: a figure from the page, on SIPI">
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"PCB Transmission-Line Loss Mechanisms","description":"Skin effect, dielectric loss and copper roughness — the three loss terms, how each scales with frequency, and where the crossover sits.","url":"https://sipi.work/topics/fundamentals/loss-mechanisms.html","articleSection":"Fundamentals","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer","url":"https://www.linkedin.com/in/geetansh-arora-a645714a/","sameAs":["https://www.linkedin.com/in/geetansh-arora-a645714a/"]},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-09-26","image":"https://sipi.work/assets/og/fundamentals/loss-mechanisms.png"}</script>
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"SIPI","item":"https://sipi.work/"},{"@type":"ListItem","position":2,"name":"Fundamentals","item":"https://sipi.work/#fundamentals"},{"@type":"ListItem","position":3,"name":"PCB Transmission-Line Loss Mechanisms"}]}</script>
+  <meta name="twitter:image:alt" content="PCB Trace Loss: Skin Effect, Dielectric Loss, Roughness: a figure from the page, on SIPI">
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"PCB Trace Loss: Skin Effect, Dielectric Loss, Roughness","description":"Skin effect, dielectric loss and copper roughness — the three loss terms, how each scales with frequency, and where the crossover sits.","url":"https://sipi.work/topics/fundamentals/loss-mechanisms.html","articleSection":"Fundamentals","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer","url":"https://www.linkedin.com/in/geetansh-arora-a645714a/","sameAs":["https://www.linkedin.com/in/geetansh-arora-a645714a/"]},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-09-26","image":"https://sipi.work/assets/og/fundamentals/loss-mechanisms.png"}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"SIPI","item":"https://sipi.work/"},{"@type":"ListItem","position":2,"name":"Fundamentals","item":"https://sipi.work/#fundamentals"},{"@type":"ListItem","position":3,"name":"PCB Trace Loss: Skin Effect, Dielectric Loss, Roughness"}]}</script>
   <!-- meta:end -->
 </head>
 <body>
@@ -52,11 +52,11 @@
 <main>
   <div class="page-head">
     <p class="crumb"><a href="../../index.html#fundamentals">Fundamentals</a> / 10</p>
-    <h1>PCB Transmission-Line Loss Mechanisms</h1>
+    <h1>PCB Trace Loss: Skin Effect, Dielectric Loss, Roughness</h1>
     <p class="byline">
       <!-- review:start --><span>By <a href="https://www.linkedin.com/in/geetansh-arora-a645714a/" target="_blank" rel="author noopener">Geetansh Arora</a> — Principal SI/PI Engineer</span><time datetime="2026-09-26" title="Technical review by Geetansh Arora on this date">26 Sep 2026</time><span>11 min</span><!-- review:end -->
     </p>
-    <!-- share:head:start --><div class="share share--head" data-share data-share-url="https://sipi.work/topics/fundamentals/loss-mechanisms.html" data-share-title="PCB Transmission-Line Loss Mechanisms"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Ffundamentals%2Floss-mechanisms.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Ffundamentals%2Floss-mechanisms.html&amp;text=PCB%20Transmission-Line%20Loss%20Mechanisms" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=PCB%20Transmission-Line%20Loss%20Mechanisms&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Ffundamentals%2Floss-mechanisms.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:head:end -->
+    <!-- share:head:start --><div class="share share--head" data-share data-share-url="https://sipi.work/topics/fundamentals/loss-mechanisms.html" data-share-title="PCB Trace Loss: Skin Effect, Dielectric Loss, Roughness"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Ffundamentals%2Floss-mechanisms.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Ffundamentals%2Floss-mechanisms.html&amp;text=PCB%20Trace%20Loss%3A%20Skin%20Effect%2C%20Dielectric%20Loss%2C%20Roughness" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=PCB%20Trace%20Loss%3A%20Skin%20Effect%2C%20Dielectric%20Loss%2C%20Roughness&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Ffundamentals%2Floss-mechanisms.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:head:end -->
     <p class="answer">
       A long trace does not attenuate every frequency equally &#8212; it attenuates the high ones
       much harder. That is what makes loss a signal-integrity problem rather than an amplitude
@@ -454,7 +454,7 @@
     <h3>Related</h3>
     <ul class="tight">
       <li><a href="../fundamentals/isi.html">Intersymbol Interference (ISI) and Channel Memory</a></li>
-      <li><a href="../fundamentals/s-parameters.html">S-Parameters: Insertion Loss, Return Loss, and Mixed Mode</a></li>
+      <li><a href="../fundamentals/s-parameters.html">S-Parameters Explained: S11, S21 and Mixed-Mode</a></li>
       <li><a href="../package-board/stackup-design.html">PCB Stackup Design and Dielectric Selection</a></li>
       <li><a href="../signal-integrity/channel-budgeting.html">Channel Loss Budgeting Across Die, Package, and Board</a></li>
       <li><a href="../tools/skin-depth.html">Skin Depth and Surface Roughness Calculator</a></li>
@@ -462,11 +462,11 @@
     </ul>
   </div>
 
-  <!-- share:foot:start --><div class="share share--foot" data-share data-share-url="https://sipi.work/topics/fundamentals/loss-mechanisms.html" data-share-title="PCB Transmission-Line Loss Mechanisms"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Ffundamentals%2Floss-mechanisms.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Ffundamentals%2Floss-mechanisms.html&amp;text=PCB%20Transmission-Line%20Loss%20Mechanisms" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=PCB%20Transmission-Line%20Loss%20Mechanisms&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Ffundamentals%2Floss-mechanisms.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:foot:end -->
+  <!-- share:foot:start --><div class="share share--foot" data-share data-share-url="https://sipi.work/topics/fundamentals/loss-mechanisms.html" data-share-title="PCB Trace Loss: Skin Effect, Dielectric Loss, Roughness"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Ffundamentals%2Floss-mechanisms.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Ffundamentals%2Floss-mechanisms.html&amp;text=PCB%20Trace%20Loss%3A%20Skin%20Effect%2C%20Dielectric%20Loss%2C%20Roughness" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=PCB%20Trace%20Loss%3A%20Skin%20Effect%2C%20Dielectric%20Loss%2C%20Roughness&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Ffundamentals%2Floss-mechanisms.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:foot:end -->
 
   <!-- pager:start -->
   <nav class="pager" aria-label="Previous and next topic">
-    <a class="prev" href="../../topics/fundamentals/capacitive-inductive-coupling.html"><span class="dir">Previous</span><span>Capacitive and Inductive Coupling: Voltage Slew vs Current Slew</span></a>
+    <a class="prev" href="../../topics/fundamentals/capacitive-inductive-coupling.html"><span class="dir">Previous</span><span>Capacitive vs Inductive Coupling: dV/dt and dI/dt Noise</span></a>
     <a class="next" href="../../topics/fundamentals/isi.html"><span class="dir">Next</span><span>Intersymbol Interference (ISI) and Channel Memory</span></a>
   </nav>
   <!-- pager:end -->

@@ -7,7 +7,7 @@
   <meta name="theme-color" content="#F7F8FA">
   <script>(function(){try{var t=localStorage.getItem('sipi-theme');if(t==='dark'||t==='system'){document.documentElement.setAttribute('data-theme',t);var m=document.querySelector('meta[name=theme-color]');if(m&&(t==='dark'||matchMedia('(prefers-color-scheme:dark)').matches))m.content='#0B1015';}}catch(e){}})();</script>
   <!-- theme:end -->
-<meta name="description" content="A GPIO switching beside a converter arrives somewhere in its output. Drive a SAR or delta-sigma converter with a coupled aggressor and watch SNR and offset move.">
+<meta name="description" content="Couple a GPIO aggressor into a SAR or delta-sigma ADC and watch where it lands: spurs, offset or raised noise, and what that does to SNR. Interactive lab.">
 <title>Lab D: ADC Interference, Aliasing and Reference Noise | SIPI</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -21,7 +21,7 @@
   <meta property="og:type" content="article">
   <meta property="og:site_name" content="SIPI">
   <meta property="og:title" content="Lab D: ADC Interference, Aliasing and Reference Noise | SIPI">
-  <meta property="og:description" content="A GPIO switching beside a converter arrives somewhere in its output. Drive a SAR or delta-sigma converter with a coupled aggressor and watch SNR and offset move.">
+  <meta property="og:description" content="Couple a GPIO aggressor into a SAR or delta-sigma ADC and watch where it lands: spurs, offset or raised noise, and what that does to SNR. Interactive lab.">
   <meta property="og:url" content="https://sipi.work/topics/labs/adc-interference.html">
   <meta property="og:image" content="https://sipi.work/assets/og/labs/adc-interference.png">
   <meta property="og:image:width" content="1200">
@@ -29,10 +29,10 @@
   <meta property="og:image:alt" content="Lab D: ADC Interference, Aliasing and Reference Noise: a figure from the page, on SIPI">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Lab D: ADC Interference, Aliasing and Reference Noise | SIPI">
-  <meta name="twitter:description" content="A GPIO switching beside a converter arrives somewhere in its output. Drive a SAR or delta-sigma converter with a coupled aggressor and watch SNR and offset move.">
+  <meta name="twitter:description" content="Couple a GPIO aggressor into a SAR or delta-sigma ADC and watch where it lands: spurs, offset or raised noise, and what that does to SNR. Interactive lab.">
   <meta name="twitter:image" content="https://sipi.work/assets/og/labs/adc-interference.png">
   <meta name="twitter:image:alt" content="Lab D: ADC Interference, Aliasing and Reference Noise: a figure from the page, on SIPI">
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Lab D: ADC Interference, Aliasing and Reference Noise","description":"A GPIO switching beside a converter arrives somewhere in its output. Drive a SAR or delta-sigma converter with a coupled aggressor and watch SNR and offset move.","url":"https://sipi.work/topics/labs/adc-interference.html","articleSection":"Labs","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer","url":"https://www.linkedin.com/in/geetansh-arora-a645714a/","sameAs":["https://www.linkedin.com/in/geetansh-arora-a645714a/"]},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-09-26","image":"https://sipi.work/assets/og/labs/adc-interference.png"}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Lab D: ADC Interference, Aliasing and Reference Noise","description":"Couple a GPIO aggressor into a SAR or delta-sigma ADC and watch where it lands: spurs, offset or raised noise, and what that does to SNR. Interactive lab.","url":"https://sipi.work/topics/labs/adc-interference.html","articleSection":"Labs","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer","url":"https://www.linkedin.com/in/geetansh-arora-a645714a/","sameAs":["https://www.linkedin.com/in/geetansh-arora-a645714a/"]},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-09-26","image":"https://sipi.work/assets/og/labs/adc-interference.png"}</script>
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"SIPI","item":"https://sipi.work/"},{"@type":"ListItem","position":2,"name":"Labs","item":"https://sipi.work/#labs"},{"@type":"ListItem","position":3,"name":"Lab D: ADC Interference, Aliasing and Reference Noise"}]}</script>
   <!-- meta:end -->
 </head>
@@ -607,7 +607,7 @@
       matters. Through a capacitor the coupled voltage follows dV/dt, so each harmonic arrives larger than it
       otherwise would until the edge rolls the series off. Compare <b>Slow edges</b> with <b>Fast edges</b>:
       7.2 dB of SNR from edge rate alone. Why capacitive coupling follows the voltage slew and inductive
-      coupling the current slew is covered in <a href="../fundamentals/capacitive-inductive-coupling.html">Capacitive and Inductive Coupling: Voltage Slew vs Current Slew</a>.
+      coupling the current slew is covered in <a href="../fundamentals/capacitive-inductive-coupling.html">Capacitive vs Inductive Coupling: dV/dt and dI/dt Noise</a>.
     </p>
 
     <h2 class="section-rule"><span>The input adds; the reference multiplies</span></h2>
@@ -856,7 +856,7 @@
     </p>
     <ul>
         <li><a href="../fundamentals/crosstalk.html">Crosstalk</a> &mdash; how an aggressor reaches a victim net, which is the coupling this lab applies.</li>
-        <li><a href="../fundamentals/edge-rate-not-clock-rate.html">Signal Bandwidth: Why Edge Rate Matters</a> &mdash; why a slow clock still carries energy near the sampling frequency.</li>
+        <li><a href="../fundamentals/edge-rate-not-clock-rate.html">Rise Time and Bandwidth: Edge Rate, Not Clock Rate</a> &mdash; why a slow clock still carries energy near the sampling frequency.</li>
         <li><a href="../power-integrity/ssn-ground-bounce.html">Ground bounce and SSN</a> &mdash; switching current in a shared return, the usual path onto a reference.</li>
         <li><a href="../fundamentals/jitter-taxonomy.html">Jitter taxonomy</a> &mdash; uncertainty in the sampling instant, which this lab holds fixed.</li>
     </ul>
@@ -866,7 +866,7 @@
 
   <!-- pager:start -->
   <nav class="pager" aria-label="Previous and next topic">
-    <a class="prev" href="../../topics/labs/pdn-chain.html"><span class="dir">Previous</span><span>Lab C: PDN Impedance, Current Sharing, and Transient Droop</span></a>
+    <a class="prev" href="../../topics/labs/pdn-chain.html"><span class="dir">Previous</span><span>Lab C: PDN Impedance and Transient Droop</span></a>
     <a class="next" href="../../topics/tools/lc-rlc-resonance.html"><span class="dir">Next</span><span>LC and RLC Resonance Calculator</span></a>
   </nav>
   <!-- pager:end -->

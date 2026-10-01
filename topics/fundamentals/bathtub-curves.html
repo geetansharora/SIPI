@@ -7,7 +7,7 @@
   <meta name="theme-color" content="#F7F8FA">
   <script>(function(){try{var t=localStorage.getItem('sipi-theme');if(t==='dark'||t==='system'){document.documentElement.setAttribute('data-theme',t);var m=document.querySelector('meta[name=theme-color]');if(m&&(t==='dark'||matchMedia('(prefers-color-scheme:dark)').matches))m.content='#0B1015';}}catch(e){}})();</script>
   <!-- theme:end -->
-<title>Bathtub curves and BER extrapolation | SIPI</title>
+<title>Bathtub Curves and BER Extrapolation | SIPI</title>
 <meta name="description" content="Why BER values such as 10⁻¹² are usually extrapolated, how bathtub curves separate DJ from RJ, and what the extrapolation assumes.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -19,20 +19,20 @@
   <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
   <meta property="og:type" content="article">
   <meta property="og:site_name" content="SIPI">
-  <meta property="og:title" content="Bathtub curves and BER extrapolation | SIPI">
+  <meta property="og:title" content="Bathtub Curves and BER Extrapolation | SIPI">
   <meta property="og:description" content="Why BER values such as 10⁻¹² are usually extrapolated, how bathtub curves separate DJ from RJ, and what the extrapolation assumes.">
   <meta property="og:url" content="https://sipi.work/topics/fundamentals/bathtub-curves.html">
   <meta property="og:image" content="https://sipi.work/assets/og/fundamentals/bathtub-curves.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
-  <meta property="og:image:alt" content="Bathtub curves and BER extrapolation: a figure from the page, on SIPI">
+  <meta property="og:image:alt" content="Bathtub Curves and BER Extrapolation: a figure from the page, on SIPI">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Bathtub curves and BER extrapolation | SIPI">
+  <meta name="twitter:title" content="Bathtub Curves and BER Extrapolation | SIPI">
   <meta name="twitter:description" content="Why BER values such as 10⁻¹² are usually extrapolated, how bathtub curves separate DJ from RJ, and what the extrapolation assumes.">
   <meta name="twitter:image" content="https://sipi.work/assets/og/fundamentals/bathtub-curves.png">
-  <meta name="twitter:image:alt" content="Bathtub curves and BER extrapolation: a figure from the page, on SIPI">
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Bathtub curves and BER extrapolation","description":"Why BER values such as 10⁻¹² are usually extrapolated, how bathtub curves separate DJ from RJ, and what the extrapolation assumes.","url":"https://sipi.work/topics/fundamentals/bathtub-curves.html","articleSection":"Fundamentals","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer","url":"https://www.linkedin.com/in/geetansh-arora-a645714a/","sameAs":["https://www.linkedin.com/in/geetansh-arora-a645714a/"]},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-09-26","image":"https://sipi.work/assets/og/fundamentals/bathtub-curves.png"}</script>
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"SIPI","item":"https://sipi.work/"},{"@type":"ListItem","position":2,"name":"Fundamentals","item":"https://sipi.work/#fundamentals"},{"@type":"ListItem","position":3,"name":"Bathtub curves and BER extrapolation"}]}</script>
+  <meta name="twitter:image:alt" content="Bathtub Curves and BER Extrapolation: a figure from the page, on SIPI">
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Bathtub Curves and BER Extrapolation","description":"Why BER values such as 10⁻¹² are usually extrapolated, how bathtub curves separate DJ from RJ, and what the extrapolation assumes.","url":"https://sipi.work/topics/fundamentals/bathtub-curves.html","articleSection":"Fundamentals","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer","url":"https://www.linkedin.com/in/geetansh-arora-a645714a/","sameAs":["https://www.linkedin.com/in/geetansh-arora-a645714a/"]},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-09-26","image":"https://sipi.work/assets/og/fundamentals/bathtub-curves.png"}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"SIPI","item":"https://sipi.work/"},{"@type":"ListItem","position":2,"name":"Fundamentals","item":"https://sipi.work/#fundamentals"},{"@type":"ListItem","position":3,"name":"Bathtub Curves and BER Extrapolation"}]}</script>
   <!-- meta:end -->
 </head>
 <body>
@@ -52,11 +52,11 @@
 <main>
   <div class="page-head">
     <p class="crumb"><a href="../../index.html#fundamentals">Fundamentals</a> / 14</p>
-    <h1>Bathtub curves and BER extrapolation</h1>
+    <h1>Bathtub Curves and BER Extrapolation</h1>
     <p class="byline">
       <!-- review:start --><span>By <a href="https://www.linkedin.com/in/geetansh-arora-a645714a/" target="_blank" rel="author noopener">Geetansh Arora</a> — Principal SI/PI Engineer</span><time datetime="2026-09-26" title="Technical review by Geetansh Arora on this date">26 Sep 2026</time><span>10 min</span><!-- review:end -->
     </p>
-    <!-- share:head:start --><div class="share share--head" data-share data-share-url="https://sipi.work/topics/fundamentals/bathtub-curves.html" data-share-title="Bathtub curves and BER extrapolation"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Ffundamentals%2Fbathtub-curves.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Ffundamentals%2Fbathtub-curves.html&amp;text=Bathtub%20curves%20and%20BER%20extrapolation" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=Bathtub%20curves%20and%20BER%20extrapolation&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Ffundamentals%2Fbathtub-curves.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:head:end -->
+    <!-- share:head:start --><div class="share share--head" data-share data-share-url="https://sipi.work/topics/fundamentals/bathtub-curves.html" data-share-title="Bathtub Curves and BER Extrapolation"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Ffundamentals%2Fbathtub-curves.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Ffundamentals%2Fbathtub-curves.html&amp;text=Bathtub%20Curves%20and%20BER%20Extrapolation" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=Bathtub%20Curves%20and%20BER%20Extrapolation&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Ffundamentals%2Fbathtub-curves.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:head:end -->
     <p class="answer">
       A bathtub curve answers the question an eye diagram cannot: not &ldquo;is there an
       opening?&rdquo; but &ldquo;how wide is the opening at the error rate I have to meet?&rdquo;
@@ -395,19 +395,19 @@
     <h3>Related</h3>
     <ul class="tight">
       <li><a href="../fundamentals/jitter-taxonomy.html">Jitter Components: RJ, DJ, DCD, PJ, and TJ</a></li>
-      <li><a href="../fundamentals/eye-diagram.html">Eye Diagrams: Construction and Interpretation</a></li>
-      <li><a href="../signal-integrity/statistical-vs-time-domain.html">Statistical and Time-Domain Channel Simulation</a></li>
+      <li><a href="../fundamentals/eye-diagram.html">Eye Diagram: How to Read Eye Height and Eye Width</a></li>
+      <li><a href="../signal-integrity/statistical-vs-time-domain.html">Statistical vs Bit-by-Bit Channel Simulation</a></li>
       <li><a href="../methodology/reporting-margin.html">Reporting Signal and Power Integrity Margin</a></li>
       <li><a href="../tools/ber-q-jitter.html">BER, Q-Factor and Total Jitter Calculator</a></li>
     </ul>
   </div>
 
-  <!-- share:foot:start --><div class="share share--foot" data-share data-share-url="https://sipi.work/topics/fundamentals/bathtub-curves.html" data-share-title="Bathtub curves and BER extrapolation"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Ffundamentals%2Fbathtub-curves.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Ffundamentals%2Fbathtub-curves.html&amp;text=Bathtub%20curves%20and%20BER%20extrapolation" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=Bathtub%20curves%20and%20BER%20extrapolation&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Ffundamentals%2Fbathtub-curves.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:foot:end -->
+  <!-- share:foot:start --><div class="share share--foot" data-share data-share-url="https://sipi.work/topics/fundamentals/bathtub-curves.html" data-share-title="Bathtub Curves and BER Extrapolation"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Ffundamentals%2Fbathtub-curves.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Ffundamentals%2Fbathtub-curves.html&amp;text=Bathtub%20Curves%20and%20BER%20Extrapolation" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=Bathtub%20Curves%20and%20BER%20Extrapolation&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Ffundamentals%2Fbathtub-curves.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:foot:end -->
 
   <!-- pager:start -->
   <nav class="pager" aria-label="Previous and next topic">
     <a class="prev" href="../../topics/fundamentals/jitter-taxonomy.html"><span class="dir">Previous</span><span>Jitter Components: RJ, DJ, DCD, PJ, and TJ</span></a>
-    <a class="next" href="../../topics/fundamentals/differential-signalling.html"><span class="dir">Next</span><span>Differential Signaling and Mode Conversion</span></a>
+    <a class="next" href="../../topics/fundamentals/differential-signalling.html"><span class="dir">Next</span><span>Differential Signaling: Common Mode and Mode Conversion</span></a>
   </nav>
   <!-- pager:end -->
 </main>

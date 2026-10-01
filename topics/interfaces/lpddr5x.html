@@ -7,7 +7,7 @@
   <meta name="theme-color" content="#F7F8FA">
   <script>(function(){try{var t=localStorage.getItem('sipi-theme');if(t==='dark'||t==='system'){document.documentElement.setAttribute('data-theme',t);var m=document.querySelector('meta[name=theme-color]');if(m&&(t==='dark'||matchMedia('(prefers-color-scheme:dark)').matches))m.content='#0B1015';}}catch(e){}})();</script>
   <!-- theme:end -->
-<title>LPDDR5 and LPDDR5X Signal Integrity: Timing, ODT, and Training | SIPI</title>
+<title>LPDDR5/5X Signal Integrity: WCK, ODT and Training | SIPI</title>
 <meta name="description" content="How an LPDDR5X channel is signed off: WCK/CK architecture, why training exists, and why the enemies are crosstalk and SSN rather than loss.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -19,20 +19,20 @@
   <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
   <meta property="og:type" content="article">
   <meta property="og:site_name" content="SIPI">
-  <meta property="og:title" content="LPDDR5 and LPDDR5X Signal Integrity: Timing, ODT, and Training | SIPI">
+  <meta property="og:title" content="LPDDR5/5X Signal Integrity: WCK, ODT and Training | SIPI">
   <meta property="og:description" content="How an LPDDR5X channel is signed off: WCK/CK architecture, why training exists, and why the enemies are crosstalk and SSN rather than loss.">
   <meta property="og:url" content="https://sipi.work/topics/interfaces/lpddr5x.html">
   <meta property="og:image" content="https://sipi.work/assets/og/interfaces/lpddr5x.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
-  <meta property="og:image:alt" content="LPDDR5 and LPDDR5X Signal Integrity: Timing, ODT, and Training: a figure from the page, on SIPI">
+  <meta property="og:image:alt" content="LPDDR5/5X Signal Integrity: WCK, ODT and Training: a figure from the page, on SIPI">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="LPDDR5 and LPDDR5X Signal Integrity: Timing, ODT, and Training | SIPI">
+  <meta name="twitter:title" content="LPDDR5/5X Signal Integrity: WCK, ODT and Training | SIPI">
   <meta name="twitter:description" content="How an LPDDR5X channel is signed off: WCK/CK architecture, why training exists, and why the enemies are crosstalk and SSN rather than loss.">
   <meta name="twitter:image" content="https://sipi.work/assets/og/interfaces/lpddr5x.png">
-  <meta name="twitter:image:alt" content="LPDDR5 and LPDDR5X Signal Integrity: Timing, ODT, and Training: a figure from the page, on SIPI">
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"LPDDR5 and LPDDR5X Signal Integrity: Timing, ODT, and Training","description":"How an LPDDR5X channel is signed off: WCK/CK architecture, why training exists, and why the enemies are crosstalk and SSN rather than loss.","url":"https://sipi.work/topics/interfaces/lpddr5x.html","articleSection":"Interface sign-off","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer","url":"https://www.linkedin.com/in/geetansh-arora-a645714a/","sameAs":["https://www.linkedin.com/in/geetansh-arora-a645714a/"]},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-10-01","image":"https://sipi.work/assets/og/interfaces/lpddr5x.png"}</script>
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"SIPI","item":"https://sipi.work/"},{"@type":"ListItem","position":2,"name":"Interface sign-off","item":"https://sipi.work/#interfaces"},{"@type":"ListItem","position":3,"name":"LPDDR5 and LPDDR5X Signal Integrity: Timing, ODT, and Training"}]}</script>
+  <meta name="twitter:image:alt" content="LPDDR5/5X Signal Integrity: WCK, ODT and Training: a figure from the page, on SIPI">
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"LPDDR5/5X Signal Integrity: WCK, ODT and Training","description":"How an LPDDR5X channel is signed off: WCK/CK architecture, why training exists, and why the enemies are crosstalk and SSN rather than loss.","url":"https://sipi.work/topics/interfaces/lpddr5x.html","articleSection":"Interface sign-off","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer","url":"https://www.linkedin.com/in/geetansh-arora-a645714a/","sameAs":["https://www.linkedin.com/in/geetansh-arora-a645714a/"]},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-10-01","image":"https://sipi.work/assets/og/interfaces/lpddr5x.png"}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"SIPI","item":"https://sipi.work/"},{"@type":"ListItem","position":2,"name":"Interface sign-off","item":"https://sipi.work/#interfaces"},{"@type":"ListItem","position":3,"name":"LPDDR5/5X Signal Integrity: WCK, ODT and Training"}]}</script>
   <!-- meta:end -->
 </head>
 <body>
@@ -52,11 +52,11 @@
 <main>
   <div class="page-head">
     <p class="crumb"><a href="../../index.html#interfaces">Interface sign-off</a> / 01</p>
-    <h1>LPDDR5 and LPDDR5X Signal Integrity: Timing, ODT, and Training</h1>
+    <h1>LPDDR5/5X Signal Integrity: WCK, ODT and Training</h1>
     <p class="byline">
       <!-- review:start --><span>By <a href="https://www.linkedin.com/in/geetansh-arora-a645714a/" target="_blank" rel="author noopener">Geetansh Arora</a> — Principal SI/PI Engineer</span><time datetime="2026-10-01" title="Technical review by Geetansh Arora on this date">1 Oct 2026</time><span>10 min</span><!-- review:end -->
     </p>
-    <!-- share:head:start --><div class="share share--head" data-share data-share-url="https://sipi.work/topics/interfaces/lpddr5x.html" data-share-title="LPDDR5 and LPDDR5X Signal Integrity: Timing, ODT, and Training"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Flpddr5x.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Flpddr5x.html&amp;text=LPDDR5%20and%20LPDDR5X%20Signal%20Integrity%3A%20Timing%2C%20ODT%2C%20and%20Training" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=LPDDR5%20and%20LPDDR5X%20Signal%20Integrity%3A%20Timing%2C%20ODT%2C%20and%20Training&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Flpddr5x.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:head:end -->
+    <!-- share:head:start --><div class="share share--head" data-share data-share-url="https://sipi.work/topics/interfaces/lpddr5x.html" data-share-title="LPDDR5/5X Signal Integrity: WCK, ODT and Training"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Flpddr5x.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Flpddr5x.html&amp;text=LPDDR5%2F5X%20Signal%20Integrity%3A%20WCK%2C%20ODT%20and%20Training" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=LPDDR5%2F5X%20Signal%20Integrity%3A%20WCK%2C%20ODT%20and%20Training&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Flpddr5x.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:head:end -->
     <p class="answer">
       LPDDR5X is a wide parallel bus where every bit has its own wire and a strobe travels
       alongside to say when to sample. That makes it a <em>timing</em> problem rather than a loss
@@ -478,7 +478,7 @@
     <ul class="tight">
       <li><a href="../fundamentals/crosstalk.html">PCB Crosstalk: NEXT, FEXT, and Mutual Coupling</a></li>
       <li><a href="../power-integrity/ssn-ground-bounce.html">Simultaneous Switching Noise and Ground Bounce</a></li>
-      <li><a href="../fundamentals/termination-schemes.html">Transmission-Line Termination Schemes</a></li>
+      <li><a href="../fundamentals/termination-schemes.html">Termination Schemes: Series, Parallel, Thevenin and AC</a></li>
       <li><a href="../package-board/bga-escape-routing.html">BGA Escape Routing and Breakout Congestion</a></li>
     </ul>
   </div>
@@ -493,12 +493,12 @@
       <p class="sources__note">Rows marked with a claim id are tracked in <a href="../../docs/claims.md">the claim ledger</a>, which records what each source can and cannot establish.</p>
     </section>
     <!-- sources:end -->
-  <!-- share:foot:start --><div class="share share--foot" data-share data-share-url="https://sipi.work/topics/interfaces/lpddr5x.html" data-share-title="LPDDR5 and LPDDR5X Signal Integrity: Timing, ODT, and Training"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Flpddr5x.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Flpddr5x.html&amp;text=LPDDR5%20and%20LPDDR5X%20Signal%20Integrity%3A%20Timing%2C%20ODT%2C%20and%20Training" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=LPDDR5%20and%20LPDDR5X%20Signal%20Integrity%3A%20Timing%2C%20ODT%2C%20and%20Training&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Flpddr5x.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:foot:end -->
+  <!-- share:foot:start --><div class="share share--foot" data-share data-share-url="https://sipi.work/topics/interfaces/lpddr5x.html" data-share-title="LPDDR5/5X Signal Integrity: WCK, ODT and Training"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Flpddr5x.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Flpddr5x.html&amp;text=LPDDR5%2F5X%20Signal%20Integrity%3A%20WCK%2C%20ODT%20and%20Training" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=LPDDR5%2F5X%20Signal%20Integrity%3A%20WCK%2C%20ODT%20and%20Training&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Flpddr5x.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:foot:end -->
 
   <!-- pager:start -->
   <nav class="pager" aria-label="Previous and next topic">
     <a class="prev" href="../../topics/package-board/package-and-system.html"><span class="dir">Previous</span><span>Package Interconnects as Transmission Lines</span></a>
-    <a class="next" href="../../topics/interfaces/pcie-gen4-gen5.html"><span class="dir">Next</span><span>PCIe 4.0 and 5.0 Signal Integrity: Loss and Equalization</span></a>
+    <a class="next" href="../../topics/interfaces/pcie-gen4-gen5.html"><span class="dir">Next</span><span>PCIe Gen 4 and Gen 5 Signal Integrity: Loss and EQ</span></a>
   </nav>
   <!-- pager:end -->
 </main>
