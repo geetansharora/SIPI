@@ -450,6 +450,38 @@ const MUTATIONS = [
     active: true, fast: true
   },
   {
+    id: 'tdr-no-time-shift',
+    file: 'js/models/tdr-model.js',
+    find: '    const shift = Math.round(ramp / 2);',
+    with: '    const shift = 0;',
+    suite: 'TDR page',
+    expect: 'a section appears at its round-trip time',
+    why: 'Time zero must be the edge\u2019s 50% point, or every feature is drawn half an '
+       + 'edge further away than it is.',
+    active: true, fast: true
+  },
+  {
+    id: 'tdr-open-as-resistor',
+    file: 'js/models/tdr-model.js',
+    find: "    const zl = p.load === 'open' ? Infinity : p.load === 'short' ? 0 : p.load === 'r' ? p.rl : Z0;",
+    with: "    const zl = p.load === 'open' ? 1e3 : p.load === 'short' ? 0 : p.load === 'r' ? p.rl : Z0;",
+    suite: 'TDR page',
+    expect: 'an open end reads rho = +1',
+    why: 'An open is the limit, not a large resistor: 1 kohm on 50 ohm reflects 0.905.',
+    active: true, fast: true
+  },
+  {
+    id: 'tdr-rise-as-full-ramp',
+    file: 'js/models/tdr-model.js',
+    find: "  const RAMP_PER_1090 = 1 / 0.5903; // a raised cosine's 10-90% is 0.5903 of its full ramp",
+    with: '  const RAMP_PER_1090 = 1;',
+    suite: 'TDR page',
+    expect: "rises in the edge's own",
+    why: 'A rise time is quoted 10-90%; reading it as the whole ramp makes every edge '
+       + '0.59 times as fast as the panel says.',
+    active: true, fast: true
+  },
+  {
     id: 'eye-contour-best-one',
     file: 'js/viz-kit.js',
     find: '        if (bits[b]) { if (v < top) top = v; } else if (v > bottom) bottom = v;',

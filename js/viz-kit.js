@@ -1211,20 +1211,33 @@
      discontinuities sharper than any equipment could resolve, which is exactly
      the impression a reader should not be given. Resolution is about
      tr·v/2: the round trip halves it. */
-  K.tdrProfile = function (s11Imp, z0, trSamples, nOut) {
+  /* The reflection coefficient itself: the S11 impulse response integrated
+     against a raised-cosine edge that rises over trSamples. The edge is 1 after
+     its ramp, so everything older than the ramp contributes a plain running sum;
+     only the last trSamples terms need the edge's shape. O(N·k), not O(N²): the
+     same numbers as the direct convolution, fast enough to redraw on a drag. */
+  K.tdrReflection = function (s11Imp, trSamples, nOut) {
     const N = Math.min(s11Imp.length, nOut);
     const k = Math.max(1, Math.round(trSamples));
-    const edge = new Float64Array(N);
+    const edge = new Float64Array(k);
+    for (let i = 0; i < k; i++) edge[i] = 0.5 - 0.5 * Math.cos(Math.PI * i / k);
+    const rho = new Float64Array(N);
+    let settled = 0;                                   // sum of s11Imp[0 .. i-k]
     for (let i = 0; i < N; i++) {
-      const u = i / k;
-      edge[i] = u >= 1 ? 1 : 0.5 - 0.5 * Math.cos(Math.PI * u);
+      if (i - k >= 0) settled += s11Imp[i - k];
+      let acc = settled;
+      for (let d = 0; d < k && d <= i; d++) acc += s11Imp[i - d] * edge[d];
+      rho[i] = acc;
     }
-    const out = new Float64Array(N);
-    for (let i = 0; i < N; i++) {
-      let acc = 0;
-      for (let j = 0; j <= i; j++) acc += s11Imp[j] * edge[i - j];
-      const rho = Math.max(-0.98, Math.min(0.98, acc));
-      out[i] = z0 * (1 + rho) / (1 - rho);
+    return rho;
+  };
+
+  K.tdrProfile = function (s11Imp, z0, trSamples, nOut) {
+    const rho = K.tdrReflection(s11Imp, trSamples, nOut);
+    const out = new Float64Array(rho.length);
+    for (let i = 0; i < rho.length; i++) {
+      const r = Math.max(-0.98, Math.min(0.98, rho[i]));
+      out[i] = z0 * (1 + r) / (1 - r);
     }
     return out;
   };

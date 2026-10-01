@@ -1,0 +1,398 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- theme:start -->
+  <meta name="theme-color" content="#F7F8FA">
+  <script>(function(){try{var t=localStorage.getItem('sipi-theme');if(t==='dark'||t==='system'){document.documentElement.setAttribute('data-theme',t);var m=document.querySelector('meta[name=theme-color]');if(m&&(t==='dark'||matchMedia('(prefers-color-scheme:dark)').matches))m.content='#0B1015';}}catch(e){}})();</script>
+  <!-- theme:end -->
+<title>Time-Domain Reflectometry: Reading Impedance Along a Channel | SIPI</title>
+<meta name="description" content="How a TDR turns reflections into an impedance map of a channel: reading dips, bumps and steps, why the edge limits resolution, why loss and masking distort the reading, and how to measure a via from the area of its dip.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<link rel="stylesheet" href="../../css/base.css?v=1e3ae753">
+<link rel="stylesheet" href="../../css/components.css?v=701d7475">
+  <!-- meta:start -->
+  <link rel="canonical" href="https://sipi.work/topics/fundamentals/tdr.html">
+  <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="SIPI">
+  <meta property="og:title" content="Time-Domain Reflectometry: Reading Impedance Along a Channel | SIPI">
+  <meta property="og:description" content="How a TDR turns reflections into an impedance map of a channel: reading dips, bumps and steps, why the edge limits resolution, why loss and masking distort the reading, and how to measure a via from the area of its dip.">
+  <meta property="og:url" content="https://sipi.work/topics/fundamentals/tdr.html">
+  <meta property="og:image" content="https://sipi.work/assets/og/fundamentals/tdr.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Time-Domain Reflectometry: Reading Impedance Along a Channel: a figure from the page, on SIPI">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Time-Domain Reflectometry: Reading Impedance Along a Channel | SIPI">
+  <meta name="twitter:description" content="How a TDR turns reflections into an impedance map of a channel: reading dips, bumps and steps, why the edge limits resolution, why loss and masking distort the reading, and how to measure a via from the area of its dip.">
+  <meta name="twitter:image" content="https://sipi.work/assets/og/fundamentals/tdr.png">
+  <meta name="twitter:image:alt" content="Time-Domain Reflectometry: Reading Impedance Along a Channel: a figure from the page, on SIPI">
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Time-Domain Reflectometry: Reading Impedance Along a Channel","description":"How a TDR turns reflections into an impedance map of a channel: reading dips, bumps and steps, why the edge limits resolution, why loss and masking distort the reading, and how to measure a via from the area of its dip.","url":"https://sipi.work/topics/fundamentals/tdr.html","articleSection":"Fundamentals","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer","url":"https://www.linkedin.com/in/geetansh-arora-a645714a/","sameAs":["https://www.linkedin.com/in/geetansh-arora-a645714a/"]},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-10-01","image":"https://sipi.work/assets/og/fundamentals/tdr.png"}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"SIPI","item":"https://sipi.work/"},{"@type":"ListItem","position":2,"name":"Fundamentals","item":"https://sipi.work/#fundamentals"},{"@type":"ListItem","position":3,"name":"Time-Domain Reflectometry: Reading Impedance Along a Channel"}]}</script>
+  <!-- meta:end -->
+</head>
+<body>
+
+<header class="masthead">
+  <a class="wordmark" href="../../index.html">SIPI</a>
+  <button class="theme-toggle" data-act="theme" type="button">Light</button>
+  <nav aria-label="Site">
+    <a href="../../start.html">Start</a>
+    <a href="../../index.html#groundwork">Topics</a>
+    <a href="../../labs.html">Labs</a>
+    <a href="../../calculators.html">Calculators</a>
+    <a href="../../colophon.html">About</a>
+  </nav>
+</header>
+
+<main>
+  <div class="page-head">
+    <p class="crumb"><a href="../../index.html#fundamentals">Fundamentals</a> / 05</p>
+    <h1>Time-Domain Reflectometry: Reading Impedance Along a Channel</h1>
+    <p class="byline">
+      <!-- review:start --><span>By <a href="https://www.linkedin.com/in/geetansh-arora-a645714a/" target="_blank" rel="author noopener">Geetansh Arora</a> — Principal SI/PI Engineer</span><time datetime="2026-10-01" title="Technical review by Geetansh Arora on this date">1 Oct 2026</time><span>10 min</span><!-- review:end -->
+    </p>
+    <!-- share:head:start --><div class="share share--head" data-share data-share-url="https://sipi.work/topics/fundamentals/tdr.html" data-share-title="Time-Domain Reflectometry: Reading Impedance Along a Channel"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Ffundamentals%2Ftdr.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Ffundamentals%2Ftdr.html&amp;text=Time-Domain%20Reflectometry%3A%20Reading%20Impedance%20Along%20a%20Channel" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=Time-Domain%20Reflectometry%3A%20Reading%20Impedance%20Along%20a%20Channel&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Ffundamentals%2Ftdr.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:head:end -->
+    <p class="answer">
+      A time-domain reflectometer sends a fast step into a channel and records what comes back. Every change in
+      impedance returns part of the step, and it returns after the time it takes to get there and back, so the trace
+      is a map: time on the screen is distance along the channel, and the height of the trace is the impedance
+      there. Reading it well is mostly a matter of knowing what the edge hides.
+    </p>
+  </div>
+
+  <!-- ───────────── the picture ───────────── -->
+  <!-- mobilenote:start -->
+  <p class="mobile-note" role="note">
+    <b>Best viewed on a laptop or desktop.</b>
+    These panels are built so you can move a slider and watch several charts
+    answer at once. A phone has no room to put them side by side.
+  </p>
+  <!-- mobilenote:end -->
+  <section class="instrument lab" data-viz="tdr" aria-label="Interactive time-domain reflectometer: build a channel from a launch, vias, a trace, a section at another impedance and a load, and compare the impedance the TDR reports with the channel as built">
+    <script type="application/json" data-contract>{"kind":"numerical","evidence":"independent","purpose":"Show what a TDR reports for a channel built from a few sections, against what the channel is: where features appear, how the edge limits resolution, and how loss and masking distort the reading.","equations":["Gamma(f) from the cascade's ABCD: Zin = (A ZL + B)/(C ZL + D), Gamma = (Zin - Z0)/(Zin + Z0)","rho(t) = integral of the S11 impulse response against a raised-cosine edge of 10-90% rise t_r","Z(t) = Z0 (1 + rho)/(1 - rho), the naive single-reflection reading, with no layer peeling","distance = round-trip time x v / 2, at 170 ps/in"],"units":"ohm, ps, in, pF, nH, dB/in","validity":"TEM sections with the kit's lossy-line material (Dk 4.03, two-term loss law, complex Zc); lumped vias; a matched 50 ohm instrument; the edge is a raised cosine.","numerics":"S11 on an 8192-point grid at 1 ps (an 8.2 ns record), inverse FFT, O(N k) edge integration; time zero at the edge's 50% point.","limitations":"Single-ended only; no instrument or probe parasitics, no cable loss before the reference plane, no layer peeling, no dispersion beyond the loss law.","suites":["TDR page"],"version":"1.0","reviewed":"2026-10-01","panel":"tdr"}</script>
+<div class="lab-frame">
+<div class="instrument__bar">
+      <span class="instrument__title">Build a channel &#183; read its TDR</span>
+      <span data-evidence="independent" data-model-version="1.0" class="model-tag model-tag--numerical" title="Cascade of TEM sections and lumped vias; S11 by inverse FFT; a raised-cosine edge.">numerical</span>
+      <span class="instrument__readout" role="status" aria-live="polite" aria-label="Current values">
+        <span>edge length <b data-out="edge">—</b></span>
+        <span>resolves <b data-out="res">—</b></span>
+        <span>round trip to the load <b data-out="rt">—</b></span>
+        <span>lowest <b data-out="min">—</b></span>
+        <span>highest <b data-out="max">—</b></span>
+      </span>
+    <button type="button" class="tool-btn lab-full" data-lab-full aria-pressed="false">full screen</button>
+</div>
+<aside class="lab-rail lab-rail--left" aria-label="Instrument and trace controls">
+<p class="lab-rail__side">Instrument and trace <span>what you send, and along what</span></p>
+<details class="control-group lab-group" open><summary class="lab-group__title" id="lab-left-0">Scenarios</summary><div class="control-group__grid lab-group__body"><div class="presets">
+      <button class="preset" type="button" data-preset="via" aria-pressed="true">A via: the dip</button>
+      <button class="preset" type="button" data-preset="clean" aria-pressed="false">A clean 50 Ω line</button>
+      <button class="preset" type="button" data-preset="inductive" aria-pressed="false">An inductive via</button>
+      <button class="preset" type="button" data-preset="merge" aria-pressed="false">Two vias, one dip</button>
+      <button class="preset" type="button" data-preset="resolve" aria-pressed="false">The same two, faster edge</button>
+      <button class="preset" type="button" data-preset="neck" aria-pressed="false">A short neck reads shallow</button>
+      <button class="preset" type="button" data-preset="mask" aria-pressed="false">Masking behind a mismatch</button>
+      <button class="preset" type="button" data-preset="loss" aria-pressed="false">Loss makes the line climb</button>
+      <button class="preset" type="button" data-preset="open" aria-pressed="false">An open end</button>
+    </div>
+    <div class="transport"><span data-out="note">—</span></div></div></details>
+<details class="control-group lab-group" open><summary class="lab-group__title" id="lab-left-1">Edge</summary><div class="control-group__grid lab-group__body"><div class="ctl">
+        <div class="ctl__head"><label for="td-tr">Rise time, 10–90%</label><output id="td-tr-out" for="td-tr">35 ps</output></div>
+        <input type="range" id="td-tr" min="0" max="1000" step="1" value="470">
+        <span class="ctl__note">Sets what you can resolve</span>
+      </div></div></details>
+<details class="control-group lab-group" open><summary class="lab-group__title" id="lab-left-2">Trace</summary><div class="control-group__grid lab-group__body"><div class="ctl">
+        <div class="ctl__head"><label for="td-zt">Trace impedance</label><output id="td-zt-out" for="td-zt">50 Ω</output></div>
+        <input type="range" id="td-zt" min="35" max="70" step="1" value="50">
+        <span class="ctl__note">Against the 50 Ω launch</span>
+      </div><div class="ctl">
+        <div class="ctl__head"><label for="td-l1">Length before the section</label><output id="td-l1-out" for="td-l1">2.0 in</output></div>
+        <input type="range" id="td-l1" min="1" max="50" step="1" value="20">
+        <span class="ctl__note">Moves the section away</span>
+      </div><div class="ctl">
+        <div class="ctl__head"><label for="td-l2">Length after it</label><output id="td-l2-out" for="td-l2">2.0 in</output></div>
+        <input type="range" id="td-l2" min="1" max="50" step="1" value="20">
+        <span class="ctl__note">Moves the load away</span>
+      </div><div class="ctl">
+        <div class="ctl__head"><label for="td-loss">Loss at 10 GHz</label><output id="td-loss-out" for="td-loss">0.0 dB/in</output></div>
+        <input type="range" id="td-loss" min="0" max="25" step="1" value="0">
+        <span class="ctl__note">Makes a uniform line climb</span>
+      </div></div></details>
+<p class="lab-help" aria-hidden="true">Point at or focus a control to see what it changes.</p>
+</aside>
+<div class="lab-stage">
+<div class="lab-row lab-row--anchor" style="--anchor-columns: minmax(0, 1fr)">
+<div data-lab-unit="profile" data-lab-name="Impedance along the channel" class="panel">
+        <div class="lab-panel-head"><span class="panel__label">What the TDR reads, over the channel as built</span><button type="button" class="tool-btn lab-expand" data-lab-expand aria-pressed="false" aria-label="Expand impedance along the channel">expand</button></div>
+        <canvas data-cv="profile" role="img" aria-label="Impedance in ohms against distance from the reference plane: the channel as built drawn as dashed steps with the vias marked, and the impedance the TDR reports drawn over it."></canvas>
+        <div class="legend"><span><i style="background:var(--signal)"></i>what the TDR reads</span><span><i class="dash" style="color:var(--ink-2)"></i>the channel as built</span></div>
+      </div>
+<div data-lab-unit="scope" data-lab-name="What the instrument records" class="panel">
+        <div class="lab-panel-head"><span class="panel__label">What the instrument records: reflection against round-trip time</span><button type="button" class="tool-btn lab-expand" data-lab-expand aria-pressed="false" aria-label="Expand what the instrument records">expand</button></div>
+        <canvas data-cv="scope" role="img" aria-label="The reflection coefficient against round-trip time in picoseconds, with the round trip to the load marked."></canvas>
+        <div class="legend"><span><i style="background:var(--signal)"></i>reflection coefficient ρ</span></div>
+      </div>
+</div>
+</div>
+<aside class="lab-rail lab-rail--right" aria-label="Feature and termination controls">
+<p class="lab-rail__side">Features and the end <span>what reflects</span></p>
+<details class="control-group lab-group" open><summary class="lab-group__title" id="lab-right-0">Via</summary><div class="control-group__grid lab-group__body"><div class="ctl">
+        <div class="ctl__head"><span class="ctl__label">Via</span></div>
+        <div class="presets" id="td-via" role="group" aria-label="Via type">
+          <button class="preset preset--act" type="button" data-act="via" data-via="c" aria-pressed="true">Capacitive</button>
+          <button class="preset preset--act" type="button" data-act="via" data-via="l" aria-pressed="false">Inductive</button>
+          <button class="preset preset--act" type="button" data-act="via" data-via="none" aria-pressed="false">None</button>
+        </div>
+        <span class="ctl__note">A shunt capacitance dips, a series inductance bumps</span>
+      </div><div class="ctl" data-ctl="vs">
+        <div class="ctl__head"><label for="td-vs">Size</label><output id="td-vs-out" for="td-vs">0.50 pF</output></div>
+        <input type="range" id="td-vs" min="1" max="200" step="1" value="50">
+        <span class="ctl__note">Bigger feature, bigger reflection</span>
+      </div><div class="ctl" data-ctl="via2">
+        <div class="ctl__head"><span class="ctl__label">A second, identical via</span></div>
+        <label class="check" for="td-via2"><input type="checkbox" id="td-via2"> after a gap</label>
+        <span class="ctl__note">For the resolution lesson</span>
+      </div><div class="ctl" data-ctl="gap" hidden>
+        <div class="ctl__head"><label for="td-gap">Gap between them</label><output id="td-gap-out" for="td-gap">60 ps</output></div>
+        <input type="range" id="td-gap" min="2" max="200" step="1" value="60">
+        <span class="ctl__note">One way; the reflections are twice this apart</span>
+      </div></div></details>
+<details class="control-group lab-group" open><summary class="lab-group__title" id="lab-right-1">Section</summary><div class="control-group__grid lab-group__body"><div class="ctl">
+        <div class="ctl__head"><label for="td-zs">Section impedance</label><output id="td-zs-out" for="td-zs">50 Ω</output></div>
+        <input type="range" id="td-zs" min="25" max="80" step="1" value="50">
+        <span class="ctl__note">A connector, a neck, a pad</span>
+      </div><div class="ctl">
+        <div class="ctl__head"><label for="td-sps">Section length</label><output id="td-sps-out" for="td-sps">0 ps</output></div>
+        <input type="range" id="td-sps" min="0" max="200" step="1" value="0">
+        <span class="ctl__note">One way; compare it with the edge</span>
+      </div></div></details>
+<details class="control-group lab-group" open><summary class="lab-group__title" id="lab-right-2">Termination</summary><div class="control-group__grid lab-group__body"><div class="ctl">
+        <div class="ctl__head"><span class="ctl__label">Load</span></div>
+        <div class="presets" id="td-load" role="group" aria-label="Load">
+          <button class="preset preset--act" type="button" data-act="load" data-load="match" aria-pressed="true">50 Ω</button>
+          <button class="preset preset--act" type="button" data-act="load" data-load="open" aria-pressed="false">Open</button>
+          <button class="preset preset--act" type="button" data-act="load" data-load="short" aria-pressed="false">Short</button>
+          <button class="preset preset--act" type="button" data-act="load" data-load="r" aria-pressed="false">Resistor</button>
+        </div>
+        <span class="ctl__note">How the line ends</span>
+      </div><div class="ctl" data-ctl="rl" hidden>
+        <div class="ctl__head"><label for="td-rl">Resistor</label><output id="td-rl-out" for="td-rl">50 Ω</output></div>
+        <input type="range" id="td-rl" min="5" max="200" step="1" value="50">
+        <span class="ctl__note">Above 50 Ω the end steps up</span>
+      </div></div></details>
+<p class="lab-help" aria-hidden="true">Point at or focus a control to see what it changes.</p>
+</aside>
+</div>
+  </section>
+  <div class="prose">
+    <h2 class="section-rule"><span>What the instrument does</span></h2>
+    <p>
+      A TDR is a step generator and a sampling scope on the same port. The step travels down the channel, and wherever
+      the impedance changes, part of it is reflected with the coefficient from the <a href="reflections.html">reflections
+      page</a>, &#915; = (Z<sub>2</sub> &#8722; Z<sub>1</sub>)/(Z<sub>2</sub> + Z<sub>1</sub>). The scope sees each
+      reflection arrive back at the port. A reflection from a feature at distance x has travelled to it and back, so
+      it arrives at the round-trip time 2x/v. At 170 ps per inch, typical of stripline, each inch of trace is 340 ps of
+      round trip.
+    </p>
+    <p>
+      The instrument records the reflection coefficient &#961; against that time, and most will also show it as an
+      impedance, by inverting the same formula:
+    </p>
+    <div class="eq">
+      <span class="eq__main"><i class="var">Z</i>(<i class="var">t</i>) = <i class="var">Z</i><sub>0</sub> · (1 + &#961;) / (1 &#8722; &#961;)
+        &nbsp;&nbsp;&nbsp;&nbsp; <i class="var">x</i> = <i class="var">t</i> · <i class="var">v</i> / 2</span>
+      <span class="eq__note">exact for the first reflection; everything behind it is seen through what came before</span>
+    </div>
+    <p>
+      The panel above does exactly that. Its lower chart is the raw record, &#961; against round-trip time. Its upper
+      chart converts both axes, to impedance against distance, and draws the channel as it was built underneath, so you
+      can see where the reading tells the truth and where it does not.
+    </p>
+
+    <h2 class="section-rule"><span>Reading the shapes</span></h2>
+    <p>
+      Most of what a TDR shows is a handful of shapes. Learn them first, and the numbers make sense afterwards.
+    </p>
+
+    <figure class="figure">
+      <div class="figure__bar"><span>Six shapes to recognise &#183; each one computed by the panel&#8217;s model, not drawn</span></div>
+      <div class="figure__body"><svg viewBox="0 0 400 214" role="img" aria-label="Six small traces of reflection against time: a dip for a shunt capacitance, a bump for a series inductance, a step down and back for a lower-impedance section, a slow climb for a lossy uniform line, a rise to plus one for an open end, and a fall to minus one for a short.">
+  <path d="M14,48.0 L126,48.0" class="tick" style="stroke-dasharray: 3 3"/>
+  <path d="M14.0,48.0 L14.5,48.0 L15.1,48.0 L15.6,48.0 L16.2,48.0 L16.7,48.0 L17.3,48.0 L17.8,48.0 L18.4,48.0 L18.9,48.0 L19.5,48.0 L20.0,48.0 L20.6,48.0 L21.1,48.0 L21.6,48.0 L22.2,48.0 L22.7,48.0 L23.3,48.0 L23.8,48.0 L24.4,48.0 L24.9,48.0 L25.5,48.0 L26.0,48.0 L26.6,48.0 L27.1,48.0 L27.7,48.0 L28.2,48.0 L28.8,48.0 L29.3,48.0 L29.8,48.0 L30.4,48.0 L30.9,48.0 L31.5,48.0 L32.0,48.0 L32.6,48.0 L33.1,48.0 L33.7,48.0 L34.2,48.0 L34.8,48.0 L35.3,48.0 L35.9,48.0 L36.4,48.0 L36.9,48.0 L37.5,48.0 L38.0,48.0 L38.6,48.0 L39.1,49.6 L39.7,53.3 L40.2,58.2 L40.8,63.1 L41.3,67.2 L41.9,69.9 L42.4,70.6 L43.0,69.3 L43.5,66.0 L44.0,61.0 L44.6,56.7 L45.1,53.8 L45.7,51.9 L46.2,50.6 L46.8,49.8 L47.3,49.2 L47.9,48.8 L48.4,48.5 L49.0,48.4 L49.5,48.2 L50.1,48.2 L50.6,48.1 L51.2,48.1 L51.7,48.0 L52.2,48.0 L52.8,48.0 L53.3,48.0 L53.9,48.0 L54.4,48.0 L55.0,48.0 L55.5,48.0 L56.1,48.0 L56.6,48.0 L57.2,48.0 L57.7,48.0 L58.3,48.0 L58.8,48.0 L59.3,48.0 L59.9,48.0 L60.4,48.0 L61.0,48.0 L61.5,48.0 L62.1,48.0 L62.6,48.0 L63.2,48.0 L63.7,48.0 L64.3,48.0 L64.8,48.0 L65.4,48.0 L65.9,48.0 L66.4,48.0 L67.0,48.0 L67.5,48.0 L68.1,48.0 L68.6,48.0 L69.2,48.0 L69.7,48.0 L70.3,48.0 L70.8,48.0 L71.4,48.0 L71.9,48.0 L72.5,48.0 L73.0,48.0 L73.6,48.0 L74.1,48.0 L74.6,48.0 L75.2,48.0 L75.7,48.0 L76.3,48.0 L76.8,48.0 L77.4,48.0 L77.9,48.0 L78.5,48.0 L79.0,48.0 L79.6,48.0 L80.1,48.0 L80.7,48.0 L81.2,48.0 L81.7,48.0 L82.3,48.0 L82.8,48.0 L83.4,48.0 L83.9,48.0 L84.5,48.0 L85.0,48.0 L85.6,48.0 L86.1,48.0 L86.7,48.0 L87.2,48.0 L87.8,48.0 L88.3,48.0 L88.8,48.0 L89.4,48.0 L89.9,48.0 L90.5,48.0 L91.0,48.0 L91.6,48.0 L92.1,48.0 L92.7,48.0 L93.2,48.0 L93.8,48.0 L94.3,48.0 L94.9,48.0 L95.4,48.0 L96.0,48.0 L96.5,48.0 L97.0,48.0 L97.6,48.0 L98.1,48.0 L98.7,48.0 L99.2,48.0 L99.8,48.0 L100.3,48.0 L100.9,48.0 L101.4,48.0 L102.0,48.0 L102.5,48.0 L103.1,48.0 L103.6,48.0 L104.1,48.0 L104.7,48.0 L105.2,48.0 L105.8,48.0 L106.3,48.0 L106.9,48.0 L107.4,48.0 L108.0,48.0 L108.5,48.0 L109.1,48.0 L109.6,48.0 L110.2,48.0 L110.7,48.0 L111.2,48.0 L111.8,48.0 L112.3,48.0 L112.9,48.0 L113.4,48.0 L114.0,48.0 L114.5,48.0 L115.1,48.0 L115.6,48.0 L116.2,48.0 L116.7,48.0 L117.3,48.0 L117.8,48.0 L118.4,48.0 L118.9,48.0 L119.4,48.0 L120.0,48.0 L120.5,48.0 L121.1,48.0 L121.6,48.0 L122.2,48.0 L122.7,48.0 L123.3,48.0 L123.8,48.0 L124.4,48.0 L124.9,48.0 L125.5,48.0 L126.0,48.0" class="flow" style="stroke-width: 1.8"/>
+  <text class="lbl-hi" x="14.0" y="16.0">a dip</text>
+  <text class="lbl" x="14.0" y="87.0">shunt C: via, pad</text>
+  <path d="M144,48.0 L256,48.0" class="tick" style="stroke-dasharray: 3 3"/>
+  <path d="M144.0,48.0 L144.5,48.0 L145.1,48.0 L145.6,48.0 L146.2,48.0 L146.7,48.0 L147.3,48.0 L147.8,48.0 L148.4,48.0 L148.9,48.0 L149.5,48.0 L150.0,48.0 L150.6,48.0 L151.1,48.0 L151.6,48.0 L152.2,48.0 L152.7,48.0 L153.3,48.0 L153.8,48.0 L154.4,48.0 L154.9,48.0 L155.5,48.0 L156.0,48.0 L156.6,48.0 L157.1,48.0 L157.7,48.0 L158.2,48.0 L158.8,48.0 L159.3,48.0 L159.8,48.0 L160.4,48.0 L160.9,48.0 L161.5,48.0 L162.0,48.0 L162.6,48.0 L163.1,48.0 L163.7,48.0 L164.2,48.0 L164.8,48.0 L165.3,48.0 L165.9,48.0 L166.4,48.0 L166.9,48.0 L167.5,48.0 L168.0,48.0 L168.6,48.0 L169.1,46.4 L169.7,42.7 L170.2,37.8 L170.8,32.9 L171.3,28.8 L171.9,26.1 L172.4,25.4 L173.0,26.7 L173.5,30.0 L174.0,35.0 L174.6,39.3 L175.1,42.2 L175.7,44.1 L176.2,45.4 L176.8,46.2 L177.3,46.8 L177.9,47.2 L178.4,47.5 L179.0,47.6 L179.5,47.8 L180.1,47.8 L180.6,47.9 L181.2,47.9 L181.7,48.0 L182.2,48.0 L182.8,48.0 L183.3,48.0 L183.9,48.0 L184.4,48.0 L185.0,48.0 L185.5,48.0 L186.1,48.0 L186.6,48.0 L187.2,48.0 L187.7,48.0 L188.3,48.0 L188.8,48.0 L189.3,48.0 L189.9,48.0 L190.4,48.0 L191.0,48.0 L191.5,48.0 L192.1,48.0 L192.6,48.0 L193.2,48.0 L193.7,48.0 L194.3,48.0 L194.8,48.0 L195.4,48.0 L195.9,48.0 L196.4,48.0 L197.0,48.0 L197.5,48.0 L198.1,48.0 L198.6,48.0 L199.2,48.0 L199.7,48.0 L200.3,48.0 L200.8,48.0 L201.4,48.0 L201.9,48.0 L202.5,48.0 L203.0,48.0 L203.6,48.0 L204.1,48.0 L204.6,48.0 L205.2,48.0 L205.7,48.0 L206.3,48.0 L206.8,48.0 L207.4,48.0 L207.9,48.0 L208.5,48.0 L209.0,48.0 L209.6,48.0 L210.1,48.0 L210.7,48.0 L211.2,48.0 L211.7,48.0 L212.3,48.0 L212.8,48.0 L213.4,48.0 L213.9,48.0 L214.5,48.0 L215.0,48.0 L215.6,48.0 L216.1,48.0 L216.7,48.0 L217.2,48.0 L217.8,48.0 L218.3,48.0 L218.8,48.0 L219.4,48.0 L219.9,48.0 L220.5,48.0 L221.0,48.0 L221.6,48.0 L222.1,48.0 L222.7,48.0 L223.2,48.0 L223.8,48.0 L224.3,48.0 L224.9,48.0 L225.4,48.0 L226.0,48.0 L226.5,48.0 L227.0,48.0 L227.6,48.0 L228.1,48.0 L228.7,48.0 L229.2,48.0 L229.8,48.0 L230.3,48.0 L230.9,48.0 L231.4,48.0 L232.0,48.0 L232.5,48.0 L233.1,48.0 L233.6,48.0 L234.1,48.0 L234.7,48.0 L235.2,48.0 L235.8,48.0 L236.3,48.0 L236.9,48.0 L237.4,48.0 L238.0,48.0 L238.5,48.0 L239.1,48.0 L239.6,48.0 L240.2,48.0 L240.7,48.0 L241.2,48.0 L241.8,48.0 L242.3,48.0 L242.9,48.0 L243.4,48.0 L244.0,48.0 L244.5,48.0 L245.1,48.0 L245.6,48.0 L246.2,48.0 L246.7,48.0 L247.3,48.0 L247.8,48.0 L248.4,48.0 L248.9,48.0 L249.4,48.0 L250.0,48.0 L250.5,48.0 L251.1,48.0 L251.6,48.0 L252.2,48.0 L252.7,48.0 L253.3,48.0 L253.8,48.0 L254.4,48.0 L254.9,48.0 L255.5,48.0 L256.0,48.0" class="flow" style="stroke-width: 1.8"/>
+  <text class="lbl-hi" x="144.0" y="16.0">a bump</text>
+  <text class="lbl" x="144.0" y="87.0">series L: a neck</text>
+  <path d="M274,48.0 L386,48.0" class="tick" style="stroke-dasharray: 3 3"/>
+  <path d="M274.0,48.0 L274.5,48.0 L274.9,48.0 L275.4,48.0 L275.8,48.0 L276.3,48.0 L276.7,48.0 L277.2,48.0 L277.7,48.0 L278.1,48.0 L278.6,48.0 L279.0,48.0 L279.5,48.0 L279.9,48.0 L280.4,48.0 L280.9,48.0 L281.3,48.0 L281.8,48.0 L282.2,48.0 L282.7,48.0 L283.1,48.0 L283.6,48.0 L284.1,48.0 L284.5,48.0 L285.0,48.0 L285.4,48.0 L285.9,48.0 L286.3,48.0 L286.8,48.0 L287.3,48.0 L287.7,48.0 L288.2,48.0 L288.6,48.0 L289.1,48.0 L289.5,48.0 L290.0,48.0 L290.5,48.0 L290.9,48.0 L291.4,48.0 L291.8,48.0 L292.3,48.0 L292.7,48.0 L293.2,48.0 L293.7,48.0 L294.1,48.0 L294.6,48.0 L295.0,48.0 L295.5,48.0 L295.9,48.0 L296.4,48.0 L296.9,48.0 L297.3,48.0 L297.8,48.0 L298.2,48.0 L298.7,48.0 L299.1,48.0 L299.6,48.0 L300.1,48.0 L300.5,48.0 L301.0,48.0 L301.4,48.0 L301.9,48.0 L302.3,48.0 L302.8,48.0 L303.3,48.0 L303.7,48.0 L304.2,48.0 L304.6,48.0 L305.1,48.0 L305.5,48.0 L306.0,48.0 L306.5,48.0 L306.9,48.0 L307.4,48.0 L307.8,48.0 L308.3,48.0 L308.7,48.0 L309.2,48.0 L309.7,48.0 L310.1,48.0 L310.6,48.0 L311.0,48.0 L311.5,48.0 L311.9,48.0 L312.4,48.0 L312.9,48.0 L313.3,48.0 L313.8,48.0 L314.2,48.0 L314.7,48.0 L315.1,48.0 L315.6,48.0 L316.1,48.0 L316.5,48.0 L317.0,48.0 L317.4,48.0 L317.9,48.0 L318.3,48.0 L318.8,48.0 L319.3,48.0 L319.7,48.0 L320.2,48.0 L320.6,48.1 L321.1,49.0 L321.5,51.0 L322.0,53.8 L322.5,57.2 L322.9,60.8 L323.4,64.2 L323.8,67.2 L324.3,69.3 L324.7,70.5 L325.2,70.6 L325.7,70.6 L326.1,70.6 L326.6,70.6 L327.0,70.6 L327.5,70.6 L327.9,70.6 L328.4,70.6 L328.9,70.6 L329.3,70.6 L329.8,70.6 L330.2,70.6 L330.7,70.6 L331.1,70.6 L331.6,70.6 L332.1,70.6 L332.5,70.6 L333.0,70.6 L333.4,70.6 L333.9,70.6 L334.3,70.6 L334.8,70.6 L335.3,70.6 L335.7,70.6 L336.2,70.6 L336.6,70.6 L337.1,70.6 L337.5,70.6 L338.0,70.6 L338.5,70.6 L338.9,70.5 L339.4,69.6 L339.8,67.7 L340.3,65.0 L340.7,61.7 L341.2,58.2 L341.7,54.9 L342.1,52.0 L342.6,49.9 L343.0,48.8 L343.5,48.7 L343.9,48.7 L344.4,48.7 L344.9,48.7 L345.3,48.7 L345.8,48.7 L346.2,48.7 L346.7,48.7 L347.1,48.7 L347.6,48.7 L348.1,48.7 L348.5,48.7 L349.0,48.7 L349.4,48.7 L349.9,48.7 L350.3,48.7 L350.8,48.7 L351.3,48.7 L351.7,48.7 L352.2,48.7 L352.6,48.7 L353.1,48.7 L353.5,48.7 L354.0,48.7 L354.5,48.7 L354.9,48.7 L355.4,48.7 L355.8,48.7 L356.3,48.7 L356.7,48.7 L357.2,48.7 L357.7,48.7 L358.1,48.6 L358.6,48.5 L359.0,48.4 L359.5,48.3 L359.9,48.2 L360.4,48.1 L360.9,48.1 L361.3,48.0 L361.8,48.0 L362.2,48.0 L362.7,48.0 L363.1,48.0 L363.6,48.0 L364.1,48.0 L364.5,48.0 L365.0,48.0 L365.4,48.0 L365.9,48.0 L366.3,48.0 L366.8,48.0 L367.3,48.0 L367.7,48.0 L368.2,48.0 L368.6,48.0 L369.1,48.0 L369.5,48.0 L370.0,48.0 L370.5,48.0 L370.9,48.0 L371.4,48.0 L371.8,48.0 L372.3,48.0 L372.7,48.0 L373.2,48.0 L373.7,48.0 L374.1,48.0 L374.6,48.0 L375.0,48.0 L375.5,48.0 L375.9,48.0 L376.4,48.0 L376.9,48.0 L377.3,48.0 L377.8,48.0 L378.2,48.0 L378.7,48.0 L379.1,48.0 L379.6,48.0 L380.1,48.0 L380.5,48.0 L381.0,48.0 L381.4,48.0 L381.9,48.0 L382.3,48.0 L382.8,48.0 L383.3,48.0 L383.7,48.0 L384.2,48.0 L384.6,48.0 L385.1,48.0 L385.5,48.0 L386.0,48.0" class="flow" style="stroke-width: 1.8"/>
+  <text class="lbl-hi" x="274.0" y="16.0">a step down and back</text>
+  <text class="lbl" x="274.0" y="87.0">a lower-Z section</text>
+  <path d="M14,140.0 L126,140.0" class="tick" style="stroke-dasharray: 3 3"/>
+  <path d="M14.0,140.0 L14.3,140.0 L14.5,140.0 L14.8,140.0 L15.0,140.0 L15.3,140.0 L15.6,140.0 L15.8,140.0 L16.1,140.1 L16.3,140.1 L16.6,140.1 L16.9,140.1 L17.1,140.1 L17.4,140.1 L17.6,140.1 L17.9,140.1 L18.2,140.1 L18.4,140.1 L18.7,140.1 L18.9,140.1 L19.2,140.1 L19.4,140.1 L19.7,140.1 L20.0,140.1 L20.2,140.1 L20.5,140.2 L20.7,140.2 L21.0,140.2 L21.3,140.2 L21.5,140.2 L21.8,140.2 L22.0,140.2 L22.3,140.2 L22.6,140.2 L22.8,140.2 L23.1,140.2 L23.3,140.2 L23.6,140.2 L23.9,140.2 L24.1,140.2 L24.4,140.2 L24.6,140.2 L24.9,140.3 L25.2,140.3 L25.4,140.3 L25.7,140.3 L25.9,140.2 L26.2,140.0 L26.5,139.8 L26.7,139.5 L27.0,139.2 L27.2,138.9 L27.5,138.6 L27.8,138.4 L28.0,138.3 L28.3,138.3 L28.5,138.2 L28.8,138.1 L29.0,138.0 L29.3,137.9 L29.6,137.8 L29.8,137.7 L30.1,137.5 L30.3,137.4 L30.6,137.3 L30.9,137.2 L31.1,137.1 L31.4,137.0 L31.6,136.9 L31.9,136.8 L32.2,136.7 L32.4,136.6 L32.7,136.5 L32.9,136.4 L33.2,136.3 L33.5,136.2 L33.7,136.1 L34.0,136.0 L34.2,135.9 L34.5,135.8 L34.8,135.7 L35.0,135.6 L35.3,135.5 L35.5,135.4 L35.8,135.3 L36.1,135.3 L36.3,135.2 L36.6,135.1 L36.8,135.0 L37.1,134.9 L37.4,134.8 L37.6,134.8 L37.9,134.7 L38.1,134.6 L38.4,134.5 L38.6,134.4 L38.9,134.4 L39.2,134.3 L39.4,134.2 L39.7,134.1 L39.9,134.1 L40.2,134.0 L40.5,133.9 L40.7,133.8 L41.0,133.8 L41.2,133.7 L41.5,133.6 L41.8,133.5 L42.0,133.5 L42.3,133.4 L42.5,133.3 L42.8,133.3 L43.1,133.2 L43.3,133.1 L43.6,133.1 L43.8,133.0 L44.1,132.9 L44.4,132.9 L44.6,132.8 L44.9,132.7 L45.1,132.7 L45.4,132.6 L45.7,132.5 L45.9,132.5 L46.2,132.4 L46.4,132.3 L46.7,132.3 L47.0,132.2 L47.2,132.2 L47.5,132.1 L47.7,132.0 L48.0,132.0 L48.2,131.9 L48.5,131.8 L48.8,131.8 L49.0,131.7 L49.3,131.7 L49.5,131.6 L49.8,131.6 L50.1,131.5 L50.3,131.4 L50.6,131.4 L50.8,131.3 L51.1,131.3 L51.4,131.2 L51.6,131.2 L51.9,131.1 L52.1,131.0 L52.4,131.0 L52.7,130.9 L52.9,130.9 L53.2,130.8 L53.4,130.8 L53.7,130.7 L54.0,130.7 L54.2,130.6 L54.5,130.6 L54.7,130.5 L55.0,130.5 L55.3,130.4 L55.5,130.3 L55.8,130.3 L56.0,130.2 L56.3,130.2 L56.6,130.1 L56.8,130.1 L57.1,130.0 L57.3,130.0 L57.6,129.9 L57.8,129.9 L58.1,129.8 L58.4,129.8 L58.6,129.7 L58.9,129.7 L59.1,129.6 L59.4,129.6 L59.7,129.5 L59.9,129.5 L60.2,129.4 L60.4,129.4 L60.7,129.3 L61.0,129.3 L61.2,129.3 L61.5,129.2 L61.7,129.2 L62.0,129.1 L62.3,129.1 L62.5,129.0 L62.8,129.0 L63.0,128.9 L63.3,128.9 L63.6,128.8 L63.8,128.8 L64.1,128.7 L64.3,128.7 L64.6,128.7 L64.9,128.6 L65.1,128.6 L65.4,128.5 L65.6,128.5 L65.9,128.4 L66.2,128.4 L66.4,128.3 L66.7,128.3 L66.9,128.3 L67.2,128.2 L67.4,128.2 L67.7,128.1 L68.0,128.1 L68.2,128.0 L68.5,128.0 L68.7,128.0 L69.0,127.9 L69.3,127.9 L69.5,127.8 L69.8,127.8 L70.0,127.7 L70.3,127.7 L70.6,127.7 L70.8,127.6 L71.1,127.6 L71.3,127.5 L71.6,127.5 L71.9,127.4 L72.1,127.4 L72.4,127.4 L72.6,127.3 L72.9,127.3 L73.2,127.2 L73.4,127.2 L73.7,127.2 L73.9,127.1 L74.2,127.1 L74.5,127.0 L74.7,127.0 L75.0,127.0 L75.2,126.9 L75.5,126.9 L75.8,126.8 L76.0,126.8 L76.3,126.8 L76.5,126.7 L76.8,126.7 L77.0,126.7 L77.3,126.6 L77.6,126.6 L77.8,126.5 L78.1,126.5 L78.3,126.5 L78.6,126.4 L78.9,126.4 L79.1,126.3 L79.4,126.3 L79.6,126.3 L79.9,126.2 L80.2,126.2 L80.4,126.2 L80.7,126.1 L80.9,126.1 L81.2,126.1 L81.5,126.0 L81.7,126.0 L82.0,125.9 L82.2,125.9 L82.5,125.9 L82.8,125.8 L83.0,125.8 L83.3,125.8 L83.5,125.7 L83.8,125.7 L84.1,125.7 L84.3,125.6 L84.6,125.6 L84.8,125.5 L85.1,125.5 L85.4,125.5 L85.6,125.4 L85.9,125.4 L86.1,125.4 L86.4,125.3 L86.6,125.3 L86.9,125.3 L87.2,125.2 L87.4,125.2 L87.7,125.2 L87.9,125.1 L88.2,125.1 L88.5,125.1 L88.7,125.0 L89.0,125.0 L89.2,125.0 L89.5,124.9 L89.8,124.9 L90.0,124.8 L90.3,124.8 L90.5,124.8 L90.8,124.7 L91.1,124.7 L91.3,124.7 L91.6,124.6 L91.8,124.6 L92.1,124.6 L92.4,124.5 L92.6,124.5 L92.9,124.5 L93.1,124.4 L93.4,124.4 L93.7,124.4 L93.9,124.3 L94.2,124.3 L94.4,124.3 L94.7,124.3 L95.0,124.2 L95.2,124.2 L95.5,124.2 L95.7,124.1 L96.0,124.1 L96.2,124.1 L96.5,124.0 L96.8,124.0 L97.0,124.0 L97.3,123.9 L97.5,123.9 L97.8,123.9 L98.1,123.8 L98.3,123.8 L98.6,123.8 L98.8,123.7 L99.1,123.7 L99.4,123.7 L99.6,123.6 L99.9,123.6 L100.1,123.6 L100.4,123.6 L100.7,123.5 L100.9,123.5 L101.2,123.5 L101.4,123.4 L101.7,123.4 L102.0,123.4 L102.2,123.3 L102.5,123.3 L102.7,123.3 L103.0,123.2 L103.3,123.2 L103.5,123.2 L103.8,123.2 L104.0,123.1 L104.3,123.1 L104.6,123.1 L104.8,123.0 L105.1,123.0 L105.3,123.0 L105.6,122.9 L105.8,122.9 L106.1,122.9 L106.4,122.9 L106.6,122.8 L106.9,122.8 L107.1,122.8 L107.4,122.7 L107.7,122.7 L107.9,122.7 L108.2,122.7 L108.4,122.6 L108.7,122.6 L109.0,122.6 L109.2,122.5 L109.5,122.5 L109.7,122.5 L110.0,122.4 L110.3,122.4 L110.5,122.4 L110.8,122.4 L111.0,122.3 L111.3,122.3 L111.6,122.3 L111.8,122.2 L112.1,122.2 L112.3,122.2 L112.6,122.2 L112.9,122.1 L113.1,122.1 L113.4,122.1 L113.6,122.1 L113.9,122.0 L114.2,122.0 L114.4,122.0 L114.7,122.0 L114.9,122.1 L115.2,122.1 L115.4,122.2 L115.7,122.2 L116.0,122.3 L116.2,122.3 L116.5,122.4 L116.7,122.4 L117.0,122.5 L117.3,122.5 L117.5,122.6 L117.8,122.7 L118.0,122.7 L118.3,122.8 L118.6,122.8 L118.8,122.9 L119.1,122.9 L119.3,123.0 L119.6,123.1 L119.9,123.1 L120.1,123.2 L120.4,123.2 L120.6,123.3 L120.9,123.4 L121.2,123.4 L121.4,123.5 L121.7,123.5 L121.9,123.6 L122.2,123.6 L122.5,123.7 L122.7,123.8 L123.0,123.8 L123.2,123.9 L123.5,123.9 L123.8,124.0 L124.0,124.0 L124.3,124.1 L124.5,124.1 L124.8,124.2 L125.0,124.2 L125.3,124.3 L125.6,124.4 L125.8,124.4" class="flow" style="stroke-width: 1.8"/>
+  <text class="lbl-hi" x="14.0" y="108.0">a slow climb</text>
+  <text class="lbl" x="14.0" y="179.0">loss, uniform line</text>
+  <path d="M144,140.0 L256,140.0" class="tick" style="stroke-dasharray: 3 3"/>
+  <path d="M144.0,140.0 L144.5,140.0 L145.1,140.0 L145.6,140.0 L146.2,140.0 L146.7,140.0 L147.3,140.0 L147.8,140.0 L148.4,140.0 L148.9,140.0 L149.5,140.0 L150.0,140.0 L150.6,140.0 L151.1,140.0 L151.6,140.0 L152.2,140.0 L152.7,140.0 L153.3,140.0 L153.8,140.0 L154.4,140.0 L154.9,140.0 L155.5,140.0 L156.0,140.0 L156.6,140.0 L157.1,140.0 L157.7,140.0 L158.2,140.0 L158.8,140.0 L159.3,140.0 L159.8,140.0 L160.4,140.0 L160.9,140.0 L161.5,140.0 L162.0,140.0 L162.6,140.0 L163.1,140.0 L163.7,140.0 L164.2,140.0 L164.8,140.0 L165.3,140.0 L165.9,140.0 L166.4,140.0 L166.9,140.0 L167.5,140.0 L168.0,140.0 L168.6,140.0 L169.1,140.0 L169.7,140.0 L170.2,140.0 L170.8,140.0 L171.3,140.0 L171.9,140.0 L172.4,140.0 L173.0,140.0 L173.5,140.0 L174.0,140.0 L174.6,140.0 L175.1,140.0 L175.7,140.0 L176.2,140.0 L176.8,140.0 L177.3,140.0 L177.9,140.0 L178.4,140.0 L179.0,140.0 L179.5,140.0 L180.1,140.0 L180.6,140.0 L181.2,140.0 L181.7,140.0 L182.2,140.0 L182.8,140.0 L183.3,140.0 L183.9,140.0 L184.4,140.0 L185.0,140.0 L185.5,140.0 L186.1,140.0 L186.6,140.0 L187.2,140.0 L187.7,140.0 L188.3,140.0 L188.8,140.0 L189.3,140.0 L189.9,140.0 L190.4,140.0 L191.0,140.0 L191.5,140.0 L192.1,140.0 L192.6,140.0 L193.2,140.0 L193.7,140.0 L194.3,140.0 L194.8,140.0 L195.4,140.0 L195.9,140.0 L196.4,140.0 L197.0,140.0 L197.5,140.0 L198.1,140.0 L198.6,140.0 L199.2,140.0 L199.7,140.0 L200.3,140.0 L200.8,140.0 L201.4,140.0 L201.9,140.0 L202.5,140.0 L203.0,140.0 L203.6,140.0 L204.1,140.0 L204.6,140.0 L205.2,140.0 L205.7,140.0 L206.3,140.0 L206.8,140.0 L207.4,140.0 L207.9,140.0 L208.5,140.0 L209.0,140.0 L209.6,140.0 L210.1,140.0 L210.7,140.0 L211.2,140.0 L211.7,140.0 L212.3,140.0 L212.8,140.0 L213.4,140.0 L213.9,140.0 L214.5,140.0 L215.0,140.0 L215.6,140.0 L216.1,140.0 L216.7,140.0 L217.2,140.0 L217.8,140.0 L218.3,140.0 L218.8,140.0 L219.4,140.0 L219.9,140.0 L220.5,140.0 L221.0,140.0 L221.6,140.0 L222.1,140.0 L222.7,140.0 L223.2,140.0 L223.8,140.0 L224.3,140.0 L224.9,140.0 L225.4,140.0 L226.0,140.0 L226.5,140.0 L227.0,140.0 L227.6,140.0 L228.1,140.0 L228.7,140.0 L229.2,140.0 L229.8,140.0 L230.3,140.0 L230.9,139.7 L231.4,138.4 L232.0,136.1 L232.5,133.1 L233.1,129.6 L233.6,126.0 L234.1,122.7 L234.7,120.0 L235.2,118.2 L235.8,117.4 L236.3,117.4 L236.9,117.4 L237.4,117.4 L238.0,117.4 L238.5,117.4 L239.1,117.4 L239.6,117.4 L240.2,117.4 L240.7,117.4 L241.2,117.4 L241.8,117.4 L242.3,117.4 L242.9,117.4 L243.4,117.4 L244.0,117.4 L244.5,117.4 L245.1,117.4 L245.6,117.4 L246.2,117.4 L246.7,117.4 L247.3,117.4 L247.8,117.4 L248.4,117.4 L248.9,117.4 L249.4,117.4 L250.0,117.4 L250.5,117.4 L251.1,117.4 L251.6,117.4 L252.2,117.4 L252.7,117.4 L253.3,117.4 L253.8,117.4 L254.4,117.4 L254.9,117.4 L255.5,117.4 L256.0,117.4" class="flow" style="stroke-width: 1.8"/>
+  <text class="lbl-hi" x="144.0" y="108.0">up to +1</text>
+  <text class="lbl" x="144.0" y="179.0">an open end</text>
+  <path d="M274,140.0 L386,140.0" class="tick" style="stroke-dasharray: 3 3"/>
+  <path d="M274.0,140.0 L274.5,140.0 L275.1,140.0 L275.6,140.0 L276.2,140.0 L276.7,140.0 L277.3,140.0 L277.8,140.0 L278.4,140.0 L278.9,140.0 L279.5,140.0 L280.0,140.0 L280.6,140.0 L281.1,140.0 L281.6,140.0 L282.2,140.0 L282.7,140.0 L283.3,140.0 L283.8,140.0 L284.4,140.0 L284.9,140.0 L285.5,140.0 L286.0,140.0 L286.6,140.0 L287.1,140.0 L287.7,140.0 L288.2,140.0 L288.8,140.0 L289.3,140.0 L289.8,140.0 L290.4,140.0 L290.9,140.0 L291.5,140.0 L292.0,140.0 L292.6,140.0 L293.1,140.0 L293.7,140.0 L294.2,140.0 L294.8,140.0 L295.3,140.0 L295.9,140.0 L296.4,140.0 L296.9,140.0 L297.5,140.0 L298.0,140.0 L298.6,140.0 L299.1,140.0 L299.7,140.0 L300.2,140.0 L300.8,140.0 L301.3,140.0 L301.9,140.0 L302.4,140.0 L303.0,140.0 L303.5,140.0 L304.0,140.0 L304.6,140.0 L305.1,140.0 L305.7,140.0 L306.2,140.0 L306.8,140.0 L307.3,140.0 L307.9,140.0 L308.4,140.0 L309.0,140.0 L309.5,140.0 L310.1,140.0 L310.6,140.0 L311.2,140.0 L311.7,140.0 L312.2,140.0 L312.8,140.0 L313.3,140.0 L313.9,140.0 L314.4,140.0 L315.0,140.0 L315.5,140.0 L316.1,140.0 L316.6,140.0 L317.2,140.0 L317.7,140.0 L318.3,140.0 L318.8,140.0 L319.3,140.0 L319.9,140.0 L320.4,140.0 L321.0,140.0 L321.5,140.0 L322.1,140.0 L322.6,140.0 L323.2,140.0 L323.7,140.0 L324.3,140.0 L324.8,140.0 L325.4,140.0 L325.9,140.0 L326.4,140.0 L327.0,140.0 L327.5,140.0 L328.1,140.0 L328.6,140.0 L329.2,140.0 L329.7,140.0 L330.3,140.0 L330.8,140.0 L331.4,140.0 L331.9,140.0 L332.5,140.0 L333.0,140.0 L333.6,140.0 L334.1,140.0 L334.6,140.0 L335.2,140.0 L335.7,140.0 L336.3,140.0 L336.8,140.0 L337.4,140.0 L337.9,140.0 L338.5,140.0 L339.0,140.0 L339.6,140.0 L340.1,140.0 L340.7,140.0 L341.2,140.0 L341.7,140.0 L342.3,140.0 L342.8,140.0 L343.4,140.0 L343.9,140.0 L344.5,140.0 L345.0,140.0 L345.6,140.0 L346.1,140.0 L346.7,140.0 L347.2,140.0 L347.8,140.0 L348.3,140.0 L348.8,140.0 L349.4,140.0 L349.9,140.0 L350.5,140.0 L351.0,140.0 L351.6,140.0 L352.1,140.0 L352.7,140.0 L353.2,140.0 L353.8,140.0 L354.3,140.0 L354.9,140.0 L355.4,140.0 L356.0,140.0 L356.5,140.0 L357.0,140.0 L357.6,140.0 L358.1,140.0 L358.7,140.0 L359.2,140.0 L359.8,140.0 L360.3,140.0 L360.9,140.3 L361.4,141.6 L362.0,143.9 L362.5,146.9 L363.1,150.4 L363.6,154.0 L364.1,157.3 L364.7,160.0 L365.2,161.8 L365.8,162.6 L366.3,162.6 L366.9,162.6 L367.4,162.6 L368.0,162.6 L368.5,162.6 L369.1,162.6 L369.6,162.6 L370.2,162.6 L370.7,162.6 L371.2,162.6 L371.8,162.6 L372.3,162.6 L372.9,162.6 L373.4,162.6 L374.0,162.6 L374.5,162.6 L375.1,162.6 L375.6,162.6 L376.2,162.6 L376.7,162.6 L377.3,162.6 L377.8,162.6 L378.4,162.6 L378.9,162.6 L379.4,162.6 L380.0,162.6 L380.5,162.6 L381.1,162.6 L381.6,162.6 L382.2,162.6 L382.7,162.6 L383.3,162.6 L383.8,162.6 L384.4,162.6 L384.9,162.6 L385.5,162.6 L386.0,162.6" class="flow" style="stroke-width: 1.8"/>
+  <text class="lbl-hi" x="274.0" y="108.0">down to −1</text>
+  <text class="lbl" x="274.0" y="179.0">a short</text>
+  <text class="lbl" x="200.0" y="206.0" text-anchor="middle">dashed: no reflection, ρ = 0 · each panel scaled to fit</text>
+</svg></div>
+      <figcaption><b>Read the shape first, then the number.</b> Each panel is the reflection a 35 ps edge gets back from one feature in an otherwise matched 50 &#937; line, time running left to right. A shunt capacitance, a via or a pad, pulls the reflection down while the edge charges it: a dip. A series inductance, a narrow neck or a wire, pushes it up: a bump. A run at a lower impedance steps down and comes back at its far end. A lossy line that is perfectly uniform still climbs slowly, because the reading includes more series resistance the further the edge has gone. An open end goes to +1 and a short to −1. Each panel has its own vertical scale, so compare shapes here and sizes in the panel above.</figcaption>
+    </figure>
+
+    <p>
+      A <strong>dip</strong> is capacitance: a via barrel, a pad that is wider than the trace, a component land. A
+      <strong>bump</strong> is inductance: a neck where the trace narrows, a wire bond, a connector pin with no return
+      close to it. A lumped feature reads as a dip or a bump that comes back to the line&#8217;s impedance afterwards. A
+      <strong>section</strong> at another impedance reads as a step that holds for as long as the section lasts. The far
+      end decides the last shape: matched, the trace stays flat; open, it climbs to +1; shorted, it falls to &#8722;1.
+    </p>
+
+    <h2 class="section-rule"><span>The edge sets what you can see</span></h2>
+    <p>
+      The edge is not instantaneous, and that limits everything. A feature&#8217;s reflection is smeared across the
+      edge&#8217;s duration, so two features whose reflections arrive less than about one rise time apart merge into
+      one. The reflections are separated by twice the distance between the features, which gives the usual rule:
+    </p>
+    <div class="eq">
+      <span class="eq__main">&#916;<i class="var">x</i> &#8776; <i class="var">t</i><sub>r</sub> · <i class="var">v</i> / 2</span>
+      <span class="eq__note">a 35 ps edge resolves about 0.10 in at 170 ps/in; a 10 ps edge about 0.03 in</span>
+    </div>
+    <p>
+      Choose &#8220;Two vias, one dip&#8221; in the panel: two identical vias 10 ps apart read as a single, deeper dip,
+      and nothing in the trace says there are two. &#8220;The same two, faster edge&#8221; shortens the edge to 10 ps and
+      they separate. Resolution is set by the edge, not by how finely the scope samples.
+    </p>
+    <p>
+      The same smearing means a <strong>short feature never shows its true impedance</strong>. A 35 &#937; neck that is
+      shorter than the edge is over before the reading has finished falling, so it bottoms out well above 35 &#937;.
+      Lengthen the section in the panel and watch the reading settle at the true value once the section is longer than
+      the edge. A reading is only an impedance where it is flat.
+    </p>
+    <p>
+      For a lumped feature there is a better measure than the depth: the <strong>area</strong>. However fast or slow the
+      edge, the area of a capacitive dip, in &#961; times time, is Z<sub>0</sub>·C/2, and the area of an inductive bump
+      is L/(2·Z<sub>0</sub>). A faster edge makes the dip deeper and narrower, never bigger. Integrating the dip is how
+      a via&#8217;s capacitance is estimated from a TDR.
+    </p>
+
+    <h2 class="section-rule"><span>Why the reading drifts</span></h2>
+    <p>
+      <strong>Loss makes a uniform line climb.</strong> On a lossy trace the reading rises slowly with distance, even
+      when the line is perfectly uniform and matched. The line&#8217;s series resistance is part of the impedance the
+      edge sees, and the further the edge has travelled, the more of it the reading includes. Choose &#8220;Loss makes
+      the line climb&#8221; to see it. A rising baseline on a lossy trace is not a taper, and judging a long line&#8217;s
+      impedance from its far end overstates it.
+    </p>
+    <p>
+      <strong>Everything behind a mismatch is seen through it.</strong> The formula above is exact only for the first
+      reflection. Behind a large discontinuity, the step that reaches the next feature has already lost part of itself,
+      and part of what that feature returns is reflected again on the way back. The levels behind it are wrong, and
+      they can be wrong in either direction. &#8220;Masking behind a mismatch&#8221; puts a 70 &#937; load behind a
+      30 &#937; section; the first level the load shows is not 70 &#937;. Undoing this needs layer peeling, which
+      reconstructs the impedance one reflection at a time, or a model of the whole channel.
+    </p>
+
+    <details class="deeper">
+      <summary>Go deeper — the areas, TDR from a VNA, differential TDR, and the reference plane</summary>
+      <p>
+        <strong>Why the area does not depend on the edge.</strong> A shunt capacitance C on a line of impedance
+        Z<sub>0</sub> reflects &#915;(s) = &#8722;s·Z<sub>0</sub>·C / (2 + s·Z<sub>0</sub>·C). The reflection of a step is
+        &#915;(s)/s, and the area under any response is its value at s = 0: &#8722;Z<sub>0</sub>·C/2. Band-limiting the step
+        filters the response but leaves its integral alone, so the area is the same for every edge. A series inductance
+        L gives +L/(2·Z<sub>0</sub>) the same way. For the 0.5 pF via in the panel&#8217;s first scenario that is 12.5 ps of
+        &#961;·time; for a 1 nH bump, 10 ps.
+      </p>
+      <p>
+        <strong>TDR from a vector network analyser.</strong> A VNA measures S11 against frequency; an inverse Fourier
+        transform turns it into the same time-domain picture, and this panel computes its trace that way. The VNA&#8217;s
+        top frequency sets the effective rise time, and the window applied before the transform trades ringing against
+        sharpness. Two instruments with the same bandwidth and different windows draw the same feature differently, so a
+        VNA-derived TDR should state both.
+      </p>
+      <p>
+        <strong>Differential TDR.</strong> A differential pair is measured by driving its two lines with opposite steps,
+        which reads the odd-mode, or differential, impedance; driving them together reads the common mode. Skew between the
+        two steps mixes the modes, and so does any asymmetry in the pair. The single-ended panel above does not show this.
+      </p>
+      <p>
+        <strong>The reference plane.</strong> Distance is measured from wherever the instrument was calibrated, usually
+        the end of its cable or probe. A launch, a probe tip or a fixture between that plane and the board adds its own
+        dips and bumps at the start of the trace; <a href="../signal-integrity/de-embedding.html">de-embedding</a> moves
+        the plane past them.
+      </p>
+    </details>
+
+    <h2 class="section-rule"><span>In the real world</span></h2>
+    <p>
+      The everyday use is <strong>controlled-impedance verification</strong>. Fabricators build a test coupon beside the
+      board, a straight trace of the same construction, and read its impedance on a TDR in the flat region away from
+      both ends. Away from the ends matters: the launch at the start and the open at the far end are features, not the
+      trace, and on a lossy coupon the reading climbs along the length.
+    </p>
+    <p>
+      In <strong>bring-up and debug</strong> a TDR finds what a schematic cannot: a via that dips more than its neighbours,
+      a connector that bumps, an unused stub that rings, a break that reads as an open. Convert the time to distance, at
+      the propagation velocity of the layer the trace is on, and you know where on the board to look. The same
+      measurement on a cable finds the distance to a fault.
+    </p>
+    <p>
+      The limits are the ones this page is about. The edge at the board is slower than the instrument&#8217;s own, because
+      the cable and probe in between have loss; features closer than that edge merge; short features read shallow; and
+      everything behind a large mismatch is distorted. Read the flat regions as impedances and the rest as shapes.
+    </p>
+    <h3>Related</h3>
+    <ul class="tight">
+      <li><a href="reflections.html">Transmission-Line Reflections and Ringing</a> — what one boundary does to a step</li>
+      <li><a href="vias.html">High-Speed Vias: Stubs, Resonance, and Backdrilling</a> — the feature a TDR is most often pointed at</li>
+      <li><a href="../methodology/measurement-practice.html">Measurement Practice</a> — probing, and TDR resolution at the bench</li>
+      <li><a href="../signal-integrity/de-embedding.html">De-embedding</a> — moving the reference plane past a fixture</li>
+      <li><a href="../labs/one-channel.html">Lab B: Channel Response, ISI, and Eye Diagrams</a> — a TDR beside the eye it explains</li>
+    </ul>
+  </div>
+  <!-- share:foot:start --><div class="share share--foot" data-share data-share-url="https://sipi.work/topics/fundamentals/tdr.html" data-share-title="Time-Domain Reflectometry: Reading Impedance Along a Channel"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Ffundamentals%2Ftdr.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Ffundamentals%2Ftdr.html&amp;text=Time-Domain%20Reflectometry%3A%20Reading%20Impedance%20Along%20a%20Channel" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=Time-Domain%20Reflectometry%3A%20Reading%20Impedance%20Along%20a%20Channel&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Ffundamentals%2Ftdr.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:foot:end -->
+
+  <!-- pager:start -->
+  <nav class="pager" aria-label="Previous and next topic">
+    <a class="prev" href="../../topics/fundamentals/reflections.html"><span class="dir">Previous</span><span>Transmission-Line Reflections and Ringing</span></a>
+    <a class="next" href="../../topics/fundamentals/termination-schemes.html"><span class="dir">Next</span><span>Transmission-Line Termination Schemes</span></a>
+  </nav>
+  <!-- pager:end -->
+</main>
+
+
+<footer class="site-foot">
+  <span>SIPI &#8212; signal and power integrity, visualised.</span>
+  <nav class="site-foot__nav" aria-label="Site, footer">
+    <a href="../../start.html">Start</a>
+    <a href="../../labs.html">Labs</a>
+    <a href="../../calculators.html">Calculators</a>
+    <a href="../../reference.html">Reference</a>
+    <a href="../../colophon.html">About &amp; AI disclosure</a>
+    <a href="../../model-contract.html">Model assumptions</a>
+    <a href="../../docs/claims.md">Claim ledger (Markdown)</a>
+  </nav>
+  <span>Created and directed by <a href="https://www.linkedin.com/in/geetansh-arora-a645714a/" target="_blank" rel="author noopener">Geetansh Arora</a>. Text <a href="../../LICENSE-CONTENT">CC BY 4.0</a>, code <a href="../../LICENSE-CODE">MIT</a>.</span>
+</footer>
+
+<script src="../../js/site.js?v=61b8ff31" defer></script>
+<script src="../../js/viz-kit.js?v=cb18bcf0" defer></script>
+<script src="../../js/models/tdr-model.js?v=c8fb6fdb" defer></script>
+<script src="../../js/viz/tdr.js?v=109d6141" defer></script>
+<script src="../../js/lab-workspace.js?v=49b1d309" defer></script>
+<script src="../../js/viz-loader.js?v=1d4bfbd7" defer></script>
+<script src="../../js/search.js?v=f57dea26" defer></script>
+</body>
+</html>

@@ -1011,12 +1011,10 @@ dialog.searchbox::backdrop { background: rgba(4, 8, 11, .58); }
     overflow-y: auto;
     overscroll-behavior: contain;
   }
-  /* The readout strip is what stays. It is one line, it carries the numbers the
-     experiment is about, and it costs a tenth of what the controls do. */
-  .instrument.is-tall .instrument__bar {
-    position: sticky; top: 0; z-index: 4;
-    background: var(--surface); border-bottom: 1px solid var(--border);
-  }
+  /* The instrument bar scrolls with the page. It used to stay pinned as the readout
+     strip, but on a phone it wraps to title, badge, five readouts and the tools, and
+     pinned that way it held a third of the screen. Geetansh, 1 Oct 2026: keep it
+     normally scrollable. */
   .instrument.is-tall .controls {
     max-height: 38vh;
   }

@@ -927,5 +927,29 @@
     "version": "1.0",
     "reviewed": "2026-09-25",
     "reviewer": "Geetansh Arora"
+  },
+  "tdr": {
+    "kind": "numerical",
+    "evidence": "independent",
+    "purpose": "Show what a TDR reports for a channel built from a few sections, against what the channel is: where features appear, how the edge limits resolution, and how loss and masking distort the reading.",
+    "topology": "A 50 ohm launch, one or two lumped vias (shunt C or series L), a trace, a section at another impedance, a second trace, and a matched, open, shorted or resistive load.",
+    "planes": "The instrument's reference plane, at the start of the launch line; distance is measured from it.",
+    "equations": [
+      "Gamma(f) from the cascade's ABCD: Zin = (A ZL + B)/(C ZL + D), Gamma = (Zin - Z0)/(Zin + Z0)",
+      "rho(t) = integral of the S11 impulse response against a raised-cosine edge of 10-90% rise t_r",
+      "Z(t) = Z0 (1 + rho)/(1 - rho), the naive single-reflection reading, with no layer peeling",
+      "distance = round-trip time x v / 2, at 170 ps/in"
+    ],
+    "units": "ohm, ps, in, pF, nH, dB/in",
+    "validity": "TEM sections with the kit's lossy-line material (Dk 4.03, two-term loss law, complex Zc); lumped vias; a matched 50 ohm instrument; the edge is a raised cosine.",
+    "numerics": "S11 on an 8192-point grid at 1 ps (an 8.2 ns record), inverse FFT, O(N k) edge integration; time zero at the edge's 50% point.",
+    "limitations": "Single-ended only; no instrument or probe parasitics, no cable loss before the reference plane, no layer peeling, no dispersion beyond the loss law.",
+    "verified": "check-models.js — TDR page (a matched line reads Z0; an open reads +1 and a short -1; a long section reads its own impedance; a short one reads shallower; a feature appears at its round trip; the dip area equals Z0 C/2 and the bump area L/(2 Z0) for any edge; two features merge below the edge and separate above it; a lossy line reads rising; the fast integration equals the direct convolution).",
+    "suites": [
+      "TDR page"
+    ],
+    "version": "1.0",
+    "reviewed": "2026-10-01",
+    "reviewer": "Geetansh Arora"
   }
 }

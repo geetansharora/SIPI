@@ -145,6 +145,32 @@
           "reviewer": "Geetansh Arora"
         },
         {
+          "slug": "tdr",
+          "title": "Time-Domain Reflectometry: Reading Impedance Along a Channel",
+          "status": "live",
+          "viz": "tdr",
+          "keywords": [
+            "TDR",
+            "time-domain reflectometry",
+            "TDT",
+            "reflectometer",
+            "impedance profile",
+            "rise time",
+            "spatial resolution",
+            "masking",
+            "layer peeling",
+            "dip",
+            "bump",
+            "VNA time domain",
+            "inverse FFT",
+            "differential TDR",
+            "test coupon",
+            "distance to fault"
+          ],
+          "reviewed": "2026-10-01",
+          "reviewer": "Geetansh Arora"
+        },
+        {
           "slug": "termination-schemes",
           "title": "Transmission-Line Termination Schemes",
           "status": "live",

@@ -134,6 +134,23 @@
       ]
     },
     {
+      "url": "topics/fundamentals/tdr.html",
+      "panels": [
+        "tdr"
+      ],
+      "presets": [
+        "clean",
+        "inductive",
+        "loss",
+        "mask",
+        "merge",
+        "neck",
+        "open",
+        "resolve",
+        "via"
+      ]
+    },
+    {
       "url": "topics/fundamentals/when-is-a-trace-a-transmission-line.html",
       "panels": [
         "criticalLength"
@@ -453,8 +470,8 @@
     }
   ],
   "totals": {
-    "pages": 41,
-    "panels": 42,
-    "presets": 134
+    "pages": 42,
+    "panels": 43,
+    "presets": 143
   }
 }

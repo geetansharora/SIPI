@@ -667,7 +667,7 @@
        spatial plot: it is the one that looks like a scope, it is what the time
        scrubber drives, and it is the only view whose meaning survives being 356 px
        wide. The wide layout shows every panel, so this only decides the phone. */
-    const defaults = { labWaves: 'probe', labChannel: 'eye', labPdn: 'z', cdr: 'transfer', coupling: 'time', adcLab: 'spectrum' };
+    const defaults = { labWaves: 'probe', labChannel: 'eye', labPdn: 'z', cdr: 'transfer', coupling: 'time', adcLab: 'spectrum', tdr: 'profile' };
 
     /* Controls that earn a place directly under the chart on a phone, by lab.
        A lab with no entry keeps its rails as they are. Every set here was chosen
@@ -693,7 +693,10 @@
       adcLab: ['adc-agg-f', 'adc-edge', 'adc-coupling-type'],
       /* The transfer curve's corner, its peaking, and a tone to slide along it:
          what the loop tracks, what it amplifies, and where a given jitter sits. */
-      cdr: ['cdr-fn', 'cdr-zeta', 'cdr-jitter-f']
+      cdr: ['cdr-fn', 'cdr-zeta', 'cdr-jitter-f'],
+      /* One per lesson on the page: the edge sets resolution, the via is the dip,
+         and a section's length decides whether it reads at its true impedance. */
+      tdr: ['td-tr', 'td-vs', 'td-sps']
     };
     if (!(el.dataset.viz in defaults)) return;
     const K = window.SIPI.kit;
@@ -724,9 +727,9 @@
       const caption = panel.querySelector('.panel__label, figcaption');
       const option = document.createElement('option');
       option.value = String(i);
-      /* These two name their own panels; the table above predates that and
+      /* These name their own panels; the table above predates that and
          would call their 'time', 'spec' and 'sweep' something else. */
-      const own = (el.dataset.viz === 'coupling' || el.dataset.viz === 'adcLab') && panel.dataset.labName;
+      const own = ['coupling', 'adcLab', 'tdr'].includes(el.dataset.viz) && panel.dataset.labName;
       option.textContent = own || titles[cv.dataset.cv] || (caption ? caption.textContent : cv.getAttribute('aria-label') || cv.dataset.cv).trim().split(/[—.]/)[0];
       select.appendChild(option);
       if (cv.dataset.cv === defaults[el.dataset.viz]) active = i;
@@ -752,7 +755,8 @@
       labPdn: [['droop', 'combined die droop'], ['zpk', 'Peak impedance']],
       cdr: [['peak', 'Peak transfer'], ['floor', 'Worst tolerance']],
       coupling: [['cap', 'Capacitive'], ['ind', 'Inductive']],
-      adcLab: [['snr', 'SNR'], ['loss', 'Lost to aggressor']] }[el.dataset.viz];
+      adcLab: [['snr', 'SNR'], ['loss', 'Lost to aggressor']],
+      tdr: [['min', 'Lowest'], ['res', 'Resolves']] }[el.dataset.viz];
     const outputs = fields.map(([key, title]) => {
       const source = el.querySelector('[data-out="' + key + '"]');
       const item = document.createElement('span');

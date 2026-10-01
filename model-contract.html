@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
 <link rel="stylesheet" href="css/base.css?v=1e3ae753">
-<link rel="stylesheet" href="css/components.css?v=bf13b2a4">
+<link rel="stylesheet" href="css/components.css?v=701d7475">
   <!-- meta:start -->
   <link rel="canonical" href="https://sipi.work/model-contract.html">
   <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
@@ -47,10 +47,10 @@
   <div class="page-head">
     <p class="crumb"><a href="index.html">SIPI</a> / model contracts</p>
     <h1>Interactive model assumptions and evidence</h1>
-    <p class="byline"><span>Generated from <code>docs/model-types.json</code></span><span>41 panels</span><span>fidelity: 17 analytical, 12 exact, 6 illustrative, 6 numerical · evidence: 5 computed, 31 independent, 5 plausible</span></p>
+    <p class="byline"><span>Generated from <code>docs/model-types.json</code></span><span>42 panels</span><span>fidelity: 17 analytical, 12 exact, 6 illustrative, 7 numerical · evidence: 5 computed, 32 independent, 5 plausible</span></p>
     <p class="answer">
       Each interactive panel uses a model with a defined scope. This page publishes the
-      contract for all 41 panels: the
+      contract for all 42 panels: the
       topology, the reference planes, the equations, the units, the range over which it is
       valid, how it is computed, and the evidence available for its behavior.
     </p>
@@ -748,6 +748,25 @@
       <dt>Numerics</dt><dd>Closed form; peak rather than mean slope reported.</dd>
       <dt>Known limitations</dt><dd>Single lumped shared inductance; no mutual coupling between returns.</dd>
       <dt>Evidence</dt><dd>check-numbers.py — the di/dt and mean-slope figures are recomputed from first principles.</dd>
+    </dl>
+  </section>
+  <section class="contract" id="tdr">
+    <div class="contract__head">
+      <h2>tdr</h2>
+      <span class="model-tag model-tag--numerical">numerical model</span>
+      <span class="ev ev--independent">independent</span>
+      <span class="contract__ver">v1.0 &#183; reviewed 2026-10-01</span>
+    </div>
+    <p class="contract__purpose">Show what a TDR reports for a channel built from a few sections, against what the channel is: where features appear, how the edge limits resolution, and how loss and masking distort the reading.</p>
+    <dl class="contract__body">
+      <dt>Topology</dt><dd>A 50 ohm launch, one or two lumped vias (shunt C or series L), a trace, a section at another impedance, a second trace, and a matched, open, shorted or resistive load.</dd>
+      <dt>Reference planes</dt><dd>The instrument's reference plane, at the start of the launch line; distance is measured from it.</dd>
+      <dt>Equations</dt><dd><ul class="tight"><li><code>Gamma(f) from the cascade's ABCD: Zin = (A ZL + B)/(C ZL + D), Gamma = (Zin - Z0)/(Zin + Z0)</code></li><li><code>rho(t) = integral of the S11 impulse response against a raised-cosine edge of 10-90% rise t_r</code></li><li><code>Z(t) = Z0 (1 + rho)/(1 - rho), the naive single-reflection reading, with no layer peeling</code></li><li><code>distance = round-trip time x v / 2, at 170 ps/in</code></li></ul></dd>
+      <dt>Units</dt><dd>ohm, ps, in, pF, nH, dB/in</dd>
+      <dt>Validity</dt><dd>TEM sections with the kit's lossy-line material (Dk 4.03, two-term loss law, complex Zc); lumped vias; a matched 50 ohm instrument; the edge is a raised cosine.</dd>
+      <dt>Numerics</dt><dd>S11 on an 8192-point grid at 1 ps (an 8.2 ns record), inverse FFT, O(N k) edge integration; time zero at the edge's 50% point.</dd>
+      <dt>Known limitations</dt><dd>Single-ended only; no instrument or probe parasitics, no cable loss before the reference plane, no layer peeling, no dispersion beyond the loss law.</dd>
+      <dt>Evidence</dt><dd>check-models.js — TDR page (a matched line reads Z0; an open reads +1 and a short -1; a long section reads its own impedance; a short one reads shallower; a feature appears at its round trip; the dip area equals Z0 C/2 and the bump area L/(2 Z0) for any edge; two features merge below the edge and separate above it; a lossy line reads rising; the fast integration equals the direct convolution).</dd>
     </dl>
   </section>
   <section class="contract" id="touchstone">

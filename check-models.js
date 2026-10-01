@@ -55,7 +55,7 @@ function loadSite() {
   };
   global.getComputedStyle = () => ({ getPropertyValue: () => '#000000' });
   global.fetch = () => new Promise(() => {});
-  const files = ['js/viz-kit.js', 'js/models/calc-models.js', 'js/models/laminates.js', 'js/models/coupling-model.js', 'js/viz/jitter.js', 'js/viz/crosstalk.js',
+  const files = ['js/viz-kit.js', 'js/models/calc-models.js', 'js/models/laminates.js', 'js/models/coupling-model.js', 'js/models/tdr-model.js', 'js/viz/jitter.js', 'js/viz/crosstalk.js',
                  'js/viz/spectrum.js', 'js/viz/pdn-extras.js',
                  'js/viz/lab-waves.js', 'js/viz/lab-channel.js', 'js/viz/lab-pdn.js',
                  'js/viz/cdr.js', 'js/models/adc-model.js',
@@ -138,6 +138,88 @@ const SIPI = loadSite();
 const K = SIPI.kit, MODELS = SIPI.models || {};
 
 /* ═════════ N6-3 · Search vocabulary and ranking ═════════ */
+/* ═════════ TDR ═════════ */
+suite('TDR page — limits, areas, resolution and the time axis', () => {
+  const T = SIPI.models.tdr;
+  const run = (o) => T.run(Object.assign({ via: 'none' }, o));
+  const at = (r, t) => r.rho[Math.round(t)];
+
+  // INDEPENDENT: a matched, uniform channel reflects nothing.
+  const m = run({});
+  let worst = 0;
+  for (let i = 0; i < m.roundTripEnd + 400; i++) worst = Math.max(worst, Math.abs(m.z[i] - 50));
+  ok('a matched line reads 50 ohm everywhere', worst < 0.01, `worst ${worst.toExponential(2)} ohm`);
+
+  // INDEPENDENT: the two terminations every TDR is checked against.
+  const o = run({ load: 'open' }), sh = run({ load: 'short' });
+  ok('an open end reads rho = +1', at(o, o.roundTripEnd + 150) > 0.999, `${at(o, o.roundTripEnd + 150)}`);
+  ok('a short reads rho = -1', at(sh, sh.roundTripEnd + 150) < -0.999, `${at(sh, sh.roundTripEnd + 150)}`);
+
+  // INDEPENDENT: an open end returns the incident edge unchanged, so its 10-90% is the edge's.
+  const cross = (r, lvl, from) => { for (let i = from; i < r.rho.length - 1; i++) if (r.rho[i] < lvl && r.rho[i + 1] >= lvl) return i + (lvl - r.rho[i]) / (r.rho[i + 1] - r.rho[i]); return NaN; };
+  for (const tr of [20, 35, 80]) {
+    const r = run({ load: 'open', tr });
+    const rise = cross(r, 0.9, 100) - cross(r, 0.1, 100);
+    ok(`an open end's reflection rises in the edge's own ${tr} ps`, Math.abs(rise - tr) < 1, `${rise.toFixed(2)} ps`);
+  }
+
+  // INDEPENDENT: a long lossless section reads Gamma = (Z - Z0)/(Z + Z0).
+  const sec = run({ zs: 30, sps: 150, len1: 1, len2: 1 });
+  const mid = 2 * (T.LAUNCH_PS + 170 + 75);
+  ok('a long 30 ohm section reads its own impedance', Math.abs(at(sec, mid) - (30 - 50) / 80) < 1e-3, `rho ${at(sec, mid).toFixed(4)}`);
+  // INDEPENDENT: its leading edge crosses half-way at exactly its round trip (time zero is the edge's 50% point).
+  const half = (() => { for (let i = 300; i < mid; i++) if (sec.rho[i] > -0.125 && sec.rho[i + 1] <= -0.125) return i + (sec.rho[i] + 0.125) / (sec.rho[i] - sec.rho[i + 1]); return NaN; })();
+  ok('a section appears at its round-trip time', Math.abs(half - 2 * (T.LAUNCH_PS + 170)) < 1.5, `${half.toFixed(2)} ps against ${2 * (T.LAUNCH_PS + 170)}`);
+  const shortSec = run({ zs: 30, sps: 8, len1: 1, len2: 1 });
+  const lo = T.extremum(shortSec, 300, 1000, -1);
+  ok('a section shorter than the edge reads shallower than it is', lo.z > 35, `bottoms at ${lo.z.toFixed(1)} ohm`);
+
+  // INDEPENDENT: the area of a lumped feature's reflection is Gamma(s)/s at s = 0, for any edge.
+  const area = (r, a, b) => { let s = 0; for (let i = a; i < b; i++) s += r.rho[i]; return s; };   // rho x ps
+  for (const tr of [10, 35, 100]) {
+    const c = run({ via: 'c', viaSize: 0.5, tr, len1: 2, len2: 2 });
+    const l = run({ via: 'l', viaSize: 1, tr, len1: 2, len2: 2 });
+    const ac = area(c, 0, 1000), al = area(l, 0, 1000);
+    ok(`a 0.5 pF dip has area -Z0 C/2 = -12.5 ps with a ${tr} ps edge`, Math.abs(ac + 12.5) < 0.25, `${ac.toFixed(3)} ps`);
+    ok(`a 1 nH bump has area L/(2 Z0) = +10 ps with a ${tr} ps edge`, Math.abs(al - 10) < 0.2, `${al.toFixed(3)} ps`);
+  }
+
+  // INDEPENDENT (the resolution rule): two vias whose reflections are 20 ps apart.
+  const dips = (r, a, b, prom) => {
+    const z = r.z, out = [];
+    for (let i = a + 1; i < b - 1; i++) {
+      if (!(z[i] < z[i - 1] && z[i] <= z[i + 1])) continue;
+      let l2 = i, lm = z[i]; while (l2 > a && z[l2 - 1] >= z[i]) { l2--; lm = Math.max(lm, z[l2]); }
+      let r2 = i, rm = z[i]; while (r2 < b && z[r2 + 1] >= z[i]) { r2++; rm = Math.max(rm, z[r2]); }
+      if (Math.min(lm, rm) - z[i] >= prom) out.push(i);
+    }
+    return out;
+  };
+  const slow = dips(run({ via: 'c', via2: true, gap: 10, tr: 35 }), 250, 380, 1);
+  const fast = dips(run({ via: 'c', via2: true, gap: 10, tr: 10 }), 250, 380, 1);
+  ok('two vias closer than the edge merge into one dip', slow.length === 1, `${slow.length} dips`);
+  ok('a faster edge separates them', fast.length === 2, `${fast.length} dips`);
+
+  // INDEPENDENT: series resistance makes a uniform lossy line read rising, never falling.
+  const lossy = run({ loss: 1.5, len1: 3, len2: 3 });
+  let rising = true;
+  for (let t = 400; t + 50 < lossy.roundTripEnd - 50; t += 50) if (lossy.z[t + 50] < lossy.z[t] - 1e-6) rising = false;
+  ok('a lossy matched line reads rising along its length', rising && lossy.z[Math.round(lossy.roundTripEnd) - 100] > 51,
+     `${lossy.z[400].toFixed(2)} to ${lossy.z[Math.round(lossy.roundTripEnd) - 100].toFixed(2)} ohm`);
+
+  // REGRESSION GUARD: the O(N k) integration equals the direct convolution it replaced.
+  const N = 600, imp = new Float64Array(N);
+  for (let i = 0; i < N; i++) imp[i] = Math.sin(i * 0.37) * Math.exp(-i / 90);
+  const fastR = K.tdrReflection(imp, 23, N);
+  let maxd = 0;
+  for (let i = 0; i < N; i++) {
+    let acc = 0;
+    for (let j = 0; j <= i; j++) { const u = (i - j) / 23; acc += imp[j] * (u >= 1 ? 1 : 0.5 - 0.5 * Math.cos(Math.PI * u)); }
+    maxd = Math.max(maxd, Math.abs(acc - fastR[i]));
+  }
+  ok('the fast edge integration equals the direct convolution', maxd < 1e-12, `max difference ${maxd.toExponential(2)}`);
+});
+
 /* ═════════ The eye's measured opening ═════════ */
 suite('Eye contour — the opening is the eye, not a rectangle', () => {
   /* INDEPENDENT: a waveform that moves linearly between ±1 at bit centres makes an

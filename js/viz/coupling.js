@@ -131,7 +131,9 @@
       m.render();
     }));
     $('[data-out="note"]').textContent = PRESETS.gpio.note;
+    /* answer repaints ourselves, or the kit nudges the first slider and clears the scenario */
+    const off = K.onRepaint(root, () => m.render());
     m.render();
-    return { start() {}, stop() {}, destroy() { m.teardown(); } };
+    return { start() {}, stop() {}, destroy() { off(); m.teardown(); } };
   };
 })();
