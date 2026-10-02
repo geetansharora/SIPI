@@ -90,6 +90,7 @@ Where the electrical design meets manufacturing.
 Interface-specific data rates, channel considerations, and source boundaries.
 
 - [LPDDR5/5X Signal Integrity: WCK, ODT and Training](https://sipi.work/topics/interfaces/lpddr5x.html)
+- [LPDDR6 Signal Integrity: Wide NRZ and Sub-Channels](https://sipi.work/topics/interfaces/lpddr6.html)
 - [DDR5 Signal Integrity: Fly-by, ODT, DFE and Training](https://sipi.work/topics/interfaces/ddr5.html)
 - [PCIe Gen 4 and Gen 5 Signal Integrity: Loss and EQ](https://sipi.work/topics/interfaces/pcie-gen4-gen5.html)
 - [PCIe 6.0 Signal Integrity: PAM4, FLIT, and FEC](https://sipi.work/topics/interfaces/pcie-gen6.html)

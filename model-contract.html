@@ -47,10 +47,10 @@
   <div class="page-head">
     <p class="crumb"><a href="index.html">SIPI</a> / model contracts</p>
     <h1>Interactive model assumptions and evidence</h1>
-    <p class="byline"><span>Generated from <code>docs/model-types.json</code></span><span>44 panels</span><span>fidelity: 17 analytical, 12 exact, 6 illustrative, 9 numerical · evidence: 5 computed, 34 independent, 5 plausible</span></p>
+    <p class="byline"><span>Generated from <code>docs/model-types.json</code></span><span>46 panels</span><span>fidelity: 17 analytical, 12 exact, 7 illustrative, 10 numerical · evidence: 6 computed, 35 independent, 5 plausible</span></p>
     <p class="answer">
       Each interactive panel uses a model with a defined scope. This page publishes the
-      contract for all 44 panels: the
+      contract for all 46 panels: the
       topology, the reference planes, the equations, the units, the range over which it is
       valid, how it is computed, and the evidence available for its behavior.
     </p>
@@ -69,7 +69,7 @@
       The fourth level is listed for reference and is currently unused. These model labels do not
       claim validation against a published specification. Where a page states a
       specification claim, it is recorded in the
-      <a href="docs/claims.md">claim ledger</a> with its status. Of its 63 claims, 34 have been read against the source they cite, 24 have been narrowed to what their source supports, and 5 still await a source. None of the verified ones rests on the normative text of a standard; they rest on vendor documents, public announcements and measured data, and the source checks were made by an AI model, not by a person.
+      <a href="docs/claims.md">claim ledger</a> with its status. Of its 72 claims, 40 have been read against the source they cite, 27 have been narrowed to what their source supports, and 5 still await a source. None of the verified ones rests on the normative text of a standard; they rest on vendor documents, public announcements and measured data, and the source checks were made by an AI model, not by a person.
     </p>
     <p>
       <em>Kind</em> and <em>evidence</em> answer different questions. A deliberately
@@ -178,6 +178,25 @@
       <dt>Numerics</dt><dd>Direct evaluation.</dd>
       <dt>Known limitations</dt><dd>A FIT, not a geometry solve. Roughness shown as shape, not a calibrated prediction.</dd>
       <dt>Evidence</dt><dd>check-numbers.py — skin depth at 1 and 10 GHz recomputed.</dd>
+    </dl>
+  </section>
+  <section class="contract" id="lpddr6Packet">
+    <div class="contract__head">
+      <h2>lpddr6Packet</h2>
+      <span class="model-tag model-tag--illustrative">illustrative model</span>
+      <span class="ev ev--computed">computed</span>
+      <span class="contract__ver">v1.0 &#183; reviewed 2026-10-02</span>
+    </div>
+    <p class="contract__purpose">Show what one LPDDR6 sub-channel burst carries, why a 1 costs energy on an LVSTL bus, what DBI saves, and what choosing link protection instead gives up.</p>
+    <dl class="contract__body">
+      <dt>Topology</dt><dd>One sub-channel burst, 12 DQ x BL24 = 288 bits, drawn by content: 256 data bits in sixteen 16-bit groups, 16 metadata bits, 16 DBI flags or link-protection check bits.</dd>
+      <dt>Reference planes</dt><dd>The DRAM's data pins.</dd>
+      <dt>Equations</dt><dd><ul class="tight"><li><code>DBI: invert a 16-bit group when it holds more than eight 1s, and send a 1 flag for it</code></li><li><code>energy of a 1 = VDDQ^2/(Ron + RTT) x UI, with VDDQ 0.5 V and Ron = RTT = 40 ohm</code></li><li><code>link-protection check bits counted at their average, 8 ones of 16</code></li></ul></dd>
+      <dt>Units</dt><dd>bits, pJ, fJ</dd>
+      <dt>Validity</dt><dd>Termination energy only; the transition energy of charging lines and pins is left out.</dd>
+      <dt>Numerics</dt><dd>Exact counting.</dd>
+      <dt>Known limitations</dt><dd>A logical layout, not the standard's pin-and-beat map; the DBI grouping follows vendor descriptions of the standard, not the standard itself; the check bits' values depend on a code the panel does not implement.</dd>
+      <dt>Evidence</dt><dd>check-models.js - LPDDR6 page (DBI counting and the energy of a 1).</dd>
     </dl>
   </section>
   <section class="contract" id="adcLab">
@@ -653,6 +672,25 @@
       <dt>Numerics</dt><dd>Trapezoid integration with 900 time intervals and max(220, ceil(64 Td/tr)) spatial intervals, capped at 65536. The energy history uses 121 uniformly spaced times plus finite-edge boundary transition landmarks; straight segments join computed samples. History is cached until physical settings change. Cursor energies are recomputed at the actual cursor time; the residual is shown on a separate aligned scale. Energy integrals begin before the source edge. Energy-history UI updates debounce rapid physical edits, then yield between samples with a generation guard. Pending histories are hidden and omitted from exports; instantaneous calculations remain current. Completed histories use the same sample grid and quadrature as the synchronous model.</dd>
       <dt>Known limitations</dt><dd>Lossless, uniform, no mid-line discontinuity. The energy account is refused rather than reported when it closes to worse than 1%. Across every length and edge the controls allow it now closes to 0.086% or better.</dd>
       <dt>Evidence</dt><dd>check-models.js — Line1D (21 assertions), shared with the reflections panel.</dd>
+    </dl>
+  </section>
+  <section class="contract" id="lpddr6">
+    <div class="contract__head">
+      <h2>lpddr6</h2>
+      <span class="model-tag model-tag--numerical">numerical model</span>
+      <span class="ev ev--independent">independent</span>
+      <span class="contract__ver">v1.0 &#183; reviewed 2026-10-02</span>
+    </div>
+    <p class="contract__purpose">Show why LPDDR6 raised bandwidth by going wider at NRZ rather than faster or to PAM4: the same raw bandwidth carried three ways through one short channel at LVSTL's swing.</p>
+    <dl class="contract__body">
+      <dt>Topology</dt><dd>One channel shared by three roads: faster NRZ on 16 pins, PAM4 on 16 pins at half that symbol rate, and NRZ on N pins (24 for LPDDR6) at the LPDDR6 bin rate x 24/N. A causal two-term loss channel plus one echo at a fixed delay in picoseconds.</dd>
+      <dt>Reference planes</dt><dd>The receiver's input, before any equaliser unless the one-tap DFE is on.</dd>
+      <dt>Equations</dt><dd><ul class="tight"><li><code>raw bandwidth = 24 x LPDDR6 rate; fast rate = raw/16, PAM4 baud = raw/32, wide rate = raw/N</code></li><li><code>loss at a road's Nyquist = L5 (0.35 sqrt(f/5 GHz) + 0.65 f/5 GHz)</code></li><li><code>swing = VDDQ RTT/(Ron + RTT) = 0.5 V x 40/80 = 250 mV; PAM4 level spacing = swing/3</code></li><li><code>margin = eye - 2 Q sigma, Q = 7, vertically in mV and horizontally in ps</code></li></ul></dd>
+      <dt>Units</dt><dd>mV, ps, Gb/s, GBd, dB</dd>
+      <dt>Validity</dt><dd>Linear channel; LVSTL swing with Ron = RTT = 40 ohm (model choice); one echo; crosstalk and supply noise folded into one rms figure; ideal one-tap DFE when on.</dd>
+      <dt>Numerics</dt><dd>Kit channel impulse on a 4096-point grid at 32 samples a symbol; raised-cosine edge of 0.3 UI; PRBS-11 (NRZ) and PRBS-11 pairs (PAM4) superposed over the pulse response; eye openings measured with the kit's eyeContour.</dd>
+      <dt>Known limitations</dt><dd>No crosstalk modelled from neighbours, no SSN, no supply noise beyond the rms figure; the same echo on every road; equalisation is either none or an ideal one-tap DFE; the PAM4 receiver is ideal.</dd>
+      <dt>Evidence</dt><dd>check-models.js - LPDDR6 page (a perfect channel opens NRZ to the full swing and PAM4 to a third of it; every road carries the same raw bandwidth; 16 wide-road pins reproduce the faster-NRZ road exactly; each road's loss is the law at its own Nyquist; more loss never opens an eye; the echo lands at its delay over the UI; DBI never sends more ones than it saves and never leaves a group above half ones; the termination energy of a 1 is VDDQ^2/(Ron+RTT) x UI).</dd>
     </dl>
   </section>
   <section class="contract" id="pam4">

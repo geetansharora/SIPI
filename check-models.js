@@ -55,7 +55,7 @@ function loadSite() {
   };
   global.getComputedStyle = () => ({ getPropertyValue: () => '#000000' });
   global.fetch = () => new Promise(() => {});
-  const files = ['js/viz-kit.js', 'js/models/calc-models.js', 'js/models/laminates.js', 'js/models/coupling-model.js', 'js/models/tdr-model.js', 'js/models/ddr5-model.js', 'js/viz/jitter.js', 'js/viz/crosstalk.js',
+  const files = ['js/viz-kit.js', 'js/models/calc-models.js', 'js/models/laminates.js', 'js/models/coupling-model.js', 'js/models/tdr-model.js', 'js/models/ddr5-model.js', 'js/models/lpddr6-model.js', 'js/viz/jitter.js', 'js/viz/crosstalk.js',
                  'js/viz/spectrum.js', 'js/viz/pdn-extras.js',
                  'js/viz/lab-waves.js', 'js/viz/lab-channel.js', 'js/viz/lab-pdn.js',
                  'js/viz/cdr.js', 'js/models/adc-model.js',
@@ -138,6 +138,51 @@ const SIPI = loadSite();
 const K = SIPI.kit, MODELS = SIPI.models || {};
 
 /* ═════════ N6-3 · Search vocabulary and ranking ═════════ */
+/* ═════════ LPDDR6 ═════════ */
+suite('LPDDR6 page — three roads, the level arithmetic, DBI and the energy of a 1', () => {
+  const L = SIPI.models.lpddr6;
+  const run = (o) => L.run(Object.assign({}, L.defaults, o));
+  const by = (R, id) => R.find((e) => e.r.id === id);
+
+  const clean = run({ loss5: 0, echo: 0, noiseMv: 0, jitterPs: 0 });
+  nearRel('a perfect channel opens NRZ to the full LVSTL swing', by(clean, 'wide').height, L.SWING, 0.01, ' V');
+  nearRel('and each PAM4 eye to a third of it', by(clean, 'pam4').height, L.SWING / 3, 0.01, ' V');
+  nearAbs('the swing is the divider VDDQ RTT/(Ron + RTT)', L.SWING, 0.5 * 40 / 80, 1e-12, ' V');
+
+  run({}).forEach((e) => nearRel('every road carries the same raw bandwidth: ' + e.r.id,
+    e.r.pins * e.r.baud * Math.log2(e.r.levels), 24 * L.defaults.rate, 1e-12, ' Mb/s'));
+  const same = run({ pins: 16 }), f = by(same, 'fast'), w = by(same, 'wide');
+  nearAbs('sixteen wide-road pins are the faster-NRZ road, eye for eye', w.height, f.height, 1e-12, ' V');
+
+  run({}).forEach((e) => nearAbs('each road sees the loss law at its own Nyquist: ' + e.r.id,
+    e.ch.loss, 3 * (0.35 * Math.sqrt(e.r.fN / 5) + 0.65 * e.r.fN / 5), 1e-12, ' dB'));
+  ['fast', 'pam4', 'wide'].forEach((id) => {
+    const h = [0, 2, 4, 6, 8].map((L5) => by(run({ loss5: L5, echo: 0 }), id).height);
+    ok('more loss never opens an eye: ' + id, h.every((v, i) => i === 0 || v <= h[i - 1] + 1e-9), h.map((v) => fmt(v * 1000)).join(' >= '));
+  });
+  {
+    /* the echo is where the delay says: its peak in the pulse response sits echoPs
+       after the cursor, whatever the symbol rate */
+    run({ loss5: 0.5, echo: 20, echoPs: 300 }).forEach((e) => {
+      const dt = e.r.ui / L.SPS, from = e.cur + Math.round(150 / dt);
+      let at = from; for (let i = from; i < e.P.length; i++) if (e.P[i] > e.P[at]) at = i;
+      nearAbs('the echo lands at its delay, on any road: ' + e.r.id, (at - e.cur) * dt, 300, e.r.ui * 0.25, ' ps');
+    });
+  }
+  {
+    const g = K.rng(0x1d6), bad = [];
+    for (let t = 0; t < 200; t++) {
+      const d = Array.from({ length: 256 }, () => (g() < g() ? 1 : 0)), meta = new Array(16).fill(0);
+      const none = L.packet(d, meta, 'none', 10667), dbi = L.packet(d, meta, 'dbi', 10667);
+      if (dbi.ones > none.ones) bad.push('more ones with DBI');
+      dbi.groups.forEach((gr) => { if (gr.sent1 > 8) bad.push('a group above half'); });
+      if (dbi.groups.some((gr, i) => gr.inv !== (dbi.flags[i] === 1))) bad.push('flag disagrees');
+    }
+    ok('DBI never sends more ones, never leaves a group above half ones, and flags exactly the inverted groups', bad.length === 0, bad.slice(0, 3).join('; '));
+  }
+  nearRel('the termination energy of a 1 is VDDQ^2/(Ron + RTT) x UI', L.energyPerOne(10667), 0.25 / 80 * 1e6 / 10667, 1e-12, ' pJ');
+});
+
 /* ═════════ DDR5 ═════════ */
 suite('DDR5 page — the bus solver, the worst-case eye, the DFE and the fly-by', () => {
   const D = SIPI.models.ddr5;

@@ -22,7 +22,8 @@
       "statement": "LPDDR5X reaches 8533 MT/s.",
       "pages": [
         "interfaces/lpddr5x",
-        "interfaces/ddr5"
+        "interfaces/ddr5",
+        "interfaces/lpddr6"
       ],
       "source_type": "public-rate",
       "source": "JEDEC press release, \"JEDEC Updates Standard for Low Power Memory Devices: LPDDR5\"",
@@ -41,7 +42,8 @@
       "id": "C-2b",
       "statement": "LPDDR5 reaches 6400 MT/s.",
       "pages": [
-        "interfaces/lpddr5x"
+        "interfaces/lpddr5x",
+        "interfaces/lpddr6"
       ],
       "source_type": "public-rate",
       "source": "JEDEC press release, \"JEDEC Updates Standard for Low Power Memory Devices: LPDDR5\"",
@@ -1181,7 +1183,8 @@
       "id": "C-53",
       "statement": "LPDDR5X has a x16 channel per die, LVSTL I/O at a VDDQ of 0.5 V (0.45 V option, 0.3 V with ODT off), a differential WCK data clock at 2:1 or 4:1 to CK, an optional read strobe RDQS, and optional DRAM-side DFE and pre-emphasis advertised in mode registers.",
       "pages": [
-        "interfaces/ddr5"
+        "interfaces/ddr5",
+        "interfaces/lpddr6"
       ],
       "source_type": "vendor",
       "source": "Micron 315b x32 Automotive LPDDR5X SDRAM data sheet, Rev. B 11/2022: features, and product-specific mode registers MR0 and MR24",
@@ -1209,6 +1212,177 @@
       "conditions": "The announcement; the standard itself has not been read",
       "status": "verified",
       "note": "Read on jedec.org.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-02",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null
+    },
+    {
+      "id": "C-55",
+      "statement": "JESD209-6 (LPDDR6) was published on 9 July 2025: two sub-channels per die with 12 DQ and 4 CA each, on-the-fly burst length for 32- and 64-byte access, static and dynamic efficiency modes, dynamic write NT-ODT, two mandatory VDD2 supplies, DVFSL, PRAC, programmable link protection, on-die ECC and CA parity.",
+      "pages": [
+        "interfaces/lpddr6"
+      ],
+      "source_type": "public-rate",
+      "source": "JEDEC press release, \"JEDEC Releases New LPDDR6 Standard to Enhance Mobile and AI Memory Performance\", 9 July 2025",
+      "source_url": "https://www.jedec.org/news/pressreleases/jedec%C2%AE-releases-new-lpddr6-standard-enhance-mobile-and-ai-memory-performance",
+      "source_title": "JEDEC — LPDDR6 (JESD209-6) announcement",
+      "conditions": "The announcement; the standard itself has not been read",
+      "status": "verified",
+      "note": "Read on jedec.org. The release gives no data rates; those are C-58.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-02",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null
+    },
+    {
+      "id": "C-56",
+      "statement": "LPDDR6 runs CK at 2667 MHz (LPDDR5X 1066.5 MHz) with only a 2:1 WCK:CK ratio; VDD1/VDD2C/VDD2D/VDDQ are 1.8/1.0/0.875/0.5 V (0.3 V VDDQ option); 16 banks and BL24/48 per sub-channel; LVSTL I/O with DQ ODT to VSSQ; a burst is 12 DQ x 24 = 288 bits, 256 data + 16 metadata + 16 DBI or link ECC/EDC, with no DMI pin.",
+      "pages": [
+        "interfaces/lpddr6"
+      ],
+      "source_type": "vendor",
+      "source": "Samsung (Seunghyun Moon), \"LPDDR6 Key Architecture\", JEDEC LPDDR6 Workshop, 8 April 2025",
+      "source_url": "https://www.jedec.org/sites/default/files/Seunghyun%20Moon_03_29_25_Final.pdf",
+      "source_title": "Samsung — LPDDR6 Key Architecture (JEDEC workshop)",
+      "conditions": "A member presentation at JEDEC’s workshop, after the content was balloted; not the standard",
+      "status": "verified",
+      "note": "Read from the comparison table and the metadata slides. The LPDDR5X column of the same table gives 9600 Mbps, which the page attributes to vendor material.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-02",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null
+    },
+    {
+      "id": "C-57",
+      "statement": "LPDDR6 adopted wide NRZ (12 DQ per sub-channel) rather than PAM4; Samsung’s workshop presentation puts PAM4 at about half the signal-integrity margin and about 1.5 times the I/O power for the same bandwidth.",
+      "pages": [
+        "interfaces/lpddr6"
+      ],
+      "source_type": "vendor",
+      "source": "Samsung, \"LPDDR6 Key Architecture\", JEDEC LPDDR6 Workshop, April 2025, slide \"High Bandwidth – Wide NRZ\"",
+      "source_url": "https://www.jedec.org/sites/default/files/Seunghyun%20Moon_03_29_25_Final.pdf",
+      "source_title": "Samsung — LPDDR6 Key Architecture (JEDEC workshop)",
+      "conditions": "An attributed comparison, not a measurement the page repeats",
+      "status": "verified",
+      "note": "The page states it as Samsung’s framing and shows its own model reaches the same ordering.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-02",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null
+    },
+    {
+      "id": "C-58",
+      "statement": "LPDDR6 starts at 10.667 Gb/s per pin and its highest defined rate is 14.4 Gb/s.",
+      "pages": [
+        "interfaces/lpddr6"
+      ],
+      "source_type": "commercial",
+      "source": "Synopsys, \"LPDDR6: A Deep Dive Into the JEDEC Press Release\", JEDEC forum, May 2024; Synopsys blog \"Delivering LPDDR6 read/write eyes at 10.67 Gb/s\", January 2026; Cadence technical article, September 2025",
+      "source_url": "https://www.synopsys.com/blogs/chip-design/delivering-lpddr6-read-write-eyes-10-6-gbps.html",
+      "source_title": "Synopsys — Delivering LPDDR6 read/write eyes at 10.67 Gb/s",
+      "conditions": "IP vendors’ statements of the standard’s rates",
+      "status": "scoped",
+      "note": "Consistent across Synopsys (2024 and 2026) and Cadence (2025, PHY at 14.4 Gb/s); JEDEC’s own release states no rates, so the page attributes them to IP vendors.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-02",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null
+    },
+    {
+      "id": "C-59",
+      "statement": "On LPDDR6 each DBI flag covers 16 data bits, the 16 extra bits carry DBI or link protection but not both, and a new shared ALERT pin reports faults such as write link errors to the host.",
+      "pages": [
+        "interfaces/lpddr6"
+      ],
+      "source_type": "commercial",
+      "source": "Synopsys, \"LPDDR6: A Deep Dive Into the JEDEC Press Release\", JEDEC forum, May 2024 (based on ballots as of March 2024)",
+      "source_url": "https://www.jedec.org/sites/default/files/Brett%20Murdock_FINAL_Mobile_2024.pdf",
+      "source_title": "Synopsys — LPDDR6 deep dive (JEDEC forum, 2024)",
+      "conditions": "Before the standard was final",
+      "status": "scoped",
+      "note": "The deck says it may change; Samsung’s 2025 deck confirms the 16 DBI-or-link bits and ALERT. The DBI inversion rule the packet panel uses, invert above half ones, is the purpose of DC DBI on a ground-terminated bus, not a quoted rule.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-02",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null
+    },
+    {
+      "id": "C-60",
+      "statement": "SK hynix announced a 1c-process 16 Gb LPDDR6 DRAM running above 10.7 Gb/s in March 2026, with supply from the second half of 2026.",
+      "pages": [
+        "interfaces/lpddr6"
+      ],
+      "source_type": "commercial",
+      "source": "SK hynix newsroom, \"SK hynix Develops 1c LPDDR6\", 10 March 2026",
+      "source_url": "https://news.skhynix.com/en/1c-lpddr6-development-2026/",
+      "source_title": "SK hynix — 1c LPDDR6 development",
+      "conditions": "A vendor announcement",
+      "status": "verified",
+      "note": "Read on the SK hynix newsroom.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-02",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null
+    },
+    {
+      "id": "C-61",
+      "statement": "LPDDR6 PHYs use receive DFE and ODT tuning, and trained read and write eyes have been shown at 10.67 Gb/s.",
+      "pages": [
+        "interfaces/lpddr6"
+      ],
+      "source_type": "commercial",
+      "source": "Synopsys blog, \"Delivering LPDDR6 read/write eyes at 10.67 Gb/s\", January 2026",
+      "source_url": "https://www.synopsys.com/blogs/chip-design/delivering-lpddr6-read-write-eyes-10-6-gbps.html",
+      "source_title": "Synopsys — Delivering LPDDR6 read/write eyes at 10.67 Gb/s",
+      "conditions": "One IP vendor’s PHY",
+      "status": "scoped",
+      "note": "The blog gives no eye dimensions or tap counts; the page claims none.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-02",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null
+    },
+    {
+      "id": "C-62",
+      "statement": "GDDR7 (JESD239, March 2024) uses PAM3 signalling.",
+      "pages": [
+        "interfaces/lpddr6"
+      ],
+      "source_type": "public-rate",
+      "source": "JEDEC press release, \"JEDEC Publishes GDDR7 Graphics Memory Standard\", 5 March 2024",
+      "source_url": "https://www.jedec.org/news/pressreleases/jedec-publishes-gddr7-graphics-memory-standard",
+      "source_title": "JEDEC — GDDR7 announcement",
+      "conditions": "The announcement",
+      "status": "verified",
+      "note": "Read on jedec.org: three levels, three bits over two cycles.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-02",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null
+    },
+    {
+      "id": "C-63",
+      "statement": "LPDDR5 runs CK at 800 MHz with a WCK:CK ratio of 2:1 up to 3200 Mbps or 4:1, 7 command pins and 16 DQ per channel, BL16/32, VDD2 1.05 V (0.9 V) and VDDQ 0.5 V (0.3 V), and carries DM, DBI or link ECC on two DMI pins.",
+      "pages": [
+        "interfaces/lpddr6"
+      ],
+      "source_type": "vendor",
+      "source": "Samsung (Seunghyun Moon), \"LPDDR6 Key Architecture\", JEDEC LPDDR6 Workshop, 8 April 2025, key spec comparison and metadata slides",
+      "source_url": "https://www.jedec.org/sites/default/files/Seunghyun%20Moon_03_29_25_Final.pdf",
+      "source_title": "Samsung — LPDDR6 Key Architecture (JEDEC workshop)",
+      "conditions": "The LPDDR5 column of a member presentation’s comparison table",
+      "status": "verified",
+      "note": "Read from the same table as C-56; the 6400 MT/s rate is also C-2b.",
       "owner": "Geetansh",
       "sourceCheckedBy": "Claude Opus 5.5",
       "sourceCheckedOn": "2026-10-02",

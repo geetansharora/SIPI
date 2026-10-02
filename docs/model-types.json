@@ -999,5 +999,52 @@
     "version": "1.0",
     "reviewed": "2026-10-02",
     "reviewer": "Geetansh Arora"
+  },
+  "lpddr6": {
+    "kind": "numerical",
+    "evidence": "independent",
+    "purpose": "Show why LPDDR6 raised bandwidth by going wider at NRZ rather than faster or to PAM4: the same raw bandwidth carried three ways through one short channel at LVSTL's swing.",
+    "topology": "One channel shared by three roads: faster NRZ on 16 pins, PAM4 on 16 pins at half that symbol rate, and NRZ on N pins (24 for LPDDR6) at the LPDDR6 bin rate x 24/N. A causal two-term loss channel plus one echo at a fixed delay in picoseconds.",
+    "planes": "The receiver's input, before any equaliser unless the one-tap DFE is on.",
+    "equations": [
+      "raw bandwidth = 24 x LPDDR6 rate; fast rate = raw/16, PAM4 baud = raw/32, wide rate = raw/N",
+      "loss at a road's Nyquist = L5 (0.35 sqrt(f/5 GHz) + 0.65 f/5 GHz)",
+      "swing = VDDQ RTT/(Ron + RTT) = 0.5 V x 40/80 = 250 mV; PAM4 level spacing = swing/3",
+      "margin = eye - 2 Q sigma, Q = 7, vertically in mV and horizontally in ps"
+    ],
+    "units": "mV, ps, Gb/s, GBd, dB",
+    "validity": "Linear channel; LVSTL swing with Ron = RTT = 40 ohm (model choice); one echo; crosstalk and supply noise folded into one rms figure; ideal one-tap DFE when on.",
+    "numerics": "Kit channel impulse on a 4096-point grid at 32 samples a symbol; raised-cosine edge of 0.3 UI; PRBS-11 (NRZ) and PRBS-11 pairs (PAM4) superposed over the pulse response; eye openings measured with the kit's eyeContour.",
+    "limitations": "No crosstalk modelled from neighbours, no SSN, no supply noise beyond the rms figure; the same echo on every road; equalisation is either none or an ideal one-tap DFE; the PAM4 receiver is ideal.",
+    "verified": "check-models.js - LPDDR6 page (a perfect channel opens NRZ to the full swing and PAM4 to a third of it; every road carries the same raw bandwidth; 16 wide-road pins reproduce the faster-NRZ road exactly; each road's loss is the law at its own Nyquist; more loss never opens an eye; the echo lands at its delay over the UI; DBI never sends more ones than it saves and never leaves a group above half ones; the termination energy of a 1 is VDDQ^2/(Ron+RTT) x UI).",
+    "suites": [
+      "LPDDR6 page"
+    ],
+    "version": "1.0",
+    "reviewed": "2026-10-02",
+    "reviewer": "Geetansh Arora"
+  },
+  "lpddr6Packet": {
+    "kind": "illustrative",
+    "evidence": "computed",
+    "purpose": "Show what one LPDDR6 sub-channel burst carries, why a 1 costs energy on an LVSTL bus, what DBI saves, and what choosing link protection instead gives up.",
+    "topology": "One sub-channel burst, 12 DQ x BL24 = 288 bits, drawn by content: 256 data bits in sixteen 16-bit groups, 16 metadata bits, 16 DBI flags or link-protection check bits.",
+    "planes": "The DRAM's data pins.",
+    "equations": [
+      "DBI: invert a 16-bit group when it holds more than eight 1s, and send a 1 flag for it",
+      "energy of a 1 = VDDQ^2/(Ron + RTT) x UI, with VDDQ 0.5 V and Ron = RTT = 40 ohm",
+      "link-protection check bits counted at their average, 8 ones of 16"
+    ],
+    "units": "bits, pJ, fJ",
+    "validity": "Termination energy only; the transition energy of charging lines and pins is left out.",
+    "numerics": "Exact counting.",
+    "limitations": "A logical layout, not the standard's pin-and-beat map; the DBI grouping follows vendor descriptions of the standard, not the standard itself; the check bits' values depend on a code the panel does not implement.",
+    "verified": "check-models.js - LPDDR6 page (DBI counting and the energy of a 1).",
+    "suites": [
+      "LPDDR6 page"
+    ],
+    "version": "1.0",
+    "reviewed": "2026-10-02",
+    "reviewer": "Geetansh Arora"
   }
 }

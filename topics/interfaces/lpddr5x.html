@@ -233,7 +233,7 @@
       JEDEC's low-power DRAM interface: a source-synchronous parallel bus, x16 per channel. The
       top speed bin is a property of an <em>edition</em>, not of the family — LPDDR5 was specified
       to 6400 MT/s and LPDDR5X to 8533 MT/s in the editions this page was written against, and
-      later editions raise both. Treat those two numbers as "the bins in the revision you are
+      later editions raise both. Its successor, <a href="lpddr6.html">LPDDR6</a>, widens the channel rather than raising the rate much further. Treat those two numbers as "the bins in the revision you are
       designing to", and go and read which revision that is. At 8533 MT/s a data bit occupies
       about <strong>117 ps</strong>, which is the entire budget for skew, jitter, noise and every
       uncertainty in the path.
@@ -480,6 +480,7 @@
       <li><a href="../power-integrity/ssn-ground-bounce.html">Simultaneous Switching Noise and Ground Bounce</a></li>
       <li><a href="../fundamentals/termination-schemes.html">Termination Schemes: Series, Parallel, Thevenin and AC</a></li>
       <li><a href="../package-board/bga-escape-routing.html">BGA Escape Routing and Breakout Congestion</a></li>
+      <li><a href="lpddr6.html">LPDDR6 Signal Integrity: Wide NRZ and Sub-Channels</a> — the next generation: 24 data pins a channel at 10.7 to 14.4 Gb/s</li>
     </ul>
   </div>
 
@@ -498,7 +499,7 @@
   <!-- pager:start -->
   <nav class="pager" aria-label="Previous and next topic">
     <a class="prev" href="../../topics/package-board/package-and-system.html"><span class="dir">Previous</span><span>Package Interconnects as Transmission Lines</span></a>
-    <a class="next" href="../../topics/interfaces/ddr5.html"><span class="dir">Next</span><span>DDR5 Signal Integrity: Fly-by, ODT, DFE and Training</span></a>
+    <a class="next" href="../../topics/interfaces/lpddr6.html"><span class="dir">Next</span><span>LPDDR6 Signal Integrity: Wide NRZ and Sub-Channels</span></a>
   </nav>
   <!-- pager:end -->
 </main>
@@ -520,7 +521,7 @@
 <script src="../../js/site.js?v=61b8ff31" defer></script>
 <script src="../../js/viz-kit.js?v=cb18bcf0" defer></script>
 <script src="../../js/viz/lpddr.js?v=c201fbab" defer></script>
-<script src="../../js/viz-loader.js?v=28f89557" defer></script>
+<script src="../../js/viz-loader.js?v=3395e118" defer></script>
 <script src="../../js/search.js?v=f57dea26" defer></script>
 </body>
 </html>

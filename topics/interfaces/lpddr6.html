@@ -1,0 +1,998 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- theme:start -->
+  <meta name="theme-color" content="#F7F8FA">
+  <script>(function(){try{var t=localStorage.getItem('sipi-theme');if(t==='dark'||t==='system'){document.documentElement.setAttribute('data-theme',t);var m=document.querySelector('meta[name=theme-color]');if(m&&(t==='dark'||matchMedia('(prefers-color-scheme:dark)').matches))m.content='#0B1015';}}catch(e){}})();</script>
+  <!-- theme:end -->
+<title>LPDDR6 Signal Integrity: Wide NRZ and Sub-Channels | SIPI</title>
+<meta name="description" content="LPDDR6 vs LPDDR5X and LPDDR5: speed, bandwidth, voltage, and why LPDDR6 went wide NRZ instead of PAM4, with 12-bit sub-channels and a 288-bit burst. Interactive.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<link rel="stylesheet" href="../../css/base.css?v=1e3ae753">
+<link rel="stylesheet" href="../../css/components.css?v=83fc3801">
+  <!-- meta:start -->
+  <link rel="canonical" href="https://sipi.work/topics/interfaces/lpddr6.html">
+  <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="SIPI">
+  <meta property="og:title" content="LPDDR6 Signal Integrity: Wide NRZ and Sub-Channels | SIPI">
+  <meta property="og:description" content="LPDDR6 vs LPDDR5X and LPDDR5: speed, bandwidth, voltage, and why LPDDR6 went wide NRZ instead of PAM4, with 12-bit sub-channels and a 288-bit burst. Interactive.">
+  <meta property="og:url" content="https://sipi.work/topics/interfaces/lpddr6.html">
+  <meta property="og:image" content="https://sipi.work/assets/og/interfaces/lpddr6.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="LPDDR6 Signal Integrity: Wide NRZ and Sub-Channels: a figure from the page, on SIPI">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="LPDDR6 Signal Integrity: Wide NRZ and Sub-Channels | SIPI">
+  <meta name="twitter:description" content="LPDDR6 vs LPDDR5X and LPDDR5: speed, bandwidth, voltage, and why LPDDR6 went wide NRZ instead of PAM4, with 12-bit sub-channels and a 288-bit burst. Interactive.">
+  <meta name="twitter:image" content="https://sipi.work/assets/og/interfaces/lpddr6.png">
+  <meta name="twitter:image:alt" content="LPDDR6 Signal Integrity: Wide NRZ and Sub-Channels: a figure from the page, on SIPI">
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"LPDDR6 Signal Integrity: Wide NRZ and Sub-Channels","description":"LPDDR6 vs LPDDR5X and LPDDR5: speed, bandwidth, voltage, and why LPDDR6 went wide NRZ instead of PAM4, with 12-bit sub-channels and a 288-bit burst. Interactive.","url":"https://sipi.work/topics/interfaces/lpddr6.html","articleSection":"Interface sign-off","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer","url":"https://www.linkedin.com/in/geetansh-arora-a645714a/","sameAs":["https://www.linkedin.com/in/geetansh-arora-a645714a/"]},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-10-02","image":"https://sipi.work/assets/og/interfaces/lpddr6.png"}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"SIPI","item":"https://sipi.work/"},{"@type":"ListItem","position":2,"name":"Interface sign-off","item":"https://sipi.work/#interfaces"},{"@type":"ListItem","position":3,"name":"LPDDR6 Signal Integrity: Wide NRZ and Sub-Channels"}]}</script>
+  <!-- meta:end -->
+</head>
+<body>
+
+<header class="masthead">
+  <a class="wordmark" href="../../index.html">SIPI</a>
+  <button class="theme-toggle" data-act="theme" type="button">Light</button>
+  <nav aria-label="Site">
+    <a href="../../start.html">Start</a>
+    <a href="../../index.html#groundwork">Topics</a>
+    <a href="../../labs.html">Labs</a>
+    <a href="../../calculators.html">Calculators</a>
+    <a href="../../colophon.html">About</a>
+  </nav>
+</header>
+
+<main>
+  <div class="page-head">
+    <p class="crumb"><a href="../../index.html#interfaces">Interface sign-off</a> / 02</p>
+    <h1>LPDDR6 Signal Integrity: Wide NRZ and Sub-Channels</h1>
+    <p class="byline">
+      <!-- review:start --><span>By <a href="https://www.linkedin.com/in/geetansh-arora-a645714a/" target="_blank" rel="author noopener">Geetansh Arora</a> — Principal SI/PI Engineer</span><time datetime="2026-10-02" title="Technical review by Geetansh Arora on this date">2 Oct 2026</time><span>10 min</span><!-- review:end -->
+    </p>
+    <!-- share:head:start --><div class="share share--head" data-share data-share-url="https://sipi.work/topics/interfaces/lpddr6.html" data-share-title="LPDDR6 Signal Integrity: Wide NRZ and Sub-Channels"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Flpddr6.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Flpddr6.html&amp;text=LPDDR6%20Signal%20Integrity%3A%20Wide%20NRZ%20and%20Sub-Channels" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=LPDDR6%20Signal%20Integrity%3A%20Wide%20NRZ%20and%20Sub-Channels&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Flpddr6.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:head:end -->
+    <p class="answer">
+      LPDDR6 nearly doubles the bandwidth of an LPDDR5X channel mostly by going wider rather than faster: each die
+      carries two sub-channels of twelve data pins, signalled as plain two-level NRZ at 10.7 to 14.4 Gb/s. It stays at
+      a half-volt I/O supply and a short, dense channel, so every extra gigabit and every extra signal level would cost
+      margin it does not have. The rest of the standard, from the 288-bit burst to the split supplies, follows from
+      spending pins instead of margin.
+    </p>
+  </div>
+
+  <!-- mobilenote:start -->
+  <!-- mobilenote:end -->
+  <section class="instrument lab" data-viz="lpddr6" aria-label="Interactive comparison of three ways to carry the same memory bandwidth: faster NRZ on 16 pins, PAM4 on 16 pins, and wide NRZ on 24 pins, through one channel at LVSTL's swing, with each eye and what noise and jitter leave of it">
+    <script type="application/json" data-contract>{"kind":"numerical","evidence":"independent","purpose":"Show why LPDDR6 raised bandwidth by going wider at NRZ rather than faster or to PAM4: the same raw bandwidth carried three ways through one short channel at LVSTL's swing.","equations":["raw bandwidth = 24 x LPDDR6 rate; fast rate = raw/16, PAM4 baud = raw/32, wide rate = raw/N","loss at a road's Nyquist = L5 (0.35 sqrt(f/5 GHz) + 0.65 f/5 GHz)","swing = VDDQ RTT/(Ron + RTT) = 0.5 V x 40/80 = 250 mV; PAM4 level spacing = swing/3","margin = eye - 2 Q sigma, Q = 7, vertically in mV and horizontally in ps"],"units":"mV, ps, Gb/s, GBd, dB","validity":"Linear channel; LVSTL swing with Ron = RTT = 40 ohm (model choice); one echo; crosstalk and supply noise folded into one rms figure; ideal one-tap DFE when on.","numerics":"Kit channel impulse on a 4096-point grid at 32 samples a symbol; raised-cosine edge of 0.3 UI; PRBS-11 (NRZ) and PRBS-11 pairs (PAM4) superposed over the pulse response; eye openings measured with the kit's eyeContour.","limitations":"No crosstalk modelled from neighbours, no SSN, no supply noise beyond the rms figure; the same echo on every road; equalisation is either none or an ideal one-tap DFE; the PAM4 receiver is ideal.","suites":["LPDDR6 page"],"version":"1.0","reviewed":"2026-10-02","panel":"lpddr6"}</script>
+<div class="lab-frame">
+<div class="instrument__bar">
+      <span class="instrument__title">Three roads to the same bandwidth</span>
+      <span data-evidence="independent" data-model-version="1.0" class="model-tag model-tag--numerical" title="One physical loss law, an echo at a fixed delay and LVSTL's swing; PRBS-11 eyes measured from the pulse response; noise and jitter as a +/-7 sigma allowance.">numerical</span>
+      <span class="instrument__readout" role="status" aria-live="polite" aria-label="Current values">
+        <span>per channel <b data-out="bw">—</b></span>
+        <span>left on faster NRZ <b data-out="fast">—</b></span>
+        <span>on PAM4 <b data-out="pam4">—</b></span>
+        <span>on wide NRZ <b data-out="wide">—</b></span>
+      </span>
+    <button type="button" class="tool-btn lab-full" data-lab-full aria-pressed="false">full screen</button>
+</div>
+<aside class="lab-rail lab-rail--left" aria-label="Scenario and bandwidth controls">
+<p class="lab-rail__side">The bandwidth <span>scenarios, target and pins</span></p>
+<details class="control-group lab-group" open><summary class="lab-group__title" id="l6-left-0">Scenarios</summary><div class="control-group__grid lab-group__body"><div class="presets">
+      <button class="preset" type="button" data-preset="lp6" aria-pressed="true">LPDDR6 at 10.667</button>
+      <button class="preset" type="button" data-preset="top" aria-pressed="false">At 14.4</button>
+      <button class="preset" type="button" data-preset="clean" aria-pressed="false">A perfect channel</button>
+      <button class="preset" type="button" data-preset="lossy" aria-pressed="false">More loss</button>
+      <button class="preset" type="button" data-preset="noisy" aria-pressed="false">More noise</button>
+      <button class="preset" type="button" data-preset="echo" aria-pressed="false">A stronger echo</button>
+      <button class="preset" type="button" data-preset="dfe" aria-pressed="false">One-tap DFE</button>
+      <button class="preset" type="button" data-preset="wider" aria-pressed="false">32 pins</button>
+    </div>
+    <div class="transport"><span data-out="note">—</span></div></div></details>
+<details class="control-group lab-group" open><summary class="lab-group__title" id="l6-left-1">Target</summary><div class="control-group__grid lab-group__body"><div class="ctl">
+        <div class="ctl__head"><label for="l6-rate">LPDDR6 bin</label><output id="l6-rate-out" for="l6-rate">10667 MT/s</output></div>
+        <input type="range" id="l6-rate" min="0" max="2" step="1" value="0">
+        <span class="ctl__note">Sets the bandwidth: 24 pins at this rate</span>
+      </div></div></details>
+<details class="control-group lab-group" open><summary class="lab-group__title" id="l6-left-2">Wide road</summary><div class="control-group__grid lab-group__body"><div class="ctl">
+        <div class="ctl__head"><label for="l6-pins">Pins on the wide road</label><output id="l6-pins-out" for="l6-pins">24 pins</output></div>
+        <input type="range" id="l6-pins" min="16" max="32" step="2" value="24">
+        <span class="ctl__note">More pins, each one slower</span>
+      </div></div></details>
+<p class="lab-help" aria-hidden="true">Point at or focus a control to see what it changes.</p>
+</aside>
+<div class="lab-stage">
+<div class="lab-row lab-row--anchor" style="--anchor-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr)">
+<div data-lab-unit="fast" data-lab-name="Faster NRZ" class="panel panel--probe-below">
+        <div class="lab-panel-head"><span class="panel__label">Faster NRZ <b class="lab-scale" data-out="fast-tag"></b></span><button type="button" class="tool-btn lab-expand" data-lab-expand aria-pressed="false" aria-label="Expand Faster NRZ">expand</button></div>
+        <canvas data-cv="fast" role="img" aria-label="The eye of the faster NRZ road, 16 pins, with its opening outlined and the noise and jitter allowance drawn as a box in its centre."></canvas>
+      </div>
+<div data-lab-unit="pam4" data-lab-name="PAM4" class="panel panel--probe-below">
+        <div class="lab-panel-head"><span class="panel__label">PAM4 <b class="lab-scale" data-out="pam4-tag"></b></span><button type="button" class="tool-btn lab-expand" data-lab-expand aria-pressed="false" aria-label="Expand PAM4">expand</button></div>
+        <canvas data-cv="pam4" role="img" aria-label="The three PAM4 eyes on 16 pins, each outlined, each with the noise and jitter allowance drawn in its centre."></canvas>
+      </div>
+<div data-lab-unit="wide" data-lab-name="Wide NRZ" class="panel panel--probe-below">
+        <div class="lab-panel-head"><span class="panel__label">Wide NRZ <b class="lab-scale" data-out="wide-tag"></b></span><button type="button" class="tool-btn lab-expand" data-lab-expand aria-pressed="false" aria-label="Expand Wide NRZ">expand</button></div>
+        <canvas data-cv="wide" role="img" aria-label="The eye of the wide NRZ road, LPDDR6, with its opening outlined and the noise and jitter allowance drawn as a box in its centre."></canvas>
+      </div>
+</div>
+<div class="legend lab-legend"><span><i style="background:var(--signal)"></i>every symbol of a PRBS-11 pattern</span><span><i class="dash" style="color:var(--ink)"></i>the opening</span><span><i style="background:var(--reflect)"></i>noise and jitter allowance</span></div>
+<div class="lab-tabs" role="tablist" aria-label="Linked views">
+<button type="button" role="tab" id="l6-tab-margins" aria-controls="l6-view-margins" aria-selected="true" tabindex="0" data-view="margins">What is left</button>
+<button type="button" role="tab" id="l6-tab-pulses" aria-controls="l6-view-pulses" aria-selected="false" tabindex="-1" data-view="pulses">One symbol, three roads</button>
+</div>
+<div class="lab-view is-active" id="l6-view-margins" role="tabpanel" aria-labelledby="l6-tab-margins" data-view="margins" data-count="1">
+<div data-lab-unit="margins" data-lab-name="What is left" class="panel">
+        <div class="lab-panel-head"><span class="panel__label">What is left of each eye, after noise and jitter</span><button type="button" class="tool-btn lab-expand" data-lab-expand aria-pressed="false" aria-label="Expand what is left">expand</button></div>
+        <canvas data-cv="margins" role="img" aria-label="Bars for each road: the eye height and, below it, the height left after the noise allowance; then the eye width as a share of a unit interval and the width left after the jitter allowance."></canvas>
+        <div class="legend"><span><i style="background:var(--signal)"></i>left after the allowance</span><span><i style="background:var(--signal); opacity:.3"></i>the eye before it</span></div>
+      </div>
+</div>
+<div class="lab-view" id="l6-view-pulses" role="tabpanel" aria-labelledby="l6-tab-pulses" data-view="pulses" data-count="1">
+<div data-lab-unit="pulses" data-lab-name="One symbol, three roads" class="panel">
+        <div class="lab-panel-head"><span class="panel__label">One symbol through the channel, on each road</span><button type="button" class="tool-btn lab-expand" data-lab-expand aria-pressed="false" aria-label="Expand one symbol, three roads">expand</button></div>
+        <canvas data-cv="pulses" role="img" aria-label="The single-symbol response of each road against time in picoseconds, with each road's later symbol instants ticked along the bottom and the echo's arrival marked."></canvas>
+        <div class="legend"><span><i style="background:var(--reflect)"></i>faster NRZ</span><span><i style="background:var(--muted)"></i>PAM4</span><span><i style="background:var(--signal)"></i>wide NRZ</span></div>
+      </div>
+</div>
+</div>
+<aside class="lab-rail lab-rail--right" aria-label="Channel, noise and receiver controls">
+<p class="lab-rail__side">The channel <span>what every road shares</span></p>
+<details class="control-group lab-group" open><summary class="lab-group__title" id="l6-right-0">Loss and echo</summary><div class="control-group__grid lab-group__body"><div class="ctl">
+        <div class="ctl__head"><label for="l6-loss">Loss at 5 GHz</label><output id="l6-loss-out" for="l6-loss">3.0 dB</output></div>
+        <input type="range" id="l6-loss" min="0" max="80" step="1" value="30">
+        <span class="ctl__note">Each road sees it at its own Nyquist</span>
+      </div><div class="ctl">
+        <div class="ctl__head"><label for="l6-echo">Echo</label><output id="l6-echo-out" for="l6-echo">8%</output></div>
+        <input type="range" id="l6-echo" min="0" max="25" step="1" value="8">
+        <span class="ctl__note">A reflection from a package or via mismatch</span>
+      </div><div class="ctl">
+        <div class="ctl__head"><label for="l6-echops">Echo delay</label><output id="l6-echops-out" for="l6-echops">240 ps</output></div>
+        <input type="range" id="l6-echops" min="60" max="600" step="10" value="240">
+        <span class="ctl__note">Fixed in time, not in symbols</span>
+      </div></div></details>
+<details class="control-group lab-group" open><summary class="lab-group__title" id="l6-right-1">Noise</summary><div class="control-group__grid lab-group__body"><div class="ctl">
+        <div class="ctl__head"><label for="l6-noise">Noise and crosstalk, rms</label><output id="l6-noise-out" for="l6-noise">4.0 mV</output></div>
+        <input type="range" id="l6-noise" min="0" max="20" step="1" value="8">
+        <span class="ctl__note">Taken off as +/-7 sigma</span>
+      </div><div class="ctl">
+        <div class="ctl__head"><label for="l6-jit">Random jitter, rms</label><output id="l6-jit-out" for="l6-jit">1.5 ps</output></div>
+        <input type="range" id="l6-jit" min="0" max="40" step="1" value="15">
+        <span class="ctl__note">Taken off as +/-7 sigma</span>
+      </div></div></details>
+<details class="control-group lab-group" open><summary class="lab-group__title" id="l6-right-2">Receiver</summary><div class="control-group__grid lab-group__body"><div class="ctl">
+        <div class="ctl__head"><span class="ctl__label">Equalisation</span></div>
+        <label class="check" for="l6-dfe"><input type="checkbox" id="l6-dfe"> a one-tap DFE on every road</label>
+        <span class="ctl__note">Cancels the first post-cursor</span>
+      </div></div></details>
+<p class="lab-help" aria-hidden="true">Point at or focus a control to see what it changes.</p>
+</aside>
+</div>
+  </section>
+  <div class="prose">
+    <p>
+      The panel asks the question JEDEC had to answer. Take a channel&#8217;s worth of bandwidth, 24 pins at the LPDDR6
+      rate, and carry it three ways through the same short channel at the same 250 mV swing: on LPDDR5X&#8217;s 16 data
+      pins by running NRZ half as fast again, on the same 16 pins by sending PAM4, or on 24 pins at LPDDR6&#8217;s rate.
+      The eyes show what each road keeps, and the allowance box in each shows what noise and jitter take. Try the
+      scenarios: PAM4 is the first to close, faster NRZ the first to run out of time, and the wide road is still open.
+    </p>
+
+    <h2 class="section-rule" id="at-a-glance"><span>LPDDR6 at a glance</span></h2>
+    <h3>How fast is LPDDR6?</h3>
+    <p>
+      LPDDR6 starts at 10.667 Gb/s per data pin, and its highest defined rate is 14.4 Gb/s. LPDDR5X reached 8533 MT/s
+      in the editions read for this site and LPDDR5 6400 MT/s. The first LPDDR6 DRAMs, announced in 2026, run at about
+      10.7 Gb/s. <a href="#what-it-is">More on the rates</a>.
+    </p>
+    <h3>How much bandwidth does LPDDR6 have?</h3>
+    <p>
+      A 24-bit LPDDR6 channel carries <span class="num">32.0 GB/s</span> of raw bandwidth at 10.667 Gb/s per pin,
+      <span class="num">28.4 GB/s</span> of it data once the metadata and protection bits are set aside, and
+      <span class="num">38.4 GB/s</span> of data at 14.4 Gb/s. A 16-bit LPDDR5X channel at 8533 MT/s carries 17.1 GB/s.
+      <a href="#lpddr5x-vs-lpddr6">The full comparison</a>.
+    </p>
+    <h3>Does LPDDR6 use PAM4?</h3>
+    <p>
+      No. LPDDR6 keeps two-level NRZ signalling and adds pins instead: twelve data pins per sub-channel and 24 per
+      channel. At LPDDR&#8217;s quarter-volt swing, PAM4&#8217;s three eyes would each be a third of the height, and on a
+      short, noisy channel that costs more than it saves. <a href="#why-wide-nrz">Why wide NRZ</a>, and the panel at the
+      top of this page, show the trade.
+    </p>
+    <h3>What voltage does LPDDR6 use?</h3>
+    <p>
+      The I/O supply, V<sub>DDQ</sub>, stays at 0.5 V, or 0.3 V with termination off. The core supply splits into two
+      rails that are both mandatory, V<sub>DD2C</sub> at 1.0 V and V<sub>DD2D</sub> at 0.875 V, and V<sub>DD1</sub> stays at 1.8 V.
+    </p>
+    <h3>What is new in LPDDR6?</h3>
+    <p>
+      Two 12-bit sub-channels per die with four command pins each; a 24-beat burst of 288 bits that carries metadata
+      and DBI or link protection on the data pins, with no DMI pin; a much faster command clock; dynamic write
+      non-target termination; an ALERT pin for faults; efficiency modes that run on one sub-channel&#8217;s I/O; and
+      per-row activation counting against row hammer.
+    </p>
+    <h3>When is LPDDR6 available?</h3>
+    <p>
+      JEDEC published the standard, JESD209-6, in July 2025. SK hynix announced an LPDDR6 DRAM above 10.7 Gb/s in March
+      2026, with supply from the second half of that year.
+    </p>
+    <h3>LPDDR6 or DDR5?</h3>
+    <p>
+      They do different jobs. LPDDR6 is soldered next to the processor or stacked on its package, and wins on
+      bandwidth per watt. DDR5 sits in sockets and wins on capacity, upgrades and ECC. The
+      <a href="ddr5.html#lpddr5x-vs-ddr5">DDR5 page</a> sets out that trade.
+    </p>
+
+    <h2 class="section-rule" id="what-it-is"><span>What LPDDR6 is</span></h2>
+    <p>
+      LPDDR6 is JEDEC&#8217;s sixth low-power DRAM generation, JESD209-6, published in July 2025. It is meant for phones
+      and thin laptops, as its predecessors were, and JEDEC also names client computers, edge AI, automotive and
+      servers. IP vendors describe a starting rate of <span class="num">10.667 Gb/s</span> per pin and a highest defined
+      rate of <span class="num">14.4 Gb/s</span>; at those rates a bit lasts <span class="num">93.75 ps</span> and
+      <span class="num">69.4 ps</span>. The first DRAMs announced, in 2026, run at about 10.7 Gb/s.
+    </p>
+    <figure class="figure">
+      <div class="figure__bar"><span>The unit interval by generation &#183; the swing does not grow</span></div>
+      <div class="figure__body"><svg viewBox="0 0 400 192" role="img" aria-label="The unit interval by generation: LPDDR5 at 6400 MT/s, 156.3 ps; LPDDR5X at 8533, 117.2 ps, and at 9600, 104.2 ps; LPDDR6 at 10667, 93.7 ps, and at 14400, 69.4 ps. VDDQ stays at 0.5 V.">
+  <text class="lbl" x="10.0" y="36.0">LPDDR5</text>
+  <text class="lbl" x="112.0" y="36.0" text-anchor="end">6400</text>
+  <rect class="plane" x="120.0" y="24.0" width="224.6" height="16.0" rx="2" style="opacity:.55"/>
+  <text class="lbl" x="350.6" y="36.0">156.3 ps</text>
+  <text class="lbl" x="10.0" y="66.0">LPDDR5X</text>
+  <text class="lbl" x="112.0" y="66.0" text-anchor="end">8533</text>
+  <rect class="plane" x="120.0" y="54.0" width="168.5" height="16.0" rx="2" style="opacity:.55"/>
+  <text class="lbl" x="294.5" y="66.0">117.2 ps</text>
+  <text class="lbl" x="10.0" y="96.0">LPDDR5X</text>
+  <text class="lbl" x="112.0" y="96.0" text-anchor="end">9600</text>
+  <rect class="plane" x="120.0" y="84.0" width="149.7" height="16.0" rx="2" style="opacity:.55"/>
+  <text class="lbl" x="275.7" y="96.0">104.2 ps</text>
+  <text class="lbl-hi" x="10.0" y="126.0">LPDDR6</text>
+  <text class="lbl" x="112.0" y="126.0" text-anchor="end">10667</text>
+  <rect class="copper" x="120.0" y="114.0" width="134.8" height="16.0" rx="2" style="opacity:.55"/>
+  <text class="lbl-hi" x="260.8" y="126.0">93.7 ps</text>
+  <text class="lbl-hi" x="10.0" y="156.0">LPDDR6</text>
+  <text class="lbl" x="112.0" y="156.0" text-anchor="end">14400</text>
+  <rect class="copper" x="120.0" y="144.0" width="99.8" height="16.0" rx="2" style="opacity:.55"/>
+  <text class="lbl-hi" x="225.8" y="156.0">69.4 ps</text>
+  <text class="lbl" x="112.0" y="14.0" text-anchor="end">MT/s</text>
+  <text class="lbl" x="120.0" y="14.0">one unit interval</text>
+  <text class="lbl-sig" x="10.0" y="184.0">VDDQ stays at 0.5 V the whole way down</text>
+</svg></div>
+      <figcaption><b>A bit has lost more than half its time since LPDDR5, and the I/O supply is still half a volt.</b>
+        LPDDR5 at 6400 MT/s gave each bit 156 ps; LPDDR6 at its top defined rate gives it 69 ps. Everything that moves an
+        edge, from jitter to skew between pins, now spends a larger share of the bit.</figcaption>
+    </figure>
+
+    <h2 class="section-rule"><span>One die, two sub-channels</span></h2>
+    <figure class="figure">
+      <div class="figure__bar"><span>An LPDDR6 die &#183; two independent sub-channels of twelve data pins</span></div>
+      <div class="figure__body"><svg viewBox="0 0 400 232" role="img" aria-label="An LPDDR6 die has two sub-channels, SC0 and SC1, each with sixteen banks. Each sub-channel has its own four command and address pins with a chip select, twelve data pins, a differential write clock WCK and a differential read strobe RDQS. ALERT, RESET_n and ZQ are shared.">
+  <rect class="dielectric" x="136.0" y="20.0" width="128.0" height="188.0" rx="6" style="stroke: var(--ink-2); stroke-width: 1.4"/>
+  <text class="lbl-hi" x="200.0" y="40.0" text-anchor="middle">LPDDR6 die</text>
+  <path d="M200,48 L200,200" class="tick" style="stroke-dasharray:3 3"/>
+  <text class="lbl-hi" x="168.0" y="64.0" text-anchor="middle">SC0</text>
+  <text class="lbl-hi" x="232.0" y="64.0" text-anchor="middle">SC1</text>
+  <text class="lbl" x="168.0" y="78.0" text-anchor="middle">16 banks</text>
+  <text class="lbl" x="232.0" y="78.0" text-anchor="middle">16 banks</text>
+  <path d="M24,104 L136,104" class="tick" style="stroke: var(--ink-2); stroke-width: 1.6"/>
+  <text class="lbl" x="28.0" y="99.0">CA[3:0], CS</text>
+  <path d="M264,104 L376,104" class="tick" style="stroke: var(--ink-2); stroke-width: 1.6"/>
+  <text class="lbl" x="372.0" y="99.0" text-anchor="end">CA[3:0], CS</text>
+  <path d="M24,126 L136,126" class="flow" style="stroke-width: 3"/>
+  <text class="lbl-hi" x="28.0" y="121.0">DQ[11:0]</text>
+  <path d="M264,126 L376,126" class="flow" style="stroke-width: 3"/>
+  <text class="lbl-hi" x="372.0" y="121.0" text-anchor="end">DQ[11:0]</text>
+  <path d="M24,148 L136,148" class="flow" style="stroke-width: 1.4"/>
+  <text class="lbl-sig" x="28.0" y="143.0">WCK_t/_c</text>
+  <path d="M264,148 L376,148" class="flow" style="stroke-width: 1.4"/>
+  <text class="lbl-sig" x="372.0" y="143.0" text-anchor="end">WCK_t/_c</text>
+  <path d="M24,170 L136,170" class="flow-2" style="stroke-width: 1.4"/>
+  <text class="lbl-ref" x="28.0" y="165.0">RDQS_t/_c</text>
+  <path d="M264,170 L376,170" class="flow-2" style="stroke-width: 1.4"/>
+  <text class="lbl-ref" x="372.0" y="165.0" text-anchor="end">RDQS_t/_c</text>
+  <text class="lbl" x="200.0" y="222.0" text-anchor="middle">shared: ALERT, RESET_n, ZQ</text>
+  <text class="lbl" x="90.0" y="16.0" text-anchor="middle">sub-channel 0</text>
+  <text class="lbl" x="310.0" y="16.0" text-anchor="middle">sub-channel 1</text>
+</svg></div>
+      <figcaption><b>Each sub-channel has its own command pins, data pins and strobes.</b> Four command and address pins
+        and a chip select, twelve data pins, a write clock and a read strobe, for each half of the die. Two sub-channels
+        make a 24-bit channel. A controller can run them independently, which is what lets one access fetch as little as
+        32 bytes, or join them for 64.</figcaption>
+    </figure>
+    <p>
+      LPDDR5X gave each die one 16-bit channel with seven command pins. LPDDR6 splits the die into two sub-channels
+      of twelve data pins and four command pins each, with sixteen banks behind each. Four command pins are enough
+      because each now runs much faster, of which more below. The access is smaller:
+      one sub-channel burst carries 32 bytes of data, and the burst length can change on the fly to fetch 64.
+    </p>
+
+    <h2 class="section-rule" id="why-wide-nrz"><span>Why wide NRZ, not PAM4</span></h2>
+    <p>
+      There are three ways to carry more bits per second down a bus: more pins, a faster rate on each, or more bits per
+      symbol. GDDR7 and PCIe 6.0 took the third, with three- and four-level signalling. LPDDR6 took the first, and
+      the panel above shows why.
+    </p>
+    <p>
+      A PAM4 receiver has to tell four levels apart in the same swing NRZ uses for two, so each of its three eyes is a
+      third of the height before the channel has done anything: <span class="num">83 mV</span> of a 250 mV swing, a loss
+      of <span class="num">9.5 dB</span>. PAM4 earns that back only when the channel is so lossy that halving the
+      symbol rate matters more. An LPDDR channel is the opposite case: a few centimetres, a few decibels of loss, and a
+      great deal of crosstalk and supply noise from a dense bus switching together. Noise is a fixed number of
+      millivolts, so it takes the largest share of the smallest eye. Running NRZ faster on the same pins avoids that,
+      but at 16 Gb/s or more the bit is so short that jitter and skew eat it, and the loss at the higher Nyquist frequency
+      is larger.
+    </p>
+    <p>
+      Going wider keeps the rate, the levels and the receivers LPDDR already knew, and spends package balls and board
+      routing instead. Samsung&#8217;s presentation at JEDEC&#8217;s LPDDR6 workshop framed the choice the same way,
+      putting PAM4 at about half the signal-integrity margin and about one and a half times the I/O power for the same
+      bandwidth. The panel&#8217;s model is simpler than a real channel, but it puts the three roads in the same order.
+    </p>
+
+    <h2 class="section-rule"><span>Faster everything else: the clocks</span></h2>
+    <p>
+      The command clock, CK, runs at <span class="num">2.667 GHz</span> at the starting rate, against 1.07 GHz on
+      LPDDR5X. The write clock, WCK, runs at twice CK, <span class="num">5.333 GHz</span>, and data moves on both of its
+      edges: the <span class="num">10.667 Gb/s</span>. LPDDR5X could run WCK at four times CK; LPDDR6 keeps only the 2:1
+      ratio, which is why CK had to speed up.
+    </p>
+    <p>
+      That changes the command bus from a slow side channel into a fast one. With four command pins sampled on both CK
+      edges, each runs at <span class="num">5.333 Gb/s</span>, and a command bus that fast needs the same care as data:
+      training to centre it, and on-die termination at the DRAM. JEDEC lists command and address parity among the
+      standard&#8217;s reliability features, so a corrupted command can be caught rather than executed.
+    </p>
+
+    <h2 class="section-rule"><span>The 288-bit packet</span></h2>
+    <figure class="figure">
+      <div class="figure__bar"><span>Twelve pins by twenty-four beats &#183; why the burst is BL24</span></div>
+      <div class="figure__body"><svg viewBox="0 0 400 202" role="img" aria-label="One LPDDR6 sub-channel burst is twelve data pins by twenty-four beats, 288 bits: 256 data, 16 metadata, and 16 that are either DBI flags or link-protection check bits. LPDDR5X sent 256 data bits on sixteen data pins plus two DMI pins over sixteen beats.">
+  <rect class="copper" x="22.0" y="30.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="32.0" y="30.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="42.0" y="30.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="52.0" y="30.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="62.0" y="30.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="72.0" y="30.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="82.0" y="30.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="92.0" y="30.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="102.0" y="30.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="112.0" y="30.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="122.0" y="30.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="132.0" y="30.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="142.0" y="30.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="152.0" y="30.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="162.0" y="30.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="172.0" y="30.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="182.0" y="30.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="192.0" y="30.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="202.0" y="30.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="212.0" y="30.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="222.0" y="30.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="232.0" y="30.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="242.0" y="30.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="252.0" y="30.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="22.0" y="39.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="32.0" y="39.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="42.0" y="39.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="52.0" y="39.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="62.0" y="39.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="72.0" y="39.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="82.0" y="39.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="92.0" y="39.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="102.0" y="39.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="112.0" y="39.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="122.0" y="39.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="132.0" y="39.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="142.0" y="39.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="152.0" y="39.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="162.0" y="39.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="172.0" y="39.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="182.0" y="39.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="192.0" y="39.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="202.0" y="39.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="212.0" y="39.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="222.0" y="39.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="232.0" y="39.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="242.0" y="39.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="252.0" y="39.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="22.0" y="48.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="32.0" y="48.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="42.0" y="48.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="52.0" y="48.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="62.0" y="48.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="72.0" y="48.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="82.0" y="48.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="92.0" y="48.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="102.0" y="48.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="112.0" y="48.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="122.0" y="48.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="132.0" y="48.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="142.0" y="48.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="152.0" y="48.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="162.0" y="48.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="172.0" y="48.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="182.0" y="48.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="192.0" y="48.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="202.0" y="48.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="212.0" y="48.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="222.0" y="48.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="232.0" y="48.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="242.0" y="48.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="252.0" y="48.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="22.0" y="57.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="32.0" y="57.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="42.0" y="57.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="52.0" y="57.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="62.0" y="57.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="72.0" y="57.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="82.0" y="57.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="92.0" y="57.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="102.0" y="57.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="112.0" y="57.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="122.0" y="57.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="132.0" y="57.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="142.0" y="57.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="152.0" y="57.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="162.0" y="57.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="172.0" y="57.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="182.0" y="57.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="192.0" y="57.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="202.0" y="57.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="212.0" y="57.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="222.0" y="57.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="232.0" y="57.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="242.0" y="57.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="252.0" y="57.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="22.0" y="66.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="32.0" y="66.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="42.0" y="66.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="52.0" y="66.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="62.0" y="66.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="72.0" y="66.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="82.0" y="66.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="92.0" y="66.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="102.0" y="66.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="112.0" y="66.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="122.0" y="66.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="132.0" y="66.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="142.0" y="66.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="152.0" y="66.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="162.0" y="66.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="172.0" y="66.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="182.0" y="66.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="192.0" y="66.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="202.0" y="66.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="212.0" y="66.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="222.0" y="66.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="232.0" y="66.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="242.0" y="66.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="252.0" y="66.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="22.0" y="75.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="32.0" y="75.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="42.0" y="75.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="52.0" y="75.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="62.0" y="75.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="72.0" y="75.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="82.0" y="75.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="92.0" y="75.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="102.0" y="75.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="112.0" y="75.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="122.0" y="75.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="132.0" y="75.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="142.0" y="75.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="152.0" y="75.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="162.0" y="75.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="172.0" y="75.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="182.0" y="75.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="192.0" y="75.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="202.0" y="75.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="212.0" y="75.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="222.0" y="75.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="232.0" y="75.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="242.0" y="75.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="252.0" y="75.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="22.0" y="84.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="32.0" y="84.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="42.0" y="84.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="52.0" y="84.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="62.0" y="84.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="72.0" y="84.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="82.0" y="84.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="92.0" y="84.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="102.0" y="84.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="112.0" y="84.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="122.0" y="84.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="132.0" y="84.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="142.0" y="84.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="152.0" y="84.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="162.0" y="84.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="172.0" y="84.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="182.0" y="84.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="192.0" y="84.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="202.0" y="84.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="212.0" y="84.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="222.0" y="84.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="232.0" y="84.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="242.0" y="84.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="252.0" y="84.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="22.0" y="93.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="32.0" y="93.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="42.0" y="93.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="52.0" y="93.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="62.0" y="93.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="72.0" y="93.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="82.0" y="93.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="92.0" y="93.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="102.0" y="93.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="112.0" y="93.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="122.0" y="93.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="132.0" y="93.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="142.0" y="93.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="152.0" y="93.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="162.0" y="93.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="172.0" y="93.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="182.0" y="93.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="192.0" y="93.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="202.0" y="93.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="212.0" y="93.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="222.0" y="93.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="232.0" y="93.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="242.0" y="93.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="252.0" y="93.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="22.0" y="102.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="32.0" y="102.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="42.0" y="102.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="52.0" y="102.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="62.0" y="102.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="72.0" y="102.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="82.0" y="102.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="92.0" y="102.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="102.0" y="102.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="112.0" y="102.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="122.0" y="102.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="132.0" y="102.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="142.0" y="102.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="152.0" y="102.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="162.0" y="102.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="172.0" y="102.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="182.0" y="102.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="192.0" y="102.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="202.0" y="102.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="212.0" y="102.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="222.0" y="102.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="232.0" y="102.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="242.0" y="102.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="252.0" y="102.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="22.0" y="111.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="32.0" y="111.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="42.0" y="111.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="52.0" y="111.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="62.0" y="111.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="72.0" y="111.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="82.0" y="111.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="92.0" y="111.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="102.0" y="111.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="112.0" y="111.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="122.0" y="111.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="132.0" y="111.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="142.0" y="111.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="152.0" y="111.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="162.0" y="111.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="172.0" y="111.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="182.0" y="111.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="192.0" y="111.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="202.0" y="111.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="212.0" y="111.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="222.0" y="111.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="232.0" y="111.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="242.0" y="111.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="252.0" y="111.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="22.0" y="120.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="32.0" y="120.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="42.0" y="120.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="52.0" y="120.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="62.0" y="120.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="72.0" y="120.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="82.0" y="120.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="92.0" y="120.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="102.0" y="120.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="112.0" y="120.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="122.0" y="120.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="132.0" y="120.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="142.0" y="120.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="152.0" y="120.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="162.0" y="120.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="172.0" y="120.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="182.0" y="120.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="192.0" y="120.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="202.0" y="120.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="212.0" y="120.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="222.0" y="120.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="232.0" y="120.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="242.0" y="120.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="252.0" y="120.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="22.0" y="129.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="32.0" y="129.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="42.0" y="129.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="52.0" y="129.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="62.0" y="129.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="72.0" y="129.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="82.0" y="129.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="92.0" y="129.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="102.0" y="129.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="112.0" y="129.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="122.0" y="129.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="132.0" y="129.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="142.0" y="129.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="152.0" y="129.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="162.0" y="129.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="172.0" y="129.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="182.0" y="129.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="192.0" y="129.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="202.0" y="129.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="212.0" y="129.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="222.0" y="129.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="232.0" y="129.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="242.0" y="129.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <rect class="copper" x="252.0" y="129.0" width="8.5" height="7.5" rx="1" style="opacity:.35"/>
+  <text class="lbl-hi" x="22.0" y="22.0">12 DQ x 24 beats = 288 bits</text>
+  <text class="lbl" x="16.0" y="84.0" text-anchor="end">DQ</text>
+  <text class="lbl" x="142.0" y="152.0" text-anchor="middle">beats of one burst</text>
+  <rect class="copper" x="272.0" y="30.0" width="22.0" height="95.0" rx="1" style="opacity:.55"/>
+  <text class="lbl" x="304.0" y="84.0">256 data</text>
+  <rect class="copper-2" x="272.0" y="126.0" width="22.0" height="5.0" rx="1" style="opacity:.7"/>
+  <path d="M296,129.0 L302,139" class="tick" style="stroke: var(--ink-2)"/>
+  <text class="lbl" x="304.0" y="142.0">16 metadata</text>
+  <rect class="plane" x="272.0" y="132.0" width="22.0" height="5.0" rx="1" style="opacity:.6"/>
+  <path d="M296,135.0 L302,153" class="tick" style="stroke: var(--ink-2)"/>
+  <text class="lbl" x="304.0" y="156.0">16 DBI or check</text>
+  <text class="lbl" x="20.0" y="178.0">LPDDR5X: 16 DQ + 2 DMI x 16 beats = 256 data + 32 DM/DBI/ECC</text>
+  <text class="lbl" x="20.0" y="194.0">LPDDR6: no DMI pin; the extra bits ride on the data pins</text>
+</svg></div>
+      <figcaption><b>Twelve pins and a burst of 24 make 288 bits, which is 256 plus room.</b> The 256 are a 32-byte data
+        access. The other 32 are 16 bits of metadata, for the host&#8217;s own use, and 16 that carry either data-bus
+        inversion flags or link-protection check bits. LPDDR5X carried its extra bits on two separate DMI pins; LPDDR6
+        removes them and sends everything on the data pins.</figcaption>
+    </figure>
+    <p>
+      An odd number of pins forces an odd burst. Twelve pins and the familiar burst of 16 would make 192 bits, which is
+      not a cache-line-friendly size; twelve pins and a burst of 24 make <span class="num">288</span>, which holds 256
+      data bits with 32 to spare. Those spare bits are where LPDDR6 put features that used to need pins or did not exist.
+    </p>
+    <p>
+      The last sixteen are a choice, and only one choice can be made. They can carry DBI, which lowers I/O power by
+      inverting groups of data that would otherwise send many 1s, or link protection, a code that detects or corrects
+      bits flipped on the wire in either direction. A write error found by the DRAM is reported to the host on ALERT, a
+      new shared pin. Power or protection: the panel below makes the power side of that choice concrete.
+    </p>
+  </div>
+  <section class="instrument lab" data-viz="lpddr6Packet" aria-label="Interactive LPDDR6 burst: 256 data bits in sixteen groups, sixteen metadata bits and sixteen DBI or link-protection bits, with the ones sent and their termination energy counted">
+    <script type="application/json" data-contract>{"kind":"illustrative","evidence":"computed","purpose":"Show what one LPDDR6 sub-channel burst carries, why a 1 costs energy on an LVSTL bus, what DBI saves, and what choosing link protection instead gives up.","equations":["DBI: invert a 16-bit group when it holds more than eight 1s, and send a 1 flag for it","energy of a 1 = VDDQ^2/(Ron + RTT) x UI, with VDDQ 0.5 V and Ron = RTT = 40 ohm","link-protection check bits counted at their average, 8 ones of 16"],"units":"bits, pJ, fJ","validity":"Termination energy only; the transition energy of charging lines and pins is left out.","numerics":"Exact counting.","limitations":"A logical layout, not the standard's pin-and-beat map; the DBI grouping follows vendor descriptions of the standard, not the standard itself; the check bits' values depend on a code the panel does not implement.","suites":["LPDDR6 page"],"version":"1.0","reviewed":"2026-10-02","panel":"lpddr6Packet"}</script>
+<div class="lab-frame">
+<div class="instrument__bar">
+      <span class="instrument__title">The 288-bit packet</span>
+      <span data-evidence="computed" data-model-version="1.0" class="model-tag model-tag--illustrative" title="Counting, exact for the data and DBI flags; the logical layout, not the pin-and-beat map; link-protection check bits counted at their average.">illustrative</span>
+      <span class="instrument__readout" role="status" aria-live="polite" aria-label="Current values">
+        <span>ones sent <b data-out="ones">—</b></span>
+        <span>termination energy <b data-out="energy">—</b></span>
+        <span> <b data-out="perbit">—</b></span>
+        <span> <b data-out="save">—</b></span>
+      </span>
+    <button type="button" class="tool-btn lab-full" data-lab-full aria-pressed="false">full screen</button>
+</div>
+<aside class="lab-rail lab-rail--left" aria-label="Data controls">
+<p class="lab-rail__side">The data <span>what the host sends</span></p>
+<details class="control-group lab-group" open><summary class="lab-group__title" id="pk-left-0">Data</summary><div class="control-group__grid lab-group__body"><div class="ctl">
+        <div class="ctl__head"><span class="ctl__label">Pattern</span></div>
+        <div class="presets" id="pk-pattern" role="group" aria-label="Data">
+      <button class="preset preset--act" type="button" data-act="pattern" data-pattern="mostlyOnes" aria-pressed="true">Mostly ones</button>
+      <button class="preset preset--act" type="button" data-act="pattern" data-pattern="random" aria-pressed="false">Random</button>
+      <button class="preset preset--act" type="button" data-act="pattern" data-pattern="text" aria-pressed="false">Text</button>
+      <button class="preset preset--act" type="button" data-act="pattern" data-pattern="ramp" aria-pressed="false">A ramp</button>
+      <button class="preset preset--act" type="button" data-act="pattern" data-pattern="ones" aria-pressed="false">All ones</button>
+      <button class="preset preset--act" type="button" data-act="pattern" data-pattern="zeros" aria-pressed="false">All zeros</button>
+    </div>
+        <span class="ctl__note">What the host writes</span>
+      </div>
+    <div class="transport"><span data-out="pknote">—</span></div></div></details>
+<p class="lab-help" aria-hidden="true">Point at or focus a control to see what it changes.</p>
+</aside>
+<div class="lab-stage">
+<div class="lab-row lab-row--anchor" style="--anchor-columns: minmax(0, 1fr)">
+<div data-lab-unit="packet" data-lab-name="The burst" class="panel">
+        <div class="lab-panel-head"><span class="panel__label">One sub-channel burst: what goes on the wire</span><button type="button" class="tool-btn lab-expand" data-lab-expand aria-pressed="false" aria-label="Expand the burst">expand</button></div>
+        <canvas data-cv="packet" role="img" aria-label="A grid of 256 data bits in sixteen rows of sixteen, filled where the bit sent is 1, with inverted rows tinted; a column of DBI flags or check bits beside it; a row of sixteen metadata bits below; and the count of ones sent and their termination energy. Select a data bit to flip it."></canvas>
+        <div class="legend"><span><i style="background:var(--signal)"></i>a 1 sent on a data pin</span><span><i style="background:var(--reflect)"></i>an inverted group and its DBI flag</span><span><i style="background:var(--ink-2)"></i>metadata</span></div>
+      </div>
+<div data-lab-unit="cost" data-lab-name="Three choices" class="panel">
+        <div class="lab-panel-head"><span class="panel__label">The same data, three ways: ones sent and termination energy</span><button type="button" class="tool-btn lab-expand" data-lab-expand aria-pressed="false" aria-label="Expand three choices">expand</button></div>
+        <canvas data-cv="cost" role="img" aria-label="Three bars for the same data: the termination energy with neither DBI nor link protection, with DBI, and with link protection."></canvas>
+      </div>
+</div>
+</div>
+<aside class="lab-rail lab-rail--right" aria-label="Mode and rate controls">
+<p class="lab-rail__side">The last 16 bits <span>power or protection</span></p>
+<details class="control-group lab-group" open><summary class="lab-group__title" id="pk-right-0">Mode</summary><div class="control-group__grid lab-group__body"><div class="ctl">
+        <div class="ctl__head"><span class="ctl__label">The 16 extra bits carry</span></div>
+        <div class="presets" id="pk-mode" role="group" aria-label="The 16 extra bits carry">
+          <button class="preset preset--act" type="button" data-act="mode" data-mode="dbi" aria-pressed="false">DBI</button>
+          <button class="preset preset--act" type="button" data-act="mode" data-mode="link" aria-pressed="false">Link protection</button>
+          <button class="preset preset--act" type="button" data-act="mode" data-mode="none" aria-pressed="false">Neither</button>
+        </div>
+        <span class="ctl__note">One or the other, not both</span>
+      </div></div></details>
+<details class="control-group lab-group" open><summary class="lab-group__title" id="pk-right-1">Rate</summary><div class="control-group__grid lab-group__body"><div class="ctl">
+        <div class="ctl__head"><span class="ctl__label">Data rate</span></div>
+        <div class="presets" id="pk-rate" role="group" aria-label="Data rate">
+          <button class="preset preset--act" type="button" data-act="prate" data-prate="10667" aria-pressed="false">10667</button>
+          <button class="preset preset--act" type="button" data-act="prate" data-prate="14400" aria-pressed="false">14400</button>
+        </div>
+        <span class="ctl__note">A faster bit is a shorter bit: less energy per 1</span>
+      </div></div></details>
+<p class="lab-help" aria-hidden="true">Point at or focus a control to see what it changes.</p>
+</aside>
+</div>
+  </section>
+  <div class="prose">
+    <p>
+      Why does a 1 cost energy? Because LPDDR terminates its data lines to ground. The next section is about that, but
+      the panel already shows the consequence: data that is mostly 1s costs several times what mostly 0s costs, and DBI
+      exists to keep the count of 1s at or below half. Choose &#8220;Link protection&#8221; and the protection is
+      bought with that saving. At the starting rate each 1 on a pin costs about <span class="num">0.29 pJ</span> of
+      termination energy in the panel&#8217;s model.
+    </p>
+
+    <h2 class="section-rule"><span>Termination: LVSTL, and who pays</span></h2>
+    <figure class="figure">
+      <div class="figure__bar"><span>LVSTL against POD &#183; the termination decides which bit costs current</span></div>
+      <div class="figure__body"><svg viewBox="0 0 400 222" role="img" aria-label="Two termination schemes side by side. LPDDR uses LVSTL: the receiver terminates to ground, so a 1, which pulls the line up, draws current. DDR5 uses POD: the receiver terminates to VDDQ, so a 0 draws current. DBI minimises whichever bit costs.">
+  <text class="lbl-hi" x="99.0" y="16.0" text-anchor="middle">LPDDR: LVSTL</text>
+  <path d="M14,36 L184,36" class="tick" style="stroke: var(--ink-2); stroke-width:1.3"/>
+  <text class="lbl" x="14.0" y="30.0">VDDQ 0.5 V</text>
+  <path d="M14,168 L184,168" class="tick" style="stroke: var(--ink-2); stroke-width:1.3"/>
+  <text class="lbl" x="14.0" y="180.0">VSSQ</text>
+  <path d="M44.0,36.0 L44.0,47.6 L40.0,52.0 L48.0,56.3 L40.0,60.6 L48.0,65.0 L40.0,69.3 L48.0,73.7 L40.0,78.0 L44.0,82.4 L44.0,94.0" class="flow" style="stroke-width:1.2"/>
+  <text class="lbl-sig" x="52.0" y="70.0">Ron</text>
+  <path d="M44.0,110.0 L44.0,121.6 L40.0,126.0 L48.0,130.3 L40.0,134.7 L48.0,139.0 L40.0,143.3 L48.0,147.7 L40.0,152.1 L44.0,156.4 L44.0,168.0" class="flow" style="stroke-width:1.2"/>
+  <text class="lbl-sig" x="52.0" y="146.0">Ron</text>
+  <path d="M44,94 L44,110 M44,102 L144,102" class="flow" style="stroke-width:1.8"/>
+  <path d="M144.0,102.0 L144.0,115.2 L140.0,120.2 L148.0,125.1 L140.0,130.1 L148.0,135.0 L140.0,139.9 L148.0,144.9 L140.0,149.8 L144.0,154.8 L144.0,168.0" class="flow-2" style="stroke-width:1.2"/>
+  <text class="lbl-ref" x="152.0" y="138.0">RTT</text>
+  <text class="lbl-bad" x="99.0" y="196.0" text-anchor="middle">a 1 draws current</text>
+  <text class="lbl-hi" x="301.0" y="16.0" text-anchor="middle">DDR5: POD</text>
+  <path d="M216,36 L386,36" class="tick" style="stroke: var(--ink-2); stroke-width:1.3"/>
+  <text class="lbl" x="216.0" y="30.0">VDDQ 1.1 V</text>
+  <path d="M216,168 L386,168" class="tick" style="stroke: var(--ink-2); stroke-width:1.3"/>
+  <text class="lbl" x="216.0" y="180.0">VSS</text>
+  <path d="M246.0,36.0 L246.0,47.6 L242.0,52.0 L250.0,56.3 L242.0,60.6 L250.0,65.0 L242.0,69.3 L250.0,73.7 L242.0,78.0 L246.0,82.4 L246.0,94.0" class="flow" style="stroke-width:1.2"/>
+  <text class="lbl-sig" x="254.0" y="70.0">Ron</text>
+  <path d="M246.0,110.0 L246.0,121.6 L242.0,126.0 L250.0,130.3 L242.0,134.7 L250.0,139.0 L242.0,143.3 L250.0,147.7 L242.0,152.1 L246.0,156.4 L246.0,168.0" class="flow" style="stroke-width:1.2"/>
+  <text class="lbl-sig" x="254.0" y="146.0">Ron</text>
+  <path d="M246,94 L246,110 M246,102 L346,102" class="flow" style="stroke-width:1.8"/>
+  <path d="M346.0,102.0 L346.0,88.8 L350.0,83.8 L342.0,78.9 L350.0,74.0 L342.0,69.0 L350.0,64.1 L342.0,59.1 L350.0,54.2 L346.0,49.2 L346.0,36.0" class="flow-2" style="stroke-width:1.2"/>
+  <text class="lbl-ref" x="354.0" y="72.0">RTT</text>
+  <text class="lbl-bad" x="301.0" y="196.0" text-anchor="middle">a 0 draws current</text>
+  <text class="lbl" x="14.0" y="214.0">DBI minimises whichever bit costs: ones on LPDDR, zeros on DDR5</text>
+</svg></div>
+      <figcaption><b>Terminate to ground and the 1s cost; terminate to the supply and the 0s do.</b> LPDDR uses low-voltage
+        swing-terminated logic (LVSTL): a 1 pulls the line up through the driver against a termination to ground, and
+        current flows. DDR5&#8217;s pseudo-open drain terminates to V<sub>DDQ</sub>, so there it is a 0 that costs. DBI is
+        the same idea on both, aimed at whichever bit is expensive.</figcaption>
+    </figure>
+    <p>
+      LPDDR6 keeps LPDDR5X&#8217;s signalling: LVSTL at a V<sub>DDQ</sub> of <span class="num">0.5 V</span>, with a 0.3 V
+      option when termination is off. A 1 pulls up to V<sub>DDQ</sub>&#183;RTT/(Ron&#160;+&#160;RTT); with 40 &#937; for
+      both, the model&#8217;s choice, that is <span class="num">250 mV</span>, and every receiver decision on the bus is
+      made inside that quarter of a volt.
+    </p>
+    <p>
+      What LPDDR6 adds is dynamic write NT-ODT: a non-target die on a shared data bus can change its termination during
+      a write, as DDR5&#8217;s non-target DRAMs do. It matters wherever more than one die shares the same data lines, as
+      in multi-die packages built for capacity.
+    </p>
+
+    <h2 class="section-rule"><span>Power, and the power network</span></h2>
+    <figure class="figure">
+      <div class="figure__bar"><span>Dynamic efficiency mode &#183; half the bandwidth on half the I/O</span></div>
+      <div class="figure__body"><svg viewBox="0 0 400 192" role="img" aria-label="Normal operation: each of the two sub-channels has its own data interface to the SoC. Dynamic efficiency mode: one sub-channel interface carries the data for both sub-channels, at half the bandwidth, and the other interface idles to save power.">
+  <text class="lbl-hi" x="100.0" y="16.0" text-anchor="middle">normal</text>
+  <rect class="dielectric" x="10.0" y="30.0" width="54.0" height="120.0" rx="4" style="stroke: var(--ink-2)"/>
+  <text class="lbl-hi" x="37.0" y="94.0" text-anchor="middle">SoC</text>
+  <rect class="dielectric" x="136.0" y="30.0" width="54.0" height="120.0" rx="4" style="stroke: var(--ink-2)"/>
+  <text class="lbl" x="163.0" y="60.0" text-anchor="middle">SC0</text>
+  <text class="lbl" x="163.0" y="124.0" text-anchor="middle">SC1</text>
+  <path d="M64,62 L136,62" class="flow" style="stroke-width:3"/>
+  <path d="M64,118 L136,118" class="flow" style="stroke-width:3"/>
+  <text class="lbl" x="100.0" y="170.0" text-anchor="middle">each sub-channel on its own I/O</text>
+  <text class="lbl-hi" x="300.0" y="16.0" text-anchor="middle">dynamic efficiency mode</text>
+  <rect class="dielectric" x="210.0" y="30.0" width="54.0" height="120.0" rx="4" style="stroke: var(--ink-2)"/>
+  <text class="lbl-hi" x="237.0" y="94.0" text-anchor="middle">SoC</text>
+  <rect class="dielectric" x="336.0" y="30.0" width="54.0" height="120.0" rx="4" style="stroke: var(--ink-2)"/>
+  <text class="lbl" x="363.0" y="60.0" text-anchor="middle">SC0</text>
+  <text class="lbl" x="363.0" y="124.0" text-anchor="middle">SC1</text>
+  <path d="M264,62 L336,62" class="flow" style="stroke-width:3"/>
+  <path d="M264,118 L336,118" class="tick" style="stroke-dasharray:3 3"/>
+  <path d="M332,66 L332,114 L336,114" class="flow" style="stroke-width:1.2"/>
+  <text class="lbl" x="300.0" y="170.0" text-anchor="middle">one I/O serves both, at half</text>
+  <text class="lbl" x="300.0" y="184.0" text-anchor="middle">the bandwidth; the other idles</text>
+</svg></div>
+      <figcaption><b>When bandwidth is not needed, one sub-channel&#8217;s interface carries both.</b> In dynamic efficiency
+        mode the host reaches both sub-channels&#8217; banks through one data interface, at half the bandwidth, and lets
+        the other idle. The saving is in the idle power of the PHY and the DRAM.</figcaption>
+    </figure>
+    <p>
+      The core supply splits in two, and JEDEC makes both mandatory: V<sub>DD2C</sub> at <span class="num">1.0 V</span> and
+      V<sub>DD2D</sub> at <span class="num">0.875 V</span>, against LPDDR5X&#8217;s 1.05 V and 0.9 V. Dynamic voltage and
+      frequency scaling for low power (DVFSL) lowers V<sub>DD2</sub> further at low speeds. For the board, two V<sub>DD2</sub>
+      rails mean two power nets to deliver and decouple where there was one, each with its own target impedance; for the
+      signals, a lower core supply means less margin inside the DRAM for the same noise.
+    </p>
+
+    <h2 class="section-rule" id="lpddr5x-vs-lpddr6"><span>LPDDR6 vs LPDDR5X vs LPDDR5: what changed</span></h2>
+    <div class="table-scroll">
+      <table class="data">
+        <caption>Three generations of LPDDR, from the signals&#8217; point of view</caption>
+        <thead><tr><th></th><th>LPDDR5</th><th>LPDDR5X</th><th>LPDDR6</th></tr></thead>
+        <tbody>
+          <tr><td>Data rate per pin</td><td>up to 6400 MT/s</td><td>up to 8533 MT/s in the editions read; 9600 in vendor material</td><td>10.667 Gb/s to start, 14.4 Gb/s defined</td></tr>
+          <tr><td>Organisation of a die</td><td>one 16-bit channel</td><td>one 16-bit channel</td><td>two 12-bit sub-channels, a 24-bit channel</td></tr>
+          <tr><td>Command pins</td><td>7 per channel</td><td>7 per channel</td><td>4 per sub-channel</td></tr>
+          <tr><td>Command clock</td><td>800 MHz</td><td>1066.5 MHz</td><td>2667 MHz</td></tr>
+          <tr><td>WCK to CK</td><td>2:1 to 3200 MT/s, or 4:1</td><td>2:1 or 4:1</td><td>2:1</td></tr>
+          <tr><td>Burst length</td><td>16 or 32</td><td>16 or 32</td><td>24 or 48</td></tr>
+          <tr><td>Extra bits</td><td>DM, DBI or link ECC on two DMI pins</td><td>DM, DBI or link ECC on two DMI pins</td><td>16 metadata + 16 DBI or link protection, on the data pins</td></tr>
+          <tr><td>Signalling</td><td>LVSTL, V<sub>DDQ</sub> 0.5 V (0.3 V)</td><td>the same</td><td>the same</td></tr>
+          <tr><td>Core supplies</td><td>V<sub>DD2H</sub> 1.05 V, V<sub>DD2L</sub> 0.9 V</td><td>V<sub>DD2H</sub> 1.05 V, V<sub>DD2L</sub> 0.9 V</td><td>V<sub>DD2C</sub> 1.0 V, V<sub>DD2D</sub> 0.875 V, both mandatory</td></tr>
+          <tr><td>Termination</td><td>to V<sub>SSQ</sub>, non-target ODT</td><td>to V<sub>SSQ</sub>, non-target ODT</td><td>to V<sub>SSQ</sub>, plus dynamic write NT-ODT</td></tr>
+          <tr><td>Error reporting</td><td>&#8212;</td><td>&#8212;</td><td>ALERT pin</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>
+      In bandwidth, a 24-bit channel at 10.667 Gb/s moves <span class="num">32.0 GB/s</span> on the wire, of which
+      <span class="num">28.4 GB/s</span> is data once the 32 extra bits in every 288 are set aside; at 14.4 Gb/s, 38.4 GB/s
+      of data. A 16-bit LPDDR5X channel at 8533 MT/s moves <span class="num">17.1 GB/s</span>. The
+      <a href="lpddr5x.html">LPDDR5X page</a> covers what both generations share: source-synchronous timing, training,
+      and a budget spent on crosstalk and switching noise rather than loss.
+    </p>
+
+    <h2 class="section-rule"><span>What it takes to sign off</span></h2>
+    <p>
+      At 69 to 94 ps a bit, LPDDR6 is a trained, equalised interface. IP vendors describe receive DFE and termination tuning
+      in their PHYs, and show trained eyes at the starting rate. The board&#8217;s part is the familiar LPDDR list, made
+      harder: twenty-four data pins a channel escaping a fine-pitch package, all switching together, now with less time per
+      bit and the same quarter-volt swing. Crosstalk and simultaneous switching noise were already the dominant terms on
+      LPDDR5X, and wider buses give each victim the same neighbours with less time between their edges.
+    </p>
+    <p>
+      The command bus joins the list. At 5.3 Gb/s per pin it is a high-speed bus with only four wires, and a fault on any
+      of them is a wrong command, which is why it is trained, terminated and, if the system wants, protected by parity.
+    </p>
+
+    <details class="deeper">
+      <summary>Go deeper &#8212; the PAM4 arithmetic, the road model, and the energy of a 1</summary>
+      <p>
+        <strong>A third of the swing.</strong> With N levels evenly spaced across a swing V, the gap between adjacent
+        levels is V/(N&#8722;1): V for NRZ, V/3 for PAM4. In decibels that is 20&#183;log<sub>10</sub>(3), or 9.54 dB. In return
+        PAM4 halves the symbol rate for the same bit rate, so its Nyquist frequency halves and so does the loss it sees,
+        roughly. On a channel whose loss at Nyquist is tens of decibels that trade can win; on one with a few, it cannot.
+      </p>
+      <p>
+        <strong>The three roads.</strong> The target is 24 pins at the chosen LPDDR6 rate. Faster NRZ carries it on 16
+        pins, so each runs at 24/16 of the rate: 16 Gb/s for the starting bin. PAM4 carries it on 16 pins at half that,
+        8 GBd. The wide road runs 24 pins at the bin rate itself, or fewer or more if you change its pins. Every road sees
+        the same physical loss law, 35% skin and 65% dielectric scaled to the loss you set at 5 GHz, evaluated at its own
+        Nyquist frequency, and the same echo at the same delay in picoseconds. The eye is built by superposing the
+        single-symbol response over a PRBS-11 pattern, and the opening is measured, not drawn.
+      </p>
+      <p>
+        <strong>The allowance.</strong> Noise and jitter are not simulated bit by bit; they are taken off as &#177;7
+        standard deviations, the margin for a bit error ratio of about 10<sup>&#8722;12</sup>. That is a model choice, and
+        a fair one for comparing roads, since all three pay it.
+      </p>
+      <p>
+        <strong>The energy of a 1.</strong> A 1 drives current V<sub>DDQ</sub>/(Ron&#160;+&#160;RTT) from the supply for
+        one bit time, so it costs V<sub>DDQ</sub><sup>2</sup>/(Ron&#160;+&#160;RTT)&#183;UI: 0.25/80 W for 93.75 ps, about 0.29 pJ.
+        A 0 costs nothing in the termination. This leaves out the energy to charge the line and pins on each transition,
+        which DBI does not reduce in the same way.
+      </p>
+      <p>
+        <strong>What both panels leave out.</strong> Crosstalk is in the noise figure, not modelled from neighbours. The
+        driver and termination are 40 &#937; each, a model choice; the standard&#8217;s values have not been read. The
+        packet panel draws the burst by what it carries, not where each bit travels: the standard defines which pin and
+        beat each bit uses, and the panel does not claim to.
+      </p>
+    </details>
+
+    <h2 class="section-rule"><span>In the real world</span></h2>
+    <p>
+      <strong>LPDDR6 moves to more places than phones.</strong> The same standard is pitched at laptops, edge AI boxes,
+      cars and some servers, where LPDDR&#8217;s power advantage now competes with DDR5&#8217;s capacity. The
+      <a href="ddr5.html#lpddr5x-vs-ddr5">DDR5 page</a> sets out that trade for LPDDR5X; it applies to LPDDR6 with more
+      bandwidth on the LPDDR side.
+    </p>
+    <p>
+      <strong>Expect the first parts at the starting rate.</strong> Announced LPDDR6 DRAMs run at about 10.7 Gb/s. The
+      higher bins depend on DRAMs, PHYs and channels that reach them, and a design should be signed off at the bin it
+      will run, not the top of the standard.
+    </p>
+    <p>
+      <strong>Pins and supplies grow even as bandwidth per pin barely does.</strong> Twenty-four data pins a channel and
+      two V<sub>DD2</sub> rails mean more balls, more routing and more decoupling than an LPDDR5X design of the same
+      capacity. That is the price of keeping NRZ, and it is paid on the board.
+    </p>
+
+    <h3>Where the numbers come from</h3>
+    <ul class="tight refs">
+      <li><strong>JEDEC&#8217;s JESD209-6 announcement</strong> (July 2025) &#8212; the sub-channels, command pins, NT-ODT, supplies, efficiency modes and reliability features. The standard itself has not been read.</li>
+      <li><strong>Samsung, &#8220;LPDDR6 Key Architecture&#8221;, JEDEC LPDDR6 workshop</strong> (April 2025) &#8212; the comparison with LPDDR5 and LPDDR5X, clocks, voltages, the packet, and the case for wide NRZ.</li>
+      <li><strong>Synopsys, &#8220;LPDDR6: A Deep Dive Into the JEDEC Press Release&#8221;</strong> (JEDEC forum, May 2024, before the standard was final), and Synopsys and Cadence product material (2025&#8211;2026) &#8212; data rates, DBI, ALERT and PHY equalisation.</li>
+      <li><strong>SK hynix</strong> (March 2026) &#8212; the first LPDDR6 DRAM announcement.</li>
+    </ul>
+
+    <h3>Related</h3>
+    <ul class="tight">
+      <li><a href="lpddr5x.html">LPDDR5/5X Signal Integrity: WCK, ODT and Training</a> &#8212; what LPDDR6 inherits</li>
+      <li><a href="ddr5.html">DDR5 Signal Integrity: Fly-by, ODT, DFE and Training</a> &#8212; the socketed alternative</li>
+      <li><a href="../signal-integrity/nrz-vs-pam4.html">NRZ vs PAM4 Signaling: Bandwidth and SNR Trade-off</a> &#8212; the level arithmetic, at serial-link scale</li>
+      <li><a href="../power-integrity/ssn-ground-bounce.html">Simultaneous Switching Noise and Ground Bounce</a> &#8212; what a wide bus switching together does</li>
+      <li><a href="../fundamentals/crosstalk.html">PCB Crosstalk: NEXT, FEXT, and Mutual Coupling</a> &#8212; the dominant LPDDR impairment</li>
+    </ul>
+  </div>
+  <!-- share:foot:start --><div class="share share--foot" data-share data-share-url="https://sipi.work/topics/interfaces/lpddr6.html" data-share-title="LPDDR6 Signal Integrity: Wide NRZ and Sub-Channels"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Flpddr6.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Flpddr6.html&amp;text=LPDDR6%20Signal%20Integrity%3A%20Wide%20NRZ%20and%20Sub-Channels" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=LPDDR6%20Signal%20Integrity%3A%20Wide%20NRZ%20and%20Sub-Channels&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Flpddr6.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:foot:end -->
+
+<!-- sources:start -->
+    <section class="sources">
+      <h2 class="section-rule"><span>Sources</span></h2>
+      <ul class="sources__list">
+      <li><a href="https://www.jedec.org/news/pressreleases/jedec-updates-standard-low-power-memory-devices-lpddr5" target="_blank" rel="noopener">JEDEC — LPDDR5 standard update announcement</a> <span class="src__for">C-2a</span></li>
+      <li><a href="https://www.farnell.com/datasheets/3928121.pdf" target="_blank" rel="noopener">Micron — x32 Automotive LPDDR5X SDRAM data sheet (315b)</a> <span class="src__for">C-53</span></li>
+      <li><a href="https://www.jedec.org/news/pressreleases/jedec%C2%AE-releases-new-lpddr6-standard-enhance-mobile-and-ai-memory-performance" target="_blank" rel="noopener">JEDEC — LPDDR6 (JESD209-6) announcement</a> <span class="src__for">C-55</span></li>
+      <li><a href="https://www.jedec.org/sites/default/files/Seunghyun%20Moon_03_29_25_Final.pdf" target="_blank" rel="noopener">Samsung — LPDDR6 Key Architecture (JEDEC workshop)</a> <span class="src__for">C-56</span></li>
+      <li><a href="https://www.synopsys.com/blogs/chip-design/delivering-lpddr6-read-write-eyes-10-6-gbps.html" target="_blank" rel="noopener">Synopsys — Delivering LPDDR6 read/write eyes at 10.67 Gb/s</a> <span class="src__for">C-58</span></li>
+      <li><a href="https://www.jedec.org/sites/default/files/Brett%20Murdock_FINAL_Mobile_2024.pdf" target="_blank" rel="noopener">Synopsys — LPDDR6 deep dive (JEDEC forum, 2024)</a> <span class="src__for">C-59</span></li>
+      <li><a href="https://news.skhynix.com/en/1c-lpddr6-development-2026/" target="_blank" rel="noopener">SK hynix — 1c LPDDR6 development</a> <span class="src__for">C-60</span></li>
+      <li><a href="https://www.jedec.org/news/pressreleases/jedec-publishes-gddr7-graphics-memory-standard" target="_blank" rel="noopener">JEDEC — GDDR7 announcement</a> <span class="src__for">C-62</span></li>
+      </ul>
+      <p class="sources__note">Rows marked with a claim id are tracked in <a href="../../docs/claims.md">the claim ledger</a>, which records what each source can and cannot establish.</p>
+    </section>
+    <!-- sources:end -->
+  <!-- pager:start -->
+  <nav class="pager" aria-label="Previous and next topic">
+    <a class="prev" href="../../topics/interfaces/lpddr5x.html"><span class="dir">Previous</span><span>LPDDR5/5X Signal Integrity: WCK, ODT and Training</span></a>
+    <a class="next" href="../../topics/interfaces/ddr5.html"><span class="dir">Next</span><span>DDR5 Signal Integrity: Fly-by, ODT, DFE and Training</span></a>
+  </nav>
+  <!-- pager:end -->
+</main>
+
+
+<footer class="site-foot">
+  <span>SIPI &#8212; signal and power integrity, visualised.</span>
+  <nav class="site-foot__nav" aria-label="Site, footer">
+    <a href="../../start.html">Start</a>
+    <a href="../../labs.html">Labs</a>
+    <a href="../../calculators.html">Calculators</a>
+    <a href="../../reference.html">Reference</a>
+    <a href="../../colophon.html">About &amp; AI disclosure</a>
+    <a href="../../model-contract.html">Model assumptions</a>
+    <a href="../../docs/claims.md">Claim ledger (Markdown)</a>
+  </nav>
+  <span>Created and directed by <a href="https://www.linkedin.com/in/geetansh-arora-a645714a/" target="_blank" rel="author noopener">Geetansh Arora</a>. Text <a href="../../LICENSE-CONTENT">CC BY 4.0</a>, code <a href="../../LICENSE-CODE">MIT</a>.</span>
+</footer>
+
+<script src="../../js/site.js?v=61b8ff31" defer></script>
+<script src="../../js/viz-kit.js?v=cb18bcf0" defer></script>
+<script src="../../js/models/lpddr6-model.js?v=61b91f9d" defer></script>
+<script src="../../js/viz/lpddr6.js?v=e7b62ee7" defer></script>
+<script src="../../js/viz/lpddr6-packet.js?v=71162a62" defer></script>
+<script src="../../js/lab-workspace.js?v=49b1d309" defer></script>
+<script src="../../js/viz-loader.js?v=3395e118" defer></script>
+<script src="../../js/search.js?v=f57dea26" defer></script>
+</body>
+</html>

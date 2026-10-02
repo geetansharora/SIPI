@@ -199,6 +199,23 @@
       ]
     },
     {
+      "url": "topics/interfaces/lpddr6.html",
+      "panels": [
+        "lpddr6",
+        "lpddr6Packet"
+      ],
+      "presets": [
+        "clean",
+        "dfe",
+        "echo",
+        "lossy",
+        "lp6",
+        "noisy",
+        "top",
+        "wider"
+      ]
+    },
+    {
       "url": "topics/labs/adc-interference.html",
       "panels": [
         "adcLab"
@@ -493,8 +510,8 @@
     }
   ],
   "totals": {
-    "pages": 43,
-    "panels": 45,
-    "presets": 157
+    "pages": 44,
+    "panels": 47,
+    "presets": 165
   }
 }
