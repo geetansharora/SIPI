@@ -1595,6 +1595,10 @@ dialog.searchbox::backdrop { background: rgba(4, 8, 11, .58); }
 .instrument.lab .probe-host > .probe__at { display: flex; justify-content: flex-end; align-items: center; gap: .4rem; margin-top: 2px; }
 .instrument.lab .panel:has(.legend) .probe-host > .probe__at { position: absolute; right: 0; top: 100%; margin: 2px 0 0; }
 .instrument.lab .panel:has(.probe__at) > .legend { padding-right: 10.5rem; min-height: 25px; }
+/* A narrow plot whose legend would wrap one entry to a line keeps the whole legend
+   width and puts the "read at" entry on its own line below it instead. */
+.instrument.lab .panel.panel--probe-below:has(.probe__at) > .legend { padding-right: 0; }
+.instrument.lab .panel.panel--probe-below:has(.legend) .probe-host > .probe__at { position: static; margin: 2px 0 0; }
 
 /* Playback and a control that moves along the plots' own axis (Lab A's time),
    between the always-visible plots and the views. The playback block's buttons
@@ -1705,6 +1709,20 @@ dialog.searchbox::backdrop { background: rgba(4, 8, 11, .58); }
 }
 .instrument.lab.is-full .lab-frame { height: 100dvh; min-height: 0; }
 html.lab-lock, html.lab-lock body { overflow: hidden; }
+
+/* The phone workspace gives every group title a 44 px touch target. In the
+   three-column frame that rule still matched (the lab carries the workspace class
+   at every width) and left a blank band under each title, text pinned to its top. */
+@media (min-width: 75rem) {
+  .workspace .lab-group > summary.lab-group__title { min-height: 0; padding: .1rem 0; }
+}
+
+/* On a phone the title keeps its 44 px touch target, but with the text centred in
+   it rather than pinned to the top, which read as a gap under every title. */
+@media (max-width: 74.99rem) {
+  .workspace .lab-group > summary.lab-group__title { min-height: 44px; padding: .8rem 0; box-sizing: border-box; }
+  .workspace .lab-group > .lab-group__body { padding-top: .25rem; }
+}
 
 /* ── short laptop screens ──────────────────────────────────────────────────── */
 @media (min-width: 75rem) and (max-height: 50rem) {

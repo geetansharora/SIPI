@@ -13,7 +13,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
 <link rel="stylesheet" href="../../css/base.css?v=1e3ae753">
-<link rel="stylesheet" href="../../css/components.css?v=701d7475">
+<link rel="stylesheet" href="../../css/components.css?v=83fc3801">
   <!-- meta:start -->
   <link rel="canonical" href="https://sipi.work/topics/fundamentals/reflections.html">
   <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
@@ -395,7 +395,7 @@
             <tr><td>Series (source)</td><td>Γ<sub>s</sub> → 0</td><td>none</td><td>full swing, one step</td><td>reset, control, slow GPIO</td></tr>
             <tr><td>Parallel to ground</td><td>Γ<sub>L</sub> → 0</td><td>V²/Z₀ when high</td><td>set by the source/load divider, not by the termination</td><td>rarely alone</td></tr>
             <tr><td>Thevenin (split)</td><td>Γ<sub>L</sub> → 0</td><td>continuous</td><td>full swing, biased</td><td>legacy DDR address/command</td></tr>
-            <tr><td>On-die (ODT)</td><td>Γ<sub>L</sub> → 0</td><td>gated per burst</td><td>full swing</td><td>LPDDR5X, PCIe, USB, UFS</td></tr>
+            <tr><td>On-die (ODT)</td><td>Γ<sub>L</sub> → 0</td><td>gated per burst</td><td>full swing</td><td>DDR5, LPDDR5X, PCIe, USB, UFS</td></tr>
           </tbody>
         </table>
       </div>
@@ -437,6 +437,7 @@
       <li><a href="./termination-schemes.html">Termination Schemes: Series, Parallel, Thevenin and AC</a></li>
       <li><a href="../interfaces/lpddr5x.html">LPDDR5X sign-off: ODT and driver strength training</a></li>
       <li><a href="../tools/return-loss-vswr.html">VSWR, Return Loss and Reflection Coefficient Calculator</a></li>
+      <li><a href="../interfaces/ddr5.html">DDR5 Signal Integrity: Fly-by, ODT, DFE and Training</a> — a stub and a connector on a memory bus, watched in space and time</li>
     </ul>
   </div>
   <!-- share:foot:start --><div class="share share--foot" data-share data-share-url="https://sipi.work/topics/fundamentals/reflections.html" data-share-title="Transmission-Line Reflections and Ringing"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Ffundamentals%2Freflections.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Ffundamentals%2Freflections.html&amp;text=Transmission-Line%20Reflections%20and%20Ringing" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=Transmission-Line%20Reflections%20and%20Ringing&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Ffundamentals%2Freflections.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:foot:end -->
@@ -467,6 +468,6 @@
 <script src="../../js/search.js?v=f57dea26" defer></script>
 <script src="../../js/viz-kit.js?v=cb18bcf0" defer></script>
 <script src="../../js/viz/reflection.js?v=8bb872ad" defer></script>
-<script src="../../js/viz-loader.js?v=1d4bfbd7" defer></script>
+<script src="../../js/viz-loader.js?v=28f89557" defer></script>
 </body>
 </html>

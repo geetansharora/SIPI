@@ -55,7 +55,7 @@ function loadSite() {
   };
   global.getComputedStyle = () => ({ getPropertyValue: () => '#000000' });
   global.fetch = () => new Promise(() => {});
-  const files = ['js/viz-kit.js', 'js/models/calc-models.js', 'js/models/laminates.js', 'js/models/coupling-model.js', 'js/models/tdr-model.js', 'js/viz/jitter.js', 'js/viz/crosstalk.js',
+  const files = ['js/viz-kit.js', 'js/models/calc-models.js', 'js/models/laminates.js', 'js/models/coupling-model.js', 'js/models/tdr-model.js', 'js/models/ddr5-model.js', 'js/viz/jitter.js', 'js/viz/crosstalk.js',
                  'js/viz/spectrum.js', 'js/viz/pdn-extras.js',
                  'js/viz/lab-waves.js', 'js/viz/lab-channel.js', 'js/viz/lab-pdn.js',
                  'js/viz/cdr.js', 'js/models/adc-model.js',
@@ -138,6 +138,178 @@ const SIPI = loadSite();
 const K = SIPI.kit, MODELS = SIPI.models || {};
 
 /* ═════════ N6-3 · Search vocabulary and ranking ═════════ */
+/* ═════════ DDR5 ═════════ */
+suite('DDR5 page — the bus solver, the worst-case eye, the DFE and the fly-by', () => {
+  const D = SIPI.models.ddr5;
+  const run = (o, opts) => D.run(Object.assign({}, D.defaults, o), opts);
+
+  /* An independent solution of the same net in frequency: every line a two-port
+     admittance (1/Z)[[-j cot θ, j csc θ], [j csc θ, -j cot θ]], every node's R, C and
+     source stamped in, and the complex nodal matrix solved by elimination. It shares
+     nothing with the time-stepping solver but the net description. */
+  function nodal(net, f) {
+    const n = net.nodes.length, w = 2 * Math.PI * f * 1e-12;
+    const A = [...Array(n)].map(() => [...Array(n)].map(() => [0, 0])), b = [...Array(n)].map(() => [0, 0]);
+    net.nodes.forEach((nd, k) => {
+      if (isFinite(nd.R)) A[k][k][0] += 1 / nd.R;
+      A[k][k][1] += w * nd.C;
+      if (nd.src) { A[k][k][0] += 1 / nd.Rs; b[k][0] += 1 / nd.Rs; }
+    });
+    net.lines.forEach((L) => {
+      const th = w * L.d, cot = Math.cos(th) / Math.sin(th), csc = 1 / Math.sin(th);
+      A[L.a][L.a][1] -= cot / L.z; A[L.b][L.b][1] -= cot / L.z; A[L.a][L.b][1] += csc / L.z; A[L.b][L.a][1] += csc / L.z;
+    });
+    const mul = (x, y) => [x[0] * y[0] - x[1] * y[1], x[0] * y[1] + x[1] * y[0]];
+    const div = (x, y) => { const q = y[0] * y[0] + y[1] * y[1]; return [(x[0] * y[0] + x[1] * y[1]) / q, (x[1] * y[0] - x[0] * y[1]) / q]; };
+    for (let i = 0; i < n; i++) {
+      let pv = i; for (let r = i + 1; r < n; r++) if (Math.hypot(...A[r][i]) > Math.hypot(...A[pv][i])) pv = r;
+      [A[i], A[pv]] = [A[pv], A[i]]; [b[i], b[pv]] = [b[pv], b[i]];
+      for (let r = i + 1; r < n; r++) {
+        const m = div(A[r][i], A[i][i]);
+        for (let c = i; c < n; c++) { const q = mul(m, A[i][c]); A[r][c] = [A[r][c][0] - q[0], A[r][c][1] - q[1]]; }
+        const q = mul(m, b[i]); b[r] = [b[r][0] - q[0], b[r][1] - q[1]];
+      }
+    }
+    const x = Array(n);
+    for (let i = n - 1; i >= 0; i--) {
+      let acc = b[i];
+      for (let c = i + 1; c < n; c++) { const q = mul(A[i][c], x[c]); acc = [acc[0] - q[0], acc[1] - q[1]]; }
+      x[i] = div(acc, A[i][i]);
+    }
+    return x;
+  }
+  [['two DIMMs, write to the near one', {}], ['far DIMM unterminated', { rttO: Infinity }], ['a read, near slot only', { dir: 'read', pop: 'near' }]].forEach(([name, o]) => {
+    const net = D.network(Object.assign({}, D.defaults, o)), nT = 60000;
+    const h = D.solve(net, nT, (t) => (t === 0 ? 1 : 0), { keep: [net.rx] }).V[net.rx];
+    let worst = 0;
+    [0.3e9, 0.8e9, 1.6e9, 2.4e9, 3.2e9].forEach((f) => {
+      const w = 2 * Math.PI * f * 1e-12; let re = 0, im = 0;
+      for (let t = 0; t < nT; t++) { re += h[t] * Math.cos(w * t); im -= h[t] * Math.sin(w * t); }
+      const x = nodal(net, f)[net.rx];
+      worst = Math.max(worst, Math.hypot(re - x[0], im - x[1]) / Math.hypot(x[0], x[1]));
+    });
+    ok('the time solver agrees with a frequency-domain nodal solution: ' + name, worst < 5e-3, 'worst relative error ' + fmt(worst));
+  });
+
+  const node = (o) => Object.assign({ R: Infinity, C: 0, ports: [] }, o);
+  const matched = { nodes: [node({ src: true, Rs: 50, ports: [[0, 0]] }), node({ R: 50, ports: [[0, 1]] })], lines: [{ a: 0, b: 1, z: 50, d: 100 }] };
+  const mv = D.solve(matched, 400, D.edge(1, 30)).V[1];
+  nearAbs('a matched line: nothing arrives before its delay', mv[99], 0, 1e-12, ' V');
+  nearAbs('a matched line: the far end settles at half the source, and never above it', Math.max(...mv), 0.5, 1e-9, ' V');
+  const open = { nodes: [node({ src: true, Rs: 50, ports: [[0, 0]] }), node({ ports: [[0, 1]] })], lines: [{ a: 0, b: 1, z: 50, d: 100 }] };
+  nearAbs('an open end doubles the launched wave', D.solve(open, 400, D.edge(1, 30)).V[1][300], 1, 1e-9, ' V');
+  const tee = { nodes: [node({ src: true, Rs: 50, ports: [[0, 0]] }), node({ ports: [[0, 1], [1, 0], [2, 0]] }), node({ R: 50, ports: [[1, 1]] }), node({ R: 50, ports: [[2, 1]] })],
+    lines: [{ a: 0, b: 1, z: 50, d: 100 }, { a: 1, b: 2, z: 50, d: 100 }, { a: 1, b: 3, z: 50, d: 100 }] };
+  const ts = D.solve(tee, 600, D.edge(1, 30));
+  nearAbs('a three-way junction of equal lines reflects -1/3: the source falls from 1/2 to 1/3', ts.V[0][260], 1 / 3, 1e-9, ' V');
+  nearAbs('and transmits 2/3 down each branch', ts.V[2][260], 1 / 3, 1e-9, ' V');
+
+  [[{}, 'a write to two terminated DIMMs'], [{ dir: 'read', rttT: 40 }, 'a read'], [{ pop: 'one', rttT: 48 }, 'one slot']].forEach(([o, name]) => {
+    const r = run(o, { eye: false }), s = r.step;
+    nearRel('the bus settles to the POD divider: ' + name, s[s.length - 1], r.swing, 5e-3, ' V');
+  });
+
+  /* Peak distortion is a bound over every pattern; a brute force over every pattern
+     of a short pulse must find the same worst 1 and worst 0. */
+  {
+    const P = new Float64Array(6 * 32), h = [0.04, 0.6, -0.04, 0.02, 0.015, -0.01];   // k = -1 .. 4
+    h.forEach((v, j) => { P[j * 32 + 3] = v; });
+    const i = 1 * 32 + 3, others = [0, 2, 3, 4, 5];
+    let one = Infinity, zero = -Infinity;
+    for (let m = 0; m < 32; m++) {
+      let isi = 0; others.forEach((j, q) => { if (m >> q & 1) isi += h[j]; });
+      one = Math.min(one, h[1] + isi); zero = Math.max(zero, isi);
+    }
+    nearAbs('the peak-distortion eye equals a brute force over every pattern', D.pda(P, i, null).height, one - zero, 1e-12, ' V');
+    const pd = D.pda(P, i, D.dfeTaps([-40, 20, 15, -10]));
+    nearAbs('with taps inside their ranges, the DFE removes post-cursors 1 to 4 exactly', pd.height, h[1] - Math.abs(h[0]), 1e-12, ' V');
+    const Q = Float64Array.from(P); Q[2 * 32 + 3] = -0.08;                                  // h1 beyond tap 1's +50 mV
+    nearAbs('a post-cursor beyond its tap\u2019s range is cancelled only up to the range',
+            D.pda(Q, i, D.dfeTaps([-80, 20, 15, -10])).height, h[1] - Math.abs(h[0]) - 0.03, 1e-12, ' V');
+  }
+  {
+    const rng = K.rng(0xd5), viol = [];
+    for (let n = 0; n < 400; n++) {
+      const t = D.dfeTaps([0, 1, 2, 3].map(() => (rng() - 0.5) * 600));
+      t.forEach((v, k) => { if (v < D.TAP_RANGE[k][0] || v > D.TAP_RANGE[k][1] || v % D.TAP_STEP) viol.push(t.join(',')); });
+      if (Math.abs(t[1]) + Math.abs(t[2]) + Math.abs(t[3]) >= D.TAP_SUM_234) viol.push('sum ' + t.join(','));
+    }
+    ok('DFE taps never leave their ranges, their 5 mV grid, or the taps 2-4 sum limit', viol.length === 0, viol.slice(0, 3).join(' | '));
+  }
+
+  const base = run({}, { eye: false }), unterm = run({ rttO: Infinity }, { eye: false });
+  ok('an unterminated second DIMM closes the eye that a terminated one leaves open',
+     unterm.wc.height < 0 && base.wc.height > 0, `terminated ${fmt(base.wc.height * 1000)} mV, unterminated ${fmt(unterm.wc.height * 1000)} mV`);
+  const nearOnly = run({ pop: 'near' }, { eye: false }), farOnly = run({ pop: 'far' }, { eye: false });
+  ok('one DIMM in the far slot leaves several times the eye of one in the near slot',
+     farOnly.wc.height > 3 * nearOnly.wc.height, `far ${fmt(farOnly.wc.height * 1000)} mV, near ${fmt(nearOnly.wc.height * 1000)} mV`);
+  /* Which echo lands where, from the net itself. With the far DIMM terminated, the
+     largest post-cursor is the near DIMM's own bounce (DRAM to slot 1 and back): it
+     stays put when the far slot moves, and shrinks when the target is terminated.
+     With the far DIMM unterminated, the largest post-cursor sits where the far
+     branch's round trip says. */
+  const largest = (r) => { let k = 1; r.post.forEach((v, j) => { if (Math.abs(v) > Math.abs(r.post[k - 1])) k = j + 1; }); return k; };
+  const roundTrip = (r, pick) => {
+    const net = r.net, br = D.branches(net, D.path(net, net.src, net.rx));
+    const chain = pick === 'far' ? br.find((x) => x.chain.length > 1).chain
+      : D.path(net, net.S1, net.rx);
+    return 2 * chain.reduce((a, [li]) => a + net.lines[li].d, 0);
+  };
+  {
+    const r = run({}, { eye: false, full: true }), k = largest(r), rt = roundTrip(r, 'near') / r.ui;
+    ok('the largest post-cursor lands where the near branch\u2019s round trip says', Math.abs(k - rt) <= 1, `post-cursor ${k}, round trip ${fmt(rt)} UI`);
+    const k5 = largest(run({ slot: 5 }, { eye: false })), k30 = largest(run({ slot: 30 }, { eye: false }));
+    ok('and it does not move when the far slot does', k5 === k && k30 === k, `slot 5 mm: ${k5}, 10 mm: ${k}, 30 mm: ${k30}`);
+    const m = run({ rttT: 40 }, { eye: false });
+    ok('terminating the target shrinks it several times', Math.abs(m.post[k - 1]) * 3 < Math.abs(r.post[k - 1]),
+       `${fmt(r.post[k - 1] * 1000)} mV at 240 ohm, ${fmt(m.post[k - 1] * 1000)} mV at 40 ohm`);
+    const u = run({ rttO: Infinity }, { eye: false, full: true }), ku = largest(u), rtu = roundTrip(u, 'far') / u.ui;
+    ok('with the far DIMM unterminated, the largest post-cursor lands where the far branch\u2019s round trip says',
+       Math.abs(ku - rtu) <= 1 && ku !== k, `post-cursor ${ku}, round trip ${fmt(rtu)} UI`);
+  }
+  /* The eye is built by superposing the single-bit response. Driving the whole bit
+     stream through the solver instead is a second, independent route to the same
+     waveform, because the net is linear: they must agree. */
+  [['two DIMMs, terminated', {}], ['one DIMM in the near slot', { pop: 'near' }]].forEach(([name, o]) => {
+    const p = Object.assign({}, D.defaults, o, { dfe: false }), r = D.run(p), W = r.eyeWave, sps = W.sps, ui = r.ui;
+    const net = D.network(p), edge = D.edge(D.VDDQ, D.edgePs(p.rate)), nT = Math.ceil(W.n * ui + 4000);
+    const src = new Float64Array(nT);
+    for (let k = 0; k < W.n; k++) {
+      const d = W.bits[k] - (k ? W.bits[k - 1] : 0);
+      if (d) for (let t = Math.floor(k * ui); t < nT; t++) src[t] += d * edge(t - k * ui);
+    }
+    const v = D.solve(net, nT, (t) => src[t], { keep: [net.rx] }).V[net.rx];
+    let worst = 0;
+    for (let b = W.lead + 20; b < W.n - 20; b++) for (let k = 0; k < sps; k += 4) {
+      const t = b * ui + (r.cursor + k - sps / 2) * ui / sps, i = Math.floor(t);
+      worst = Math.max(worst, Math.abs(r.vLow + v[i] + (v[i + 1] - v[i]) * (t - i) - W.y[b * sps + k]));
+    }
+    ok('the PRBS eye equals the bit stream driven through the solver: ' + name, worst < 0.01 * D.VDDQ, 'worst ' + fmt(worst * 1000) + ' mV');
+  });
+  ['base', 'emptyFar', 'fast', 'nodfe', 'read'].forEach((k) => {
+    const o = { base: {}, emptyFar: { pop: 'near' }, fast: { rate: 6400 }, nodfe: { rate: 6400, dfe: false }, read: { dir: 'read', rttT: 40 } }[k];
+    const r = run(o), W = r.eyeWave, sps = W.sps;
+    const c = K.eyeContour((b, q) => { const i = b * sps + sps / 2 + q; return i >= 0 && i < W.y.length ? W.y[i] : undefined; }, W.bits, W.lead, W.n, -sps, sps);
+    const mid = c.pts ? c.pts.find((q) => q[0] === 0) : null, h = mid ? mid[1] - mid[2] : -Infinity;
+    ok('a PRBS eye is never smaller than its worst-case bound: ' + k, h >= r.wc.height - 1e-9, `PRBS ${fmt(h * 1000)} mV, bound ${fmt(r.wc.height * 1000)} mV`);
+  });
+  {
+    const r = run({}), sh = D.shmoo(r), c = sh.centre;
+    const ci = sh.phases.indexOf(c.s), ri = sh.rows.indexOf(c.vref);
+    ok('the trained point passes, and sits between the 0 and 1 levels', sh.pass[ri][ci] && c.vref > r.vLow && c.vref < D.VDDQ,
+       `Vref ${fmt(c.vref)} V between ${fmt(r.vLow)} and ${D.VDDQ}`);
+  }
+
+  /* the fly-by */
+  const fb = (o) => D.flyby(Object.assign({}, D.flybyDefaults, o));
+  const bare = fb({ cLoad: 0 }), gap = (r) => (r.arr[4].t - r.arr[1].t) / 3;
+  nearRel('a bare fly-by costs the unloaded flight per DRAM', gap(bare), D.flybyDefaults.pitch * D.PS_PER_MM, 0.02, ' ps');
+  const loaded = fb({});
+  nearRel('a loaded fly-by approaches the loaded-line delay', gap(loaded), loaded.loaded.psPerMm * D.flybyDefaults.pitch, 0.06, ' ps');
+  const last = [0, 0.5, 1, 1.5, 2].map((c) => fb({ cLoad: c }).arr[4].t);
+  ok('more load per DRAM never reaches the last DRAM sooner', last.every((t, i) => i === 0 || t > last[i - 1]), last.map((t) => t.toFixed(0)).join(' < '));
+});
+
 /* ═════════ TDR ═════════ */
 suite('TDR page — limits, areas, resolution and the time axis', () => {
   const T = SIPI.models.tdr;

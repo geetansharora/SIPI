@@ -951,5 +951,53 @@
     "version": "1.0",
     "reviewed": "2026-10-01",
     "reviewer": "Geetansh Arora"
+  },
+  "ddr5": {
+    "kind": "numerical",
+    "evidence": "independent",
+    "purpose": "Show how a DDR5 data net with one or two DIMMs behaves in time: where each reflection comes from and which later bit it lands on, what the terminations trade, what the DRAM's 4-tap DFE can and cannot cancel, and what training sees.",
+    "topology": "Controller die (1.0 pF) and package, a 40 ohm mainboard trace to slot 1, optionally a slot-to-slot trace to slot 2; at each populated slot a 60 ohm, 25 ps connector, 20 mm of 40 ohm DIMM trace, a 45 ohm, 30 ps package and a 0.8 pF DRAM die; an empty slot is its connector, open. Single-rank DIMMs.",
+    "planes": "Controller die and DRAM die nodes; the eye is at the receiving die, after the DFE summer on writes.",
+    "equations": [
+      "Method of characteristics: V = (sum 2 a_i/Z_i + Vs/Rs + J_C)/(sum 1/Z_i + 1/Rs + 1/RTT + 2C/dt); each line carries V - a_i away",
+      "Capacitors by the trapezoidal companion: i = (2C/dt) v - J, J' = (2C/dt) v + i",
+      "POD swing = VDDQ RTT_eff/(Ron + RTT_eff), RTT_eff every termination in parallel",
+      "pulse p(t) = s(t) - s(t - UI); worst-case eye h0 - sum|h_k - c_k|, c_k the DFE taps on k = 1..4",
+      "DFE taps clipped to the data sheet ranges (t1 -200..+50, t2 +/-75, t3 +/-60, t4 +/-45 mV, 5 mV steps, |t2|+|t3|+|t4| < 60 mV)"
+    ],
+    "units": "ps, V, mV, ohm, pF, mm",
+    "validity": "Lossless TEM lines at 6.7 ps/mm with whole-picosecond delays; lumped die capacitance; linear drivers and terminations; single-rank DIMMs; no crosstalk, SSN or supply noise; the driver edge is a raised cosine of 30% of a UI, held between 30 and 70 ps.",
+    "numerics": "1 ps time step over the whole tree; pulse sampled at 32 points a UI; PRBS-11 eye with 64 bits of history; training phase chosen within one UI of the pulse peak by the worst-case eye; shmoo with seeded 5 mV rms noise and 2 ps rms jitter, VrefDQ in 0.5% of VDDQ steps; termination sweep of 8 x 8 runs.",
+    "limitations": "No loss, so long mainboard routes are optimistic; no crosstalk or SSN; the controller's read equalisation is not modelled; the stressed-eye diamond is the receiver's test condition, not a channel mask; the shmoo's noise is a model choice. No ESD clamps or loss, so an open stub rings past both rails further than silicon would allow.",
+    "verified": "check-models.js — DDR5 page (the solver matches an independent frequency-domain nodal solution of the same net; a matched line, an open end and a three-way junction give their closed-form levels; the settled level equals the POD divider; the peak-distortion bound equals a brute-force search of every pattern; DFE taps stay inside their ranges and the sum limit; a DFE cannot touch the fifth post-cursor; an unterminated second DIMM closes the eye that a terminated one leaves open; the far slot leaves a larger eye than the near one with one DIMM fitted; the largest post-cursor is the near branch's round trip when the far DIMM is terminated, does not move with the far slot and shrinks when the target is terminated, and becomes the far branch's round trip when the far DIMM is not; the trained point lies inside the passing region; the PRBS eye equals the whole bit stream driven through the solver; every PRBS eye is at least its worst-case bound).",
+    "suites": [
+      "DDR5 page"
+    ],
+    "version": "1.0",
+    "reviewed": "2026-10-02",
+    "reviewer": "Geetansh Arora"
+  },
+  "ddr5Flyby": {
+    "kind": "numerical",
+    "evidence": "independent",
+    "purpose": "Show why a fly-by clock reaches each DRAM at a different time, how the DRAMs' input capacitance slows and lowers the line, and what write leveling has to add to each lane's strobe.",
+    "topology": "An RCD driver (25 ohm) into 12 mm of 50 ohm line to DRAM 0, then one pitch of the same line between each of five DRAMs, each a lumped input capacitance, ending in the last DRAM's CA termination.",
+    "planes": "Each DRAM's input node.",
+    "equations": [
+      "Method of characteristics, as the DDR5 bus model",
+      "loaded line: t_pd' = t_pd sqrt(1 + C_load/C_line), Z' = Z0/sqrt(1 + C_load/C_line), C_line = t_pd pitch/Z0",
+      "arrival = the 50% crossing of the settled level at each DRAM"
+    ],
+    "units": "ps, mm, pF, ohm",
+    "validity": "Single-ended, lossless line at 6.7 ps/mm; one subchannel's five DRAMs; the strobes are taken to arrive together, as from equal-length point-to-point routes.",
+    "numerics": "1 ps time step; 60 ps 10-90% edge; arrivals by linear interpolation of the 50% crossing.",
+    "limitations": "The clock is drawn single-ended and as one edge; the RCD's own delay and the controller-to-RCD flight are left out, so times are from the RCD's output; the DRAMs nearer the RCD carry no termination.",
+    "verified": "check-models.js — DDR5 page (with no load every gap costs the unloaded flight; with load the delay per DRAM approaches the loaded-line formula; more load never arrives sooner).",
+    "suites": [
+      "DDR5 page"
+    ],
+    "version": "1.0",
+    "reviewed": "2026-10-02",
+    "reviewer": "Geetansh Arora"
   }
 }

@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
 <link rel="stylesheet" href="css/base.css?v=1e3ae753">
-<link rel="stylesheet" href="css/components.css?v=701d7475">
+<link rel="stylesheet" href="css/components.css?v=83fc3801">
   <!-- meta:start -->
   <link rel="canonical" href="https://sipi.work/model-contract.html">
   <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
@@ -47,10 +47,10 @@
   <div class="page-head">
     <p class="crumb"><a href="index.html">SIPI</a> / model contracts</p>
     <h1>Interactive model assumptions and evidence</h1>
-    <p class="byline"><span>Generated from <code>docs/model-types.json</code></span><span>42 panels</span><span>fidelity: 17 analytical, 12 exact, 6 illustrative, 7 numerical · evidence: 5 computed, 32 independent, 5 plausible</span></p>
+    <p class="byline"><span>Generated from <code>docs/model-types.json</code></span><span>44 panels</span><span>fidelity: 17 analytical, 12 exact, 6 illustrative, 9 numerical · evidence: 5 computed, 34 independent, 5 plausible</span></p>
     <p class="answer">
       Each interactive panel uses a model with a defined scope. This page publishes the
-      contract for all 42 panels: the
+      contract for all 44 panels: the
       topology, the reference planes, the equations, the units, the range over which it is
       valid, how it is computed, and the evidence available for its behavior.
     </p>
@@ -69,7 +69,7 @@
       The fourth level is listed for reference and is currently unused. These model labels do not
       claim validation against a published specification. Where a page states a
       specification claim, it is recorded in the
-      <a href="docs/claims.md">claim ledger</a> with its status. Of its 43 claims, 18 have been read against the source they cite, 21 have been narrowed to what their source supports, and 4 still await a source. None of the verified ones rests on the normative text of a standard; they rest on vendor documents, public announcements and measured data, and the source checks were made by an AI model, not by a person.
+      <a href="docs/claims.md">claim ledger</a> with its status. Of its 63 claims, 34 have been read against the source they cite, 24 have been narrowed to what their source supports, and 5 still await a source. None of the verified ones rests on the normative text of a standard; they rest on vendor documents, public announcements and measured data, and the source checks were made by an AI model, not by a person.
     </p>
     <p>
       <em>Kind</em> and <em>evidence</em> answer different questions. A deliberately
@@ -501,6 +501,44 @@
       <dt>Numerics</dt><dd>Closed form superposition over the coupled length.</dd>
       <dt>Known limitations</dt><dd>Weak coupling, ratios &lt;= 0.30. One aggressor, not a bus.</dd>
       <dt>Evidence</dt><dd>check-models.js — Crosstalk (FEXT cancels when the ratios are equal; NEXT saturates past tr/2tpd).</dd>
+    </dl>
+  </section>
+  <section class="contract" id="ddr5">
+    <div class="contract__head">
+      <h2>ddr5</h2>
+      <span class="model-tag model-tag--numerical">numerical model</span>
+      <span class="ev ev--independent">independent</span>
+      <span class="contract__ver">v1.0 &#183; reviewed 2026-10-02</span>
+    </div>
+    <p class="contract__purpose">Show how a DDR5 data net with one or two DIMMs behaves in time: where each reflection comes from and which later bit it lands on, what the terminations trade, what the DRAM's 4-tap DFE can and cannot cancel, and what training sees.</p>
+    <dl class="contract__body">
+      <dt>Topology</dt><dd>Controller die (1.0 pF) and package, a 40 ohm mainboard trace to slot 1, optionally a slot-to-slot trace to slot 2; at each populated slot a 60 ohm, 25 ps connector, 20 mm of 40 ohm DIMM trace, a 45 ohm, 30 ps package and a 0.8 pF DRAM die; an empty slot is its connector, open. Single-rank DIMMs.</dd>
+      <dt>Reference planes</dt><dd>Controller die and DRAM die nodes; the eye is at the receiving die, after the DFE summer on writes.</dd>
+      <dt>Equations</dt><dd><ul class="tight"><li><code>Method of characteristics: V = (sum 2 a_i/Z_i + Vs/Rs + J_C)/(sum 1/Z_i + 1/Rs + 1/RTT + 2C/dt); each line carries V - a_i away</code></li><li><code>Capacitors by the trapezoidal companion: i = (2C/dt) v - J, J' = (2C/dt) v + i</code></li><li><code>POD swing = VDDQ RTT_eff/(Ron + RTT_eff), RTT_eff every termination in parallel</code></li><li><code>pulse p(t) = s(t) - s(t - UI); worst-case eye h0 - sum|h_k - c_k|, c_k the DFE taps on k = 1..4</code></li><li><code>DFE taps clipped to the data sheet ranges (t1 -200..+50, t2 +/-75, t3 +/-60, t4 +/-45 mV, 5 mV steps, |t2|+|t3|+|t4| &lt; 60 mV)</code></li></ul></dd>
+      <dt>Units</dt><dd>ps, V, mV, ohm, pF, mm</dd>
+      <dt>Validity</dt><dd>Lossless TEM lines at 6.7 ps/mm with whole-picosecond delays; lumped die capacitance; linear drivers and terminations; single-rank DIMMs; no crosstalk, SSN or supply noise; the driver edge is a raised cosine of 30% of a UI, held between 30 and 70 ps.</dd>
+      <dt>Numerics</dt><dd>1 ps time step over the whole tree; pulse sampled at 32 points a UI; PRBS-11 eye with 64 bits of history; training phase chosen within one UI of the pulse peak by the worst-case eye; shmoo with seeded 5 mV rms noise and 2 ps rms jitter, VrefDQ in 0.5% of VDDQ steps; termination sweep of 8 x 8 runs.</dd>
+      <dt>Known limitations</dt><dd>No loss, so long mainboard routes are optimistic; no crosstalk or SSN; the controller's read equalisation is not modelled; the stressed-eye diamond is the receiver's test condition, not a channel mask; the shmoo's noise is a model choice. No ESD clamps or loss, so an open stub rings past both rails further than silicon would allow.</dd>
+      <dt>Evidence</dt><dd>check-models.js — DDR5 page (the solver matches an independent frequency-domain nodal solution of the same net; a matched line, an open end and a three-way junction give their closed-form levels; the settled level equals the POD divider; the peak-distortion bound equals a brute-force search of every pattern; DFE taps stay inside their ranges and the sum limit; a DFE cannot touch the fifth post-cursor; an unterminated second DIMM closes the eye that a terminated one leaves open; the far slot leaves a larger eye than the near one with one DIMM fitted; the largest post-cursor is the near branch's round trip when the far DIMM is terminated, does not move with the far slot and shrinks when the target is terminated, and becomes the far branch's round trip when the far DIMM is not; the trained point lies inside the passing region; the PRBS eye equals the whole bit stream driven through the solver; every PRBS eye is at least its worst-case bound).</dd>
+    </dl>
+  </section>
+  <section class="contract" id="ddr5Flyby">
+    <div class="contract__head">
+      <h2>ddr5Flyby</h2>
+      <span class="model-tag model-tag--numerical">numerical model</span>
+      <span class="ev ev--independent">independent</span>
+      <span class="contract__ver">v1.0 &#183; reviewed 2026-10-02</span>
+    </div>
+    <p class="contract__purpose">Show why a fly-by clock reaches each DRAM at a different time, how the DRAMs' input capacitance slows and lowers the line, and what write leveling has to add to each lane's strobe.</p>
+    <dl class="contract__body">
+      <dt>Topology</dt><dd>An RCD driver (25 ohm) into 12 mm of 50 ohm line to DRAM 0, then one pitch of the same line between each of five DRAMs, each a lumped input capacitance, ending in the last DRAM's CA termination.</dd>
+      <dt>Reference planes</dt><dd>Each DRAM's input node.</dd>
+      <dt>Equations</dt><dd><ul class="tight"><li><code>Method of characteristics, as the DDR5 bus model</code></li><li><code>loaded line: t_pd' = t_pd sqrt(1 + C_load/C_line), Z' = Z0/sqrt(1 + C_load/C_line), C_line = t_pd pitch/Z0</code></li><li><code>arrival = the 50% crossing of the settled level at each DRAM</code></li></ul></dd>
+      <dt>Units</dt><dd>ps, mm, pF, ohm</dd>
+      <dt>Validity</dt><dd>Single-ended, lossless line at 6.7 ps/mm; one subchannel's five DRAMs; the strobes are taken to arrive together, as from equal-length point-to-point routes.</dd>
+      <dt>Numerics</dt><dd>1 ps time step; 60 ps 10-90% edge; arrivals by linear interpolation of the 50% crossing.</dd>
+      <dt>Known limitations</dt><dd>The clock is drawn single-ended and as one edge; the RCD's own delay and the controller-to-RCD flight are left out, so times are from the RCD's output; the DRAMs nearer the RCD carry no termination.</dd>
+      <dt>Evidence</dt><dd>check-models.js — DDR5 page (with no load every gap costs the unloaded flight; with load the delay per DRAM approaches the loaded-line formula; more load never arrives sooner).</dd>
     </dl>
   </section>
   <section class="contract" id="equalizer">

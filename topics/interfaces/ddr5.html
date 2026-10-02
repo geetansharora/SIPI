@@ -1,0 +1,1114 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- theme:start -->
+  <meta name="theme-color" content="#F7F8FA">
+  <script>(function(){try{var t=localStorage.getItem('sipi-theme');if(t==='dark'||t==='system'){document.documentElement.setAttribute('data-theme',t);var m=document.querySelector('meta[name=theme-color]');if(m&&(t==='dark'||matchMedia('(prefers-color-scheme:dark)').matches))m.content='#0B1015';}}catch(e){}})();</script>
+  <!-- theme:end -->
+<title>DDR5 Signal Integrity: Fly-by, ODT, DFE and Training | SIPI</title>
+<meta name="description" content="DDR5 signal integrity: DIMM topology, two DIMMs on one wire, ODT, the DRAM&#8217;s 4-tap DFE, fly-by and training, and how DDR5 differs from LPDDR5X. Interactive.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<link rel="stylesheet" href="../../css/base.css?v=1e3ae753">
+<link rel="stylesheet" href="../../css/components.css?v=83fc3801">
+  <!-- meta:start -->
+  <link rel="canonical" href="https://sipi.work/topics/interfaces/ddr5.html">
+  <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="SIPI">
+  <meta property="og:title" content="DDR5 Signal Integrity: Fly-by, ODT, DFE and Training | SIPI">
+  <meta property="og:description" content="DDR5 signal integrity: DIMM topology, two DIMMs on one wire, ODT, the DRAM&amp;#8217;s 4-tap DFE, fly-by and training, and how DDR5 differs from LPDDR5X. Interactive.">
+  <meta property="og:url" content="https://sipi.work/topics/interfaces/ddr5.html">
+  <meta property="og:image" content="https://sipi.work/assets/og/interfaces/ddr5.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="DDR5 Signal Integrity: Fly-by, ODT, DFE and Training: a figure from the page, on SIPI">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="DDR5 Signal Integrity: Fly-by, ODT, DFE and Training | SIPI">
+  <meta name="twitter:description" content="DDR5 signal integrity: DIMM topology, two DIMMs on one wire, ODT, the DRAM&amp;#8217;s 4-tap DFE, fly-by and training, and how DDR5 differs from LPDDR5X. Interactive.">
+  <meta name="twitter:image" content="https://sipi.work/assets/og/interfaces/ddr5.png">
+  <meta name="twitter:image:alt" content="DDR5 Signal Integrity: Fly-by, ODT, DFE and Training: a figure from the page, on SIPI">
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"DDR5 Signal Integrity: Fly-by, ODT, DFE and Training","description":"DDR5 signal integrity: DIMM topology, two DIMMs on one wire, ODT, the DRAM&#8217;s 4-tap DFE, fly-by and training, and how DDR5 differs from LPDDR5X. Interactive.","url":"https://sipi.work/topics/interfaces/ddr5.html","articleSection":"Interface sign-off","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer","url":"https://www.linkedin.com/in/geetansh-arora-a645714a/","sameAs":["https://www.linkedin.com/in/geetansh-arora-a645714a/"]},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-10-02","image":"https://sipi.work/assets/og/interfaces/ddr5.png"}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"SIPI","item":"https://sipi.work/"},{"@type":"ListItem","position":2,"name":"Interface sign-off","item":"https://sipi.work/#interfaces"},{"@type":"ListItem","position":3,"name":"DDR5 Signal Integrity: Fly-by, ODT, DFE and Training"}]}</script>
+  <!-- meta:end -->
+</head>
+<body>
+
+<header class="masthead">
+  <a class="wordmark" href="../../index.html">SIPI</a>
+  <button class="theme-toggle" data-act="theme" type="button">Light</button>
+  <nav aria-label="Site">
+    <a href="../../start.html">Start</a>
+    <a href="../../index.html#groundwork">Topics</a>
+    <a href="../../labs.html">Labs</a>
+    <a href="../../calculators.html">Calculators</a>
+    <a href="../../colophon.html">About</a>
+  </nav>
+</header>
+
+<main>
+  <div class="page-head">
+    <p class="crumb"><a href="../../index.html#interfaces">Interface sign-off</a> / 02</p>
+    <h1>DDR5 Signal Integrity: Fly-by, ODT, DFE and Training</h1>
+    <p class="byline">
+      <!-- review:start --><span>By <a href="https://www.linkedin.com/in/geetansh-arora-a645714a/" target="_blank" rel="author noopener">Geetansh Arora</a> — Principal SI/PI Engineer</span><time datetime="2026-10-02" title="Technical review by Geetansh Arora on this date">2 Oct 2026</time><span>10 min</span><!-- review:end -->
+    </p>
+    <!-- share:head:start --><div class="share share--head" data-share data-share-url="https://sipi.work/topics/interfaces/ddr5.html" data-share-title="DDR5 Signal Integrity: Fly-by, ODT, DFE and Training"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Fddr5.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Fddr5.html&amp;text=DDR5%20Signal%20Integrity%3A%20Fly-by%2C%20ODT%2C%20DFE%20and%20Training" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=DDR5%20Signal%20Integrity%3A%20Fly-by%2C%20ODT%2C%20DFE%20and%20Training&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Fddr5.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:head:end -->
+    <p class="answer">
+      DDR5 runs a single-ended data bus at up to 8800 MT/s through wiring that a serial link would never accept: a
+      connector, a shared wire with a second DIMM hanging off it, a clock that reaches each DRAM at a different time.
+      Its signal integrity problem is reflections and timing, not loss, and its answer is to move termination,
+      equalisation and calibration into the DRAM itself and to train the whole bus at power-up.
+    </p>
+  </div>
+
+  <!-- mobilenote:start -->
+  <!-- mobilenote:end -->
+  <section class="instrument lab" data-viz="ddr5" aria-label="Interactive DDR5 data bus: one or two DIMMs on a shared net, with the voltage on every section against time, the eye at the receiver after the DRAM's equaliser, a sweep of both terminations and the pass/fail map training would see">
+    <script type="application/json" data-contract>{"kind":"numerical","evidence":"independent","purpose":"Show how a DDR5 data net with one or two DIMMs behaves in time: where each reflection comes from and which later bit it lands on, what the terminations trade, what the DRAM's 4-tap DFE can and cannot cancel, and what training sees.","equations":["Method of characteristics: V = (sum 2 a_i/Z_i + Vs/Rs + J_C)/(sum 1/Z_i + 1/Rs + 1/RTT + 2C/dt); each line carries V - a_i away","Capacitors by the trapezoidal companion: i = (2C/dt) v - J, J' = (2C/dt) v + i","POD swing = VDDQ RTT_eff/(Ron + RTT_eff), RTT_eff every termination in parallel","pulse p(t) = s(t) - s(t - UI); worst-case eye h0 - sum|h_k - c_k|, c_k the DFE taps on k = 1..4","DFE taps clipped to the data sheet ranges (t1 -200..+50, t2 +/-75, t3 +/-60, t4 +/-45 mV, 5 mV steps, |t2|+|t3|+|t4| < 60 mV)"],"units":"ps, V, mV, ohm, pF, mm","validity":"Lossless TEM lines at 6.7 ps/mm with whole-picosecond delays; lumped die capacitance; linear drivers and terminations; single-rank DIMMs; no crosstalk, SSN or supply noise; the driver edge is a raised cosine of 30% of a UI, held between 30 and 70 ps.","numerics":"1 ps time step over the whole tree; pulse sampled at 32 points a UI; PRBS-11 eye with 64 bits of history; training phase chosen within one UI of the pulse peak by the worst-case eye; shmoo with seeded 5 mV rms noise and 2 ps rms jitter, VrefDQ in 0.5% of VDDQ steps; termination sweep of 8 x 8 runs.","limitations":"No loss, so long mainboard routes are optimistic; no crosstalk or SSN; the controller's read equalisation is not modelled; the stressed-eye diamond is the receiver's test condition, not a channel mask; the shmoo's noise is a model choice. No ESD clamps or loss, so an open stub rings past both rails further than silicon would allow.","suites":["DDR5 page"],"version":"1.0","reviewed":"2026-10-02","panel":"ddr5"}</script>
+<div class="lab-frame">
+<div class="instrument__bar">
+      <span class="instrument__title">Two slots, one bus &#183; a DDR5 data net in space and time</span>
+      <span data-evidence="independent" data-model-version="1.0" class="model-tag model-tag--numerical" title="Lossless lines and lumped die capacitance, solved in time by the method of characteristics; a PRBS-11 eye and a peak-distortion worst case.">numerical</span>
+      <span class="instrument__readout" role="status" aria-live="polite" aria-label="Current values">
+        <span>one bit <b data-out="ui">—</b></span>
+        <span>swing <b data-out="swing">—</b></span>
+        <span>eye, PRBS <b data-out="eye">—</b></span>
+        <span>worst case <b data-out="wc">—</b></span>
+        <span>DFE taps <b data-out="taps">—</b></span>
+        <span>training lands at <b data-out="train">—</b></span>
+      </span>
+    <button type="button" class="tool-btn lab-full" data-lab-full aria-pressed="false">full screen</button>
+</div>
+<aside class="lab-rail lab-rail--left" aria-label="Bus controls">
+<p class="lab-rail__side">The bus <span>scenarios, speed and slots</span></p>
+<details class="control-group lab-group" open><summary class="lab-group__title" id="lab-left-0">Scenarios</summary><div class="control-group__grid lab-group__body"><div class="presets">
+      <button class="preset" type="button" data-preset="base" aria-pressed="true">Two DIMMs</button>
+      <button class="preset" type="button" data-preset="unterm" aria-pressed="false">Other DIMM unterminated</button>
+      <button class="preset" type="button" data-preset="far" aria-pressed="false">Write to the far DIMM</button>
+      <button class="preset" type="button" data-preset="emptyFar" aria-pressed="false">One DIMM, near slot</button>
+      <button class="preset" type="button" data-preset="emptyNear" aria-pressed="false">One DIMM, far slot</button>
+      <button class="preset" type="button" data-preset="one" aria-pressed="false">One slot</button>
+      <button class="preset" type="button" data-preset="fast" aria-pressed="false">Two DIMMs at 6400</button>
+      <button class="preset" type="button" data-preset="nodfe" aria-pressed="false">6400, DFE off</button>
+      <button class="preset" type="button" data-preset="read" aria-pressed="false">A read</button>
+    </div>
+    <div class="transport"><span data-out="note">—</span></div></div></details>
+<details class="control-group lab-group" open><summary class="lab-group__title" id="lab-left-1">Speed</summary><div class="control-group__grid lab-group__body"><div class="ctl">
+        <div class="ctl__head"><label for="dd-rate">Data rate</label><output id="dd-rate-out" for="dd-rate">4800 MT/s</output></div>
+        <input type="range" id="dd-rate" min="0" max="14" step="1" value="4">
+        <span class="ctl__note">JEDEC bins, 3200 to 8800</span>
+      </div></div></details>
+<details class="control-group lab-group" open><summary class="lab-group__title" id="lab-left-2">Slots</summary><div class="control-group__grid lab-group__body"><div class="ctl">
+        <div class="ctl__head"><span class="ctl__label">Slots and DIMMs</span></div>
+        <div class="presets" role="group" aria-label="Slots and DIMMs">
+          <button class="preset preset--act" type="button" data-act="pop" data-pop="one" aria-pressed="false">One slot</button>
+          <button class="preset preset--act" type="button" data-act="pop" data-pop="two" aria-pressed="false">Two slots, two DIMMs</button>
+          <button class="preset preset--act" type="button" data-act="pop" data-pop="near" aria-pressed="false">Two slots, near DIMM only</button>
+          <button class="preset preset--act" type="button" data-act="pop" data-pop="far" aria-pressed="false">Two slots, far DIMM only</button>
+        </div>
+        <span class="ctl__note">An empty slot is still on the wire</span>
+      </div></div></details>
+<p class="lab-help" aria-hidden="true">Point at or focus a control to see what it changes.</p>
+</aside>
+<div class="lab-stage">
+<div class="lab-row lab-row--anchor" style="--anchor-columns: minmax(0, 1.4fr) minmax(0, 1fr)">
+<div data-lab-unit="map" data-lab-name="Where one bit goes" class="panel">
+        <div class="lab-panel-head"><span class="panel__label">Where one bit goes, in space and time</span><button type="button" class="tool-btn lab-expand" data-lab-expand aria-pressed="false" aria-label="Expand where one bit goes">expand</button></div>
+        <canvas data-cv="map" role="img" aria-label="A space-time map of one bit on the bus. Distance along the path from driver to receiver runs left to right, with each branch off the path drawn as its own strip; time runs downward. The bit is a diagonal stripe; reflections are stripes running the other way. Beside it, the bit as the receiver sees it, on the same time axis, with the cursor and the post-cursors the DFE can reach marked."></canvas>
+        <div class="legend"><span><i style="background:var(--signal)"></i>above resting level</span><span><i style="background:var(--reflect)"></i>below it</span><span><i style="background:var(--ink-2)"></i>the bit at the receiver</span></div>
+      </div>
+<div data-lab-unit="eye" data-lab-name="The eye" class="panel panel--probe-below">
+        <div class="lab-panel-head"><span class="panel__label">The eye at the receiver</span><button type="button" class="tool-btn lab-expand" data-lab-expand aria-pressed="false" aria-label="Expand the eye">expand</button></div>
+        <canvas data-cv="eye" role="img" aria-label="The eye diagram of a PRBS-11 pattern at the receiver, after the DRAM's DFE when it is on, with its measured opening outlined, the trained reference level, and the data sheet's stressed-eye diamond where one is published."></canvas>
+        <div class="legend"><span><i style="background:var(--signal)"></i>PRBS-11 bits</span><span><i class="dash" style="color:var(--ink)"></i>opening</span><span><i style="background:var(--alarm)"></i>stressed eye</span><span><i style="background:var(--reflect)"></i>training</span></div>
+      </div>
+</div>
+<div class="lab-tabs" role="tablist" aria-label="Linked views">
+<button type="button" role="tab" id="lab-tab-sweep" aria-controls="lab-view-sweep" aria-selected="true" tabindex="0" data-view="sweep">Termination sweep</button>
+<button type="button" role="tab" id="lab-tab-shmoo" aria-controls="lab-view-shmoo" aria-selected="false" tabindex="-1" data-view="shmoo">What training sees</button>
+</div>
+<div class="lab-view is-active" id="lab-view-sweep" role="tabpanel" aria-labelledby="lab-tab-sweep" data-view="sweep" data-count="1">
+<div data-lab-unit="sweep" data-lab-name="Termination sweep" class="panel">
+        <div class="lab-panel-head"><span class="panel__label">Every pair of terminations at once</span><button type="button" class="tool-btn lab-expand" data-lab-expand aria-pressed="false" aria-label="Expand termination sweep">expand</button></div>
+        <canvas data-cv="sweep" role="img" aria-label="A grid of worst-case eye heights in millivolts: rows are the target's termination, columns the other DIMM's, from off to 34 ohms. The best cell is starred and the current setting outlined. Selecting a cell applies it."></canvas>
+      </div>
+</div>
+<div class="lab-view" id="lab-view-shmoo" role="tabpanel" aria-labelledby="lab-tab-shmoo" data-view="shmoo" data-count="1">
+<div data-lab-unit="shmoo" data-lab-name="What training sees" class="panel">
+        <div class="lab-panel-head"><span class="panel__label">What training sees: pass or fail per strobe delay and Vref step</span><button type="button" class="tool-btn lab-expand" data-lab-expand aria-pressed="false" aria-label="Expand what training sees">expand</button></div>
+        <canvas data-cv="shmoo" role="img" aria-label="A shmoo plot: strobe delay across, VrefDQ in half-percent steps of VDDQ up, each cell filled where a PRBS-11 burst with noise and jitter passes. The noiseless eye is outlined and the point a simple trainer would choose is marked."></canvas>
+        <div class="legend"><span><i style="background:var(--signal)"></i>passes</span><span><i class="dash" style="color:var(--ink-2)"></i>the eye, without noise</span><span><i style="background:var(--reflect)"></i>trained point</span></div>
+      </div>
+</div>
+</div>
+<aside class="lab-rail lab-rail--right" aria-label="Transfer, routing, termination and receiver controls">
+<p class="lab-rail__side">The transfer and the wiring <span>who talks, what absorbs, what equalises</span></p>
+<details class="control-group lab-group" open><summary class="lab-group__title" id="lab-right-t">Transfer</summary><div class="control-group__grid lab-group__body"><div class="ctl">
+        <div class="ctl__head"><span class="ctl__label">Transfer</span></div>
+        <div class="presets" role="group" aria-label="Transfer">
+          <button class="preset preset--act" type="button" data-act="dir" data-dir="write" aria-pressed="false">Write</button>
+          <button class="preset preset--act" type="button" data-act="dir" data-dir="read" aria-pressed="false">Read</button>
+        </div>
+        <span class="ctl__note">Who drives, who listens</span>
+      </div><div class="ctl" data-ctl-wrap="target">
+        <div class="ctl__head"><span class="ctl__label">To or from</span></div>
+        <div class="presets" role="group" aria-label="To or from">
+          <button class="preset preset--act" type="button" data-act="target" data-target="near" aria-pressed="false">Near DIMM</button>
+          <button class="preset preset--act" type="button" data-act="target" data-target="far" aria-pressed="false">Far DIMM</button>
+        </div>
+        <span class="ctl__note">The other one becomes the stub</span>
+      </div></div></details>
+<details class="control-group lab-group" open><summary class="lab-group__title" id="lab-right-r">Routing</summary><div class="control-group__grid lab-group__body"><div class="ctl">
+        <div class="ctl__head"><label for="dd-mb">Mainboard trace</label><output id="dd-mb-out" for="dd-mb">100 mm</output></div>
+        <input type="range" id="dd-mb" min="25" max="200" step="5" value="100">
+        <span class="ctl__note">Controller to the first slot</span>
+      </div><div class="ctl" data-ctl-wrap="slot">
+        <div class="ctl__head"><label for="dd-slot">Slot to slot</label><output id="dd-slot-out" for="dd-slot">10 mm</output></div>
+        <input type="range" id="dd-slot" min="5" max="30" step="1" value="10">
+        <span class="ctl__note">The stub a second slot adds</span>
+      </div></div></details>
+<details class="control-group lab-group" open><summary class="lab-group__title" id="lab-right-0">Driver</summary><div class="control-group__grid lab-group__body"><div class="ctl">
+        <div class="ctl__head"><span class="ctl__label" id="dd-ron-label">Controller driver</span></div>
+        <div class="presets" role="group" aria-label="Controller driver">
+          <button class="preset preset--act" type="button" data-act="ron" data-ron="34" aria-pressed="false">34 Ω</button>
+          <button class="preset preset--act" type="button" data-act="ron" data-ron="40" aria-pressed="false">40 Ω</button>
+          <button class="preset preset--act" type="button" data-act="ron" data-ron="48" aria-pressed="false">48 Ω</button>
+        </div>
+        <span class="ctl__note">Pull-up and pull-down strength</span>
+      </div></div></details>
+<details class="control-group lab-group" open><summary class="lab-group__title" id="lab-right-1">Termination</summary><div class="control-group__grid lab-group__body"><div class="ctl">
+        <div class="ctl__head"><label for="dd-rtt-t" id="dd-rtt-t-label">Target DRAM, RTT_WR</label><output id="dd-rtt-t-out" for="dd-rtt-t">240 Ω</output></div>
+        <input type="range" id="dd-rtt-t" min="0" max="7" step="1" value="1">
+        <span class="ctl__note">Where the bit is going</span>
+      </div>
+<div class="ctl" data-ctl-wrap="rtt-o">
+        <div class="ctl__head"><label for="dd-rtt-o" id="dd-rtt-o-label">Other DIMM, RTT_NOM_WR</label><output id="dd-rtt-o-out" for="dd-rtt-o">40 Ω</output></div>
+        <input type="range" id="dd-rtt-o" min="0" max="7" step="1" value="6">
+        <span class="ctl__note">The DIMM that is not being addressed</span>
+      </div></div></details>
+<details class="control-group lab-group" open><summary class="lab-group__title" id="lab-right-2">Receiver</summary><div class="control-group__grid lab-group__body"><div class="ctl">
+        <div class="ctl__head"><span class="ctl__label">The DRAM's DFE</span></div>
+        <label class="check" for="dd-dfe"><input type="checkbox" id="dd-dfe" checked> four taps, data-sheet ranges</label>
+        <span class="ctl__note">Writes only: it equalises the DRAM's input</span>
+      </div></div></details>
+<p class="lab-help" aria-hidden="true">Point at or focus a control to see what it changes.</p>
+</aside>
+</div>
+  </section>
+  <div class="prose">
+    <p>
+      The panel above is one data bit on a two-slot server bus. The left chart is a map of the wiring against time: distance
+      runs across, from the controller to the DRAM being written, with the branch to the other slot as its own strip, and
+      time runs down. A travelling bit is a diagonal stripe. Where it meets a change of impedance, part of it turns round,
+      and a reflection is a stripe running the other way. The column on the right is the same bit as the receiver sees it,
+      on the same time axis. Every bump in that column is a stripe arriving. Most of this page is about where those
+      stripes come from and what DDR5 does about each of them.
+    </p>
+
+    <h2 class="section-rule"><span>What DDR5 is</span></h2>
+    <p>
+      DDR5 SDRAM is JEDEC&#8217;s fifth double-data-rate memory generation, the main memory of servers, desktops and
+      laptops. The standard is JESD79-5, first published in 2020 and revised since: JESD79-5C (April 2024) extended the
+      timing definitions to <span class="num">8800 MT/s</span>, and the current edition, JESD79-5D, appeared in November
+      2025. Parts and platforms are qualified at particular speed bins, so the bin a given system runs is a property of the
+      parts and the board, not of the generation.
+    </p>
+    <p>
+      At 3200 MT/s a bit lasts <span class="num">312.5 ps</span>; at 4800, <span class="num">208 ps</span>; at 6400,
+      <span class="num">156 ps</span>; at 8800, <span class="num">114 ps</span>. The clock runs at half the transfer rate,
+      so at 6400 MT/s one clock period, t<sub>CK</sub>, is <span class="num">312.5 ps</span>. Keep those numbers in mind:
+      the wiring on this page is measured in hundreds of picoseconds, so every reflection lands one or more whole bits
+      late.
+    </p>
+
+    <div class="table-scroll">
+      <table class="data">
+        <caption>What changed from DDR4, as far as the signals are concerned</caption>
+        <thead><tr><th></th><th>DDR4</th><th>DDR5</th><th>Why it matters here</th></tr></thead>
+        <tbody>
+          <tr><td>Transfer rates</td><td>1600&#8211;3200 MT/s</td><td>3200 MT/s upward, timing defined to 8800</td><td>bits as short as 114 ps</td></tr>
+          <tr><td>V<sub>DD</sub> / V<sub>DDQ</sub> / V<sub>PP</sub></td><td>1.2 / 1.2 / 2.5 V</td><td>1.1 / 1.1 / 1.8 V</td><td>less swing to spend</td></tr>
+          <tr><td>Data bus per DIMM</td><td>one 64-bit channel (72 with ECC)</td><td>two independent 32-bit subchannels (40 with ECC)</td><td>each subchannel trains and fails on its own</td></tr>
+          <tr><td>Burst length</td><td>8</td><td>16</td><td>64 bytes from one subchannel</td></tr>
+          <tr><td>Receiver equalisation in the DRAM</td><td>none</td><td>4-tap DFE on DQ</td><td>the DRAM cancels part of the ISI itself</td></tr>
+          <tr><td>CA, CS and CK termination</td><td>resistors on the module</td><td>on the DRAM die, programmable</td><td>termination is a setting, per DRAM</td></tr>
+          <tr><td>DRAM power regulation</td><td>on the mainboard</td><td>a PMIC on the DIMM</td><td>the DRAM rails&#8217; noise is now the module&#8217;s</td></tr>
+          <tr><td>Training</td><td>write leveling, read training</td><td>adds CS and CA training, internal write leveling, LFSR read patterns, duty-cycle adjust</td><td>more of the bus is calibrated, not designed</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>
+      Two things have not changed, and they set the whole problem. The data lines are still single-ended, one wire per bit,
+      because a 72- or 80-bit bus cannot afford a second wire each. And they still pass through a connector, onto a module
+      the board designer did not lay out, often sharing their wire with a second module. If you are weighing DDR5 against LPDDR5X, the
+      <a href="#lpddr5x-vs-ddr5">comparison is further down</a>.
+    </p>
+
+    <h2 class="section-rule"><span>The module, from above</span></h2>
+    <figure class="figure">
+      <div class="figure__bar"><span>A DDR5 RDIMM &#183; two subchannels, a fly-by for commands, a straight path for data</span></div>
+      <div class="figure__body"><svg viewBox="0 0 400 230" role="img" aria-label="A DDR5 registered DIMM from above: ten DRAMs in two groups of five, subchannel A on the left and B on the right, a registering clock driver in the middle with a power management IC above it. Command, address and clock leave the RCD and run past each DRAM of its subchannel in turn, ending in a termination; data and strobes run straight up from the edge connector to one DRAM each.">
+  <rect class="dielectric" x="10.0" y="34.0" width="380.0" height="112.0" rx="4"/>
+  <rect class="copper-2" x="16.0" y="136.0" width="3.0" height="10.0" style="opacity:.45"/>
+  <rect class="copper-2" x="21.3" y="136.0" width="3.0" height="10.0" style="opacity:.45"/>
+  <rect class="copper-2" x="26.6" y="136.0" width="3.0" height="10.0" style="opacity:.45"/>
+  <rect class="copper-2" x="31.9" y="136.0" width="3.0" height="10.0" style="opacity:.45"/>
+  <rect class="copper-2" x="37.2" y="136.0" width="3.0" height="10.0" style="opacity:.45"/>
+  <rect class="copper-2" x="42.5" y="136.0" width="3.0" height="10.0" style="opacity:.45"/>
+  <rect class="copper-2" x="47.8" y="136.0" width="3.0" height="10.0" style="opacity:.45"/>
+  <rect class="copper-2" x="53.1" y="136.0" width="3.0" height="10.0" style="opacity:.45"/>
+  <rect class="copper-2" x="58.4" y="136.0" width="3.0" height="10.0" style="opacity:.45"/>
+  <rect class="copper-2" x="63.7" y="136.0" width="3.0" height="10.0" style="opacity:.45"/>
+  <rect class="copper-2" x="69.0" y="136.0" width="3.0" height="10.0" style="opacity:.45"/>
+  <rect class="copper-2" x="74.3" y="136.0" width="3.0" height="10.0" style="opacity:.45"/>
+  <rect class="copper-2" x="79.6" y="136.0" width="3.0" height="10.0" style="opacity:.45"/>
+  <rect class="copper-2" x="84.9" y="136.0" width="3.0" height="10.0" style="opacity:.45"/>
+  <rect class="copper-2" x="90.2" y="136.0" width="3.0" height="10.0" style="opacity:.45"/>
+  <rect class="copper-2" x="95.5" y="136.0" width="3.0" height="10.0" style="opacity:.45"/>
+  <rect class="copper-2" x="100.8" y="136.0" width="3.0" height="10.0" style="opacity:.45"/>
+  <rect class="copper-2" x="106.1" y="136.0" width="3.0" height="10.0" style="opacity:.45"/>
+  <rect class="copper-2" x="111.4" y="136.0" width="3.0" height="10.0" style="opacity:.45"/>
+  <rect class="copper-2" x="116.7" y="136.0" width="3.0" height="10.0" style="opacity:.45"/>
+  <rect class="copper-2" x="122.0" y="136.0" width="3.0" height="10.0" style="opacity:.45"/>
+  <rect class="copper-2" x="127.3" y="136.0" width="3.0" height="10.0" style="opacity:.45"/>
+  <rect class="copper-2" x="132.6" y="136.0" width="3.0" height="10.0" style="opacity:.45"/>
+  <rect class="copper-2" x="137.9" y="136.0" width="3.0" height="10.0" style="opacity:.45"/>
+  <rect class="copper-2" x="143.2" y="136.0" width="3.0" height="10.0" style="opacity:.45"/>
+  <rect class="copper-2" x="148.5" y="136.0" width="3.0" height="10.0" style="opacity:.45"/>
+  <rect class="copper-2" x="153.8" y="136.0" width="3.0" height="10.0" style="opacity:.45"/>
+  <rect class="copper-2" x="159.1" y="136.0" width="3.0" height="10.0" style="opacity:.45"/>
+  <rect class="copper-2" x="164.4" y="136.0" width="3.0" height="10.0" style="opacity:.45"/>
+  <rect class="copper-2" x="169.7" y="136.0" width="3.0" height="10.0" style="opacity:.45"/>
+  <rect class="copper-2" x="175.0" y="136.0" width="3.0" height="10.0" style="opacity:.45"/>
+  <rect class="copper-2" x="190.9" y="136.0" width="3.0" height="10.0" style="opacity:.45"/>
+  <rect class="copper-2" x="196.2" y="136.0" width="3.0" height="10.0" style="opacity:.45"/>
+  <rect class="copper-2" x="201.5" y="136.0" width="3.0" height="10.0" style="opacity:.45"/>
+  <rect class="copper-2" x="206.8" y="136.0" width="3.0" height="10.0" style="opacity:.45"/>
+  <rect class="copper-2" x="212.1" y="136.0" width="3.0" height="10.0" style="opacity:.45"/>
+  <rect class="copper-2" x="217.4" y="136.0" width="3.0" height="10.0" style="opacity:.45"/>
+  <rect class="copper-2" x="222.7" y="136.0" width="3.0" height="10.0" style="opacity:.45"/>
+  <rect class="copper-2" x="228.0" y="136.0" width="3.0" height="10.0" style="opacity:.45"/>
+  <rect class="copper-2" x="233.3" y="136.0" width="3.0" height="10.0" style="opacity:.45"/>
+  <rect class="copper-2" x="238.6" y="136.0" width="3.0" height="10.0" style="opacity:.45"/>
+  <rect class="copper-2" x="243.9" y="136.0" width="3.0" height="10.0" style="opacity:.45"/>
+  <rect class="copper-2" x="249.2" y="136.0" width="3.0" height="10.0" style="opacity:.45"/>
+  <rect class="copper-2" x="254.5" y="136.0" width="3.0" height="10.0" style="opacity:.45"/>
+  <rect class="copper-2" x="259.8" y="136.0" width="3.0" height="10.0" style="opacity:.45"/>
+  <rect class="copper-2" x="265.1" y="136.0" width="3.0" height="10.0" style="opacity:.45"/>
+  <rect class="copper-2" x="270.4" y="136.0" width="3.0" height="10.0" style="opacity:.45"/>
+  <rect class="copper-2" x="275.7" y="136.0" width="3.0" height="10.0" style="opacity:.45"/>
+  <rect class="copper-2" x="281.0" y="136.0" width="3.0" height="10.0" style="opacity:.45"/>
+  <rect class="copper-2" x="286.3" y="136.0" width="3.0" height="10.0" style="opacity:.45"/>
+  <rect class="copper-2" x="291.6" y="136.0" width="3.0" height="10.0" style="opacity:.45"/>
+  <rect class="copper-2" x="296.9" y="136.0" width="3.0" height="10.0" style="opacity:.45"/>
+  <rect class="copper-2" x="302.2" y="136.0" width="3.0" height="10.0" style="opacity:.45"/>
+  <rect class="copper-2" x="307.5" y="136.0" width="3.0" height="10.0" style="opacity:.45"/>
+  <rect class="copper-2" x="312.8" y="136.0" width="3.0" height="10.0" style="opacity:.45"/>
+  <rect class="copper-2" x="318.1" y="136.0" width="3.0" height="10.0" style="opacity:.45"/>
+  <rect class="copper-2" x="323.4" y="136.0" width="3.0" height="10.0" style="opacity:.45"/>
+  <rect class="copper-2" x="328.7" y="136.0" width="3.0" height="10.0" style="opacity:.45"/>
+  <rect class="copper-2" x="334.0" y="136.0" width="3.0" height="10.0" style="opacity:.45"/>
+  <rect class="copper-2" x="339.3" y="136.0" width="3.0" height="10.0" style="opacity:.45"/>
+  <rect class="copper-2" x="344.6" y="136.0" width="3.0" height="10.0" style="opacity:.45"/>
+  <rect class="copper-2" x="349.9" y="136.0" width="3.0" height="10.0" style="opacity:.45"/>
+  <rect class="copper-2" x="355.2" y="136.0" width="3.0" height="10.0" style="opacity:.45"/>
+  <rect class="copper-2" x="360.5" y="136.0" width="3.0" height="10.0" style="opacity:.45"/>
+  <rect class="copper-2" x="365.8" y="136.0" width="3.0" height="10.0" style="opacity:.45"/>
+  <rect class="copper-2" x="371.1" y="136.0" width="3.0" height="10.0" style="opacity:.45"/>
+  <rect class="copper-2" x="376.4" y="136.0" width="3.0" height="10.0" style="opacity:.45"/>
+  <rect class="copper-2" x="381.7" y="136.0" width="3.0" height="10.0" style="opacity:.45"/>
+  <path d="M180,104 L172,112 L26,112" class="flow"/>
+  <path d="M153,112 L153,88" class="flow" style="stroke-width:1"/>
+  <path d="M123,112 L123,88" class="flow" style="stroke-width:1"/>
+  <path d="M93,112 L93,88" class="flow" style="stroke-width:1"/>
+  <path d="M63,112 L63,88" class="flow" style="stroke-width:1"/>
+  <path d="M33,112 L33,88" class="flow" style="stroke-width:1"/>
+  <path d="M26.0,112.0 L26.0,115.6 L23.0,117.0 L29.0,118.3 L23.0,119.7 L29.0,121.0 L23.0,122.3 L29.0,123.7 L23.0,125.0 L26.0,126.4 L26.0,130.0" class="flow" style="stroke-width:1"/>
+  <path d="M220,104 L228,112 L374,112" class="flow"/>
+  <path d="M237,112 L237,88" class="flow" style="stroke-width:1"/>
+  <path d="M267,112 L267,88" class="flow" style="stroke-width:1"/>
+  <path d="M297,112 L297,88" class="flow" style="stroke-width:1"/>
+  <path d="M327,112 L327,88" class="flow" style="stroke-width:1"/>
+  <path d="M357,112 L357,88" class="flow" style="stroke-width:1"/>
+  <path d="M374.0,112.0 L374.0,115.6 L371.0,117.0 L377.0,118.3 L371.0,119.7 L377.0,121.0 L371.0,122.3 L377.0,123.7 L371.0,125.0 L374.0,126.4 L374.0,130.0" class="flow" style="stroke-width:1"/>
+  <path d="M163,136 L163,88" class="flow-2" style="stroke-width:1.2"/>
+  <path d="M133,136 L133,88" class="flow-2" style="stroke-width:1.2"/>
+  <path d="M103,136 L103,88" class="flow-2" style="stroke-width:1.2"/>
+  <path d="M73,136 L73,88" class="flow-2" style="stroke-width:1.2"/>
+  <path d="M43,136 L43,88" class="flow-2" style="stroke-width:1.2"/>
+  <path d="M247,136 L247,88" class="flow-2" style="stroke-width:1.2"/>
+  <path d="M277,136 L277,88" class="flow-2" style="stroke-width:1.2"/>
+  <path d="M307,136 L307,88" class="flow-2" style="stroke-width:1.2"/>
+  <path d="M337,136 L337,88" class="flow-2" style="stroke-width:1.2"/>
+  <path d="M367,136 L367,88" class="flow-2" style="stroke-width:1.2"/>
+  <rect class="dielectric" x="146.0" y="50.0" width="24.0" height="38.0" rx="2" style="stroke: var(--ink-2)"/>
+  <rect class="dielectric" x="116.0" y="50.0" width="24.0" height="38.0" rx="2" style="stroke: var(--ink-2)"/>
+  <rect class="dielectric" x="86.0" y="50.0" width="24.0" height="38.0" rx="2" style="stroke: var(--ink-2)"/>
+  <rect class="dielectric" x="56.0" y="50.0" width="24.0" height="38.0" rx="2" style="stroke: var(--ink-2)"/>
+  <rect class="dielectric" x="26.0" y="50.0" width="24.0" height="38.0" rx="2" style="stroke: var(--ink-2)"/>
+  <rect class="dielectric" x="230.0" y="50.0" width="24.0" height="38.0" rx="2" style="stroke: var(--ink-2)"/>
+  <rect class="dielectric" x="260.0" y="50.0" width="24.0" height="38.0" rx="2" style="stroke: var(--ink-2)"/>
+  <rect class="dielectric" x="290.0" y="50.0" width="24.0" height="38.0" rx="2" style="stroke: var(--ink-2)"/>
+  <rect class="dielectric" x="320.0" y="50.0" width="24.0" height="38.0" rx="2" style="stroke: var(--ink-2)"/>
+  <rect class="dielectric" x="350.0" y="50.0" width="24.0" height="38.0" rx="2" style="stroke: var(--ink-2)"/>
+  <rect class="dielectric" x="180.0" y="72.0" width="40.0" height="32.0" rx="2" style="stroke: var(--ink); stroke-width: 1.4"/>
+  <text class="lbl-hi" x="200.0" y="92.0" text-anchor="middle">RCD</text>
+  <rect class="dielectric" x="184.0" y="44.0" width="32.0" height="20.0" rx="2" style="stroke: var(--ink-2)"/>
+  <text class="lbl" x="200.0" y="58.0" text-anchor="middle">PMIC</text>
+  <path d="M200,136 L200,104" class="tick" style="stroke: var(--ink-2); stroke-width: 1.6"/>
+  <text class="lbl-hi" x="98.0" y="22.0" text-anchor="middle">subchannel A · 32 data + 8 ECC</text>
+  <text class="lbl-hi" x="302.0" y="22.0" text-anchor="middle">subchannel B · 32 data + 8 ECC</text>
+  <path d="M14,166 L36,166" class="flow"/>
+  <text class="lbl" x="42.0" y="169.0">CA, CK: fly-by from the RCD, 14 pins, SDR</text>
+  <path d="M14,184 L36,184" class="flow-2"/>
+  <text class="lbl" x="42.0" y="187.0">DQ, DQS: straight up from the edge, one DRAM each</text>
+  <path d="M14,202 L36,202" class="tick" style="stroke: var(--ink-2); stroke-width: 1.6"/>
+  <text class="lbl" x="42.0" y="205.0">host to RCD: 7 CA pins a subchannel, DDR</text>
+  <text class="lbl" x="14.0" y="222.0">PMIC: 12 V in; 1.1 V VDD, VDDQ and 1.8 V VPP out</text>
+</svg></div>
+      <figcaption><b>Data goes straight to one DRAM; commands go past all of them.</b> A registered DIMM splits into two
+        halves that the controller treats as two independent subchannels, each 32 data bits plus 8 for ECC. Each DRAM&#8217;s
+        data and strobe pins run straight from the edge connector to it, one load per wire. Command, address and clock
+        instead come from the registering clock driver (RCD) in the middle, which re-drives them to each half and runs them
+        past every DRAM in turn, ending in a termination. The PMIC turns a 12 V input into the DRAM rails on the module
+        itself. A client UDIMM or SODIMM has no RCD: the controller drives the fly-by directly, and its PMIC takes 5 V.</figcaption>
+    </figure>
+    <p>
+      Two wiring styles on one module, for two different reasons. The data bus carries the fast signals, so it gets the
+      cleanest possible path: point to point, short, one DRAM per wire. The command bus is slower but goes to every DRAM,
+      and a star that split it ten ways would be a stub forest; a fly-by, one line passing each DRAM in turn, has no stubs
+      longer than a via. The price is that the clock reaches each DRAM at a different time, which is what write leveling,
+      further down, exists to fix.
+    </p>
+    <p>
+      The RCD also changes the command bus&#8217;s shape. The controller sends it 7 command and address pins per
+      subchannel at double data rate; it drives the DRAMs with 14 pins at single data rate. Half the pins on the
+      mainboard, at twice the rate, and the freed pins became grounds: the DDR5 RDIMM edge has noticeably more V<sub>SS</sub>
+      pins than DDR4&#8217;s, because every signal on it is referenced to ground.
+    </p>
+
+    <h2 class="section-rule"><span>The signal: pseudo-open drain</span></h2>
+    <figure class="figure">
+      <div class="figure__bar"><span>POD &#183; the swing hangs from V<sub>DDQ</sub></span></div>
+      <div class="figure__body"><svg viewBox="0 0 400 232" role="img" aria-label="Pseudo-open-drain signalling. Left: the driver has a pull-up and a pull-down, each of resistance Ron; the receiver terminates to VDDQ through RTT. Right: with Ron 34 ohms and RTT 40 ohms the high level is VDDQ, 1.10 V, the low level is 0.505 V, the swing 595 mV, and the reference sits at 73% of VDDQ.">
+  <path d="M20,26 L210,26" class="tick" style="stroke: var(--ink-2); stroke-width: 1.4"/>
+  <text class="lbl-hi" x="20.0" y="18.0">VDDQ 1.1 V</text>
+  <path d="M20,176 L120,176" class="tick" style="stroke: var(--ink-2); stroke-width: 1.4"/>
+  <text class="lbl" x="20.0" y="190.0">VSS</text>
+  <path d="M46.0,26.0 L46.0,39.2 L42.0,43.2 L50.0,47.1 L42.0,51.1 L50.0,55.0 L42.0,59.0 L50.0,63.0 L42.0,66.9 L50.0,70.9 L42.0,74.8 L46.0,78.8 L46.0,92.0" class="flow" style="stroke-width:1.3"/>
+  <text class="lbl-sig" x="54.0" y="62.0">Ron</text>
+  <path d="M46.0,108.0 L46.0,121.6 L42.0,125.7 L50.0,129.8 L42.0,133.8 L50.0,137.9 L42.0,142.0 L50.0,146.1 L42.0,150.2 L50.0,154.2 L42.0,158.3 L46.0,162.4 L46.0,176.0" class="flow" style="stroke-width:1.3"/>
+  <text class="lbl-sig" x="54.0" y="146.0">Ron</text>
+  <path d="M46,92 L46,108" class="tick"/>
+  <path d="M46,100 L150,100" class="flow" style="stroke-width:2.4"/>
+  <text class="lbl" x="98.0" y="92.0" text-anchor="middle">the line</text>
+  <text class="lbl" x="58.0" y="120.0">driver</text>
+  <path d="M150,100 L176,100" class="flow" style="stroke-width:1.3"/>
+  <path d="M176.0,100.0 L176.0,85.2 L180.0,80.8 L172.0,76.3 L180.0,71.9 L172.0,67.4 L180.0,63.0 L172.0,58.6 L180.0,54.1 L172.0,49.7 L180.0,45.2 L176.0,40.8 L176.0,26.0" class="flow-2" style="stroke-width:1.3"/>
+  <text class="lbl-ref" x="184.0" y="66.0">RTT</text>
+  <circle cx="176" cy="100" r="2.5" class="copper"/>
+  <text class="lbl" x="176.0" y="118.0" text-anchor="middle">receiver</text>
+  <text class="lbl" x="20.0" y="210.0">a 0 pulls the line down through Ron against RTT;</text>
+  <text class="lbl" x="20.0" y="224.0">a 1 lets it sit at VDDQ</text>
+  <text class="lbl" x="250.0" y="18.0">Ron 34 Ω, RTT 40 Ω</text>
+  <path d="M250,36.0 L318,36.0" class="flow" style="stroke-width:2"/>
+  <text class="lbl-hi" x="324.0" y="39.0">1: 1.10 V</text>
+  <path d="M250,154.9 L318,154.9" class="flow" style="stroke-width:2"/>
+  <text class="lbl-hi" x="324.0" y="157.9">0: 0.505 V</text>
+  <path d="M244,95.5 L318,95.5" class="tick" style="stroke-dasharray:4 3; stroke: var(--ink-2)"/>
+  <text class="lbl" x="324.0" y="98.5">Vref 73%</text>
+  <path d="M236,36.0 L236,154.9" class="tick" style="stroke: var(--ink-2)"/>
+  <path d="M232,36.0 L240,36.0 M232,154.9 L240,154.9" class="tick" style="stroke: var(--ink-2)"/>
+  <text class="lbl-hi" x="228.0" y="91.5" text-anchor="end">595</text>
+  <text class="lbl" x="228.0" y="104.5" text-anchor="end">mV</text>
+</svg></div>
+      <figcaption><b>Only a 0 costs current, and the swing is set by a divider.</b> The receiver terminates to V<sub>DDQ</sub>,
+        so a 1 is simply V<sub>DDQ</sub>: no current flows. A 0 pulls the line down through the driver&#8217;s Ron against RTT,
+        to V<sub>DDQ</sub>&#183;Ron/(Ron + RTT). With 34 &#937; and 40 &#937; that is 0.505 V, a swing of
+        595 mV, and the middle of the eye sits at 73% of V<sub>DDQ</sub> rather than at
+        half. The DRAM&#8217;s reference, VrefDQ, is set inside it, from 35% to 97.5% of V<sub>DDQ</sub> in 0.5% steps,
+        and training finds the best value.</figcaption>
+    </figure>
+    <p>
+      DDR5&#8217;s data lines use pseudo-open-drain (POD) signalling, at 1.1 V. Read the figure as a voltage divider: every
+      termination on the wire, in parallel, against the driver. That one fact explains a lot of what the panel does.
+      Terminate more strongly, or terminate in two places at once, and the swing shrinks. Terminate less, and the swing
+      grows but reflections are absorbed less well. Every termination choice on a DDR5 bus trades those two against each
+      other.
+    </p>
+    <p>
+      Because the reference is internal and adjustable, the eye&#8217;s vertical centre is not a design value but a
+      trained one. A VrefDQ step is 0.5% of V<sub>DDQ</sub>, <span class="num">5.5 mV</span>, fine against a few-hundred
+      millivolt swing.
+    </p>
+
+    <h2 class="section-rule"><span>Two DIMMs on one wire</span></h2>
+    <p>
+      A server board usually has two slots per channel, and the data line runs from the controller past the first slot to the
+      second: a daisy chain. With both slots filled, a write to the near DIMM still sends part of every bit down the line to
+      the far one. At slot 1 the bit meets a junction. Some of it goes up into the near DIMM, where it was meant to go; some
+      of it carries on to slot 2, and whatever is not absorbed there comes back, a few hundred picoseconds later, and arrives
+      at the near DRAM on top of a later bit.
+    </p>
+    <p>
+      The arithmetic is worth doing once. In the panel&#8217;s model the far branch, from slot 1 to the far DRAM, is
+      10 mm of trace between slots (<span class="num">67 ps</span>), the connector (25 ps), 20 mm on the module
+      (<span class="num">134 ps</span>) and the DRAM package (30 ps): <span class="num">256 ps</span> one way and
+      <span class="num">512 ps</span> there and back. At 4800 MT/s that echo lands <span class="num">2.5</span> bits after
+      the bit that launched it; at 6400, <span class="num">3.3</span> bits; at 8800, <span class="num">4.5</span>. The
+      echo itself does not change. What changes is which later bit it lands on.
+    </p>
+    <p>
+      There is a second echo, and in the panel&#8217;s first scenario it is the larger one. The near DIMM&#8217;s own DRAM is
+      lightly terminated there (RTT_WR 240 &#937;), so it sends much of each bit back down its own branch. At slot 1 that
+      reflection meets the mainboard and the far branch in parallel, a lower impedance than the line it arrives on, so it
+      turns round <em>inverted</em> and reaches the DRAM again one round trip of the near branch later: connector, module
+      trace and package, 189 ps each way and <span class="num">378 ps</span> there and back, about
+      <span class="num">1.8</span> bits at 4800 MT/s. That is the deep dip just after the cursor in the panel&#8217;s
+      receiver column. Move the far slot and it stays where it is; terminate the target more strongly and it nearly
+      vanishes, at the price of swing.
+    </p>
+    <p>
+      Choose &#8220;Other DIMM unterminated&#8221; in the panel and watch the far strip: the share of the bit that enters
+      it bounces between the open end and the junction, a zig-zag that keeps leaking back into the path. The eye shuts.
+      Turn the other DIMM&#8217;s termination back on and the zig-zag fades on its first trip, because the far DRAM now
+      absorbs most of what reaches it.
+    </p>
+
+    <figure class="figure">
+      <div class="figure__bar"><span>One DIMM, two slots &#183; which slot leaves the shorter stub</span></div>
+      <div class="figure__body"><svg viewBox="0 0 400 238" role="img" aria-label="Two boards with two slots per channel and one DIMM. With the DIMM in the slot nearer the CPU, the trace runs on past it to the empty far slot, an open stub made of the slot-to-slot trace and the empty connector. With the DIMM in the far slot, the only stub is the empty near connector.">
+  <text class="lbl-hi" x="10.0" y="38.0">one DIMM, in the slot nearer the CPU</text>
+  <rect class="dielectric" x="10.0" y="88.0" width="54.0" height="24.0" rx="2" style="stroke: var(--ink-2)"/>
+  <text class="lbl" x="37.0" y="104.0" text-anchor="middle">CPU</text>
+  <path d="M64,100 L250,100" class="flow" style="stroke-width:2"/>
+  <rect class="dielectric" x="245.0" y="54.0" width="10.0" height="46.0" rx="1" style="stroke: var(--ink-2)"/>
+  <rect class="copper" x="247.0" y="26.0" width="6.0" height="30.0" rx="1" style="opacity:.55"/>
+  <text class="lbl" x="250.0" y="116.0" text-anchor="middle">slot 1</text>
+  <rect class="dielectric" x="295.0" y="54.0" width="10.0" height="46.0" rx="1" style="stroke: var(--ink-2); stroke-dasharray: 3 2"/>
+  <text class="lbl" x="300.0" y="116.0" text-anchor="middle">slot 2</text>
+  <path d="M250,100 L300,100 L300,56" class="flow-bad" style="stroke-width:2.6"/>
+  <text class="lbl-bad" x="76.0" y="54.0">a long open stub:</text>
+  <text class="lbl" x="76.0" y="67.0">slot-to-slot trace</text>
+  <text class="lbl" x="76.0" y="79.0">+ the empty connector</text>
+  <text class="lbl-hi" x="10.0" y="152.0">one DIMM, in the far slot</text>
+  <rect class="dielectric" x="10.0" y="202.0" width="54.0" height="24.0" rx="2" style="stroke: var(--ink-2)"/>
+  <text class="lbl" x="37.0" y="218.0" text-anchor="middle">CPU</text>
+  <path d="M64,214 L250,214" class="flow" style="stroke-width:2"/>
+  <rect class="dielectric" x="245.0" y="168.0" width="10.0" height="46.0" rx="1" style="stroke: var(--ink-2); stroke-dasharray: 3 2"/>
+  <text class="lbl" x="250.0" y="230.0" text-anchor="middle">slot 1</text>
+  <rect class="dielectric" x="295.0" y="168.0" width="10.0" height="46.0" rx="1" style="stroke: var(--ink-2)"/>
+  <rect class="copper" x="297.0" y="140.0" width="6.0" height="30.0" rx="1" style="opacity:.55"/>
+  <text class="lbl" x="300.0" y="230.0" text-anchor="middle">slot 2</text>
+  <path d="M250,214 L250,170" class="flow-bad" style="stroke-width:2.6"/>
+  <text class="lbl-bad" x="76.0" y="168.0">a short stub:</text>
+  <text class="lbl" x="76.0" y="181.0">the empty near</text>
+  <text class="lbl" x="76.0" y="193.0">connector only</text>
+  <path d="M250,214 L300,214" class="flow" style="stroke-width:2"/>
+</svg></div>
+      <figcaption><b>An empty slot is still on the wire.</b> On a daisy-chained board, a single DIMM in the near slot leaves
+        the slot-to-slot trace and the empty far connector hanging off the bus as an open stub. In the far slot it leaves only
+        the empty near connector. Compare &#8220;One DIMM, near slot&#8221; and &#8220;One DIMM, far slot&#8221; in the
+        panel: the same module, a worst-case eye several times larger.</figcaption>
+    </figure>
+    <p>
+      Board makers&#8217; manuals name the slot to fill first when a channel has one DIMM; ASUS&#8217;s, for example, says
+      DIMM_A2 and gives no reason. The panel gives a likely one for a daisy-chained layout: the far slot leaves the
+      shorter stub. Which slot is &#8220;far&#8221; depends on the board&#8217;s routing, so follow the manual rather than
+      the slot number.
+    </p>
+
+    <h2 class="section-rule"><span>Termination is a schedule, not a resistor</span></h2>
+    <p>
+      On a DDR5 bus every DRAM carries its own on-die termination (ODT), programmable in steps of a 240 &#937; reference:
+      240, 120, 80, 60, 48, 40 and 34 &#937;, or off. What makes it powerful is that a DRAM applies a different value
+      depending on what the bus is doing at that moment:
+    </p>
+    <div class="table-scroll">
+      <table class="data">
+        <caption>Who terminates during a write to, and a read from, the near DIMM</caption>
+        <thead><tr><th>Transfer</th><th>Controller</th><th>Near DIMM&#8217;s DRAM (the target)</th><th>Far DIMM&#8217;s DRAM</th></tr></thead>
+        <tbody>
+          <tr><td>Write</td><td>drives, through Ron</td><td>RTT_WR</td><td>RTT_NOM_WR, if told of the write; otherwise RTT_PARK</td></tr>
+          <tr><td>Read</td><td>terminates, with its own ODT</td><td>drives, through its Ron: 34, 40 or 48 &#937;</td><td>RTT_NOM_RD, if told; otherwise RTT_PARK</td></tr>
+          <tr><td>Idle</td><td>&#8212;</td><td>RTT_PARK</td><td>RTT_PARK</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>
+      A non-target DRAM learns that a transfer is under way from a command addressed to it, so the controller can switch
+      it between its nominal and park values burst by burst. The board designer&#8217;s job is no longer to pick a
+      resistor; it is to find the combination that leaves the best eye at every receiver, for every rank, in both directions.
+    </p>
+    <p>
+      That is what the panel&#8217;s <b>Termination sweep</b> does: it runs the bus with every pair of target and
+      other-DIMM values, 64 simulations, and colours each by its worst-case eye height. Look for the shape of the answer
+      rather than one number. Off on the other DIMM is always bad, because it leaves an open stub. Very strong termination
+      everywhere is never best, because it divides the swing away. The best settings lie between those two, and they
+      move when the data rate, the slot spacing or the target changes. That is why ODT values are swept, not calculated.
+    </p>
+
+    <h2 class="section-rule"><span>The DRAM equalises its own input</span></h2>
+    <p>
+      DDR4&#8217;s DRAM had no equaliser at all. DDR5&#8217;s has a decision feedback equaliser (DFE) on every data input,
+      because at these rates the reflections described above no longer fit inside one bit. A DFE works on what the
+      receiver has already decided: if the previous bit was a 1, and a 1 is known to leave a certain residue on the bit
+      after it, subtract that residue before deciding the next one. Because it subtracts a known quantity rather than
+      boosting high frequencies, it does not amplify noise, which is why it suits a reflective channel; a public DDR5 data
+      sheet makes the same point.
+    </p>
+    <figure class="figure">
+      <div class="figure__bar"><span>The DRAM&#8217;s DFE &#183; four taps, each with a range</span></div>
+      <div class="figure__body"><svg viewBox="0 0 400 246" role="img" aria-label="The DRAM receiver equaliser. Left: DQ passes a gain stage and a summer into the slicer, which DQS clocks; the last four decisions, each delayed by one more unit interval, are weighted by taps t1 to t4 and subtracted at the summer. Right: the taps' ranges from a JESD79-5B data sheet, 3200 to 6400 MT/s: t1 from minus 200 to plus 50 millivolts, t2 plus or minus 75, t3 plus or minus 60, t4 plus or minus 45, in 5 millivolt steps.">
+  <text class="lbl-hi" x="10.0" y="64.0">DQ</text>
+  <path d="M30,60 L56,60" class="flow"/>
+  <rect class="dielectric" x="56.0" y="48.0" width="30.0" height="24.0" rx="2" style="stroke: var(--ink-2)"/>
+  <text class="lbl" x="71.0" y="64.0" text-anchor="middle">gain</text>
+  <path d="M86,60 L104,60" class="flow"/>
+  <circle cx="114" cy="60" r="10" class="dielectric" style="stroke: var(--ink-2)"/>
+  <text class="lbl-hi" x="114.0" y="64.0" text-anchor="middle">Σ</text>
+  <path d="M124,60 L146,60" class="flow"/>
+  <rect class="dielectric" x="146.0" y="46.0" width="36.0" height="28.0" rx="2" style="stroke: var(--ink)"/>
+  <text class="lbl-hi" x="164.0" y="64.0" text-anchor="middle">slicer</text>
+  <path d="M164,24 L164,46" class="flow-2" style="stroke-width:1.2"/>
+  <text class="lbl-ref" x="164.0" y="18.0" text-anchor="middle">DQS</text>
+  <path d="M182,60 L214,60" class="flow"/>
+  <text class="lbl" x="214.0" y="52.0" text-anchor="end">bit</text>
+  <path d="M198,60 L198,146 L74,146" class="tick" style="stroke: var(--ink-2)"/>
+  <rect class="dielectric" x="164.0" y="138.0" width="24.0" height="16.0" rx="2"/>
+  <text class="lbl" x="176.0" y="149.0" text-anchor="middle">UI</text>
+  <path d="M176,138 L176,120" class="tick" style="stroke: var(--ink-2)"/>
+  <rect class="dielectric" x="164.0" y="104.0" width="24.0" height="16.0" rx="2" style="stroke: var(--signal)"/>
+  <text class="lbl-sig" x="176.0" y="115.0" text-anchor="middle">t1</text>
+  <path d="M176,104 L114,70" class="tick" style="stroke: var(--signal); stroke-width: .9"/>
+  <rect class="dielectric" x="134.0" y="138.0" width="24.0" height="16.0" rx="2"/>
+  <text class="lbl" x="146.0" y="149.0" text-anchor="middle">UI</text>
+  <path d="M146,138 L146,120" class="tick" style="stroke: var(--ink-2)"/>
+  <rect class="dielectric" x="134.0" y="104.0" width="24.0" height="16.0" rx="2" style="stroke: var(--signal)"/>
+  <text class="lbl-sig" x="146.0" y="115.0" text-anchor="middle">t2</text>
+  <path d="M146,104 L114,70" class="tick" style="stroke: var(--signal); stroke-width: .9"/>
+  <rect class="dielectric" x="104.0" y="138.0" width="24.0" height="16.0" rx="2"/>
+  <text class="lbl" x="116.0" y="149.0" text-anchor="middle">UI</text>
+  <path d="M116,138 L116,120" class="tick" style="stroke: var(--ink-2)"/>
+  <rect class="dielectric" x="104.0" y="104.0" width="24.0" height="16.0" rx="2" style="stroke: var(--signal)"/>
+  <text class="lbl-sig" x="116.0" y="115.0" text-anchor="middle">t3</text>
+  <path d="M116,104 L114,70" class="tick" style="stroke: var(--signal); stroke-width: .9"/>
+  <rect class="dielectric" x="74.0" y="138.0" width="24.0" height="16.0" rx="2"/>
+  <text class="lbl" x="86.0" y="149.0" text-anchor="middle">UI</text>
+  <path d="M86,138 L86,120" class="tick" style="stroke: var(--ink-2)"/>
+  <rect class="dielectric" x="74.0" y="104.0" width="24.0" height="16.0" rx="2" style="stroke: var(--signal)"/>
+  <text class="lbl-sig" x="86.0" y="115.0" text-anchor="middle">t4</text>
+  <path d="M86,104 L114,70" class="tick" style="stroke: var(--signal); stroke-width: .9"/>
+  <text class="lbl" x="10.0" y="178.0">each past decision, one UI</text>
+  <text class="lbl" x="10.0" y="192.0">older at each box, is weighted</text>
+  <text class="lbl" x="10.0" y="206.0">and subtracted at the summer</text>
+  <path d="M266,69.2 L394,69.2" class="tick" style="stroke: var(--ink-2)"/>
+  <text class="lbl" x="262.0" y="164.4" text-anchor="end">-200</text>
+  <text class="lbl" x="262.0" y="118.3" text-anchor="end">-100</text>
+  <text class="lbl" x="262.0" y="72.2" text-anchor="end">0</text>
+  <text class="lbl" x="262.0" y="49.1" text-anchor="end">+50</text>
+  <text class="lbl" x="262.0" y="18.0" text-anchor="end">mV</text>
+  <rect class="copper" x="280.0" y="46.1" width="16.0" height="115.3" rx="2" style="opacity:.35"/>
+  <text class="lbl" x="288.0" y="42.1" text-anchor="middle">+50</text>
+  <text class="lbl" x="288.0" y="172.4" text-anchor="middle">-200</text>
+  <text class="lbl-sig" x="288.0" y="192.0" text-anchor="middle">t1</text>
+  <rect class="copper" x="310.0" y="34.6" width="16.0" height="69.2" rx="2" style="opacity:.35"/>
+  <text class="lbl" x="318.0" y="30.6" text-anchor="middle">+75</text>
+  <text class="lbl" x="318.0" y="114.8" text-anchor="middle">-75</text>
+  <text class="lbl-sig" x="318.0" y="192.0" text-anchor="middle">t2</text>
+  <rect class="copper" x="340.0" y="41.5" width="16.0" height="55.3" rx="2" style="opacity:.35"/>
+  <text class="lbl" x="348.0" y="37.5" text-anchor="middle">+60</text>
+  <text class="lbl" x="348.0" y="107.8" text-anchor="middle">-60</text>
+  <text class="lbl-sig" x="348.0" y="192.0" text-anchor="middle">t3</text>
+  <rect class="copper" x="370.0" y="48.4" width="16.0" height="41.5" rx="2" style="opacity:.35"/>
+  <text class="lbl" x="378.0" y="44.4" text-anchor="middle">+45</text>
+  <text class="lbl" x="378.0" y="100.9" text-anchor="middle">-45</text>
+  <text class="lbl-sig" x="378.0" y="192.0" text-anchor="middle">t4</text>
+  <text class="lbl" x="333.0" y="210.0" text-anchor="middle">3200-6400 MT/s</text>
+  <text class="lbl" x="333.0" y="224.0" text-anchor="middle">in 5 mV steps</text>
+  <text class="lbl" x="333.0" y="238.0" text-anchor="middle">|t2|+|t3|+|t4| < 60 mV</text>
+</svg></div>
+      <figcaption><b>Four taps, each with a limit, and only four.</b> The DRAM&#8217;s DFE weights its last four decisions and
+        subtracts them at the summer before the slicer. The ranges are a JESD79-5B data sheet&#8217;s for 3200 to 6400 MT/s.
+        Tap 1 is lopsided because the first post-cursor of a lossy channel is usually positive, which needs a negative
+        correction. The receiver test that uses these taps also requires the sum of taps 2 to 4 to stay below 60 mV.</figcaption>
+    </figure>
+    <p>
+      Two limits follow, and the panel shows both. A DFE has <em>four</em> taps, so it reaches the four bits after the
+      cursor and no further. The near DIMM&#8217;s own 378 ps echo lands on the second or third bit at these rates, inside
+      its reach; the far branch&#8217;s 512 ps echo, if the far DIMM returns much of it, lands four and a half bits late at
+      8800 MT/s, between taps 4 and 5, and only part of it can be cancelled. And each tap has a <em>range</em>: a
+      reflection larger than the tap&#8217;s limit is cancelled only up to it. In the &#8220;Two DIMMs at 6400&#8221;
+      scenario the near DIMM&#8217;s echo is the third post-cursor and far larger than tap 3&#8217;s 60 mV, and taps 2 to 4
+      together may not exceed 60 mV either; the DFE taps readout shows what training was allowed to set,
+      and the eye shows what was left.
+    </p>
+    <p>
+      The map shows where the DFE&#8217;s reach ends. The shaded band in the receiver column covers the four post-cursors
+      it corrects; anything arriving below the band is past it. Making the stub shorter moves its echo up into the band.
+      Making the bus faster pushes it down and out.
+    </p>
+    <p>
+      With the DFE on, the panel&#8217;s eye is what the slicer sees: the input after the summer has subtracted each
+      correction. That eye has seams half a bit either side of the sampling instant, where the correction for one bit gives
+      way to the next, and it is only meaningful between them. It also sits lower than the eye at the pin. With its
+      post-cursors removed, a 0 settles at the same level whatever came before it and a 1 at that level plus the cursor, so
+      training finds the reference near the middle of the cursor rather than the middle of the full swing.
+    </p>
+
+    <h2 class="section-rule"><span>The fly-by and write leveling</span></h2>
+    <p>
+      Back to the command bus. The RCD drives the clock along the fly-by, so DRAM 0 sees each clock edge first and DRAM 4
+      last. Each DRAM&#8217;s input capacitance also slows the line it hangs on. A line loaded with a capacitance
+      C<sub>load</sub> every pitch behaves like a slower line of lower impedance:
+    </p>
+    <div class="eq">
+      <span class="eq__main"><i class="var">t</i><sub>pd,loaded</sub> = <i class="var">t</i><sub>pd</sub> &#183; &#8730;(1 + <i class="var">C</i><sub>load</sub>/<i class="var">C</i><sub>line</sub>)
+        &nbsp;&nbsp;&nbsp;&nbsp; <i class="var">Z</i><sub>loaded</sub> = <i class="var">Z</i><sub>0</sub> / &#8730;(1 + <i class="var">C</i><sub>load</sub>/<i class="var">C</i><sub>line</sub>)</span>
+      <span class="eq__note">C<sub>line</sub> is the line&#8217;s own capacitance over one pitch: t<sub>pd</sub>&#183;pitch/Z<sub>0</sub></span>
+    </div>
+    <p>
+      With a 50 &#937; line at 6.7 ps/mm and DRAMs 12 mm apart, each pitch of line holds <span class="num">1.61 pF</span>.
+      Add 1 pF of DRAM input and the line slows by a factor of <span class="num">1.27</span>: each gap now takes
+      <span class="num">102 ps</span> instead of 80, the line looks like <span class="num">39.3 &#937;</span>, and the clock
+      reaches the fifth DRAM of the subchannel <span class="num">410 ps</span> after the first. At 6400 MT/s that is
+      <span class="num">1.31</span> clock periods; at 8800, <span class="num">1.80</span>. A designer who wants the loaded
+      line to land at a chosen impedance routes it above that impedance to begin with.
+    </p>
+  </div>
+  <section class="instrument lab" data-viz="ddr5Flyby" aria-label="Interactive fly-by: a clock edge leaves the RCD and reaches five DRAMs in turn; the timing of the edge at each DRAM, and the strobe delay write leveling adds to each byte lane">
+    <script type="application/json" data-contract>{"kind":"numerical","evidence":"independent","purpose":"Show why a fly-by clock reaches each DRAM at a different time, how the DRAMs' input capacitance slows and lowers the line, and what write leveling has to add to each lane's strobe.","equations":["Method of characteristics, as the DDR5 bus model","loaded line: t_pd' = t_pd sqrt(1 + C_load/C_line), Z' = Z0/sqrt(1 + C_load/C_line), C_line = t_pd pitch/Z0","arrival = the 50% crossing of the settled level at each DRAM"],"units":"ps, mm, pF, ohm","validity":"Single-ended, lossless line at 6.7 ps/mm; one subchannel's five DRAMs; the strobes are taken to arrive together, as from equal-length point-to-point routes.","numerics":"1 ps time step; 60 ps 10-90% edge; arrivals by linear interpolation of the 50% crossing.","limitations":"The clock is drawn single-ended and as one edge; the RCD's own delay and the controller-to-RCD flight are left out, so times are from the RCD's output; the DRAMs nearer the RCD carry no termination.","suites":["DDR5 page"],"version":"1.0","reviewed":"2026-10-02","panel":"ddr5Flyby"}</script>
+<div class="lab-frame">
+<div class="instrument__bar">
+      <span class="instrument__title">One clock edge, five arrival times</span>
+      <span data-evidence="independent" data-model-version="1.0" class="model-tag model-tag--numerical" title="A 50 ohm line loaded every pitch by a lumped DRAM input capacitance, solved in time; the loaded-line formula is shown beside it.">numerical</span>
+      <span class="instrument__readout" role="status" aria-live="polite" aria-label="Current values">
+        <span>loaded line <b data-out="zl">—</b></span>
+        <span>per DRAM <b data-out="per">—</b></span>
+        <span>first to last <b data-out="skew">—</b></span>
+        <span> <b data-out="tck">—</b></span>
+      </span>
+    <button type="button" class="tool-btn lab-full" data-lab-full aria-pressed="false">full screen</button>
+</div>
+<aside class="lab-rail lab-rail--left" aria-label="Scenario and speed controls">
+<p class="lab-rail__side">The edge <span>scenarios and speed</span></p>
+<details class="control-group lab-group" open><summary class="lab-group__title" id="fb-left-0">Scenarios</summary><div class="control-group__grid lab-group__body"><div class="presets">
+      <button class="preset" type="button" data-preset="r6400" aria-pressed="true">DDR5-6400</button>
+      <button class="preset" type="button" data-preset="r4800" aria-pressed="false">DDR5-4800</button>
+      <button class="preset" type="button" data-preset="r8800" aria-pressed="false">DDR5-8800</button>
+      <button class="preset" type="button" data-preset="bare" aria-pressed="false">No DRAM loading</button>
+      <button class="preset" type="button" data-preset="open" aria-pressed="false">No end termination</button>
+      <button class="tool-btn" type="button" data-act="replay">replay the edge</button>
+    </div>
+    <div class="transport"><span data-out="fbnote">—</span></div></div></details>
+<details class="control-group lab-group" open><summary class="lab-group__title" id="fb-left-1">Speed</summary><div class="control-group__grid lab-group__body"><div class="ctl">
+        <div class="ctl__head"><label for="fb-rate">Data rate</label><output id="fb-rate-out" for="fb-rate">6400 MT/s</output></div>
+        <input type="range" id="fb-rate" min="0" max="14" step="1" value="8">
+        <span class="ctl__note">Sets the clock period, not the skew</span>
+      </div></div></details>
+<p class="lab-help" aria-hidden="true">Point at or focus a control to see what it changes.</p>
+</aside>
+<div class="lab-stage">
+<div class="lab-row lab-row--anchor" style="--anchor-columns: minmax(0, 1fr)">
+<div data-lab-unit="dimm" data-lab-name="The module from above" class="panel">
+        <div class="lab-panel-head"><span class="panel__label">The module from above</span><button type="button" class="tool-btn lab-expand" data-lab-expand aria-pressed="false" aria-label="Expand the module from above">expand</button></div>
+        <canvas data-cv="dimm" role="img" aria-label="A DIMM from above with the RCD in the middle and five DRAMs either side. A clock edge travels outward along the fly-by, lighting each DRAM as it arrives; each DRAM's data strobe lights when its strobe arrives from the edge connector."></canvas>
+        <div class="legend"><span><i style="background:var(--signal)"></i>the clock edge</span><span><i style="background:var(--reflect)"></i>the data strobe</span></div>
+      </div>
+<div data-lab-unit="ladder" data-lab-name="The clock at each DRAM" class="panel">
+        <div class="lab-panel-head"><span class="panel__label">The clock at each DRAM, and where each strobe lands</span><button type="button" class="tool-btn lab-expand" data-lab-expand aria-pressed="false" aria-label="Expand the clock at each DRAM">expand</button></div>
+        <canvas data-cv="ladder" role="img" aria-label="The clock edge at DRAM 0 to DRAM 4 against time, each later and a little slower than the last, with clock periods marked from the first DRAM's edge. A strobe marker on each row shows where that lane's strobe lands, with write leveling's added delay or, without it, how early it arrives."></canvas>
+        <div class="legend"><span><i style="background:var(--signal)"></i>clock at the DRAM</span><span><i style="background:var(--reflect)"></i>strobe arrives</span></div>
+      </div>
+</div>
+</div>
+<aside class="lab-rail lab-rail--right" aria-label="Module and leveling controls">
+<p class="lab-rail__side">The module <span>what slows the edge, what fixes the strobes</span></p>
+<details class="control-group lab-group" open><summary class="lab-group__title" id="fb-right-0">Loading</summary><div class="control-group__grid lab-group__body"><div class="ctl">
+        <div class="ctl__head"><label for="fb-load">Input capacitance per DRAM</label><output id="fb-load-out" for="fb-load">1.0 pF</output></div>
+        <input type="range" id="fb-load" min="0" max="25" step="1" value="10">
+        <span class="ctl__note">Each load slows the line and lowers its impedance</span>
+      </div><div class="ctl">
+        <div class="ctl__head"><label for="fb-pitch">DRAM pitch</label><output id="fb-pitch-out" for="fb-pitch">12.0 mm</output></div>
+        <input type="range" id="fb-pitch" min="20" max="26" step="1" value="24">
+        <span class="ctl__note">Trace between neighbours</span>
+      </div></div></details>
+<details class="control-group lab-group" open><summary class="lab-group__title" id="fb-right-1">Termination</summary><div class="control-group__grid lab-group__body"><div class="ctl">
+        <div class="ctl__head"><span class="ctl__label">Termination at the last DRAM</span></div>
+        <div class="presets" role="group" aria-label="Termination at the last DRAM">
+          <button class="preset preset--act" type="button" data-act="odt" data-odt="0" aria-pressed="false">Off</button>
+          <button class="preset preset--act" type="button" data-act="odt" data-odt="1" aria-pressed="false">80 Ω</button>
+          <button class="preset preset--act" type="button" data-act="odt" data-odt="2" aria-pressed="false">40 Ω</button>
+        </div>
+        <span class="ctl__note">CA ODT, strapped strong at the end of the chain</span>
+      </div></div></details>
+<details class="control-group lab-group" open><summary class="lab-group__title" id="fb-right-2">Training</summary><div class="control-group__grid lab-group__body"><div class="ctl">
+        <div class="ctl__head"><span class="ctl__label">Write leveling</span></div>
+        <label class="check" for="fb-level"><input type="checkbox" id="fb-level" checked> delay each lane's strobe to its DRAM's clock</label>
+        <span class="ctl__note">Off: every strobe is launched for the first DRAM</span>
+      </div></div></details>
+<p class="lab-help" aria-hidden="true">Point at or focus a control to see what it changes.</p>
+</aside>
+</div>
+  </section>
+  <div class="prose">
+    <p>
+      The data strobes, meanwhile, come straight up from the edge connector and arrive at every DRAM at about the same
+      time. If the controller launched every byte lane&#8217;s strobe the same way, it would be on time for DRAM 0 and
+      hundreds of picoseconds early for DRAM 4. <strong>Write leveling</strong> fixes that per lane. Untick it in the panel
+      to see the error it removes.
+    </p>
+    <figure class="figure">
+      <div class="figure__bar"><span>Write leveling &#183; the DRAM reports which side of its clock the strobe landed</span></div>
+      <div class="figure__body"><svg viewBox="0 0 400 218" role="img" aria-label="Write leveling. The DRAM raises an internal pulse at the clock edge that write latency points to. The controller sends DQS at three trial delays; the DRAM samples the pulse with each DQS rising edge and returns the result on DQ: 0 for the two early strobes, 1 for the one after the edge. The delay where 0 turns to 1 is the one that aligns DQS with that DRAM's clock.">
+  <text class="lbl-hi" x="10.0" y="34.0">CK at DRAM</text>
+  <text class="lbl" x="10.0" y="70.0">WL pulse</text>
+  <path d="M84,40 L110,40 L110,22 L136,22 L136,40 L162,40 L162,22 L188,22 L188,40 L214,40 L214,22 L240,22 L240,40 L266,40 L266,22 L292,22 L292,40 L318,40 L318,22 L330,22" class="flow" style="stroke-width:1.4"/>
+  <path d="M84,76 L188,76 L188,58 L318,58 L318,76 L330,76" class="tick" style="stroke: var(--ink-2); stroke-width: 1.3"/>
+  <path d="M188,12 L188,170" class="tick" style="stroke-dasharray:3 3"/>
+  <text class="lbl" x="192.0" y="12.0">the CK edge at CWL</text>
+  <text class="lbl-hi" x="352.0" y="96.0" text-anchor="middle">DQ</text>
+  <text class="lbl-hi" x="10.0" y="118.0">DQS, try 1</text>
+  <path d="M132,122 L148,122 L148,110 L164,110" class="flow-bad" style="stroke-width:1.4"/>
+  <text class="lbl-bad" x="352.0" y="119.0" text-anchor="middle">0</text>
+  <text class="lbl" x="10.0" y="142.0">DQS, try 2</text>
+  <path d="M158,146 L174,146 L174,134 L190,134" class="flow-bad" style="stroke-width:1.4"/>
+  <text class="lbl-bad" x="352.0" y="143.0" text-anchor="middle">0</text>
+  <text class="lbl" x="10.0" y="166.0">DQS, try 3</text>
+  <path d="M184,170 L200,170 L200,158 L216,158" class="flow-2" style="stroke-width:1.4"/>
+  <text class="lbl-hi" x="352.0" y="167.0" text-anchor="middle">1</text>
+  <text class="lbl" x="10.0" y="196.0">Each DQS edge samples the pulse; DQ returns it.</text>
+  <text class="lbl" x="10.0" y="210.0">The controller delays DQS until 0 turns to 1.</text>
+</svg></div>
+      <figcaption><b>The controller cannot see the DRAM&#8217;s clock, so it asks.</b> In write leveling mode each DRAM samples
+        an internal pulse, raised at the clock edge its write latency points to, on every rising edge of its strobe, and
+        drives the result back on its data pins. The controller sweeps that lane&#8217;s strobe delay until the answer turns
+        from 0 to 1. Because the pulse comes once, at one particular clock edge, the search finds the cycle as well as the
+        phase.</figcaption>
+    </figure>
+    <p>
+      DDR5 adds a second step. Inside the DRAM, the path from the strobe pin to where data is captured is not matched to
+      the clock&#8217;s path, so lining the strobe up with the clock at the pins is not quite enough. An internal cycle
+      alignment step, also driven from the controller, adjusts the DRAM&#8217;s own write timing to absorb that difference.
+      Between them, every lane&#8217;s strobe ends up aligned in phase and in cycle with its own DRAM&#8217;s clock, however
+      far along the fly-by that DRAM sits.
+    </p>
+    <p>
+      The same chain explains DDR5&#8217;s command-bus termination. With the termination on the DRAM die, every DRAM on
+      the chain has one, and a strap pin decides which group&#8217;s setting it uses: the DRAMs along the chain take a weak
+      setting or none, and the last one, at the end of the fly-by, a strong one. Choose &#8220;No end termination&#8221;
+      above to see what the last DRAM would otherwise do to everyone else&#8217;s clock.
+    </p>
+
+    <h2 class="section-rule"><span>Training: the controller never sees the eye</span></h2>
+    <p>
+      Everything so far assumes someone knows where the eye is. Nobody does. The controller has no oscilloscope at the
+      DRAM&#8217;s pins; it has a delay line on each strobe, a register for each DRAM&#8217;s VrefDQ, and the ability to
+      write a pattern and read it back. Training is the process of finding the eye with only those, at every power-up and
+      again when the temperature moves.
+    </p>
+    <p>
+      The panel&#8217;s <b>What training sees</b> view is that process in one picture, a <em>shmoo</em>. For every strobe
+      delay step and every VrefDQ step, send a PRBS burst and record pass or fail. The pass region is the eye as the
+      controller knows it: blockier than the true eye, because Vref moves in 5.5 mV steps, and ragged at its edges,
+      because real noise and jitter make marginal settings pass sometimes and fail sometimes. A trainer then picks a point
+      inside it. The one in the panel takes the Vref with the widest passing run of delays and the middle of that run, one
+      common rule among several.
+    </p>
+    <p>
+      DDR5 trains in stages, each one making the next possible: chip select and command/address first (otherwise no
+      command can be trusted), then write leveling, then read training with patterns the DRAM itself generates, including
+      an LFSR pseudo-random one, then write training, VrefDQ per bit and the DFE taps. A duty-cycle adjuster in the DRAM
+      corrects the read strobe&#8217;s duty cycle, and a strobe interval oscillator lets the controller measure how far the
+      DRAM&#8217;s internal strobe delay has drifted, so it can decide when to retrain.
+    </p>
+    <div class="note">
+      <b>What the shmoo tells you that the eye does not</b>
+      It is the only margin measurement a running system can make. A shmoo that is wide and centred says the bus has
+      margin; one that is narrow, lopsided, or different from DRAM to DRAM is the first sign of a problem, and it is
+      available from the controller with no instrument on the board.
+    </div>
+
+    <h2 class="section-rule"><span>What a pass means</span></h2>
+    <p>
+      The target is a raw bit error ratio of 10<sup>&#8722;16</sup> per lane, before any correction. That is hard to
+      picture until it is turned into time: at 6400 MT/s one lane at 10<sup>&#8722;16</sup> errs about once every
+      <span class="num">18 days</span>, and the 80 data lanes of one DIMM together about once every
+      <span class="num">5.4 hours</span>. That is why server memory carries ECC on top, and why DDR5 adds CRC on reads as
+      well as writes and single-error correction inside the DRAM.
+    </p>
+    <p>
+      Nobody measures 10<sup>&#8722;16</sup> directly. Receiver and transmitter limits are validated at
+      10<sup>&#8722;9</sup>, which at 99.5% confidence needs <span class="num">5.3 &#215; 10<sup>9</sup></span> bits without
+      an error (&#8722;ln(0.005)/10<sup>&#8722;9</sup>), <span class="num">0.83 s</span> of one lane at 6400 MT/s, and the
+      eye is extrapolated from there. The DRAM&#8217;s receiver is tested with a <em>stressed eye</em>: a reference channel
+      plus injected jitter and noise, adjusted until the eye at the slicer, after the DFE, is just the specified height and
+      width. In the data sheet read for this page that is 95 mV by 0.25 UI at 3200 MT/s, narrowing to 57.5 mV by 0.23 UI
+      at 6400, with the higher bins still to be defined in that revision. The panel draws that diamond on the eye. It
+      is a statement about the receiver, not a mask for the channel: a channel whose eye at the slicer is bigger than the
+      diamond, with everything else that closes it accounted for, is one the receiver is specified to handle.
+    </p>
+    <p>
+      The panel&#8217;s two eye readouts differ for a reason. &#8220;Eye, PRBS&#8221; is the opening of a 2047-bit pattern;
+      &#8220;worst case&#8221; is the peak-distortion bound, the eye of the worst possible bit sequence for this pulse
+      response. The worst sequence may never occur in a training pattern, which is one reason a bus can train well and
+      still fail later on real data.
+    </p>
+
+    <h2 class="section-rule" id="lpddr5x-vs-ddr5"><span>LPDDR5X vs DDR5</span></h2>
+    <p>
+      LPDDR5X and DDR5 are JEDEC memories of the same era, and from far away they look alike: single-ended data, a
+      strobe travelling with it, everything trained at power-up. The difference is where each one lives, and nearly every
+      electrical choice follows from that. LPDDR5X is soldered next to the processor, or stacked on its package, so its
+      channel is a few centimetres of board with nothing in the way. DDR5 sits on a module in a socket, so its channel
+      crosses a mainboard and a connector and often shares its wire with a second module.
+    </p>
+    <figure class="figure">
+      <div class="figure__bar"><span>Two channels for the same job &#183; one soldered, one socketed</span></div>
+      <div class="figure__pair figure__pair--stack">
+        <div><span class="figure__label">LPDDR5X</span><svg viewBox="0 0 400 210" role="img" aria-label="An LPDDR5X channel: the SoC and an LPDDR5X package joined point to point over about 10 to 30 millimetres, with command and clock, a write data clock WCK, sixteen data wires and a read strobe RDQS. VDDQ 0.5 V, LVSTL signalling.">
+  <rect class="dielectric" x="14.0" y="40.0" width="92.0" height="104.0" rx="5" style="stroke: var(--ink-2)"/>
+  <text class="lbl-hi" x="60.0" y="88.0" text-anchor="middle">SoC</text>
+  <text class="lbl" x="60.0" y="102.0" text-anchor="middle">controller</text>
+  <rect class="dielectric" x="294.0" y="40.0" width="92.0" height="104.0" rx="5" style="stroke: var(--ink-2)"/>
+  <text class="lbl-hi" x="340.0" y="88.0" text-anchor="middle">LPDDR5X</text>
+  <text class="lbl" x="340.0" y="102.0" text-anchor="middle">x16 a channel</text>
+  <path d="M106,54 L294,54" class="tick" style="stroke: var(--ink-2); stroke-width: 1.4"/>
+  <text class="lbl" x="200.0" y="49.0" text-anchor="middle">CK and CA</text>
+  <path d="M106,74 L294,74" class="flow" style="stroke-width:1.8"/>
+  <text class="lbl-sig" x="200.0" y="69.0" text-anchor="middle">WCK: write data clock</text>
+  <path d="M108,90 L292,90" class="flow" style="stroke: var(--ink-2); stroke-width: 1.1"/>
+  <path d="M108,94 L292,94" class="flow" style="stroke: var(--ink-2); stroke-width: 1.1"/>
+  <path d="M108,98 L292,98" class="flow" style="stroke: var(--ink-2); stroke-width: 1.1"/>
+  <path d="M108,102 L292,102" class="flow" style="stroke: var(--ink-2); stroke-width: 1.1"/>
+  <text class="lbl-hi" x="200.0" y="115.0" text-anchor="middle">DQ: 16 data wires</text>
+  <path d="M294,132 L106,132" class="flow-2" style="stroke-width:1.8"/>
+  <text class="lbl-ref" x="200.0" y="127.0" text-anchor="middle">RDQS: read strobe</text>
+  <text class="lbl" x="200.0" y="168.0" text-anchor="middle">soldered, roughly 10-30 mm, no connector;</text>
+  <text class="lbl" x="200.0" y="182.0" text-anchor="middle">or on the package, or on a CAMM2 module</text>
+  <text class="lbl-sig" x="200.0" y="200.0" text-anchor="middle">VDDQ 0.5 V, LVSTL</text>
+</svg></div>
+        <div><span class="figure__label">DDR5</span><svg viewBox="0 0 400 210" role="img" aria-label="A DDR5 channel: the CPU drives a mainboard trace past two DIMM slots, so the data wire reaches two modules through connectors; each DRAM terminates on die, command and clock run fly-by on the module, and the data strobe DQS runs both ways. VDDQ 1.1 V, POD signalling.">
+  <rect class="dielectric" x="14.0" y="96.0" width="66.0" height="48.0" rx="5" style="stroke: var(--ink-2)"/>
+  <text class="lbl-hi" x="47.0" y="124.0" text-anchor="middle">CPU</text>
+  <path d="M80,120 L300,120" class="flow" style="stroke-width:2"/>
+  <text class="lbl" x="160.0" y="136.0" text-anchor="middle">mainboard</text>
+  <rect class="dielectric" x="234.0" y="92.0" width="12.0" height="28.0" rx="1" style="stroke: var(--ink-2)"/>
+  <rect class="copper" x="236.0" y="22.0" width="8.0" height="70.0" rx="1" style="opacity:.5"/>
+  <text class="lbl" x="240.0" y="136.0" text-anchor="middle">slot 1</text>
+  <rect class="dielectric" x="294.0" y="92.0" width="12.0" height="28.0" rx="1" style="stroke: var(--ink-2)"/>
+  <rect class="copper" x="296.0" y="22.0" width="8.0" height="70.0" rx="1" style="opacity:.5"/>
+  <text class="lbl" x="300.0" y="136.0" text-anchor="middle">slot 2</text>
+  <text class="lbl-hi" x="316.0" y="40.0">two DIMMs,</text>
+  <text class="lbl" x="316.0" y="54.0">one data wire</text>
+  <text class="lbl" x="316.0" y="74.0">ODT on every</text>
+  <text class="lbl" x="316.0" y="88.0">DRAM</text>
+  <text class="lbl" x="200.0" y="168.0" text-anchor="middle">through a connector, often past a second DIMM;</text>
+  <text class="lbl" x="200.0" y="182.0" text-anchor="middle">CA and CK fly-by on the module, DQS both ways</text>
+  <text class="lbl-sig" x="200.0" y="200.0" text-anchor="middle">VDDQ 1.1 V, POD</text>
+</svg></div>
+      </div>
+      <figcaption><b>A short, private wire against a long, shared one.</b> LPDDR5X runs point to point from the controller to one
+        package, with a dedicated write clock (WCK) and a read strobe (RDQS). DDR5 crosses the mainboard and a connector, may
+        pass a second module on the way, and puts the clock past each DRAM in turn on the module. The rest of each design
+        follows from its picture.</figcaption>
+    </figure>
+    <p>
+      <strong>The swing follows the channel.</strong> LPDDR5X signals at a V<sub>DDQ</sub> of 0.5 V (0.45 V on some parts)
+      with low-voltage swing-terminated logic (LVSTL), and can drop to 0.3 V with termination off. That is affordable only
+      because its channel is short and private: there is little loss, no connector and no stub to eat the margin. DDR5
+      keeps a 1.1 V pseudo-open-drain bus, because its signal has to survive the connector, the shared wire and the
+      terminations along it.
+    </p>
+    <p>
+      <strong>The clocking differs.</strong> LPDDR5X separates a slow command clock from a fast write data clock that runs
+      at two or four times its rate and only when it is needed; reads come back with their own strobe. DDR5 uses one
+      differential strobe per byte, driven by whichever end is sending. Both make the data source-synchronous, so delay the
+      data and its strobe share cancels, and both train the strobe into the eye at power-up.
+    </p>
+    <p>
+      <strong>What limits each is different.</strong> On LPDDR5X the enemies are crosstalk and simultaneous switching noise
+      in a dense escape from a fine-pitch package, and skew between bits; the <a href="lpddr5x.html">LPDDR5X page</a> works
+      through that budget. On DDR5 they are reflections from the connector and from the other module, the choice of
+      termination for each DRAM, and the fly-by skew on the module: this page.
+    </p>
+    <div class="table-scroll">
+      <table class="data">
+        <caption>LPDDR5X and DDR5 side by side, from the signals&#8217; point of view</caption>
+        <thead><tr><th></th><th>LPDDR5X</th><th>DDR5</th></tr></thead>
+        <tbody>
+          <tr><td>Where it sits</td><td>soldered beside the processor, on its package, or on an LPDDR5X CAMM2</td><td>a module in a socket: RDIMM, UDIMM, SODIMM, clocked UDIMM, or a DDR5 CAMM2</td></tr>
+          <tr><td>Fastest bin in the editions read</td><td>8533 MT/s</td><td>timing defined to 8800 MT/s</td></tr>
+          <tr><td>Data width</td><td>16 bits a channel; an x32 package carries two channels</td><td>two 32-bit subchannels a DIMM, 40 bits each with ECC</td></tr>
+          <tr><td>Signalling and V<sub>DDQ</sub></td><td>LVSTL, 0.5 V (0.3 V with ODT off)</td><td>POD, 1.1 V</td></tr>
+          <tr><td>Data timing</td><td>WCK from the controller for writes, at 2:1 or 4:1 to CK; RDQS for reads</td><td>DQS, one per byte, driven by the sender</td></tr>
+          <tr><td>The data channel</td><td>point to point, about 10&#8211;30 mm, no connector on a soldered board</td><td>mainboard, connector and module, often past a second DIMM</td></tr>
+          <tr><td>Command and clock</td><td>straight from the controller</td><td>fly-by along the DRAMs, from the RCD on a registered DIMM</td></tr>
+          <tr><td>Equalisation in the DRAM</td><td>optional, advertised per device: a DFE and transmit pre-emphasis</td><td>a 4-tap DFE on every data input</td></tr>
+          <tr><td>Power regulation</td><td>the platform&#8217;s regulators, on a soldered board</td><td>a PMIC on the module</td></tr>
+          <tr><td>The SI problem</td><td>crosstalk, SSN and skew in a dense, short escape</td><td>reflections, termination and fly-by skew</td></tr>
+          <tr><td>What you trade</td><td>speed and power, with the capacity fixed when the board is built (unless it is on a CAMM2)</td><td>capacity, upgrades and ECC, paid for in signal integrity</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>
+      The line between them is blurring. JEDEC&#8217;s CAMM2 standard puts either memory on a compression-attached module
+      with a common connector and different pinouts, and JEDEC aims LPDDR5/5X CAMM2s at notebooks and some server
+      segments. A CAMM2 is still a connector, but a short, flat one, so it buys LPDDR5X upgradability while keeping most of
+      its channel. The choice that remains is the old one: LPDDR5X where power and speed per watt rule and the capacity is
+      fixed at build, DDR5 where capacity, upgrades and ECC matter and the board can pay for a longer channel.
+    </p>
+
+    <details class="deeper">
+      <summary>Go deeper &#8212; how the panel solves the bus, the peak-distortion eye, and what it leaves out</summary>
+      <p>
+        <strong>The method of characteristics.</strong> A lossless line of impedance Z and delay T, seen from one end,
+        looks like a voltage source of twice whatever wave is arriving, behind a resistor Z. That turns a network of lines
+        into a sequence of small resistive problems. At each node and each time step, the node voltage is
+      </p>
+      <div class="eq">
+        <span class="eq__main"><i class="var">V</i> = ( &#931; 2<i class="var">a</i><sub>i</sub>/<i class="var">Z</i><sub>i</sub> + <i class="var">V</i><sub>s</sub>/<i class="var">R</i><sub>s</sub> + <i class="var">J</i><sub>C</sub> ) / ( &#931; 1/<i class="var">Z</i><sub>i</sub> + 1/<i class="var">R</i><sub>s</sub> + 1/<i class="var">R</i><sub>TT</sub> + 2<i class="var">C</i>/&#916;t )</span>
+        <span class="eq__note">a<sub>i</sub> arrives on line i; each line then carries V &#8722; a<sub>i</sub> away from the node</span>
+      </div>
+      <p>
+        where the capacitor enters as a conductance 2C/&#916;t with a history current J<sub>C</sub> (the trapezoidal rule).
+        The panel steps this at 1 ps over the whole tree. It is exact for lossless lines whose delays are whole picoseconds,
+        and the site&#8217;s model gate checks it against a frequency-domain solution of the same network, built
+        independently from each line&#8217;s two-port admittance. At a three-way junction of equal lines it gives the
+        textbook split: a third reflected, two thirds transmitted down each branch.
+      </p>
+      <p>
+        <strong>The peak-distortion eye.</strong> Sample the single-bit response at the cursor and at every whole bit
+        before and after it: h<sub>0</sub> and the h<sub>k</sub>. The worst 1 is the cursor plus every negative
+        h<sub>k</sub>; the worst 0 is every positive one. The worst-case height is
+        h<sub>0</sub> &#8722; &#931;|h<sub>k</sub>|, and the DFE replaces h<sub>1</sub> to h<sub>4</sub> with what is left
+        after its taps. It is a bound, not a measurement, and on a long ringing tail it is pessimistic, because it adds
+        every small echo with its worst sign at once.
+      </p>
+      <p>
+        <strong>Why reflections are the ISI.</strong> A data sheet for DDR5 describes the memory channel as reflection
+        dominated, and the panel agrees: its lines are lossless, and still the eye closes. Loss would add to that on a long
+        mainboard route, and crosstalk and simultaneous switching noise, both covered on their own pages, would close it
+        further. The panel leaves out all three.
+      </p>
+      <p>
+        <strong>What else the panel leaves out.</strong> The mainboard and module lines are 40 &#937; and the connector a
+        60 &#937;, 25 ps section; the packages are 45 &#937; sections; the DRAM die is 0.8 pF and the controller&#8217;s
+        1.0 pF. Each DIMM is single-rank, so there is one DRAM per wire; a dual-rank DIMM puts two on it, and its
+        non-target rank is one more termination to schedule. The driver&#8217;s edge is a raised cosine of 30% of a bit,
+        held between 30 and 70 ps. Noise and jitter appear only in the shmoo, as model choices: 5 mV and 2 ps rms.
+        There are no ESD clamps and no package or line loss, so when a stub is left open the pin rings several hundred
+        millivolts past both rails, further than real silicon would let it; read those eyes for their shape and timing
+        rather than their peaks.
+      </p>
+    </details>
+
+    <h2 class="section-rule"><span>In the real world</span></h2>
+    <p>
+      <strong>Two DIMMs per channel costs speed.</strong> Server platforms commonly qualify a lower data rate with two
+      DIMMs per channel than with one, and the panel shows why: the second DIMM&#8217;s stub, terminated or not, takes a
+      share of every bit and returns some of it late. Check the platform&#8217;s population rules before assuming the
+      headline speed.
+    </p>
+    <p>
+      <strong>Client modules above 6400 MT/s add a clock driver.</strong> On an unbuffered DIMM the controller drives the
+      DRAMs&#8217; clock directly, through the connector and along the fly-by. JEDEC&#8217;s clocked UDIMM and SODIMM
+      (JESD323 and JESD324) put a clock driver on the module that regenerates the clock locally, which JEDEC presents as
+      the step from 6400 toward 7200 MT/s on client modules. Command and address still come from the controller, so the
+      rest of this page still applies.
+    </p>
+    <p>
+      <strong>Power is now on the module.</strong> The PMIC regulates V<sub>DD</sub>, V<sub>DDQ</sub> and V<sub>PP</sub> next
+      to the DRAMs, from 12 V on server modules and 5 V on client ones. That shortens the DRAM&#8217;s power delivery path,
+      and it means the module&#8217;s own regulator and decoupling are part of every data eye&#8217;s noise. A DDR5
+      signal-integrity simulation that ignores the module&#8217;s power network ignores a source of jitter that DDR4 put
+      on the mainboard.
+    </p>
+    <p>
+      <strong>Debug starts from the training results.</strong> The controller knows, for every DRAM and every lane, where
+      training landed and how wide the passing region was. A lane whose window is narrower than its neighbours&#8217;
+      points at its own routing; a whole DIMM that is narrow points at the slot, the population or the termination; a
+      window that shrinks as the system warms points at timing drift. All of it is available without probing a pin.
+    </p>
+
+    <h3>Where the numbers come from</h3>
+    <ul class="tight refs">
+      <li><strong>JEDEC JESD79-5D, DDR5 SDRAM</strong> (Nov 2025), and JEDEC&#8217;s JESD79-5C announcement (Apr 2024) &#8212; editions and the 8800 MT/s timing extension; ledger C-35 and C-36. The standard itself is sold and has not been read.</li>
+      <li><strong>Micron, DDR5 SDRAM core data sheet</strong> (Rev. D, Oct 2022, stated JESD79-5B compliant) &#8212; supply voltages, ODT and driver values, VrefDQ range and step, DFE tap ranges, stressed-eye limits, BER requirements, write leveling; ledger C-37 to C-43.</li>
+      <li><strong>Micron white papers and technical briefs</strong>: &#8220;Introducing Micron DDR5 SDRAM: More Than a Generational Update&#8221;, &#8220;DDR5 SDRAM: New Features&#8221;, &#8220;DDR5: Key Module Features&#8221; and &#8220;DDR5: Client Module Features&#8221; &#8212; the DDR4 comparison, subchannels, PMIC input voltages, the RCD&#8217;s command bus and CA termination groups; ledger C-44 to C-49.</li>
+      <li><strong>JEDEC clocked UDIMM and SODIMM</strong> (JESD323, JESD324), as announced in October 2024 &#8212; ledger C-50.</li>
+      <li><strong>Micron, x32 automotive LPDDR5X data sheet</strong> and <strong>JEDEC&#8217;s CAMM2 announcement</strong> (Dec 2023) &#8212; the LPDDR5X side of the comparison; ledger C-53 and C-54, with C-2a, C-3 and C-4a from the LPDDR5X page.</li>
+      <li><strong>ASUS support FAQ</strong>, &#8220;How to install DRAM on motherboard&#8221; &#8212; the slot to fill first; ledger C-51.</li>
+      <li><strong>Platform memory population guides</strong> &#8212; that two DIMMs per channel usually run slower; ledger C-52, awaiting a source.</li>
+    </ul>
+
+    <h3>Related</h3>
+    <ul class="tight">
+      <li><a href="lpddr5x.html">LPDDR5/5X Signal Integrity: WCK, ODT and Training</a> &#8212; the mobile cousin: point to point, no DIMM</li>
+      <li><a href="../fundamentals/reflections.html">Transmission-Line Reflections and Ringing</a> &#8212; what one boundary does to a step</li>
+      <li><a href="../fundamentals/tdr.html">TDR (Time-Domain Reflectometry): Reading PCB Impedance</a> &#8212; reading a stub and a connector on a trace</li>
+      <li><a href="../fundamentals/termination-schemes.html">Termination Schemes: Series, Parallel, Thevenin and AC</a> &#8212; why a terminated line stops ringing</li>
+      <li><a href="../signal-integrity/equalization.html">SerDes Equalization: CTLE, FFE, DFE and CDR</a> &#8212; the DFE in a serial receiver</li>
+      <li><a href="../power-integrity/ssn-ground-bounce.html">Simultaneous Switching Noise and Ground Bounce</a> &#8212; what an 80-bit bus switching together does to its reference</li>
+    </ul>
+  </div>
+  <!-- share:foot:start --><div class="share share--foot" data-share data-share-url="https://sipi.work/topics/interfaces/ddr5.html" data-share-title="DDR5 Signal Integrity: Fly-by, ODT, DFE and Training"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Fddr5.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Fddr5.html&amp;text=DDR5%20Signal%20Integrity%3A%20Fly-by%2C%20ODT%2C%20DFE%20and%20Training" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=DDR5%20Signal%20Integrity%3A%20Fly-by%2C%20ODT%2C%20DFE%20and%20Training&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Fddr5.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:foot:end -->
+
+<!-- sources:start -->
+    <section class="sources">
+      <h2 class="section-rule"><span>Sources</span></h2>
+      <ul class="sources__list">
+      <li><a href="https://www.jedec.org/news/pressreleases/jedec-updates-standard-low-power-memory-devices-lpddr5" target="_blank" rel="noopener">JEDEC — LPDDR5 standard update announcement</a> <span class="src__for">C-2a</span></li>
+      <li><a href="https://www.synopsys.com/designware-ip/technical-bulletin/key-features-about-lpddr5.html" target="_blank" rel="noopener">Synopsys — Key features designers should know about LPDDR5</a> <span class="src__for">C-3</span></li>
+      <li><a href="https://www.jedec.org/news/pressreleases/jedec-updates-jesd79-5c-ddr5-sdram-standard-elevating-performance-and-security" target="_blank" rel="noopener">JEDEC — JESD79-5C DDR5 SDRAM standard update announcement</a> <span class="src__for">C-35</span></li>
+      <li><a href="https://www.jedec.org/standards-documents/docs/jesd79-5d" target="_blank" rel="noopener">JEDEC — JESD79-5D DDR5 SDRAM document page</a> <span class="src__for">C-36</span></li>
+      <li><a href="https://www.farnell.com/datasheets/3980285.pdf" target="_blank" rel="noopener">Micron — DDR5 SDRAM core data sheet (Rev. D, JESD79-5B compliant)</a> <span class="src__for">C-37</span></li>
+      <li><a href="https://www.avnet.com/wcm/connect/630450bf-bb94-4993-b756-4b9f3ef2334e/DDR5-Key-Module-Technical-Brief.pdf?MOD=AJPERES&amp;attachment=false&amp;id=1597182346576" target="_blank" rel="noopener">Micron — DDR5: Key Module Features (technical brief)</a> <span class="src__for">C-44</span></li>
+      <li><a href="https://assets.micron.com/adobe/assets/urn:aaid:aem:f1706cdb-4b55-4568-84bc-b7ee42f46236/renditions/original/as/ddr5-more-than-a-generational-update-wp.pdf" target="_blank" rel="noopener">Micron — Introducing Micron DDR5 SDRAM: More Than a Generational Update</a> <span class="src__for">C-45</span></li>
+      <li><a href="https://assets.micron.com/adobe/assets/urn:aaid:aem:5902f17e-8bde-4246-971c-8d7f274c6b1a/renditions/original/as/ddr5-key-module-features-wp-client.pdf" target="_blank" rel="noopener">Micron — DDR5: Client Module Features</a> <span class="src__for">C-47</span></li>
+      <li><a href="https://www.edn.com/jedec-unveils-memory-designs-with-ddr5-clock-drivers/" target="_blank" rel="noopener">EDN — JEDEC unveils memory designs with DDR5 clock drivers</a> <span class="src__for">C-50</span></li>
+      <li><a href="https://www.asus.com/us/support/faq/1049387/" target="_blank" rel="noopener">ASUS — How to install DRAM (memory) on motherboard</a> <span class="src__for">C-51</span></li>
+      <li><a href="https://www.farnell.com/datasheets/3928121.pdf" target="_blank" rel="noopener">Micron — x32 Automotive LPDDR5X SDRAM data sheet (315b)</a> <span class="src__for">C-53</span></li>
+      <li><a href="https://www.jedec.org/news/pressreleases/jedec-publishes-new-camm2-memory-module-standard" target="_blank" rel="noopener">JEDEC — CAMM2 memory module standard announcement</a> <span class="src__for">C-54</span></li>
+      </ul>
+      <p class="sources__note">Rows marked with a claim id are tracked in <a href="../../docs/claims.md">the claim ledger</a>, which records what each source can and cannot establish.</p>
+    </section>
+    <!-- sources:end -->
+  <!-- pager:start -->
+  <nav class="pager" aria-label="Previous and next topic">
+    <a class="prev" href="../../topics/interfaces/lpddr5x.html"><span class="dir">Previous</span><span>LPDDR5/5X Signal Integrity: WCK, ODT and Training</span></a>
+    <a class="next" href="../../topics/interfaces/pcie-gen4-gen5.html"><span class="dir">Next</span><span>PCIe Gen 4 and Gen 5 Signal Integrity: Loss and EQ</span></a>
+  </nav>
+  <!-- pager:end -->
+</main>
+
+
+<footer class="site-foot">
+  <span>SIPI &#8212; signal and power integrity, visualised.</span>
+  <nav class="site-foot__nav" aria-label="Site, footer">
+    <a href="../../start.html">Start</a>
+    <a href="../../labs.html">Labs</a>
+    <a href="../../calculators.html">Calculators</a>
+    <a href="../../reference.html">Reference</a>
+    <a href="../../colophon.html">About &amp; AI disclosure</a>
+    <a href="../../model-contract.html">Model assumptions</a>
+    <a href="../../docs/claims.md">Claim ledger (Markdown)</a>
+  </nav>
+  <span>Created and directed by <a href="https://www.linkedin.com/in/geetansh-arora-a645714a/" target="_blank" rel="author noopener">Geetansh Arora</a>. Text <a href="../../LICENSE-CONTENT">CC BY 4.0</a>, code <a href="../../LICENSE-CODE">MIT</a>.</span>
+</footer>
+
+<script src="../../js/site.js?v=61b8ff31" defer></script>
+<script src="../../js/viz-kit.js?v=cb18bcf0" defer></script>
+<script src="../../js/models/ddr5-model.js?v=aa4478aa" defer></script>
+<script src="../../js/viz/ddr5.js?v=c979fc9a" defer></script>
+<script src="../../js/viz/ddr5-flyby.js?v=3633a93c" defer></script>
+<script src="../../js/lab-workspace.js?v=49b1d309" defer></script>
+<script src="../../js/viz-loader.js?v=28f89557" defer></script>
+<script src="../../js/search.js?v=f57dea26" defer></script>
+</body>
+</html>

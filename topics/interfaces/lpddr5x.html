@@ -13,7 +13,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
 <link rel="stylesheet" href="../../css/base.css?v=1e3ae753">
-<link rel="stylesheet" href="../../css/components.css?v=701d7475">
+<link rel="stylesheet" href="../../css/components.css?v=83fc3801">
   <!-- meta:start -->
   <link rel="canonical" href="https://sipi.work/topics/interfaces/lpddr5x.html">
   <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
@@ -253,7 +253,7 @@
     <p>
       Point-to-point, controller to DRAM, routed on a phone or compute board over roughly 10–30 mm — or
       no board at all when the DRAM is stacked on the package. There is no DIMM, no connector and no
-      fly-by topology. &ldquo;Never multi-drop&rdquo; is a step too far, though: a dual-rank
+      fly-by topology; the <a href="ddr5.html#lpddr5x-vs-ddr5">DDR5 page</a> sets the two side by side. &ldquo;Never multi-drop&rdquo; is a step too far, though: a dual-rank
       configuration puts two devices on the same data net, and the topology, loading and timing that
       follow depend on rank count, transfer direction, and the particular controller and PHY. Check
       the configuration before assuming the simple case.
@@ -498,7 +498,7 @@
   <!-- pager:start -->
   <nav class="pager" aria-label="Previous and next topic">
     <a class="prev" href="../../topics/package-board/package-and-system.html"><span class="dir">Previous</span><span>Package Interconnects as Transmission Lines</span></a>
-    <a class="next" href="../../topics/interfaces/pcie-gen4-gen5.html"><span class="dir">Next</span><span>PCIe Gen 4 and Gen 5 Signal Integrity: Loss and EQ</span></a>
+    <a class="next" href="../../topics/interfaces/ddr5.html"><span class="dir">Next</span><span>DDR5 Signal Integrity: Fly-by, ODT, DFE and Training</span></a>
   </nav>
   <!-- pager:end -->
 </main>
@@ -520,7 +520,7 @@
 <script src="../../js/site.js?v=61b8ff31" defer></script>
 <script src="../../js/viz-kit.js?v=cb18bcf0" defer></script>
 <script src="../../js/viz/lpddr.js?v=c201fbab" defer></script>
-<script src="../../js/viz-loader.js?v=1d4bfbd7" defer></script>
+<script src="../../js/viz-loader.js?v=28f89557" defer></script>
 <script src="../../js/search.js?v=f57dea26" defer></script>
 </body>
 </html>

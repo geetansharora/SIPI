@@ -163,6 +163,29 @@
       ]
     },
     {
+      "url": "topics/interfaces/ddr5.html",
+      "panels": [
+        "ddr5",
+        "ddr5Flyby"
+      ],
+      "presets": [
+        "bare",
+        "base",
+        "emptyFar",
+        "emptyNear",
+        "far",
+        "fast",
+        "nodfe",
+        "one",
+        "open",
+        "r4800",
+        "r6400",
+        "r8800",
+        "read",
+        "unterm"
+      ]
+    },
+    {
       "url": "topics/interfaces/lpddr5x.html",
       "panels": [
         "lpddrBudget"
@@ -470,8 +493,8 @@
     }
   ],
   "totals": {
-    "pages": 42,
-    "panels": 43,
-    "presets": 143
+    "pages": 43,
+    "panels": 45,
+    "presets": 157
   }
 }

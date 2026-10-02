@@ -24,14 +24,14 @@ HTTP, and it hides itself when it cannot fetch `topics.json`.
 
 | | |
 |---|---|
-| Topic pages | **74**, all `live`, each with a `deeper` section and its own review date |
-| Words | 151470; median 2186 per page |
-| Interactive panels | **42**, including four labs and twelve calculators |
-| SVG figures | 86 |
+| Topic pages | **75**, all `live`, each with a `deeper` section and its own review date |
+| Words | 157799; median 2193 per page |
+| Interactive panels | **44**, including four labs and twelve calculators |
+| SVG figures | 93 |
 | Arithmetic claims checked | **165** across 43 pages (`check-numbers.py`) |
-| Model assertions | **1014** (`check-models.js`), with **0 claims pending** |
+| Model assertions | **1046** (`check-models.js`), with **0 claims pending** |
 | Mutation coverage | **68 of 68** known defects have an assertion that provably catches them (`mutate.js`). This is regression coverage for defects already found, not a measure of what the gates would catch in general |
-| Specification claims | **43 tracked: 18 verified, 21 scoped, 4 awaiting a primary source** | <!-- generated from docs/claims.json -->
+| Specification claims | **63 tracked: 34 verified, 24 scoped, 5 awaiting a primary source** | <!-- generated from docs/claims.json -->
 
 ## How it is checked
 

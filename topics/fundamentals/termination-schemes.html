@@ -13,7 +13,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
 <link rel="stylesheet" href="../../css/base.css?v=1e3ae753">
-<link rel="stylesheet" href="../../css/components.css?v=701d7475">
+<link rel="stylesheet" href="../../css/components.css?v=83fc3801">
   <!-- meta:start -->
   <link rel="canonical" href="https://sipi.work/topics/fundamentals/termination-schemes.html">
   <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
@@ -174,7 +174,7 @@
           <tr><td>Parallel to GND</td><td>at the load</td><td>V<sub>load</sub>²/Z₀ while high</td><td>V<sub>s</sub>·R<sub>L</sub>/(R<sub>s</sub>+R<sub>L</sub>)</td><td>rare on its own</td></tr>
           <tr><td>Thevenin split</td><td>at the load</td><td>continuous, both states</td><td>full, biased</td><td>legacy DDR command/address</td></tr>
           <tr><td>AC (R + C)</td><td>at the load</td><td>none DC; C·V²·f AC</td><td>full</td><td>clocks with a fixed duty cycle</td></tr>
-          <tr><td>On-die (ODT)</td><td>inside the receiver</td><td>gated per burst</td><td>full</td><td>LPDDR5X, PCIe, USB, UFS</td></tr>
+          <tr><td>On-die (ODT)</td><td>inside the receiver</td><td>gated per burst</td><td>full</td><td>DDR5, LPDDR5X, PCIe, USB, UFS</td></tr>
         </tbody>
       </table>
     </div>
@@ -370,6 +370,7 @@
       <li><a href="characteristic-impedance.html">Characteristic Impedance (Z0) of PCB Transmission Lines</a> — the number you are matching to</li>
       <li><a href="../labs/travelling-waves.html">Lab A — travelling waves</a> — step through each scheme and watch the energy account</li>
       <li><a href="../tools/return-loss-vswr.html">VSWR, Return Loss and Reflection Coefficient Calculator</a></li>
+      <li><a href="../interfaces/ddr5.html">DDR5 Signal Integrity: Fly-by, ODT, DFE and Training</a> — on-die termination, scheduled per DRAM on a shared bus</li>
     </ul>
   </div>
 
