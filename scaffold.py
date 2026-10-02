@@ -1075,9 +1075,28 @@ def cmd_meta():
             path.write_text(new, encoding="utf-8")
             n += 1
 
-    # sitemap — every page, one source of truth
+    # sitemap — every page, one source of truth.
+    # <lastmod> is the date a page's content last changed, so it comes from the
+    # review dates, never from file times or git: `bust` re-stamps every page when
+    # an asset changes, and a lastmod that moved with it would tell a crawler that
+    # 80 pages changed when none did. A topic gives its own review date; a hub gives
+    # the newest review among the topics it lists; the model contract the newest
+    # model review. The colophon has no honest date to give, so it gives none.
+    def newest(dates):
+        dates = [d for d in dates if d and re.fullmatch(r"\d{4}-\d{2}-\d{2}", d)]
+        return max(dates) if dates else None
+    every = newest(t.get("reviewed") for t in flat)
+    in_section = lambda sid: newest(t.get("reviewed") for t in flat if t["section_id"] == sid)
+    hub_date = {"index": every, "start": every, "reference": every,
+                "labs": in_section("labs"), "calculators": in_section("tools"),
+                "model-contract": newest(c.get("reviewed") for c in MODEL_TYPES.values())}
+
+    def lastmod(path, reviewed):
+        d = reviewed if path.parent != ROOT else hub_date.get(path.stem)
+        return f"<lastmod>{d}</lastmod>" if d and re.fullmatch(r"\d{4}-\d{2}-\d{2}", d) else ""
     urls = "\n".join(
-        f"  <url><loc>{u}</loc></url>" for _p, u, *_rest in pages)
+        f"  <url><loc>{u}</loc>{lastmod(p, rv)}</url>"
+        for p, u, _t, _d, _k, _c, rv, _i in pages)
     (ROOT / "sitemap.xml").write_text(
         '<?xml version="1.0" encoding="UTF-8"?>\n'
         '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
