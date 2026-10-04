@@ -34,6 +34,22 @@
         });
       });
     });
+    /* The interview guide is three pages that are not topics, so topics.json lists
+       them separately under site.guides. Without this, "interview" finds nothing. */
+    ((data.site && data.site.guides) || []).forEach((g) => {
+      const hay = ('interview guide ' + g.title + ' ' + g.slug + ' ' + (g.keywords || []).join(' ')).toLowerCase();
+      out.push({
+        title: g.title,
+        section: 'Interview guide',
+        status: 'guide',
+        num: '',
+        href: ROOT + g.slug + '.html',
+        tool: false,
+        kw: (g.keywords || []).map((k) => k.toLowerCase()),
+        hay: hay,
+        words: hay.split(/[^a-z0-9.]+/).filter(Boolean)
+      });
+    });
     return out;
   }
 
@@ -118,7 +134,7 @@
             <a class="sr__row${i === 0 ? ' is-cur' : ''}" href="${it.href}" role="option" aria-selected="${i === 0}">
               <span class="sr__sec">${esc(it.section)}</span>
               <span class="sr__ttl">${mark(it.title, q)}</span>
-              <span class="sr__st sr__st--${it.status}">${it.status === 'live' ? 'full' : it.status === 'brief' ? 'brief' : 'soon'}</span>
+              <span class="sr__st sr__st--${it.status}">${it.status === 'live' ? 'full' : it.status === 'brief' ? 'brief' : it.status === 'guide' ? 'guide' : 'soon'}</span>
             </a>
           </li>`).join('')
       : '<li class="sr__none">Nothing matches — try “eye”, “decap”, “PCIe”, “jitter”.</li>';

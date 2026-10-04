@@ -153,7 +153,7 @@ for (const order of [
      step verifies they correctly match nothing; they exist for the day one gets
      through. Requiring them to match would make the publish check demand the
      leak it is guarding against. */
-  const DEFENSIVE = new Set(['.git', 'CLAUDE.md', 'HANDOVER.md', 'tests/experimental-labs/*']);
+  const DEFENSIVE = new Set(['.git', 'CLAUDE.md', 'HANDOVER.md', 'tests/experimental-labs/*', 'assets/social/*']);
   const inert = patterns.filter((pat) => !DEFENSIVE.has(pat)
     && !all.some((f) => hits(body(pat), f)));
   assert.deepEqual(inert, [],

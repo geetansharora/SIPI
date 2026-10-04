@@ -1,0 +1,282 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- theme:start -->
+  <meta name="theme-color" content="#F7F8FA">
+  <script>(function(){try{var t=localStorage.getItem('sipi-theme');if(t==='dark'||t==='system'){document.documentElement.setAttribute('data-theme',t);var m=document.querySelector('meta[name=theme-color]');if(m&&(t==='dark'||matchMedia('(prefers-color-scheme:dark)').matches))m.content='#0B1015';}}catch(e){}})();</script>
+  <!-- theme:end -->
+<title>Signal and Power Integrity Interview Guide | SIPI</title>
+<meta name="description" content="How SI and PI interviews run, which topics they cover with links to each, the numbers to estimate in your head, a study plan, and the wrong answers to avoid.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<link rel="stylesheet" href="css/base.css?v=1e3ae753">
+<link rel="stylesheet" href="css/components.css?v=9f8a948d">
+  <!-- meta:start -->
+  <link rel="canonical" href="https://sipi.work/interview.html">
+  <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="SIPI">
+  <meta property="og:title" content="Signal and Power Integrity Interview Guide | SIPI">
+  <meta property="og:description" content="How SI and PI interviews run, which topics they cover with links to each, the numbers to estimate in your head, a study plan, and the wrong answers to avoid.">
+  <meta property="og:url" content="https://sipi.work/interview.html">
+  <meta property="og:image" content="https://sipi.work/assets/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="SIPI: signal and power integrity, explained with interactive graphics">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Signal and Power Integrity Interview Guide | SIPI">
+  <meta name="twitter:description" content="How SI and PI interviews run, which topics they cover with links to each, the numbers to estimate in your head, a study plan, and the wrong answers to avoid.">
+  <meta name="twitter:image" content="https://sipi.work/assets/og.png">
+  <meta name="twitter:image:alt" content="SIPI: signal and power integrity, explained with interactive graphics">
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Signal and Power Integrity Interview Guide","description":"How SI and PI interviews run, which topics they cover with links to each, the numbers to estimate in your head, a study plan, and the wrong answers to avoid.","url":"https://sipi.work/interview.html","articleSection":"Interview preparation","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer","url":"https://www.linkedin.com/in/geetansh-arora-a645714a/","sameAs":["https://www.linkedin.com/in/geetansh-arora-a645714a/"]},"publisher":{"@type":"Person","name":"Geetansh Arora"},"image":"https://sipi.work/assets/og.png"}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"SIPI","item":"https://sipi.work/"},{"@type":"ListItem","position":2,"name":"Signal and Power Integrity Interview Guide"}]}</script>
+  <!-- meta:end -->
+</head>
+<body>
+
+<header class="masthead">
+  <a class="wordmark" href="index.html">SIPI</a>
+  <button class="theme-toggle" data-act="theme" type="button">Light</button>
+  <nav aria-label="Site">
+    <a href="start.html">Start</a>
+    <a href="index.html#groundwork">Topics</a>
+    <a href="labs.html">Labs</a>
+    <a href="calculators.html">Calculators</a>
+    <a href="colophon.html">About</a>
+  </nav>
+</header>
+
+<main>
+  <div class="page-head">
+    <p class="crumb"><a href="start.html">Start</a> / interview guide</p>
+    <h1>Signal and Power Integrity Interview Guide</h1>
+    <p class="byline"><!-- review:start --><span>By <a href="https://www.linkedin.com/in/geetansh-arora-a645714a/" target="_blank" rel="author noopener">Geetansh Arora</a> — Principal SI/PI Engineer</span><time datetime="2026-10-04" title="Date of the last substantive edit">Updated Oct 2026</time><!-- review:end --><span>10 min</span></p>
+    <!-- share:head:start --><div class="share share--head" data-share data-share-url="https://sipi.work/interview.html" data-share-title="Signal and Power Integrity Interview Guide"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Finterview.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Finterview.html&amp;text=Signal%20and%20Power%20Integrity%20Interview%20Guide" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=Signal%20and%20Power%20Integrity%20Interview%20Guide&amp;body=https%3A%2F%2Fsipi.work%2Finterview.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:head:end -->
+    <p class="answer">
+      Most signal and power integrity interviews test whether you understand the physics well enough to reason about a
+      problem you have not seen, not whether you remember a specification&#8217;s numbers. They draw on almost every
+      topic on this site, and lean towards signal integrity or power integrity depending on the role. This guide maps
+      what gets asked to the pages that teach it, lists the estimates you should be able to make in your head, and
+      leads to two question banks with layered answers.
+    </p>
+  </div>
+  <div class="prose">
+    <nav class="doors doors--pair" aria-label="Question banks">
+      <a class="door" href="interview-signal-integrity.html"><b>Signal integrity questions</b><span>33 questions with layered answers: lines, loss, eyes, jitter, timing budgets, crosstalk, S-parameters, equalisation, plots to read and failures to debug.</span></a>
+      <a class="door" href="interview-power-integrity.html"><b>Power integrity questions</b><span>24 questions with layered answers: the PDN, target impedance, decoupling, planes, the regulator, noise into jitter, plots and debug.</span></a>
+    </nav>
+
+    <h2 class="section-rule"><span>How SI and PI interviews tend to run</span></h2>
+    <p>
+      This describes the usual shape, not any one company&#8217;s process, and the shape varies between companies; a few stages recur. A first conversation checks fundamentals: what
+      characteristic impedance is, why reflections happen, what a decoupling capacitor really does. A technical round
+      then goes deep on one side, signal or power, depending on the role, usually by asking you to reason through a
+      mechanism and then pushing on it with follow-ups. Many interviews also include a design or debug discussion,
+      where you are given a symptom and asked how you would find the cause, and a walk through your own work.
+    </p>
+    <p>
+      The follow-ups are where interviews are decided. A first answer that names the right effect is expected; what
+      separates candidates is whether they can say why it happens, put a number on it, and say what they would do about
+      it. That is why each question in the two banks is answered in three layers.
+    </p>
+
+    <h2 class="section-rule"><span>What gets asked, and where to read it</span></h2>
+    <div class="table-scroll">
+      <table class="data">
+        <caption>Topic areas, what interviewers probe in each, and the pages that cover them</caption>
+        <thead><tr><th>Area</th><th>What gets probed</th><th>Read</th></tr></thead>
+        <tbody>
+          <tr><td>Transmission lines</td><td>what sets impedance, when a trace is a line, what a discontinuity does, which termination to use</td><td><a href="topics/fundamentals/characteristic-impedance.html">impedance</a> &#183; <a href="topics/fundamentals/when-is-a-trace-a-transmission-line.html">critical length</a> &#183; <a href="topics/fundamentals/reflections.html">reflections</a> &#183; <a href="topics/fundamentals/termination-schemes.html">termination</a> &#183; <a href="topics/fundamentals/tdr.html">TDR</a></td></tr>
+          <tr><td>Edges, loss and ISI</td><td>why the edge and not the clock sets bandwidth, skin and dielectric loss, how loss turns into ISI</td><td><a href="topics/fundamentals/edge-rate-not-clock-rate.html">edge rate</a> &#183; <a href="topics/fundamentals/loss-mechanisms.html">loss</a> &#183; <a href="topics/fundamentals/isi.html">ISI</a></td></tr>
+          <tr><td>Eyes, jitter and BER</td><td>what an eye shows and hides, jitter decomposition, BER extrapolation</td><td><a href="topics/fundamentals/eye-diagram.html">eye diagrams</a> &#183; <a href="topics/fundamentals/jitter-taxonomy.html">jitter</a> &#183; <a href="topics/fundamentals/bathtub-curves.html">bathtubs</a></td></tr>
+          <tr><td>Coupling and return paths</td><td>NEXT against FEXT, where return current flows, splits, slots and vias</td><td><a href="topics/fundamentals/crosstalk.html">crosstalk</a> &#183; <a href="topics/fundamentals/capacitive-inductive-coupling.html">coupling</a> &#183; <a href="topics/fundamentals/return-current-paths.html">return paths</a> &#183; <a href="topics/fundamentals/vias.html">vias</a></td></tr>
+          <tr><td>Differential signalling and S-parameters</td><td>modes, mode conversion, reading S11 and S21, passivity and causality</td><td><a href="topics/fundamentals/differential-signalling.html">differential</a> &#183; <a href="topics/fundamentals/s-parameters.html">S-parameters</a></td></tr>
+          <tr><td>Channels and receivers</td><td>budgets, CTLE, FFE, DFE, CDR, NRZ against PAM4</td><td><a href="topics/signal-integrity/channel-budgeting.html">budgets</a> &#183; <a href="topics/signal-integrity/what-closes-the-eye.html">eye closure</a> &#183; <a href="topics/signal-integrity/equalization.html">equalisation</a> &#183; <a href="topics/signal-integrity/receiver-and-clock.html">CDR</a> &#183; <a href="topics/signal-integrity/nrz-vs-pam4.html">NRZ vs PAM4</a></td></tr>
+          <tr><td>Package and board</td><td>stackups, breakout, layer changes, connectors, tolerance</td><td><a href="topics/package-board/stackup-design.html">stackups</a> &#183; <a href="topics/package-board/bga-escape-routing.html">escape routing</a> &#183; <a href="topics/package-board/layer-transitions.html">layer changes</a> &#183; <a href="topics/package-board/connectors-cables.html">connectors</a> &#183; <a href="topics/package-board/manufacturing-tolerance.html">tolerance</a> &#183; <a href="topics/package-board/package-and-system.html">packages</a></td></tr>
+          <tr><td>The PDN</td><td>what it must do, target impedance, the three droops, decoupling, anti-resonance, planes</td><td><a href="topics/power-integrity/what-is-the-pdn.html">the PDN</a> &#183; <a href="topics/power-integrity/target-impedance.html">target impedance</a> &#183; <a href="topics/power-integrity/three-frequency-domains.html">three droops</a> &#183; <a href="topics/power-integrity/decoupling-capacitors.html">decoupling</a> &#183; <a href="topics/power-integrity/anti-resonance.html">anti-resonance</a> &#183; <a href="topics/power-integrity/plane-resonance.html">planes</a> &#183; <a href="topics/power-integrity/real-capacitors.html">MLCC derating</a></td></tr>
+          <tr><td>PI at the silicon</td><td>the regulator&#8217;s loop, DC drop, switching noise, supply-induced jitter, chip&#8211;package&#8211;system analysis</td><td><a href="topics/power-integrity/vrm-loop-bandwidth.html">VRM loop</a> &#183; <a href="topics/power-integrity/ir-drop-electromigration.html">IR drop</a> &#183; <a href="topics/power-integrity/ssn-ground-bounce.html">SSN</a> &#183; <a href="topics/power-integrity/pdn-induced-jitter.html">PSIJ</a> &#183; <a href="topics/power-integrity/cps-co-analysis.html">CPS analysis</a></td></tr>
+          <tr><td>Method</td><td>how a channel or PDN is simulated, measured, correlated and reported</td><td><a href="topics/methodology/simulation-flow.html">simulation flow</a> &#183; <a href="topics/signal-integrity/ibis-ami-spice.html">IBIS-AMI</a> &#183; <a href="topics/signal-integrity/statistical-vs-time-domain.html">statistical vs time domain</a> &#183; <a href="topics/signal-integrity/de-embedding.html">de-embedding</a> &#183; <a href="topics/methodology/field-solvers.html">field solvers</a> &#183; <a href="topics/methodology/measurement-practice.html">measurement</a> &#183; <a href="topics/methodology/correlation.html">correlation</a> &#183; <a href="topics/methodology/reporting-margin.html">reporting margin</a> &#183; <a href="topics/methodology/debug-playbook.html">debug</a></td></tr>
+          <tr><td>Interfaces, as worked examples</td><td>how the concepts combine on a real bus; the specification&#8217;s numbers are rarely the question</td><td><a href="topics/interfaces/ddr5.html">DDR5</a> &#183; <a href="topics/interfaces/lpddr6.html">LPDDR6</a> &#183; <a href="topics/interfaces/pcie-gen4-gen5.html">PCIe 4/5</a> &#183; <a href="topics/interfaces/pcie-gen6.html">PCIe 6</a></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2 class="section-rule" id="numbers"><span>Numbers to estimate in your head</span></h2>
+    <p>
+      Interviewers like quick estimates, because they show that the formulas mean something to you. Try each one before
+      opening it. Every answer links to the calculator or page that does it properly.
+    </p>
+    <div class="drill">
+      <details class="drill__card">
+        <summary>A 10 Gb/s NRZ link: how long is one bit, and what is its Nyquist frequency?</summary>
+        <p>One UI is the inverse of the bit rate: <span class="num">100 ps</span>. NRZ&#8217;s fastest pattern, 1010&#8230;, repeats every two bits, so the Nyquist frequency is half the bit rate: <span class="num">5 GHz</span>.</p>
+        <p class="drill__link"><a href="topics/tools/bit-rate-ui-nyquist.html">Bit rate, UI and Nyquist calculator</a></p>
+      </details>
+      <details class="drill__card">
+        <summary>A 50 ps edge: up to what frequency does its spectrum matter?</summary>
+        <p>The knee frequency, about 0.5/t<sub>r</sub>: <span class="num">10 GHz</span>. The &#8722;3 dB bandwidth of a single pole with that rise time is 0.35/t<sub>r</sub>, <span class="num">7 GHz</span>. The clock rate does not enter.</p>
+        <p class="drill__link"><a href="topics/fundamentals/edge-rate-not-clock-rate.html">Rise Time and Bandwidth: Edge Rate, Not Clock Rate</a></p>
+      </details>
+      <details class="drill__card">
+        <summary>How fast does a signal travel on FR-4?</summary>
+        <p>About <span class="num">170 ps per inch</span> in stripline, roughly 6.7 ps/mm, set by D<sub>k</sub> near 4. A microstrip is faster, about 147 ps per inch, because part of its field is in air.</p>
+        <p class="drill__link"><a href="topics/fundamentals/characteristic-impedance.html">Characteristic Impedance (Z0) of PCB Transmission Lines</a></p>
+      </details>
+      <details class="drill__card">
+        <summary>A 100 ps edge on stripline: when is the trace a transmission line?</summary>
+        <p>When the round trip exceeds about a third of the rise time, 2T<sub>d</sub> &gt; t<sub>r</sub>/3, so the critical length is t<sub>r</sub>/(6&#183;t<sub>pd</sub>): about <span class="num">2.5 mm</span> at 6.7 ps/mm. Almost every high-speed net is longer.</p>
+        <p class="drill__link"><a href="topics/fundamentals/when-is-a-trace-a-transmission-line.html">When Is a Trace a Transmission Line? Critical Length</a></p>
+      </details>
+      <details class="drill__card">
+        <summary>A 50 &#937; line into 75 &#937;, and into 30 &#937;: what reflects?</summary>
+        <p>&#915; = (Z<sub>L</sub> &#8722; Z<sub>0</sub>)/(Z<sub>L</sub> + Z<sub>0</sub>): <span class="num">+0.2</span> into 75 &#937;, <span class="num">&#8722;0.25</span> into 30 &#937;. An open gives +1, a short &#8722;1, a match 0.</p>
+        <p class="drill__link"><a href="topics/fundamentals/reflections.html">Transmission-Line Reflections and Ringing</a></p>
+      </details>
+      <details class="drill__card">
+        <summary>20 dB of return loss: how big is the reflection?</summary>
+        <p>|&#915;| = 10<sup>&#8722;RL/20</sup> = <span class="num">0.1</span>, a tenth of the incident voltage, and a VSWR of about <span class="num">1.22</span>.</p>
+        <p class="drill__link"><a href="topics/tools/return-loss-vswr.html">Return loss and VSWR calculator</a></p>
+      </details>
+      <details class="drill__card">
+        <summary>&#8722;3 dB, &#8722;6 dB, &#8722;20 dB: what fractions are they?</summary>
+        <p>In voltage: &#8722;6 dB is a half, &#8722;20 dB a tenth, &#8722;3 dB about 0.707. In power, &#8722;3 dB is a half and &#8722;10 dB a tenth.</p>
+        <p class="drill__link"><a href="topics/groundwork/units-and-conventions.html">SI/PI Units and Conventions: dB, Rise Time, RMS</a></p>
+      </details>
+      <details class="drill__card">
+        <summary>How deep does current flow in copper at 1 GHz?</summary>
+        <p>The skin depth is about <span class="num">2.06 &#181;m</span>, and it shrinks as 1/&#8730;f: about 0.65 &#181;m at 10 GHz. That is why conductor loss grows as &#8730;f.</p>
+        <p class="drill__link"><a href="topics/tools/skin-depth.html">Skin depth calculator</a></p>
+      </details>
+      <details class="drill__card">
+        <summary>A 60 mil via stub in D<sub>k</sub> 4: where does it notch the channel?</summary>
+        <p>An open stub resonates when it is a quarter wavelength long: f = c/(4&#183;L&#183;&#8730;D<sub>k</sub>), about <span class="num">24.6 GHz</span>. Halve the stub and the notch doubles in frequency; backdrilling moves it out of band.</p>
+        <p class="drill__link"><a href="topics/tools/via-stub-resonance.html">Via stub resonance calculator</a></p>
+      </details>
+      <details class="drill__card">
+        <summary>A 0.8 V rail, 3% ripple, a 20 A load step: what impedance must the PDN hold?</summary>
+        <p>Z<sub>target</sub> = V<sub>dd</sub>&#183;ripple/&#916;I = 0.8 &#215; 0.03 / 20 = <span class="num">1.2 m&#937;</span>, across the band where that step has energy.</p>
+        <p class="drill__link"><a href="topics/tools/target-impedance-calculator.html">Target impedance calculator</a></p>
+      </details>
+      <details class="drill__card">
+        <summary>A 100 nF capacitor with 1.6 nH of loop inductance: where does it stop helping?</summary>
+        <p>At its self-resonance, 1/(2&#960;&#8730;LC): about <span class="num">12.6 MHz</span>. Above it the capacitor is an inductor, and only less inductance, not more capacitance, lowers the impedance.</p>
+        <p class="drill__link"><a href="topics/tools/lc-rlc-resonance.html">LC and RLC resonance calculator</a></p>
+      </details>
+      <details class="drill__card">
+        <summary>1 nH of shared return inductance, 20 mA switching in 50 ps: how much ground bounce?</summary>
+        <p>V = L&#183;di/dt, taking di/dt as the current over the edge time: 1 nH &#215; 20 mA / 50 ps = <span class="num">0.4 V</span> for one driver. Several drivers through the same inductance add, and a smooth edge peaks higher than the average.</p>
+        <p class="drill__link"><a href="topics/power-integrity/ssn-ground-bounce.html">Simultaneous Switching Noise and Ground Bounce</a></p>
+      </details>
+      <details class="drill__card">
+        <summary>At a BER of 10<sup>&#8722;12</sup>, how many sigma of random jitter do you allow?</summary>
+        <p>Q &#8776; <span class="num">7.03</span> each side, so total jitter is deterministic jitter plus about 14.07 &#215; the rms random jitter.</p>
+        <p class="drill__link"><a href="topics/tools/ber-q-jitter.html">BER, Q and jitter calculator</a></p>
+      </details>
+      <details class="drill__card">
+        <summary>PAM4 against NRZ at the same swing: how big is each eye?</summary>
+        <p>A third of the height: three eyes share the swing, a penalty of about <span class="num">9.5 dB</span>, paid back only if halving the symbol rate saves more loss than that.</p>
+        <p class="drill__link"><a href="topics/signal-integrity/nrz-vs-pam4.html">NRZ vs PAM4 Signaling: Bandwidth and SNR Trade-off</a></p>
+      </details>
+      <details class="drill__card">
+        <summary>A 1 pF via on a 50 &#937; line: how long does its dip on a TDR last?</summary>
+        <p>It behaves like an RC with time constant Z<sub>0</sub>C/2 = <span class="num">25 ps</span>, and the area of the dip in &#961;&#183;time is the same 25 ps for any edge.</p>
+        <p class="drill__link"><a href="topics/fundamentals/tdr.html">TDR (Time-Domain Reflectometry): Reading PCB Impedance</a></p>
+      </details>
+      <details class="drill__card">
+        <summary>Two capacitors in parallel: where does the anti-resonance peak sit, and what sets its height?</summary>
+        <p>Between their self-resonances, where one capacitor&#8217;s inductance resonates with the other&#8217;s capacitance. Its height is set by the resistance in the loop: the closer the ESR is to &#8730;(L/C), the flatter the curve.</p>
+        <p class="drill__link"><a href="topics/power-integrity/anti-resonance.html">PDN Anti-Resonance and Impedance Peaks</a></p>
+      </details>
+    </div>
+
+    <h2 class="section-rule"><span>How to answer well</span></h2>
+    <ol class="tight">
+      <li><b>Start with the mechanism in one sentence.</b> &#8220;Part of the wave reflects because the line suddenly
+        has a different ratio of voltage to current&#8221; beats a list of formulas.</li>
+      <li><b>Then the equation or the number.</b> &#915; = (Z<sub>L</sub> &#8722; Z<sub>0</sub>)/(Z<sub>L</sub> + Z<sub>0</sub>),
+        and what it gives for the case in front of you.</li>
+      <li><b>Then the trade-off.</b> Every fix costs something: power, swing, area, layers, margin elsewhere. Saying what
+        it costs is what makes an answer sound like engineering.</li>
+      <li><b>Then how you would check it.</b> A simulation, a TDR, a VNA sweep, a probe on the rail. Saying how you
+        would find out shows that you can tell what you know from what you expect.</li>
+      <li><b>When you don&#8217;t know, say what you would do.</b> &#8220;I haven&#8217;t worked with that, but I would
+        expect&#8230; and I would confirm it by&#8230;&#8221; is a good answer; a guess presented as a fact is not.</li>
+    </ol>
+    <p>
+      For &#8220;tell me about a hard problem you solved&#8221;, use the same order: the symptom, how you narrowed the cause
+      down, the root cause with the evidence for it, the fix and what it cost, and what you would do differently. The
+      <a href="topics/methodology/debug-playbook.html">debug playbook</a> is a good model of the reasoning interviewers
+      want to hear.
+    </p>
+
+    <h2 class="section-rule"><span>Prepare one story of your own</span></h2>
+    <p>
+      &#8220;Tell me about a problem you solved&#8221; is the one question you can prepare completely, because the material is
+      yours. Choose two problems, one signal integrity and one power integrity if you have them, and write each one in six
+      short answers:
+    </p>
+    <ol class="tight">
+      <li><b>The symptom.</b> What was observed, where, and under what conditions? One sentence a non-specialist could follow.</li>
+      <li><b>The first suspects.</b> What did you expect the cause to be, and why?</li>
+      <li><b>The narrowing.</b> Which measurements or simulations ruled causes in or out, in what order, and what did each cost?</li>
+      <li><b>The root cause, and the evidence.</b> What showed it was the cause rather than a coincidence, and what would you have seen if it were not?</li>
+      <li><b>The fix, and its price.</b> Swing, power, area, layers, schedule, or margin somewhere else.</li>
+      <li><b>In hindsight.</b> What would have caught it earlier, and what do you do differently now?</li>
+    </ol>
+    <p>
+      Practise telling it in two minutes, then in thirty seconds. Describe the mechanism and the method; there is no need
+      to name a product, a customer or any figure you are not free to share, and the reasoning is what the story is for.
+    </p>
+
+    <h2 class="section-rule"><span>Common misconceptions, and what to say instead</span></h2>
+    <p>
+      Each of these has a grain of truth, which is why it is tempting. The better answer keeps that grain and adds the
+      condition under which it stops being true.
+    </p>
+    <ul class="tight">
+      <li><b>&#8220;It&#8217;s a 100 MHz clock, so it isn&#8217;t a transmission line.&#8221;</b> The edge decides, not the clock: a 100 MHz clock with a 100 ps edge has energy to several gigahertz and its traces ring like any fast link. <a href="topics/fundamentals/edge-rate-not-clock-rate.html">Why</a>.</li>
+      <li><b>&#8220;Add more decoupling capacitors.&#8221;</b> Above a few tens of megahertz a capacitor is its mounting inductance, and mixed values can raise a peak between them. The fix is usually less inductance or damping, chosen against a target impedance. <a href="topics/power-integrity/anti-resonance.html">Why</a>.</li>
+      <li><b>&#8220;A differential pair doesn&#8217;t need a reference plane.&#8221;</b> Its odd mode carries the signal, but any imbalance creates common-mode current that still needs a return, and a pair crossing a split radiates and converts modes. <a href="topics/fundamentals/differential-signalling.html">Why</a>.</li>
+      <li><b>&#8220;Terminate everything to match.&#8221;</b> Parallel termination burns DC power; series termination suits point-to-point nets and leaves the line unterminated at the far end; on-die termination is switched in only when it is needed. The right choice depends on topology, power and swing. <a href="topics/fundamentals/termination-schemes.html">Why</a>.</li>
+      <li><b>&#8220;The stackup says 50 &#937;, so the channel is 50 &#937;.&#8221;</b> Vias, pads, connectors, packages and etch tolerance all add discontinuities, and a TDR of the real channel rarely reads flat. <a href="topics/package-board/manufacturing-tolerance.html">Why</a>.</li>
+      <li><b>&#8220;Spacing fixes crosstalk.&#8221;</b> Spacing helps, but so do a closer reference plane, shorter coupled length for far-end crosstalk, stripline instead of microstrip, slower edges and avoiding gaps in the return path. <a href="topics/fundamentals/crosstalk.html">Why</a>.</li>
+      <li><b>&#8220;The simulated eye is open, so we have margin.&#8221;</b> An eye from a few thousand bits says little about 10<sup>&#8722;12</sup>; margin needs jitter and noise extrapolated, corners, and a stated reference plane. <a href="topics/fundamentals/bathtub-curves.html">Why</a>.</li>
+      <li><b>&#8220;A DFE can fix any ISI.&#8221;</b> It cancels only post-cursor ISI, only as many bits as it has taps, only within its tap ranges, and a wrong decision feeds back. <a href="topics/signal-integrity/equalization.html">Why</a>.</li>
+      <li><b>&#8220;Keep the PDN below target from DC to infinity.&#8221;</b> The board cannot control impedance above the frequency where package and on-die capacitance take over; each part of the PDN owns a band. <a href="topics/power-integrity/three-frequency-domains.html">Why</a>.</li>
+    </ul>
+
+    <h2 class="section-rule"><span>A study plan</span></h2>
+    <p><b>One evening.</b> The numbers above, the common misconceptions, and the first ten questions in each bank.</p>
+    <p><b>Four weeks.</b></p>
+    <ol class="tight">
+      <li><b>Week 1, foundations.</b> <a href="topics/fundamentals/characteristic-impedance.html">Impedance</a>, <a href="topics/fundamentals/reflections.html">reflections</a>, <a href="topics/fundamentals/termination-schemes.html">termination</a>, <a href="topics/fundamentals/return-current-paths.html">return paths</a>, <a href="topics/fundamentals/edge-rate-not-clock-rate.html">edges and bandwidth</a>, and the <a href="topics/labs/travelling-waves.html">travelling-waves lab</a>.</li>
+      <li><b>Week 2, the channel.</b> <a href="topics/fundamentals/loss-mechanisms.html">Loss</a>, <a href="topics/fundamentals/isi.html">ISI</a>, <a href="topics/fundamentals/eye-diagram.html">eyes</a>, <a href="topics/fundamentals/jitter-taxonomy.html">jitter</a>, <a href="topics/fundamentals/crosstalk.html">crosstalk</a>, <a href="topics/fundamentals/s-parameters.html">S-parameters</a>, <a href="topics/signal-integrity/equalization.html">equalisation</a>, and the <a href="topics/labs/one-channel.html">channel lab</a>.</li>
+      <li><b>Week 3, power.</b> <a href="topics/power-integrity/what-is-the-pdn.html">The PDN</a>, <a href="topics/power-integrity/target-impedance.html">target impedance</a>, <a href="topics/power-integrity/three-frequency-domains.html">the three droops</a>, <a href="topics/power-integrity/decoupling-capacitors.html">decoupling</a>, <a href="topics/power-integrity/anti-resonance.html">anti-resonance</a>, <a href="topics/power-integrity/pdn-induced-jitter.html">supply-induced jitter</a>, and the <a href="topics/labs/pdn-chain.html">PDN lab</a>.</li>
+      <li><b>Week 4, practice.</b> <a href="topics/package-board/stackup-design.html">Stackups</a>, <a href="topics/fundamentals/vias.html">vias</a>, <a href="topics/methodology/simulation-flow.html">simulation flow</a>, <a href="topics/methodology/measurement-practice.html">measurement</a>, <a href="topics/methodology/debug-playbook.html">debug</a>, one interface page as a worked example, and both question banks out loud.</li>
+    </ol>
+    <p>The <a href="start.html">learning paths</a> cover the same ground in a guided order, with an experiment at each step.</p>
+    <!-- share:foot:start --><div class="share share--foot" data-share data-share-url="https://sipi.work/interview.html" data-share-title="Signal and Power Integrity Interview Guide"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Finterview.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Finterview.html&amp;text=Signal%20and%20Power%20Integrity%20Interview%20Guide" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=Signal%20and%20Power%20Integrity%20Interview%20Guide&amp;body=https%3A%2F%2Fsipi.work%2Finterview.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:foot:end -->
+  </div>
+</main>
+
+<footer class="site-foot">
+  <span>SIPI &#8212; signal and power integrity, visualised.</span>
+  <nav class="site-foot__nav" aria-label="Site, footer">
+    <a href="start.html">Start</a>
+    <a href="labs.html">Labs</a>
+    <a href="calculators.html">Calculators</a>
+    <a href="reference.html">Reference</a>
+    <a href="interview.html">Interview guide</a>
+    <a href="colophon.html">About &amp; AI disclosure</a>
+    <a href="model-contract.html">Model assumptions</a>
+    <a href="docs/claims.md">Claim ledger (Markdown)</a>
+  </nav>
+  <span>Created and directed by <a href="https://www.linkedin.com/in/geetansh-arora-a645714a/" target="_blank" rel="author noopener">Geetansh Arora</a>. Text <a href="LICENSE-CONTENT">CC BY 4.0</a>, code <a href="LICENSE-CODE">MIT</a>.</span>
+</footer>
+
+<script src="js/site.js?v=61b8ff31" defer></script>
+</body>
+</html>

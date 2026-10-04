@@ -246,6 +246,73 @@ def stamp_share():
     return n
 
 
+def bank_count(stem):
+    """Questions in an interview bank, counted from the page itself."""
+    f = ROOT / f"{stem}.html"
+    return len(re.findall(r'<div class="qa" id="', f.read_text(encoding="utf-8"))) if f.exists() else 0
+
+
+GUIDE_FOOT = '\n  </div>\n</main>'
+
+
+def stamp_guides():
+    """Byline and share rows on the interview guide's three pages.
+
+    They are not topics, so the topic stampers never reach them and they shipped
+    with no date, no share row and no structured data. The record lives in
+    topics.json under site.guides: `updated` says when the page last changed, and
+    `reviewed`, added by whoever reviews it, turns that into a technical-review
+    date exactly as it does for a topic. Nothing here infers a review: a page with
+    no `reviewed` says "Updated", which is all it can honestly say."""
+    MONTHS = ("Jan", "Feb", "Mar", "Apr", "May", "Jun",
+              "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
+    data, _flat = load()
+    site = data["site"]
+    author = site.get("author", "Geetansh Arora")
+    base = site["url"].rstrip("/")
+    n = 0
+    for g in site.get("guides", []):
+        path = ROOT / f'{g["slug"]}.html'
+        if not path.exists():
+            continue
+        html = path.read_text(encoding="utf-8")
+        if g.get("reviewed"):
+            y, mo, d = g["reviewed"].split("-")
+            when = (f'<time datetime="{esc(g["reviewed"])}" title="Technical review by '
+                    f'{esc(author)} on this date">{int(d)} {MONTHS[int(mo) - 1]} {y}</time>')
+        else:
+            y, mo, _d = g["updated"].split("-")
+            when = (f'<time datetime="{esc(g["updated"])}" title="Date of the last substantive '
+                    f'edit">Updated {MONTHS[int(mo) - 1]} {y}</time>')
+        blk = (REVIEW_START + f"<span>By {author_link(esc(author))} \u2014 Principal SI/PI Engineer</span>"
+               + when + REVIEW_END)
+        m = re.search(r'<p class="byline">([\s\S]*?)</p>', html)
+        if not m:
+            continue
+        inner = m.group(1)
+        if REVIEW_START in inner:
+            inner = re.sub(re.escape(REVIEW_START) + r"[\s\S]*?" + re.escape(REVIEW_END),
+                           lambda _m: blk, inner)
+        else:                              # first run: the By-span becomes the stamped block
+            inner = re.sub(r"<span>By [\s\S]*?</span>", lambda _m: blk, inner, count=1)
+        out = html[:m.start(1)] + inner + html[m.end(1):]
+        url = f'{base}/{g["slug"]}.html'
+        for where in ("head", "foot"):
+            start, end = SHARE_MARKERS[where]
+            row = start + share_html(url, g["title"], where) + end
+            if start in out:
+                out = re.sub(re.escape(start) + r"[\s\S]*?" + re.escape(end), lambda _m: row, out)
+            elif where == "head":
+                m = re.search(r'<p class="byline">[\s\S]*?</p>', out)
+                out = out[:m.end()] + "\n    " + row + out[m.end():]
+            elif GUIDE_FOOT in out:
+                out = out.replace(GUIDE_FOOT, "\n    " + row + GUIDE_FOOT, 1)
+        if out != html:
+            path.write_text(out, encoding="utf-8")
+            n += 1
+    return n
+
+
 def cmd_new():
     _, flat = load()
     made = 0
@@ -712,6 +779,7 @@ def stamp_footer():
                   f'    <a href="{prefix}labs.html">Labs</a>\n'
                   f'    <a href="{prefix}calculators.html">Calculators</a>\n'
                   f'    <a href="{prefix}reference.html">Reference</a>\n'
+                  f'    <a href="{prefix}interview.html">Interview guide</a>\n'
                   f'    <a href="{prefix}colophon.html">About &amp; AI disclosure</a>\n'
                   f'    <a href="{prefix}model-contract.html">Model assumptions</a>\n'
                   f'    <a href="{prefix}docs/claims.md">Claim ledger (Markdown)</a>\n'
@@ -759,6 +827,7 @@ def cmd_relink():
     block = "  <!-- map:start -->\n" + map_html(data) + "\n  <!-- map:end -->"
     sh = stamp_share()
     print(f"share rows stamped on {sh} page(s)")
+    print(f"interview guide bylines and share rows stamped on {stamp_guides()} page(s)")
     new, hits = re.subn(r"  <!-- map:start -->.*?<!-- map:end -->", lambda _m: block,
                         html, flags=re.S)
     if hits and new != html:
@@ -919,7 +988,9 @@ def cmd_theme():
 # The pages at the site root that are not topics. One list, read by both the
 # sitemap writer and the sitemap check: they were two lists, and a new hub page
 # (calculators.html) was added to one and failed the check against the other.
-STANDALONE_PAGES = ("start", "labs", "calculators", "reference", "model-contract", "colophon")
+INTERVIEW_PAGES = ("interview", "interview-signal-integrity", "interview-power-integrity")
+STANDALONE_PAGES = ("start", "labs", "calculators", "reference", "model-contract", "colophon"
+                    ) + INTERVIEW_PAGES
 
 
 def cmd_meta():
@@ -995,13 +1066,20 @@ def cmd_meta():
         # Nothing is invented -- headline, section and date all come from the
         # source the page itself was stamped from.
         if crumb:
+            # Topics carry (section, section id). A guide page names its own trail,
+            # because "Interview guide" is not a section of the topic map:
+            # ("trail", [(name, url), ...], articleSection).
+            if crumb[0] == "trail":
+                section, trail = crumb[2], crumb[1]
+            else:
+                section, trail = crumb[0], [(crumb[0], base + "/#" + crumb[1])]
             art = {
                 "@context": "https://schema.org",
                 "@type": "TechArticle",
                 "headline": title.split(" | ")[0],
                 "description": desc,
                 "url": url,
-                "articleSection": crumb[0],
+                "articleSection": section,
                 "isPartOf": {"@type": "WebSite", "name": "SIPI", "url": base + "/"},
                 "author": dict({"@type": "Person", "name": "Geetansh Arora",
                                 "jobTitle": "Principal SI/PI Engineer"},
@@ -1016,13 +1094,10 @@ def cmd_meta():
                 "@context": "https://schema.org",
                 "@type": "BreadcrumbList",
                 "itemListElement": [
-                    {"@type": "ListItem", "position": 1, "name": "SIPI",
-                     "item": base + "/"},
-                    {"@type": "ListItem", "position": 2, "name": crumb[0],
-                     "item": base + "/#" + crumb[1]},
-                    {"@type": "ListItem", "position": 3,
-                     "name": title.split(" | ")[0]},
-                ],
+                    {"@type": "ListItem", "position": i + 1, "name": name, "item": item}
+                    for i, (name, item) in enumerate([("SIPI", base + "/")] + list(trail))
+                ] + [{"@type": "ListItem", "position": len(trail) + 2,
+                      "name": title.split(" | ")[0]}],
             }
             for obj in (art, crumbs):
                 website += ('\n  <script type="application/ld+json">'
@@ -1052,11 +1127,16 @@ def cmd_meta():
     # start, labs and reference are collections of links rather than prose, so
     # they are websites; the colophon and the model contract are documents.
     HUBS = {"start", "labs", "calculators", "reference"}
+    guides = {g["slug"]: g for g in site.get("guides", [])}
     for stem in STANDALONE_PAGES:
         f = ROOT / (stem + ".html")
         if f.exists():
+            crumb = reviewed = None
+            if stem in guides:
+                trail = [] if stem == "interview" else [("Interview guide", f"{base}/interview.html")]
+                crumb, reviewed = ("trail", trail, "Interview preparation"), guides[stem].get("reviewed")
             pages.append((f, f"{base}/{stem}.html", None, None,
-                          "website" if stem in HUBS else "article", None, None, None))
+                          "website" if stem in HUBS else "article", crumb, reviewed, None))
 
     n = 0
     for path, url, title, desc, kind, crumb, reviewed, image in pages:
@@ -1089,7 +1169,8 @@ def cmd_meta():
     in_section = lambda sid: newest(t.get("reviewed") for t in flat if t["section_id"] == sid)
     hub_date = {"index": every, "start": every, "reference": every,
                 "labs": in_section("labs"), "calculators": in_section("tools"),
-                "model-contract": newest(c.get("reviewed") for c in MODEL_TYPES.values())}
+                "model-contract": newest(c.get("reviewed") for c in MODEL_TYPES.values()),
+                **{g["slug"]: g.get("reviewed") for g in site.get("guides", [])}}
 
     def lastmod(path, reviewed):
         d = reviewed if path.parent != ROOT else hub_date.get(path.stem)
@@ -1122,6 +1203,9 @@ def cmd_meta():
         f"- [Interactive labs]({base}/labs.html): Long-form labs for transmission lines, channel response, and PDN behavior.",
         f"- [Calculators]({base}/calculators.html): Twelve SI and PI calculators, each with its formula, assumptions and a live chart.",
         f"- [Reference]({base}/reference.html): SI/PI symbols, formulas, assumptions, and unit tools.",
+        f"- [Interview guide]({base}/interview.html): What SI and PI interviews cover, quick estimates, and links to two question banks.",
+        f"- [Signal integrity interview questions]({base}/interview-signal-integrity.html): {bank_count('interview-signal-integrity')} questions with layered answers linked to the topic pages.",
+        f"- [Power integrity interview questions]({base}/interview-power-integrity.html): {bank_count('interview-power-integrity')} questions with layered answers linked to the topic pages.",
         f"- [Model assumptions and evidence]({base}/model-contract.html): Scope, equations, numerics, limitations, and supporting checks for each interactive model.",
         f"- [About, review, and attribution]({base}/colophon.html): Authorship, review status, sources, licenses, and AI-assistance disclosure.",
     ]
@@ -2731,6 +2815,69 @@ def mobile_note_problems():
     return out
 
 
+def interview_problems():
+    """The interview guide is hand-written, so its counts, anchors and stamped
+    parts drift unless something compares them. Each of these was a hand-typed
+    number or a stamped block that a later edit could silently leave behind:
+    "26 questions" after a 27th was added, a byline with no date, a section link
+    to an id that was renamed."""
+    out = []
+    data, _flat = load()
+    guides = {g["slug"]: g for g in data["site"].get("guides", [])}
+    for stem in INTERVIEW_PAGES:
+        path = ROOT / f"{stem}.html"
+        if stem not in guides:
+            out.append(f"topics.json: site.guides has no entry for {stem}")
+            continue
+        if not path.exists():
+            out.append(f"{stem}.html is listed in site.guides but does not exist")
+            continue
+        html = path.read_text(encoding="utf-8")
+        b = Balance()
+        b.feed(html)
+        b.close()
+        out += [f"{stem}.html: {e}" for e in b.bad]
+        if b.stack:
+            out.append(f"{stem}.html: never closed {[tag for tag, _ in b.stack]}")
+        h1 = re.findall(r"<h1>(.*?)</h1>", html, re.S)
+        if len(h1) != 1 or h1[0].strip() != guides[stem]["title"]:
+            out.append(f"{stem}.html: <h1> disagrees with site.guides title {guides[stem]['title']!r}")
+        for marker in (REVIEW_START, SHARE_MARKERS["head"][0], SHARE_MARKERS["foot"][0]):
+            if marker not in html:
+                out.append(f"{stem}.html: missing {marker} - run `scaffold.py relink`")
+        if '"@type":"TechArticle"' not in html or '"@type":"BreadcrumbList"' not in html:
+            out.append(f"{stem}.html: no TechArticle/BreadcrumbList structured data - run `scaffold.py meta`")
+        ids = re.findall(r'id="([^"]+)"', html)
+        for dup in sorted({i for i in ids if ids.count(i) > 1}):
+            out.append(f"{stem}.html: id {dup!r} appears more than once")
+        for a in re.findall(r'<a href="#([^"]+)"', html):
+            if a not in ids:
+                out.append(f"{stem}.html: link to #{a} has no matching id")
+
+    hub = (ROOT / "interview.html").read_text(encoding="utf-8") if (ROOT / "interview.html").exists() else ""
+    for stem, word in (("interview-signal-integrity", "signal integrity"), ("interview-power-integrity", "power integrity")):
+        path = ROOT / f"{stem}.html"
+        if not path.exists():
+            continue
+        html = path.read_text(encoding="utf-8")
+        n = bank_count(stem)
+        nums = [int(x) for x in re.findall(r'Question \d+ of (\d+)', html)]
+        if nums != [n] * n:
+            out.append(f"{stem}.html: question labels say {sorted(set(nums))} but there are {n}")
+        seq = [int(x) for x in re.findall(r'Question (\d+) of \d+', html)]
+        if seq != list(range(1, n + 1)):
+            out.append(f"{stem}.html: question numbers are not 1..{n} in order")
+        for pat, what in ((r'<span>(\d+) questions</span>', "byline"),
+                          (rf'(\d+) {word} questions of the kind', "introduction")):
+            m = re.search(pat, html)
+            if not m or int(m.group(1)) != n:
+                out.append(f"{stem}.html: its {what} does not say {n} questions")
+        m = re.search(rf'href="{stem}.html"><b>[^<]*</b><span>(\d+) questions', hub)
+        if not m or int(m.group(1)) != n:
+            out.append(f"interview.html: the {word} door does not say {n} questions")
+    return out
+
+
 def cmd_check():
     data, flat = load()
     known = {t["path"].resolve() for t in flat}
@@ -2763,7 +2910,7 @@ def cmd_check():
                   + guide_problems() + preset_problems()
                   + panel_manifest_problems() + evidence_problems()
                   + contract_prose_problems() + reference_library_problems()
-                  + mobile_note_problems())
+                  + mobile_note_problems() + interview_problems())
     for t in flat:
         if not t["path"].exists():
             continue

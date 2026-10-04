@@ -7,6 +7,26 @@
     "repo": "https://github.com/geetansharora/SIPI",
     "author": "Geetansh Arora",
     "linkedin": "https://www.linkedin.com/in/geetansh-arora-a645714a/",
+    "guides": [
+      {
+        "slug": "interview",
+        "title": "Signal and Power Integrity Interview Guide",
+        "updated": "2026-10-04",
+        "keywords": ["interview", "interview questions", "interview prep", "preparation", "job", "hiring", "estimates", "study plan", "misconceptions"]
+      },
+      {
+        "slug": "interview-signal-integrity",
+        "title": "Signal Integrity Interview Questions and Answers",
+        "updated": "2026-10-04",
+        "keywords": ["interview", "interview questions", "si interview", "questions and answers", "practice", "reflections", "termination", "jitter", "timing budget", "crosstalk", "3w", "equalisation", "tdr"]
+      },
+      {
+        "slug": "interview-power-integrity",
+        "title": "Power Integrity Interview Questions and Answers",
+        "updated": "2026-10-04",
+        "keywords": ["interview", "interview questions", "pi interview", "questions and answers", "practice", "target impedance", "decoupling", "bulk capacitance", "ferrite bead", "psij", "ir drop"]
+      }
+    ],
     "technicalReview": {
       "reviewer": "Geetansh Arora",
       "date": "2026-09-18",

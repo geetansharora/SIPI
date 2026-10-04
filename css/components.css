@@ -428,7 +428,7 @@ dialog.searchbox::backdrop { background: rgba(4, 8, 11, .58); }
 .sr__ttl { flex: 1; min-width: 0; font-size: .95rem; }
 .sr__ttl mark { background: transparent; color: var(--signal-text); font-weight: 600; }
 .sr__st { font-family: var(--font-mono); font-size: .6rem; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); flex: none; }
-.sr__st--live { color: var(--signal); }
+.sr__st--live, .sr__st--guide { color: var(--signal); }
 .sr__none { padding: var(--s4); font-size: .95rem; color: var(--muted); }
 @media (max-width: 34rem) {
   .sr__row { flex-wrap: wrap; gap: var(--s1) var(--s2); }
@@ -1121,6 +1121,66 @@ dialog.searchbox::backdrop { background: rgba(4, 8, 11, .58); }
   text-transform: uppercase; color: var(--signal);
 }
 .door span { font-size: .9rem; color: var(--ink2); line-height: 1.5; }
+
+/* ── interview guide ──────────────────────────────────────────────────────────
+   A question bank answered in three layers, a set of estimate cards, and an
+   in-page index. Plain HTML: <details> does the revealing, so the cards work with
+   scripts off and every answer is in the page for a reader and a crawler. */
+.doors--pair { margin: var(--s4) 0 var(--s5); grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr)); }
+.toc { margin: var(--s4) 0; font-size: .9rem; line-height: 1.8; color: var(--ink2); }
+.toc b { font-family: var(--font-mono); font-size: .74rem; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin-right: .3rem; }
+.qa { margin: var(--s5) 0; padding-top: var(--s3); border-top: 1px solid var(--border-soft); scroll-margin-top: 4rem; border-radius: 2px; }
+.qa:focus { outline: none; }
+.qa__n { margin: 0 0 var(--s1); font-family: var(--font-mono); font-size: .72rem; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+.qa h3 { margin: 0 0 var(--s3); }
+.qa p { margin: 0 0 var(--s2); }
+.qa p > b:first-child { font-family: var(--font-display); color: var(--ink); }
+.qa__follow { padding-left: var(--s3); border-left: 2px solid var(--signal); color: var(--ink2); }
+.qa__more { font-size: .88rem; color: var(--muted); }
+/* The answer is folded so a reader can say theirs first. The summary is a plain
+   44 px target with its own marker; the text swaps with [open], no script. */
+.qa__ans > summary {
+  display: inline-flex; align-items: center; gap: .45rem; min-height: 44px; padding: 0 var(--s3);
+  font-family: var(--font-mono); font-size: .76rem; letter-spacing: .04em; color: var(--signal);
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  cursor: pointer; list-style: none;
+}
+.qa__ans > summary::-webkit-details-marker { display: none; }
+.qa__ans > summary::before { content: "\25B8"; transition: transform .15s; }
+.qa__ans[open] > summary::before { transform: rotate(90deg); }
+.qa__ans > summary:hover { border-color: var(--signal); }
+.qa__ans > summary:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
+.qa__ans[open] > summary { margin-bottom: var(--s3); }
+.qa__hide, .qa__ans[open] .qa__show { display: none; }
+.qa__ans[open] .qa__hide { display: inline; }
+.qa--picked { animation: qa-pick 1.8s ease-out; }
+@keyframes qa-pick { from { box-shadow: 0 0 0 .5rem color-mix(in oklab, var(--signal) 14%, transparent); background: color-mix(in oklab, var(--signal) 14%, transparent); } to { box-shadow: 0 0 0 .5rem transparent; background: transparent; } }
+@media (prefers-reduced-motion: reduce) { .qa__ans > summary::before { transition: none; } .qa--picked { animation: none; } }
+/* Practice tools only exist with scripts on; the markup ships hidden. */
+.qa-tools { display: flex; flex-wrap: wrap; gap: var(--s2); margin: var(--s3) 0 var(--s4); }
+.qa-tools[hidden] { display: none; }
+.qa-tools .preset { min-height: 44px; padding: 0 var(--s3); }
+/* A plot that belongs to a question: narrower than a page figure, same family. */
+.qa__fig { margin: var(--s3) 0 var(--s4); max-width: none; }
+.qa__fig .figure__body { padding: var(--s3) var(--s3) var(--s2); }
+.qa__fig svg { max-width: 32rem; }
+/* On a phone the 380-unit viewBox is drawn at about 0.8, which leaves 10-unit labels
+   near 8 px. Less padding gives the plot more of the width, and 11-unit labels
+   bring them back to about 9.5 px without touching the plotted geometry. */
+@media (max-width: 47.99rem) {
+  .qa__fig .figure__body { padding-inline: var(--s2); }
+  .qa__fig .lbl, .qa__fig .lbl-hi, .qa__fig .lbl-sig, .qa__fig .lbl-ref, .qa__fig .lbl-bad { font-size: 11px; }
+}
+.qa__fig figcaption { padding: 0 var(--s3) var(--s3); font-size: .88rem; }
+.figure .grid { stroke: var(--border-soft); stroke-width: 1; fill: none; }
+.figure .thresh { stroke: var(--ink-2); stroke-width: 1; stroke-dasharray: 4 3; fill: none; }
+@media print { .qa-tools, .qa__ans > summary { display: none; } }
+.drill { display: grid; gap: var(--s2); grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr)); margin: var(--s4) 0; }
+.drill__card { padding: var(--s3); background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); }
+.drill__card[open] { border-color: var(--signal); }
+.drill__card summary { cursor: pointer; font-family: var(--font-display); font-weight: 600; color: var(--ink); line-height: 1.4; }
+.drill__card p { margin: var(--s2) 0 0; font-size: .92rem; }
+.drill__link { font-size: .84rem; }
 
 /* ── HOMEPAGE SHOWCASE ──────────────────────────────────────────────────────
    Three working models one swipe apart, directly under the hero.

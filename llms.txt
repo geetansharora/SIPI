@@ -10,6 +10,9 @@ Created and directed by Geetansh Arora, Principal SI/PI Engineer. The site state
 - [Interactive labs](https://sipi.work/labs.html): Long-form labs for transmission lines, channel response, and PDN behavior.
 - [Calculators](https://sipi.work/calculators.html): Twelve SI and PI calculators, each with its formula, assumptions and a live chart.
 - [Reference](https://sipi.work/reference.html): SI/PI symbols, formulas, assumptions, and unit tools.
+- [Interview guide](https://sipi.work/interview.html): What SI and PI interviews cover, quick estimates, and links to two question banks.
+- [Signal integrity interview questions](https://sipi.work/interview-signal-integrity.html): 33 questions with layered answers linked to the topic pages.
+- [Power integrity interview questions](https://sipi.work/interview-power-integrity.html): 24 questions with layered answers linked to the topic pages.
 - [Model assumptions and evidence](https://sipi.work/model-contract.html): Scope, equations, numerics, limitations, and supporting checks for each interactive model.
 - [About, review, and attribution](https://sipi.work/colophon.html): Authorship, review status, sources, licenses, and AI-assistance disclosure.
 

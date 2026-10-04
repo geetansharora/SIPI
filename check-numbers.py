@@ -203,6 +203,17 @@ def _erfinv(y):
     return (lo + hi) / 2
 
 
+def _ramp_dip(tau, tr, step=0.01e-12):
+    """A shunt-C dip seen through a 0-100 % ramp edge: (depth, width at half depth).
+    Closed-form depth; the width is found by stepping the closed-form waveform."""
+    depth = (tau / tr) * (1 - math.exp(-tr / tau))
+    def r(t):
+        return (tau / tr) * (1 - math.exp(-t / tau)) if t < tr else (tau / tr) * (math.exp(tr / tau) - 1) * math.exp(-t / tau)
+    ts = [i * step for i in range(int(20 * tau / step))]
+    half = [t for t in ts if r(t) >= depth / 2]
+    return depth, half[-1] - half[0]
+
+
 def _shunt_err(target):
     """|Z| at which Z0*S21/2 departs from Z0*S21/[2(1-S21)] by `target`.
     Bisected rather than solved, because the inverse has no tidy closed form."""
@@ -492,6 +503,64 @@ CLAIMS = [
      abs((30 - 50) / (30 + 50)), r"into 30 ohm, . = .([\d.]+)", 0.5),
     (F + "/reflections", "figure: transmitted, 50 into 30 ohm",
      1 + (30 - 50) / (30 + 50), r"transmitted wave shrinks to (\d\.\d+)", 0.5),
+    # ── Interview guide ─────────────────────────────────────────────────────
+    ("../interview", "UI at 10 Gb/s (ps)", ui_ps(10e9), r"inverse of the bit rate: (\d+) ps", 0.1),
+    ("../interview", "Nyquist of 10 Gb/s NRZ (GHz)", 5, r"half the bit rate: (\d+) GHz", 0.1),
+    ("../interview", "knee of a 50 ps edge, 0.5/tr (GHz)", 0.5 / 50e-12 / 1e9, r"0.5/t r : (\d+) GHz", 0.1),
+    ("../interview", "-3 dB bandwidth, 0.35/tr (GHz)", 0.35 / 50e-12 / 1e9, r"0.35/t r , (\d+) GHz", 0.1),
+    ("../interview", "stripline delay, 170 ps/in in ps/mm", 170 / 25.4, r"roughly ([\d.]+) ps/mm, set by", 0.5),
+    ("../interview", "critical length, 100 ps / (6 x 6.7 ps/mm) (mm)", 100 / (6 * 6.7), r"about ([\d.]+) mm at 6.7 ps/mm", 1),
+    ("../interview", "gamma, 50 into 75", (75 - 50) / (75 + 50), r": \+([\d.]+) into 75 ohm", 0.1),
+    ("../interview", "gamma, 50 into 30 (magnitude)", abs((30 - 50) / (30 + 50)), r"-([\d.]+) into 30 ohm", 0.1),
+    ("../interview", "|gamma| at 20 dB return loss", 10 ** (-20 / 20), r"10 -RL/20 = ([\d.]+) ,", 0.1),
+    ("../interview", "VSWR at |gamma| 0.1", 1.1 / 0.9, r"VSWR of about ([\d.]+)", 0.5),
+    ("../interview", "skin depth of copper at 1 GHz (um)", skin(1), r"skin depth is about ([\d.]+) um", 2),
+    ("../interview", "skin depth of copper at 10 GHz (um)", skin(10), r"about ([\d.]+) um at 10 GHz", 3),
+    ("../interview", "60 mil stub in Dk 4, quarter wave (GHz)", 11.8028 / (4 * 0.060 * 2), r"about ([\d.]+) GHz \. Halve", 0.5),
+    ("../interview", "target impedance, 0.8 V x 3% / 20 A (mohm)", 0.8 * 0.03 / 20 * 1000, r"= ([\d.]+) mohm , across", 0.1),
+    ("../interview", "SRF, 100 nF with 1.6 nH (MHz)", srf(100e-9, 1.6e-9) / 1e6, r"about ([\d.]+) MHz \. Above it", 0.5),
+    ("../interview", "ground bounce, 1 nH x 20 mA / 50 ps (V)", 1e-9 * 0.02 / 50e-12, r"/ 50 ps = ([\d.]+) V for one driver", 0.1),
+    ("../interview", "Q at BER 1e-12", qinv(1e-12), r"Q ~ ([\d.]+) each side", 0.5),
+    ("../interview", "2Q at BER 1e-12", 2 * qinv(1e-12), r"plus about ([\d.]+) x the rms", 0.5),
+    ("../interview", "PAM4 eye penalty, 20 log10 3 (dB)", 20 * math.log10(3), r"a penalty of about ([\d.]+) dB", 1),
+    ("../interview", "via dip time constant, 50 x 1 pF / 2 (ps)", 50 * 1e-12 / 2 * 1e12, r"Z 0 C/2 = (\d+) ps", 0.1),
+    ("../interview-power-integrity", "target impedance example (mohm)", 0.8 * 0.03 / 20 * 1000, r"20 A step needs ([\d.]+) mohm", 0.1),
+    ("../interview-power-integrity", "SRF of 100 nF with 1.6 nH (MHz)", srf(100e-9, 1.6e-9) / 1e6, r"self-resonance is near (\d+) MHz", 4),
+    ("../interview-signal-integrity", "60 mil stub notch (GHz)", 11.8028 / (4 * 0.060 * 2), r"60 mil stub notches near (\d+) GHz", 2),
+    ("../interview-signal-integrity", "dip area 25 ps on 50 ohm is C = 2 x 25 ps / 50 (pF)", 2 * 25e-12 / 50 * 1e12, r"50 ohm line is (\d+) pF", 0.1),
+    ("../interview-signal-integrity", "PAM4 eye penalty (dB)", 20 * math.log10(3), r"about ([\d.]+) dB less", 1),
+
+    ("../interview-signal-integrity", "plot: dip depth, 1 pF on 50 ohm, 50 ps ramp", _ramp_dip(25e-12, 50e-12)[0], r"is about ([\d.]+) deep and", 1),
+    ("../interview-signal-integrity", "plot: dip width at half depth (ps)", _ramp_dip(25e-12, 50e-12)[1] * 1e12, r"deep and (\d+) ps wide at half", 2),
+    ("../interview-signal-integrity", "plot: depth x width estimate (ps)", _ramp_dip(25e-12, 50e-12)[0] * _ramp_dip(25e-12, 50e-12)[1] * 1e12, r"depth times width is about (\d+) ps", 3),
+    ("../interview-signal-integrity", "plot: quarter wave at 20 GHz in Dk 4 (mm)", 11.8028 / (4 * 20 * 2) * 25.4, r"D k 4 is about ([\d.]+) mm", 3),
+    ("../interview-signal-integrity", "plot: quarter wave at 20 GHz in Dk 4 (mil)", 11.8028 / (4 * 20 * 2) * 1000, r"mm, (\d+) mil, a plausible", 1),
+    ("../interview-power-integrity", "plot: 29 pH against 250 nF (MHz)", 1 / (2 * math.pi * math.sqrt(29e-12 * 250e-9)) / 1e6, r"which gives (\d+) MHz", 1),
+
+    # ── Interview guide: questions added 4 Oct 2026 ─────────────────────────
+    ("../interview-signal-integrity", "edge question: knee of a 100 ps edge (GHz)", 0.5 / 100e-12 / 1e9, r"0.5/t r = (\d+) GHz", 0.1),
+    ("../interview-signal-integrity", "edge question: -3 dB bandwidth of a 100 ps edge (GHz)", 0.35 / 100e-12 / 1e9, r"0.35/t r , ([\d.]+) GHz here", 0.1),
+    ("../interview-signal-integrity", "edge question: harmonic of 100 MHz at the 5 GHz knee", 5e9 / 100e6, r"the (\d+)th harmonic sits at the knee", 0.1),
+    ("../interview-signal-integrity", "timing: 1 mm of stripline at 170 ps/in (ps)", 170 / 25.4, r"1 mm of stripline is ([\d.]+) ps", 1.5),
+    ("../interview-signal-integrity", "timing: 10 mm of stripline (ps)", 10 * 170 / 25.4, r"so 10 mm is (\d+) ps", 1.5),
+    ("../interview-signal-integrity", "timing: UI at 6400 MT/s (ps)", ui_ps(6.4e9), r"of the (\d+) ps unit interval of a 6400", 0.5),
+    ("../interview-signal-integrity", "timing: 10 mm as a share of the 6400 MT/s UI (%)", 100 * 10 * 170 / 25.4 / ui_ps(6.4e9), r"67 ps, (\d+)% of the", 2),
+    ("../interview-signal-integrity", "timing: microstrip at 147 ps/in (ps/mm)", 147 / 25.4, r"faster, about ([\d.]+) ps/mm, so a net", 1),
+    ("../interview-signal-integrity", "timing: UI at 3200 MT/s (ps)", ui_ps(3.2e9), r"the ([\d.]+) ps interval at 3200", 0.2),
+    ("../interview-signal-integrity", "timing: 67 ps as a share of the 3200 MT/s UI (%)", 100 * 67 / ui_ps(3.2e9), r"is about (\d+)% of the 312", 3),
+    ("../interview-signal-integrity", "AC coupling: corner of 100 nF into 50 ohm (kHz)", 1 / (2 * math.pi * 50 * 100e-9) / 1e3, r"corner near (\d+) kHz", 2),
+    ("../interview-signal-integrity", "AC coupling: time constant 50 ohm x 100 nF (us)", 50 * 100e-9 * 1e6, r"of the (\d+) us time constant", 0.1),
+    ("../interview-signal-integrity", "AC coupling: 128 bits at 10 Gb/s (ns)", 128 * ui_ps(10e9) / 1e3, r"lasts ([\d.]+) ns", 0.1),
+    ("../interview-signal-integrity", "AC coupling: that run as a share of the time constant (%)", 100 * 128 * 100e-12 / (50 * 100e-9), r"about ([\d.]+)% of the 5", 3),
+    ("../interview-power-integrity", "placement: spreading inductance, mu0 x 50 um per square (pH)", 4e-7 * math.pi * 50e-6 * 1e12, r"per square: (\d+) pH", 1),
+    ("../interview-power-integrity", "bulk: C = 1/(2 pi f Z), 200 kHz and 1.2 mohm (uF)", 1 / (2 * math.pi * 200e3 * 1.2e-3) * 1e6, r"about (\d+) uF\. It is a first", 1),
+    ("../interview-power-integrity", "filter: 1 uH into 10 uF resonates (kHz)", 1 / (2 * math.pi * math.sqrt(1e-6 * 10e-6)) / 1e3, r"resonates near (\d+) kHz", 1),
+    ("../interview-power-integrity", "filter: sqrt(L/C) of 1 uH and 10 uF (ohm)", math.sqrt(1e-6 / 10e-6), r"impedance of ([\d.]+) ohm; with", 2),
+    ("../interview-power-integrity", "filter: Q = sqrt(L/C)/R with 0.1 ohm", math.sqrt(1e-6 / 10e-6) / 0.1, r"a Q of about (\d+)", 6),
+    ("../interview-power-integrity", "PSIJ: 40 mV x 0.12 ps/mV (ps)", 40 * 0.12, r"turns 40 mV of ripple into ([\d.]+) ps", 0.1),
+    ("../interview-power-integrity", "PSIJ: UI of a 32 Gb/s NRZ link (ps)", ui_ps(32e9), r"the ([\d.]+) ps unit interval of a 32", 0.1),
+    ("../interview-power-integrity", "PSIJ: 4.8 ps as a share of that UI (%)", 100 * 4.8 / ui_ps(32e9), r"which is (\d+)% of the 31", 3),
+
     # ── LPDDR6 ──────────────────────────────────────────────────────────────
     ("interfaces/lpddr6", "glance: raw bandwidth at 10.667 (GB/s)", 24 * 10.667 / 8, r"carries ([\d.]+) GB/s of raw bandwidth", 0.2),
     ("interfaces/lpddr6", "glance: data bandwidth at 10.667 (GB/s)", 24 * 10.667 / 8 * 256 / 288, r"per pin, ([\d.]+) GB/s of it data", 0.3),

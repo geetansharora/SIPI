@@ -1,0 +1,440 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- theme:start -->
+  <meta name="theme-color" content="#F7F8FA">
+  <script>(function(){try{var t=localStorage.getItem('sipi-theme');if(t==='dark'||t==='system'){document.documentElement.setAttribute('data-theme',t);var m=document.querySelector('meta[name=theme-color]');if(m&&(t==='dark'||matchMedia('(prefers-color-scheme:dark)').matches))m.content='#0B1015';}}catch(e){}})();</script>
+  <!-- theme:end -->
+<title>Power Integrity Interview Questions and Answers | SIPI</title>
+<meta name="description" content="Power integrity interview questions with layered answers: the PDN, target impedance, the three droops, decoupling, anti-resonance, planes, the VRM, IR drop, SSN, PSIJ, plots and debug.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<link rel="stylesheet" href="css/base.css?v=1e3ae753">
+<link rel="stylesheet" href="css/components.css?v=9f8a948d">
+  <!-- meta:start -->
+  <link rel="canonical" href="https://sipi.work/interview-power-integrity.html">
+  <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="SIPI">
+  <meta property="og:title" content="Power Integrity Interview Questions and Answers | SIPI">
+  <meta property="og:description" content="Power integrity interview questions with layered answers: the PDN, target impedance, the three droops, decoupling, anti-resonance, planes, the VRM, IR drop, SSN, PSIJ, plots and debug.">
+  <meta property="og:url" content="https://sipi.work/interview-power-integrity.html">
+  <meta property="og:image" content="https://sipi.work/assets/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="SIPI: signal and power integrity, explained with interactive graphics">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Power Integrity Interview Questions and Answers | SIPI">
+  <meta name="twitter:description" content="Power integrity interview questions with layered answers: the PDN, target impedance, the three droops, decoupling, anti-resonance, planes, the VRM, IR drop, SSN, PSIJ, plots and debug.">
+  <meta name="twitter:image" content="https://sipi.work/assets/og.png">
+  <meta name="twitter:image:alt" content="SIPI: signal and power integrity, explained with interactive graphics">
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Power Integrity Interview Questions and Answers","description":"Power integrity interview questions with layered answers: the PDN, target impedance, the three droops, decoupling, anti-resonance, planes, the VRM, IR drop, SSN, PSIJ, plots and debug.","url":"https://sipi.work/interview-power-integrity.html","articleSection":"Interview preparation","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer","url":"https://www.linkedin.com/in/geetansh-arora-a645714a/","sameAs":["https://www.linkedin.com/in/geetansh-arora-a645714a/"]},"publisher":{"@type":"Person","name":"Geetansh Arora"},"image":"https://sipi.work/assets/og.png"}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"SIPI","item":"https://sipi.work/"},{"@type":"ListItem","position":2,"name":"Interview guide","item":"https://sipi.work/interview.html"},{"@type":"ListItem","position":3,"name":"Power Integrity Interview Questions and Answers"}]}</script>
+  <!-- meta:end -->
+</head>
+<body>
+
+<header class="masthead">
+  <a class="wordmark" href="index.html">SIPI</a>
+  <button class="theme-toggle" data-act="theme" type="button">Light</button>
+  <nav aria-label="Site">
+    <a href="start.html">Start</a>
+    <a href="index.html#groundwork">Topics</a>
+    <a href="labs.html">Labs</a>
+    <a href="calculators.html">Calculators</a>
+    <a href="colophon.html">About</a>
+  </nav>
+</header>
+
+<main>
+  <div class="page-head">
+    <p class="crumb"><a href="interview.html">Interview guide</a> / power integrity</p>
+    <h1>Power Integrity Interview Questions and Answers</h1>
+    <p class="byline"><!-- review:start --><span>By <a href="https://www.linkedin.com/in/geetansh-arora-a645714a/" target="_blank" rel="author noopener">Geetansh Arora</a> — Principal SI/PI Engineer</span><time datetime="2026-10-04" title="Date of the last substantive edit">Updated Oct 2026</time><!-- review:end --><span>24 questions</span><span>45&#8211;55 min of practice</span></p>
+    <!-- share:head:start --><div class="share share--head" data-share data-share-url="https://sipi.work/interview-power-integrity.html" data-share-title="Power Integrity Interview Questions and Answers"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Finterview-power-integrity.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Finterview-power-integrity.html&amp;text=Power%20Integrity%20Interview%20Questions%20and%20Answers" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=Power%20Integrity%20Interview%20Questions%20and%20Answers&amp;body=https%3A%2F%2Fsipi.work%2Finterview-power-integrity.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:head:end -->
+    <p class="answer">
+      24 power integrity questions of the kind asked in PI and hardware design interviews, each answered in three
+      layers: the short answer, what a strong answer adds, and the follow-up an interviewer is likely to ask next. Every
+      answer links to the page that teaches it, and many to a panel where you can see it happen.
+    </p>
+  </div>
+  <div class="prose">
+    <p>
+      The questions are about the physics of the power network, not about any one product&#8217;s numbers. They are representative questions written for this guide from the physics on this site; none is taken from any company&#8217;s interviews. Each answer is
+      folded away: say yours aloud first, then open it. The <a href="interview.html">interview guide</a> has the topic map, quick
+      estimates and common misconceptions; the <a href="interview-signal-integrity.html">signal integrity questions</a>
+      are the other half.
+    </p>
+    <nav class="toc" aria-label="Sections"><b>Sections:</b>
+      <a href="#pdn">The PDN</a> &#183; <a href="#decoupling">Decoupling</a> &#183; <a href="#planes">Planes, the regulator and DC</a> &#183;
+      <a href="#noise">Noise into the signals</a> &#183; <a href="#measure">Measurement</a> &#183;
+      <a href="#plots">Read the plot</a> &#183; <a href="#debug">Debug scenarios</a></nav>
+    <div class="qa-tools" data-qa-tools hidden>
+      <button type="button" class="preset" data-qa="random">Random question</button>
+      <button type="button" class="preset" data-qa="all" aria-pressed="false">Show all answers</button>
+    </div>
+    <h2 class="section-rule" id="pdn"><span>The PDN</span></h2>
+    <div class="qa" id="q-what-is-pi">
+      <p class="qa__n">Question 1 of 24</p>
+      <h3>What is power integrity?</h3>
+      <details class="qa__ans">
+        <summary><span class="qa__show">Show answer</span><span class="qa__hide">Hide answer</span></summary>
+        <p><b>Short answer.</b> Making sure every device on a board receives a supply voltage that stays within its tolerance while its current changes, from DC to the fastest current step it draws. It covers the regulator, the planes and capacitors on the board, the package, and the capacitance on the die.</p>
+        <p><b>A strong answer adds.</b> It has a DC half, the resistive drop and current density that take a permanent slice of the voltage, and an AC half, the noise when the load current changes faster than the network can respond. Its consequences show up in signal integrity too: supply noise moves logic thresholds and edge timing, which becomes jitter.</p>
+        <p class="qa__follow"><b>Likely follow-up:</b> <em>Why has it become harder?</em> Supply voltages have fallen and currents have risen, so the same percentage tolerance is fewer millivolts across more amps.</p>
+        <p class="qa__more"><b>Read:</b> <a href="topics/power-integrity/what-is-the-pdn.html">Power Delivery Network (PDN) Basics: VRM to Die</a> &#183; <a href="topics/power-integrity/ir-drop-electromigration.html">DC IR Drop and Electromigration</a></p>
+      </details>
+    </div>
+    <div class="qa" id="q-target">
+      <p class="qa__n">Question 2 of 24</p>
+      <h3>What is target impedance, and how do you calculate it?</h3>
+      <details class="qa__ans">
+        <summary><span class="qa__show">Show answer</span><span class="qa__hide">Hide answer</span></summary>
+        <p><b>Short answer.</b> The highest impedance the power network may present to the load without the voltage moving more than allowed: Z<sub>target</sub> = V<sub>dd</sub>&#215;ripple / &#916;I. A 0.8 V rail with 3% allowed ripple and a 20 A step needs 1.2 m&#937;.</p>
+        <p><b>A strong answer adds.</b> The ripple in that formula is only what is left after DC tolerance, regulator accuracy and IR drop have taken their share, and it should be the same peak or peak-to-peak convention as the budget. The target applies over the frequencies where the load current has energy; a flat line from DC to infinity is a simplification, because the board cannot control impedance above the frequency where the package and die take over.</p>
+        <p class="qa__follow"><b>Likely follow-up:</b> <em>Is staying below target sufficient?</em> Not always: a sharp resonance below target can still ring with a repetitive load at its frequency, so the shape matters as well as the level.</p>
+        <p class="qa__more"><b>Read:</b> <a href="topics/power-integrity/target-impedance.html">PDN Target Impedance: Calculation and Limitations</a> &#183; <a href="topics/tools/target-impedance-calculator.html">PDN Target Impedance Calculator</a> &#183; <a href="topics/power-integrity/three-frequency-domains.html">First, Second and Third Droop: PDN Frequency Regions</a><br><b>Try it:</b> <a href="topics/power-integrity/target-impedance.html">the target impedance panel</a></p>
+      </details>
+    </div>
+    <div class="qa" id="q-droops">
+      <p class="qa__n">Question 3 of 24</p>
+      <h3>Why does a rail droop more than once after a load step?</h3>
+      <details class="qa__ans">
+        <summary><span class="qa__show">Show answer</span><span class="qa__hide">Hide answer</span></summary>
+        <p><b>Short answer.</b> Because different parts of the network supply current on different timescales. The first droop, around a nanosecond, is held up by on-die capacitance; the second, tens of nanoseconds, by package and board ceramics; the third, microseconds, by bulk capacitance until the regulator&#8217;s loop catches up.</p>
+        <p><b>A strong answer adds.</b> Each droop has its own owner and its own fix: the first can only be helped on the die or in the package, the second by board decoupling and mounting, the third by bulk capacitance and the regulator&#8217;s bandwidth. Identifying which droop you are looking at is the first step in any rail problem.</p>
+        <p class="qa__follow"><b>Likely follow-up:</b> <em>Which droop does adding board capacitors help?</em> Mainly the second; they cannot reach the first because of the inductance between them and the die.</p>
+        <p class="qa__more"><b>Read:</b> <a href="topics/power-integrity/three-frequency-domains.html">First, Second and Third Droop: PDN Frequency Regions</a> &#183; <a href="topics/power-integrity/vrm-loop-bandwidth.html">VRM Control-Loop Bandwidth and Load Transients</a> &#183; <a href="topics/labs/pdn-chain.html">Lab C: PDN Impedance and Transient Droop</a><br><b>Try it:</b> <a href="topics/labs/pdn-chain.html">the PDN lab&#8217;s transient view</a></p>
+      </details>
+    </div>
+    <h2 class="section-rule" id="decoupling"><span>Decoupling</span></h2>
+    <div class="qa" id="q-srf">
+      <p class="qa__n">Question 4 of 24</p>
+      <h3>Why does a decoupling capacitor stop working above some frequency?</h3>
+      <details class="qa__ans">
+        <summary><span class="qa__show">Show answer</span><span class="qa__hide">Hide answer</span></summary>
+        <p><b>Short answer.</b> Every real capacitor has series inductance, from its body and, more importantly, from its mounting. Its impedance falls as 1/&#969;C, bottoms out at its ESR at the self-resonant frequency 1/(2&#960;&#8730;LC), then rises as &#969;L: above that it behaves as an inductor.</p>
+        <p><b>A strong answer adds.</b> For a 100 nF part with 1.6 nH of total loop inductance the self-resonance is near 13 MHz. Above it, a larger capacitance does not help; only less inductance does, by shorter mounting, more capacitors in parallel, or capacitance closer to the load, in the package or on the die.</p>
+        <p class="qa__follow"><b>Likely follow-up:</b> <em>So is a 100 nF capacitor useless at 100 MHz?</em> It still conducts, as an inductor of about its mounting inductance, which may or may not be low enough.</p>
+        <p class="qa__more"><b>Read:</b> <a href="topics/power-integrity/decoupling-capacitors.html">Decoupling Capacitors: ESR, ESL, and Placement</a> &#183; <a href="topics/tools/lc-rlc-resonance.html">LC and RLC Resonance Calculator</a><br><b>Try it:</b> <a href="topics/power-integrity/decoupling-capacitors.html">the decoupling panel</a></p>
+      </details>
+    </div>
+    <div class="qa" id="q-mounting">
+      <p class="qa__n">Question 5 of 24</p>
+      <h3>What dominates a decoupling capacitor&#8217;s inductance?</h3>
+      <details class="qa__ans">
+        <summary><span class="qa__show">Show answer</span><span class="qa__hide">Hide answer</span></summary>
+        <p><b>Short answer.</b> Usually the mounting, not the part: the pads, the trace or via from pad to plane, and the distance from the vias to the plane pair. The capacitor&#8217;s own body contributes a fraction of a nanohenry; a poor mounting adds several times that.</p>
+        <p><b>A strong answer adds.</b> Short, wide connections, vias placed at or beside the pads, two vias per pad, and a power-ground plane pair close to the surface all cut it. Reverse-geometry and multi-terminal parts reduce the body&#8217;s share too. How a board capacitor is mounted often matters more than how close it sits to the pin.</p>
+        <p class="qa__follow"><b>Likely follow-up:</b> <em>Where should the plane pair be in the stackup?</em> Close to the surface the capacitors sit on, with a thin dielectric between power and ground.</p>
+        <p class="qa__more"><b>Read:</b> <a href="topics/power-integrity/decoupling-capacitors.html">Decoupling Capacitors: ESR, ESL, and Placement</a> &#183; <a href="topics/tools/mounting-inductance.html">Decoupling Capacitor Mounting Inductance Calculator</a> &#183; <a href="topics/package-board/stackup-design.html">PCB Stackup Design and Dielectric Selection</a></p>
+      </details>
+    </div>
+    <div class="qa" id="q-placement">
+      <p class="qa__n">Question 6 of 24</p>
+      <h3>How close does a decoupling capacitor need to be to the chip?</h3>
+      <details class="qa__ans">
+        <summary><span class="qa__show">Show answer</span><span class="qa__hide">Hide answer</span></summary>
+        <p><b>Short answer.</b> As close as keeps the whole loop short, which means the pads, the vias and the plane path between capacitor and chip together, not only the distance on the layout. At high frequency it is the loop inductance, not the capacitance, that limits what the capacitor can do.</p>
+        <p><b>A strong answer adds.</b> The plane pair has inductance of its own, called spreading inductance, of about &#181;<sub>0</sub>&#183;h per square: 63 pH for a 50 &#181;m dielectric. A thin dielectric therefore makes distance cheap and a thick one makes it expensive. In a wide plane it grows only slowly with distance, which is why a capacitor a few millimetres farther away, with shorter vias and a better connection, can beat a closer one with a poor connection. Closeness matters most for the smallest, highest-frequency capacitors; bulk capacitors can sit farther back, because the band they cover is far below where this inductance matters.</p>
+        <p class="qa__follow"><b>Likely follow-up:</b> <em>What about a capacitor on the other side of the board?</em> It is often the right place under a BGA. The price is a via through the board&#8217;s thickness, so it works best on a thin board or when a power plane sits near that side.</p>
+        <p class="qa__more"><b>Read:</b> <a href="topics/power-integrity/decoupling-capacitors.html">Decoupling Capacitors: ESR, ESL, and Placement</a> &#183; <a href="topics/tools/mounting-inductance.html">Decoupling Capacitor Mounting Inductance Calculator</a> &#183; <a href="topics/package-board/stackup-design.html">PCB Stackup Design and Dielectric Selection</a></p>
+      </details>
+    </div>
+    <div class="qa" id="q-antires">
+      <p class="qa__n">Question 7 of 24</p>
+      <h3>Why can two different capacitors in parallel create an impedance peak, and how do you remove it?</h3>
+      <details class="qa__ans">
+        <summary><span class="qa__show">Show answer</span><span class="qa__hide">Hide answer</span></summary>
+        <p><b>Short answer.</b> Between their two self-resonances, the smaller capacitor is still capacitive while the larger has already become inductive, and an inductor in parallel with a capacitor resonates. The result is a parallel, anti-resonant peak, higher than either part on its own.</p>
+        <p><b>A strong answer adds.</b> Its height goes roughly as L/(R&#183;C), so it falls with more resistance in the loop. Fixes are values closer together, more capacitors to lower the inductance, or deliberate damping: parts with higher ESR, or a resistor, so that the resistance approaches &#8730;(L/C). The same mechanism appears between the board and the package, and between the package and the die.</p>
+        <p class="qa__follow"><b>Likely follow-up:</b> <em>Can adding a capacitor make noise worse?</em> Yes, if it creates or moves an anti-resonance to where the load has energy.</p>
+        <p class="qa__more"><b>Read:</b> <a href="topics/power-integrity/anti-resonance.html">PDN Anti-Resonance and Impedance Peaks</a> &#183; <a href="topics/power-integrity/cps-co-analysis.html">Chip-Package-System (CPS) Power Integrity Co-Simulation</a><br><b>Try it:</b> <a href="topics/power-integrity/anti-resonance.html">the anti-resonance panel</a></p>
+      </details>
+    </div>
+    <div class="qa" id="q-choose">
+      <p class="qa__n">Question 8 of 24</p>
+      <h3>How do you choose decoupling capacitor values, and how many?</h3>
+      <details class="qa__ans">
+        <summary><span class="qa__show">Show answer</span><span class="qa__hide">Hide answer</span></summary>
+        <p><b>Short answer.</b> Against the target impedance, band by band: enough parallel capacitors that their combined inductance meets the target at the top of the band the board is responsible for, values spread so their resonances overlap without leaving anti-resonant peaks, and bulk capacitance to bridge down to the regulator&#8217;s bandwidth.</p>
+        <p><b>A strong answer adds.</b> The count at high frequency is set by inductance, not capacitance: N parts in parallel divide the mounted inductance by about N. Values are chosen so the impedance curve stays under target with damped transitions between banks, and the result is checked in a PDN simulation that includes the planes and the package, not by a rule such as one capacitor per pin.</p>
+        <p class="qa__follow"><b>Likely follow-up:</b> <em>Why not use only the largest value that fits each footprint?</em> Because above its self-resonance every part is an inductor, so the value hardly matters; what matters is how many there are and how they are mounted.</p>
+        <p class="qa__more"><b>Read:</b> <a href="topics/power-integrity/decoupling-capacitors.html">Decoupling Capacitors: ESR, ESL, and Placement</a> &#183; <a href="topics/power-integrity/anti-resonance.html">PDN Anti-Resonance and Impedance Peaks</a> &#183; <a href="topics/power-integrity/target-impedance.html">PDN Target Impedance: Calculation and Limitations</a><br><b>Try it:</b> <a href="topics/power-integrity/decoupling-capacitors.html">the decoupling panel, adding a second bank</a></p>
+      </details>
+    </div>
+    <div class="qa" id="q-bulk">
+      <p class="qa__n">Question 9 of 24</p>
+      <h3>How much bulk capacitance does a rail need?</h3>
+      <details class="qa__ans">
+        <summary><span class="qa__show">Show answer</span><span class="qa__hide">Hide answer</span></summary>
+        <p><b>Short answer.</b> Enough that the capacitor, not the regulator, holds the voltage until the regulator&#8217;s loop takes over: its impedance at the loop bandwidth should equal the target, so C &#8776; 1/(2&#960;&#183;f<sub>bw</sub>&#183;Z<sub>target</sub>).</p>
+        <p><b>A strong answer adds.</b> For the 1.2 m&#937; target above and a regulator with a 200 kHz loop bandwidth, that is about 660 &#181;F. It is a first estimate. The bulk parts&#8217; ESR and ESL must also be low enough to stay under target in the band they cover; the regulator&#8217;s output impedance and phase margin shape the handover; and ceramic capacitance falls with DC bias, so the nominal value is not what you get.</p>
+        <p class="qa__follow"><b>Likely follow-up:</b> <em>What if the regulator is slower?</em> The same step needs more capacitance, in proportion: halving the loop bandwidth doubles the capacitor.</p>
+        <p class="qa__more"><b>Read:</b> <a href="topics/power-integrity/vrm-loop-bandwidth.html">VRM Control-Loop Bandwidth and Load Transients</a> &#183; <a href="topics/power-integrity/target-impedance.html">PDN Target Impedance: Calculation and Limitations</a> &#183; <a href="topics/power-integrity/real-capacitors.html">MLCC Derating: DC Bias, Tolerance, Temperature, Ageing</a><br><b>Try it:</b> <a href="topics/power-integrity/vrm-loop-bandwidth.html">the regulator panel</a></p>
+      </details>
+    </div>
+    <div class="qa" id="q-mlcc">
+      <p class="qa__n">Question 10 of 24</p>
+      <h3>A 10 &#181;F ceramic capacitor measures far less in circuit. Why?</h3>
+      <details class="qa__ans">
+        <summary><span class="qa__show">Show answer</span><span class="qa__hide">Hide answer</span></summary>
+        <p><b>Short answer.</b> DC bias: the dielectric of class II ceramics, such as X5R and X7R, loses permittivity under an applied voltage, and a small case at a high fraction of its rating can lose half or more of its capacitance. Temperature and ageing reduce it further.</p>
+        <p><b>A strong answer adds.</b> The derating depends on the part and the vendor, not just the marking, so it has to come from the vendor&#8217;s curve at the operating voltage. Class I, C0G, parts barely change, but come only in small values. A PDN designed with nominal values can miss its target in the band the bulk ceramics were meant to cover.</p>
+        <p class="qa__follow"><b>Likely follow-up:</b> <em>Do bias and temperature derating combine?</em> Yes; they multiply, so both have to be applied.</p>
+        <p class="qa__more"><b>Read:</b> <a href="topics/power-integrity/real-capacitors.html">MLCC Derating: DC Bias, Tolerance, Temperature, Ageing</a></p>
+      </details>
+    </div>
+    <h2 class="section-rule" id="planes"><span>Planes, the regulator and DC</span></h2>
+    <div class="qa" id="q-planes">
+      <p class="qa__n">Question 11 of 24</p>
+      <h3>What do power and ground planes contribute, and what is a plane resonance?</h3>
+      <details class="qa__ans">
+        <summary><span class="qa__show">Show answer</span><span class="qa__hide">Hide answer</span></summary>
+        <p><b>Short answer.</b> A closely spaced plane pair is a low-inductance path for current and a small, very good capacitor. It is also a cavity: at frequencies where the board&#8217;s dimensions are a whole number of half-wavelengths, standing waves form and the impedance varies strongly with position.</p>
+        <p><b>A strong answer adds.</b> Below the first cavity mode the planes behave as a lumped capacitance and spreading inductance; above it, where a capacitor sits relative to the standing wave decides whether it helps. Thinner dielectric, edge stitching and damping, and decoupling placed at high-impedance locations reduce the effect.</p>
+        <p class="qa__follow"><b>Likely follow-up:</b> <em>How do you estimate the first resonance?</em> Half a wavelength across the longest dimension in the dielectric: f = c/(2&#183;a&#183;&#8730;D<sub>k</sub>).</p>
+        <p class="qa__more"><b>Read:</b> <a href="topics/power-integrity/plane-resonance.html">Power-Plane Cavity Resonance and Edge Radiation</a> &#183; <a href="topics/tools/plane-cavity-resonance.html">Power Plane Cavity Resonance Calculator</a></p>
+      </details>
+    </div>
+    <div class="qa" id="q-vrm">
+      <p class="qa__n">Question 12 of 24</p>
+      <h3>What does a regulator&#8217;s control-loop bandwidth mean for the PDN?</h3>
+      <details class="qa__ans">
+        <summary><span class="qa__show">Show answer</span><span class="qa__hide">Hide answer</span></summary>
+        <p><b>Short answer.</b> Below the loop bandwidth the regulator actively holds the voltage, so its output impedance is low; above it, the loop cannot keep up, and what is left is the output inductor and the capacitors. The bandwidth is where the regulator hands over to the bulk capacitance.</p>
+        <p><b>A strong answer adds.</b> A load step faster than the loop sees no regulator at all for its first microseconds. Too little phase margin makes the loop&#8217;s own output impedance peak. Remote sensing at the load corrects the DC drop along the way, but puts that path inside the loop, which affects stability.</p>
+        <p class="qa__follow"><b>Likely follow-up:</b> <em>Why not make the loop much faster?</em> Switching frequency and stability limit it; the capacitors exist precisely because it cannot be.</p>
+        <p class="qa__more"><b>Read:</b> <a href="topics/power-integrity/vrm-loop-bandwidth.html">VRM Control-Loop Bandwidth and Load Transients</a> &#183; <a href="topics/power-integrity/three-frequency-domains.html">First, Second and Third Droop: PDN Frequency Regions</a><br><b>Try it:</b> <a href="topics/power-integrity/vrm-loop-bandwidth.html">the regulator panel</a></p>
+      </details>
+    </div>
+    <div class="qa" id="q-ir">
+      <p class="qa__n">Question 13 of 24</p>
+      <h3>Why does DC drop matter, and what is electromigration?</h3>
+      <details class="qa__ans">
+        <summary><span class="qa__show">Show answer</span><span class="qa__hide">Hide answer</span></summary>
+        <p><b>Short answer.</b> Resistance in the planes, vias, package and bumps takes a permanent slice of the voltage budget at full current, before any AC noise. Electromigration is the slow movement of metal atoms under high current density, which over years opens conductors; it is a lifetime limit, not an immediate one.</p>
+        <p><b>A strong answer adds.</b> Current crowds at vias, necks and the balls nearest the source, so an average density can look safe while a few locations run far above it. Electromigration lifetime falls steeply with current density and exponentially with temperature, which is why the limit is checked at the hot spot. Both are found by a DC solve of the real geometry.</p>
+        <p class="qa__follow"><b>Likely follow-up:</b> <em>How do you fix an IR-drop hot spot?</em> More vias or copper where the current crowds, more balls or bumps on the rail, or moving the regulator&#8217;s sense point.</p>
+        <p class="qa__more"><b>Read:</b> <a href="topics/power-integrity/ir-drop-electromigration.html">DC IR Drop and Electromigration</a></p>
+      </details>
+    </div>
+    <h2 class="section-rule" id="noise"><span>Noise into the signals</span></h2>
+    <div class="qa" id="q-ssn">
+      <p class="qa__n">Question 14 of 24</p>
+      <h3>What is simultaneous switching noise, or ground bounce?</h3>
+      <details class="qa__ans">
+        <summary><span class="qa__show">Show answer</span><span class="qa__hide">Hide answer</span></summary>
+        <p><b>Short answer.</b> When many outputs switch together, their currents return through the same few ground and power connections, and the inductance of those connections develops a voltage, L&#183;N&#183;di/dt. The local ground moves, and every signal referenced to it moves with it, including quiet ones.</p>
+        <p><b>A strong answer adds.</b> It grows with the number of outputs switching in the same direction, with the edge rate and with the shared inductance. The fixes are more and shorter power and ground connections, slower edges where timing allows, data bus inversion to limit how many bits switch, and on-die decoupling.</p>
+        <p class="qa__follow"><b>Likely follow-up:</b> <em>Why does a quiet output fail?</em> Because its reference moved under it while it was not switching.</p>
+        <p class="qa__more"><b>Read:</b> <a href="topics/power-integrity/ssn-ground-bounce.html">Simultaneous Switching Noise and Ground Bounce</a><br><b>Try it:</b> <a href="topics/power-integrity/ssn-ground-bounce.html">the switching noise panel</a></p>
+      </details>
+    </div>
+    <div class="qa" id="q-ref-change">
+      <p class="qa__n">Question 15 of 24</p>
+      <h3>A signal moves from a layer referenced to ground to one referenced to a power plane. What happens to its return current?</h3>
+      <details class="qa__ans">
+        <summary><span class="qa__show">Show answer</span><span class="qa__hide">Hide answer</span></summary>
+        <p><b>Short answer.</b> The return current has to move from the ground plane to the power plane at the via, and the only path between the two planes is through decoupling capacitors or the plane capacitance itself. That path has inductance, so the transition becomes a discontinuity and a coupling point.</p>
+        <p><b>A strong answer adds.</b> Every signal making the same transition shares that path, so their return currents mix and inject noise into the power network, and power-network noise couples back into the signals. Stitching capacitors near the via, keeping both reference planes the same net where possible, and close plane pairs reduce it. It is where signal integrity and power integrity are one problem.</p>
+        <p class="qa__follow"><b>Likely follow-up:</b> <em>Why does a power plane work as a signal reference at all?</em> At high frequency the return current flows on whichever plane lies nearest the trace, power or ground, because that path has the least inductance. It works when that plane is continuous under the trace, and when, wherever the signal changes layers, the return current has a nearby, low-inductance path to the other plane: a stitching capacitor, or a closely spaced plane pair.</p>
+        <p class="qa__more"><b>Read:</b> <a href="topics/fundamentals/return-current-paths.html">Return Current Paths: Reference Planes, Splits and Gaps</a> &#183; <a href="topics/package-board/layer-transitions.html">Stitching Vias and PCB Layer Transitions</a> &#183; <a href="topics/power-integrity/what-is-the-pdn.html">Power Delivery Network (PDN) Basics: VRM to Die</a></p>
+      </details>
+    </div>
+    <div class="qa" id="q-psij">
+      <p class="qa__n">Question 16 of 24</p>
+      <h3>How does supply noise become jitter?</h3>
+      <details class="qa__ans">
+        <summary><span class="qa__show">Show answer</span><span class="qa__hide">Hide answer</span></summary>
+        <p><b>Short answer.</b> A gate&#8217;s delay depends on its supply voltage, so noise on the supply of a clock buffer or driver moves its edges in time. The sensitivity is measured in picoseconds per millivolt of supply noise.</p>
+        <p><b>A strong answer adds.</b> A sensitivity of 0.12 ps/mV turns 40 mV of ripple into 4.8 ps of jitter, which is 15% of the 31.25 ps unit interval of a 32 Gb/s NRZ link. The effect accumulates along a clock tree, so a long tree on a noisy rail is the worst case. Noise inside a PLL&#8217;s loop bandwidth is partly corrected; noise on buffers after it is not. That is why sensitive clock and I/O rails are often separated and filtered.</p>
+        <p class="qa__follow"><b>Likely follow-up:</b> <em>Which noise frequencies hurt most?</em> Those the PLL cannot track and that line up with the data&#8217;s timing, often near the PDN&#8217;s resonances.</p>
+        <p class="qa__more"><b>Read:</b> <a href="topics/power-integrity/pdn-induced-jitter.html">PSIJ: How Power Supply Noise Becomes Jitter</a><br><b>Try it:</b> <a href="topics/power-integrity/pdn-induced-jitter.html">the PSIJ panel</a></p>
+      </details>
+    </div>
+    <div class="qa" id="q-filter">
+      <p class="qa__n">Question 17 of 24</p>
+      <h3>How do you keep a noisy rail off a sensitive PLL or analog supply?</h3>
+      <details class="qa__ans">
+        <summary><span class="qa__show">Show answer</span><span class="qa__hide">Hide answer</span></summary>
+        <p><b>Short answer.</b> Put a low-pass filter between them: a ferrite bead or a small inductor in series, with a capacitor to ground on the sensitive side. It attenuates noise above its corner, but only if the filter is damped and the bead is carrying well under its rated current.</p>
+        <p><b>A strong answer adds.</b> The inductor and capacitor resonate at 1/(2&#960;&#8730;LC), and with little resistance they peak there instead of attenuating. A bead that behaves as about 1 &#181;H at low frequency, feeding 10 &#181;F, resonates near 50 kHz with a characteristic impedance of 0.32 &#937;; with 0.1 &#937; of series resistance the peak has a Q of about 3. The filter can therefore amplify noise where the regulator&#8217;s own rejection is weakest, and damping, in a lossy bead, a series resistance or a damped capacitor, is part of the design. A bead&#8217;s impedance also falls as DC current biases it, its resistance costs a DC drop, and it does nothing below its corner, which is where a regulator with good low-frequency rejection does better.</p>
+        <p class="qa__follow"><b>Likely follow-up:</b> <em>Does the filter work in both directions?</em> Yes. It also keeps the sensitive circuit&#8217;s own current noise off the shared rail.</p>
+        <p class="qa__more"><b>Read:</b> <a href="topics/power-integrity/pdn-induced-jitter.html">PSIJ: How Power Supply Noise Becomes Jitter</a> &#183; <a href="topics/power-integrity/anti-resonance.html">PDN Anti-Resonance and Impedance Peaks</a> &#183; <a href="topics/power-integrity/vrm-loop-bandwidth.html">VRM Control-Loop Bandwidth and Load Transients</a></p>
+      </details>
+    </div>
+    <div class="qa" id="q-cps">
+      <p class="qa__n">Question 18 of 24</p>
+      <h3>Why can&#8217;t you sign off a PDN with the board model alone?</h3>
+      <details class="qa__ans">
+        <summary><span class="qa__show">Show answer</span><span class="qa__hide">Hide answer</span></summary>
+        <p><b>Short answer.</b> Because the important resonances sit at the boundaries: between the board and the package, and between the package and the die. A board-only model cannot contain a resonance that involves the package&#8217;s inductance and the die&#8217;s capacitance, so it produces a smooth curve with the peak missing.</p>
+        <p><b>A strong answer adds.</b> Chip&#8211;package&#8211;system analysis joins a chip power model, the package model and the board model, and drives them with the die&#8217;s real current profile. Each model arrives from a different team and at a different time, which is the practical difficulty.</p>
+        <p class="qa__follow"><b>Likely follow-up:</b> <em>What does the chip power model provide?</em> The on-die capacitance, the grid resistance and the current profiles of the workloads.</p>
+        <p class="qa__more"><b>Read:</b> <a href="topics/power-integrity/cps-co-analysis.html">Chip-Package-System (CPS) Power Integrity Co-Simulation</a> &#183; <a href="topics/package-board/package-and-system.html">Package Interconnects as Transmission Lines</a></p>
+      </details>
+    </div>
+    <h2 class="section-rule" id="measure"><span>Measurement</span></h2>
+    <div class="qa" id="q-measure-z">
+      <p class="qa__n">Question 19 of 24</p>
+      <h3>How do you measure milliohm impedances on a power network?</h3>
+      <details class="qa__ans">
+        <summary><span class="qa__show">Show answer</span><span class="qa__hide">Hide answer</span></summary>
+        <p><b>Short answer.</b> With a VNA in a two-port shunt-through arrangement: one port drives current into the rail and the other senses voltage at the same point, so the probe&#8217;s own resistance is not part of the measurement.</p>
+        <p><b>A strong answer adds.</b> Common-mode isolation on the cable shields is needed, or a ground loop swamps the reading. A one-port reflection measurement cannot resolve milliohms, because a few milliohms are a tiny fraction of the 50 &#937; reference. Calibrate to the probe tips, keep the probe connections short and close together, and remember that the result is the impedance at that point on the board, not at the die.</p>
+        <p class="qa__follow"><b>Likely follow-up:</b> <em>How do you measure ripple on a rail without fooling yourself?</em> With a short ground connection at the tip, the right bandwidth, and a probe made for low-voltage rails; a long ground lead picks up its own noise.</p>
+        <p class="qa__more"><b>Read:</b> <a href="topics/methodology/measurement-practice.html">SI/PI Measurement: Probes, Fixtures and Calibration</a> &#183; <a href="topics/signal-integrity/de-embedding.html">S-Parameter De-Embedding and Fixture Removal</a></p>
+      </details>
+    </div>
+    <div class="qa" id="q-flow">
+      <p class="qa__n">Question 20 of 24</p>
+      <h3>How would you approach the PDN design for a new board?</h3>
+      <details class="qa__ans">
+        <summary><span class="qa__show">Show answer</span><span class="qa__hide">Hide answer</span></summary>
+        <p><b>Short answer.</b> Start from the requirements: each rail&#8217;s voltage, tolerance and the load&#8217;s current steps and spectrum, then derive target impedances. Plan the stackup with close power-ground plane pairs, then choose the regulator, bulk and ceramic capacitors band by band, and check DC drop and current density.</p>
+        <p><b>A strong answer adds.</b> Then simulate the PDN with the package and, if available, the chip power model, against the target over frequency and in the time domain with realistic load steps; iterate placement and values; and after build, measure the impedance and ripple to correlate. Recording the assumptions and the reference points is what makes the result reviewable.</p>
+        <p class="qa__follow"><b>Likely follow-up:</b> <em>Where do the load current numbers come from?</em> The silicon vendor&#8217;s power models and design guides, or measurement on a previous generation.</p>
+        <p class="qa__more"><b>Read:</b> <a href="topics/methodology/simulation-flow.html">Signal Integrity Simulation Workflow</a> &#183; <a href="topics/power-integrity/target-impedance.html">PDN Target Impedance: Calculation and Limitations</a> &#183; <a href="topics/package-board/stackup-design.html">PCB Stackup Design and Dielectric Selection</a> &#183; <a href="topics/methodology/correlation.html">Simulation-to-Measurement Correlation for SI/PI</a></p>
+      </details>
+    </div>
+    <h2 class="section-rule" id="plots"><span>Read the plot</span></h2>
+    <div class="qa" id="q-plot-peak">
+      <p class="qa__n">Question 21 of 24</p>
+      <h3>An impedance plot rises above target in a narrow peak around 60 MHz. What are the likely causes?</h3>
+      <figure class="figure qa__fig">
+        <div class="figure__bar"><span>Impedance seen from the die</span></div>
+        <div class="figure__body"><svg viewBox="0 0 380 200" role="img" aria-label="Impedance seen from the die against frequency, log scales. It stays under the 10 milliohm target up to about 36 MHz, rises to a narrow peak of about 66 milliohms near 59 MHz, then falls below the target again above about 98 MHz.">
+        <line class="grid" x1="46" y1="166.0" x2="368" y2="166.0"/>
+        <text class="lbl" x="41" y="169.5" text-anchor="end">0.1</text>
+        <line class="grid" x1="46" y1="114.7" x2="368" y2="114.7"/>
+        <text class="lbl" x="41" y="118.2" text-anchor="end">1</text>
+        <line class="grid" x1="46" y1="63.3" x2="368" y2="63.3"/>
+        <text class="lbl" x="41" y="66.8" text-anchor="end">10</text>
+        <line class="grid" x1="46" y1="12.0" x2="368" y2="12.0"/>
+        <text class="lbl" x="41" y="15.5" text-anchor="end">100</text>
+        <line class="grid" x1="46.0" y1="12" x2="46.0" y2="166"/>
+        <text class="lbl" x="46.0" y="179" text-anchor="middle">100k</text>
+        <line class="grid" x1="126.5" y1="12" x2="126.5" y2="166"/>
+        <text class="lbl" x="126.5" y="179" text-anchor="middle">1M</text>
+        <line class="grid" x1="207.0" y1="12" x2="207.0" y2="166"/>
+        <text class="lbl" x="207.0" y="179" text-anchor="middle">10M</text>
+        <line class="grid" x1="287.5" y1="12" x2="287.5" y2="166"/>
+        <text class="lbl" x="287.5" y="179" text-anchor="middle">100M</text>
+        <line class="grid" x1="368.0" y1="12" x2="368.0" y2="166"/>
+        <text class="lbl" x="368.0" y="179" text-anchor="middle">1G</text>
+        <rect class="tick" x="46" y="12" width="322" height="154"/>
+        <text class="lbl" x="207.0" y="196" text-anchor="middle">frequency (Hz)</text>
+        <text class="lbl" x="11" y="89.0" text-anchor="middle" transform="rotate(-90 11 89.0)">|Z| seen from the die (m&#937;)</text>
+        <line class="flow-bad dash" x1="46" y1="63.3" x2="368" y2="63.3"/>
+        <text class="lbl-bad" x="55.2" y="58.3" text-anchor="start">target 10 m&#937;</text>
+        <path class="flow" d="M46.0 78.7 L46.8 78.6 L47.6 78.6 L48.4 78.6 L49.2 78.5 L50.0 78.5 L50.8 78.5 L51.6 78.5 L52.4 78.4 L53.2 78.4 L54.0 78.4 L54.9 78.4 L55.7 78.4 L56.5 78.4 L57.3 78.4 L58.1 78.3 L58.9 78.3 L59.7 78.3 L60.5 78.3 L61.3 78.3 L62.1 78.3 L62.9 78.3 L63.7 78.3 L64.5 78.3 L65.3 78.3 L66.1 78.3 L66.9 78.3 L67.7 78.3 L68.5 78.3 L69.3 78.3 L70.1 78.3 L71.0 78.3 L71.8 78.3 L72.6 78.3 L73.4 78.3 L74.2 78.2 L75.0 78.2 L75.8 78.2 L76.6 78.2 L77.4 78.2 L78.2 78.2 L79.0 78.2 L79.8 78.2 L80.6 78.2 L81.4 78.2 L82.2 78.2 L83.0 78.2 L83.8 78.2 L84.6 78.2 L85.4 78.2 L86.2 78.1 L87.1 78.1 L87.9 78.1 L88.7 78.1 L89.5 78.1 L90.3 78.1 L91.1 78.1 L91.9 78.1 L92.7 78.1 L93.5 78.1 L94.3 78.1 L95.1 78.1 L95.9 78.1 L96.7 78.1 L97.5 78.1 L98.3 78.1 L99.1 78.1 L99.9 78.1 L100.7 78.1 L101.5 78.2 L102.4 78.2 L103.2 78.2 L104.0 78.2 L104.8 78.3 L105.6 78.3 L106.4 78.4 L107.2 78.5 L108.0 78.5 L108.8 78.6 L109.6 78.7 L110.4 78.8 L111.2 78.9 L112.0 79.0 L112.8 79.2 L113.6 79.3 L114.4 79.5 L115.2 79.6 L116.0 79.8 L116.8 80.0 L117.6 80.3 L118.5 80.5 L119.3 80.8 L120.1 81.1 L120.9 81.4 L121.7 81.7 L122.5 82.0 L123.3 82.4 L124.1 82.7 L124.9 83.1 L125.7 83.6 L126.5 84.0 L127.3 84.4 L128.1 84.9 L128.9 85.4 L129.7 85.8 L130.5 86.3 L131.3 86.9 L132.1 87.4 L132.9 87.9 L133.7 88.4 L134.5 89.0 L135.4 89.5 L136.2 90.1 L137.0 90.7 L137.8 91.2 L138.6 91.8 L139.4 92.3 L140.2 92.9 L141.0 93.5 L141.8 94.0 L142.6 94.5 L143.4 95.1 L144.2 95.6 L145.0 96.1 L145.8 96.7 L146.6 97.2 L147.4 97.7 L148.2 98.1 L149.0 98.6 L149.8 99.1 L150.6 99.5 L151.5 100.0 L152.3 100.4 L153.1 100.8 L153.9 101.2 L154.7 101.6 L155.5 101.9 L156.3 102.3 L157.1 102.6 L157.9 102.9 L158.7 103.2 L159.5 103.5 L160.3 103.8 L161.1 104.0 L161.9 104.3 L162.7 104.5 L163.5 104.7 L164.3 104.9 L165.1 105.1 L165.9 105.3 L166.8 105.4 L167.6 105.5 L168.4 105.7 L169.2 105.8 L170.0 105.9 L170.8 105.9 L171.6 106.0 L172.4 106.0 L173.2 106.1 L174.0 106.1 L174.8 106.1 L175.6 106.1 L176.4 106.1 L177.2 106.1 L178.0 106.0 L178.8 106.0 L179.6 105.9 L180.4 105.8 L181.2 105.7 L182.0 105.6 L182.9 105.5 L183.7 105.4 L184.5 105.2 L185.3 105.1 L186.1 104.9 L186.9 104.7 L187.7 104.6 L188.5 104.4 L189.3 104.2 L190.1 103.9 L190.9 103.7 L191.7 103.5 L192.5 103.2 L193.3 103.0 L194.1 102.7 L194.9 102.5 L195.7 102.2 L196.5 101.9 L197.3 101.6 L198.1 101.3 L199.0 101.0 L199.8 100.6 L200.6 100.3 L201.4 100.0 L202.2 99.6 L203.0 99.3 L203.8 98.9 L204.6 98.5 L205.4 98.2 L206.2 97.8 L207.0 97.4 L207.8 97.0 L208.6 96.6 L209.4 96.2 L210.2 95.8 L211.0 95.3 L211.8 94.9 L212.6 94.5 L213.4 94.0 L214.2 93.6 L215.0 93.1 L215.9 92.7 L216.7 92.2 L217.5 91.7 L218.3 91.2 L219.1 90.7 L219.9 90.3 L220.7 89.7 L221.5 89.2 L222.3 88.7 L223.1 88.2 L223.9 87.7 L224.7 87.1 L225.5 86.6 L226.3 86.1 L227.1 85.5 L227.9 84.9 L228.7 84.4 L229.5 83.8 L230.3 83.2 L231.1 82.6 L232.0 82.0 L232.8 81.4 L233.6 80.8 L234.4 80.2 L235.2 79.5 L236.0 78.9 L236.8 78.2 L237.6 77.5 L238.4 76.9 L239.2 76.2 L240.0 75.4 L240.8 74.7 L241.6 74.0 L242.4 73.2 L243.2 72.5 L244.0 71.7 L244.8 70.9 L245.6 70.0 L246.4 69.2 L247.2 68.3 L248.1 67.4 L248.9 66.5 L249.7 65.5 L250.5 64.5 L251.3 63.5 L252.1 62.5 L252.9 61.4 L253.7 60.2 L254.5 59.0 L255.3 57.8 L256.1 56.4 L256.9 55.1 L257.7 53.6 L258.5 52.1 L259.3 50.4 L260.1 48.7 L260.9 46.8 L261.7 44.8 L262.5 42.6 L263.4 40.2 L264.2 37.7 L265.0 34.9 L265.8 31.9 L266.6 28.7 L267.4 25.6 L268.2 22.9 L269.0 21.3 L269.8 21.4 L270.6 23.1 L271.4 25.8 L272.2 28.9 L273.0 32.1 L273.8 35.1 L274.6 37.8 L275.4 40.4 L276.2 42.8 L277.0 45.0 L277.8 47.0 L278.6 48.9 L279.5 50.6 L280.3 52.3 L281.1 53.8 L281.9 55.3 L282.7 56.7 L283.5 58.0 L284.3 59.3 L285.1 60.5 L285.9 61.6 L286.7 62.8 L287.5 63.8 L288.3 64.9 L289.1 65.9 L289.9 66.8 L290.7 67.8 L291.5 68.7 L292.3 69.6 L293.1 70.5 L293.9 71.3 L294.7 72.1 L295.5 72.9 L296.4 73.7 L297.2 74.5 L298.0 75.3 L298.8 76.0 L299.6 76.7 L300.4 77.5 L301.2 78.2 L302.0 78.9 L302.8 79.6 L303.6 80.3 L304.4 80.9 L305.2 81.6 L306.0 82.2 L306.8 82.9 L307.6 83.5 L308.4 84.2 L309.2 84.8 L310.0 85.4 L310.8 86.0 L311.7 86.6 L312.5 87.3 L313.3 87.9 L314.1 88.4 L314.9 89.0 L315.7 89.6 L316.5 90.2 L317.3 90.8 L318.1 91.4 L318.9 91.9 L319.7 92.5 L320.5 93.1 L321.3 93.6 L322.1 94.2 L322.9 94.7 L323.7 95.3 L324.5 95.8 L325.3 96.4 L326.1 96.9 L326.9 97.5 L327.8 98.0 L328.6 98.6 L329.4 99.1 L330.2 99.6 L331.0 100.2 L331.8 100.7 L332.6 101.2 L333.4 101.7 L334.2 102.3 L335.0 102.8 L335.8 103.3 L336.6 103.8 L337.4 104.3 L338.2 104.9 L339.0 105.4 L339.8 105.9 L340.6 106.4 L341.4 106.9 L342.2 107.4 L343.0 107.9 L343.8 108.4 L344.7 108.9 L345.5 109.4 L346.3 109.9 L347.1 110.4 L347.9 110.9 L348.7 111.4 L349.5 111.9 L350.3 112.4 L351.1 112.8 L351.9 113.3 L352.7 113.8 L353.5 114.3 L354.3 114.8 L355.1 115.2 L355.9 115.7 L356.7 116.2 L357.5 116.6 L358.3 117.1 L359.1 117.6 L360.0 118.0 L360.8 118.5 L361.6 118.9 L362.4 119.4 L363.2 119.8 L364.0 120.3 L364.8 120.7 L365.6 121.1 L366.4 121.6 L367.2 122.0 L368.0 122.4"/>
+      </svg></div>
+        <figcaption>Board, package and die together, from 100 kHz to 1 GHz. Computed from a simple ladder model, not drawn.</figcaption>
+      </figure>
+      <details class="qa__ans">
+        <summary><span class="qa__show">Show answer</span><span class="qa__hide">Hide answer</span></summary>
+        <p><b>Short answer.</b> An anti-resonance: the inductance of one stage of the network resonating with the capacitance of the next. At tens of megahertz, seen from the die, it is usually the inductance from the board capacitors through the package, against the package and on-die capacitance.</p>
+        <p><b>A strong answer adds.</b> Lower down it can be two board capacitor banks; the frequency and sharpness of the peak tell you which. Check which elements resonate there with f = 1/(2&#960;&#8730;LC). The plot was computed with 250 nF on the die and about 29 pH from the die back to the board capacitors, which gives 59 MHz. Then check the self-resonances of the banks either side. Fixes are lower inductance, damping with resistance, or capacitors that fill the gap; adding more of the same value usually only moves the peak.</p>
+        <p class="qa__follow"><b>Likely follow-up:</b> <em>Why is a sharp peak worse than a broad one of the same height?</em> A repetitive load at that frequency builds up a large response; a well-damped peak cannot ring.</p>
+        <p class="qa__more"><b>Read:</b> <a href="topics/power-integrity/anti-resonance.html">PDN Anti-Resonance and Impedance Peaks</a> &#183; <a href="topics/power-integrity/cps-co-analysis.html">Chip-Package-System (CPS) Power Integrity Co-Simulation</a> &#183; <a href="topics/power-integrity/decoupling-capacitors.html">Decoupling Capacitors: ESR, ESL, and Placement</a><br><b>Try it:</b> <a href="topics/power-integrity/anti-resonance.html">the anti-resonance panel, &#8220;Two decades apart&#8221; then &#8220;Deliberately damped&#8221;</a></p>
+      </details>
+    </div>
+    <div class="qa" id="q-plot-droop">
+      <p class="qa__n">Question 22 of 24</p>
+      <h3>After a large load step, the rail dips three times. What is the slow dip a few microseconds later, and what fixes it?</h3>
+      <figure class="figure qa__fig">
+        <div class="figure__bar"><span>One load step &#183; die rail on a log time axis</span></div>
+        <div class="figure__body"><svg viewBox="0 0 380 200" role="img" aria-label="Die rail voltage change after a 10 A load step, against time on a log scale from 0.1 ns to 100 microseconds. It dips sharply near a nanosecond, again more gently near 40 nanoseconds, and a third, slow dip bottoms out at about 3 microseconds before recovering.">
+        <line class="grid" x1="46" y1="12.0" x2="368" y2="12.0"/>
+        <text class="lbl" x="41" y="15.5" text-anchor="end">+20</text>
+        <line class="grid" x1="46" y1="37.7" x2="368" y2="37.7"/>
+        <text class="lbl" x="41" y="41.2" text-anchor="end">0</text>
+        <line class="grid" x1="46" y1="63.3" x2="368" y2="63.3"/>
+        <text class="lbl" x="41" y="66.8" text-anchor="end">&#8722;20</text>
+        <line class="grid" x1="46" y1="89.0" x2="368" y2="89.0"/>
+        <text class="lbl" x="41" y="92.5" text-anchor="end">&#8722;40</text>
+        <line class="grid" x1="46" y1="114.7" x2="368" y2="114.7"/>
+        <text class="lbl" x="41" y="118.2" text-anchor="end">&#8722;60</text>
+        <line class="grid" x1="46" y1="140.3" x2="368" y2="140.3"/>
+        <text class="lbl" x="41" y="143.8" text-anchor="end">&#8722;80</text>
+        <line class="grid" x1="46" y1="166.0" x2="368" y2="166.0"/>
+        <text class="lbl" x="41" y="169.5" text-anchor="end">&#8722;100</text>
+        <line class="grid" x1="46.0" y1="12" x2="46.0" y2="166"/>
+        <text class="lbl" x="46.0" y="179" text-anchor="middle">0.1 ns</text>
+        <line class="grid" x1="99.7" y1="12" x2="99.7" y2="166"/>
+        <text class="lbl" x="99.7" y="179" text-anchor="middle">1 ns</text>
+        <line class="grid" x1="153.3" y1="12" x2="153.3" y2="166"/>
+        <text class="lbl" x="153.3" y="179" text-anchor="middle">10 ns</text>
+        <line class="grid" x1="207.0" y1="12" x2="207.0" y2="166"/>
+        <text class="lbl" x="207.0" y="179" text-anchor="middle">100 ns</text>
+        <line class="grid" x1="260.7" y1="12" x2="260.7" y2="166"/>
+        <text class="lbl" x="260.7" y="179" text-anchor="middle">1 &#181;s</text>
+        <line class="grid" x1="314.3" y1="12" x2="314.3" y2="166"/>
+        <text class="lbl" x="314.3" y="179" text-anchor="middle">10 &#181;s</text>
+        <line class="grid" x1="368.0" y1="12" x2="368.0" y2="166"/>
+        <text class="lbl" x="368.0" y="179" text-anchor="middle">100 &#181;s</text>
+        <rect class="tick" x="46" y="12" width="322" height="154"/>
+        <text class="lbl" x="207.0" y="196" text-anchor="middle">time after the load step (log scale)</text>
+        <text class="lbl" x="11" y="89.0" text-anchor="middle" transform="rotate(-90 11 89.0)">die rail change (mV)</text>
+        <path class="flow" d="M46.0 58.5 L46.7 59.2 L47.4 59.8 L48.1 60.5 L48.8 61.3 L49.5 62.0 L50.2 62.9 L50.8 63.6 L51.5 64.5 L52.2 65.4 L52.9 66.3 L53.6 67.2 L54.3 68.2 L55.0 69.2 L55.7 70.2 L56.3 71.3 L57.0 72.4 L57.7 73.6 L58.4 74.8 L59.1 76.0 L59.8 77.3 L60.5 78.6 L61.2 80.0 L61.9 81.4 L62.5 82.9 L63.2 84.4 L63.9 86.0 L64.6 87.6 L65.3 89.3 L66.0 91.1 L66.7 92.9 L67.4 94.8 L68.1 96.7 L68.7 98.8 L69.4 100.8 L70.1 103.0 L70.8 105.3 L71.5 107.6 L72.2 108.6 L72.9 109.3 L73.6 110.0 L74.2 110.7 L74.9 111.4 L75.6 112.2 L76.3 112.9 L77.0 113.7 L77.7 114.5 L78.4 115.2 L79.1 116.0 L79.8 116.8 L80.5 117.6 L81.1 118.4 L81.8 119.2 L82.5 120.0 L83.2 120.8 L83.9 121.6 L84.6 122.4 L85.3 123.1 L86.0 123.9 L86.7 124.7 L87.3 125.4 L88.0 126.2 L88.7 126.9 L89.4 127.6 L90.1 128.3 L90.8 129.0 L91.5 129.7 L92.2 130.3 L92.9 130.8 L93.5 131.4 L94.2 131.9 L94.9 132.4 L95.6 132.8 L96.3 133.1 L97.0 133.4 L97.7 133.7 L98.4 133.9 L99.0 134.0 L99.7 134.0 L100.4 134.0 L101.1 133.8 L101.8 133.6 L102.5 133.3 L103.2 132.8 L103.9 132.3 L104.6 131.6 L105.3 130.9 L105.9 130.0 L106.6 128.9 L107.3 127.8 L108.0 126.5 L108.7 125.0 L109.4 123.5 L110.1 121.7 L110.8 119.8 L111.5 117.8 L112.1 115.6 L112.8 113.2 L113.5 110.7 L114.2 108.1 L114.9 105.3 L115.6 102.3 L116.3 99.3 L117.0 96.1 L117.7 92.8 L118.3 89.5 L119.0 86.0 L119.7 82.5 L120.4 78.9 L121.1 75.4 L121.8 71.8 L122.5 68.3 L123.2 64.8 L123.9 61.5 L124.5 58.2 L125.2 55.1 L125.9 52.2 L126.6 49.5 L127.3 47.1 L128.0 45.0 L128.7 43.1 L129.4 41.7 L130.1 40.6 L130.8 39.8 L131.4 39.5 L132.1 39.6 L132.8 40.1 L133.5 41.0 L134.2 42.2 L134.9 43.8 L135.6 45.8 L136.3 48.0 L136.9 50.4 L137.6 53.0 L138.3 55.7 L139.0 58.4 L139.7 61.0 L140.4 63.5 L141.1 65.8 L141.8 67.9 L142.5 69.6 L143.1 71.0 L143.8 71.9 L144.5 72.5 L145.2 72.7 L145.9 72.5 L146.6 71.9 L147.3 71.1 L148.0 70.2 L148.7 69.1 L149.3 68.0 L150.0 67.0 L150.7 66.2 L151.4 65.6 L152.1 65.2 L152.8 65.1 L153.5 65.3 L154.2 65.8 L154.9 66.4 L155.5 67.1 L156.2 67.8 L156.9 68.6 L157.6 69.2 L158.3 69.7 L159.0 70.1 L159.7 70.3 L160.4 70.5 L161.1 70.5 L161.7 70.5 L162.4 70.6 L163.1 70.7 L163.8 70.9 L164.5 71.1 L165.2 71.5 L165.9 71.8 L166.6 72.1 L167.3 72.4 L168.0 72.7 L168.6 73.0 L169.3 73.2 L170.0 73.4 L170.7 73.6 L171.4 73.9 L172.1 74.1 L172.8 74.4 L173.5 74.6 L174.1 74.8 L174.8 75.1 L175.5 75.3 L176.2 75.5 L176.9 75.7 L177.6 75.9 L178.3 76.1 L179.0 76.2 L179.7 76.4 L180.3 76.5 L181.0 76.6 L181.7 76.7 L182.4 76.8 L183.1 76.9 L183.8 77.0 L184.5 77.0 L185.2 77.0 L185.9 77.0 L186.5 77.0 L187.2 76.9 L187.9 76.8 L188.6 76.7 L189.3 76.5 L190.0 76.4 L190.7 76.2 L191.4 75.9 L192.1 75.6 L192.7 75.3 L193.4 75.0 L194.1 74.6 L194.8 74.2 L195.5 73.8 L196.2 73.3 L196.9 72.8 L197.6 72.2 L198.3 71.7 L199.0 71.1 L199.6 70.4 L200.3 69.8 L201.0 69.1 L201.7 68.4 L202.4 67.7 L203.1 66.9 L203.8 66.2 L204.5 65.5 L205.2 64.7 L205.8 64.0 L206.5 63.3 L207.2 62.6 L207.9 61.9 L208.6 61.3 L209.3 60.6 L210.0 60.1 L210.7 59.5 L211.3 59.1 L212.0 58.7 L212.7 58.3 L213.4 58.1 L214.1 57.9 L214.8 57.7 L215.5 57.7 L216.2 57.7 L216.9 57.8 L217.5 57.9 L218.2 58.1 L218.9 58.4 L219.6 58.7 L220.3 59.1 L221.0 59.5 L221.7 59.9 L222.4 60.4 L223.1 60.8 L223.7 61.3 L224.4 61.7 L225.1 62.1 L225.8 62.5 L226.5 62.8 L227.2 63.1 L227.9 63.3 L228.6 63.5 L229.3 63.7 L230.0 63.8 L230.6 63.9 L231.3 63.9 L232.0 64.0 L232.7 64.0 L233.4 64.1 L234.1 64.1 L234.8 64.2 L235.5 64.3 L236.2 64.4 L236.8 64.5 L237.5 64.7 L238.2 64.9 L238.9 65.1 L239.6 65.3 L240.3 65.5 L241.0 65.7 L241.7 65.9 L242.4 66.1 L243.0 66.4 L243.7 66.6 L244.4 66.8 L245.1 67.0 L245.8 67.2 L246.5 67.5 L247.2 67.7 L247.9 67.9 L248.5 68.2 L249.2 68.5 L249.9 68.7 L250.6 69.0 L251.3 69.3 L252.0 69.5 L252.7 69.8 L253.4 70.1 L254.1 70.4 L254.7 70.7 L255.4 71.0 L256.1 71.3 L256.8 71.7 L257.5 72.0 L258.2 72.3 L258.9 72.7 L259.6 73.0 L260.3 73.3 L260.9 73.7 L261.6 74.0 L262.3 74.4 L263.0 74.8 L263.7 75.1 L264.4 75.5 L265.1 75.9 L265.8 76.3 L266.5 76.7 L267.1 77.1 L267.8 77.5 L268.5 77.8 L269.2 78.2 L269.9 78.6 L270.6 79.0 L271.3 79.4 L272.0 79.8 L272.7 80.2 L273.4 80.6 L274.0 81.0 L274.7 81.4 L275.4 81.8 L276.1 82.2 L276.8 82.5 L277.5 82.9 L278.2 83.3 L278.9 83.6 L279.5 83.9 L280.2 84.3 L280.9 84.6 L281.6 84.9 L282.3 85.1 L283.0 85.4 L283.7 85.6 L284.4 85.9 L285.1 86.0 L285.7 86.2 L286.4 86.3 L287.1 86.5 L287.8 86.5 L288.5 86.6 L289.2 86.6 L289.9 86.5 L290.6 86.5 L291.3 86.3 L291.9 86.2 L292.6 86.0 L293.3 85.7 L294.0 85.4 L294.7 85.0 L295.4 84.6 L296.1 84.1 L296.8 83.5 L297.5 82.9 L298.1 82.2 L298.8 81.5 L299.5 80.6 L300.2 79.7 L300.9 78.8 L301.6 77.8 L302.3 76.7 L303.0 75.5 L303.7 74.2 L304.3 72.9 L305.0 71.6 L305.7 70.1 L306.4 68.6 L307.1 67.1 L307.8 65.5 L308.5 63.8 L309.2 62.1 L309.9 60.4 L310.6 58.7 L311.2 56.9 L311.9 55.2 L312.6 53.4 L313.3 51.6 L314.0 49.9 L314.7 48.2 L315.4 46.6 L316.1 45.0 L316.8 43.5 L317.4 42.1 L318.1 40.8 L318.8 39.5 L319.5 38.5 L320.2 37.5 L320.9 36.7 L321.6 36.0 L322.3 35.4 L323.0 35.1 L323.6 34.8 L324.3 34.7 L325.0 34.8 L325.7 35.0 L326.4 35.4 L327.1 35.8 L327.8 36.4 L328.5 37.0 L329.2 37.7 L329.8 38.5 L330.5 39.3 L331.2 40.0 L331.9 40.8 L332.6 41.5 L333.3 42.2 L334.0 42.8 L334.7 43.3 L335.4 43.7 L336.0 44.0 L336.7 44.2 L337.4 44.3 L338.1 44.3 L338.8 44.2 L339.5 44.1 L340.2 43.9 L340.9 43.7 L341.6 43.4 L342.2 43.2 L342.9 43.0 L343.6 42.8 L344.3 42.7 L345.0 42.6 L345.7 42.5 L346.4 42.5 L347.1 42.5 L347.8 42.6 L348.4 42.6 L349.1 42.7 L349.8 42.8 L350.5 42.8 L351.2 42.8 L351.9 42.8 L352.6 42.9 L353.3 42.8 L354.0 42.8 L354.6 42.8 L355.3 42.8 L356.0 42.8 L356.7 42.8 L357.4 42.8 L358.1 42.8 L358.8 42.8 L359.5 42.8 L360.2 42.8 L360.8 42.8 L361.5 42.8 L362.2 42.8 L362.9 42.8 L363.6 42.8 L364.3 42.8 L365.0 42.8 L365.7 42.8 L366.4 42.8 L367.0 42.8 L367.7 42.8"/>
+      </svg></div>
+        <figcaption>A 10 A step at the die. The time axis is logarithmic so all three dips fit. Computed from a simple ladder model, not drawn.</figcaption>
+      </figure>
+      <details class="qa__ans">
+        <summary><span class="qa__show">Show answer</span><span class="qa__hide">Hide answer</span></summary>
+        <p><b>Short answer.</b> The third droop: the bulk capacitance running out before the regulator&#8217;s control loop responds. It is not a decoupling problem at the device.</p>
+        <p><b>A strong answer adds.</b> Its depth depends on the size of the step, the bulk capacitance and the regulator&#8217;s bandwidth and phase margin. More bulk capacitance, a faster or better-compensated loop, or a load that ramps more slowly all help. Board ceramics near the device will not.</p>
+        <p class="qa__follow"><b>Likely follow-up:</b> <em>What would a dip at a few nanoseconds mean instead?</em> The first droop, owned by on-die and package capacitance.</p>
+        <p class="qa__more"><b>Read:</b> <a href="topics/power-integrity/three-frequency-domains.html">First, Second and Third Droop: PDN Frequency Regions</a> &#183; <a href="topics/power-integrity/vrm-loop-bandwidth.html">VRM Control-Loop Bandwidth and Load Transients</a></p>
+      </details>
+    </div>
+    <h2 class="section-rule" id="debug"><span>Debug scenarios</span></h2>
+    <div class="qa" id="q-debug-workload">
+      <p class="qa__n">Question 23 of 24</p>
+      <h3>A processor fails only during one particular workload. How do you investigate the power network?</h3>
+      <details class="qa__ans">
+        <summary><span class="qa__show">Show answer</span><span class="qa__hide">Hide answer</span></summary>
+        <p><b>Short answer.</b> Suspect a load current at a frequency where the PDN&#8217;s impedance peaks. Measure or estimate that workload&#8217;s current spectrum, compare it with the impedance profile, and look at the rail at the die if possible.</p>
+        <p><b>A strong answer adds.</b> A loop that toggles at a fixed rate can sit right on an anti-resonance, so a modest current builds a large voltage. Confirm by changing the workload&#8217;s rate and watching the failure move, then fix by damping or moving the resonance rather than by adding capacitance blindly. Check DC drop under that workload too.</p>
+        <p class="qa__follow"><b>Likely follow-up:</b> <em>How can you see the die rail?</em> Through on-die voltage monitors or sense points, if the silicon provides them.</p>
+        <p class="qa__more"><b>Read:</b> <a href="topics/methodology/debug-playbook.html">SI/PI Debugging: From Symptom to Cause</a> &#183; <a href="topics/power-integrity/anti-resonance.html">PDN Anti-Resonance and Impedance Peaks</a> &#183; <a href="topics/power-integrity/target-impedance.html">PDN Target Impedance: Calculation and Limitations</a></p>
+      </details>
+    </div>
+    <div class="qa" id="q-debug-more-caps">
+      <p class="qa__n">Question 24 of 24</p>
+      <h3>Someone added capacitors and the noise got worse. How is that possible?</h3>
+      <details class="qa__ans">
+        <summary><span class="qa__show">Show answer</span><span class="qa__hide">Hide answer</span></summary>
+        <p><b>Short answer.</b> The new capacitors created or shifted an anti-resonance into the band where the load has energy, or their mounting added inductance instead of reducing it.</p>
+        <p><b>A strong answer adds.</b> Plot the impedance before and after: the peak will have moved or grown. Damping, values chosen to fill the gap, or a lower-inductance mounting fixes it. Decoupling is designed against an impedance profile, not by count.</p>
+        <p class="qa__follow"><b>Likely follow-up:</b> <em>What would you change first?</em> The damping and the mounting, before the values.</p>
+        <p class="qa__more"><b>Read:</b> <a href="topics/power-integrity/anti-resonance.html">PDN Anti-Resonance and Impedance Peaks</a> &#183; <a href="topics/power-integrity/decoupling-capacitors.html">Decoupling Capacitors: ESR, ESL, and Placement</a></p>
+      </details>
+    </div>
+    <!-- share:foot:start --><div class="share share--foot" data-share data-share-url="https://sipi.work/interview-power-integrity.html" data-share-title="Power Integrity Interview Questions and Answers"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Finterview-power-integrity.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Finterview-power-integrity.html&amp;text=Power%20Integrity%20Interview%20Questions%20and%20Answers" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=Power%20Integrity%20Interview%20Questions%20and%20Answers&amp;body=https%3A%2F%2Fsipi.work%2Finterview-power-integrity.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:foot:end -->
+  </div>
+</main>
+
+<footer class="site-foot">
+  <span>SIPI &#8212; signal and power integrity, visualised.</span>
+  <nav class="site-foot__nav" aria-label="Site, footer">
+    <a href="start.html">Start</a>
+    <a href="labs.html">Labs</a>
+    <a href="calculators.html">Calculators</a>
+    <a href="reference.html">Reference</a>
+    <a href="interview.html">Interview guide</a>
+    <a href="colophon.html">About &amp; AI disclosure</a>
+    <a href="model-contract.html">Model assumptions</a>
+    <a href="docs/claims.md">Claim ledger (Markdown)</a>
+  </nav>
+  <span>Created and directed by <a href="https://www.linkedin.com/in/geetansh-arora-a645714a/" target="_blank" rel="author noopener">Geetansh Arora</a>. Text <a href="LICENSE-CONTENT">CC BY 4.0</a>, code <a href="LICENSE-CODE">MIT</a>.</span>
+</footer>
+
+<script src="js/site.js?v=61b8ff31" defer></script>
+<script src="js/interview.js?v=7ed7fe59" defer></script>
+</body>
+</html>

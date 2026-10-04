@@ -1,0 +1,611 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- theme:start -->
+  <meta name="theme-color" content="#F7F8FA">
+  <script>(function(){try{var t=localStorage.getItem('sipi-theme');if(t==='dark'||t==='system'){document.documentElement.setAttribute('data-theme',t);var m=document.querySelector('meta[name=theme-color]');if(m&&(t==='dark'||matchMedia('(prefers-color-scheme:dark)').matches))m.content='#0B1015';}}catch(e){}})();</script>
+  <!-- theme:end -->
+<title>Signal Integrity Interview Questions and Answers | SIPI</title>
+<meta name="description" content="Signal integrity interview questions with layered answers: impedance, reflections, termination, loss, ISI, eyes, jitter, crosstalk, S-parameters, equalisation, plots and debug.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<link rel="stylesheet" href="css/base.css?v=1e3ae753">
+<link rel="stylesheet" href="css/components.css?v=9f8a948d">
+  <!-- meta:start -->
+  <link rel="canonical" href="https://sipi.work/interview-signal-integrity.html">
+  <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="SIPI">
+  <meta property="og:title" content="Signal Integrity Interview Questions and Answers | SIPI">
+  <meta property="og:description" content="Signal integrity interview questions with layered answers: impedance, reflections, termination, loss, ISI, eyes, jitter, crosstalk, S-parameters, equalisation, plots and debug.">
+  <meta property="og:url" content="https://sipi.work/interview-signal-integrity.html">
+  <meta property="og:image" content="https://sipi.work/assets/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="SIPI: signal and power integrity, explained with interactive graphics">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Signal Integrity Interview Questions and Answers | SIPI">
+  <meta name="twitter:description" content="Signal integrity interview questions with layered answers: impedance, reflections, termination, loss, ISI, eyes, jitter, crosstalk, S-parameters, equalisation, plots and debug.">
+  <meta name="twitter:image" content="https://sipi.work/assets/og.png">
+  <meta name="twitter:image:alt" content="SIPI: signal and power integrity, explained with interactive graphics">
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Signal Integrity Interview Questions and Answers","description":"Signal integrity interview questions with layered answers: impedance, reflections, termination, loss, ISI, eyes, jitter, crosstalk, S-parameters, equalisation, plots and debug.","url":"https://sipi.work/interview-signal-integrity.html","articleSection":"Interview preparation","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer","url":"https://www.linkedin.com/in/geetansh-arora-a645714a/","sameAs":["https://www.linkedin.com/in/geetansh-arora-a645714a/"]},"publisher":{"@type":"Person","name":"Geetansh Arora"},"image":"https://sipi.work/assets/og.png"}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"SIPI","item":"https://sipi.work/"},{"@type":"ListItem","position":2,"name":"Interview guide","item":"https://sipi.work/interview.html"},{"@type":"ListItem","position":3,"name":"Signal Integrity Interview Questions and Answers"}]}</script>
+  <!-- meta:end -->
+</head>
+<body>
+
+<header class="masthead">
+  <a class="wordmark" href="index.html">SIPI</a>
+  <button class="theme-toggle" data-act="theme" type="button">Light</button>
+  <nav aria-label="Site">
+    <a href="start.html">Start</a>
+    <a href="index.html#groundwork">Topics</a>
+    <a href="labs.html">Labs</a>
+    <a href="calculators.html">Calculators</a>
+    <a href="colophon.html">About</a>
+  </nav>
+</header>
+
+<main>
+  <div class="page-head">
+    <p class="crumb"><a href="interview.html">Interview guide</a> / signal integrity</p>
+    <h1>Signal Integrity Interview Questions and Answers</h1>
+    <p class="byline"><!-- review:start --><span>By <a href="https://www.linkedin.com/in/geetansh-arora-a645714a/" target="_blank" rel="author noopener">Geetansh Arora</a> — Principal SI/PI Engineer</span><time datetime="2026-10-04" title="Date of the last substantive edit">Updated Oct 2026</time><!-- review:end --><span>33 questions</span><span>60&#8211;75 min of practice</span></p>
+    <!-- share:head:start --><div class="share share--head" data-share data-share-url="https://sipi.work/interview-signal-integrity.html" data-share-title="Signal Integrity Interview Questions and Answers"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Finterview-signal-integrity.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Finterview-signal-integrity.html&amp;text=Signal%20Integrity%20Interview%20Questions%20and%20Answers" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=Signal%20Integrity%20Interview%20Questions%20and%20Answers&amp;body=https%3A%2F%2Fsipi.work%2Finterview-signal-integrity.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:head:end -->
+    <p class="answer">
+      33 signal integrity questions of the kind asked in SI and high-speed design interviews, each answered in three
+      layers: the short answer, what a strong answer adds, and the follow-up an interviewer is likely to ask next. Every
+      answer links to the page that teaches it, and many to a panel where you can see it happen.
+    </p>
+  </div>
+  <div class="prose">
+    <p>
+      The questions are about physics and reasoning, not about one interface&#8217;s numbers, because that is what most
+      interviews test. They are representative questions written for this guide from the physics on this site; none is taken from any company&#8217;s interviews. Each answer is folded away: say yours aloud first, then open it. The
+      <a href="interview.html">interview guide</a> has the topic map, a set of quick estimates and the common misconceptions;
+      the <a href="interview-power-integrity.html">power integrity questions</a> are the other half.
+    </p>
+    <nav class="toc" aria-label="Sections"><b>Sections:</b>
+      <a href="#fundamentals">Fundamentals</a> &#183; <a href="#reflections">Reflections and termination</a> &#183;
+      <a href="#loss">Loss, ISI and eyes</a> &#183; <a href="#crosstalk">Crosstalk</a> &#183;
+      <a href="#sparams">Differential and S-parameters</a> &#183; <a href="#eq">Equalisation and clock recovery</a> &#183;
+      <a href="#board">Package, board and vias</a> &#183; <a href="#methods">Methods and measurement</a> &#183;
+      <a href="#plots">Read the plot</a> &#183; <a href="#debug">Debug scenarios</a></nav>
+    <div class="qa-tools" data-qa-tools hidden>
+      <button type="button" class="preset" data-qa="random">Random question</button>
+      <button type="button" class="preset" data-qa="all" aria-pressed="false">Show all answers</button>
+    </div>
+    <h2 class="section-rule" id="fundamentals"><span>Fundamentals</span></h2>
+    <div class="qa" id="q-what-is-si">
+      <p class="qa__n">Question 1 of 33</p>
+      <h3>What is signal integrity?</h3>
+      <details class="qa__ans">
+        <summary><span class="qa__show">Show answer</span><span class="qa__hide">Hide answer</span></summary>
+        <p><b>Short answer.</b> Making sure a signal arrives at the receiver with enough voltage and timing margin to be read correctly, at the error rate the system needs. It covers what the interconnect does to a signal on the way: reflections, loss, crosstalk, noise and jitter.</p>
+        <p><b>A strong answer adds.</b> Signal integrity starts to matter when the interconnect is no longer a short wire: when its delay is comparable to the signal&#8217;s edge, so voltage and current travel as waves. From then on the board, package and connectors are part of the circuit, and their design is about controlling impedance, loss and coupling.</p>
+        <p class="qa__follow"><b>Likely follow-up:</b> <em>When does a trace stop being a plain wire?</em> When its round-trip delay is a meaningful fraction of the rise time.</p>
+        <p class="qa__more"><b>Read:</b> <a href="topics/fundamentals/when-is-a-trace-a-transmission-line.html">When Is a Trace a Transmission Line? Critical Length</a> &#183; <a href="topics/fundamentals/edge-rate-not-clock-rate.html">Rise Time and Bandwidth: Edge Rate, Not Clock Rate</a></p>
+      </details>
+    </div>
+    <div class="qa" id="q-edge">
+      <p class="qa__n">Question 2 of 33</p>
+      <h3>A 100 MHz clock: why does its edge matter more than its frequency?</h3>
+      <details class="qa__ans">
+        <summary><span class="qa__show">Show answer</span><span class="qa__hide">Hide answer</span></summary>
+        <p><b>Short answer.</b> Because a signal&#8217;s spectrum is set by how fast it changes, not how often it repeats. A 100 ps edge has significant energy up to about 0.5/t<sub>r</sub> = 5 GHz, whether the clock repeats at 100 MHz or at 10 MHz.</p>
+        <p><b>A strong answer adds.</b> The knee, 0.5/t<sub>r</sub>, is where the spectrum of a trapezoidal edge starts to fall away steeply; the &#8722;3 dB bandwidth of a single-pole edge is 0.35/t<sub>r</sub>, 3.5 GHz here. The clock rate only sets how closely the harmonics are spaced beneath that envelope: for a 100 MHz clock the 50th harmonic sits at the knee. Reflections, crosstalk and loss all respond to the edge, so a ringing slow clock is more often cured by a slower edge than by a lower frequency.</p>
+        <p class="qa__follow"><b>Likely follow-up:</b> <em>Then why quote Nyquist for a data link?</em> For random data the fastest repeating pattern, 1010&#8230;, has a period of two bits, so the channel&#8217;s loss is judged at half the bit rate. The edge decides how much energy lies above that frequency.</p>
+        <p class="qa__more"><b>Read:</b> <a href="topics/fundamentals/edge-rate-not-clock-rate.html">Rise Time and Bandwidth: Edge Rate, Not Clock Rate</a> &#183; <a href="topics/tools/bit-rate-ui-nyquist.html">Bit Rate, UI and Nyquist Frequency Calculator</a><br><b>Try it:</b> <a href="topics/fundamentals/edge-rate-not-clock-rate.html">the spectrum panel: move the clock rate, then the rise time</a></p>
+      </details>
+    </div>
+    <div class="qa" id="q-z0">
+      <p class="qa__n">Question 3 of 33</p>
+      <h3>What is characteristic impedance, and what sets it?</h3>
+      <details class="qa__ans">
+        <summary><span class="qa__show">Show answer</span><span class="qa__hide">Hide answer</span></summary>
+        <p><b>Short answer.</b> The ratio of voltage to current for a wave travelling along a line, Z<sub>0</sub> = &#8730;(L/C) per unit length. It is not a resistance you can measure with an ohmmeter; it is what the line looks like to an edge before any reflection comes back.</p>
+        <p><b>A strong answer adds.</b> Geometry and material set it: a wider trace or a thinner dielectric adds capacitance and lowers Z<sub>0</sub>; a higher D<sub>k</sub> lowers it too. A stripline is surrounded by dielectric, a microstrip is partly in air, so for the same impedance they need different widths, and the microstrip is faster.</p>
+        <p class="qa__follow"><b>Likely follow-up:</b> <em>Why 50 &#937;?</em> Largely a historical compromise in coaxial cable between low loss and power handling, which became the standard for test equipment; many PCB nets use other values, such as 85 or 100 &#937; differential.</p>
+        <p class="qa__more"><b>Read:</b> <a href="topics/fundamentals/characteristic-impedance.html">Characteristic Impedance (Z0) of PCB Transmission Lines</a> &#183; <a href="topics/tools/line-impedance.html">Microstrip and Stripline Impedance Calculator</a><br><b>Try it:</b> <a href="topics/tools/line-impedance.html">the line impedance calculator</a></p>
+      </details>
+    </div>
+    <div class="qa" id="q-tl">
+      <p class="qa__n">Question 4 of 33</p>
+      <h3>When does a trace need to be treated as a transmission line?</h3>
+      <details class="qa__ans">
+        <summary><span class="qa__show">Show answer</span><span class="qa__hide">Hide answer</span></summary>
+        <p><b>Short answer.</b> When its round-trip delay is a significant fraction of the signal&#8217;s rise time. A common form of the rule is 2T<sub>d</sub> &gt; t<sub>r</sub>/3, which gives a critical length of t<sub>r</sub>/(6&#183;t<sub>pd</sub>).</p>
+        <p><b>A strong answer adds.</b> The rule is about the edge, not the clock frequency, and it is a boundary of degree: below it reflections are absorbed into the edge, above it they appear as overshoot and ringing. For a 100 ps edge on stripline the critical length is only a few millimetres, so almost every high-speed net qualifies.</p>
+        <p class="qa__follow"><b>Likely follow-up:</b> <em>So does a 10 MHz clock need termination?</em> If its driver has a fast edge and the trace is long, yes: the edge, not the 10 MHz, decides.</p>
+        <p class="qa__more"><b>Read:</b> <a href="topics/fundamentals/when-is-a-trace-a-transmission-line.html">When Is a Trace a Transmission Line? Critical Length</a> &#183; <a href="topics/tools/electrical-length.html">Electrical Length and Critical Length Calculator</a><br><b>Try it:</b> <a href="topics/fundamentals/when-is-a-trace-a-transmission-line.html">the critical-length panel</a></p>
+      </details>
+    </div>
+    <h2 class="section-rule" id="reflections"><span>Reflections and termination</span></h2>
+    <div class="qa" id="q-reflection">
+      <p class="qa__n">Question 5 of 33</p>
+      <h3>What happens when a signal meets an impedance discontinuity?</h3>
+      <details class="qa__ans">
+        <summary><span class="qa__show">Show answer</span><span class="qa__hide">Hide answer</span></summary>
+        <p><b>Short answer.</b> Part of it reflects. The reflection coefficient is &#915; = (Z<sub>L</sub> &#8722; Z<sub>0</sub>)/(Z<sub>L</sub> + Z<sub>0</sub>): +1 for an open, &#8722;1 for a short, 0 for a matched load. The rest is transmitted, 1 + &#915; times the incident voltage.</p>
+        <p><b>A strong answer adds.</b> The reflection travels back to the source, where it reflects again by the source&#8217;s own &#915;. The result is a sequence of steps that settles to the DC value: ringing when the two coefficients have opposite signs, a staircase when they have the same sign. A short discontinuity, such as a via, behaves as a lumped capacitance or inductance instead of a step.</p>
+        <p class="qa__follow"><b>Likely follow-up:</b> <em>Why does an open end double the voltage?</em> The forward and reflected waves add in voltage and cancel in current, which is what an open requires.</p>
+        <p class="qa__more"><b>Read:</b> <a href="topics/fundamentals/reflections.html">Transmission-Line Reflections and Ringing</a> &#183; <a href="topics/fundamentals/tdr.html">TDR (Time-Domain Reflectometry): Reading PCB Impedance</a><br><b>Try it:</b> <a href="topics/labs/travelling-waves.html">the travelling-waves lab, with an open load</a></p>
+      </details>
+    </div>
+    <div class="qa" id="q-termination">
+      <p class="qa__n">Question 6 of 33</p>
+      <h3>Series or parallel termination: when do you use each?</h3>
+      <details class="qa__ans">
+        <summary><span class="qa__show">Show answer</span><span class="qa__hide">Hide answer</span></summary>
+        <p><b>Short answer.</b> Series termination puts a resistor at the driver so that driver plus resistor equals Z<sub>0</sub>; it suits point-to-point nets and costs no DC power. Parallel termination puts Z<sub>0</sub> at the receiver, where it absorbs the wave on arrival; it suits a multi-drop bus, at the cost of DC current.</p>
+        <p><b>A strong answer adds.</b> A bidirectional net needs termination at whichever end is receiving, which is why memory interfaces switch on-die termination with the direction of transfer. Series termination launches a half-amplitude wave that doubles at the open far end, so only the end of the line sees a clean full swing; loads along the line see a step. Parallel termination gives a full swing everywhere after one flight but burns power, which is why Thevenin, AC and on-die termination exist. Most modern interfaces terminate on die and switch it in only when needed.</p>
+        <p class="qa__follow"><b>Likely follow-up:</b> <em>Why is the far end of a series-terminated line clean but the middle is not?</em> The middle sees the half-amplitude launched wave first, then the reflection from the open end.</p>
+        <p class="qa__more"><b>Read:</b> <a href="topics/fundamentals/termination-schemes.html">Termination Schemes: Series, Parallel, Thevenin and AC</a> &#183; <a href="topics/fundamentals/reflections.html">Transmission-Line Reflections and Ringing</a></p>
+      </details>
+    </div>
+    <div class="qa" id="q-flyby">
+      <p class="qa__n">Question 7 of 33</p>
+      <h3>Why do memory buses route commands in a fly-by chain instead of branching to each chip?</h3>
+      <details class="qa__ans">
+        <summary><span class="qa__show">Show answer</span><span class="qa__hide">Hide answer</span></summary>
+        <p><b>Short answer.</b> A branching (T) topology gives every stub its own reflection, and the stubs add up as the speed rises. A fly-by chain runs one line past every device with very short stubs and terminates once, at the end, so the reflections stay small and regular.</p>
+        <p><b>A strong answer adds.</b> The cost is arrival time: the signal reaches the first and the last device at different moments, so each device sees clock and data skewed by a different amount. DDR3 introduced write leveling for this, in which the controller measures each device&#8217;s skew and delays its data to match. Every DRAM&#8217;s input capacitance also loads the line, which lowers its effective impedance and slows it, so stub length and load capacitance are what you control. DDR5 keeps a fly-by for commands on the module and a short point-to-point path for data.</p>
+        <p class="qa__follow"><b>Likely follow-up:</b> <em>Why not use fly-by for the data as well?</em> Each data bit only has to reach one device, so a dedicated point-to-point wire is cleaner than any chain, and there is no skew to level.</p>
+        <p class="qa__more"><b>Read:</b> <a href="topics/interfaces/ddr5.html">DDR5 Signal Integrity: Fly-by, ODT, DFE and Training</a> &#183; <a href="topics/fundamentals/termination-schemes.html">Termination Schemes: Series, Parallel, Thevenin and AC</a><br><b>Try it:</b> <a href="topics/interfaces/ddr5.html">the fly-by lab on the DDR5 page, with write leveling off and then on</a></p>
+      </details>
+    </div>
+    <div class="qa" id="q-return">
+      <p class="qa__n">Question 8 of 33</p>
+      <h3>Where does the return current flow, and what happens when a trace crosses a split in its reference plane?</h3>
+      <details class="qa__ans">
+        <summary><span class="qa__show">Show answer</span><span class="qa__hide">Hide answer</span></summary>
+        <p><b>Short answer.</b> At high frequency it flows in the reference plane directly under the trace, because that path has the least inductance. At a split it has to detour around the gap, which adds inductance, creates a discontinuity and couples the signal into everything sharing the detour.</p>
+        <p><b>A strong answer adds.</b> The detour shows up as a bump on a TDR, as crosstalk between nets that share the gap, and as radiation. The same thing happens at a layer change when the reference plane changes and there is no nearby return via or capacitor between the two planes. The fixes are routing over a continuous plane, stitching vias beside signal vias, and keeping antipads from merging into slots.</p>
+        <p class="qa__follow"><b>Likely follow-up:</b> <em>Does a differential pair need a return path?</em> Its odd mode mostly returns through the partner trace, but common-mode current from any imbalance still needs the plane.</p>
+        <p class="qa__more"><b>Read:</b> <a href="topics/fundamentals/return-current-paths.html">Return Current Paths: Reference Planes, Splits and Gaps</a> &#183; <a href="topics/package-board/layer-transitions.html">Stitching Vias and PCB Layer Transitions</a> &#183; <a href="topics/fundamentals/vias.html">High-Speed Vias: Stubs, Resonance, and Backdrilling</a></p>
+      </details>
+    </div>
+    <h2 class="section-rule" id="loss"><span>Loss, ISI and eyes</span></h2>
+    <div class="qa" id="q-loss">
+      <p class="qa__n">Question 9 of 33</p>
+      <h3>What causes loss in a PCB trace, and how does it scale with frequency?</h3>
+      <details class="qa__ans">
+        <summary><span class="qa__show">Show answer</span><span class="qa__hide">Hide answer</span></summary>
+        <p><b>Short answer.</b> Conductor loss and dielectric loss. Conductor loss grows as the square root of frequency because the skin effect crowds current to the surface; dielectric loss grows linearly with frequency and the loss tangent. Above a few gigahertz on typical laminates, dielectric loss usually dominates.</p>
+        <p><b>A strong answer adds.</b> Copper roughness adds to conductor loss once the skin depth becomes comparable to the roughness, and glass weave changes the effective D<sub>k</sub> along a trace. The levers are a lower-loss laminate, smoother copper, wider traces and shorter routes. Loss is not a problem in itself; the frequency dependence is, because it smears edges into ISI.</p>
+        <p class="qa__follow"><b>Likely follow-up:</b> <em>What is the skin depth of copper at 1 GHz?</em> About 2 &#181;m.</p>
+        <p class="qa__more"><b>Read:</b> <a href="topics/fundamentals/loss-mechanisms.html">PCB Trace Loss: Skin Effect, Dielectric Loss, Roughness</a> &#183; <a href="topics/tools/skin-depth.html">Skin Depth and Surface Roughness Calculator</a> &#183; <a href="topics/tools/loss-budget.html">PCB Channel Loss Budget Calculator</a><br><b>Try it:</b> <a href="topics/fundamentals/loss-mechanisms.html">the loss panel, sweeping the loss tangent</a></p>
+      </details>
+    </div>
+    <div class="qa" id="q-isi">
+      <p class="qa__n">Question 10 of 33</p>
+      <h3>What is intersymbol interference?</h3>
+      <details class="qa__ans">
+        <summary><span class="qa__show">Show answer</span><span class="qa__hide">Hide answer</span></summary>
+        <p><b>Short answer.</b> Energy from one bit spilling into the bits around it. A lossy or reflective channel spreads a single bit&#8217;s pulse over several unit intervals, so each sample contains a little of its neighbours.</p>
+        <p><b>A strong answer adds.</b> The single-bit, or pulse, response shows it directly: the main cursor at the sampling point, pre-cursors before it and post-cursors after. Loss produces a long, smooth tail; reflections produce discrete echoes at later bits. The worst case is the pattern that adds every post- and pre-cursor with the wrong sign, which is what peak-distortion analysis finds.</p>
+        <p class="qa__follow"><b>Likely follow-up:</b> <em>Which patterns are worst for ISI?</em> A long run of one value followed by a single opposite bit, because the tail of the run is largest just as the isolated bit needs to stand out.</p>
+        <p class="qa__more"><b>Read:</b> <a href="topics/fundamentals/isi.html">Intersymbol Interference (ISI) and Channel Memory</a> &#183; <a href="topics/signal-integrity/what-closes-the-eye.html">Eye Closure Causes: Loss, Reflections and Crosstalk</a><br><b>Try it:</b> <a href="topics/fundamentals/isi.html">the ISI panel</a></p>
+      </details>
+    </div>
+    <div class="qa" id="q-eye">
+      <p class="qa__n">Question 11 of 33</p>
+      <h3>What does an eye diagram tell you, and what doesn&#8217;t it?</h3>
+      <details class="qa__ans">
+        <summary><span class="qa__show">Show answer</span><span class="qa__hide">Hide answer</span></summary>
+        <p><b>Short answer.</b> It overlays every bit on one unit interval, so the open area in the middle is the voltage and timing margin left after ISI, noise and jitter for the bits you simulated or captured. Eye height and eye width are its two dimensions.</p>
+        <p><b>A strong answer adds.</b> An eye from a few thousand bits says little about rare events at 10<sup>&#8722;12</sup>; for that you need jitter and noise decomposed and extrapolated, or a statistical simulation. An eye also depends on where it is taken: at the pin, after the package, or after equalisation at the slicer. A compliance eye uses a mask, which is a statement about the receiver, not about the channel.</p>
+        <p class="qa__follow"><b>Likely follow-up:</b> <em>The eye is open in simulation but the link fails. Why?</em> Missing crosstalk, supply noise, a model that does not match the hardware, or simply too few bits.</p>
+        <p class="qa__more"><b>Read:</b> <a href="topics/fundamentals/eye-diagram.html">Eye Diagram: How to Read Eye Height and Eye Width</a> &#183; <a href="topics/signal-integrity/statistical-vs-time-domain.html">Statistical vs Bit-by-Bit Channel Simulation</a> &#183; <a href="topics/signal-integrity/compliance-masks.html">Transmitter Compliance Masks and Receiver Eye Masks</a></p>
+      </details>
+    </div>
+    <div class="qa" id="q-jitter">
+      <p class="qa__n">Question 12 of 33</p>
+      <h3>What are the kinds of jitter, and why does total jitter depend on BER?</h3>
+      <details class="qa__ans">
+        <summary><span class="qa__show">Show answer</span><span class="qa__hide">Hide answer</span></summary>
+        <p><b>Short answer.</b> Random jitter is unbounded and Gaussian, so it is described by its rms. Deterministic jitter is bounded: data-dependent jitter from ISI, duty-cycle distortion, periodic jitter and crosstalk. Total jitter at a BER is deterministic jitter plus 2Q(BER) times the random rms, about 14 sigma at 10<sup>&#8722;12</sup>.</p>
+        <p><b>A strong answer adds.</b> Because random jitter has no peak value, the total grows as you ask for a lower BER, which is why a jitter number without a BER is meaningless. The dual-Dirac model that splits jitter this way is a fit to the tails, not a measurement, and it can mislead on links with unusual jitter.</p>
+        <p class="qa__follow"><b>Likely follow-up:</b> <em>Can you measure 10<sup>&#8722;12</sup> directly?</em> At a few gigabits per second it takes minutes per sampling point; the bathtub is extrapolated from a shorter capture.</p>
+        <p class="qa__more"><b>Read:</b> <a href="topics/fundamentals/jitter-taxonomy.html">Jitter Components: RJ, DJ, DCD, PJ, and TJ</a> &#183; <a href="topics/fundamentals/bathtub-curves.html">Bathtub Curves and BER Extrapolation</a> &#183; <a href="topics/tools/ber-q-jitter.html">BER, Q-Factor and Total Jitter Calculator</a></p>
+      </details>
+    </div>
+    <div class="qa" id="q-timing">
+      <p class="qa__n">Question 13 of 33</p>
+      <h3>How do you build a timing budget for a source-synchronous bus such as DDR?</h3>
+      <details class="qa__ans">
+        <summary><span class="qa__show">Show answer</span><span class="qa__hide">Hide answer</span></summary>
+        <p><b>Short answer.</b> Compare the time the data is valid at the receiver with the time the receiver needs. The valid time is the unit interval minus the skew, jitter and pattern-dependent spread between the data and its strobe; the receiver&#8217;s setup and hold window has to fit inside what is left.</p>
+        <p><b>A strong answer adds.</b> Lay the terms out one by one. Static skew comes from length and layer mismatch: 1 mm of stripline is 6.7 ps, so 10 mm is 67 ps, 43% of the 156 ps unit interval of a 6400 MT/s bus. Microstrip is faster, about 5.8 ps/mm, so a net routed partly on each layer must be matched in delay, not in length. Jitter, ISI and crosstalk-induced delay variation come next; layout cannot remove them, and training removes static skew but not noise. What remains is the margin, and it has to be quoted at a BER or a mask, not as one number.</p>
+        <p class="qa__follow"><b>Likely follow-up:</b> <em>Why does the same length mismatch hurt more at a higher data rate?</em> The skew in picoseconds does not change while the unit interval shrinks: 67 ps is about 21% of the 312.5 ps interval at 3200 MT/s but 43% of it at 6400 MT/s.</p>
+        <p class="qa__more"><b>Read:</b> <a href="topics/signal-integrity/channel-budgeting.html">Channel Loss Budgeting Across Die, Package, and Board</a> &#183; <a href="topics/interfaces/ddr5.html">DDR5 Signal Integrity: Fly-by, ODT, DFE and Training</a> &#183; <a href="topics/methodology/reporting-margin.html">Reporting Signal and Power Integrity Margin</a></p>
+      </details>
+    </div>
+    <h2 class="section-rule" id="crosstalk"><span>Crosstalk</span></h2>
+    <div class="qa" id="q-crosstalk">
+      <p class="qa__n">Question 14 of 33</p>
+      <h3>What is the difference between near-end and far-end crosstalk?</h3>
+      <details class="qa__ans">
+        <summary><span class="qa__show">Show answer</span><span class="qa__hide">Hide answer</span></summary>
+        <p><b>Short answer.</b> Near-end crosstalk appears at the end of the victim nearest the aggressor&#8217;s driver and saturates once the coupled section&#8217;s delay exceeds about half the rise time. Far-end crosstalk appears at the far end, travels with the aggressor&#8217;s edge and grows with coupled length.</p>
+        <p><b>A strong answer adds.</b> Both come from mutual capacitance and mutual inductance. They add at the near end and subtract at the far end, so in a homogeneous dielectric such as stripline far-end crosstalk nearly cancels, while a microstrip, partly in air, generally has noticeable far-end crosstalk because its capacitive and inductive coupling no longer cancel. Far-end crosstalk is also proportional to the edge rate, so faster edges make it worse.</p>
+        <p class="qa__follow"><b>Likely follow-up:</b> <em>How do you reduce it?</em> More spacing, a closer reference plane, stripline instead of microstrip, shorter parallel runs, slower edges where allowed, and keeping return paths continuous.</p>
+        <p class="qa__more"><b>Read:</b> <a href="topics/fundamentals/crosstalk.html">PCB Crosstalk: NEXT, FEXT, and Mutual Coupling</a> &#183; <a href="topics/fundamentals/capacitive-inductive-coupling.html">Capacitive vs Inductive Coupling: dV/dt and dI/dt Noise</a><br><b>Try it:</b> <a href="topics/fundamentals/crosstalk.html">the crosstalk panel, changing the coupled length</a></p>
+      </details>
+    </div>
+    <div class="qa" id="q-3w">
+      <p class="qa__n">Question 15 of 33</p>
+      <h3>What is the 3W rule, and how far should you trust it?</h3>
+      <details class="qa__ans">
+        <summary><span class="qa__show">Show answer</span><span class="qa__hide">Hide answer</span></summary>
+        <p><b>Short answer.</b> A layout guideline: keep two traces at least three trace widths apart, centre to centre, so that much less of one trace&#8217;s field reaches the other. It is a sound starting point for crosstalk, not a result derived for your stackup.</p>
+        <p><b>A strong answer adds.</b> The physics sets spacing relative to the height above the reference plane, not to the trace width: an aggressor&#8217;s field terminates on the plane beneath it, so a closer plane often cuts coupling more cheaply than space does. Beyond about five widths more spacing buys very little. A rule that ignores the layer height will be too tight in one stackup and too loose in another, so check long parallel runs between fast edges against a crosstalk budget, with a coupled-line model or a field solver.</p>
+        <p class="qa__follow"><b>Likely follow-up:</b> <em>Is 3W enough between a clock and a data line?</em> Not by itself. Judge it by the noise it can add against the receiver&#8217;s margin, and give a clock or another sensitive net more room, a shorter parallel run, or both.</p>
+        <p class="qa__more"><b>Read:</b> <a href="topics/fundamentals/crosstalk.html">PCB Crosstalk: NEXT, FEXT, and Mutual Coupling</a> &#183; <a href="topics/fundamentals/capacitive-inductive-coupling.html">Capacitive vs Inductive Coupling: dV/dt and dI/dt Noise</a> &#183; <a href="topics/package-board/stackup-design.html">PCB Stackup Design and Dielectric Selection</a><br><b>Try it:</b> <a href="topics/fundamentals/crosstalk.html">the crosstalk panel, whose controls are the coupling ratios that spacing and height set</a></p>
+      </details>
+    </div>
+    <h2 class="section-rule" id="sparams"><span>Differential signalling and S-parameters</span></h2>
+    <div class="qa" id="q-diff">
+      <p class="qa__n">Question 16 of 33</p>
+      <h3>Why use differential signalling, and what is differential impedance?</h3>
+      <details class="qa__ans">
+        <summary><span class="qa__show">Show answer</span><span class="qa__hide">Hide answer</span></summary>
+        <p><b>Short answer.</b> The receiver looks at the difference between two lines, so noise common to both cancels, the swing on each line can be smaller, and the two return currents mostly cancel. Differential impedance is the impedance the pair presents to an odd-mode signal: twice the odd-mode impedance of one line.</p>
+        <p><b>A strong answer adds.</b> Coupling between the two lines lowers the odd-mode impedance and raises the even-mode impedance, so a pair designed for 100 &#937; differential is not two independent 50 &#937; lines. Any asymmetry, such as length skew, unequal coupling to neighbours or glass weave, converts some differential signal into common mode, which is what radiates and what a receiver may not reject.</p>
+        <p class="qa__follow"><b>Likely follow-up:</b> <em>Does length matching within a pair matter?</em> Yes: intra-pair skew is mode conversion. Matching between pairs matters only as much as the protocol&#8217;s skew budget.</p>
+        <p class="qa__more"><b>Read:</b> <a href="topics/fundamentals/differential-signalling.html">Differential Signaling: Common Mode and Mode Conversion</a></p>
+      </details>
+    </div>
+    <div class="qa" id="q-sparams">
+      <p class="qa__n">Question 17 of 33</p>
+      <h3>What do S11 and S21 tell you, and what is mode conversion?</h3>
+      <details class="qa__ans">
+        <summary><span class="qa__show">Show answer</span><span class="qa__hide">Hide answer</span></summary>
+        <p><b>Short answer.</b> S21 is the fraction of a wave that gets through, insertion loss; S11 is the fraction reflected back, return loss. In mixed-mode form, SDD21 is the differential insertion loss and SCD21 is how much differential signal turns into common mode on the way, which is mode conversion.</p>
+        <p><b>A strong answer adds.</b> S-parameters are measured or simulated against a reference impedance at defined ports; change the reference and they change. They must be passive (no gain at any frequency) and causal (no response before the input), and a model that breaks either produces eyes that are too good or simulations that do not converge.</p>
+        <p class="qa__follow"><b>Likely follow-up:</b> <em>Why is my S-parameter model non-causal?</em> Usually truncated bandwidth, poor interpolation, or a dielectric model whose loss and phase are not consistent.</p>
+        <p class="qa__more"><b>Read:</b> <a href="topics/fundamentals/s-parameters.html">S-Parameters Explained: S11, S21 and Mixed-Mode</a> &#183; <a href="topics/groundwork/domain-bridges.html">Time vs Frequency Domain: Impulse, Step, Convolution</a><br><b>Try it:</b> <a href="topics/fundamentals/s-parameters.html">the S-parameter panel</a></p>
+      </details>
+    </div>
+    <div class="qa" id="q-cm-emc">
+      <p class="qa__n">Question 18 of 33</p>
+      <h3>A differential link has a clean eye but fails radiated emissions. Where do you look?</h3>
+      <details class="qa__ans">
+        <summary><span class="qa__show">Show answer</span><span class="qa__hide">Hide answer</span></summary>
+        <p><b>Short answer.</b> At common-mode current. Radiation comes mostly from current that flows the same way on both conductors, and the eye only looks at the difference, so a pair can be clean differentially and still be converting some of its signal to common mode.</p>
+        <p><b>A strong answer adds.</b> Conversion comes from asymmetry: skew inside the pair, a via or stub on only one line, a glass-weave difference, unequal coupling to a neighbour or a plane edge, or an imbalanced driver. It appears in S-parameters as SCD21, differential in and common mode out. The first fix is symmetry at the source of the mismatch, together with a continuous return path; filters, common-mode chokes and shields treat the symptom, and are worth having once the conversion is as small as the layout allows.</p>
+        <p class="qa__follow"><b>Likely follow-up:</b> <em>Why does a cable make it worse?</em> It is a long, efficient antenna attached to the board&#8217;s reference, so a small common-mode voltage drives a useful amount of current into it.</p>
+        <p class="qa__more"><b>Read:</b> <a href="topics/fundamentals/differential-signalling.html">Differential Signaling: Common Mode and Mode Conversion</a> &#183; <a href="topics/fundamentals/s-parameters.html">S-Parameters Explained: S11, S21 and Mixed-Mode</a> &#183; <a href="topics/fundamentals/return-current-paths.html">Return Current Paths: Reference Planes, Splits and Gaps</a></p>
+      </details>
+    </div>
+    <h2 class="section-rule" id="eq"><span>Equalisation and clock recovery</span></h2>
+    <div class="qa" id="q-eq">
+      <p class="qa__n">Question 19 of 33</p>
+      <h3>CTLE, FFE and DFE: what does each one fix, and what does each cost?</h3>
+      <details class="qa__ans">
+        <summary><span class="qa__show">Show answer</span><span class="qa__hide">Hide answer</span></summary>
+        <p><b>Short answer.</b> A CTLE is an analogue high-pass that boosts high frequencies to undo channel loss, but it boosts noise and crosstalk with them. An FFE at the transmitter pre-distorts the signal, at the cost of launched swing. A DFE at the receiver subtracts post-cursor ISI using the bits it has already decided, without amplifying noise.</p>
+        <p><b>A strong answer adds.</b> An FFE is typically de-emphasis, often with a pre-cursor tap. They are complementary: the CTLE and FFE shape the pulse, the DFE cancels what remains after the cursor. A DFE cannot touch pre-cursor ISI, only reaches as many bits as it has taps, and a wrong decision feeds back into the next one. Adaptation chooses the settings during link training.</p>
+        <p class="qa__follow"><b>Likely follow-up:</b> <em>Why not use only a DFE?</em> It cannot remove pre-cursor ISI, and with a heavily lossy channel the first decision is already unreliable.</p>
+        <p class="qa__more"><b>Read:</b> <a href="topics/signal-integrity/equalization.html">SerDes Equalization: CTLE, FFE, DFE and CDR</a> &#183; <a href="topics/signal-integrity/what-closes-the-eye.html">Eye Closure Causes: Loss, Reflections and Crosstalk</a><br><b>Try it:</b> <a href="topics/signal-integrity/equalization.html">the equaliser panel</a></p>
+      </details>
+    </div>
+    <div class="qa" id="q-cdr">
+      <p class="qa__n">Question 20 of 33</p>
+      <h3>What does a clock and data recovery circuit do, and what are jitter transfer and jitter tolerance?</h3>
+      <details class="qa__ans">
+        <summary><span class="qa__show">Show answer</span><span class="qa__hide">Hide answer</span></summary>
+        <p><b>Short answer.</b> A CDR recovers a sampling clock from the data transitions, so a serial link needs no separate clock. Jitter transfer is how much input jitter the recovered clock follows; jitter tolerance is how much input jitter, at each frequency, the receiver can take before errors rise.</p>
+        <p><b>A strong answer adds.</b> The loop tracks slow jitter, below its bandwidth, so that jitter does not close the eye; fast jitter passes through untracked and spends margin. Peaking in the loop amplifies jitter near its natural frequency. Spread-spectrum clocking works only because its modulation is slow enough for the CDR to follow.</p>
+        <p class="qa__follow"><b>Likely follow-up:</b> <em>What sets the loop bandwidth?</em> A trade between tracking low-frequency jitter and filtering high-frequency noise, usually defined by the protocol.</p>
+        <p class="qa__more"><b>Read:</b> <a href="topics/signal-integrity/receiver-and-clock.html">CDR, Jitter Transfer and Jitter Tolerance (JTOL)</a> &#183; <a href="topics/fundamentals/jitter-taxonomy.html">Jitter Components: RJ, DJ, DCD, PJ, and TJ</a></p>
+      </details>
+    </div>
+    <div class="qa" id="q-pam4">
+      <p class="qa__n">Question 21 of 33</p>
+      <h3>Why move from NRZ to PAM4, and what does it cost?</h3>
+      <details class="qa__ans">
+        <summary><span class="qa__show">Show answer</span><span class="qa__hide">Hide answer</span></summary>
+        <p><b>Short answer.</b> PAM4 sends two bits per symbol, so the symbol rate and the Nyquist frequency halve for the same bit rate, and the channel loss at Nyquist drops. The cost is that three eyes share the same swing, each a third of the height, about 9.5 dB less.</p>
+        <p><b>A strong answer adds.</b> The receiver needs three slicers instead of one. It pays when loss at Nyquist is large enough that halving the frequency saves more than 9.5 dB, as in long backplanes and PCIe 6.0. On a short, noisy channel it does not, which is why LPDDR6 went to wider NRZ instead. PAM4 links usually rely on forward error correction because their raw error rate is higher.</p>
+        <p class="qa__follow"><b>Likely follow-up:</b> <em>Why is the PAM4 eye width smaller too?</em> Transitions between non-adjacent levels cross the thresholds at different times, and the eyes are shorter, so timing margin shrinks as well.</p>
+        <p class="qa__more"><b>Read:</b> <a href="topics/signal-integrity/nrz-vs-pam4.html">NRZ vs PAM4 Signaling: Bandwidth and SNR Trade-off</a> &#183; <a href="topics/interfaces/lpddr6.html">LPDDR6 Signal Integrity: Wide NRZ and Sub-Channels</a> &#183; <a href="topics/interfaces/pcie-gen6.html">PCIe 6.0 Signal Integrity: PAM4, FLIT, and FEC</a><br><b>Try it:</b> <a href="topics/interfaces/lpddr6.html">the three-roads panel on the LPDDR6 page</a></p>
+      </details>
+    </div>
+    <h2 class="section-rule" id="board"><span>Package, board and vias</span></h2>
+    <div class="qa" id="q-via">
+      <p class="qa__n">Question 22 of 33</p>
+      <h3>Why do vias matter at high speed, and what is a via stub?</h3>
+      <details class="qa__ans">
+        <summary><span class="qa__show">Show answer</span><span class="qa__hide">Hide answer</span></summary>
+        <p><b>Short answer.</b> A via is a short vertical discontinuity: its barrel and pads add capacitance, its return path adds inductance, and the unused length below the signal layer is a stub. An open stub resonates at the frequency where it is a quarter wavelength long and notches the channel there.</p>
+        <p><b>A strong answer adds.</b> The notch frequency is c/(4&#183;L&#183;&#8730;D<sub>k</sub>), so a 60 mil stub notches near 25 GHz. Backdrilling, blind vias or routing on the layer that leaves the shortest stub move the notch out of band. Return vias next to signal vias keep the return path short when the reference plane changes.</p>
+        <p class="qa__follow"><b>Likely follow-up:</b> <em>Where should you route a high-speed signal to minimise the stub?</em> On the layer furthest from the component side the via enters from, unless the via is backdrilled.</p>
+        <p class="qa__more"><b>Read:</b> <a href="topics/fundamentals/vias.html">High-Speed Vias: Stubs, Resonance, and Backdrilling</a> &#183; <a href="topics/tools/via-stub-resonance.html">Via Stub Resonance Calculator</a> &#183; <a href="topics/package-board/layer-transitions.html">Stitching Vias and PCB Layer Transitions</a></p>
+      </details>
+    </div>
+    <div class="qa" id="q-stackup">
+      <p class="qa__n">Question 23 of 33</p>
+      <h3>How would you plan a stackup for a high-speed board?</h3>
+      <details class="qa__ans">
+        <summary><span class="qa__show">Show answer</span><span class="qa__hide">Hide answer</span></summary>
+        <p><b>Short answer.</b> Every high-speed signal layer next to a continuous reference plane, power and ground planes paired closely for low inductance and plane capacitance, a symmetric build to avoid warp, and a laminate chosen for the loss budget at the fastest interface&#8217;s Nyquist frequency.</p>
+        <p><b>A strong answer adds.</b> Then trace widths for the target impedances on each layer, including tolerance; which interfaces go on which layers to keep via stubs short; where the planes split for different supplies, and making sure no fast signal crosses a split. Doing this early is cheaper than any fix later.</p>
+        <p class="qa__follow"><b>Likely follow-up:</b> <em>Microstrip or stripline?</em> Stripline for crosstalk and shielding; microstrip is faster and avoids vias, but has far-end crosstalk and is exposed.</p>
+        <p class="qa__more"><b>Read:</b> <a href="topics/package-board/stackup-design.html">PCB Stackup Design and Dielectric Selection</a> &#183; <a href="topics/package-board/manufacturing-tolerance.html">PCB Impedance Tolerance: Etch, Glass Weave, Stackup</a> &#183; <a href="topics/package-board/bga-escape-routing.html">BGA Escape Routing and Breakout Congestion</a></p>
+      </details>
+    </div>
+    <div class="qa" id="q-weave">
+      <p class="qa__n">Question 24 of 33</p>
+      <h3>What is glass-weave skew, and why can&#8217;t length matching fix it?</h3>
+      <details class="qa__ans">
+        <summary><span class="qa__show">Show answer</span><span class="qa__hide">Hide answer</span></summary>
+        <p><b>Short answer.</b> Laminate is woven glass in resin, and the two have different dielectric constants. A trace running along the weave can sit over glass while its partner sits over resin, so the two signals travel at different speeds even when their lengths are equal.</p>
+        <p><b>A strong answer adds.</b> The result is a delay difference inside the pair, which becomes mode conversion and a differential eye with less margin. It cannot be matched out by length, because it changes along the trace with where the weave happens to be. The fixes are upstream of layout: route at a small angle to the weave so each line averages over glass and resin, or specify a spread or mechanically flattened glass style. How much it matters depends on the data rate and the length of the run.</p>
+        <p class="qa__follow"><b>Likely follow-up:</b> <em>Does it matter on a 1 Gb/s link?</em> Rarely. It matters at the rates where the unit interval is short enough that tens of picoseconds are a large fraction of it.</p>
+        <p class="qa__more"><b>Read:</b> <a href="topics/package-board/manufacturing-tolerance.html">PCB Impedance Tolerance: Etch, Glass Weave, Stackup</a> &#183; <a href="topics/fundamentals/differential-signalling.html">Differential Signaling: Common Mode and Mode Conversion</a> &#183; <a href="topics/package-board/stackup-design.html">PCB Stackup Design and Dielectric Selection</a></p>
+      </details>
+    </div>
+    <div class="qa" id="q-ac">
+      <p class="qa__n">Question 25 of 33</p>
+      <h3>Why do high-speed links have AC-coupling capacitors, and where do they go?</h3>
+      <details class="qa__ans">
+        <summary><span class="qa__show">Show answer</span><span class="qa__hide">Hide answer</span></summary>
+        <p><b>Short answer.</b> They block DC, so that transmitter and receiver can each use their own common-mode level and survive different supply domains and hot-plugging. A small ceramic capacitor goes in series with each line of the pair, in the place the interface specification gives, often at the transmitter end.</p>
+        <p><b>A strong answer adds.</b> The capacitor and the receiver&#8217;s termination form a high-pass filter: 100 nF into 50 &#937; per line has its corner near 32 kHz. A run of 128 identical bits at 10 Gb/s lasts 12.8 ns, about 0.26% of the 5 &#181;s time constant, so the line barely droops. The trouble is the footprint, not the value: a pad wider than the trace is extra capacitance over the plane, a dip on a TDR. Use a small package, a cut-out in the plane beneath the pads, and an identical, symmetrical placement on both lines of the pair so that the mismatch does not convert modes. Keep vias away from the pads and the capacitor off any stub.</p>
+        <p class="qa__follow"><b>Likely follow-up:</b> <em>What goes wrong if the capacitor is too small?</em> The corner rises, long runs of identical bits droop, and the baseline wanders with the data, which closes the eye in the way ISI does.</p>
+        <p class="qa__more"><b>Read:</b> <a href="topics/fundamentals/tdr.html">TDR (Time-Domain Reflectometry): Reading PCB Impedance</a> &#183; <a href="topics/fundamentals/differential-signalling.html">Differential Signaling: Common Mode and Mode Conversion</a> &#183; <a href="topics/package-board/layer-transitions.html">Stitching Vias and PCB Layer Transitions</a></p>
+      </details>
+    </div>
+    <h2 class="section-rule" id="methods"><span>Methods and measurement</span></h2>
+    <div class="qa" id="q-tdr">
+      <p class="qa__n">Question 26 of 33</p>
+      <h3>How do you read a TDR, and what limits its resolution?</h3>
+      <details class="qa__ans">
+        <summary><span class="qa__show">Show answer</span><span class="qa__hide">Hide answer</span></summary>
+        <p><b>Short answer.</b> A TDR sends a fast step and plots the reflection against round-trip time, so time is distance and height is impedance. A dip is capacitance, a bump is inductance, and a step is a section at a different impedance.</p>
+        <p><b>A strong answer adds.</b> The end of the line reads +1 for an open and &#8722;1 for a short. Two features closer than about half the rise distance merge into one, a short feature never reaches its true impedance, loss makes a uniform line read as rising, and everything behind a large mismatch is seen through it. The area of a lumped dip gives its capacitance whatever the edge.</p>
+        <p class="qa__follow"><b>Likely follow-up:</b> <em>How do you get a TDR from a VNA?</em> By inverse Fourier transform of S11; the measurement bandwidth and the window set the effective rise time.</p>
+        <p class="qa__more"><b>Read:</b> <a href="topics/fundamentals/tdr.html">TDR (Time-Domain Reflectometry): Reading PCB Impedance</a> &#183; <a href="topics/methodology/measurement-practice.html">SI/PI Measurement: Probes, Fixtures and Calibration</a><br><b>Try it:</b> <a href="topics/fundamentals/tdr.html">the TDR lab</a></p>
+      </details>
+    </div>
+    <div class="qa" id="q-measure">
+      <p class="qa__n">Question 27 of 33</p>
+      <h3>When would you use a VNA, and when an oscilloscope?</h3>
+      <details class="qa__ans">
+        <summary><span class="qa__show">Show answer</span><span class="qa__hide">Hide answer</span></summary>
+        <p><b>Short answer.</b> A VNA measures the channel itself in the frequency domain, as S-parameters, with high dynamic range: insertion loss, return loss, crosstalk, resonances. An oscilloscope measures the signal in the time domain: the eye, jitter and noise with the real driver and receiver.</p>
+        <p><b>A strong answer adds.</b> Both need de-embedding of fixtures and probes to the reference plane you care about, and probing itself loads the circuit. A VNA answers &#8220;what is this interconnect?&#8221;; a scope answers &#8220;what is the signal doing?&#8221;. Correlation is comparing each against the simulation that predicted it.</p>
+        <p class="qa__follow"><b>Likely follow-up:</b> <em>Why does a probe change the measurement?</em> Its tip capacitance and ground lead inductance form a resonance, and its loading adds to the node.</p>
+        <p class="qa__more"><b>Read:</b> <a href="topics/methodology/measurement-practice.html">SI/PI Measurement: Probes, Fixtures and Calibration</a> &#183; <a href="topics/signal-integrity/de-embedding.html">S-Parameter De-Embedding and Fixture Removal</a> &#183; <a href="topics/methodology/correlation.html">Simulation-to-Measurement Correlation for SI/PI</a></p>
+      </details>
+    </div>
+    <div class="qa" id="q-ami">
+      <p class="qa__n">Question 28 of 33</p>
+      <h3>What is IBIS-AMI, and when do you need it instead of a transistor-level model?</h3>
+      <details class="qa__ans">
+        <summary><span class="qa__show">Show answer</span><span class="qa__hide">Hide answer</span></summary>
+        <p><b>Short answer.</b> IBIS describes a buffer&#8217;s analogue behaviour; AMI adds executable models of the transmitter and receiver equalisation and clock recovery, so a channel simulator can run millions of bits with realistic adaptation. A transistor-level model is accurate but far too slow for that.</p>
+        <p><b>A strong answer adds.</b> AMI models can be statistical, which is fast and assumes a linear, time-invariant channel, or time-domain, which handles adaptation and nonlinearity bit by bit. The channel itself comes in as S-parameters. The model is only as good as its correlation to silicon, which is why vendors publish correlation reports.</p>
+        <p class="qa__follow"><b>Likely follow-up:</b> <em>Why statistical analysis for 10<sup>&#8722;12</sup>?</em> Because simulating a trillion bits in the time domain is not practical; statistical methods compute the distribution directly.</p>
+        <p class="qa__more"><b>Read:</b> <a href="topics/signal-integrity/ibis-ami-spice.html">IBIS vs IBIS-AMI vs SPICE: Choosing SI Models</a> &#183; <a href="topics/signal-integrity/statistical-vs-time-domain.html">Statistical vs Bit-by-Bit Channel Simulation</a> &#183; <a href="topics/methodology/simulation-flow.html">Signal Integrity Simulation Workflow</a></p>
+      </details>
+    </div>
+    <h2 class="section-rule" id="plots"><span>Read the plot</span></h2>
+    <div class="qa" id="q-plot-tdr">
+      <p class="qa__n">Question 29 of 33</p>
+      <h3>A TDR trace dips, then returns to 50 &#937;, partway along a line. What is it, and how big?</h3>
+      <figure class="figure qa__fig">
+        <div class="figure__bar"><span>TDR &#183; reflection against round-trip time</span></div>
+        <div class="figure__body"><svg viewBox="0 0 380 200" role="img" aria-label="TDR trace: reflection coefficient against round-trip time. It sits at zero, dips to about minus 0.43 near 200 picoseconds, and recovers to zero by about 300 picoseconds.">
+        <line class="grid" x1="46" y1="12.0" x2="368" y2="12.0"/>
+        <text class="lbl" x="41" y="15.5" text-anchor="end">+0.1</text>
+        <line class="grid" x1="46" y1="37.7" x2="368" y2="37.7"/>
+        <text class="lbl" x="41" y="41.2" text-anchor="end">0</text>
+        <line class="grid" x1="46" y1="63.3" x2="368" y2="63.3"/>
+        <text class="lbl" x="41" y="66.8" text-anchor="end">&#8722;0.1</text>
+        <line class="grid" x1="46" y1="89.0" x2="368" y2="89.0"/>
+        <text class="lbl" x="41" y="92.5" text-anchor="end">&#8722;0.2</text>
+        <line class="grid" x1="46" y1="114.7" x2="368" y2="114.7"/>
+        <text class="lbl" x="41" y="118.2" text-anchor="end">&#8722;0.3</text>
+        <line class="grid" x1="46" y1="140.3" x2="368" y2="140.3"/>
+        <text class="lbl" x="41" y="143.8" text-anchor="end">&#8722;0.4</text>
+        <line class="grid" x1="46" y1="166.0" x2="368" y2="166.0"/>
+        <text class="lbl" x="41" y="169.5" text-anchor="end">&#8722;0.5</text>
+        <line class="grid" x1="46.0" y1="12" x2="46.0" y2="166"/>
+        <text class="lbl" x="46.0" y="179" text-anchor="middle">0</text>
+        <line class="grid" x1="110.4" y1="12" x2="110.4" y2="166"/>
+        <text class="lbl" x="110.4" y="179" text-anchor="middle">100</text>
+        <line class="grid" x1="174.8" y1="12" x2="174.8" y2="166"/>
+        <text class="lbl" x="174.8" y="179" text-anchor="middle">200</text>
+        <line class="grid" x1="239.2" y1="12" x2="239.2" y2="166"/>
+        <text class="lbl" x="239.2" y="179" text-anchor="middle">300</text>
+        <line class="grid" x1="303.6" y1="12" x2="303.6" y2="166"/>
+        <text class="lbl" x="303.6" y="179" text-anchor="middle">400</text>
+        <line class="grid" x1="368.0" y1="12" x2="368.0" y2="166"/>
+        <text class="lbl" x="368.0" y="179" text-anchor="middle">500</text>
+        <rect class="tick" x="46" y="12" width="322" height="154"/>
+        <text class="lbl" x="207.0" y="196" text-anchor="middle">round-trip time (ps)</text>
+        <text class="lbl" x="11" y="89.0" text-anchor="middle" transform="rotate(-90 11 89.0)">reflection &#961;</text>
+        <path class="flow" d="M46.0 37.7 L46.6 37.7 L47.3 37.7 L47.9 37.7 L48.6 37.7 L49.2 37.7 L49.9 37.7 L50.5 37.7 L51.2 37.7 L51.8 37.7 L52.4 37.7 L53.1 37.7 L53.7 37.7 L54.4 37.7 L55.0 37.7 L55.7 37.7 L56.3 37.7 L56.9 37.7 L57.6 37.7 L58.2 37.7 L58.9 37.7 L59.5 37.7 L60.2 37.7 L60.8 37.7 L61.5 37.7 L62.1 37.7 L62.7 37.7 L63.4 37.7 L64.0 37.7 L64.7 37.7 L65.3 37.7 L66.0 37.7 L66.6 37.7 L67.3 37.7 L67.9 37.7 L68.5 37.7 L69.2 37.7 L69.8 37.7 L70.5 37.7 L71.1 37.7 L71.8 37.7 L72.4 37.7 L73.0 37.7 L73.7 37.7 L74.3 37.7 L75.0 37.7 L75.6 37.7 L76.3 37.7 L76.9 37.7 L77.6 37.7 L78.2 37.7 L78.8 37.7 L79.5 37.7 L80.1 37.7 L80.8 37.7 L81.4 37.7 L82.1 37.7 L82.7 37.7 L83.4 37.7 L84.0 37.7 L84.6 37.7 L85.3 37.7 L85.9 37.7 L86.6 37.7 L87.2 37.7 L87.9 37.7 L88.5 37.7 L89.1 37.7 L89.8 37.7 L90.4 37.7 L91.1 37.7 L91.7 37.7 L92.4 37.7 L93.0 37.7 L93.7 37.7 L94.3 37.7 L94.9 37.7 L95.6 37.7 L96.2 37.7 L96.9 37.7 L97.5 37.7 L98.2 37.7 L98.8 37.7 L99.5 37.7 L100.1 37.7 L100.7 37.7 L101.4 37.7 L102.0 37.7 L102.7 37.7 L103.3 37.7 L104.0 37.7 L104.6 37.7 L105.2 37.7 L105.9 37.7 L106.5 37.7 L107.2 37.7 L107.8 37.7 L108.5 37.7 L109.1 37.7 L109.8 37.7 L110.4 37.7 L111.0 37.7 L111.7 37.7 L112.3 37.7 L113.0 37.7 L113.6 37.7 L114.3 37.7 L114.9 37.7 L115.6 37.7 L116.2 37.7 L116.8 37.7 L117.5 37.7 L118.1 37.7 L118.8 37.7 L119.4 37.7 L120.1 37.7 L120.7 37.7 L121.3 37.7 L122.0 37.7 L122.6 37.7 L123.3 37.7 L123.9 37.7 L124.6 37.7 L125.2 37.7 L125.9 37.7 L126.5 37.7 L127.1 37.7 L127.8 37.7 L128.4 37.7 L129.1 37.7 L129.7 37.7 L130.4 37.7 L131.0 37.7 L131.7 37.7 L132.3 37.7 L132.9 37.7 L133.6 37.7 L134.2 37.7 L134.9 37.7 L135.5 37.7 L136.2 37.7 L136.8 37.7 L137.4 37.7 L138.1 37.7 L138.7 37.7 L139.4 37.7 L140.0 37.7 L140.7 37.7 L141.3 37.7 L142.0 37.7 L142.6 37.7 L143.2 42.7 L143.9 47.5 L144.5 52.2 L145.2 56.6 L145.8 60.9 L146.5 65.0 L147.1 69.0 L147.8 72.8 L148.4 76.5 L149.0 80.0 L149.7 83.3 L150.3 86.6 L151.0 89.7 L151.6 92.7 L152.3 95.6 L152.9 98.3 L153.5 101.0 L154.2 103.5 L154.8 106.0 L155.5 108.3 L156.1 110.6 L156.8 112.8 L157.4 114.9 L158.1 116.9 L158.7 118.8 L159.3 120.6 L160.0 122.4 L160.6 124.1 L161.3 125.8 L161.9 127.3 L162.6 128.9 L163.2 130.3 L163.9 131.7 L164.5 133.1 L165.1 134.4 L165.8 135.6 L166.4 136.8 L167.1 137.9 L167.7 139.0 L168.4 140.1 L169.0 141.1 L169.6 142.1 L170.3 143.0 L170.9 143.9 L171.6 144.8 L172.2 145.6 L172.9 146.4 L173.5 147.2 L174.2 147.9 L174.8 148.6 L175.4 144.3 L176.1 140.1 L176.7 136.1 L177.4 132.2 L178.0 128.5 L178.7 125.0 L179.3 121.5 L180.0 118.2 L180.6 115.1 L181.2 112.0 L181.9 109.1 L182.5 106.3 L183.2 103.6 L183.8 101.1 L184.5 98.6 L185.1 96.2 L185.7 93.9 L186.4 91.7 L187.0 89.6 L187.7 87.5 L188.3 85.6 L189.0 83.7 L189.6 81.9 L190.3 80.2 L190.9 78.5 L191.5 76.9 L192.2 75.3 L192.8 73.9 L193.5 72.5 L194.1 71.1 L194.8 69.8 L195.4 68.5 L196.1 67.3 L196.7 66.1 L197.3 65.0 L198.0 64.0 L198.6 62.9 L199.3 61.9 L199.9 61.0 L200.6 60.1 L201.2 59.2 L201.8 58.3 L202.5 57.5 L203.1 56.8 L203.8 56.0 L204.4 55.3 L205.1 54.6 L205.7 53.9 L206.4 53.3 L207.0 52.7 L207.6 52.1 L208.3 51.5 L208.9 51.0 L209.6 50.5 L210.2 50.0 L210.9 49.5 L211.5 49.0 L212.2 48.6 L212.8 48.1 L213.4 47.7 L214.1 47.3 L214.7 47.0 L215.4 46.6 L216.0 46.2 L216.7 45.9 L217.3 45.6 L217.9 45.3 L218.6 45.0 L219.2 44.7 L219.9 44.4 L220.5 44.1 L221.2 43.9 L221.8 43.7 L222.5 43.4 L223.1 43.2 L223.7 43.0 L224.4 42.8 L225.0 42.6 L225.7 42.4 L226.3 42.2 L227.0 42.0 L227.6 41.8 L228.3 41.7 L228.9 41.5 L229.5 41.4 L230.2 41.2 L230.8 41.1 L231.5 41.0 L232.1 40.8 L232.8 40.7 L233.4 40.6 L234.0 40.5 L234.7 40.4 L235.3 40.3 L236.0 40.1 L236.6 40.1 L237.3 40.0 L237.9 39.9 L238.6 39.8 L239.2 39.7 L239.8 39.6 L240.5 39.5 L241.1 39.5 L241.8 39.4 L242.4 39.3 L243.1 39.3 L243.7 39.2 L244.4 39.1 L245.0 39.1 L245.6 39.0 L246.3 39.0 L246.9 38.9 L247.6 38.9 L248.2 38.8 L248.9 38.8 L249.5 38.7 L250.1 38.7 L250.8 38.7 L251.4 38.6 L252.1 38.6 L252.7 38.5 L253.4 38.5 L254.0 38.5 L254.7 38.4 L255.3 38.4 L255.9 38.4 L256.6 38.4 L257.2 38.3 L257.9 38.3 L258.5 38.3 L259.2 38.3 L259.8 38.2 L260.5 38.2 L261.1 38.2 L261.7 38.2 L262.4 38.1 L263.0 38.1 L263.7 38.1 L264.3 38.1 L265.0 38.1 L265.6 38.1 L266.2 38.0 L266.9 38.0 L267.5 38.0 L268.2 38.0 L268.8 38.0 L269.5 38.0 L270.1 38.0 L270.8 38.0 L271.4 37.9 L272.0 37.9 L272.7 37.9 L273.3 37.9 L274.0 37.9 L274.6 37.9 L275.3 37.9 L275.9 37.9 L276.6 37.9 L277.2 37.9 L277.8 37.9 L278.5 37.8 L279.1 37.8 L279.8 37.8 L280.4 37.8 L281.1 37.8 L281.7 37.8 L282.3 37.8 L283.0 37.8 L283.6 37.8 L284.3 37.8 L284.9 37.8 L285.6 37.8 L286.2 37.8 L286.9 37.8 L287.5 37.8 L288.1 37.8 L288.8 37.8 L289.4 37.8 L290.1 37.8 L290.7 37.7 L291.4 37.7 L292.0 37.7 L292.7 37.7 L293.3 37.7 L293.9 37.7 L294.6 37.7 L295.2 37.7 L295.9 37.7 L296.5 37.7 L297.2 37.7 L297.8 37.7 L298.4 37.7 L299.1 37.7 L299.7 37.7 L300.4 37.7 L301.0 37.7 L301.7 37.7 L302.3 37.7 L303.0 37.7 L303.6 37.7 L304.2 37.7 L304.9 37.7 L305.5 37.7 L306.2 37.7 L306.8 37.7 L307.5 37.7 L308.1 37.7 L308.8 37.7 L309.4 37.7 L310.0 37.7 L310.7 37.7 L311.3 37.7 L312.0 37.7 L312.6 37.7 L313.3 37.7 L313.9 37.7 L314.5 37.7 L315.2 37.7 L315.8 37.7 L316.5 37.7 L317.1 37.7 L317.8 37.7 L318.4 37.7 L319.1 37.7 L319.7 37.7 L320.3 37.7 L321.0 37.7 L321.6 37.7 L322.3 37.7 L322.9 37.7 L323.6 37.7 L324.2 37.7 L324.9 37.7 L325.5 37.7 L326.1 37.7 L326.8 37.7 L327.4 37.7 L328.1 37.7 L328.7 37.7 L329.4 37.7 L330.0 37.7 L330.6 37.7 L331.3 37.7 L331.9 37.7 L332.6 37.7 L333.2 37.7 L333.9 37.7 L334.5 37.7 L335.2 37.7 L335.8 37.7 L336.4 37.7 L337.1 37.7 L337.7 37.7 L338.4 37.7 L339.0 37.7 L339.7 37.7 L340.3 37.7 L341.0 37.7 L341.6 37.7 L342.2 37.7 L342.9 37.7 L343.5 37.7 L344.2 37.7 L344.8 37.7 L345.5 37.7 L346.1 37.7 L346.7 37.7 L347.4 37.7 L348.0 37.7 L348.7 37.7 L349.3 37.7 L350.0 37.7 L350.6 37.7 L351.3 37.7 L351.9 37.7 L352.5 37.7 L353.2 37.7 L353.8 37.7 L354.5 37.7 L355.1 37.7 L355.8 37.7 L356.4 37.7 L357.1 37.7 L357.7 37.7 L358.3 37.7 L359.0 37.7 L359.6 37.7 L360.3 37.7 L360.9 37.7 L361.6 37.7 L362.2 37.7 L362.8 37.7 L363.5 37.7 L364.1 37.7 L364.8 37.7 L365.4 37.7 L366.1 37.7 L366.7 37.7 L367.4 37.7 L368.0 37.7"/>
+        <text class="lbl" x="71.8" y="31.7" text-anchor="start">50 &#937; line</text>
+        <text class="lbl" x="362.8" y="31.7" text-anchor="end">50 &#937; line</text>
+      </svg></div>
+        <figcaption>A 50 &#937; line measured by a TDR with a 50 ps edge. Computed from a simple model, not drawn.</figcaption>
+      </figure>
+      <details class="qa__ans">
+        <summary><span class="qa__show">Show answer</span><span class="qa__hide">Hide answer</span></summary>
+        <p><b>Short answer.</b> A capacitive discontinuity: a via, a pad, a component land, a test point. A capacitance pulls the reflection negative while the edge charges it, then the line reads its own impedance again.</p>
+        <p><b>A strong answer adds.</b> Its size comes from the area of the dip in &#961;&#183;time, which equals Z<sub>0</sub>C/2 for any edge: 25 ps of area on a 50 &#937; line is 1 pF. In the plot the dip is about 0.43 deep and 53 ps wide at half depth, so depth times width is about 23 ps: close to the true area of 25 ps, which is the 1 pF used to draw it. Its depth depends on the edge as much as on the capacitance, so depth alone is not a measure. A bump instead of a dip would be series inductance, such as a neck or a wire.</p>
+        <p class="qa__follow"><b>Likely follow-up:</b> <em>Two vias close together show as one dip. Why?</em> Their reflections are closer together than the edge; a faster edge separates them.</p>
+        <p class="qa__more"><b>Read:</b> <a href="topics/fundamentals/tdr.html">TDR (Time-Domain Reflectometry): Reading PCB Impedance</a><br><b>Try it:</b> <a href="topics/fundamentals/tdr.html">the TDR lab: &#8220;A via: the dip&#8221; and &#8220;Two vias, one dip&#8221;</a></p>
+      </details>
+    </div>
+    <div class="qa" id="q-plot-notch">
+      <p class="qa__n">Question 30 of 33</p>
+      <h3>Insertion loss falls smoothly, then has a sharp notch near 20 GHz. What causes it?</h3>
+      <figure class="figure qa__fig">
+        <div class="figure__bar"><span>Insertion loss &#183; one board channel</span></div>
+        <div class="figure__body"><svg viewBox="0 0 380 200" role="img" aria-label="Insertion loss against frequency from 0 to 40 GHz. It falls smoothly to about minus 17 dB at 40 GHz, with a sharp notch to about minus 36 dB at 20 GHz.">
+        <line class="grid" x1="46" y1="12.0" x2="368" y2="12.0"/>
+        <text class="lbl" x="41" y="15.5" text-anchor="end">0</text>
+        <line class="grid" x1="46" y1="50.5" x2="368" y2="50.5"/>
+        <text class="lbl" x="41" y="54.0" text-anchor="end">&#8722;10</text>
+        <line class="grid" x1="46" y1="89.0" x2="368" y2="89.0"/>
+        <text class="lbl" x="41" y="92.5" text-anchor="end">&#8722;20</text>
+        <line class="grid" x1="46" y1="127.5" x2="368" y2="127.5"/>
+        <text class="lbl" x="41" y="131.0" text-anchor="end">&#8722;30</text>
+        <line class="grid" x1="46" y1="166.0" x2="368" y2="166.0"/>
+        <text class="lbl" x="41" y="169.5" text-anchor="end">&#8722;40</text>
+        <line class="grid" x1="46.0" y1="12" x2="46.0" y2="166"/>
+        <text class="lbl" x="46.0" y="179" text-anchor="middle">0</text>
+        <line class="grid" x1="126.5" y1="12" x2="126.5" y2="166"/>
+        <text class="lbl" x="126.5" y="179" text-anchor="middle">10</text>
+        <line class="grid" x1="207.0" y1="12" x2="207.0" y2="166"/>
+        <text class="lbl" x="207.0" y="179" text-anchor="middle">20</text>
+        <line class="grid" x1="287.5" y1="12" x2="287.5" y2="166"/>
+        <text class="lbl" x="287.5" y="179" text-anchor="middle">30</text>
+        <line class="grid" x1="368.0" y1="12" x2="368.0" y2="166"/>
+        <text class="lbl" x="368.0" y="179" text-anchor="middle">40</text>
+        <rect class="tick" x="46" y="12" width="322" height="154"/>
+        <text class="lbl" x="207.0" y="196" text-anchor="middle">frequency (GHz)</text>
+        <text class="lbl" x="11" y="89.0" text-anchor="middle" transform="rotate(-90 11 89.0)">insertion loss (dB)</text>
+        <path class="flow" d="M46.0 12.0 L46.4 12.6 L46.8 12.9 L47.2 13.1 L47.6 13.3 L48.0 13.5 L48.4 13.7 L48.8 13.9 L49.2 14.0 L49.6 14.2 L50.0 14.3 L50.4 14.5 L50.8 14.6 L51.2 14.7 L51.6 14.9 L52.0 15.0 L52.4 15.2 L52.8 15.3 L53.2 15.4 L53.6 15.5 L54.0 15.7 L54.5 15.8 L54.9 15.9 L55.3 16.0 L55.7 16.1 L56.1 16.3 L56.5 16.4 L56.9 16.5 L57.3 16.6 L57.7 16.7 L58.1 16.9 L58.5 17.0 L58.9 17.1 L59.3 17.2 L59.7 17.3 L60.1 17.4 L60.5 17.5 L60.9 17.6 L61.3 17.7 L61.7 17.9 L62.1 18.0 L62.5 18.1 L62.9 18.2 L63.3 18.3 L63.7 18.4 L64.1 18.5 L64.5 18.6 L64.9 18.7 L65.3 18.8 L65.7 18.9 L66.1 19.0 L66.5 19.2 L66.9 19.3 L67.3 19.4 L67.7 19.5 L68.1 19.6 L68.5 19.7 L68.9 19.8 L69.3 19.9 L69.7 20.0 L70.2 20.1 L70.6 20.2 L71.0 20.3 L71.4 20.4 L71.8 20.5 L72.2 20.6 L72.6 20.7 L73.0 20.8 L73.4 20.9 L73.8 21.0 L74.2 21.1 L74.6 21.3 L75.0 21.4 L75.4 21.5 L75.8 21.6 L76.2 21.7 L76.6 21.8 L77.0 21.9 L77.4 22.0 L77.8 22.1 L78.2 22.2 L78.6 22.3 L79.0 22.4 L79.4 22.5 L79.8 22.6 L80.2 22.7 L80.6 22.8 L81.0 22.9 L81.4 23.0 L81.8 23.1 L82.2 23.2 L82.6 23.3 L83.0 23.4 L83.4 23.5 L83.8 23.6 L84.2 23.7 L84.6 23.8 L85.0 23.9 L85.4 24.1 L85.8 24.2 L86.2 24.3 L86.7 24.4 L87.1 24.5 L87.5 24.6 L87.9 24.7 L88.3 24.8 L88.7 24.9 L89.1 25.0 L89.5 25.1 L89.9 25.2 L90.3 25.3 L90.7 25.4 L91.1 25.5 L91.5 25.6 L91.9 25.7 L92.3 25.8 L92.7 25.9 L93.1 26.1 L93.5 26.2 L93.9 26.3 L94.3 26.4 L94.7 26.5 L95.1 26.6 L95.5 26.7 L95.9 26.8 L96.3 26.9 L96.7 27.0 L97.1 27.1 L97.5 27.2 L97.9 27.3 L98.3 27.4 L98.7 27.6 L99.1 27.7 L99.5 27.8 L99.9 27.9 L100.3 28.0 L100.7 28.1 L101.1 28.2 L101.5 28.3 L101.9 28.4 L102.3 28.5 L102.8 28.7 L103.2 28.8 L103.6 28.9 L104.0 29.0 L104.4 29.1 L104.8 29.2 L105.2 29.3 L105.6 29.4 L106.0 29.6 L106.4 29.7 L106.8 29.8 L107.2 29.9 L107.6 30.0 L108.0 30.1 L108.4 30.2 L108.8 30.4 L109.2 30.5 L109.6 30.6 L110.0 30.7 L110.4 30.8 L110.8 30.9 L111.2 31.0 L111.6 31.2 L112.0 31.3 L112.4 31.4 L112.8 31.5 L113.2 31.6 L113.6 31.8 L114.0 31.9 L114.4 32.0 L114.8 32.1 L115.2 32.2 L115.6 32.4 L116.0 32.5 L116.4 32.6 L116.8 32.7 L117.2 32.9 L117.6 33.0 L118.0 33.1 L118.5 33.2 L118.9 33.3 L119.3 33.5 L119.7 33.6 L120.1 33.7 L120.5 33.9 L120.9 34.0 L121.3 34.1 L121.7 34.2 L122.1 34.4 L122.5 34.5 L122.9 34.6 L123.3 34.8 L123.7 34.9 L124.1 35.0 L124.5 35.2 L124.9 35.3 L125.3 35.4 L125.7 35.6 L126.1 35.7 L126.5 35.8 L126.9 36.0 L127.3 36.1 L127.7 36.2 L128.1 36.4 L128.5 36.5 L128.9 36.6 L129.3 36.8 L129.7 36.9 L130.1 37.1 L130.5 37.2 L130.9 37.4 L131.3 37.5 L131.7 37.6 L132.1 37.8 L132.5 37.9 L132.9 38.1 L133.3 38.2 L133.7 38.4 L134.1 38.5 L134.6 38.7 L135.0 38.8 L135.4 39.0 L135.8 39.1 L136.2 39.3 L136.6 39.4 L137.0 39.6 L137.4 39.8 L137.8 39.9 L138.2 40.1 L138.6 40.2 L139.0 40.4 L139.4 40.6 L139.8 40.7 L140.2 40.9 L140.6 41.0 L141.0 41.2 L141.4 41.4 L141.8 41.5 L142.2 41.7 L142.6 41.9 L143.0 42.1 L143.4 42.2 L143.8 42.4 L144.2 42.6 L144.6 42.8 L145.0 42.9 L145.4 43.1 L145.8 43.3 L146.2 43.5 L146.6 43.7 L147.0 43.9 L147.4 44.0 L147.8 44.2 L148.2 44.4 L148.6 44.6 L149.0 44.8 L149.4 45.0 L149.8 45.2 L150.2 45.4 L150.7 45.6 L151.1 45.8 L151.5 46.0 L151.9 46.2 L152.3 46.4 L152.7 46.6 L153.1 46.8 L153.5 47.0 L153.9 47.3 L154.3 47.5 L154.7 47.7 L155.1 47.9 L155.5 48.1 L155.9 48.4 L156.3 48.6 L156.7 48.8 L157.1 49.0 L157.5 49.3 L157.9 49.5 L158.3 49.8 L158.7 50.0 L159.1 50.2 L159.5 50.5 L159.9 50.7 L160.3 51.0 L160.7 51.2 L161.1 51.5 L161.5 51.8 L161.9 52.0 L162.3 52.3 L162.7 52.6 L163.1 52.8 L163.5 53.1 L163.9 53.4 L164.3 53.7 L164.7 53.9 L165.1 54.2 L165.5 54.5 L165.9 54.8 L166.3 55.1 L166.8 55.4 L167.2 55.7 L167.6 56.0 L168.0 56.3 L168.4 56.6 L168.8 57.0 L169.2 57.3 L169.6 57.6 L170.0 58.0 L170.4 58.3 L170.8 58.6 L171.2 59.0 L171.6 59.3 L172.0 59.7 L172.4 60.0 L172.8 60.4 L173.2 60.8 L173.6 61.2 L174.0 61.5 L174.4 61.9 L174.8 62.3 L175.2 62.7 L175.6 63.1 L176.0 63.5 L176.4 64.0 L176.8 64.4 L177.2 64.8 L177.6 65.2 L178.0 65.7 L178.4 66.1 L178.8 66.6 L179.2 67.1 L179.6 67.5 L180.0 68.0 L180.4 68.5 L180.8 69.0 L181.2 69.5 L181.6 70.0 L182.0 70.5 L182.4 71.1 L182.8 71.6 L183.3 72.2 L183.7 72.7 L184.1 73.3 L184.5 73.9 L184.9 74.5 L185.3 75.1 L185.7 75.7 L186.1 76.3 L186.5 77.0 L186.9 77.7 L187.3 78.3 L187.7 79.0 L188.1 79.7 L188.5 80.4 L188.9 81.2 L189.3 81.9 L189.7 82.7 L190.1 83.5 L190.5 84.3 L190.9 85.1 L191.3 85.9 L191.7 86.8 L192.1 87.7 L192.5 88.6 L192.9 89.5 L193.3 90.5 L193.7 91.5 L194.1 92.5 L194.5 93.6 L194.9 94.7 L195.3 95.8 L195.7 96.9 L196.1 98.1 L196.5 99.4 L196.9 100.6 L197.3 101.9 L197.7 103.3 L198.1 104.7 L198.5 106.2 L198.9 107.7 L199.4 109.3 L199.8 111.0 L200.2 112.8 L200.6 114.6 L201.0 116.5 L201.4 118.5 L201.8 120.6 L202.2 122.7 L202.6 125.0 L203.0 127.4 L203.4 129.9 L203.8 132.5 L204.2 135.2 L204.6 137.9 L205.0 140.5 L205.4 143.1 L205.8 145.3 L206.2 147.1 L206.6 148.3 L207.0 148.8 L207.4 148.4 L207.8 147.3 L208.2 145.6 L208.6 143.4 L209.0 141.0 L209.4 138.5 L209.8 136.0 L210.2 133.5 L210.6 131.1 L211.0 128.7 L211.4 126.5 L211.8 124.4 L212.2 122.3 L212.6 120.4 L213.0 118.6 L213.4 116.8 L213.8 115.2 L214.2 113.6 L214.6 112.1 L215.1 110.7 L215.5 109.3 L215.9 108.0 L216.3 106.7 L216.7 105.5 L217.1 104.3 L217.5 103.2 L217.9 102.1 L218.3 101.1 L218.7 100.1 L219.1 99.1 L219.5 98.2 L219.9 97.3 L220.3 96.4 L220.7 95.6 L221.1 94.8 L221.5 94.0 L221.9 93.3 L222.3 92.5 L222.7 91.8 L223.1 91.1 L223.5 90.5 L223.9 89.8 L224.3 89.2 L224.7 88.6 L225.1 88.0 L225.5 87.4 L225.9 86.8 L226.3 86.3 L226.7 85.7 L227.1 85.2 L227.5 84.7 L227.9 84.2 L228.3 83.7 L228.7 83.3 L229.1 82.8 L229.5 82.4 L229.9 82.0 L230.3 81.5 L230.7 81.1 L231.1 80.7 L231.6 80.3 L232.0 79.9 L232.4 79.6 L232.8 79.2 L233.2 78.9 L233.6 78.5 L234.0 78.2 L234.4 77.9 L234.8 77.5 L235.2 77.2 L235.6 76.9 L236.0 76.6 L236.4 76.3 L236.8 76.0 L237.2 75.8 L237.6 75.5 L238.0 75.2 L238.4 75.0 L238.8 74.7 L239.2 74.5 L239.6 74.2 L240.0 74.0 L240.4 73.8 L240.8 73.5 L241.2 73.3 L241.6 73.1 L242.0 72.9 L242.4 72.7 L242.8 72.5 L243.2 72.3 L243.6 72.1 L244.0 71.9 L244.4 71.7 L244.8 71.6 L245.2 71.4 L245.6 71.2 L246.0 71.1 L246.4 70.9 L246.8 70.7 L247.2 70.6 L247.7 70.4 L248.1 70.3 L248.5 70.1 L248.9 70.0 L249.3 69.9 L249.7 69.7 L250.1 69.6 L250.5 69.5 L250.9 69.4 L251.3 69.2 L251.7 69.1 L252.1 69.0 L252.5 68.9 L252.9 68.8 L253.3 68.7 L253.7 68.6 L254.1 68.5 L254.5 68.4 L254.9 68.3 L255.3 68.2 L255.7 68.1 L256.1 68.0 L256.5 67.9 L256.9 67.9 L257.3 67.8 L257.7 67.7 L258.1 67.6 L258.5 67.5 L258.9 67.5 L259.3 67.4 L259.7 67.3 L260.1 67.3 L260.5 67.2 L260.9 67.1 L261.3 67.1 L261.7 67.0 L262.1 67.0 L262.5 66.9 L262.9 66.9 L263.4 66.8 L263.8 66.8 L264.2 66.7 L264.6 66.7 L265.0 66.6 L265.4 66.6 L265.8 66.6 L266.2 66.5 L266.6 66.5 L267.0 66.4 L267.4 66.4 L267.8 66.4 L268.2 66.3 L268.6 66.3 L269.0 66.3 L269.4 66.3 L269.8 66.2 L270.2 66.2 L270.6 66.2 L271.0 66.2 L271.4 66.1 L271.8 66.1 L272.2 66.1 L272.6 66.1 L273.0 66.1 L273.4 66.1 L273.8 66.0 L274.2 66.0 L274.6 66.0 L275.0 66.0 L275.4 66.0 L275.8 66.0 L276.2 66.0 L276.6 66.0 L277.0 66.0 L277.4 66.0 L277.8 66.0 L278.2 66.0 L278.6 66.0 L279.0 66.0 L279.4 66.0 L279.9 66.0 L280.3 66.0 L280.7 66.0 L281.1 66.0 L281.5 66.0 L281.9 66.0 L282.3 66.0 L282.7 66.0 L283.1 66.0 L283.5 66.0 L283.9 66.0 L284.3 66.0 L284.7 66.0 L285.1 66.1 L285.5 66.1 L285.9 66.1 L286.3 66.1 L286.7 66.1 L287.1 66.1 L287.5 66.1 L287.9 66.2 L288.3 66.2 L288.7 66.2 L289.1 66.2 L289.5 66.2 L289.9 66.3 L290.3 66.3 L290.7 66.3 L291.1 66.3 L291.5 66.3 L291.9 66.4 L292.3 66.4 L292.7 66.4 L293.1 66.4 L293.5 66.5 L293.9 66.5 L294.3 66.5 L294.7 66.5 L295.1 66.6 L295.6 66.6 L296.0 66.6 L296.4 66.7 L296.8 66.7 L297.2 66.7 L297.6 66.7 L298.0 66.8 L298.4 66.8 L298.8 66.8 L299.2 66.9 L299.6 66.9 L300.0 66.9 L300.4 67.0 L300.8 67.0 L301.2 67.0 L301.6 67.1 L302.0 67.1 L302.4 67.2 L302.8 67.2 L303.2 67.2 L303.6 67.3 L304.0 67.3 L304.4 67.3 L304.8 67.4 L305.2 67.4 L305.6 67.5 L306.0 67.5 L306.4 67.5 L306.8 67.6 L307.2 67.6 L307.6 67.7 L308.0 67.7 L308.4 67.7 L308.8 67.8 L309.2 67.8 L309.6 67.9 L310.0 67.9 L310.4 68.0 L310.8 68.0 L311.2 68.0 L311.6 68.1 L312.1 68.1 L312.5 68.2 L312.9 68.2 L313.3 68.3 L313.7 68.3 L314.1 68.4 L314.5 68.4 L314.9 68.5 L315.3 68.5 L315.7 68.6 L316.1 68.6 L316.5 68.6 L316.9 68.7 L317.3 68.7 L317.7 68.8 L318.1 68.8 L318.5 68.9 L318.9 68.9 L319.3 69.0 L319.7 69.0 L320.1 69.1 L320.5 69.1 L320.9 69.2 L321.3 69.2 L321.7 69.3 L322.1 69.4 L322.5 69.4 L322.9 69.5 L323.3 69.5 L323.7 69.6 L324.1 69.6 L324.5 69.7 L324.9 69.7 L325.3 69.8 L325.7 69.8 L326.1 69.9 L326.5 69.9 L326.9 70.0 L327.3 70.0 L327.8 70.1 L328.2 70.2 L328.6 70.2 L329.0 70.3 L329.4 70.3 L329.8 70.4 L330.2 70.4 L330.6 70.5 L331.0 70.5 L331.4 70.6 L331.8 70.7 L332.2 70.7 L332.6 70.8 L333.0 70.8 L333.4 70.9 L333.8 71.0 L334.2 71.0 L334.6 71.1 L335.0 71.1 L335.4 71.2 L335.8 71.2 L336.2 71.3 L336.6 71.4 L337.0 71.4 L337.4 71.5 L337.8 71.5 L338.2 71.6 L338.6 71.7 L339.0 71.7 L339.4 71.8 L339.8 71.8 L340.2 71.9 L340.6 72.0 L341.0 72.0 L341.4 72.1 L341.8 72.2 L342.2 72.2 L342.6 72.3 L343.0 72.3 L343.4 72.4 L343.9 72.5 L344.3 72.5 L344.7 72.6 L345.1 72.6 L345.5 72.7 L345.9 72.8 L346.3 72.8 L346.7 72.9 L347.1 73.0 L347.5 73.0 L347.9 73.1 L348.3 73.2 L348.7 73.2 L349.1 73.3 L349.5 73.4 L349.9 73.4 L350.3 73.5 L350.7 73.5 L351.1 73.6 L351.5 73.7 L351.9 73.7 L352.3 73.8 L352.7 73.9 L353.1 73.9 L353.5 74.0 L353.9 74.1 L354.3 74.1 L354.7 74.2 L355.1 74.3 L355.5 74.3 L355.9 74.4 L356.3 74.5 L356.7 74.5 L357.1 74.6 L357.5 74.7 L357.9 74.7 L358.3 74.8 L358.7 74.9 L359.1 74.9 L359.5 75.0 L359.9 75.1 L360.4 75.1 L360.8 75.2 L361.2 75.3 L361.6 75.4 L362.0 75.4 L362.4 75.5 L362.8 75.6 L363.2 75.6 L363.6 75.7 L364.0 75.8 L364.4 75.8 L364.8 75.9 L365.2 76.0 L365.6 76.1 L366.0 76.1 L366.4 76.2 L366.8 76.3 L367.2 76.3 L367.6 76.4 L368.0 76.5"/>
+      </svg></div>
+        <figcaption>Insertion loss of a board channel from 0 to 40 GHz. Computed from a simple model, not drawn.</figcaption>
+      </figure>
+      <details class="qa__ans">
+        <summary><span class="qa__show">Show answer</span><span class="qa__hide">Hide answer</span></summary>
+        <p><b>Short answer.</b> Almost always a resonance: an unused via stub a quarter wavelength long at that frequency, or a stub-like structure such as an unterminated branch or a connector pin.</p>
+        <p><b>A strong answer adds.</b> Compute the stub length the notch implies and compare it with the stackup: here the notch is at 20 GHz, and a quarter wavelength there in a dielectric of D<sub>k</sub> 4 is about 1.9 mm, 74 mil, a plausible stub through a thick board. If it matches a via stub, backdrill it or change layers. If the notch is inside the band the protocol uses, the eye shows it as a reflection-like tail and the equaliser cannot remove it.</p>
+        <p class="qa__follow"><b>Likely follow-up:</b> <em>What would you see in the time domain?</em> A ringing tail on the pulse response at the notch frequency.</p>
+        <p class="qa__more"><b>Read:</b> <a href="topics/tools/via-stub-resonance.html">Via Stub Resonance Calculator</a> &#183; <a href="topics/fundamentals/vias.html">High-Speed Vias: Stubs, Resonance, and Backdrilling</a> &#183; <a href="topics/fundamentals/s-parameters.html">S-Parameters Explained: S11, S21 and Mixed-Mode</a></p>
+      </details>
+    </div>
+    <div class="qa" id="q-plot-eye">
+      <p class="qa__n">Question 31 of 33</p>
+      <h3>An eye closes mostly after long runs of identical bits, as in the waveform below. What does that point to?</h3>
+      <figure class="figure qa__fig">
+        <div class="figure__bar"><span>Received waveform &#183; the pattern above each bit</span></div>
+        <div class="figure__body"><svg viewBox="0 0 380 200" role="img" aria-label="Received waveform for the bit pattern written above it. In the alternating bits the waveform crosses the threshold with room to spare; the lone one after seven zeros, and the lone zero after seven ones, only just cross it.">
+        <line class="grid" x1="355.1" y1="12" x2="355.1" y2="166" opacity=".5"/>
+        <line class="grid" x1="342.2" y1="12" x2="342.2" y2="166" opacity=".5"/>
+        <line class="grid" x1="329.4" y1="12" x2="329.4" y2="166" opacity=".5"/>
+        <line class="grid" x1="316.5" y1="12" x2="316.5" y2="166" opacity=".5"/>
+        <line class="grid" x1="303.6" y1="12" x2="303.6" y2="166" opacity=".5"/>
+        <line class="grid" x1="290.7" y1="12" x2="290.7" y2="166" opacity=".5"/>
+        <line class="grid" x1="277.8" y1="12" x2="277.8" y2="166" opacity=".5"/>
+        <line class="grid" x1="265.0" y1="12" x2="265.0" y2="166" opacity=".5"/>
+        <line class="grid" x1="252.1" y1="12" x2="252.1" y2="166" opacity=".5"/>
+        <line class="grid" x1="239.2" y1="12" x2="239.2" y2="166" opacity=".5"/>
+        <line class="grid" x1="226.3" y1="12" x2="226.3" y2="166" opacity=".5"/>
+        <line class="grid" x1="213.4" y1="12" x2="213.4" y2="166" opacity=".5"/>
+        <line class="grid" x1="200.6" y1="12" x2="200.6" y2="166" opacity=".5"/>
+        <line class="grid" x1="187.7" y1="12" x2="187.7" y2="166" opacity=".5"/>
+        <line class="grid" x1="174.8" y1="12" x2="174.8" y2="166" opacity=".5"/>
+        <line class="grid" x1="161.9" y1="12" x2="161.9" y2="166" opacity=".5"/>
+        <line class="grid" x1="149.0" y1="12" x2="149.0" y2="166" opacity=".5"/>
+        <line class="grid" x1="136.2" y1="12" x2="136.2" y2="166" opacity=".5"/>
+        <line class="grid" x1="123.3" y1="12" x2="123.3" y2="166" opacity=".5"/>
+        <line class="grid" x1="110.4" y1="12" x2="110.4" y2="166" opacity=".5"/>
+        <line class="grid" x1="97.5" y1="12" x2="97.5" y2="166" opacity=".5"/>
+        <line class="grid" x1="84.6" y1="12" x2="84.6" y2="166" opacity=".5"/>
+        <line class="grid" x1="71.8" y1="12" x2="71.8" y2="166" opacity=".5"/>
+        <line class="grid" x1="58.9" y1="12" x2="58.9" y2="166" opacity=".5"/>
+        <line class="grid" x1="46" y1="27.4" x2="368" y2="27.4"/>
+        <text class="lbl" x="41" y="30.9" text-anchor="end">+1</text>
+        <line class="grid" x1="46" y1="89.0" x2="368" y2="89.0"/>
+        <text class="lbl" x="41" y="92.5" text-anchor="end">0</text>
+        <line class="grid" x1="46" y1="150.6" x2="368" y2="150.6"/>
+        <text class="lbl" x="41" y="154.1" text-anchor="end">&#8722;1</text>
+        <rect class="tick" x="46" y="12" width="322" height="154"/>
+        <text class="lbl" x="207.0" y="196" text-anchor="middle">time, one bit per column</text>
+        <text class="lbl" x="11" y="89.0" text-anchor="middle" transform="rotate(-90 11 89.0)">received level</text>
+        <text class="lbl-hi" x="52.4" y="11.0" text-anchor="middle">1</text>
+        <text class="lbl-hi" x="65.3" y="11.0" text-anchor="middle">0</text>
+        <text class="lbl-hi" x="78.2" y="11.0" text-anchor="middle">1</text>
+        <text class="lbl-hi" x="91.1" y="11.0" text-anchor="middle">0</text>
+        <text class="lbl-hi" x="104.0" y="11.0" text-anchor="middle">1</text>
+        <text class="lbl-hi" x="116.8" y="11.0" text-anchor="middle">0</text>
+        <text class="lbl-hi" x="129.7" y="11.0" text-anchor="middle">1</text>
+        <text class="lbl-hi" x="142.6" y="11.0" text-anchor="middle">0</text>
+        <text class="lbl-hi" x="155.5" y="11.0" text-anchor="middle">0</text>
+        <text class="lbl-hi" x="168.4" y="11.0" text-anchor="middle">0</text>
+        <text class="lbl-hi" x="181.2" y="11.0" text-anchor="middle">0</text>
+        <text class="lbl-hi" x="194.1" y="11.0" text-anchor="middle">0</text>
+        <text class="lbl-hi" x="207.0" y="11.0" text-anchor="middle">0</text>
+        <text class="lbl-hi" x="219.9" y="11.0" text-anchor="middle">0</text>
+        <text class="lbl-hi" x="232.8" y="11.0" text-anchor="middle">1</text>
+        <text class="lbl-hi" x="245.6" y="11.0" text-anchor="middle">0</text>
+        <text class="lbl-hi" x="258.5" y="11.0" text-anchor="middle">1</text>
+        <text class="lbl-hi" x="271.4" y="11.0" text-anchor="middle">1</text>
+        <text class="lbl-hi" x="284.3" y="11.0" text-anchor="middle">1</text>
+        <text class="lbl-hi" x="297.2" y="11.0" text-anchor="middle">1</text>
+        <text class="lbl-hi" x="310.0" y="11.0" text-anchor="middle">1</text>
+        <text class="lbl-hi" x="322.9" y="11.0" text-anchor="middle">1</text>
+        <text class="lbl-hi" x="335.8" y="11.0" text-anchor="middle">1</text>
+        <text class="lbl-hi" x="348.7" y="11.0" text-anchor="middle">0</text>
+        <text class="lbl-hi" x="361.6" y="11.0" text-anchor="middle">1</text>
+        <path class="flow" d="M46.0 127.3 L46.3 126.4 L46.6 124.0 L47.0 120.6 L47.3 116.5 L47.6 112.1 L47.9 107.5 L48.3 103.0 L48.6 98.5 L48.9 94.2 L49.2 90.1 L49.5 86.3 L49.9 82.7 L50.2 79.4 L50.5 76.4 L50.8 73.7 L51.2 71.2 L51.5 68.9 L51.8 66.9 L52.1 65.0 L52.4 63.4 L52.8 61.9 L53.1 60.6 L53.4 59.4 L53.7 58.3 L54.0 57.4 L54.4 56.5 L54.7 55.8 L55.0 55.1 L55.3 54.5 L55.7 54.0 L56.0 53.5 L56.3 53.0 L56.6 52.6 L56.9 52.3 L57.3 52.0 L57.6 51.7 L57.9 51.4 L58.2 51.2 L58.6 50.9 L58.9 50.7 L59.2 51.7 L59.5 54.1 L59.8 57.5 L60.2 61.5 L60.5 65.9 L60.8 70.5 L61.1 75.1 L61.5 79.6 L61.8 83.9 L62.1 88.0 L62.4 91.8 L62.7 95.3 L63.1 98.6 L63.4 101.6 L63.7 104.4 L64.0 106.9 L64.4 109.2 L64.7 111.2 L65.0 113.0 L65.3 114.7 L65.6 116.2 L66.0 117.5 L66.3 118.7 L66.6 119.7 L66.9 120.7 L67.3 121.5 L67.6 122.3 L67.9 122.9 L68.2 123.5 L68.5 124.1 L68.9 124.6 L69.2 125.0 L69.5 125.4 L69.8 125.8 L70.2 126.1 L70.5 126.4 L70.8 126.6 L71.1 126.9 L71.4 127.1 L71.8 127.3 L72.1 126.4 L72.4 124.0 L72.7 120.6 L73.0 116.5 L73.4 112.1 L73.7 107.5 L74.0 103.0 L74.3 98.5 L74.7 94.2 L75.0 90.1 L75.3 86.3 L75.6 82.7 L75.9 79.4 L76.3 76.4 L76.6 73.6 L76.9 71.2 L77.2 68.9 L77.6 66.9 L77.9 65.0 L78.2 63.4 L78.5 61.9 L78.8 60.6 L79.2 59.4 L79.5 58.3 L79.8 57.4 L80.1 56.5 L80.5 55.8 L80.8 55.1 L81.1 54.5 L81.4 54.0 L81.7 53.5 L82.1 53.0 L82.4 52.6 L82.7 52.3 L83.0 52.0 L83.4 51.7 L83.7 51.4 L84.0 51.2 L84.3 50.9 L84.6 50.7 L85.0 51.7 L85.3 54.1 L85.6 57.5 L85.9 61.5 L86.2 65.9 L86.6 70.5 L86.9 75.1 L87.2 79.6 L87.5 83.9 L87.9 88.0 L88.2 91.8 L88.5 95.3 L88.8 98.6 L89.1 101.6 L89.5 104.4 L89.8 106.9 L90.1 109.1 L90.4 111.2 L90.8 113.0 L91.1 114.7 L91.4 116.2 L91.7 117.5 L92.0 118.7 L92.4 119.7 L92.7 120.7 L93.0 121.5 L93.3 122.3 L93.7 122.9 L94.0 123.5 L94.3 124.1 L94.6 124.6 L94.9 125.0 L95.3 125.4 L95.6 125.8 L95.9 126.1 L96.2 126.4 L96.6 126.6 L96.9 126.9 L97.2 127.1 L97.5 127.3 L97.8 126.4 L98.2 124.0 L98.5 120.6 L98.8 116.5 L99.1 112.1 L99.5 107.5 L99.8 103.0 L100.1 98.5 L100.4 94.2 L100.7 90.1 L101.1 86.2 L101.4 82.7 L101.7 79.4 L102.0 76.4 L102.3 73.6 L102.7 71.1 L103.0 68.9 L103.3 66.8 L103.6 65.0 L104.0 63.4 L104.3 61.9 L104.6 60.6 L104.9 59.4 L105.2 58.3 L105.6 57.4 L105.9 56.5 L106.2 55.8 L106.5 55.1 L106.9 54.5 L107.2 53.9 L107.5 53.5 L107.8 53.0 L108.1 52.6 L108.5 52.3 L108.8 52.0 L109.1 51.7 L109.4 51.4 L109.8 51.2 L110.1 50.9 L110.4 50.7 L110.7 51.7 L111.0 54.1 L111.4 57.5 L111.7 61.5 L112.0 65.9 L112.3 70.5 L112.7 75.1 L113.0 79.6 L113.3 83.9 L113.6 87.9 L113.9 91.8 L114.3 95.3 L114.6 98.6 L114.9 101.6 L115.2 104.4 L115.6 106.9 L115.9 109.1 L116.2 111.2 L116.5 113.0 L116.8 114.7 L117.2 116.1 L117.5 117.5 L117.8 118.7 L118.1 119.7 L118.5 120.7 L118.8 121.5 L119.1 122.3 L119.4 122.9 L119.7 123.5 L120.1 124.1 L120.4 124.6 L120.7 125.0 L121.0 125.4 L121.3 125.7 L121.7 126.1 L122.0 126.4 L122.3 126.6 L122.6 126.9 L123.0 127.1 L123.3 127.3 L123.6 126.4 L123.9 124.0 L124.2 120.6 L124.6 116.5 L124.9 112.1 L125.2 107.5 L125.5 102.9 L125.9 98.5 L126.2 94.2 L126.5 90.1 L126.8 86.2 L127.1 82.7 L127.5 79.4 L127.8 76.4 L128.1 73.6 L128.4 71.1 L128.8 68.9 L129.1 66.8 L129.4 65.0 L129.7 63.4 L130.0 61.9 L130.4 60.6 L130.7 59.4 L131.0 58.3 L131.3 57.4 L131.7 56.5 L132.0 55.8 L132.3 55.1 L132.6 54.5 L132.9 53.9 L133.3 53.5 L133.6 53.0 L133.9 52.6 L134.2 52.3 L134.6 52.0 L134.9 51.7 L135.2 51.4 L135.5 51.1 L135.8 50.9 L136.2 50.7 L136.5 51.7 L136.8 54.1 L137.1 57.5 L137.4 61.5 L137.8 65.9 L138.1 70.5 L138.4 75.1 L138.7 79.6 L139.1 83.9 L139.4 87.9 L139.7 91.8 L140.0 95.3 L140.3 98.6 L140.7 101.6 L141.0 104.4 L141.3 106.9 L141.6 109.1 L142.0 111.2 L142.3 113.0 L142.6 114.7 L142.9 116.1 L143.2 117.5 L143.6 118.7 L143.9 119.7 L144.2 120.7 L144.5 121.5 L144.9 122.3 L145.2 122.9 L145.5 123.5 L145.8 124.1 L146.1 124.6 L146.5 125.0 L146.8 125.4 L147.1 125.7 L147.4 126.1 L147.8 126.4 L148.1 126.6 L148.4 126.9 L148.7 127.1 L149.0 127.3 L149.4 127.5 L149.7 127.7 L150.0 127.8 L150.3 128.0 L150.7 128.1 L151.0 128.3 L151.3 128.4 L151.6 128.5 L151.9 128.7 L152.3 128.8 L152.6 128.9 L152.9 129.0 L153.2 129.1 L153.5 129.2 L153.9 129.3 L154.2 129.4 L154.5 129.5 L154.8 129.6 L155.2 129.7 L155.5 129.8 L155.8 129.9 L156.1 130.0 L156.4 130.1 L156.8 130.1 L157.1 130.2 L157.4 130.3 L157.7 130.4 L158.1 130.5 L158.4 130.6 L158.7 130.7 L159.0 130.7 L159.3 130.8 L159.7 130.9 L160.0 131.0 L160.3 131.1 L160.6 131.2 L161.0 131.2 L161.3 131.3 L161.6 131.4 L161.9 131.5 L162.2 131.6 L162.6 131.6 L162.9 131.7 L163.2 131.8 L163.5 131.9 L163.9 132.0 L164.2 132.0 L164.5 132.1 L164.8 132.2 L165.1 132.3 L165.5 132.3 L165.8 132.4 L166.1 132.5 L166.4 132.6 L166.8 132.6 L167.1 132.7 L167.4 132.8 L167.7 132.9 L168.0 132.9 L168.4 133.0 L168.7 133.1 L169.0 133.2 L169.3 133.2 L169.6 133.3 L170.0 133.4 L170.3 133.4 L170.6 133.5 L170.9 133.6 L171.3 133.7 L171.6 133.7 L171.9 133.8 L172.2 133.9 L172.5 133.9 L172.9 134.0 L173.2 134.1 L173.5 134.1 L173.8 134.2 L174.2 134.3 L174.5 134.4 L174.8 134.4 L175.1 134.5 L175.4 134.6 L175.8 134.6 L176.1 134.7 L176.4 134.8 L176.7 134.8 L177.1 134.9 L177.4 134.9 L177.7 135.0 L178.0 135.1 L178.3 135.1 L178.7 135.2 L179.0 135.3 L179.3 135.3 L179.6 135.4 L180.0 135.5 L180.3 135.5 L180.6 135.6 L180.9 135.6 L181.2 135.7 L181.6 135.8 L181.9 135.8 L182.2 135.9 L182.5 136.0 L182.8 136.0 L183.2 136.1 L183.5 136.1 L183.8 136.2 L184.1 136.3 L184.5 136.3 L184.8 136.4 L185.1 136.4 L185.4 136.5 L185.7 136.6 L186.1 136.6 L186.4 136.7 L186.7 136.7 L187.0 136.8 L187.4 136.8 L187.7 136.9 L188.0 137.0 L188.3 137.0 L188.6 137.1 L189.0 137.1 L189.3 137.2 L189.6 137.2 L189.9 137.3 L190.3 137.4 L190.6 137.4 L190.9 137.5 L191.2 137.5 L191.5 137.6 L191.9 137.6 L192.2 137.7 L192.5 137.7 L192.8 137.8 L193.2 137.8 L193.5 137.9 L193.8 137.9 L194.1 138.0 L194.4 138.0 L194.8 138.1 L195.1 138.2 L195.4 138.2 L195.7 138.3 L196.1 138.3 L196.4 138.4 L196.7 138.4 L197.0 138.5 L197.3 138.5 L197.7 138.6 L198.0 138.6 L198.3 138.7 L198.6 138.7 L198.9 138.8 L199.3 138.8 L199.6 138.9 L199.9 138.9 L200.2 139.0 L200.6 139.0 L200.9 139.1 L201.2 139.1 L201.5 139.1 L201.8 139.2 L202.2 139.2 L202.5 139.3 L202.8 139.3 L203.1 139.4 L203.5 139.4 L203.8 139.5 L204.1 139.5 L204.4 139.6 L204.7 139.6 L205.1 139.7 L205.4 139.7 L205.7 139.8 L206.0 139.8 L206.4 139.8 L206.7 139.9 L207.0 139.9 L207.3 140.0 L207.6 140.0 L208.0 140.1 L208.3 140.1 L208.6 140.2 L208.9 140.2 L209.3 140.2 L209.6 140.3 L209.9 140.3 L210.2 140.4 L210.5 140.4 L210.9 140.5 L211.2 140.5 L211.5 140.5 L211.8 140.6 L212.2 140.6 L212.5 140.7 L212.8 140.7 L213.1 140.7 L213.4 140.8 L213.8 140.8 L214.1 140.9 L214.4 140.9 L214.7 140.9 L215.1 141.0 L215.4 141.0 L215.7 141.1 L216.0 141.1 L216.3 141.1 L216.7 141.2 L217.0 141.2 L217.3 141.3 L217.6 141.3 L217.9 141.3 L218.3 141.4 L218.6 141.4 L218.9 141.5 L219.2 141.5 L219.6 141.5 L219.9 141.6 L220.2 141.6 L220.5 141.6 L220.8 141.7 L221.2 141.7 L221.5 141.8 L221.8 141.8 L222.1 141.8 L222.5 141.9 L222.8 141.9 L223.1 141.9 L223.4 142.0 L223.7 142.0 L224.1 142.0 L224.4 142.1 L224.7 142.1 L225.0 142.2 L225.4 142.2 L225.7 142.2 L226.0 142.3 L226.3 142.3 L226.6 141.2 L227.0 138.7 L227.3 135.1 L227.6 130.9 L227.9 126.4 L228.3 121.7 L228.6 117.1 L228.9 112.5 L229.2 108.1 L229.5 103.9 L229.9 100.0 L230.2 96.4 L230.5 93.0 L230.8 89.9 L231.1 87.1 L231.5 84.6 L231.8 82.2 L232.1 80.1 L232.4 78.2 L232.8 76.5 L233.1 75.0 L233.4 73.6 L233.7 72.4 L234.0 71.2 L234.4 70.2 L234.7 69.3 L235.0 68.5 L235.3 67.8 L235.7 67.1 L236.0 66.5 L236.3 66.0 L236.6 65.5 L236.9 65.1 L237.3 64.7 L237.6 64.3 L237.9 63.9 L238.2 63.6 L238.6 63.3 L238.9 63.1 L239.2 62.8 L239.5 63.7 L239.8 66.0 L240.2 69.4 L240.5 73.4 L240.8 77.8 L241.1 82.3 L241.5 86.8 L241.8 91.2 L242.1 95.5 L242.4 99.5 L242.7 103.3 L243.1 106.8 L243.4 110.1 L243.7 113.0 L244.0 115.7 L244.4 118.2 L244.7 120.4 L245.0 122.4 L245.3 124.2 L245.6 125.8 L246.0 127.2 L246.3 128.5 L246.6 129.6 L246.9 130.6 L247.2 131.5 L247.6 132.3 L247.9 133.1 L248.2 133.7 L248.5 134.2 L248.9 134.7 L249.2 135.2 L249.5 135.6 L249.8 135.9 L250.1 136.2 L250.5 136.5 L250.8 136.8 L251.1 137.0 L251.4 137.2 L251.8 137.4 L252.1 137.5 L252.4 136.5 L252.7 134.1 L253.0 130.7 L253.4 126.6 L253.7 122.1 L254.0 117.5 L254.3 112.9 L254.7 108.4 L255.0 104.0 L255.3 99.9 L255.6 96.0 L255.9 92.4 L256.3 89.1 L256.6 86.0 L256.9 83.2 L257.2 80.7 L257.6 78.4 L257.9 76.3 L258.2 74.5 L258.5 72.8 L258.8 71.2 L259.2 69.9 L259.5 68.7 L259.8 67.6 L260.1 66.6 L260.5 65.7 L260.8 64.9 L261.1 64.2 L261.4 63.5 L261.7 63.0 L262.1 62.4 L262.4 62.0 L262.7 61.5 L263.0 61.1 L263.4 60.8 L263.7 60.5 L264.0 60.2 L264.3 59.9 L264.6 59.6 L265.0 59.4 L265.3 59.1 L265.6 58.9 L265.9 58.7 L266.2 58.5 L266.6 58.4 L266.9 58.2 L267.2 58.0 L267.5 57.9 L267.9 57.7 L268.2 57.5 L268.5 57.4 L268.8 57.3 L269.1 57.1 L269.5 57.0 L269.8 56.8 L270.1 56.7 L270.4 56.6 L270.8 56.4 L271.1 56.3 L271.4 56.2 L271.7 56.1 L272.0 55.9 L272.4 55.8 L272.7 55.7 L273.0 55.6 L273.3 55.5 L273.7 55.3 L274.0 55.2 L274.3 55.1 L274.6 55.0 L274.9 54.9 L275.3 54.8 L275.6 54.6 L275.9 54.5 L276.2 54.4 L276.6 54.3 L276.9 54.2 L277.2 54.1 L277.5 54.0 L277.8 53.9 L278.2 53.7 L278.5 53.6 L278.8 53.5 L279.1 53.4 L279.4 53.3 L279.8 53.2 L280.1 53.1 L280.4 53.0 L280.7 52.9 L281.1 52.8 L281.4 52.7 L281.7 52.6 L282.0 52.5 L282.3 52.4 L282.7 52.3 L283.0 52.2 L283.3 52.0 L283.6 51.9 L284.0 51.8 L284.3 51.7 L284.6 51.6 L284.9 51.5 L285.2 51.4 L285.6 51.3 L285.9 51.2 L286.2 51.1 L286.5 51.0 L286.9 50.9 L287.2 50.8 L287.5 50.7 L287.8 50.7 L288.1 50.6 L288.5 50.5 L288.8 50.4 L289.1 50.3 L289.4 50.2 L289.8 50.1 L290.1 50.0 L290.4 49.9 L290.7 49.8 L291.0 49.7 L291.4 49.6 L291.7 49.5 L292.0 49.4 L292.3 49.3 L292.7 49.2 L293.0 49.2 L293.3 49.1 L293.6 49.0 L293.9 48.9 L294.3 48.8 L294.6 48.7 L294.9 48.6 L295.2 48.5 L295.6 48.4 L295.9 48.4 L296.2 48.3 L296.5 48.2 L296.8 48.1 L297.2 48.0 L297.5 47.9 L297.8 47.8 L298.1 47.7 L298.4 47.7 L298.8 47.6 L299.1 47.5 L299.4 47.4 L299.7 47.3 L300.1 47.2 L300.4 47.2 L300.7 47.1 L301.0 47.0 L301.3 46.9 L301.7 46.8 L302.0 46.8 L302.3 46.7 L302.6 46.6 L303.0 46.5 L303.3 46.4 L303.6 46.4 L303.9 46.3 L304.2 46.2 L304.6 46.1 L304.9 46.0 L305.2 46.0 L305.5 45.9 L305.9 45.8 L306.2 45.7 L306.5 45.7 L306.8 45.6 L307.1 45.5 L307.5 45.4 L307.8 45.4 L308.1 45.3 L308.4 45.2 L308.8 45.1 L309.1 45.1 L309.4 45.0 L309.7 44.9 L310.0 44.8 L310.4 44.8 L310.7 44.7 L311.0 44.6 L311.3 44.6 L311.6 44.5 L312.0 44.4 L312.3 44.3 L312.6 44.3 L312.9 44.2 L313.3 44.1 L313.6 44.1 L313.9 44.0 L314.2 43.9 L314.5 43.9 L314.9 43.8 L315.2 43.7 L315.5 43.6 L315.8 43.6 L316.2 43.5 L316.5 43.4 L316.8 43.4 L317.1 43.3 L317.4 43.2 L317.8 43.2 L318.1 43.1 L318.4 43.1 L318.7 43.0 L319.1 42.9 L319.4 42.9 L319.7 42.8 L320.0 42.7 L320.3 42.7 L320.7 42.6 L321.0 42.5 L321.3 42.5 L321.6 42.4 L322.0 42.3 L322.3 42.3 L322.6 42.2 L322.9 42.2 L323.2 42.1 L323.6 42.0 L323.9 42.0 L324.2 41.9 L324.5 41.9 L324.9 41.8 L325.2 41.7 L325.5 41.7 L325.8 41.6 L326.1 41.6 L326.5 41.5 L326.8 41.4 L327.1 41.4 L327.4 41.3 L327.8 41.3 L328.1 41.2 L328.4 41.2 L328.7 41.1 L329.0 41.0 L329.4 41.0 L329.7 40.9 L330.0 40.9 L330.3 40.8 L330.6 40.8 L331.0 40.7 L331.3 40.6 L331.6 40.6 L331.9 40.5 L332.3 40.5 L332.6 40.4 L332.9 40.4 L333.2 40.3 L333.5 40.3 L333.9 40.2 L334.2 40.2 L334.5 40.1 L334.8 40.1 L335.2 40.0 L335.5 39.9 L335.8 39.9 L336.1 39.8 L336.4 39.8 L336.8 39.7 L337.1 39.7 L337.4 39.6 L337.7 39.6 L338.1 39.5 L338.4 39.5 L338.7 39.4 L339.0 39.4 L339.3 39.3 L339.7 39.3 L340.0 39.2 L340.3 39.2 L340.6 39.1 L341.0 39.1 L341.3 39.0 L341.6 39.0 L341.9 38.9 L342.2 38.9 L342.6 40.0 L342.9 42.5 L343.2 46.0 L343.5 50.2 L343.9 54.7 L344.2 59.4 L344.5 64.0 L344.8 68.6 L345.1 73.0 L345.5 77.1 L345.8 81.0 L346.1 84.6 L346.4 88.0 L346.7 91.1 L347.1 93.9 L347.4 96.4 L347.7 98.7 L348.0 100.8 L348.4 102.7 L348.7 104.4 L349.0 105.9 L349.3 107.3 L349.6 108.5 L350.0 109.6 L350.3 110.6 L350.6 111.5 L350.9 112.3 L351.3 113.0 L351.6 113.7 L351.9 114.3 L352.2 114.8 L352.5 115.3 L352.9 115.7 L353.2 116.1 L353.5 116.5 L353.8 116.8 L354.2 117.1 L354.5 117.4 L354.8 117.7 L355.1 117.9 L355.4 117.0 L355.8 114.6 L356.1 111.3 L356.4 107.3 L356.7 102.9 L357.1 98.4 L357.4 93.8 L357.7 89.4 L358.0 85.1 L358.3 81.1 L358.7 77.3 L359.0 73.7 L359.3 70.5 L359.6 67.5 L359.9 64.8 L360.3 62.3 L360.6 60.1 L360.9 58.1 L361.2 56.3 L361.6 54.7 L361.9 53.3 L362.2 52.0 L362.5 50.8 L362.8 49.8 L363.2 48.9 L363.5 48.1 L363.8 47.4 L364.1 46.7 L364.5 46.2 L364.8 45.6 L365.1 45.2 L365.4 44.8 L365.7 44.4 L366.1 44.1 L366.4 43.8 L366.7 43.6 L367.0 43.3 L367.4 43.1 L367.7 42.9 L368.0 42.8"/>
+        <line class="thresh" x1="46" y1="89.0" x2="368" y2="89.0"/>
+        <text class="lbl" x="181.2" y="85.0" text-anchor="middle">threshold</text>
+      </svg></div>
+        <figcaption>One bit per column, with the decision threshold dashed. Computed from a simple lossy-channel model, not drawn.</figcaption>
+      </figure>
+      <details class="qa__ans">
+        <summary><span class="qa__show">Show answer</span><span class="qa__hide">Hide answer</span></summary>
+        <p><b>Short answer.</b> ISI from loss: the long run charges the channel&#8217;s slow tail, and the single opposite bit afterwards cannot get across the threshold in time. Discrete echoes landing on particular later bits point to reflections instead.</p>
+        <p><b>A strong answer adds.</b> In the waveform, the alternating bits cross the threshold with room to spare, while the lone 1 after seven 0s, and the lone 0 after seven 1s, only just make it: the slow part of the response is still charged from the run. Look at the pulse response: a long smooth tail means loss, and the fix is equalisation or a shorter, lower-loss channel; separate bumps at fixed delays mean reflections, and the fix is the discontinuity that causes them. Crosstalk, by contrast, follows what the neighbours are doing, not the victim&#8217;s own pattern.</p>
+        <p class="qa__follow"><b>Likely follow-up:</b> <em>How would you confirm it?</em> Change the pattern, or the equalisation, and see which part of the eye moves.</p>
+        <p class="qa__more"><b>Read:</b> <a href="topics/fundamentals/isi.html">Intersymbol Interference (ISI) and Channel Memory</a> &#183; <a href="topics/signal-integrity/what-closes-the-eye.html">Eye Closure Causes: Loss, Reflections and Crosstalk</a> &#183; <a href="topics/fundamentals/eye-diagram.html">Eye Diagram: How to Read Eye Height and Eye Width</a><br><b>Try it:</b> <a href="topics/labs/one-channel.html">the channel lab</a></p>
+      </details>
+    </div>
+    <h2 class="section-rule" id="debug"><span>Debug scenarios</span></h2>
+    <div class="qa" id="q-debug-lab">
+      <p class="qa__n">Question 32 of 33</p>
+      <h3>A link passes in simulation but fails in the lab. How do you approach it?</h3>
+      <details class="qa__ans">
+        <summary><span class="qa__show">Show answer</span><span class="qa__hide">Hide answer</span></summary>
+        <p><b>Short answer.</b> Narrow it down in the order that is cheapest and most informative: confirm the failure and its signature, then compare the hardware with what was simulated, then find which assumption differs.</p>
+        <p><b>A strong answer adds.</b> Check the obvious first: the right build, the right settings, training results and margins. Then compare measurement and model in the same domain at the same reference plane: TDR or VNA of the channel against the simulated S-parameters, the eye at a probe point against the simulated eye there. Common culprits are a stackup or material that differs from the model, a missing stub or connector, crosstalk or supply noise that was not in the simulation, or equalisation settings that did not adapt as expected.</p>
+        <p class="qa__follow"><b>Likely follow-up:</b> <em>The error rate changes with temperature. What does that suggest?</em> Loss and timing drift with temperature, so look at margin and retraining, not at a single failure.</p>
+        <p class="qa__more"><b>Read:</b> <a href="topics/methodology/debug-playbook.html">SI/PI Debugging: From Symptom to Cause</a> &#183; <a href="topics/methodology/correlation.html">Simulation-to-Measurement Correlation for SI/PI</a> &#183; <a href="topics/methodology/measurement-practice.html">SI/PI Measurement: Probes, Fixtures and Calibration</a></p>
+      </details>
+    </div>
+    <div class="qa" id="q-debug-xtalk">
+      <p class="qa__n">Question 33 of 33</p>
+      <h3>Errors appear only when a neighbouring interface is active. What do you suspect?</h3>
+      <details class="qa__ans">
+        <summary><span class="qa__show">Show answer</span><span class="qa__hide">Hide answer</span></summary>
+        <p><b>Short answer.</b> Coupling: crosstalk from the neighbour&#8217;s traces, or noise through a shared supply or return path, such as simultaneous switching noise moving the reference.</p>
+        <p><b>A strong answer adds.</b> Separate the two by changing what the neighbour does: if errors follow its edge timing and coupled length, it is crosstalk; if they follow how many of its bits switch together, it is switching noise through the power or ground network. Look for shared via fields, a gap in the reference plane under both buses, and shared supply pins.</p>
+        <p class="qa__follow"><b>Likely follow-up:</b> <em>How would you prove it on the bench?</em> Correlate error timestamps with the aggressor&#8217;s activity, and measure the victim&#8217;s noise with the aggressor on and off.</p>
+        <p class="qa__more"><b>Read:</b> <a href="topics/fundamentals/crosstalk.html">PCB Crosstalk: NEXT, FEXT, and Mutual Coupling</a> &#183; <a href="topics/power-integrity/ssn-ground-bounce.html">Simultaneous Switching Noise and Ground Bounce</a> &#183; <a href="topics/fundamentals/return-current-paths.html">Return Current Paths: Reference Planes, Splits and Gaps</a> &#183; <a href="topics/methodology/debug-playbook.html">SI/PI Debugging: From Symptom to Cause</a></p>
+      </details>
+    </div>
+    <!-- share:foot:start --><div class="share share--foot" data-share data-share-url="https://sipi.work/interview-signal-integrity.html" data-share-title="Signal Integrity Interview Questions and Answers"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Finterview-signal-integrity.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Finterview-signal-integrity.html&amp;text=Signal%20Integrity%20Interview%20Questions%20and%20Answers" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=Signal%20Integrity%20Interview%20Questions%20and%20Answers&amp;body=https%3A%2F%2Fsipi.work%2Finterview-signal-integrity.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:foot:end -->
+  </div>
+</main>
+
+<footer class="site-foot">
+  <span>SIPI &#8212; signal and power integrity, visualised.</span>
+  <nav class="site-foot__nav" aria-label="Site, footer">
+    <a href="start.html">Start</a>
+    <a href="labs.html">Labs</a>
+    <a href="calculators.html">Calculators</a>
+    <a href="reference.html">Reference</a>
+    <a href="interview.html">Interview guide</a>
+    <a href="colophon.html">About &amp; AI disclosure</a>
+    <a href="model-contract.html">Model assumptions</a>
+    <a href="docs/claims.md">Claim ledger (Markdown)</a>
+  </nav>
+  <span>Created and directed by <a href="https://www.linkedin.com/in/geetansh-arora-a645714a/" target="_blank" rel="author noopener">Geetansh Arora</a>. Text <a href="LICENSE-CONTENT">CC BY 4.0</a>, code <a href="LICENSE-CODE">MIT</a>.</span>
+</footer>
+
+<script src="js/site.js?v=61b8ff31" defer></script>
+<script src="js/interview.js?v=7ed7fe59" defer></script>
+</body>
+</html>

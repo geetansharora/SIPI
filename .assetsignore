@@ -58,3 +58,4 @@ docs/*
 CLAUDE.md
 HANDOVER.md
 tests/experimental-labs/*
+assets/social/*
