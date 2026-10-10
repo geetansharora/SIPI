@@ -313,6 +313,44 @@ def stamp_guides():
     return n
 
 
+def stamp_search():
+    """Load js/search.js on every served page, so the header always has search.
+
+    search.js injects the button into `.masthead nav` itself, so a page shows
+    search only if it loads the script -- and only topic pages did, from their
+    template. Start, Labs, Reference, the colophon, the model contract, the 404
+    page and the interview guide all shipped a header with no search in it.
+    The tag goes in after the page's last script, with the same path prefix and
+    the same defer convention as that page's site.js, so the load order and the
+    deferred/non-deferred rule in check-load-order.js both hold."""
+    n = 0
+    for f in site_html():
+        html = f.read_text(encoding="utf-8")
+        if "js/search.js" in html:
+            continue
+        m = re.search(r'<script src="([^"]*)js/site\.js[^"]*"( defer)?></script>', html)
+        if not m:
+            continue                        # a page with no site chrome
+        tag = f'<script src="{m.group(1)}js/search.js"{m.group(2) or ""}></script>'
+        last = list(re.finditer(r'<script src="[^"]+"[^>]*></script>', html))[-1]
+        html = html[:last.end()] + "\n" + tag + html[last.end():]
+        f.write_text(html, encoding="utf-8")
+        n += 1
+    return n
+
+
+def search_problems():
+    """Every page with the site's header must load search.js, or its header has
+    no search. stamp_search() fixes it; this keeps a new page from regressing."""
+    out = []
+    for f in site_html():
+        html = f.read_text(encoding="utf-8")
+        if 'class="masthead"' in html and "js/search.js" not in html:
+            out.append(f"{f.relative_to(ROOT)}: header has no search - run `scaffold.py relink`, "
+                       f"then `scaffold.py bust`")
+    return out
+
+
 def cmd_new():
     _, flat = load()
     made = 0
@@ -828,6 +866,7 @@ def cmd_relink():
     sh = stamp_share()
     print(f"share rows stamped on {sh} page(s)")
     print(f"interview guide bylines and share rows stamped on {stamp_guides()} page(s)")
+    print(f"search script added to {stamp_search()} page(s)")
     new, hits = re.subn(r"  <!-- map:start -->.*?<!-- map:end -->", lambda _m: block,
                         html, flags=re.S)
     if hits and new != html:
@@ -894,7 +933,7 @@ def cmd_bust():
 
 
 ASSET_REF = re.compile(
-    r'((?:href|src)=")((?:\.\./)*(?:css|js)/[^"?]+\.(?:css|js))(?:\?v=[0-9a-f]+)?(")')
+    r'((?:href|src)=")(/?(?:\.\./)*(?:css|js)/[^"?]+\.(?:css|js))(?:\?v=[0-9a-f]+)?(")')
 
 
 def _stamp_one(html, rel, digests):
@@ -903,7 +942,10 @@ def _stamp_one(html, rel, digests):
     unversioned hrefs silently undoes the cache-busting every time it runs, and
     under an immutable cache rule that is a stale asset nobody can invalidate."""
     def digest(href):
-        key = ((ROOT / rel).parent / href).resolve()
+        # A root-absolute href (404.html uses them, because it is served at any
+        # depth) resolves from the site root, not from the filesystem root.
+        key = ((ROOT / href.lstrip("/")) if href.startswith("/")
+               else ((ROOT / rel).parent / href)).resolve()
         if key not in digests:
             try:
                 digests[key] = hashlib.sha1(key.read_bytes()).hexdigest()[:8]
@@ -1406,6 +1448,7 @@ CONTRACT_PAGE = """<!doctype html>
 </footer>
 
 <script src="js/site.js"></script>
+<script src="js/search.js"></script>
 </body>
 </html>
 """
@@ -2088,10 +2131,22 @@ def deployment_problems():
     out = []
     for f in site_html():
         html = f.read_text(encoding="utf-8")
-        for m in re.finditer(r'(?:href|src)="((?:\.\./)*(?:css|js)/[^"]+\.(?:css|js))(\?[^"]*)?"', html):
+        for m in re.finditer(r'(?:href|src)="(/?(?:\.\./)*(?:css|js)/[^"]+\.(?:css|js))(\?[^"]*)?"', html):
             if not (m.group(2) or "").startswith("?v="):
                 out.append(f"{f.relative_to(ROOT)}: {m.group(1)} has no ?v= — "
                            f"it would be cached immutably and could never be updated")
+                continue
+            # A hash that no longer matches the file is as bad as none: the URL
+            # names an old version, and a browser holding it never asks again.
+            # 404.html carried stale hashes for this reason until 10 Oct 2026,
+            # because the stamper skipped its root-absolute paths.
+            href = m.group(1)
+            asset = (ROOT / href.lstrip("/")) if href.startswith("/") else (f.parent / href)
+            if asset.exists():
+                want = hashlib.sha1(asset.read_bytes()).hexdigest()[:8]
+                if m.group(2) != "?v=" + want:
+                    out.append(f"{f.relative_to(ROOT)}: {href}{m.group(2)} is stale (file is "
+                               f"?v={want}) - run `scaffold.py bust`")
     h = ROOT / "_headers"
     if h.exists():
         text = h.read_text(encoding="utf-8")
@@ -2922,7 +2977,7 @@ def cmd_check():
                   + guide_problems() + preset_problems()
                   + panel_manifest_problems() + evidence_problems()
                   + contract_prose_problems() + reference_library_problems()
-                  + mobile_note_problems() + interview_problems())
+                  + mobile_note_problems() + interview_problems() + search_problems())
     for t in flat:
         if not t["path"].exists():
             continue
