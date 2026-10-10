@@ -551,7 +551,7 @@
             "supply noise",
             "jitter"
           ],
-          "reviewed": "2026-09-15",
+          "reviewed": "2026-10-10",
           "reviewer": "Geetansh Arora"
         },
         {
@@ -1018,7 +1018,7 @@
             "CAMM2",
             "LPCAMM2"
           ],
-          "reviewed": "2026-10-02",
+          "reviewed": "2026-10-10",
           "reviewer": "Geetansh Arora"
         },
         {
@@ -1053,7 +1053,7 @@
             "FEC",
             "precoding"
           ],
-          "reviewed": "2026-10-01",
+          "reviewed": "2026-10-10",
           "reviewer": "Geetansh Arora"
         },
         {
@@ -1085,9 +1085,10 @@
             "Gear5",
             "UniPro",
             "storage",
+            "23.32",
             "23.2"
           ],
-          "reviewed": "2026-09-18",
+          "reviewed": "2026-10-10",
           "reviewer": "Geetansh Arora"
         }
       ]

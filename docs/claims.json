@@ -231,20 +231,22 @@
     },
     {
       "id": "C-8d",
-      "statement": "A PCIe 6.0 FLIT is 256 bytes: 236 of transaction-layer data, 6 of data-link information, 8 of CRC and 6 of FEC.",
+      "statement": "A public overview of PCIe 6.0 by a director of the PCI-SIG board divides the 256-byte FLIT into 236 bytes of transaction-layer data, 6 of data-link information, 8 of CRC and 6 of FEC.",
       "pages": [
         "interfaces/pcie-gen6"
       ],
       "source_type": "normative",
       "source": "PCI-SIG PCI Express Base Specification 6.0, FLIT mode",
       "conditions": "FLIT mode, as defined in Base 6.0; later revisions may differ",
-      "status": "awaiting",
-      "note": "The page states this as a vendor description and labels it unchecked. The byte split appears consistently in vendor material, but the normative layout is in the Base specification, which has not been read.",
+      "status": "scoped",
+      "note": "Read in the overview: Das Sharma (Intel Senior Fellow; Director, PCI-SIG Board), 2022 OFA Virtual Workshop, “Flit size: 256B — 236B TLP, 6B DLP, 8B CRC, 6B FEC”. That is the specification's author describing it, not the Base specification, which has not been read. The page attributes the split to the overview.",
       "owner": "Geetansh",
-      "sourceCheckedBy": null,
-      "sourceCheckedOn": null,
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-10",
       "humanReviewedBy": null,
-      "humanReviewedOn": null
+      "humanReviewedOn": null,
+      "source_title": "D. Das Sharma, PCIe 6.0 Specification (2022 OFA Virtual Workshop)",
+      "source_url": "https://www.openfabrics.org/wp-content/uploads/2022-workshop/2022-workshop-presentations/206_DDasSharma.pdf"
     },
     {
       "id": "C-9",
@@ -348,47 +350,68 @@
       "source_type": "public-rate",
       "source": "MIPI press release, M-PHY v5.0",
       "conditions": "Raw lane rate, before 128b/132b encoding overhead",
-      "status": "scoped",
-      "note": "The page said 23.2 Gb/s; the announcement says 23.32. Neither figure is wrong for a different quantity — raw versus post-encoding differ — so the page now states the raw rate and names it as raw. The discrepancy is why this is split from C-12a.",
+      "status": "verified",
+      "note": "MIPI's announcement gives HS-G5 at 23.32 Gb/s, the raw line rate. The page used to say 23.2, which is the same rate cut short rather than a different quantity (an earlier note here called it post-encoding, which it is not); it now says 23.32 throughout, with 46.6 Gb/s for two lanes.",
       "source_title": "MIPI Alliance — M-PHY v5.0 announcement",
       "source_url": "https://www.mipi.org/press-releases/m-phy-update-doubles-peak-data-rate-for-next-generation-flash-memory-storage-applications",
       "owner": "Geetansh",
-      "sourceCheckedBy": "Claude Opus 5",
-      "sourceCheckedOn": "2026-09-12",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-10",
       "humanReviewedBy": null,
       "humanReviewedOn": null
     },
     {
       "id": "C-12c",
-      "statement": "UFS 4.0 binds M-PHY HS-GEAR5.",
+      "statement": "UFS 4.0 (JESD220F) is built on MIPI M-PHY v5.0, the revision that defines HS-GEAR5.",
       "pages": [
         "interfaces/ufs4"
       ],
-      "source_type": "normative",
-      "source": "JESD220E and the M-PHY revision it references",
-      "conditions": "Which M-PHY revision UFS 4.0 cites",
-      "status": "awaiting",
-      "note": "MIPI’s own announcement establishes that M-PHY v5.0 defines HS-GEAR5 at 23.32 Gbps (recorded separately as C-12a). What needs JESD220E is the BINDING — that UFS 4.0 requires that gear rather than merely permitting it. Note also that JEDEC published UFS 5.0 (JESD220H) in February 2026 on M-PHY 6.0 with HS-G6, so the page should say which generation it describes.",
+      "source_type": "public-rate",
+      "source": "JEDEC press release, JESD220F Universal Flash Storage 4.0 (17 August 2022)",
+      "conditions": "The announcement names the M-PHY revision. Whether UFS 4.0 requires HS-G5 rather than permitting it is in JESD220F, which has not been read.",
+      "status": "verified",
+      "note": "JEDEC's release says it “has published the JESD220F: Universal Flash Storage 4.0”, which “leverages the M-PHY version 5.0 specification and the UniPro version 2.0 specification”; C-12a establishes that M-PHY v5.0 defines HS-GEAR5. Read via the release as reprinted under JEDEC's byline by EE Times Asia. The page previously cited UFS 4.0 as JESD220E, which is UFS 3.1's number; corrected.",
       "owner": "Geetansh",
-      "sourceCheckedBy": "Claude Opus 5",
-      "sourceCheckedOn": "2026-09-19",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-10",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null,
+      "source_title": "JEDEC — JESD220F UFS 4.0 announcement",
+      "source_url": "https://www.jedec.org/news/pressreleases/jedec-updates-universal-flash-storage-ufs-and-supporting-memory-interface"
+    },
+    {
+      "id": "C-12d",
+      "statement": "JEDEC published UFS 5.0 (JESD220H) in February 2026, built on MIPI M-PHY v6.0, whose HS-G6 doubles the HS-G5 rate.",
+      "pages": [
+        "interfaces/ufs4"
+      ],
+      "source_type": "public-rate",
+      "source": "JEDEC press release, JESD220H and JESD223G Universal Flash Storage 5.0 (February 2026)",
+      "conditions": "The announcement names the revisions and the rate; the electricals are in the specifications",
+      "status": "verified",
+      "note": "JEDEC's release says it “has published its highly anticipated JESD220H and JESD223G: Universal Flash Storage 5.0”, which “leverages the MIPI M-PHY version 6.0 specification and the UniPro version 3.0 specification”, with HS-G6 at double the HS-G5 rate. Read via the release as reprinted under JEDEC's byline by EE Times Asia.",
+      "source_title": "JEDEC — UFS 5.0 announcement",
+      "source_url": "https://www.jedec.org/node/9631",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-10",
       "humanReviewedBy": null,
       "humanReviewedOn": null
     },
     {
       "id": "C-13",
-      "statement": "UFS over M-PHY uses spread-spectrum clocking.",
+      "statement": "Spread-spectrum clocking on a UFS link depends on the M-PHY configuration; the page asserts neither that a link uses it nor a modulation profile.",
       "pages": [
         "interfaces/ufs4"
       ],
       "source_type": "normative",
       "source": "MIPI M-PHY",
       "conditions": "Whether it is required or optional, and its profile",
-      "status": "awaiting",
-      "note": "Spread-spectrum clocking is described in M-PHY material as an option for EMI control, and the page should say optional rather than used. What needs the specification is whether UFS mandates it and with what modulation limits.",
+      "status": "scoped",
+      "note": "The page says “where the PHY configuration uses it” and warns against assuming USB's parameters. Whether UFS mandates spread spectrum, and with what limits, needs the M-PHY and UFS specifications, which have not been read.",
       "owner": "Geetansh",
-      "sourceCheckedBy": "Claude Opus 5",
-      "sourceCheckedOn": "2026-09-19",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-10",
       "humanReviewedBy": null,
       "humanReviewedOn": null
     },
@@ -824,20 +847,22 @@
     },
     {
       "id": "C-34",
-      "statement": "PCIe 6.0 specifies transmitter linearity as a level-separation mismatch ratio and as a signal-to-noise-and-distortion ratio, each with a minimum.",
+      "statement": "PCIe 6.0 makes transmitter linearity something to measure, and test-equipment vendors describe new PCIe 6.0 transmitter measurements for it. The page names no metric limit.",
       "pages": [
         "interfaces/pcie-gen6"
       ],
       "source_type": "normative",
       "source": "PCI-SIG PCI Express Base Specification 6.0, transmitter electrical specifications",
       "conditions": "64 GT/s PAM4, measured through the specified test setup",
-      "status": "awaiting",
-      "note": "The page names the two metrics and deliberately gives no limits. An earlier version quoted R_LM >= 0.95 and SNDR of 31.5 to 32 dB with no source; both were removed until the specification is read.",
+      "status": "scoped",
+      "note": "Teledyne LeCroy (27 June 2022) calls RLM and SNDR “two new measurements introduced in PCIe 6.0”. A modelling vendor quotes limits that differ from those an earlier version of this page gave; neither has been read against the Base specification, so the page gives none.",
       "owner": "Geetansh",
-      "sourceCheckedBy": null,
-      "sourceCheckedOn": null,
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-10",
       "humanReviewedBy": null,
-      "humanReviewedOn": null
+      "humanReviewedOn": null,
+      "source_title": "Teledyne LeCroy — Get Ready for PCIe 6.0 Base Tx Testing",
+      "source_url": "https://blog.teledynelecroy.com/2022/06/get-ready-for-pci-express-60-base.html"
     },
     {
       "id": "C-35",
@@ -1164,20 +1189,22 @@
     },
     {
       "id": "C-52",
-      "statement": "Server platforms commonly qualify a lower DDR5 data rate with two DIMMs per channel than with one.",
+      "statement": "Lenovo's ThinkSystem SR650 V3 runs DDR5 at a lower rate with two DIMMs per channel than with one: 4800 against 4400 MT/s with 4th Gen Xeon processors, 5600 against 4800 MT/s with 5th Gen.",
       "pages": [
         "interfaces/ddr5"
       ],
       "source_type": "commercial",
-      "source": "none read: platform memory population guides",
-      "conditions": "Platform dependent",
-      "status": "awaiting",
-      "note": "Stated on the page as common practice with the physical reason; no platform guide has been read for it.",
+      "source": "Lenovo Press LP1601, ThinkSystem SR650 V3 product guide",
+      "conditions": "One platform, as an example of the practice; other platforms set their own population rules",
+      "status": "verified",
+      "note": "The product guide: “Supports 1 DIMM per channel operating at 5600 MHz (5th Gen processors) or 4800 MHz (4th Gen processors). Supports 2 DIMMs per channel operating at 4800 MHz (5th Gen processors) or 4400 MHz (4th Gen processors).” The page quotes the 4th Gen pair as an example.",
       "owner": "Geetansh",
-      "sourceCheckedBy": null,
-      "sourceCheckedOn": null,
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-10",
       "humanReviewedBy": null,
-      "humanReviewedOn": null
+      "humanReviewedOn": null,
+      "source_title": "Lenovo Press — ThinkSystem SR650 V3 product guide",
+      "source_url": "https://lenovopress.lenovo.com/lp1601-thinksystem-sr650-v3-server"
     },
     {
       "id": "C-53",

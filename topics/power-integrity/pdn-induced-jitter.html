@@ -31,7 +31,7 @@
   <meta name="twitter:description" content="How supply noise becomes timing error, why the eye diagram hides the cause, and the debug signature that identifies it.">
   <meta name="twitter:image" content="https://sipi.work/assets/og/power-integrity/pdn-induced-jitter.png">
   <meta name="twitter:image:alt" content="PSIJ: How Power Supply Noise Becomes Jitter: a figure from the page, on SIPI">
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"PSIJ: How Power Supply Noise Becomes Jitter","description":"How supply noise becomes timing error, why the eye diagram hides the cause, and the debug signature that identifies it.","url":"https://sipi.work/topics/power-integrity/pdn-induced-jitter.html","articleSection":"Power Integrity","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer","url":"https://www.linkedin.com/in/geetansh-arora-a645714a/","sameAs":["https://www.linkedin.com/in/geetansh-arora-a645714a/"]},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-09-15","image":"https://sipi.work/assets/og/power-integrity/pdn-induced-jitter.png"}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"PSIJ: How Power Supply Noise Becomes Jitter","description":"How supply noise becomes timing error, why the eye diagram hides the cause, and the debug signature that identifies it.","url":"https://sipi.work/topics/power-integrity/pdn-induced-jitter.html","articleSection":"Power Integrity","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer","url":"https://www.linkedin.com/in/geetansh-arora-a645714a/","sameAs":["https://www.linkedin.com/in/geetansh-arora-a645714a/"]},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-10-10","image":"https://sipi.work/assets/og/power-integrity/pdn-induced-jitter.png"}</script>
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"SIPI","item":"https://sipi.work/"},{"@type":"ListItem","position":2,"name":"Power Integrity","item":"https://sipi.work/#power-integrity"},{"@type":"ListItem","position":3,"name":"PSIJ: How Power Supply Noise Becomes Jitter"}]}</script>
   <!-- meta:end -->
 </head>
@@ -54,7 +54,7 @@
     <p class="crumb"><a href="../../index.html#power-integrity">Power Integrity</a> / 09</p>
     <h1>PSIJ: How Power Supply Noise Becomes Jitter</h1>
     <p class="byline">
-      <!-- review:start --><span>By <a href="https://www.linkedin.com/in/geetansh-arora-a645714a/" target="_blank" rel="author noopener">Geetansh Arora</a> — Principal SI/PI Engineer</span><time datetime="2026-09-15" title="Technical review by Geetansh Arora on this date">15 Sep 2026</time><span>10 min</span><!-- review:end -->
+      <!-- review:start --><span>By <a href="https://www.linkedin.com/in/geetansh-arora-a645714a/" target="_blank" rel="author noopener">Geetansh Arora</a> — Principal SI/PI Engineer</span><time datetime="2026-10-10" title="Technical review by Geetansh Arora on this date">10 Oct 2026</time><span>10 min</span><!-- review:end -->
     </p>
     <!-- share:head:start --><div class="share share--head" data-share data-share-url="https://sipi.work/topics/power-integrity/pdn-induced-jitter.html" data-share-title="PSIJ: How Power Supply Noise Becomes Jitter"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Fpower-integrity%2Fpdn-induced-jitter.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Fpower-integrity%2Fpdn-induced-jitter.html&amp;text=PSIJ%3A%20How%20Power%20Supply%20Noise%20Becomes%20Jitter" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=PSIJ%3A%20How%20Power%20Supply%20Noise%20Becomes%20Jitter&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Fpower-integrity%2Fpdn-induced-jitter.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:head:end -->
     <p class="answer">
@@ -344,9 +344,10 @@
         <strong>The K<sub>PSIJ</sub> sensitivity coefficient and the jitter budget.</strong> Inside silicon design kits,
         power-supply jitter sensitivity is quantified by the metric
         <span class="num">K<sub>PSIJ</sub> = &#8706;t<sub>delay</sub> / &#8706;V<sub>dd</sub></span>, expressed in
-        picoseconds of edge displacement per millivolt of supply ripple (ps/mV). For a typical clock distribution tree
-        or multi-stage CML-to-CMOS converter, <span class="num">K<sub>PSIJ</sub></span> commonly falls between
-        <span class="num">0.05</span> and <span class="num">0.20 ps/mV</span>.
+        picoseconds of edge displacement per millivolt of supply ripple (ps/mV). Its value is design-specific: it
+        depends on the circuit, the number of stages and how far the supply sits above the transistors&#8217;
+        threshold, so it comes from the silicon vendor&#8217;s characterisation rather than a rule of thumb. The
+        example below assumes <span class="num">0.12 ps/mV</span>.
       </p>
 
       <p>

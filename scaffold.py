@@ -1135,8 +1135,10 @@ def cmd_meta():
             if stem in guides:
                 trail = [] if stem == "interview" else [("Interview guide", f"{base}/interview.html")]
                 crumb, reviewed = ("trail", trail, "Interview preparation"), guides[stem].get("reviewed")
+            card = guide_card(stem)
             pages.append((f, f"{base}/{stem}.html", None, None,
-                          "website" if stem in HUBS else "article", crumb, reviewed, None))
+                          "website" if stem in HUBS else "article", crumb, reviewed,
+                          card if stem in guides and (ROOT / card).exists() else None))
 
     n = 0
     for path, url, title, desc, kind, crumb, reviewed, image in pages:
@@ -2046,8 +2048,8 @@ def cmd_contract():
     cl, cc = _claims(), claim_counts()
     normative_ok = sum(1 for c in cl if c.get("status") == "verified" and c.get("source_type") == "normative")
     ledger = (f"Of its {cc['total']} claims, {cc['verified']} have been read against the source they cite, "
-              f"{cc['scoped']} have been narrowed to what their source supports, and {cc['awaiting']} still "
-              f"await a source. "
+              f"{cc['scoped']} have been narrowed to what their source supports, and "
+              + (f"{cc['awaiting']} still await a source. " if cc['awaiting'] else "none still awaits a source. ")
               + ("None of the verified ones rests on the normative text of a standard; they rest on vendor "
                  "documents, public announcements and measured data, "
                  if normative_ok == 0 else
@@ -2473,6 +2475,11 @@ def og_card(t):
     return f"assets/og/{t['section_id']}/{t['slug']}.png"
 
 
+def guide_card(stem):
+    """Where an interview guide page's preview card lives; og-cards.mjs writes it."""
+    return f"assets/og/guides/{stem}.png"
+
+
 def og_card_problems():
     """Every topic page has its own preview card, and every og:image on the site
     names a file that is in the repository. A new page without a card would share
@@ -2484,6 +2491,11 @@ def og_card_problems():
         if t["path"].exists() and not (ROOT / og_card(t)).exists():
             out.append(f"{t['path'].relative_to(ROOT)}: no preview card at {og_card(t)} "
                        f"- run `node og-cards.mjs` with the dev server up, then "
+                       f"`python3 scaffold.py meta`")
+    for g in _data["site"].get("guides", []):
+        if (ROOT / f'{g["slug"]}.html').exists() and not (ROOT / guide_card(g["slug"])).exists():
+            out.append(f"{g['slug']}.html: no preview card at {guide_card(g['slug'])} - run "
+                       f"`node og-cards.mjs guides/{g['slug']}` with the dev server up, then "
                        f"`python3 scaffold.py meta`")
     for f in site_html():
         text = f.read_text(encoding="utf-8")

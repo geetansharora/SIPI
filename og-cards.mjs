@@ -10,6 +10,7 @@
  *   python3 serve.py &                  # the dev server, on port 8000
  *   node og-cards.mjs                   # every topic page
  *   node og-cards.mjs fundamentals/crosstalk   # just these
+ *   node og-cards.mjs guides/interview          # an interview guide page
  *
  * No npm dependencies: it drives a local Chrome over the DevTools protocol with
  * Node's own fetch and WebSocket. Set CHROME to the browser binary if it is not
@@ -108,7 +109,17 @@ async function main() {
     const rel = `${s.id}/${t.slug}`;
     if (!fs.existsSync(path.join(ROOT, 'topics', rel + '.html'))) continue;
     if (want.size && !want.has(rel)) continue;
-    jobs.push({ rel, section: s.title, title: t.title.split(' | ')[0], section_id: s.id, slug: t.slug });
+    jobs.push({ rel, section: s.title, title: t.title.split(' | ')[0], section_id: s.id, slug: t.slug,
+                url: `${BASE}/topics/${rel}.html` });
+  }
+  /* The interview guide's pages sit at the root and are listed under site.guides.
+     The banks lead with a plot; the hub has none, so it shows its estimate cards. */
+  for (const g of (topics.site.guides || [])) {
+    const rel = `guides/${g.slug}`;
+    if (!fs.existsSync(path.join(ROOT, g.slug + '.html'))) continue;
+    if (want.size && !want.has(rel)) continue;
+    jobs.push({ rel, section: 'Interview guide', title: g.title, section_id: 'guides', slug: g.slug,
+                url: `${BASE}/${g.slug}.html` });
   }
   const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'sipi-og-v-'));
   const b = await browser();
@@ -118,12 +129,17 @@ async function main() {
     /* 800 px is still the desktop layout, and near the size the card shows it at,
        so a chart's own labels stay legible instead of shrinking with it */
     await b.size(800, 900, 2);
-    await b.goto(`${BASE}/topics/${j.rel}.html`);
+    await b.goto(j.url);
     await sleep(1400);
     const box = await b.eval(`(() => {
       document.documentElement.setAttribute('data-theme', 'light');
       /* a figure's first diagram; else the panel's numbers and chart together */
       let el = document.querySelector('figure.figure svg');
+      const drill = document.querySelector('.drill');
+      if (!el && drill) {                       // the interview hub: six estimate cards, two by three
+        [...drill.children].forEach((c, i) => { if (i >= 6) c.remove(); });
+        el = drill;
+      }
       if (!el) {
         const v = document.querySelector('[data-viz]');
         if (!v) return null;

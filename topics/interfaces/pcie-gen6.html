@@ -31,7 +31,7 @@
   <meta name="twitter:description" content="What changes for the SI engineer when PCIe goes to PAM4: the same Nyquist frequency, a 9.5 dB amplitude penalty, and a raw BER you can actually measure.">
   <meta name="twitter:image" content="https://sipi.work/assets/og/interfaces/pcie-gen6.png">
   <meta name="twitter:image:alt" content="PCIe 6.0 Signal Integrity: PAM4, FLIT, and FEC: a figure from the page, on SIPI">
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"PCIe 6.0 Signal Integrity: PAM4, FLIT, and FEC","description":"What changes for the SI engineer when PCIe goes to PAM4: the same Nyquist frequency, a 9.5 dB amplitude penalty, and a raw BER you can actually measure.","url":"https://sipi.work/topics/interfaces/pcie-gen6.html","articleSection":"Interface sign-off","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer","url":"https://www.linkedin.com/in/geetansh-arora-a645714a/","sameAs":["https://www.linkedin.com/in/geetansh-arora-a645714a/"]},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-10-01","image":"https://sipi.work/assets/og/interfaces/pcie-gen6.png"}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"PCIe 6.0 Signal Integrity: PAM4, FLIT, and FEC","description":"What changes for the SI engineer when PCIe goes to PAM4: the same Nyquist frequency, a 9.5 dB amplitude penalty, and a raw BER you can actually measure.","url":"https://sipi.work/topics/interfaces/pcie-gen6.html","articleSection":"Interface sign-off","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer","url":"https://www.linkedin.com/in/geetansh-arora-a645714a/","sameAs":["https://www.linkedin.com/in/geetansh-arora-a645714a/"]},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-10-10","image":"https://sipi.work/assets/og/interfaces/pcie-gen6.png"}</script>
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"SIPI","item":"https://sipi.work/"},{"@type":"ListItem","position":2,"name":"Interface sign-off","item":"https://sipi.work/#interfaces"},{"@type":"ListItem","position":3,"name":"PCIe 6.0 Signal Integrity: PAM4, FLIT, and FEC"}]}</script>
   <!-- meta:end -->
 </head>
@@ -54,7 +54,7 @@
     <p class="crumb"><a href="../../index.html#interfaces">Interface sign-off</a> / 05</p>
     <h1>PCIe 6.0 Signal Integrity: PAM4, FLIT, and FEC</h1>
     <p class="byline">
-      <!-- review:start --><span>By <a href="https://www.linkedin.com/in/geetansh-arora-a645714a/" target="_blank" rel="author noopener">Geetansh Arora</a> — Principal SI/PI Engineer</span><time datetime="2026-10-01" title="Technical review by Geetansh Arora on this date">1 Oct 2026</time><span>9 min</span><!-- review:end -->
+      <!-- review:start --><span>By <a href="https://www.linkedin.com/in/geetansh-arora-a645714a/" target="_blank" rel="author noopener">Geetansh Arora</a> — Principal SI/PI Engineer</span><time datetime="2026-10-10" title="Technical review by Geetansh Arora on this date">10 Oct 2026</time><span>9 min</span><!-- review:end -->
     </p>
     <!-- share:head:start --><div class="share share--head" data-share data-share-url="https://sipi.work/topics/interfaces/pcie-gen6.html" data-share-title="PCIe 6.0 Signal Integrity: PAM4, FLIT, and FEC"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Fpcie-gen6.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Fpcie-gen6.html&amp;text=PCIe%206.0%20Signal%20Integrity%3A%20PAM4%2C%20FLIT%2C%20and%20FEC" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=PCIe%206.0%20Signal%20Integrity%3A%20PAM4%2C%20FLIT%2C%20and%20FEC&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Fpcie-gen6.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:head:end -->
     <p class="answer">
@@ -142,7 +142,8 @@
     <p>
       There is a second, subtler cost: the three eyes are not identical. Level-dependent nonlinearity in
       the driver makes the outer eyes and the inner eye behave differently, so transmitter linearity
-      becomes a specified parameter in a way it never was for NRZ.
+      becomes something to measure in a way it never was for NRZ, and test-equipment vendors describe new PCIe 6.0
+      transmitter measurements for it (C-34).
     </p>
 
     <h2 class="section-rule"><span>Why FEC becomes mandatory</span></h2>
@@ -261,9 +262,9 @@
       <p>
         <strong>The fixed-size FLIT, and why the FEC is light.</strong> Earlier generations sent variable-length
         packets. A block code needs fixed blocks to compute parity over, so Gen 6 carries everything in fixed
-        256-byte flow control units, with the FEC and a CRC in known positions (C-8a to C-8c). Vendor descriptions
-        divide the 256 bytes into 236 of transaction-layer data, 6 of data-link information, 8 of CRC and 6 of FEC
-        (C-8d, not yet checked against the specification).
+        256-byte flow control units, with the FEC and a CRC in known positions (C-8a to C-8c). A public overview by a
+        director of the PCI-SIG board divides the 256 bytes into 236 of transaction-layer data, 6 of data-link
+        information, 8 of CRC and 6 of FEC (C-8d; the overview was read, the specification itself was not).
       </p>
 
       <p>
@@ -313,8 +314,10 @@
       <h2 class="section-rule"><span>Sources</span></h2>
       <ul class="sources__list">
       <li><a href="https://www.synopsys.com/blogs/chip-design/pcie-6-verifaction-fec-crc.html" target="_blank" rel="noopener">Synopsys — PCIe 6.0 verification of FEC and CRC</a> <span class="src__for">C-8a</span></li>
+      <li><a href="https://www.openfabrics.org/wp-content/uploads/2022-workshop/2022-workshop-presentations/206_DDasSharma.pdf" target="_blank" rel="noopener">D. Das Sharma, PCIe 6.0 Specification (2022 OFA Virtual Workshop)</a> <span class="src__for">C-8d</span></li>
       <li><a href="https://www.cadence.com/content/dam/cadence-www/global/en_US/documents/tools/silicon-solutions/design-ip/pcie-6-0-electrical-testing-for-high-data-bandwidth-applications.pdf" target="_blank" rel="noopener">Cadence — PCIe 6.0 electrical testing for high data bandwidth applications</a> <span class="src__for">C-9</span></li>
       <li><a href="https://www.chipestimate.com/Unraveling-PCIe-60-FLIT-Mode-Challenges/Cadence/blogs/3640" target="_blank" rel="noopener">Cadence — Unravelling PCIe 6.0 FLIT mode challenges</a> <span class="src__for">C-10</span></li>
+      <li><a href="https://blog.teledynelecroy.com/2022/06/get-ready-for-pci-express-60-base.html" target="_blank" rel="noopener">Teledyne LeCroy — Get Ready for PCIe 6.0 Base Tx Testing</a> <span class="src__for">C-34</span></li>
       </ul>
       <p class="sources__note">Rows marked with a claim id are tracked in <a href="../../docs/claims.md">the claim ledger</a>, which records what each source can and cannot establish.</p>
     </section>

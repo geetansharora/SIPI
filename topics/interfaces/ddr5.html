@@ -31,7 +31,7 @@
   <meta name="twitter:description" content="DDR5 signal integrity: DIMM topology, two DIMMs on one wire, ODT, the DRAM&amp;#8217;s 4-tap DFE, fly-by and training, and how DDR5 differs from LPDDR5X. Interactive.">
   <meta name="twitter:image" content="https://sipi.work/assets/og/interfaces/ddr5.png">
   <meta name="twitter:image:alt" content="DDR5 Signal Integrity: Fly-by, ODT, DFE and Training: a figure from the page, on SIPI">
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"DDR5 Signal Integrity: Fly-by, ODT, DFE and Training","description":"DDR5 signal integrity: DIMM topology, two DIMMs on one wire, ODT, the DRAM&#8217;s 4-tap DFE, fly-by and training, and how DDR5 differs from LPDDR5X. Interactive.","url":"https://sipi.work/topics/interfaces/ddr5.html","articleSection":"Interface sign-off","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer","url":"https://www.linkedin.com/in/geetansh-arora-a645714a/","sameAs":["https://www.linkedin.com/in/geetansh-arora-a645714a/"]},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-10-02","image":"https://sipi.work/assets/og/interfaces/ddr5.png"}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"DDR5 Signal Integrity: Fly-by, ODT, DFE and Training","description":"DDR5 signal integrity: DIMM topology, two DIMMs on one wire, ODT, the DRAM&#8217;s 4-tap DFE, fly-by and training, and how DDR5 differs from LPDDR5X. Interactive.","url":"https://sipi.work/topics/interfaces/ddr5.html","articleSection":"Interface sign-off","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer","url":"https://www.linkedin.com/in/geetansh-arora-a645714a/","sameAs":["https://www.linkedin.com/in/geetansh-arora-a645714a/"]},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-10-10","image":"https://sipi.work/assets/og/interfaces/ddr5.png"}</script>
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"SIPI","item":"https://sipi.work/"},{"@type":"ListItem","position":2,"name":"Interface sign-off","item":"https://sipi.work/#interfaces"},{"@type":"ListItem","position":3,"name":"DDR5 Signal Integrity: Fly-by, ODT, DFE and Training"}]}</script>
   <!-- meta:end -->
 </head>
@@ -54,7 +54,7 @@
     <p class="crumb"><a href="../../index.html#interfaces">Interface sign-off</a> / 03</p>
     <h1>DDR5 Signal Integrity: Fly-by, ODT, DFE and Training</h1>
     <p class="byline">
-      <!-- review:start --><span>By <a href="https://www.linkedin.com/in/geetansh-arora-a645714a/" target="_blank" rel="author noopener">Geetansh Arora</a> — Principal SI/PI Engineer</span><time datetime="2026-10-02" title="Technical review by Geetansh Arora on this date">2 Oct 2026</time><span>10 min</span><!-- review:end -->
+      <!-- review:start --><span>By <a href="https://www.linkedin.com/in/geetansh-arora-a645714a/" target="_blank" rel="author noopener">Geetansh Arora</a> — Principal SI/PI Engineer</span><time datetime="2026-10-10" title="Technical review by Geetansh Arora on this date">10 Oct 2026</time><span>10 min</span><!-- review:end -->
     </p>
     <!-- share:head:start --><div class="share share--head" data-share data-share-url="https://sipi.work/topics/interfaces/ddr5.html" data-share-title="DDR5 Signal Integrity: Fly-by, ODT, DFE and Training"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Fddr5.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Fddr5.html&amp;text=DDR5%20Signal%20Integrity%3A%20Fly-by%2C%20ODT%2C%20DFE%20and%20Training" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=DDR5%20Signal%20Integrity%3A%20Fly-by%2C%20ODT%2C%20DFE%20and%20Training&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Fddr5.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:head:end -->
     <p class="answer">
@@ -1010,8 +1010,9 @@
 
     <h2 class="section-rule"><span>In the real world</span></h2>
     <p>
-      <strong>Two DIMMs per channel costs speed.</strong> Server platforms commonly qualify a lower data rate with two
-      DIMMs per channel than with one, and the panel shows why: the second DIMM&#8217;s stub, terminated or not, takes a
+      <strong>Two DIMMs per channel costs speed.</strong> Server platforms qualify a lower data rate with two DIMMs per
+      channel than with one: Lenovo&#8217;s ThinkSystem SR650 V3, for example, runs 4800 MT/s at one DIMM per channel and
+      4400 MT/s at two with 4th Gen Xeon processors (C-52). The panel shows why: the second DIMM&#8217;s stub, terminated or not, takes a
       share of every bit and returns some of it late. Check the platform&#8217;s population rules before assuming the
       headline speed.
     </p>
@@ -1044,7 +1045,7 @@
       <li><strong>JEDEC clocked UDIMM and SODIMM</strong> (JESD323, JESD324), as announced in October 2024 &#8212; ledger C-50.</li>
       <li><strong>Micron, x32 automotive LPDDR5X data sheet</strong> and <strong>JEDEC&#8217;s CAMM2 announcement</strong> (Dec 2023) &#8212; the LPDDR5X side of the comparison; ledger C-53 and C-54, with C-2a, C-3 and C-4a from the LPDDR5X page.</li>
       <li><strong>ASUS support FAQ</strong>, &#8220;How to install DRAM on motherboard&#8221; &#8212; the slot to fill first; ledger C-51.</li>
-      <li><strong>Platform memory population guides</strong> &#8212; that two DIMMs per channel usually run slower; ledger C-52, awaiting a source.</li>
+      <li><strong>Lenovo Press, ThinkSystem SR650 V3 product guide</strong> &#8212; DDR5 speed at one and two DIMMs per channel; ledger C-52.</li>
     </ul>
 
     <h3>Related</h3>
@@ -1074,6 +1075,7 @@
       <li><a href="https://assets.micron.com/adobe/assets/urn:aaid:aem:5902f17e-8bde-4246-971c-8d7f274c6b1a/renditions/original/as/ddr5-key-module-features-wp-client.pdf" target="_blank" rel="noopener">Micron — DDR5: Client Module Features</a> <span class="src__for">C-47</span></li>
       <li><a href="https://www.edn.com/jedec-unveils-memory-designs-with-ddr5-clock-drivers/" target="_blank" rel="noopener">EDN — JEDEC unveils memory designs with DDR5 clock drivers</a> <span class="src__for">C-50</span></li>
       <li><a href="https://www.asus.com/us/support/faq/1049387/" target="_blank" rel="noopener">ASUS — How to install DRAM (memory) on motherboard</a> <span class="src__for">C-51</span></li>
+      <li><a href="https://lenovopress.lenovo.com/lp1601-thinksystem-sr650-v3-server" target="_blank" rel="noopener">Lenovo Press — ThinkSystem SR650 V3 product guide</a> <span class="src__for">C-52</span></li>
       <li><a href="https://www.farnell.com/datasheets/3928121.pdf" target="_blank" rel="noopener">Micron — x32 Automotive LPDDR5X SDRAM data sheet (315b)</a> <span class="src__for">C-53</span></li>
       <li><a href="https://www.jedec.org/news/pressreleases/jedec-publishes-new-camm2-memory-module-standard" target="_blank" rel="noopener">JEDEC — CAMM2 memory module standard announcement</a> <span class="src__for">C-54</span></li>
       </ul>

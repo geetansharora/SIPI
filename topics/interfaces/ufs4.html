@@ -8,7 +8,7 @@
   <script>(function(){try{var t=localStorage.getItem('sipi-theme');if(t==='dark'||t==='system'){document.documentElement.setAttribute('data-theme',t);var m=document.querySelector('meta[name=theme-color]');if(m&&(t==='dark'||matchMedia('(prefers-color-scheme:dark)').matches))m.content='#0B1015';}}catch(e){}})();</script>
   <!-- theme:end -->
 <title>UFS 4.0 Signal Integrity: M-PHY Gear 5 | SIPI</title>
-<meta name="description" content="23.2 Gbps per lane on a phone board: what burst-mode signalling changes, and why the hard part is the escape rather than the channel.">
+<meta name="description" content="23.32 Gbps per lane on a phone board: what burst-mode signalling changes, and why the hard part is the escape rather than the channel.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
@@ -20,7 +20,7 @@
   <meta property="og:type" content="article">
   <meta property="og:site_name" content="SIPI">
   <meta property="og:title" content="UFS 4.0 Signal Integrity: M-PHY Gear 5 | SIPI">
-  <meta property="og:description" content="23.2 Gbps per lane on a phone board: what burst-mode signalling changes, and why the hard part is the escape rather than the channel.">
+  <meta property="og:description" content="23.32 Gbps per lane on a phone board: what burst-mode signalling changes, and why the hard part is the escape rather than the channel.">
   <meta property="og:url" content="https://sipi.work/topics/interfaces/ufs4.html">
   <meta property="og:image" content="https://sipi.work/assets/og/interfaces/ufs4.png">
   <meta property="og:image:width" content="1200">
@@ -28,10 +28,10 @@
   <meta property="og:image:alt" content="UFS 4.0 Signal Integrity: M-PHY Gear 5: a figure from the page, on SIPI">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="UFS 4.0 Signal Integrity: M-PHY Gear 5 | SIPI">
-  <meta name="twitter:description" content="23.2 Gbps per lane on a phone board: what burst-mode signalling changes, and why the hard part is the escape rather than the channel.">
+  <meta name="twitter:description" content="23.32 Gbps per lane on a phone board: what burst-mode signalling changes, and why the hard part is the escape rather than the channel.">
   <meta name="twitter:image" content="https://sipi.work/assets/og/interfaces/ufs4.png">
   <meta name="twitter:image:alt" content="UFS 4.0 Signal Integrity: M-PHY Gear 5: a figure from the page, on SIPI">
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"UFS 4.0 Signal Integrity: M-PHY Gear 5","description":"23.2 Gbps per lane on a phone board: what burst-mode signalling changes, and why the hard part is the escape rather than the channel.","url":"https://sipi.work/topics/interfaces/ufs4.html","articleSection":"Interface sign-off","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer","url":"https://www.linkedin.com/in/geetansh-arora-a645714a/","sameAs":["https://www.linkedin.com/in/geetansh-arora-a645714a/"]},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-09-18","image":"https://sipi.work/assets/og/interfaces/ufs4.png"}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"UFS 4.0 Signal Integrity: M-PHY Gear 5","description":"23.32 Gbps per lane on a phone board: what burst-mode signalling changes, and why the hard part is the escape rather than the channel.","url":"https://sipi.work/topics/interfaces/ufs4.html","articleSection":"Interface sign-off","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer","url":"https://www.linkedin.com/in/geetansh-arora-a645714a/","sameAs":["https://www.linkedin.com/in/geetansh-arora-a645714a/"]},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-10-10","image":"https://sipi.work/assets/og/interfaces/ufs4.png"}</script>
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"SIPI","item":"https://sipi.work/"},{"@type":"ListItem","position":2,"name":"Interface sign-off","item":"https://sipi.work/#interfaces"},{"@type":"ListItem","position":3,"name":"UFS 4.0 Signal Integrity: M-PHY Gear 5"}]}</script>
   <!-- meta:end -->
 </head>
@@ -54,7 +54,7 @@
     <p class="crumb"><a href="../../index.html#interfaces">Interface sign-off</a> / 07</p>
     <h1>UFS 4.0 Signal Integrity: M-PHY Gear 5</h1>
     <p class="byline">
-      <!-- review:start --><span>By <a href="https://www.linkedin.com/in/geetansh-arora-a645714a/" target="_blank" rel="author noopener">Geetansh Arora</a> — Principal SI/PI Engineer</span><time datetime="2026-09-18" title="Technical review by Geetansh Arora on this date">18 Sep 2026</time><span>9 min</span><!-- review:end -->
+      <!-- review:start --><span>By <a href="https://www.linkedin.com/in/geetansh-arora-a645714a/" target="_blank" rel="author noopener">Geetansh Arora</a> — Principal SI/PI Engineer</span><time datetime="2026-10-10" title="Technical review by Geetansh Arora on this date">10 Oct 2026</time><span>9 min</span><!-- review:end -->
     </p>
     <!-- share:head:start --><div class="share share--head" data-share data-share-url="https://sipi.work/topics/interfaces/ufs4.html" data-share-title="UFS 4.0 Signal Integrity: M-PHY Gear 5"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Fufs4.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Fufs4.html&amp;text=UFS%204.0%20Signal%20Integrity%3A%20M-PHY%20Gear%205" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=UFS%204.0%20Signal%20Integrity%3A%20M-PHY%20Gear%205&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Fufs4.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:head:end -->
     <p class="answer">
@@ -78,7 +78,7 @@
     <rect x="136" y="0" width="86" height="34" rx="2" fill="var(--alarm)" opacity=".55"/>
     <text class="lbl-hi" x="179" y="21" text-anchor="middle">preamble</text>
     <rect x="222" y="0" width="300" height="34" rx="2" fill="var(--signal)" opacity=".55"/>
-    <text class="lbl-hi" x="372" y="21" text-anchor="middle">HS burst — 23.2 Gbps per lane</text>
+    <text class="lbl-hi" x="372" y="21" text-anchor="middle">HS burst — 23.32 Gbps per lane</text>
     <rect x="522" y="0" width="140" height="34" rx="2" fill="var(--muted)" opacity=".25"/>
     <text class="lbl" x="592" y="21" text-anchor="middle">powered down</text>
     <path class="edge dash" d="M136,40 L136,66 M222,40 L222,66" stroke="var(--alarm)"/>
@@ -94,15 +94,15 @@
     <text class="lbl-bad" x="0" y="62">a link that is stable once running but drops the odd burst is an acquisition problem, not a channel one</text>
   </g>
 </svg></div>
-    <figcaption><b>M-PHY is built for battery-powered systems, so it powers down between transfers.</b> That saves substantial energy and creates the interface's characteristic problem: the receiver must acquire from nothing, every burst. A continuously-running link's CDR has effectively unlimited time to settle; an M-PHY receiver gets a short preamble, and if it has not locked by the end of it the burst is lost. So the requirements move to things a continuous link barely cares about &#8212; squelch detection thresholds, wake timing, how quickly the eye is usable after the driver turns on, and how much residual noise is left on the rail by whatever else woke at the same moment. The margin itself mostly goes to the <b>escape</b> rather than the trace: 23.2 Gbps across a few centimetres is a modest loss budget, but getting four differential pairs out of a fine-pitch ball field through a thin phone stackup, without breaking pair symmetry, is where the discontinuities are. And a link that is stable once running but occasionally drops a burst is almost never a channel problem &#8212; simulate the burst <em>start</em>, not the steady-state eye.</figcaption>
+    <figcaption><b>M-PHY is built for battery-powered systems, so it powers down between transfers.</b> That saves substantial energy and creates the interface's characteristic problem: the receiver must acquire from nothing, every burst. A continuously-running link's CDR has effectively unlimited time to settle; an M-PHY receiver gets a short preamble, and if it has not locked by the end of it the burst is lost. So the requirements move to things a continuous link barely cares about &#8212; squelch detection thresholds, wake timing, how quickly the eye is usable after the driver turns on, and how much residual noise is left on the rail by whatever else woke at the same moment. The margin itself mostly goes to the <b>escape</b> rather than the trace: 23.32 Gbps across a few centimetres is a modest loss budget, but getting four differential pairs out of a fine-pitch ball field through a thin phone stackup, without breaking pair symmetry, is where the discontinuities are. And a link that is stable once running but occasionally drops a burst is almost never a channel problem &#8212; simulate the burst <em>start</em>, not the steady-state eye.</figcaption>
   </figure>
 
   <div class="prose">
     <p>
       Whenever a modern flagship smartphone launches an application, captures 8K video, or loads an on-device
       AI model, it transfers data through Universal Flash Storage (UFS). In UFS 4.0, the underlying physical layer
-      is driven by MIPI M-PHY Gear 5, delivering data rates up to an astonishing <span class="num">23.2 Gbps per lane</span>.
-      Across two dual-simplex differential lanes, the interface provides up to <span class="num">46.4 Gbps</span> of
+      is driven by MIPI M-PHY Gear 5, delivering a raw line rate of <span class="num">23.32 Gbps per lane</span>.
+      Across two dual-simplex differential lanes, the interface provides up to <span class="num">46.6 Gbps</span> of
       raw throughput — matching enterprise server NVMe speeds, but engineered entirely within the tight battery and
       thermal envelope of a handheld mobile device.
     </p>
@@ -146,10 +146,11 @@
     <h2 class="section-rule"><span>What it is</span></h2>
 
     <p>
-      JEDEC's storage interface, layered on MIPI's M-PHY. UFS 4.0 adds HS-Gear5, roughly
-      <strong>23.2 Gbps per lane</strong>, with two lanes in each direction. UniPro sits above the PHY
+      JEDEC's storage interface, layered on MIPI's M-PHY. UFS 4.0 (JESD220F) is built on M-PHY v5.0, which adds HS-Gear5, roughly
+      <strong>23.32 Gbps per lane</strong>, with two lanes in each direction. UniPro sits above the PHY
       as the link layer. Unlike LPDDR this is a serial, embedded-clock link; unlike PCIe it lives
-      entirely inside a handset, a few centimetres from the SoC.
+      entirely inside a handset, a few centimetres from the SoC. This page describes UFS 4.0; JEDEC published
+      UFS 5.0 (JESD220H) in February 2026, built on M-PHY v6.0, whose HS-Gear6 doubles the HS-Gear5 rate (C-12c, C-12d).
     </p>
 
     <h2 class="section-rule"><span>Burst mode is the distinctive part</span></h2>
@@ -207,7 +208,7 @@
 
     <h3>Sources</h3>
     <ul class="tight refs">
-      <li><strong>JEDEC JESD220E (UFS 4.0), and the MIPI M-PHY revision it references</strong> &#8212; lane rate, burst and power-state behaviour, spread spectrum &#8212; ledger claims C-12 to C-14</li>
+      <li><strong>JEDEC JESD220F (UFS 4.0), and the MIPI M-PHY revision it references</strong> &#8212; lane rate, burst and power-state behaviour, spread spectrum &#8212; ledger claims C-12 to C-14</li>
     </ul>
       <h2 class="section-rule"><span>Why this decides how your board behaves</span></h2>
 
@@ -332,6 +333,8 @@
       <h2 class="section-rule"><span>Sources</span></h2>
       <ul class="sources__list">
       <li><a href="https://www.mipi.org/press-releases/m-phy-update-doubles-peak-data-rate-for-next-generation-flash-memory-storage-applications" target="_blank" rel="noopener">MIPI Alliance — M-PHY v5.0 announcement</a> <span class="src__for">C-12a</span></li>
+      <li><a href="https://www.jedec.org/news/pressreleases/jedec-updates-universal-flash-storage-ufs-and-supporting-memory-interface" target="_blank" rel="noopener">JEDEC — JESD220F UFS 4.0 announcement</a> <span class="src__for">C-12c</span></li>
+      <li><a href="https://www.jedec.org/node/9631" target="_blank" rel="noopener">JEDEC — UFS 5.0 announcement</a> <span class="src__for">C-12d</span></li>
       <li><a href="https://mixel.com/m-phy-benefits-challenges/" target="_blank" rel="noopener">Mixel — M-PHY benefits and challenges</a> <span class="src__for">C-14</span></li>
       </ul>
       <p class="sources__note">Rows marked with a claim id are tracked in <a href="../../docs/claims.md">the claim ledger</a>, which records what each source can and cannot establish.</p>

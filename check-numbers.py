@@ -561,6 +561,8 @@ CLAIMS = [
     ("../interview-power-integrity", "PSIJ: UI of a 32 Gb/s NRZ link (ps)", ui_ps(32e9), r"the ([\d.]+) ps unit interval of a 32", 0.1),
     ("../interview-power-integrity", "PSIJ: 4.8 ps as a share of that UI (%)", 100 * 4.8 / ui_ps(32e9), r"which is (\d+)% of the 31", 3),
 
+    ("interfaces/ufs4", "two HS-G5 lanes of 23.32 Gb/s (Gb/s)", 2 * 23.32, r"provides up to ([\d.]+) Gbps of", 0.2),
+
     # ── LPDDR6 ──────────────────────────────────────────────────────────────
     ("interfaces/lpddr6", "glance: raw bandwidth at 10.667 (GB/s)", 24 * 10.667 / 8, r"carries ([\d.]+) GB/s of raw bandwidth", 0.2),
     ("interfaces/lpddr6", "glance: data bandwidth at 10.667 (GB/s)", 24 * 10.667 / 8 * 256 / 288, r"per pin, ([\d.]+) GB/s of it data", 0.3),
