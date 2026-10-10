@@ -154,6 +154,61 @@
     return chosen;
   };
 
+  /* ---------- axes that hold still ----------
+     Geetansh, 10 Oct 2026, on Lab C: "when I change die load current, instead of
+     the waveform the axis keeps changing. That gives first impressions that
+     nothing is working when it is." A plot fitted to its data on every redraw
+     turns a halved current into an identical curve under different tick labels.
+
+     So a chart's range is remembered per plot (`memo[key]`) and kept while the
+     data stays inside it: an input change then moves the WAVEFORM. It grows, to a
+     round number, only when the data would leave the plot, and shrinks only when
+     the data has fallen below `shrink` of the range (default 15%) and would be
+     unreadable. Linear ranges round to 1, 1.2, 1.5, 2, 2.5, 3, 4, 5, 6 or 8 x 10^k; log ranges to whole
+     decades. A preset or a reset should clear `memo` so the new scene is framed
+     afresh. Returns { min, max }.
+
+       lo, hi     the data extremes this frame
+       opts.log   decade axis; opts.decades fixes its depth below the top
+       opts.min   a fixed lower bound (e.g. 0 for a current that cannot go negative)
+       opts.head  headroom above the data when a range is fitted (default 10%)       */
+  K.stickyAxis = function (memo, key, lo, hi, opts) {
+    opts = opts || {};
+    const head = opts.head === undefined ? 0.1 : opts.head, shrink = opts.shrink === undefined ? 0.15 : opts.shrink;
+    if (!Number.isFinite(lo) || !Number.isFinite(hi)) return memo[key] || { min: 0, max: 1 };
+    if (opts.log) {
+      const top = (v) => Math.pow(10, Math.ceil(Math.log10(v) - 1e-9));
+      const H = Math.max(hi, opts.floor || 1e-15);
+      const fit = () => {
+        const max = top(H * (1 + head));
+        const min = opts.min !== undefined ? opts.min
+          : opts.decades ? max / Math.pow(10, opts.decades)
+          : Math.pow(10, Math.floor(Math.log10(Math.max(lo, 1e-300) / (1 + head)) + 1e-9));
+        return { min: Math.min(min, max / 10), max };
+      };
+      const r = memo[key];
+      const span = (a, b) => Math.log10(b) - Math.log10(a);
+      const keep = r && H <= r.max && (opts.min !== undefined || opts.decades || lo >= r.min)
+        && span(H, r.max) <= (opts.shrinkDecades === undefined ? 2 : opts.shrinkDecades);
+      return (memo[key] = keep ? r : fit());
+    }
+    const nice = (v) => {
+      if (!(v > 0)) return 0;
+      const e = Math.pow(10, Math.floor(Math.log10(v)));
+      for (const m of [1, 1.2, 1.5, 2, 2.5, 3, 4, 5, 6, 8, 10]) if (m * e >= v * (1 - 1e-12)) return m * e;
+      return 10 * e;
+    };
+    const fit = () => {
+      let min = opts.min !== undefined ? opts.min : (lo < 0 ? -nice(-lo * (1 + head)) : 0);
+      let max = hi > 0 ? nice(hi * (1 + head)) : 0;
+      if (!(max > min)) max = min + (opts.minSpan || 1e-3);
+      return { min, max };
+    };
+    const r = memo[key];
+    const keep = r && lo >= r.min && hi <= r.max && (hi - lo) >= shrink * (r.max - r.min);
+    return (memo[key] = keep ? r : fit());
+  };
+
   K.plot = function (surface, T, opts) {
     const { ctx, w, h } = surface;
     /* A right pad wide enough for trace labels on a desktop is a large fraction of
@@ -200,6 +255,11 @@
     function ticksFor(a) {
       if (a.ticks) return a.ticks;
       if (a.log) {
+        /* A log axis needs 0 < min < max. Lab C's die-current spectrum handed this
+           min = max = 0 when the die load was set to 0 A: log10(0) is -Infinity, the
+           loop never ended, and the whole panel stopped redrawing with stale numbers
+           on screen. No ticks is the right answer for an axis that cannot exist. */
+        if (!(a.min > 0) || !(a.max > a.min) || !Number.isFinite(a.max)) return [];
         const out = [];
         for (let d = Math.ceil(Math.log10(a.min)); d <= Math.log10(a.max) + 1e-9; d++) out.push(Math.pow(10, d));
         return out;
@@ -1612,7 +1672,22 @@
      A small matrix exponential advances [u,c] exactly for linearly interpolated
      currents; analytic input derivatives recover the inductive output voltage.
      This differs from the independent trapezoidal nodal reference in tests. */
-  K.pdnCausalTransient = function (stages, loads, dt, observe) {
+  /* `tail` (optional) continues each observation past the record, for as long as
+     the network takes to settle. It exists because the record is a fixed few
+     microseconds and a slow regulator is not: with a 10 kHz loop the overshoot
+     after the load releases peaked after the measurement window had closed, and
+     the lab reported 0.7 mV for a rail that went on to ring by 80 mV.
+
+     It is exact rather than extrapolated. Once both loads have returned to zero
+     (the record must end there, or this throws), the input is identically zero
+     and the network evolves freely, x' = A x, so one matrix exponential of A*step
+     carries the state forward with no input-discretisation error at any step
+     size. The step only sets how finely the tail is SAMPLED for its extrema.
+     It stops when the combined response at every observed node has stayed below
+     `settle` times its largest excursion for `quiet` seconds, or at `maxSeconds`,
+     and says which. Returned per observation as `tail: {dt, parts, combined,
+     settled, seconds}`. */
+  K.pdnCausalTransient = function (stages, loads, dt, observe, tail) {
     const banks=stages.length-1, n=loads.length&&loads[0].current.length;
     if(banks<1||!Number.isFinite(dt)||dt<=0||n<2||!loads.length
         ||stages[0].series||!stages[0].shunt||stages[0].shunt.c
@@ -1667,21 +1742,27 @@
       loads.forEach((_,j)=>{H[i][dim+j]=dt*F[i][j];});
     }
     loads.forEach((_,j)=>{H[dim+j][dim+loads.length+j]=1;});
-    const norm=Math.max(...H.map(row=>row.reduce((s,v)=>s+Math.abs(v),0)));
-    const scale=Math.max(0,Math.ceil(Math.log2(norm/.5))), factor=2**scale;
-    const small=H.map(row=>row.map(v=>v/factor));
-    let term=zeros(size,size),exp=zeros(size,size);
-    for(let i=0;i<size;i++) term[i][i]=exp[i][i]=1;
-    let converged=false;
-    for(let k=1;k<=40;k++) {
-      term=mul(term,small).map(row=>row.map(v=>v/k));
-      let max=0;for(let i=0;i<size;i++) for(let j=0;j<size;j++) {exp[i][j]+=term[i][j];max=Math.max(max,Math.abs(term[i][j]));}
-      if(max<1e-17){converged=true;break;}
-    }
-    if(!converged) throw new Error('Causal PDN matrix exponential did not converge');
-    for(let k=0;k<scale;k++) exp=mul(exp,exp);
+    // Scaling and squaring with a converged Taylor series.
+    const expm=G=>{
+      const m=G.length,norm=Math.max(...G.map(row=>row.reduce((s,v)=>s+Math.abs(v),0)));
+      const scale=Math.max(0,Math.ceil(Math.log2(norm/.5))), factor=2**scale;
+      const small=G.map(row=>row.map(v=>v/factor));
+      let term=zeros(m,m),e=zeros(m,m);
+      for(let i=0;i<m;i++) term[i][i]=e[i][i]=1;
+      let converged=false;
+      for(let k=1;k<=40;k++) {
+        term=mul(term,small).map(row=>row.map(v=>v/k));
+        let max=0;for(let i=0;i<m;i++) for(let j=0;j<m;j++) {e[i][j]+=term[i][j];max=Math.max(max,Math.abs(term[i][j]));}
+        if(max<1e-17){converged=true;break;}
+      }
+      if(!converged) throw new Error('Causal PDN matrix exponential did not converge');
+      for(let k=0;k<scale;k++) e=mul(e,e);
+      return e;
+    };
+    const exp=expm(H);
     const out=observe.map(()=>({parts:loads.map(()=>new Float64Array(n)),combined:new Float64Array(n)}));
     // Evolve separate load contributions, preserving comparison/superposition semantics.
+    const finals=[];
     loads.forEach((load,l)=>{
       let x=new Float64Array(dim),next=new Float64Array(dim);
       for(let t=0;t<n;t++) {
@@ -1703,6 +1784,44 @@
           out[j].parts[l][t]=voltage;out[j].combined[t]+=voltage;
         });
       }
+      finals[l]=x;
+    });
+    if(!tail) return out;
+    const step=tail.step,maxSeconds=tail.maxSeconds,settle=tail.settle===undefined?1e-3:tail.settle,
+      quiet=tail.quiet===undefined?10e-6:tail.quiet;
+    if(!(step>0)||!Number.isFinite(step)||!(maxSeconds>=step)||!Number.isFinite(maxSeconds)||!(settle>0)||!(quiet>=step))
+      throw new Error('Invalid causal PDN tail');
+    if(loads.some(l=>l.current[n-1]!==0||l.derivative[n-1]!==0))
+      throw new Error('A causal PDN tail needs every load back at zero by the end of the record');
+    // Free evolution: with I = I' = 0 the bank current is x_k and its derivative (A x)_k.
+    const free=expm(A.map(row=>row.map(v=>v*step)));
+    const volts=(x,j)=>{const k=observe[j]-1;let d=0;for(let m=0;m<dim;m++) d+=A[k][m]*x[m];return sh[k].r*x[k]+sh[k].l*d+x[k+banks];};
+    const scale=observe.map((_,j)=>{let m=0;for(const v of out[j].combined) m=Math.max(m,Math.abs(v));return m;});
+    const series=observe.map(()=>({parts:loads.map(()=>[]),combined:[]}));
+    const states=finals.map(x=>Float64Array.from(x)),next=new Float64Array(dim);
+    const maxSteps=Math.ceil(maxSeconds/step),quietSteps=Math.ceil(quiet/step);
+    let calm=0,steps=0;
+    while(steps<maxSteps&&calm<quietSteps) {
+      states.forEach((x,l)=>{
+        for(let i=0;i<dim;i++){let v=0;for(let j=0;j<dim;j++) v+=free[i][j]*x[j];next[i]=v;}
+        x.set(next);
+      });
+      steps++;
+      let loud=false;
+      observe.forEach((_,j)=>{
+        let total=0;
+        states.forEach((x,l)=>{const v=volts(x,j);series[j].parts[l].push(v);total+=v;});
+        if(!Number.isFinite(total)) throw new Error('Non-finite causal PDN tail');
+        series[j].combined.push(total);
+        scale[j]=Math.max(scale[j],Math.abs(total));
+        if(Math.abs(total)>settle*scale[j]) loud=true;
+      });
+      calm=loud?0:calm+1;
+    }
+    const settled=calm>=quietSteps;
+    observe.forEach((_,j)=>{
+      out[j].tail={dt:step,seconds:steps*step,settled,
+        parts:series[j].parts.map(a=>Float64Array.from(a)),combined:Float64Array.from(series[j].combined)};
     });
     return out;
   };

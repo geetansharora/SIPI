@@ -72,3 +72,38 @@ for (const width of [160, 236, 320, 640, 1100]) {
 }
 
 console.log('Plot label layout: ' + cases + ' widths passed (synthetic font metrics; browser audit also required).');
+
+/* A log axis that cannot exist must draw nothing rather than loop. Lab C's
+   spectrum asked for min = max = 0 when the die load was 0 A, ticksFor counted
+   up from log10(0) = -Infinity, and the panel stopped redrawing (10 Oct 2026). */
+{
+  const any = new Proxy({}, { get: (t, k) => k === 'canvas' ? { width: 400, height: 200 } : k === 'measureText' ? () => ({ width: 10 }) : () => {} , set: () => true });
+  const cv = { clientWidth: 400, style: {}, getContext: () => any };
+  for (const y of [{ min: 0, max: 0 }, { min: 0, max: 1 }, { min: 1, max: 1 }, { min: -1, max: 1 }, { min: 1e-3, max: NaN }]) {
+    const P = K.plot(K.canvas(cv, 200), K.theme(), { x: { min: 1, max: 10, log: true }, y: Object.assign({ log: true }, y) });
+    P.grid(); P.frame();
+    cases++;
+  }
+  console.log('Degenerate log axes draw without looping: 5 cases.');
+}
+
+/* Axes hold still while an input changes (K.stickyAxis). Geetansh, 10 Oct 2026:
+   halving Lab C's die current redrew an identical curve under new tick labels,
+   because every plot refitted its axis to the data. */
+{
+  const memo = {};
+  const first = K.stickyAxis(memo, 'v', -0.07, 0.142);
+  assert(first.max >= 0.142 && first.min <= -0.07, 'a fitted range contains the data');
+  assert.deepEqual(K.stickyAxis(memo, 'v', -0.035, 0.071), first, 'halving the data keeps the axis, so the waveform shrinks');
+  assert.deepEqual(K.stickyAxis(memo, 'v', -0.06, 0.15), first, 'a change that still fits keeps the axis');
+  const grown = K.stickyAxis(memo, 'v', -0.07, 0.4);
+  assert(grown.max >= 0.4 && grown.max > first.max, 'data leaving the plot grows the axis');
+  const shrunk = K.stickyAxis(memo, 'v', -0.002, 0.01);
+  assert(shrunk.max < grown.max && shrunk.max >= 0.01, 'data below 15% of the range refits it');
+  const lg = {}, a = K.stickyAxis(lg, 's', 0, 3e-3, { log: true, decades: 5 });
+  assert.deepEqual(K.stickyAxis(lg, 's', 0, 1e-3, { log: true, decades: 5 }), a, 'a log axis holds within its decades');
+  assert(K.stickyAxis(lg, 's', 0, 2, { log: true, decades: 5 }).max >= 2, 'a log axis grows when the data leaves it');
+  for (const v of [0.142 * 1.1, 0.4 * 1.1]) assert([1, 1.2, 1.5, 2, 2.5, 3, 4, 5, 6, 8, 10].some((m) => {
+    const e = 10 ** Math.floor(Math.log10(v)); return Math.abs(K.stickyAxis({}, 'x', 0, v / 1.1).max - m * e) < 1e-12; }), 'fitted bounds are round numbers');
+  console.log('Sticky axes: hold, grow, shrink and round as specified.');
+}

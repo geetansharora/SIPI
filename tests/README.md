@@ -37,7 +37,13 @@ Two-load PDN evidence: `node tests/check-pdn-multi.js` runs six selected corners
 independent causal reference/refinement comparisons, an analytical shared-path RL
 tone and four scoped numerical faults. It is included in `./check`. To capture all
 metrics, set `PDN_EVIDENCE_PATH=/tmp/pdn-evidence.json`. The optional output path
-only writes evidence; it does not disable assertions. Some default-grid cases
+only writes evidence; it does not disable assertions.
+
+Lab C across its control ranges: `node tests/check-pdn-domain.js` runs a seeded
+sample of settings (24 by default; `PDN_DOMAIN_N=240` for the full sweep) against
+the independent reference at an eighth of the model's step, driven with the model's
+own declared stimulus times, and requires that no reported droop or overshoot is
+smaller than an excursion a four-times-longer record contains. It is in `./check`. Some default-grid cases
 miss accuracy budgets; five longer/finer test configurations meet them, while the
 slow-VRM case remains diagnostic. See `docs/verification-evidence.md` and the dated
 `docs/pdn-two-load-evidence.json`; passing this suite does not certify the entire

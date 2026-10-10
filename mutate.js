@@ -166,6 +166,43 @@ const MUTATIONS = [
     active: true, fast: true
   },
   {
+    id: 'ring-down-ignored',
+    file: 'js/viz/lab-pdn.js',
+    find: '        return t?assess(a,start,to,t,dt):assess(a,start,to);',
+    with: '        return assess(a,start,to);',
+    suite: 'Lab C ring-down —',
+    expect: 'overshoot after the window agrees with the independent reference',
+    why: 'The defect a domain sweep found on 10 Oct 2026: droop and overshoot '
+       + 'measured only inside the plotted window. With a 10 kHz regulator the '
+       + 'overshoot after the load releases peaks at 13.8 us, after the window '
+       + 'closes, and the lab reported 0.00 mV at the die for a 367.5 mV overshoot.',
+    active: true, fast: true
+  },
+  {
+    id: 'ring-down-from-rest',
+    file: 'js/viz-kit.js',
+    find: '    const states=finals.map(x=>Float64Array.from(x)),next=new Float64Array(dim);',
+    with: '    const states=finals.map(x=>new Float64Array(x.length)),next=new Float64Array(dim);',
+    suite: 'Lab C ring-down —',
+    expect: 'overshoot after the window agrees with the independent reference',
+    why: 'A ring-down that does not continue from the state the record ended in '
+       + 'is not a continuation: it starts the free evolution from rest, finds '
+       + 'nothing, and reports the in-window overshoot as if the rail had settled.',
+    active: true, fast: true
+  },
+  {
+    id: 'large-signal-die-only',
+    file: 'js/viz/lab-pdn.js',
+    find: '    const excursion = multi ? Math.max(...multi.nodes.map((q) => Math.max(q.stats[2].droop, q.stats[2].overshoot))) : Math.max(droop, overshoot);',
+    with: '    const excursion = Math.max(droop, overshoot);',
+    suite: 'Lab C large-signal flag —',
+    expect: 'the board stress case is flagged, at the board',
+    why: 'A flag computed from the headline die numbers alone. A 20 A board load '
+       + 'with a 200 ps edge puts 167 mV on the die and over 7 V on the board, '
+       + 'and a die-only check calls that rail fine.',
+    active: true, fast: true
+  },
+  {
     id: 'il-from-the-budget',
     file: 'js/viz/lab-channel.js',
     find: '    const ilNyq = 20 * Math.log10(Math.hypot(Snyq.s21r, Snyq.s21i));',

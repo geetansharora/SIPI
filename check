@@ -33,6 +33,7 @@ node check-models.js "$@"
 node tests/check-plot-layout.js
 node tests/check-domain.js
 node tests/check-pdn-multi.js
+node tests/check-pdn-domain.js
 node tests/check-reference.js
 node tests/check-experiments.js
 node tests/check-reference-next.js

@@ -9,6 +9,30 @@ Entries are newest first.
 
 ---
 
+## October 2026
+
+### Corrections to model behaviour
+
+- **Lab C missed the overshoot of a slow regulator.** Droop and overshoot were
+  measured only until 1.44 µs after the load turned off, and a slow regulator
+  rings for much longer. With a 10 kHz loop the lab reported 0.00 mV of die
+  overshoot for a rail that overshoots by 367.5 mV, 13.8 µs into the record. The
+  model now continues each observation exactly once the loads are off, until the
+  rail settles, measures the extremes over all of it, and says when one falls
+  after the plotted window. None of the five presets changes. *Caught by: a
+  seeded sweep across every control range, after six hand-picked corners had
+  passed; the gate now runs that sweep.*
+- **Lab C showed volts of "droop" as if a rail could reach them.** The ladder
+  is linear, and the controls allow 40 A with 200 ps edges, which can put
+  several volts on a rail of about a volt. Those results are still shown, but
+  above 0.5 V at either node the readout now says they are beyond what the
+  model can describe. *Caught by: the same sweep.*
+- **Lab C froze with the die current at 0 A.** The die-current spectrum had
+  nothing to plot, its log axis ran from zero, and the redraw failed every time,
+  leaving the previous setting's numbers on screen. The panel now says the die
+  current is 0 A, and the plotting kit refuses any log axis that cannot exist.
+  *Caught by: checking the large-signal flag in a browser.*
+
 ## September 2026
 
 ### Corrections to model behaviour

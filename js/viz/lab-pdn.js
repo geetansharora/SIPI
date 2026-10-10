@@ -34,6 +34,26 @@
      this the droop is not a number to a tenth of a millivolt and the result
      says so instead. */
   const PRE_EVENT_BUDGET = 0.02;
+  /* The record is a few microseconds; a 10 kHz regulator rings for a hundred.
+     Droop and overshoot were measured only inside the plotted window, and a
+     domain sweep (10 Oct 2026) found the overshoot after the load releases
+     peaking after that window in 24 of 528 cases -- 0.00 mV reported at the die
+     for a rail that went on to overshoot by 367 mV. The kit now continues each
+     observation exactly once both loads are off (free evolution, one matrix
+     exponential), sampled every 2 ns, until it stays within 0.1% of its largest
+     excursion for 10 us, or 1 ms has passed. Extremes are measured over the
+     record AND that ring-down, and the result says when one falls after the plot. */
+  const TAIL = { step: 2e-9, maxSeconds: 1e-3, settle: 1e-3, quiet: 10e-6 };
+  /* The ladder is linear: the load draws the same current whatever the rail
+     does, and the regulator never runs out of headroom. That is a fair account of
+     a rail that moves by tens or a few hundreds of millivolts. It is not one of a
+     rail that moves by volts, and the controls allow that -- 40 A at the board
+     with a 200 ps edge and a 10 kHz regulator gives a 28 V "droop" on a rail of
+     about a volt. Past half a volt the result is still the linear model's answer,
+     and it is shown, but it is labelled as what it is: far outside any budget,
+     not a voltage the rail would reach. The lab does not model a particular
+     supply, so the bound is half of a nominal 1 V core rail. */
+  const LARGE_SIGNAL_VOLTS = 0.5;
 
   const NAMES = ['VRM', 'bulk', 'board', 'package', 'die'];
 
@@ -141,14 +161,24 @@
 
   // Per-observation/mode drift measurement. Zero excitation is exactly settled;
   // cancellation uses an absolute numerical floor, not a fabricated droop ratio.
-  function assess(v, start, to) {
+  // With a ring-down (`tail`, `dt`), the extremes are searched past the plotted
+  // window `to` as well, and each one carries the time it occurred.
+  function assess(v, start, to, tail, dt) {
     const stop=Math.max(1,start-8);
     let base=0; for(let i=0;i<stop;i++) base+=v[i]; base/=stop;
-    let pre=0,droop=0,overshoot=0;
+    let pre=0,droop=0,overshoot=0,droopAt=null,overshootAt=null;
     for(let i=0;i<stop;i++) pre=Math.max(pre,Math.abs(v[i]-base));
-    for(let i=start;i<to;i++) {droop=Math.max(droop,base-v[i]);overshoot=Math.max(overshoot,v[i]-base);}
+    const end=tail?v.length:to;
+    const look=(x,t)=>{if(base-x>droop){droop=base-x;droopAt=t;} if(x-base>overshoot){overshoot=x-base;overshootAt=t;}};
+    for(let i=start;i<end;i++) look(v[i],dt?i*dt:i);
+    if(tail) for(let k=0;k<tail.combined.length;k++) look(tail.combined[k],(v.length-1)*dt+(k+1)*tail.dt);
     const fraction=pre/Math.max(droop,overshoot,1e-12);
-    return {base,pre,fraction,droop,overshoot,settled:fraction<=PRE_EVENT_BUDGET};
+    const windowEnd=dt?to*dt:to;
+    return {base,pre,fraction,droop,overshoot,settled:fraction<=PRE_EVENT_BUDGET,
+      droopAt,overshootAt,
+      droopAfterWindow:tail?droopAt!==null&&droopAt>=windowEnd:false,
+      overshootAfterWindow:tail?overshootAt!==null&&overshootAt>=windowEnd:false,
+      observedUntil:tail?(v.length-1)*dt+tail.seconds:null,ringDownSettled:tail?tail.settled:null};
   }
 
   NS.models.labPdn = function (p, opts) {
@@ -156,23 +186,23 @@
       p=Object.assign({tr2:800,startNs:786.4,widthNs:1835,start2Ns:786.4,width2Ns:1835},p);
       const limits={imax:[0,40],tr:[200,20000],imax2:[0,40],tr2:[200,20000],startNs:[100,1500],start2Ns:[100,1500],widthNs:[100,2500],width2Ns:[100,2500]};
       if(Object.keys(limits).some(k=>!Number.isFinite(p[k])||p[k]<limits[k][0]||p[k]>limits[k][1]))
-        return K.result({model:'labPdn',version:'1.3',status:'unsupported',params:p,why:'Load settings are outside the supported finite amplitude, edge or timing ranges.'});
+        return K.result({model:'labPdn',version:'1.4',status:'unsupported',params:p,why:'Load settings are outside the supported finite amplitude, edge or timing ranges.'});
     }
     if(opts && ((opts.dt!==undefined&&(!Number.isFinite(opts.dt)||opts.dt<=0))
         ||(opts.nt!==undefined&&(!Number.isInteger(opts.nt)||opts.nt<2||(opts.nt&(opts.nt-1))||opts.nt>2097152))
         ||(opts.method!==undefined&&!['causal','periodic'].includes(opts.method))))
-      return K.result({model:'labPdn',version:'1.3',status:'unsupported',params:p,why:'Invalid numerical configuration.'});
+      return K.result({model:'labPdn',version:'1.4',status:'unsupported',params:p,why:'Invalid numerical configuration.'});
     const networkKeys=['rvrm','fbw','lplane','lpkg','cboard','nboard','esr','esl','cdie','zt'];
     if(networkKeys.some(k=>!Number.isFinite(p[k])||p[k]<=0)||!Number.isInteger(p.nboard))
-      return K.result({model:'labPdn',version:'1.3',status:'unsupported',params:p,why:'Network values must be positive and finite; capacitor count must be an integer.'});
+      return K.result({model:'labPdn',version:'1.4',status:'unsupported',params:p,why:'Network values must be positive and finite; capacitor count must be an integer.'});
     const causal=p.imax2!==undefined && !(opts&&opts.method==='periodic');
     const grid = gridFor(p, opts);
     const nt = (opts && opts.nt) || grid.nt;
     const dt = grid.dt;
     if (p.imax2 !== undefined && (Math.max(p.startNs+p.widthNs+p.tr/1000,p.start2Ns+p.width2Ns+p.tr2/1000)*1e-9 >= nt*dt || dt>Math.min(p.tr,p.imax2?p.tr2:p.tr)*1e-12/8))
-      return K.result({model:'labPdn',version:'1.3',status:'out-of-record',params:p,why:'The two-load record must contain both pulses and resolve each active edge with at least eight samples.'});
+      return K.result({model:'labPdn',version:'1.4',status:'out-of-record',params:p,why:'The two-load record must contain both pulses and resolve each active edge with at least eight samples.'});
     if(!Number.isFinite(dt)||dt<=0||!Number.isInteger(nt)||nt<2||(nt&(nt-1))||nt>2097152)
-      return K.result({model:'labPdn',version:'1.3',status:'unsupported',params:p,why:'The numerical grid must have a finite positive timestep and a bounded power-of-two sample count.'});
+      return K.result({model:'labPdn',version:'1.4',status:'unsupported',params:p,why:'The numerical grid must have a finite positive timestep and a bounded power-of-two sample count.'});
     const stages = stagesFor(p);
 
     const sweep = [];
@@ -189,10 +219,13 @@
     if (p.imax2 !== undefined) {
       const second=currentWaveFor({imax:p.imax2,tr:p.tr2,startNs:p.start2Ns,widthNs:p.width2Ns},nt,dt);
       const loads=[{node:4,current:wave.a,derivative:wave.derivative},{node:2,current:second.a,derivative:second.derivative}];
-      const nodes=causal ? K.pdnCausalTransient(stages,loads,dt,[4,2]) : K.pdnMultiTransient(stages,loads,dt,[4,2]);
+      const nodes=causal ? K.pdnCausalTransient(stages,loads,dt,[4,2],TAIL) : K.pdnMultiTransient(stages,loads,dt,[4,2]);
       const start=Math.min(wave.t0,p.imax2?second.t0:wave.t0);
       const to=Math.min(nt-1,Math.max(wave.fall,p.imax2?second.fall:wave.fall)+Math.round(1.44e-6/dt));
-      nodes.forEach(q=>{q.stats=[assess(q.parts[0],start,to),assess(q.parts[1],start,to),assess(q.combined,start,to)];});
+      nodes.forEach(q=>{q.stats=[0,1,2].map(k=>{
+        const a=k<2?q.parts[k]:q.combined,t=q.tail&&{dt:q.tail.dt,seconds:q.tail.seconds,settled:q.tail.settled,combined:k<2?q.tail.parts[k]:q.tail.combined};
+        return t?assess(a,start,to,t,dt):assess(a,start,to);
+      });});
       multi={nodes,second,start,to,loads};
       v=Float64Array.from(nodes[0].combined,x=>-x); // legacy positive-droop internal convention
     }
@@ -217,6 +250,14 @@
       if (-d > overshoot) overshoot = -d;
       worstAbs = Math.max(worstAbs, Math.abs(d));
     }
+    // The causal path measures through the ring-down; the die node is the headline.
+    const die = multi && causal ? multi.nodes[0].stats[2] : null;
+    if (die) { droop = die.droop; overshoot = die.overshoot; worstAbs = Math.max(droop, overshoot); }
+    const ringing = !!die && die.ringDownSettled === false;   // null means no ring-down was run
+    // The largest excursion at either observed node, against the linear-model bound.
+    const excursion = multi ? Math.max(...multi.nodes.map((q) => Math.max(q.stats[2].droop, q.stats[2].overshoot))) : Math.max(droop, overshoot);
+    const excursionNode = multi ? (Math.max(multi.nodes[0].stats[2].droop, multi.nodes[0].stats[2].overshoot) >= excursion ? 'die' : 'board') : 'die';
+    const largeSignal = excursion > LARGE_SIGNAL_VOLTS;
 
     /* M2-4 · A droop quoted to a tenth of a millivolt while 3% of it is record
        contamination is not a measurement. The fraction is computed for THIS
@@ -227,12 +268,14 @@
 
     return K.result({
       model: 'labPdn',
-      version: '1.3',
-      status: settled ? 'ok' : 'not-settled',
-      why: settled ? null
-        : 'pre-event drift is ' + (preFraction * 100).toFixed(1) + '% of the droop, '
+      version: '1.4',
+      status: settled && !ringing ? 'ok' : 'not-settled',
+      why: !settled
+        ? 'pre-event drift is ' + (preFraction * 100).toFixed(1) + '% of the droop, '
           + 'above the ' + (PRE_EVENT_BUDGET * 100) + '% budget — the record is too '
-          + 'short for this rail\u2019s slowest pole',
+          + 'short for this rail\u2019s slowest pole'
+        : ringing ? 'the rail was still moving ' + (die.observedUntil * 1e6).toFixed(0) + ' \u00b5s after the load'
+          + ' started, so its true droop and overshoot are not known' : null,
       params: {
         rvrm: p.rvrm, fbw: p.fbw, lplane: p.lplane, lpkg: p.lpkg,
         cboard: p.cboard, nboard: p.nboard, esr: p.esr, esl: p.esl,
@@ -291,6 +334,9 @@
       }()),
       measurements: {
         droop: droop, overshoot: overshoot, worstAbs: worstAbs,
+        droopAtSeconds: die ? die.droopAt : null, overshootAtSeconds: die ? die.overshootAt : null,
+        droopAfterWindow: die ? die.droopAfterWindow : false, overshootAfterWindow: die ? die.overshootAfterWindow : false,
+        largestExcursion: excursion, largestExcursionNode: excursionNode, largeSignal: largeSignal,
         /* What the model actually built, which is not always what was asked
            for: the edge is an integer number of samples. Reported so the reader
            can see when the two differ instead of being silently rounded. */
@@ -309,6 +355,12 @@
         initialState: causal ? 'zero' : 'periodic',
         timestepConverged: null,
         measurementEndSeconds: to*dt,
+        observedUntilSeconds: die ? die.observedUntil : to*dt,
+        largeSignal: { limitVolts: LARGE_SIGNAL_VOLTS, flagged: largeSignal, worstVolts: excursion, node: excursionNode,
+          meaning: 'Above the limit the linear ladder is still solved exactly, but a real rail would not follow it: '
+            + 'the load would draw less as the voltage fell and the regulator would saturate.' },
+        ringDown: die ? { step: TAIL.step, settleFraction: TAIL.settle, quietSeconds: TAIL.quiet,
+          maxSeconds: TAIL.maxSeconds, settled: die.ringDownSettled } : null,
         multi: multi ? multi.nodes.map(q=>q.stats) : null,
         preEventDeviation: preDev,
         preEventFraction: preFraction,
@@ -328,6 +380,9 @@
 
   NS.viz.labPdn = function (root) {
     const $ = (s) => root.querySelector(s);
+    /* Remembered axis ranges, one per plot (K.stickyAxis): an input change moves
+       the waveform, not the axis. A preset clears them so its scene is framed afresh. */
+    const axes = {};
     const cv = {};
     root.querySelectorAll('canvas[data-cv]').forEach((c) => (cv[c.dataset.cv] = c));
 
@@ -399,11 +454,11 @@
     /* ---------- |Z| ---------- */
     function drawZ() {
       const s = K.canvas(cv.z, 240);
-      const hi = Math.max(0.2, Math.max.apply(null, sweep.map((d) => d.mag)) * 1.6);
+      const zr = K.stickyAxis(axes, 'z', 1e-4, Math.max.apply(null, sweep.map((d) => d.mag)), { log: true, min: 1e-4, floor: 0.12, head: 0.6 });
       const P = K.plot(s, T, {
         pad: { l: 58, r: 16, t: 18, b: 30 },
         x: { min: FLO, max: FHI, log: true, fmt: K.fmt.hz, title: 'frequency' },
-        y: { min: 1e-4, max: hi, log: true, fmt: K.fmt.ohm, title: '|Z|' }
+        y: { min: zr.min, max: zr.max, log: true, fmt: K.fmt.ohm, title: '|Z|' }
       }).grid();
       /* M7-2 · Driving-point AND transfer, on one plot, because they answer
          different questions and the gap between them is the lesson.
@@ -471,7 +526,7 @@
          single most diagnostic thing on the panel. */
       let top = 1.15;
       sweep.forEach((d) => d.branches.forEach((b) => { if (b.i > top) top = b.i; }));
-      top = Math.min(top * 1.1, 12);
+      top = K.stickyAxis(axes, 'share', 0, Math.min(top, 11), { min: 0 }).max;
       const P = K.plot(s, T, {
         pad: { l: 50, r: 16, t: 16, b: 30 },
         x: { min: FLO, max: FHI, log: true, fmt: K.fmt.hz, title: 'frequency' },
@@ -571,23 +626,26 @@
 
       let lo = 0, hi = 0;
       for (let i = from; i < to; i++) { const d = v[i] - base; if (d < lo) lo = d; if (d > hi) hi = d; }
-      const pad = Math.max(2e-3, (hi - lo) * 0.18);
+      // A measured extreme can lie after this window; keep its line on the plot.
+      if (RES.measurements) { hi = Math.max(hi, RES.measurements.droop); lo = Math.min(lo, -RES.measurements.overshoot); }
+      const dr = K.stickyAxis(axes, 'droop', lo, hi, { head: 0.15, minSpan: 4e-3 });
 
       const s = K.canvas(cv.vt, 210);
       const P = K.plot(s, T, {
         pad: { l: 56, r: 52, t: 16, b: 30 },
         x: { min: 0, max: (to - from) * DTv * 1e9, count: 5, fmt: (x2) => x2.toFixed(0), title: 'ns from view start' },
-        y: { min: -(hi + pad), max: -(lo - pad), count: 4, fmt: (y2) => (y2 * 1000).toFixed(0), title: 'mV' }
+        y: { min: -dr.max, max: -dr.min, count: 4, fmt: (y2) => (y2 * 1000).toFixed(0), title: 'mV' }
       }).grid();
 
       /* The stimulus, drawn on its own scale against the right edge. A rail
          excursion without the current that caused it is half an experiment. */
-      const iMax = Math.max(1e-9, p.imax);
-      const yTop = -(hi + pad), yBot = -(lo - pad);
+      // The current's own full scale is sticky too, so a smaller current draws smaller.
+      const iMax = K.stickyAxis(axes, 'idie', 0, Math.max(1e-9, p.imax), { min: 0, head: 0 }).max;
+      const yTop = -dr.max, yBot = -dr.min;
       P.trace((i) => [i * DTv * 1e9,
                       yTop + (wave.a[from + i] / iMax) * (yBot - yTop) * 0.22],
               T.ink2, { n: to - from, width: 1.4, dash: [4, 3] });
-      K.text(P.ctx, p.imax.toFixed(0) + ' A', P.box.R + 6, P.Y(yTop) + 10, T.ink2, 10, 'left');
+      K.text(P.ctx, (+iMax.toPrecision(3)) + ' A', P.box.R + 6, P.Y(yTop) + 10, T.ink2, 10, 'left');
       K.text(P.ctx, 'I die', P.box.R + 6, P.Y(yTop) - 2, T.ink2, 10, 'left');
 
       // drawn as a droop: a positive current draw pulls the rail down
@@ -598,9 +656,10 @@
       P.hline(0, T.muted, [4, 4], null);
 
       if (RES.measurements) {
-        P.hline(-RES.measurements.droop, T.reflect, [2, 3], 'worst droop');
-        if (RES.measurements.overshoot > 0.05 * RES.measurements.droop) {
-          P.hline(RES.measurements.overshoot, T.reflect, [2, 3], 'overshoot');
+        const M = RES.measurements;
+        P.hline(-M.droop, T.reflect, [2, 3], M.droopAfterWindow ? 'worst droop, at ' + us(M.droopAtSeconds) : 'worst droop');
+        if (M.overshoot > 0.05 * M.droop) {
+          P.hline(M.overshoot, T.reflect, [2, 3], M.overshootAfterWindow ? 'overshoot, at ' + us(M.overshootAtSeconds) : 'overshoot');
         }
       }
       P.frame();
@@ -618,15 +677,43 @@
         if (f < FLO || f > FHI) continue;
         pts.push([f, Math.hypot(re[k], im[k]) * 2 / NTs]);
       }
-      const hi = Math.max.apply(null, pts.map((q) => q[1]));
+      const hi = Math.max(0, ...pts.map((q) => q[1]));
+      if (!(hi > 0)) {
+        // No die load: there is no spectrum to draw, only an axis to say so on.
+        const E = K.plot(s, T, {
+          pad: { l: 56, r: 16, t: 16, b: 30 },
+          x: { min: FLO, max: FHI, log: true, fmt: K.fmt.hz, title: 'frequency' },
+          y: { min: 1e-3, max: 1, log: true, fmt: (v2) => (v2 * 1000).toFixed(0), title: 'mA' }
+        }).grid();
+        K.text(E.ctx, 'Die current is 0 A: no spectrum', E.box.L + 10, E.box.TP + 18, T.ink2, 11, 'left');
+        E.frame();
+        return;
+      }
       const P = K.plot(s, T, {
         pad: { l: 56, r: 16, t: 16, b: 30 },
         x: { min: FLO, max: FHI, log: true, fmt: K.fmt.hz, title: 'frequency' },
-        y: { min: hi * 1e-5, max: hi * 2, log: true, fmt: (v2) => (v2 * 1000).toFixed(0), title: 'mA' }
+        y: (function () { const sr = K.stickyAxis(axes, 'spec', 0, hi, { log: true, decades: 5, head: 1 }); return { min: sr.min, max: sr.max, log: true, fmt: (v2) => (v2 * 1000).toFixed(0), title: 'mA' }; }())
       }).grid();
       P.trace(pts, T.reflect, { width: 1.6 });
       P.vline(sweep[nearest(fSel)].f, T.ink2, [3, 3], null);
       P.frame();
+    }
+
+    const us = (t) => (t * 1e6).toFixed(t < 1e-4 ? 1 : 0) + ' \u00b5s';
+    /* An extreme that comes after the plotted window is still the number shown,
+       so the reader is told where it is rather than left to search the plot. */
+    function lateNote(m) {
+      const late = [];
+      if (m.droopAfterWindow) late.push('droop peaks at ' + us(m.droopAtSeconds));
+      if (m.overshootAfterWindow) late.push('overshoot peaks at ' + us(m.overshootAtSeconds));
+      return late.length ? ' · ' + late.join(', ') + ', after the plot' : '';
+    }
+    /* A volt-scale excursion is the linear model's answer, not the rail's. */
+    function largeNote(m) {
+      if (!m.largeSignal) return '';
+      const v = m.largestExcursion;
+      return ' · ' + (v >= 1 ? v.toFixed(2) + ' V' : (v * 1000).toFixed(0) + ' mV') + ' at the ' + m.largestExcursionNode
+        + ': beyond this linear model';
     }
 
     function readouts() {
@@ -654,15 +741,18 @@
       if (m) {
         set('droop', (m.droop * 1000).toFixed(1) + ' mV');
         set('overshoot', (m.overshoot * 1000).toFixed(1) + ' mV');
-        set('quality', RES.diagnostics.initialState==='zero' ? 'Causal from rest · finite timestep and observation window' : 'Baseline drift within budget · '
-            + (RES.diagnostics.preEventFraction * 100).toFixed(2) + '% pre-event drift');
+        set('quality', RES.diagnostics.initialState==='zero'
+            ? 'Causal from rest · settles by ' + us(RES.diagnostics.observedUntilSeconds) + lateNote(m) + largeNote(m)
+            : 'Baseline drift within budget · ' + (RES.diagnostics.preEventFraction * 100).toFixed(2) + '% pre-event drift');
       } else {
-        set('droop', 'withheld: excessive pre-event drift');
+        set('droop', 'withheld');
         set('overshoot', '—');
-        set('quality', RES.why || 'Excessive pre-event drift; measurements withheld');
+        set('quality', RES.why ? 'Withheld: ' + RES.why : 'Excessive pre-event drift; measurements withheld');
       }
       const zt = $('[data-out="zt"]');
       if (zt) zt.style.color = worstF.mag > p.zt / 1000 ? 'var(--alarm-text)' : 'var(--ink)';
+      const quality = $('[data-out="quality"]');
+      if (quality) quality.style.color = m && m.largeSignal ? 'var(--alarm-text)' : '';
 
       /* M2-6 · the phase is shown, because it is what says whether a bank is
          supplying the load or circulating against its neighbour. Magnitudes
@@ -730,17 +820,17 @@
       m.nodes.forEach(node=>[...node.parts,node.combined].forEach((a,k)=>{
         for(let i=from;i<to;i++){const v=a[i]-node.stats[k].base;lo=Math.min(lo,v);hi=Math.max(hi,v);}
       }));
-      const pad=Math.max(.002,(hi-lo)*.12);
+      const mr=K.stickyAxis(axes,'multi',lo,hi,{head:.12,minSpan:4e-3});
       const P=K.plot(K.canvas(cv.multi,230),T,{
         x:{min:from*g.dt*1e9,max:to*g.dt*1e9,count:4,fmt:x=>x.toFixed(0),title:'ns from record start'},
-        y:{min:lo-pad,max:hi+pad,count:4,fmt:y=>(y*1000).toFixed(0),title:'rail ΔV (mV)'}
+        y:{min:mr.min,max:mr.max,count:4,fmt:y=>(y*1000).toFixed(0),title:'rail ΔV (mV)'}
       }).grid();
       P.trace(i=>[(from+i)*g.dt*1e9,selected[from+i]-st.base],T.signal,
         {n:to-from,width:2,id:'selected-rail',label:['die','board'][observe]+' rail deviation',unit:'mV'});
       P.hline(0,T.muted,[3,3]);P.frame();
       const C=K.plot(K.canvas(cv.loads,170),T,{
         x:{min:from*g.dt*1e9,max:to*g.dt*1e9,count:4,fmt:x=>x.toFixed(0),title:'same record time (ns)'},
-        y:{min:0,max:Math.max(1,p.imax,p.imax2)*1.15,count:3,fmt:y=>y.toFixed(1),title:'withdrawal (A)'}
+        y:{min:0,max:K.stickyAxis(axes,'loads',0,Math.max(1,p.imax,p.imax2),{min:0,head:.15}).max,count:3,fmt:y=>y.toFixed(1),title:'withdrawal (A)'}
       }).grid();
       [g.wave.a,m.second.a].forEach((a,k)=>C.trace(i=>[(from+i)*g.dt*1e9,a[from+i]],k?T.reflect:T.signal,
         {n:to-from,width:2,dash:k?[5,3]:[],id:'load-'+k,label:k?'board load 2':'die load 1',unit:'A'}));C.frame();
@@ -748,8 +838,13 @@
       $('[data-out="multi-detail"]').textContent='Observe '+['die','board'][observe]+', excite '+['die','board'][excite]
         +': |Z| '+K.fmt.ohm(Math.hypot(z.re,z.im))+' at '+K.fmt.hz(fSel)+'; phase '+(Math.atan2(z.im,z.re)*180/Math.PI).toFixed(1)+'°. '
         +['Load 1 alone','Load 2 alone','Combined loads'][compare]+': '
-        +(st.settled?'Causal from rest; droop '+(st.droop*1000).toFixed(1)+' mV; overshoot '+(st.overshoot*1000).toFixed(1)+' mV. ':'Excessive pre-event drift; measurements withheld. ')
-        +'Peaks cover '+(m.start*g.dt*1e9).toFixed(1)+'–'+(m.to*g.dt*1e9).toFixed(1)+' ns; timestep convergence is not inferred from a quiet baseline. '
+        +(!st.settled?'Excessive pre-event drift; measurements withheld. '
+          :st.ringDownSettled===false?'The rail was still moving at the end of the ring-down; droop and overshoot withheld. '
+          :'Causal from rest; droop '+(st.droop*1000).toFixed(1)+' mV'+(st.droopAfterWindow?' (at '+us(st.droopAt)+', after the plot)':'')
+            +'; overshoot '+(st.overshoot*1000).toFixed(1)+' mV'+(st.overshootAfterWindow?' (at '+us(st.overshootAt)+', after the plot)':'')+'. ')
+        +(RES.measurements&&RES.measurements.largeSignal?'Above '+(1000*RES.diagnostics.largeSignal.limitVolts).toFixed(0)+' mV the linear model no longer applies: a real rail\u2019s load would draw less and its regulator would saturate. ':'')
+        +'The plot covers '+(m.start*g.dt*1e9).toFixed(1)+'–'+(m.to*g.dt*1e9).toFixed(1)+' ns; droop and overshoot are measured until the rail settles'
+        +(st.observedUntil?', '+us(st.observedUntil)+' after the record start':'')+'. '
         +'Both observations and all modes share fixed voltage bounds; currents below show both configured stimuli. '
         +'Built edges: die '+(Math.max(2,Math.round(p.tr*1e-12/g.dt))*g.dt*1e12).toFixed(0)+' ps, board '
         +(Math.max(2,Math.round(p.tr2*1e-12/g.dt))*g.dt*1e12).toFixed(0)+' ps.';
@@ -773,7 +868,7 @@
       const P=K.plot(K.canvas(cv.transferZ,230),T,{
         pad:{l:66,r:16,t:18,b:30},
         x:{min:FLO,max:FHI,log:true,fmt:K.fmt.hz,title:'frequency'},
-        y:{min:Math.max(1e-12,lo/1.5),max:Math.max(1e-11,hi*1.5),log:true,fmt:K.fmt.ohm,title:'|Z|'}
+        y:(function(){const tr=K.stickyAxis(axes,'transfer',Math.max(1e-12,lo),Math.max(1e-11,hi),{log:true,head:.5});return {min:tr.min,max:tr.max,log:true,fmt:K.fmt.ohm,title:'|Z|'};}())
       }).grid();
       const label='observe '+['die','board'][observe]+', excite '+['die','board'][excite];
       P.trace(rows.map((q,i)=>[q.f,Math.hypot(values[i].re,values[i].im)]),T.signal,{width:2,id:'selected-transfer',label,unit:'ohm'});
@@ -875,6 +970,7 @@
         Object.assign(p, q, {imax2:0,tr2:800,startNs:786.4,widthNs:1835,start2Ns:786.4,width2Ns:1835});
         root.querySelectorAll('.preset[data-preset]').forEach((o) => o.setAttribute('aria-pressed', String(o === b)));
         $('[data-out="note"]').textContent = q.note;
+        for (const k in axes) delete axes[k];
         rebuild();
       });
     });

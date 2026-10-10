@@ -4272,6 +4272,129 @@ suite('Lab C transient — against an independently written solver', () => {
      d800.status === 'ok' && d800.measurements.droop > 0);
 });
 
+suite('Lab C ring-down — extremes after the plotted window', () => {
+  /* Found 10 Oct 2026 by a sweep across the control ranges, not by a corner: the
+     record is a few microseconds, and with a slow regulator the rail's overshoot
+     after the load releases peaks well after the measurement window closed. The
+     lab reported 0.00 mV of die overshoot for a rail that went on to overshoot by
+     367 mV. The model now continues each observation exactly once the loads are
+     off. These assertions are independent of that code: the network and the
+     stimulus are rebuilt here, and the extremes come from tests/pdn-reference.js,
+     a trapezoidal companion solver run straight through the ring-down. */
+  const REF = require(require('path').join(SRC, 'tests', 'pdn-reference.js'));
+  const Q = { rvrm: 4, fbw: 10, lplane: 900, lpkg: 350, cboard: 1, nboard: 20, esr: 20, esl: 1100,
+              cdie: 200, imax: 36, tr: 7000, zt: 10, imax2: 20, tr2: 800,
+              startNs: 1500, widthNs: 2500, start2Ns: 1500, width2Ns: 2500 };
+  const stagesOf = (q) => [
+    { series: null, shunt: { r: q.rvrm / 1000, l: (q.rvrm / 1000) / (2 * Math.PI * q.fbw * 1e3) } },
+    { series: { r: 4e-4, l: 1.2e-9 }, shunt: { r: 0.01, l: 2.5e-9, c: 47e-6, n: 4 } },
+    { series: { r: 6e-4, l: q.lplane * 1e-12 }, shunt: { r: q.esr / 1000, l: q.esl * 1e-12, c: q.cboard * 1e-6, n: q.nboard } },
+    { series: { r: 8e-4, l: q.lpkg * 1e-12 }, shunt: { r: 0.05, l: 250e-12, c: 100e-9, n: 12 } },
+    { series: { r: 2e-3, l: 40e-12 }, shunt: { r: 5e-3, l: 2e-12, c: q.cdie * 1e-9 } }
+  ];
+  // Physical-time raised-cosine pulses; these start times and edges sit on the grid.
+  const pulse = (n, dt, amp, start, width, edge) => {
+    const r = (t) => t <= 0 ? 0 : t >= edge ? 1 : (1 - Math.cos(Math.PI * t / edge)) / 2;
+    return Float64Array.from({ length: n }, (_, i) => amp * (r(i * dt - start) - r(i * dt - start - width)));
+  };
+  const extremes = (q, dt, seconds, node) => {
+    const n = Math.round(seconds / dt);
+    const loads = [{ node: 4, current: pulse(n, dt, q.imax, q.startNs * 1e-9, q.widthNs * 1e-9, q.tr * 1e-12) },
+                   { node: 2, current: pulse(n, dt, q.imax2, q.start2Ns * 1e-9, q.width2Ns * 1e-9, q.tr2 * 1e-12) }];
+    const v = REF.solve(stagesOf(q), loads[0].current, dt, loads, node);
+    let droop = 0, over = 0;
+    for (const x of v) { droop = Math.max(droop, -x); over = Math.max(over, x); }
+    return { droop, over };
+  };
+
+  const r = MODELS.labPdn(Object.assign({}, Q));
+  ok('the slow-regulator case is measured', r.status === 'ok', r.status + ' ' + (r.why || ''));
+  if (r.status !== 'ok') return;
+  const m = r.measurements, span = r.diagnostics.observedUntilSeconds + 2e-6;
+  ok('its overshoot is found after the plotted window, which is what this suite is about',
+     m.overshootAfterWindow && m.overshootAtSeconds > r.diagnostics.measurementEndSeconds,
+     'peak at ' + (m.overshootAtSeconds * 1e6).toFixed(2) + ' us, window ends ' + (r.diagnostics.measurementEndSeconds * 1e6).toFixed(2) + ' us');
+
+  const coarse = extremes(Q, 200e-12, span, 4), fine = extremes(Q, 100e-12, span, 4);
+  ok('the reference is itself converged through the ring-down (200 ps against 100 ps)',
+     Math.abs(coarse.over - fine.over) < 1e-4 * fine.over && Math.abs(coarse.droop - fine.droop) < 1e-4 * fine.droop,
+     'over ' + (coarse.over * 1e3).toFixed(4) + ' / ' + (fine.over * 1e3).toFixed(4) + ' mV');
+  ok('overshoot after the window agrees with the independent reference',
+     Math.abs(m.overshoot - fine.over) < 0.02 * fine.over,
+     (m.overshoot * 1e3).toFixed(3) + ' mV against ' + (fine.over * 1e3).toFixed(3) + ' mV');
+  ok('droop agrees with the independent reference over the same span',
+     Math.abs(m.droop - fine.droop) < 0.02 * fine.droop,
+     (m.droop * 1e3).toFixed(3) + ' mV against ' + (fine.droop * 1e3).toFixed(3) + ' mV');
+  /* The board's extremes come from its own 800 ps edge, inside the record, and a
+     trapezoidal reference needs a much finer step to resolve that edge than the
+     production solver does: at 100 ps it reads 2.1% high and converges onto the
+     model as it is refined (1131, 1113, 1108.8, 1107.7 mV). So it runs at 25 and
+     12.5 ps over the first 8 us, and must agree with itself before it is used. */
+  const board = r.diagnostics.multi[1][2], b25 = extremes(Q, 25e-12, 8e-6, 2), b12 = extremes(Q, 12.5e-12, 8e-6, 2);
+  ok('the board-node reference is converged at 12.5 ps (against 25 ps)',
+     Math.abs(b25.over - b12.over) < 0.002 * b12.over, (b25.over * 1e3).toFixed(3) + ' / ' + (b12.over * 1e3).toFixed(3) + ' mV');
+  ok('the board node agrees with the reference too',
+     Math.abs(board.overshoot - b12.over) < 0.02 * b12.over && Math.abs(board.droop - b12.droop) < 0.02 * b12.droop,
+     'over ' + (board.overshoot * 1e3).toFixed(2) + ' / ' + (b12.over * 1e3).toFixed(2) + ' mV');
+
+  // A measurement may not depend on how long the record happened to be.
+  const g = r.generated, longer = MODELS.labPdn(Object.assign({}, Q), { dt: g.dt, nt: g.nt * 4 }).measurements;
+  ok('a four-times-longer record reports the same droop and overshoot',
+     Math.abs(longer.droop - m.droop) < 1e-6 && Math.abs(longer.overshoot - m.overshoot) < 1e-6,
+     'over ' + (m.overshoot * 1e3).toFixed(4) + ' / ' + (longer.overshoot * 1e3).toFixed(4) + ' mV');
+
+  const slowest = MODELS.labPdn(Object.assign({}, Q, { nboard: 60, cdie: 600, esr: 150 }));
+  ok('the ring-down settles within its cap at the slowest regulator and largest banks',
+     slowest.status === 'ok' && slowest.diagnostics.ringDown.settled === true,
+     slowest.status + ', observed to ' + (slowest.diagnostics.observedUntilSeconds * 1e6).toFixed(0) + ' us');
+
+  // The kit's own refusals: a capped ring-down says so, and a load still on is refused.
+  const loads = g.multi.loads;
+  const capped = K.pdnCausalTransient(g.stages, loads, g.dt, [4], { step: 2e-9, maxSeconds: 1e-6 });
+  ok('a ring-down stopped by its cap reports that it did not settle', capped[0].tail.settled === false);
+  let threw = false;
+  try { K.pdnCausalTransient(g.stages, loads.map((l) => ({ ...l, current: l.current.slice(0, Math.round(2e-6 / g.dt)), derivative: l.derivative.slice(0, Math.round(2e-6 / g.dt)) })), g.dt, [4], { step: 2e-9, maxSeconds: 1e-4 }); }
+  catch (e) { threw = /back at zero/.test(e.message); }
+  ok('a ring-down is refused while a load is still drawing current', threw);
+});
+
+suite('Lab C large-signal flag — volts on a rail of about a volt', () => {
+  /* The ladder is linear and the controls reach 40 A with 200 ps edges, which
+     can put volts of "droop" on a rail of about a volt. Those numbers are the
+     linear model's answer, not the rail's, and the lab must say so. The board
+     excursion here is confirmed with the independent reference solver, so the
+     flag is tested against a fact rather than against the code that sets it. */
+  const REF = require(require('path').join(SRC, 'tests', 'pdn-reference.js'));
+  const B = { rvrm: 4, fbw: 120, lplane: 900, lpkg: 350, cboard: 1, nboard: 20, esr: 20, esl: 1100,
+              cdie: 200, imax: 8, tr: 800, zt: 10, imax2: 0, tr2: 800,
+              startNs: 786.4, widthNs: 1835, start2Ns: 786.4, width2Ns: 1835 };
+  const quiet = MODELS.labPdn(Object.assign({}, B)).measurements;
+  ok('the default rail (about 142 mV) is not flagged', quiet && quiet.largeSignal === false,
+     (quiet.largestExcursion * 1e3).toFixed(1) + ' mV');
+  const nodie = MODELS.labPdn(Object.assign({}, B, { cdie: 20 })).measurements;
+  ok('the no-die-capacitance preset (about 399 mV) is not flagged', nodie && nodie.largeSignal === false,
+     (nodie.largestExcursion * 1e3).toFixed(1) + ' mV');
+
+  // A board-only stress: modest at the die, volts at the board.
+  const S = Object.assign({}, B, { imax: 0, imax2: 20, tr2: 200 });
+  const r = MODELS.labPdn(Object.assign({}, S)), g = r.generated;
+  const h = g.dt / 2, n = Math.round(4e-6 / h);
+  const edge = (t) => t <= 0 ? 0 : t >= 200e-12 ? 1 : (1 - Math.cos(Math.PI * t / 200e-12)) / 2;
+  const board = Float64Array.from({ length: n }, (_, i) => 20 * (edge(i * h - S.start2Ns * 1e-9) - edge(i * h - (S.start2Ns + S.width2Ns) * 1e-9)));
+  const loads = [{ node: 4, current: new Float64Array(n) }, { node: 2, current: board }];
+  let worst = 0;
+  for (const x of REF.solve(g.stages, loads[0].current, h, loads, 2)) worst = Math.max(worst, Math.abs(x));
+  ok('the independent reference puts the board stress case far past half a volt', worst > 2,
+     (worst * 1e3).toFixed(0) + ' mV at the board');
+  ok('the board stress case is flagged, at the board',
+     r.measurements.largeSignal === true && r.measurements.largestExcursionNode === 'board',
+     r.measurements.largestExcursionNode + ', ' + (r.measurements.largestExcursion * 1e3).toFixed(0) + ' mV');
+  ok('its die excursion alone is under the limit, so only the board can raise the flag',
+     Math.max(r.diagnostics.multi[0][2].droop, r.diagnostics.multi[0][2].overshoot) < 0.5);
+  ok('the flag states its limit and what it means',
+     r.diagnostics.largeSignal.limitVolts === 0.5 && /would not follow/.test(r.diagnostics.largeSignal.meaning));
+});
+
 suite('Lab A quadrature — the shipped grid, not a helper at higher resolution', () => {
   const W = { Z0: 50, Rs: 10, RL: 50, open: true, tr: 60, len: 3, xp: 50 };
   const at = (o, opts) => MODELS.labWaves(Object.assign({}, W, o), 0, opts);

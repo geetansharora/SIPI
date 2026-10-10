@@ -1,6 +1,6 @@
 # Causal two-load PDN model
 
-Implemented 16 September 2026. Lab C result version 1.3, contract 2.3.
+Implemented 16 September 2026 (Lab C result 1.3, contract 2.3). Ring-down added 10 October 2026: result 1.4, contract 2.4.
 
 ## Scope and reason for the change
 
@@ -63,6 +63,22 @@ The smooth raised-cosine stimulus supplies its analytic derivative at each sampl
 
 There is no periodic tail. Extending the record at fixed timestep leaves its existing prefix unchanged. Nevertheless, a finite observation interval may omit a later extremum, and sampled peaks can shift on refinement. `timestepConverged` is deliberately null: the browser does not run an independent convergence check on every edit. Zero baseline is not an accuracy certificate.
 
+## Ring-down: extremes after the plotted window
+
+Added 10 October 2026, after a seeded sweep across every control range found what six chosen corners had not. The record is a few microseconds and the measurement window ended 1.44 µs after the last load turned off. A slow regulator rings for far longer: with a 10 kHz loop the overshoot after the load releases peaks 13.8 µs into the record, and the lab reported 0.00 mV of die overshoot for a rail that overshoots by 367.5 mV. In the sweep, 29 of 480 node results had an extreme after the window, at regulator bandwidths up to 320 kHz.
+
+Once both loads have returned to zero the input is identically zero, so the network evolves freely:
+
+```text
+x' = A x        (I = I' = 0 after the last fall)
+x(t + H) = exp(A H) x(t)
+v_k = Rbank(k) x_k + Lbank(k) (A x)_k + c_k
+```
+
+One more matrix exponential, of A·H with H = 2 ns, carries each load's final state forward with no input-discretisation error at any step; H only sets how finely the ring-down is sampled for its extrema. It continues until the combined response at every observed node has stayed within 0.1% of its largest excursion for 10 µs, or 1 ms has passed. Droop and overshoot are taken over the record and the ring-down, each with the time it occurs, and the panel says when one falls after the plotted window. A rail that has not settled by 1 ms is reported as not settled and its extremes are withheld; across the control ranges the slowest case settles in about 156 µs.
+
+The ring-down was checked against a four-times-longer record of the same production solver: the overlapping samples agree to 2e-11 V. Record plus ring-down costs about 80 ms at the default grid and about 210 ms at the finest (25 ps) grid.
+
 ## Evidence
 
 `tests/check-pdn-multi.js` now requires all six selected production-grid cases to meet the existing 5% waveform / 2% droop budgets at both nodes, including slow VRM. Maximum observed waveform and droop differences against the refined independent reference were about 0.466% of reference peak/droop. The unchanged budgets were not relaxed. Fixed-grid record extension changed earlier samples by zero in these cases; peak timestep changes stayed within 2 mV.
@@ -70,5 +86,9 @@ There is no periodic tail. Extending the record at fixed timestep leaves its exi
 The causal trapezoidal reference uses a different formulation and integration algorithm. Its own refinement is checked. A separate closed-form quadratic-current two-node trajectory and shared-path DC values test the new helper independently of that reference. Four new causal-path faults detect wrong withdrawal sign, omitted inductive input derivative, swapped load nodes and omitted second load. The earlier four periodic-helper faults remain distinct.
 
 Reproducible corner inputs: `tests/fixtures/pdn/two-load-corners.json`. Current record: `docs/pdn-causal-evidence.json`. The older `docs/pdn-two-load-evidence.json` remains historical evidence of the previous method, not a current failure report.
+
+`check-models.js`, suite *Lab C ring-down*, rebuilds the network and stimulus independently and runs `tests/pdn-reference.js` straight through the ring-down for the 10 kHz case: overshoot 367.512 mV and droop 820.380 mV, matching the model, with the reference converged between 200 and 100 ps; at the board node the reference has to be run at 25 and 12.5 ps to resolve the 800 ps board edge, and then agrees within 0.04%. Two planted faults, the lab ignoring the ring-down and the ring-down starting from rest, are each caught by the named assertion.
+
+`tests/check-pdn-domain.js` samples the control ranges with a fixed seed (24 settings in `./check`, 240 for the recorded sweep) and compares both nodes with the reference at an eighth of the model's step, driven with the model's own declared stimulus times. Over 240 settings the worst disagreement was 0.194% of peak in waveform, 0.120% in droop and 0.140% in overshoot, against budgets of 5%, 2% and 2%. It also requires that no reported droop or overshoot is smaller than an excursion a four-times-longer record contains, which the window defect fails. An earlier version compared against the requested, unrounded start times and read up to 19%: event times are rounded to the grid, by up to half a step, and a sharp board-edge spike shifted by 100 ps disagrees pointwise with itself. Against the declared times it is 0.19%.
 
 The UI exposes method and finite-window qualification, model/contract versions advance, and reference scenario pins are updated. This is selected-corner validation of the declared teaching network, not a universal parameter-domain proof, field-solver correlation, regulator-loop stability analysis or hardware sign-off.
