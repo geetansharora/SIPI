@@ -55,7 +55,7 @@ function loadSite() {
   };
   global.getComputedStyle = () => ({ getPropertyValue: () => '#000000' });
   global.fetch = () => new Promise(() => {});
-  const files = ['js/viz-kit.js', 'js/models/calc-models.js', 'js/models/laminates.js', 'js/models/coupling-model.js', 'js/models/tdr-model.js', 'js/models/ddr5-model.js', 'js/models/lpddr6-model.js', 'js/models/ucie-model.js', 'js/viz/jitter.js', 'js/viz/crosstalk.js',
+  const files = ['js/viz-kit.js', 'js/models/calc-models.js', 'js/models/laminates.js', 'js/models/coupling-model.js', 'js/models/tdr-model.js', 'js/models/ddr5-model.js', 'js/models/lpddr6-model.js', 'js/models/ucie-model.js', 'js/models/d2d-model.js', 'js/viz/jitter.js', 'js/viz/crosstalk.js',
                  'js/viz/spectrum.js', 'js/viz/pdn-extras.js',
                  'js/viz/lab-waves.js', 'js/viz/lab-channel.js', 'js/viz/lab-pdn.js',
                  'js/viz/cdr.js', 'js/models/adc-model.js',
@@ -4371,6 +4371,42 @@ suite('UCIe echo — when a wire needs a receiver termination', () => {
   ok('malformed echo inputs are refused',
      [{ rate: 20, lenMm: 2, term: 'open', rs: 40 }, { rate: 32, lenMm: 0, term: 'open', rs: 40 }, { rate: 32, lenMm: 2, term: 'x', rs: 40 }]
        .every((q) => E(q).status === 'unsupported'));
+});
+
+suite('Chiplet layouts — UCIe and BoW compared from their published dimensions', () => {
+  /* The literals here are the sources' own words (ledger C-68, C-76, C-87), written out
+     independently of js/models/d2d-model.js. */
+  const D = MODELS.d2d, at = (rate, pitch) => D({ rate, pitch: pitch || 40 }).measurements;
+  // BoW 2.0, 8.11: "provides a total of 2.0 Tb/s in each direction" for 16 slices of 16 wires at 16 Gb/s.
+  const bowEachWay = 16 * 16 * 16 / 2 / 1000;
+  ok('the BoW example carries the 2.0 Tb/s each way its specification states',
+     Math.abs(bowEachWay - 2.0) < 0.05 && Math.abs(at(16).edge.bowI * 1.60 * 8 / 2 / 1000 - bowEachWay) < 1e-9,
+     bowEachWay.toFixed(3) + ' Tb/s');
+  ok('the UCIe module sizes reproduce the consortium shoreline table (28 and 224, 165 and 1317 GB/s/mm; 1975 and 2634 for UCIe-A)',
+     Math.abs(at(4).edge.ucieS - 28) < 0.5 && Math.abs(at(32).edge.ucieS - 224) < 0.5
+       && Math.abs(at(4).edge.ucieA / 165 - 1) < 0.005 && Math.abs(at(32).edge.ucieA / 1317 - 1) < 0.005
+       && Math.abs(at(48).edge.ucieA / 1975 - 1) < 0.005 && Math.abs(at(64).edge.ucieA / 2634 - 1) < 0.005);
+  ok('UCIe-S at 48 and 64 GT/s is the table’s 278 and 370, not its 32 GT/s module scaled up',
+     at(48).edge.ucieS === 278 && at(64).edge.ucieS === 370);
+  ok('with the geometry fixed, edge bandwidth is proportional to wire rate',
+     ['ucieA', 'bowL', 'bowI'].every((k) => Math.abs(at(32).edge[k] / at(16).edge[k] - 2) < 1e-12 && Math.abs(at(8).edge[k] / at(4).edge[k] - 2) < 1e-12));
+  ok('a rate a standard does not define is reported as undefined, not extrapolated',
+     at(2).edge.ucieS === null && at(2).edge.ucieA === null && at(48).edge.bowI === null && at(64).edge.bowL === null && at(12).edge.bowI === null);
+  // Dimensional check: bumps per area go as 1/pitch^2, independent of the layout.
+  ok('halving the common pitch quadruples every layout’s bump-field density',
+     ['ucieS', 'ucieA', 'bowL', 'bowI'].every((k) => Math.abs(at(16, 20).areaAtCommonPitch[k] / at(16, 40).areaAtCommonPitch[k] - 4) < 1e-12));
+  ok('at its own pitch, a layout’s density is its bandwidth over its rectangle, per Gb/s',
+     Math.abs(at(16, 40).areaAtCommonPitch.bowI - 256 / 8 / (1.60 * 0.42)) < 1e-9
+       && Math.abs(at(16, 55).areaAtCommonPitch.ucieA - 128 / 8 / (0.389 * 1.585)) < 1e-9);
+  ok('the BoW interposer edge counts the full slice with AUX and FEC, like a UCIe module: 320 GB/s/mm at 16 Gb/s',
+     Math.abs(at(16).edge.bowI - 320) < 1e-9);
+  // Regression guards for the figures the page quotes, not independent validations.
+  ok('regression guard: at a common pitch UCIe-A is within 3% of BoW’s interposer example',
+     Math.abs(at(16).interposerRatio - 1) < 0.03, (100 * (1 / at(16).interposerRatio - 1)).toFixed(1) + '%');
+  ok('regression guard: the UCIe-S module needs about 40% more bump area than BoW’s laminate example',
+     Math.abs(at(16).organicRatio - 1.40) < 0.02, at(16).organicRatio.toFixed(3));
+  ok('malformed inputs are refused, not answered',
+     [{ rate: 10, pitch: 40 }, { rate: 16, pitch: 5 }, { rate: 16, pitch: NaN }, null].every((q) => D(q).status === 'unsupported'));
 });
 
 suite('Lab C ring-down — extremes after the plotted window', () => {

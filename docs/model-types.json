@@ -1093,5 +1093,28 @@
     ],
     "reviewed": "2026-10-11",
     "version": "1.0"
+  },
+  "d2dCompare": {
+    "kind": "exact",
+    "evidence": "independent",
+    "purpose": "Compare the bandwidth that published UCIe and BoW layouts put through each millimetre of die edge, and through each square millimetre of bumps once the bump pitch is taken out.",
+    "topology": "No channel: arithmetic on four published layouts, the UCIe-S and UCIe-A modules (C-76) and BoW's example link on laminate and on an interposer (C-87).",
+    "planes": "Die edge and bump field, both directions counted.",
+    "equations": [
+      "edge density = data wires * wire rate / 8 / edge width",
+      "UCIe-S at 48 and 64 GT/s: the consortium table (C-68)",
+      "bump density = data wires / 8 / (edge * depth), per Gb/s of wire rate",
+      "at a common pitch: bump density * (own pitch / common pitch)^2"
+    ],
+    "units": "Gb/s per wire, GB/s/mm, GB/s/mm2 per Gb/s, um",
+    "validity": "Exact arithmetic on the published dimensions. Each layout is one example, not the only layout the standard allows; BoW does not specify bump patterns.",
+    "numerics": "Direct evaluation at the nine wire rates the standards define.",
+    "limitations": "AIB publishes no comparable layout and is not drawn. Bump density counts the whole rectangle a layout occupies, power and ground bumps included. The pitch scaling assumes the same bump arrangement at the new pitch.",
+    "verified": "check-models.js suite Chiplet layouts: the BoW example's own 2.0 Tb/s each way, the UCIe modules reproducing the consortium's shoreline table, bandwidth proportional to wire rate at fixed geometry, the inverse-square pitch law, undefined rates reported as undefined, and malformed inputs refused. check-numbers.py recomputes every figure the prose states.",
+    "suites": [
+      "Chiplet layouts"
+    ],
+    "reviewed": "2026-10-11",
+    "version": "1.0"
   }
 }

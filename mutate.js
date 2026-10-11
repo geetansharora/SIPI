@@ -249,6 +249,28 @@ const MUTATIONS = [
     active: true, fast: true
   },
   {
+    id: 'd2d-bow-without-aux-fec',
+    file: 'js/models/d2d-model.js',
+    find: "    bowI:  { name: 'BoW example, interposer', std: 'BoW', pkg: 'interposer', wires: 256, edge: 1.60, depth: 0.42, pitch: 40,",
+    with: "    bowI:  { name: 'BoW example, interposer', std: 'BoW', pkg: 'interposer', wires: 256, edge: 1.28, depth: 0.42, pitch: 40,",
+    suite: 'Chiplet layouts —',
+    expect: 'the BoW interposer edge counts the full slice with AUX and FEC',
+    why: 'BoW measured without its optional wires while UCIe is measured with all of its lanes: '
+       + 'the comparison would flatter BoW by a quarter and stop being like for like.',
+    active: true, fast: true
+  },
+  {
+    id: 'd2d-pitch-linear',
+    file: 'js/models/d2d-model.js',
+    find: '      areaAt[k] = area[k] * Math.pow(L.pitch / p.pitch, 2);',
+    with: '      areaAt[k] = area[k] * (L.pitch / p.pitch);',
+    suite: 'Chiplet layouts —',
+    expect: 'halving the common pitch quadruples',
+    why: 'Bump count scaled linearly with pitch instead of as its inverse square: the '
+       + 'normalisation that shows the layouts agree would be dimensionally wrong.',
+    active: true, fast: true
+  },
+  {
     id: 'il-from-the-budget',
     file: 'js/viz/lab-channel.js',
     find: '    const ilNyq = 20 * Math.log10(Math.hypot(Snyq.s21r, Snyq.s21i));',

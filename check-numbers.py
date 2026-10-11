@@ -612,6 +612,21 @@ CLAIMS = [
     ("interfaces/ucie", "UI at 64 GT/s, the timing window (ps)", ui_ps(64e9), r"that window is ([\d.]+) ps", 0.5),
     ("interfaces/ucie", "1 mm at 6.7 ps/mm as a share of the 64 GT/s UI (%)", 100 * 6.7 / ui_ps(64e9), r"6\.7 ps, (\d+)% of the unit interval", 1),
 
+    # ── Chiplet interconnects ───────────────────────────────────────────────
+    ("interfaces/chiplet-interconnects", "BoW example, interposer: 4096 Gb/s total over 1.60 mm (GB/s/mm)", 256 * 16 / 8 / 1.60, r"that is (\d+) GB/s/mm\. A UCIe-A", 0.1),
+    ("interfaces/chiplet-interconnects", "UCIe-A at 16 GT/s, the table scaled, 1317 / 2 (GB/s/mm)", 1317 / 2, r"carries about (\d+) GB/s/mm", 0.2),
+    ("interfaces/chiplet-interconnects", "UCIe-A over BoW interposer at 16 Gb/s, 658.5 / 320", (1317 / 2) / 320, r"about\s+([\d.]+) times as much", 0.5),
+    ("interfaces/chiplet-interconnects", "UCIe-A over BoW interposer at a common pitch (%)", 100 * ((128 / 8 / (0.389 * 1.585)) * (55 / 40) ** 2 / (256 / 8 / (1.60 * 0.42)) - 1), r"land within about (\d+)% of each other", 15),
+    ("interfaces/chiplet-interconnects", "UCIe-S extra bump area against BoW laminate (%)", 100 * ((256 / 8 / (5.2 * 1.35)) / ((64 / 8 / (1.143 * 1.54)) * (110 / 130) ** 2) - 1), r"needs about (\d+)% more bump area", 3),
+    ("interfaces/chiplet-interconnects", "BoW example total, 256 wires x 16 Gb/s (Gb/s)", 256 * 16, r"at 16 Gb/s: (\d+) Gb/s, \d+ GB/s in all", 0.1),
+    ("interfaces/chiplet-interconnects", "BoW example total in bytes (GB/s)", 256 * 16 / 8, r"Gb/s, (\d+) GB/s in all", 0.1),
+    ("interfaces/chiplet-interconnects", "BoW example over 1.60 mm (GB/s/mm)", 256 * 16 / 8 / 1.60, r"Over 1\.60 mm that is (\d+) GB/s/mm", 0.1),
+    ("interfaces/chiplet-interconnects", "BoW example over 1.28 mm (GB/s/mm)", 256 * 16 / 8 / 1.28, r"without the optional AUX and FEC wires, (\d+)\.", 0.1),
+    ("interfaces/chiplet-interconnects", "BoW interposer bump density per Gb/s", 256 / 8 / (1.60 * 0.42), r"gives ([\d.]+) GB/s per mm", 0.2),
+    ("interfaces/chiplet-interconnects", "UCIe-A module bump density per Gb/s", 128 / 8 / (0.389 * 1.585), r"interposer example at 40 .m and ([\d.]+) for the UCIe-A", 0.05),
+    ("interfaces/chiplet-interconnects", "UCIe-A density moved to 40 um", 128 / 8 / (0.389 * 1.585) * (55 / 40) ** 2, r"\(55/40\)2 = (\d+\.\d)", 0.2),
+    ("interfaces/chiplet-interconnects", "BoW slices: 8 TX + 8 RX at 16 wires, 16 Gb/s each way (Tb/s)", 8 * 16 * 16 / 1000, r"per wire carry ([\d.]+) Tb/s each way", 3),
+
     # ── LPDDR6 ──────────────────────────────────────────────────────────────
     ("interfaces/lpddr6", "glance: raw bandwidth at 10.667 (GB/s)", 24 * 10.667 / 8, r"carries ([\d.]+) GB/s of raw bandwidth", 0.2),
     ("interfaces/lpddr6", "glance: data bandwidth at 10.667 (GB/s)", 24 * 10.667 / 8 * 256 / 288, r"per pin, ([\d.]+) GB/s of it data", 0.3),

@@ -1681,6 +1681,424 @@
       "humanReviewedOn": null,
       "source_title": "UCIe Consortium — overview deck, 2025, with the key metrics for UCIe 3.0",
       "source_url": "https://www.uciexpress.org/_files/ugd/0c1418_b4744fe368c94e3e9c7eaa13ead632bf.pdf"
+    },
+    {
+      "id": "C-78",
+      "statement": "A BoW slice is 16 single-ended data wires plus a differential clock pair, with optional FEC and AUX wires; a slice is unidirectional when operating.",
+      "pages": [
+        "interfaces/chiplet-interconnects"
+      ],
+      "source_type": "normative",
+      "source": "BoW PHY 2.0, 6.1 and 6.2",
+      "conditions": "Per slice",
+      "status": "scoped",
+      "note": "'each BoW slice consists of a differential clock pair, 16 single-ended data wires, and an optional pair of wires FEC and AUX'; 'Each BoW PHY slice is unidirectional when in operation'. Read in the specification itself, at the section named in source; the ledger records normative rows as scoped by rule. Both happened: the source check by Claude Opus 5.5 against the PDF, and Geetansh Arora's review of this row in the draft claims table on 11 Oct 2026.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-11",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null,
+      "source_title": "ODSA BoW workstream (OCP) — Bunch of Wires (BoW) PHY Specification, Version 2.0, 1 March 2023",
+      "source_url": "https://www.opencompute.org/marketplace/it-infrastructure/bunch-of-wires-bow-phy-specification-2-0/"
+    },
+    {
+      "id": "C-79",
+      "statement": "BoW defines six modes, BoW-32 to BoW-512, at 2, 4, 8, 16, 24 and 32 Gb/s per wire; data is DDR in every mode, so the clock runs at half the wire rate (1 to 16 GHz).",
+      "pages": [
+        "interfaces/chiplet-interconnects"
+      ],
+      "source_type": "normative",
+      "source": "BoW PHY 2.0, 5.4 and Table 3",
+      "conditions": "All modes",
+      "status": "scoped",
+      "note": "Table 3, 'BoW Modes'; 'In all modes, the data must be clocked DDR: the chip-to-chip data wire bit rate is double the clock wire frequency'. Read in the specification itself, at the section named in source; the ledger records normative rows as scoped by rule. Both happened: the source check by Claude Opus 5.5 against the PDF, and Geetansh Arora's review of this row in the draft claims table on 11 Oct 2026.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-11",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null,
+      "source_title": "ODSA BoW workstream (OCP) — Bunch of Wires (BoW) PHY Specification, Version 2.0, 1 March 2023",
+      "source_url": "https://www.opencompute.org/marketplace/it-infrastructure/bunch-of-wires-bow-phy-specification-2-0/"
+    },
+    {
+      "id": "C-80",
+      "statement": "24 and 32 Gb/s per wire are new in BoW 2.0, which is backwards compatible with BoW 1.0.",
+      "pages": [
+        "interfaces/chiplet-interconnects"
+      ],
+      "source_type": "normative",
+      "source": "BoW PHY 2.0, Table 2",
+      "conditions": "Version 2.0",
+      "status": "scoped",
+      "note": "Table 2, 'Features added in Version 2: 32- and 24 Gb/s/line'; 2.2, 'Fully backwards compatible with BoW 1.0'. Read in the specification itself, at the section named in source; the ledger records normative rows as scoped by rule. Both happened: the source check by Claude Opus 5.5 against the PDF, and Geetansh Arora's review of this row in the draft claims table on 11 Oct 2026.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-11",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null,
+      "source_title": "ODSA BoW workstream (OCP) — Bunch of Wires (BoW) PHY Specification, Version 2.0, 1 March 2023",
+      "source_url": "https://www.opencompute.org/marketplace/it-infrastructure/bunch-of-wires-bow-phy-specification-2-0/"
+    },
+    {
+      "id": "C-81",
+      "statement": "Recommended BoW reach: on laminate, unterminated 10 mm at 2 Gb/s only, source-terminated 20, 10 and 5 mm at 2, 4 and 8 Gb/s, doubly terminated 25+ mm at every rate; on advanced packaging, unterminated, 4 mm at 2 Gb/s and 2 mm from 4 to 32 Gb/s.",
+      "pages": [
+        "interfaces/chiplet-interconnects"
+      ],
+      "source_type": "normative",
+      "source": "BoW PHY 2.0, 7 and Table 8",
+      "conditions": "Recommendations, not limits",
+      "status": "scoped",
+      "note": "Table 8, 'Recommended BoW Wire Reaches'; 'Exceeding these reach values may degrade the voltage margins at the receiver'. Read in the specification itself, at the section named in source; the ledger records normative rows as scoped by rule. Both happened: the source check by Claude Opus 5.5 against the PDF, and Geetansh Arora's review of this row in the draft claims table on 11 Oct 2026.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-11",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null,
+      "source_title": "ODSA BoW workstream (OCP) — Bunch of Wires (BoW) PHY Specification, Version 2.0, 1 March 2023",
+      "source_url": "https://www.opencompute.org/marketplace/it-infrastructure/bunch-of-wires-bow-phy-specification-2-0/"
+    },
+    {
+      "id": "C-82",
+      "statement": "On advanced packaging BoW expects unterminated, non-controlled-impedance wires, because interposer traces are short and much more resistive than laminate traces.",
+      "pages": [
+        "interfaces/chiplet-interconnects"
+      ],
+      "source_type": "normative",
+      "source": "BoW PHY 2.0, 7 and 8.8",
+      "conditions": "Advanced packaging",
+      "status": "scoped",
+      "note": "'traces are usually much more resistive than in organic laminate packages ... Due to these short traces, termination is not expected to be useful for implementations targeting Advanced packaging'; 8.8, 'the shorter wire lengths and higher wire resistance suggests the use of non-controlled-impedance wires and unterminated transmitters and receivers'. Read in the specification itself, at the section named in source; the ledger records normative rows as scoped by rule. Both happened: the source check by Claude Opus 5.5 against the PDF, and Geetansh Arora's review of this row in the draft claims table on 11 Oct 2026.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-11",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null,
+      "source_title": "ODSA BoW workstream (OCP) — Bunch of Wires (BoW) PHY Specification, Version 2.0, 1 March 2023",
+      "source_url": "https://www.opencompute.org/marketplace/it-infrastructure/bunch-of-wires-bow-phy-specification-2-0/"
+    },
+    {
+      "id": "C-83",
+      "statement": "Every BoW implementation must support 0.75 V I/O signalling; source-terminated transmitters are 36 to 50 ohm, doubly terminated receivers 50 to 69 ohm (59 to 69 ohm at BoW-384 and up), skewed so the receive swing never falls below half the I/O voltage.",
+      "pages": [
+        "interfaces/chiplet-interconnects"
+      ],
+      "source_type": "normative",
+      "source": "BoW PHY 2.0, 9.1 and Table 10",
+      "conditions": "DC values",
+      "status": "scoped",
+      "note": "'All BoW implementations must support signaling based on a 0.75 V I/O voltage'; Table 10; 'never reduced to less than half of the I/O voltage (i.e., 375 mV for a 0.75 V I/O voltage)'. Read in the specification itself, at the section named in source; the ledger records normative rows as scoped by rule. Both happened: the source check by Claude Opus 5.5 against the PDF, and Geetansh Arora's review of this row in the draft claims table on 11 Oct 2026.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-11",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null,
+      "source_title": "ODSA BoW workstream (OCP) — Bunch of Wires (BoW) PHY Specification, Version 2.0, 1 March 2023",
+      "source_url": "https://www.opencompute.org/marketplace/it-infrastructure/bunch-of-wires-bow-phy-specification-2-0/"
+    },
+    {
+      "id": "C-84",
+      "statement": "Maximum equivalent capacitance per BoW I/O: 800 fF at BoW-32 and 64, 400 fF at BoW-128, 200 fF at BoW-256, and at BoW-384 and 512 200 fF source-terminated or 125 fF doubly terminated.",
+      "pages": [
+        "interfaces/chiplet-interconnects"
+      ],
+      "source_type": "normative",
+      "source": "BoW PHY 2.0, 9.4 and Table 11",
+      "conditions": "Table 11 governs",
+      "status": "scoped",
+      "note": "Table 11. The text of 9.4 gives 500 fF for BoW-128 as an example, which disagrees with the table; the table is used. Read in the specification itself, at the section named in source; the ledger records normative rows as scoped by rule. Both happened: the source check by Claude Opus 5.5 against the PDF, and Geetansh Arora's review of this row in the draft claims table on 11 Oct 2026.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-11",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null,
+      "source_title": "ODSA BoW workstream (OCP) — Bunch of Wires (BoW) PHY Specification, Version 2.0, 1 March 2023",
+      "source_url": "https://www.opencompute.org/marketplace/it-infrastructure/bunch-of-wires-bow-phy-specification-2-0/"
+    },
+    {
+      "id": "C-85",
+      "statement": "BoW-384 and BoW-512 receivers must include a CTLE, checked for conformance with a one-zero, one-pole response of 1.3 peaking or bypassed; transmit FFE is optional and only in addition to the CTLE. Lower modes require no equalization.",
+      "pages": [
+        "interfaces/chiplet-interconnects"
+      ],
+      "source_type": "normative",
+      "source": "BoW PHY 2.0, 10.3.6.1",
+      "conditions": "BoW-384 and BoW-512",
+      "status": "scoped",
+      "note": "'BoW-384 and BoW-512 receivers must include continuous-time linear equalizer (CTLE)'; 'may also optionally include transmit feedforward equalization (FFE) ... only ... in addition to (and not instead of) RX CTLE'; 'A_pk = 1.3'. Read in the specification itself, at the section named in source; the ledger records normative rows as scoped by rule. Both happened: the source check by Claude Opus 5.5 against the PDF, and Geetansh Arora's review of this row in the draft claims table on 11 Oct 2026.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-11",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null,
+      "source_title": "ODSA BoW workstream (OCP) — Bunch of Wires (BoW) PHY Specification, Version 2.0, 1 March 2023",
+      "source_url": "https://www.opencompute.org/marketplace/it-infrastructure/bunch-of-wires-bow-phy-specification-2-0/"
+    },
+    {
+      "id": "C-86",
+      "statement": "BoW timing is specified at an error rate of 1e-15: total transmitter timing error must not exceed 29% of a UI peak to peak.",
+      "pages": [
+        "interfaces/chiplet-interconnects"
+      ],
+      "source_type": "normative",
+      "source": "BoW PHY 2.0, 10.3.5",
+      "conditions": "Transmitter",
+      "status": "scoped",
+      "note": "'TX shall not exceed 29% of a UI peak-to-peak at an error rate of 1e-15'. Read in the specification itself, at the section named in source; the ledger records normative rows as scoped by rule. Both happened: the source check by Claude Opus 5.5 against the PDF, and Geetansh Arora's review of this row in the draft claims table on 11 Oct 2026.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-11",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null,
+      "source_title": "ODSA BoW workstream (OCP) — Bunch of Wires (BoW) PHY Specification, Version 2.0, 1 March 2023",
+      "source_url": "https://www.opencompute.org/marketplace/it-infrastructure/bunch-of-wires-bow-phy-specification-2-0/"
+    },
+    {
+      "id": "C-87",
+      "statement": "BoW's worked example: 16 slices (8 TX and 8 RX in four stacks of four) at BoW-256 carry 2.0 Tb/s each way; on organic laminate at a 130 um bump pitch they take 5.2 mm of edge (4.16 mm without AUX and FEC) and 1.35 mm of depth, and on an interposer at 40 um, 1.60 mm (1.28 mm) and 0.42 mm.",
+      "pages": [
+        "interfaces/chiplet-interconnects"
+      ],
+      "source_type": "normative",
+      "source": "BoW PHY 2.0, 8.11",
+      "conditions": "One example layout; BoW does not specify bump patterns (8.7)",
+      "status": "scoped",
+      "note": "'In BoW-256 at 16 Gbps/wire, the link in Figure 12 provides a total of 2.0 Tb/s in each direction. In an organic substrate ... bump pitch is 130 um, the total edge width is 5.2 mm (4.16 mm without AUX and FEC); the depth from the edge is 1.35 mm. In an interposer, if the bump pitch is 40 um, the edge width is 1.60 mm (or 1.28 mm) and the depth is 0.42 mm.' Read in the specification itself, at the section named in source; the ledger records normative rows as scoped by rule. Both happened: the source check by Claude Opus 5.5 against the PDF, and Geetansh Arora's review of this row in the draft claims table on 11 Oct 2026.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-11",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null,
+      "source_title": "ODSA BoW workstream (OCP) — Bunch of Wires (BoW) PHY Specification, Version 2.0, 1 March 2023",
+      "source_url": "https://www.opencompute.org/marketplace/it-infrastructure/bunch-of-wires-bow-phy-specification-2-0/"
+    },
+    {
+      "id": "C-88",
+      "statement": "BoW's stated targets: under 0.5 to 1 pJ/bit doubly terminated and under 0.25 to 0.5 pJ/bit unterminated, latency under 2 to 4 ns without FEC, throughput density up to 2 to 12+ Tbps per mm of chip edge, and process nodes from 65 nm to 5 nm.",
+      "pages": [
+        "interfaces/chiplet-interconnects"
+      ],
+      "source_type": "normative",
+      "source": "BoW PHY 2.0, 2.2 and 2.3",
+      "conditions": "Targets (OCP tenets), not requirements; the density figure does not say one direction or both",
+      "status": "scoped",
+      "note": "2.2, 'Very low peak power (< 0.5 - 1 pJ/bit for doubly terminated modes, <0.25 - 0.5 pJ/bit for unterminated)', 'Very low latency (<2-4 ns without FEC ...)', 'High throughput density (up to 2 - 12+ Tbps/mm-chip-edge)'; 2.3, 'Portable across IC process nodes ranging from 65 nm to 5 nm and beyond'. Read in the specification itself, at the section named in source; the ledger records normative rows as scoped by rule. Both happened: the source check by Claude Opus 5.5 against the PDF, and Geetansh Arora's review of this row in the draft claims table on 11 Oct 2026.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-11",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null,
+      "source_title": "ODSA BoW workstream (OCP) — Bunch of Wires (BoW) PHY Specification, Version 2.0, 1 March 2023",
+      "source_url": "https://www.opencompute.org/marketplace/it-infrastructure/bunch-of-wires-bow-phy-specification-2-0/"
+    },
+    {
+      "id": "C-89",
+      "statement": "AIB is a physical layer for chiplets in one package over 10 mm or less (ultra-short reach), with no hard maximum distance; link and protocol layers sit on top of it.",
+      "pages": [
+        "interfaces/chiplet-interconnects"
+      ],
+      "source_type": "normative",
+      "source": "AIB 2.0.3, 1",
+      "conditions": "PHY only",
+      "status": "scoped",
+      "note": "'signal distances of 10 millimeters or less (often referred to as Ultra-Short Reach). While no maximum interconnect distance is specified, AIB signal electrical requirements detailed in Section 4 shall be met'; 'AIB is a physical interconnect. Link, protocol and application layers are implemented on top'. Read in the specification itself, at the section named in source; the ledger records normative rows as scoped by rule. Both happened: the source check by Claude Opus 5.5 against the PDF, and Geetansh Arora's review of this row in the draft claims table on 11 Oct 2026.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-11",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null,
+      "source_title": "CHIPS Alliance — Advanced Interface Bus (AIB) Specification, Revision 2.0.3, June 2022",
+      "source_url": "https://github.com/chipsalliance/AIB-specification/blob/master/AIB_Specification%202_0.pdf"
+    },
+    {
+      "id": "C-90",
+      "statement": "AIB Gen1 runs at up to 2 Gb/s and Gen2 at up to 6.4 Gb/s per wire; no maximum rate is specified, and the typical Gen2 rates are 4 and 6.4 Gb/s.",
+      "pages": [
+        "interfaces/chiplet-interconnects"
+      ],
+      "source_type": "normative",
+      "source": "AIB 2.0.3, Tables 1 and 3",
+      "conditions": "Minimum and typical rates",
+      "status": "scoped",
+      "note": "Table 1, 'Data Rate Up to 2Gbps / Up to 6.4Gbps'; 1.3.1, 'There is no maximum data rate specified for AIB'; Table 3, Gen2 DDR typical '4Gbps, 6.4Gbps'. Read in the specification itself, at the section named in source; the ledger records normative rows as scoped by rule. Both happened: the source check by Claude Opus 5.5 against the PDF, and Geetansh Arora's review of this row in the draft claims table on 11 Oct 2026.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-11",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null,
+      "source_title": "CHIPS Alliance — Advanced Interface Bus (AIB) Specification, Revision 2.0.3, June 2022",
+      "source_url": "https://github.com/chipsalliance/AIB-specification/blob/master/AIB_Specification%202_0.pdf"
+    },
+    {
+      "id": "C-91",
+      "statement": "AIB Gen2 cuts the data and forwarded-clock swing from 0.9 V to 0.4 V for lower energy per bit.",
+      "pages": [
+        "interfaces/chiplet-interconnects"
+      ],
+      "source_type": "normative",
+      "source": "AIB 2.0.3, Table 1 and Table 21",
+      "conditions": "Gen2 mode, data and forwarded clock",
+      "status": "scoped",
+      "note": "1.1, 'Reduced I/O voltage swing on data and data clocks for lower energy per bit'; Table 21, 'Typical output swing 0.9 V / 0.4 V'; revision note 'Only data and fwd_clk are low swing'. Read in the specification itself, at the section named in source; the ledger records normative rows as scoped by rule. Both happened: the source check by Claude Opus 5.5 against the PDF, and Geetansh Arora's review of this row in the draft claims table on 11 Oct 2026.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-11",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null,
+      "source_title": "CHIPS Alliance — Advanced Interface Bus (AIB) Specification, Revision 2.0.3, June 2022",
+      "source_url": "https://github.com/chipsalliance/AIB-specification/blob/master/AIB_Specification%202_0.pdf"
+    },
+    {
+      "id": "C-92",
+      "statement": "In Gen2 mode AIB transfers data at double data rate only, and every channel forwards its transmit clock, quasi-differential between the chiplets.",
+      "pages": [
+        "interfaces/chiplet-interconnects"
+      ],
+      "source_type": "normative",
+      "source": "AIB 2.0.3, Table 2 and 2.1.6.3",
+      "conditions": "Gen2 mode",
+      "status": "scoped",
+      "note": "Table 2 note 2, 'In Gen2 mode AIB Base and AIB Plus support only DDR data transfer'; 2.1.6.3, 'An AIB Base or AIB Plus channel shall forward its transmit clock to the far side. The clock signal shall be quasi-differential'. Read in the specification itself, at the section named in source; the ledger records normative rows as scoped by rule. Both happened: the source check by Claude Opus 5.5 against the PDF, and Geetansh Arora's review of this row in the draft claims table on 11 Oct 2026.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-11",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null,
+      "source_title": "CHIPS Alliance — Advanced Interface Bus (AIB) Specification, Revision 2.0.3, June 2022",
+      "source_url": "https://github.com/chipsalliance/AIB-specification/blob/master/AIB_Specification%202_0.pdf"
+    },
+    {
+      "id": "C-93",
+      "statement": "An AIB channel carries 20 to 80 balanced data signals (half TX, half RX) at a 55 um bump pitch or coarser, and up to 320 at 10 um, in steps of 20.",
+      "pages": [
+        "interfaces/chiplet-interconnects"
+      ],
+      "source_type": "normative",
+      "source": "AIB 2.0.3, Table 5",
+      "conditions": "Balanced interface",
+      "status": "scoped",
+      "note": "Table 5, 'Number of Data Signals per Channel': '<=55: 20-80 (20)', '10: 20-320 (20)'. Read in the specification itself, at the section named in source; the ledger records normative rows as scoped by rule. Both happened: the source check by Claude Opus 5.5 against the PDF, and Geetansh Arora's review of this row in the draft claims table on 11 Oct 2026.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-11",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null,
+      "source_title": "CHIPS Alliance — Advanced Interface Bus (AIB) Specification, Revision 2.0.3, June 2022",
+      "source_url": "https://github.com/chipsalliance/AIB-specification/blob/master/AIB_Specification%202_0.pdf"
+    },
+    {
+      "id": "C-94",
+      "statement": "AIB bump densities: low density up to 55 um, medium up to 52 um (45 and 36 um given as medium), high density up to 20 um.",
+      "pages": [
+        "interfaces/chiplet-interconnects"
+      ],
+      "source_type": "normative",
+      "source": "AIB 2.0.3, 6.2 and 4.1",
+      "conditions": "Microbump pitch classes",
+      "status": "scoped",
+      "note": "6.2, 'Low-density may be used with any microbump pitch up to 55 um', 'Medium-density ... up to 52 um', 'High-density ... up to 20 um'; 4.1, '55um is a low-density bump pitch. 45um and 36um are medium-density bump pitches'. Read in the specification itself, at the section named in source; the ledger records normative rows as scoped by rule. Both happened: the source check by Claude Opus 5.5 against the PDF, and Geetansh Arora's review of this row in the draft claims table on 11 Oct 2026.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-11",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null,
+      "source_title": "CHIPS Alliance — Advanced Interface Bus (AIB) Specification, Revision 2.0.3, June 2022",
+      "source_url": "https://github.com/chipsalliance/AIB-specification/blob/master/AIB_Specification%202_0.pdf"
+    },
+    {
+      "id": "C-95",
+      "statement": "AIB Gen2 timing assumes medium-density bumps with a 0.3 pF load and a reference channel of 2 dB loss at 2 GHz; the far-end eye must open at least +/-50 mV.",
+      "pages": [
+        "interfaces/chiplet-interconnects"
+      ],
+      "source_type": "normative",
+      "source": "AIB 2.0.3, 4.1 and Table 21",
+      "conditions": "Gen2 mode",
+      "status": "scoped",
+      "note": "4.1, 'For Gen2 the near-end timing specifications reflect microbumps with medium-density pitch and a 0.3pF capacitive load'; 'a channel that has 2dB loss at 2GHz'; Table 21, 'Minimum difference between LO and HI (eye diagram height) +/-50 mV'. Read in the specification itself, at the section named in source; the ledger records normative rows as scoped by rule. Both happened: the source check by Claude Opus 5.5 against the PDF, and Geetansh Arora's review of this row in the draft claims table on 11 Oct 2026.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-11",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null,
+      "source_title": "CHIPS Alliance — Advanced Interface Bus (AIB) Specification, Revision 2.0.3, June 2022",
+      "source_url": "https://github.com/chipsalliance/AIB-specification/blob/master/AIB_Specification%202_0.pdf"
+    },
+    {
+      "id": "C-96",
+      "statement": "The AIB specification gives no shoreline-bandwidth or energy-per-bit figure.",
+      "pages": [
+        "interfaces/chiplet-interconnects"
+      ],
+      "source_type": "normative",
+      "source": "AIB 2.0.3, whole text",
+      "conditions": "A statement of absence",
+      "status": "scoped",
+      "note": "Checked by searching the full extracted text for pJ, energy figures, Gbps/mm and Tbps/mm: the only energy reference is the qualitative 'lower energy per bit' of 1.1. Read in the specification itself, at the section named in source; the ledger records normative rows as scoped by rule. Both happened: the source check by Claude Opus 5.5 against the PDF, and Geetansh Arora's review of this row in the draft claims table on 11 Oct 2026.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-11",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null,
+      "source_title": "CHIPS Alliance — Advanced Interface Bus (AIB) Specification, Revision 2.0.3, June 2022",
+      "source_url": "https://github.com/chipsalliance/AIB-specification/blob/master/AIB_Specification%202_0.pdf"
+    },
+    {
+      "id": "C-97",
+      "statement": "A ComboPHY on advanced packaging can interoperate with both a UCIe-A PHY and an AIB PHY; an AIB 2.0 Gen2 chiplet's 40 data signals map onto UCIe data lanes.",
+      "pages": [
+        "interfaces/chiplet-interconnects"
+      ],
+      "source_type": "vendor",
+      "source": "Intel UCIe-AIB guide, slides 4 and 6",
+      "conditions": "Interoperability guide, not a specification",
+      "status": "verified",
+      "note": "'This guide describes requirements of a ComboPHY for interoperating with a UCIe Advanced Packaging PHY or an AIB PHY'; 'This guide is not a design specification'; signal table, 'For an AIB 2.0 Gen2 chiplet, n ranges from 0-39'. Both happened: the source check by Claude Opus 5.5 against the PDF, and Geetansh Arora's review of this row in the draft claims table on 11 Oct 2026.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-11",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null,
+      "source_title": "Intel — UCIe and AIB Interoperability Guide, v7, August 2022",
+      "source_url": "https://github.com/chipsalliance/AIB-specification/blob/master/UCIe_AIB_Interoperability_Guide_v7.pdf"
+    },
+    {
+      "id": "C-98",
+      "statement": "The AIB specification defines no line termination: every AIB input and output has a configurable weak pull-up and weak pull-down, and the word termination does not appear in the document.",
+      "pages": [
+        "interfaces/chiplet-interconnects"
+      ],
+      "source_type": "normative",
+      "source": "AIB 2.0.3, 2.1.5 and whole text",
+      "conditions": "A statement of absence, plus 2.1.5",
+      "status": "scoped",
+      "note": "2.1.5, 'All inputs and outputs shall have an associated weak pull-up and weak pull-down ... configurable either with the pull-up, with the pull-down, or with neither'. A search of the full extracted text finds no occurrence of 'terminat'. Read in the specification itself, at the section named in source; the ledger records normative rows as scoped by rule.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-11",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null,
+      "source_title": "CHIPS Alliance — Advanced Interface Bus (AIB) Specification, Revision 2.0.3, June 2022",
+      "source_url": "https://github.com/chipsalliance/AIB-specification/blob/master/AIB_Specification%202_0.pdf"
+    },
+    {
+      "id": "C-99",
+      "statement": "The BoW PHY specification leaves the definition of protocols for logical data transfer outside its scope.",
+      "pages": [
+        "interfaces/chiplet-interconnects"
+      ],
+      "source_type": "normative",
+      "source": "BoW PHY 2.0, 4",
+      "conditions": "PHY specification only",
+      "status": "scoped",
+      "note": "4, 'The following activities are outside the scope of this document: ... d. Definition of protocols for logical data transfer'. Read in the specification itself, at the section named in source; the ledger records normative rows as scoped by rule.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-11",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null,
+      "source_title": "ODSA BoW workstream (OCP) — Bunch of Wires (BoW) PHY Specification, Version 2.0, 1 March 2023",
+      "source_url": "https://www.opencompute.org/marketplace/it-infrastructure/bunch-of-wires-bow-phy-specification-2-0/"
     }
   ]
 }

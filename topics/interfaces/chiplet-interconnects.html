@@ -1,0 +1,330 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- theme:start -->
+  <meta name="theme-color" content="#F7F8FA">
+  <script>(function(){try{var t=localStorage.getItem('sipi-theme');if(t==='dark'||t==='system'){document.documentElement.setAttribute('data-theme',t);var m=document.querySelector('meta[name=theme-color]');if(m&&(t==='dark'||matchMedia('(prefers-color-scheme:dark)').matches))m.content='#0B1015';}}catch(e){}})();</script>
+  <!-- theme:end -->
+<title>Chiplet Interconnects: UCIe vs BoW vs AIB Compared | SIPI</title>
+<meta name="description" content="UCIe, BoW and AIB compared from their own specifications: wire rates, clocking, termination, reach and bump pitch, and why bandwidth per mm of die edge depends on layout depth more than on the standard.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<link rel="stylesheet" href="../../css/base.css?v=1e3ae753">
+<link rel="stylesheet" href="../../css/components.css?v=9f8a948d">
+  <!-- meta:start -->
+  <link rel="canonical" href="https://sipi.work/topics/interfaces/chiplet-interconnects.html">
+  <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="SIPI">
+  <meta property="og:title" content="Chiplet Interconnects: UCIe vs BoW vs AIB Compared | SIPI">
+  <meta property="og:description" content="UCIe, BoW and AIB compared from their own specifications: wire rates, clocking, termination, reach and bump pitch, and why bandwidth per mm of die edge depends on layout depth more than on the standard.">
+  <meta property="og:url" content="https://sipi.work/topics/interfaces/chiplet-interconnects.html">
+  <meta property="og:image" content="https://sipi.work/assets/og/interfaces/chiplet-interconnects.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Chiplet Interconnects: UCIe vs BoW vs AIB Compared: a figure from the page, on SIPI">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Chiplet Interconnects: UCIe vs BoW vs AIB Compared | SIPI">
+  <meta name="twitter:description" content="UCIe, BoW and AIB compared from their own specifications: wire rates, clocking, termination, reach and bump pitch, and why bandwidth per mm of die edge depends on layout depth more than on the standard.">
+  <meta name="twitter:image" content="https://sipi.work/assets/og/interfaces/chiplet-interconnects.png">
+  <meta name="twitter:image:alt" content="Chiplet Interconnects: UCIe vs BoW vs AIB Compared: a figure from the page, on SIPI">
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Chiplet Interconnects: UCIe vs BoW vs AIB Compared","description":"UCIe, BoW and AIB compared from their own specifications: wire rates, clocking, termination, reach and bump pitch, and why bandwidth per mm of die edge depends on layout depth more than on the standard.","url":"https://sipi.work/topics/interfaces/chiplet-interconnects.html","articleSection":"Interface sign-off","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer","url":"https://www.linkedin.com/in/geetansh-arora-a645714a/","sameAs":["https://www.linkedin.com/in/geetansh-arora-a645714a/"]},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-10-11","image":"https://sipi.work/assets/og/interfaces/chiplet-interconnects.png"}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"SIPI","item":"https://sipi.work/"},{"@type":"ListItem","position":2,"name":"Interface sign-off","item":"https://sipi.work/#interfaces"},{"@type":"ListItem","position":3,"name":"Chiplet Interconnects: UCIe vs BoW vs AIB Compared"}]}</script>
+  <!-- meta:end -->
+</head>
+<body>
+
+<header class="masthead">
+  <a class="wordmark" href="../../index.html">SIPI</a>
+  <button class="theme-toggle" data-act="theme" type="button">Light</button>
+  <nav aria-label="Site">
+    <a href="../../start.html">Start</a>
+    <a href="../../index.html#groundwork">Topics</a>
+    <a href="../../labs.html">Labs</a>
+    <a href="../../calculators.html">Calculators</a>
+    <a href="../../colophon.html">About</a>
+  </nav>
+</header>
+
+<main>
+  <div class="page-head">
+    <p class="crumb"><a href="../../index.html#interfaces">Interface sign-off</a> / 07</p>
+    <h1>Chiplet Interconnects: UCIe vs BoW vs AIB Compared</h1>
+    <p class="byline">
+      <!-- review:start --><span>By <a href="https://www.linkedin.com/in/geetansh-arora-a645714a/" target="_blank" rel="author noopener">Geetansh Arora</a> — Principal SI/PI Engineer</span><time datetime="2026-10-11" title="Technical review by Geetansh Arora on this date">11 Oct 2026</time><span>9 min</span><!-- review:end -->
+    </p>
+    <!-- share:head:start --><div class="share share--head" data-share data-share-url="https://sipi.work/topics/interfaces/chiplet-interconnects.html" data-share-title="Chiplet Interconnects: UCIe vs BoW vs AIB Compared"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Fchiplet-interconnects.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Fchiplet-interconnects.html&amp;text=Chiplet%20Interconnects%3A%20UCIe%20vs%20BoW%20vs%20AIB%20Compared" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=Chiplet%20Interconnects%3A%20UCIe%20vs%20BoW%20vs%20AIB%20Compared&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Fchiplet-interconnects.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:head:end -->
+    <p class="answer">
+      UCIe, BoW and AIB solve the same problem, wide and simple parallel links between dies a few millimetres apart,
+      and they physically look alike: single-ended wires, a clock sent with the data, and little or no equalisation.
+      They differ in how fast each wire runs, when a wire is terminated, and how much of the stack above the
+      physical layer they define. How much bandwidth fits along a millimetre of die edge depends mostly on the bump
+      pitch and how deep the layout goes, not on which standard you pick.
+    </p>
+  </div>
+
+  <div class="prose">
+    <h2 class="section-rule" id="at-a-glance"><span>At a glance</span></h2>
+    <h3>What are the chiplet interconnect standards?</h3>
+    <p>
+      The three open die-to-die standards with public specifications are UCIe, from the UCIe Consortium; BoW (Bunch
+      of Wires), from the Open Compute Project&#8217;s ODSA workstream; and AIB (Advanced Interface Bus), from the CHIPS
+      Alliance. All three connect dies inside one package.
+    </p>
+    <h3>UCIe vs BoW: what is the difference?</h3>
+    <p>
+      Speed and scope. BoW runs 2 to 32 Gb/s per wire (C-79) and specifies the physical layer only, leaving
+      protocols to other documents (C-99). UCIe runs 4 to 64 GT/s (C-64) and also defines a die-to-die adapter and the
+      mapping of protocols such as PCIe and CXL. Electrically they are close relatives: a BoW slice is 16 single-ended
+      data wires and a differential clock (C-78).
+    </p>
+    <h3>UCIe vs AIB: what is the difference?</h3>
+    <p>
+      AIB is slower and simpler: up to 6.4 Gb/s per wire in its second generation, with no maximum specified (C-90),
+      and no line termination at all (C-98). It is a physical layer only (C-89). An interoperability guide shows one
+      PHY on an advanced package serving both UCIe and AIB chiplets (C-97).
+    </p>
+    <h3>Why is HBM not in this comparison?</h3>
+    <p>
+      HBM is a memory interface between a processor and a DRAM stack, defined by JEDEC, not a general die-to-die link
+      between any two chiplets. It solves a related problem with a different contract, and its specification is not
+      freely available, so it is left out rather than compared from second-hand figures.
+    </p>
+  </div>
+
+  <!-- ───────────── the picture ───────────── -->
+  <section class="instrument" data-viz="d2dCompare" aria-label="Interactive comparison of four published UCIe and BoW layouts: bandwidth per millimetre of die edge against wire rate, or bandwidth per square millimetre of bumps against a common bump pitch">
+    <script type="application/json" data-contract>{"kind":"exact","evidence":"independent","purpose":"Compare the bandwidth that published UCIe and BoW layouts put through each millimetre of die edge, and through each square millimetre of bumps once the bump pitch is taken out.","equations":["edge density = data wires * wire rate / 8 / edge width","UCIe-S at 48 and 64 GT/s: the consortium table (C-68)","bump density = data wires / 8 / (edge * depth), per Gb/s of wire rate","at a common pitch: bump density * (own pitch / common pitch)^2"],"units":"Gb/s per wire, GB/s/mm, GB/s/mm2 per Gb/s, um","validity":"Exact arithmetic on the published dimensions. Each layout is one example, not the only layout the standard allows; BoW does not specify bump patterns.","numerics":"Direct evaluation at the nine wire rates the standards define.","limitations":"AIB publishes no comparable layout and is not drawn. Bump density counts the whole rectangle a layout occupies, power and ground bumps included. The pitch scaling assumes the same bump arrangement at the new pitch.","suites":["Chiplet layouts"],"version":"1.0","reviewed":"2026-10-11","panel":"d2dCompare"}</script>
+    <div class="instrument__bar">
+      <span class="instrument__title">Bandwidth per millimetre of edge, and per square millimetre of bumps</span>
+        <span data-evidence="independent" data-model-version="1.0" class="model-tag model-tag--exact" title="">exact</span>
+      <span class="instrument__readout" role="status" aria-live="polite" aria-label="Current values">
+        <span>UCIe-S <b data-out="ucieS">—</b></span>
+        <span>UCIe-A <b data-out="ucieA">—</b></span>
+        <span>BoW laminate <b data-out="bowL">—</b></span>
+        <span>BoW interposer <b data-out="bowI">—</b></span>
+        <span>AIB <b data-out="aib">—</b></span>
+        <span><b data-out="unit">—</b></span>
+      </span>
+    </div>
+    <div class="panels">
+      <div class="panel">
+        <span class="panel__label">Four published layouts, both directions counted</span>
+        <canvas data-cv="d2d" role="img" aria-label="Either bandwidth per millimetre of die edge against wire rate, on logarithmic axes, for the UCIe-S and UCIe-A modules and BoW's laminate and interposer example links; or each layout's bandwidth per square millimetre of bumps per Gb/s of wire rate, moved to a common bump pitch."></canvas>
+        <div class="legend"><span><i style="background:var(--signal)"></i>interposer or bridge</span><span><i style="background:var(--reflect)"></i>organic substrate</span><span><i class="dash" style="color:var(--muted)"></i>BoW (UCIe solid)</span></div>
+        <p class="panel__note" data-out="detail">—</p>
+      </div>
+    </div>
+    <div class="controls">
+      <div class="ctl">
+        <div class="ctl__head"><label for="dc-view">View</label></div>
+        <select id="dc-view"><option value="edge">Per mm of die edge</option><option value="area">Per mm² of bumps, at a common pitch</option></select>
+        <span class="ctl__note">Edge is what a floorplan spends; area is what the bumps allow</span>
+      </div>
+      <div class="ctl">
+        <div class="ctl__head"><label for="dc-rate">Wire rate</label><output id="dc-rate-out" for="dc-rate">16 Gb/s</output></div>
+        <input type="range" id="dc-rate" min="0" max="8" step="1" value="4">
+        <span class="ctl__note">Every rate either standard defines; used by the edge view</span>
+      </div>
+      <div class="ctl">
+        <div class="ctl__head"><label for="dc-pitch">Common bump pitch</label><output id="dc-pitch-out" for="dc-pitch">40 µm</output></div>
+        <input type="range" id="dc-pitch" min="0" max="13" step="1" value="6">
+        <span class="ctl__note">Used by the area view: every layout moved to this pitch</span>
+      </div>
+    </div>
+    <div class="presets">
+      <button class="preset" type="button" data-preset="edge16" aria-pressed="true">Edge, 16 Gb/s</button>
+      <button class="preset" type="button" data-preset="area40" aria-pressed="false">Bumps, at 40 µm</button>
+      <button class="preset" type="button" data-preset="fast" aria-pressed="false">64 Gb/s</button>
+      <button class="preset" type="button" data-preset="organic" aria-pressed="false">Bumps, at 130 µm</button>
+    </div>
+    <div class="transport"><span data-out="note">—</span></div>
+  </section>
+
+  <div class="prose">
+    <h2 class="section-rule" id="same-problem"><span>Three standards, one problem</span></h2>
+    <p>
+      Inside a package two dies sit millimetres apart, so a wire loses little and the expensive machinery of a board
+      SerDes buys nothing. What is scarce is the edge of the die, because every wire needs a bump. All three standards
+      therefore make the same trade: many single-ended wires at a modest rate, a clock sent alongside the data so no
+      clock-recovery loop is needed, and as little equalisation as the channel allows. The
+      <a href="ucie.html">UCIe page</a> walks through why; this page compares the three on what their specifications
+      actually say.
+    </p>
+
+    <h2 class="section-rule" id="side-by-side"><span>Side by side</span></h2>
+    <div class="table-scroll">
+      <table class="data">
+        <caption>UCIe 3.0, BoW 2.0 and AIB 2.0, from their published specifications and overviews (ledger rows in brackets)</caption>
+        <thead><tr><th></th><th>UCIe</th><th>BoW</th><th>AIB</th></tr></thead>
+        <tbody>
+          <tr><th>Published by</th><td>UCIe Consortium</td><td>OCP, ODSA workstream</td><td>CHIPS Alliance</td></tr>
+          <tr><th>Rate per wire</th><td>4 to 32 GT/s; 48 and 64 GT/s in 3.0 (C-64)</td><td>2 to 32 Gb/s in six modes; 24 and 32 new in 2.0 (C-79, C-80)</td><td>up to 2 Gb/s Gen1, 6.4 Gb/s Gen2; no maximum specified (C-90)</td></tr>
+          <tr><th>Unit of width</th><td>module: 16 lanes standard, 64 advanced (C-65)</td><td>slice: 16 data wires and a clock pair (C-78)</td><td>channel: 20 to 80 data signals at 55 &#181;m or coarser (C-93)</td></tr>
+          <tr><th>Clock</th><td>forwarded; half or quarter rate (C-72)</td><td>forwarded, differential, half the wire rate (C-78, C-79)</td><td>forwarded per channel, quasi-differential, DDR (C-92)</td></tr>
+          <tr><th>Termination</th><td>required at the receiver at 48 and 64 GT/s (C-70)</td><td>none, source or double, by package and rate (C-81, C-83)</td><td>none defined (C-98)</td></tr>
+          <tr><th>Reach</th><td>up to 25 mm standard, 2 mm advanced (C-67)</td><td>2 mm advanced; up to 25+ mm on laminate, doubly terminated (C-81)</td><td>10 mm or less, no hard maximum (C-89)</td></tr>
+          <tr><th>Bump pitch</th><td>100&#8211;130 &#181;m and 25&#8211;55 &#181;m (C-66)</td><td>not specified; examples at 130 and 40 &#181;m (C-87)</td><td>classes up to 55, 52 and 20 &#181;m (C-94)</td></tr>
+          <tr><th>Equalisation</th><td>3-tap TX FFE and CTLE at 48 and 64 GT/s (C-70)</td><td>RX CTLE required at 24 and 32 Gb/s (C-85)</td><td>none specified</td></tr>
+          <tr><th>Error rate</th><td>10<sup>&#8722;15</sup> at 48, 10<sup>&#8722;12</sup> at 64 GT/s (C-70)</td><td>timing specified at 10<sup>&#8722;15</sup> (C-86)</td><td>an eye mask, &#177;50 mV at the far end in Gen2 (C-95)</td></tr>
+          <tr><th>Energy figure</th><td>targets, 0.25 to 0.75 pJ/b (C-69)</td><td>targets, under 0.25 to 1 pJ/b (C-88)</td><td>none published (C-96)</td></tr>
+          <tr><th>Layers defined</th><td>PHY, die-to-die adapter, protocol mapping</td><td>PHY (C-99)</td><td>PHY (C-89)</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>
+      Read the table as three answers to one question, how fast can a simple wire go before it needs help. AIB stops
+      early and never terminates. BoW goes to 32 Gb/s and adds termination and a receive CTLE as the rate and the
+      wire length grow. UCIe goes to 64 GT/s and, at its top two rates, requires both termination and equalisation.
+    </p>
+
+    <h2 class="section-rule" id="edge-density"><span>Bandwidth per millimetre is a choice of depth</span></h2>
+    <p>
+      The figure that sizes a chiplet is bandwidth per millimetre of die edge, and it is tempting to read it as a
+      property of the standard. The published layouts say otherwise. BoW&#8217;s specification includes a worked
+      example: eight transmit and eight receive slices at 16 Gb/s per wire carry 2.0 Tb/s each way, and on an
+      interposer with a 40 &#181;m bump pitch they take 1.60 mm of edge and 0.42 mm of depth (C-87). Counting both
+      directions, that is 320 GB/s/mm. A UCIe-A module at the same 16 GT/s carries about 658 GB/s/mm (C-68, C-76), about
+      2.06 times as much, although BoW&#8217;s bumps are finer.
+    </p>
+    <p>
+      The difference is depth. The BoW example stacks four slices, 0.42 mm deep; the UCIe-A module is 1.585 mm deep
+      (C-76). Both are bump-limited, so the fair comparison is bandwidth per square millimetre of bumps, per Gb/s of
+      wire rate, moved to a common pitch. The number of bumps in an area goes as the inverse square of the pitch, so a
+      layout&#8217;s density moves by (its pitch / common pitch)&#178;. Done that way, UCIe-A and BoW&#8217;s interposer
+      example land within about 3% of each other, and BoW&#8217;s laminate example joins them. Try it in the panel: choose the
+      bump view and drag the pitch.
+    </p>
+    <p>
+      One layout does not join them. The UCIe-S module needs about 40% more bump area for the same bandwidth than the
+      other three. The published figures do not say why, and this page does not guess; it is a reminder that a
+      single example layout carries choices beyond the standard.
+    </p>
+
+    <h2 class="section-rule" id="termination"><span>Termination: three answers to the same wire</span></h2>
+    <p>
+      An unterminated receiver is the cheapest and lowest-power choice, and it works while every echo dies before the
+      sample. BoW states the trade most clearly. On an interposer it expects no termination at any of its rates,
+      recommending wires up to 2 mm (4 mm at 2 Gb/s), because interposer traces are short and resistive enough to damp their own
+      echoes (C-81, C-82). On a laminate, where traces are wider, less resistive and longer, an unterminated wire is
+      recommended only at 2 Gb/s; a source termination reaches 20, 10 and 5 mm at 2, 4 and 8 Gb/s, and a double
+      termination reaches 25 mm or more at every rate (C-81).
+    </p>
+    <p>
+      AIB, at a few Gb/s per wire over 10 mm or less, defines no termination at all (C-98). UCIe requires a receiver
+      termination on both package types at 48 and 64 GT/s (C-70). The
+      <a href="ucie.html#termination">termination panel on the UCIe page</a> shows the mechanism on a lossless line.
+    </p>
+
+    <h2 class="section-rule"><span>What it takes to sign off</span></h2>
+    <ul class="tight">
+      <li><b>Which standard your partner dies speak.</b> A chiplet bought from another company sets the standard; the comparison matters most when you control both sides.</li>
+      <li><b>The layout, not the headline density.</b> Edge per Tb/s comes from your bump pitch and how deep you are willing to go, so compute it from your own bump map.</li>
+      <li><b>Termination against your wire.</b> Length, resistance and rate decide whether an open receiver settles before the sample; the standards&#8217; reach tables are recommendations built on that.</li>
+      <li><b>Energy figures as targets.</b> Both UCIe and BoW publish targets, not measurements, and AIB publishes none.</li>
+    </ul>
+
+    <details class="deeper">
+      <summary>Go deeper: the arithmetic behind the panel</summary>
+      <div class="deeper__body">
+        <p>
+          <b>Both directions.</b> All four layouts are counted the way the UCIe table counts shoreline: the total of both
+          directions (C-76). BoW&#8217;s example is 256 data wires, 128 each way, at 16 Gb/s: 4096 Gb/s, 512 GB/s in all.
+          Over 1.60 mm that is 320 GB/s/mm; over the 1.28 mm it needs without the optional AUX and FEC wires, 400. The
+          panel uses the full slice, because a UCIe module&#8217;s width also includes its clock and other lanes.
+        </p>
+        <p>
+          <b>Layouts used.</b> UCIe-S: a 32-lane-per-direction module, 1.143 by 1.54 mm at 110 &#181;m. UCIe-A: a
+          64-lane-per-direction module, 0.389 by 1.585 mm at 55 &#181;m (C-76). BoW: the example link, 5.2 by 1.35 mm on
+          laminate at 130 &#181;m and 1.60 by 0.42 mm on an interposer at 40 &#181;m (C-87). AIB publishes no comparable
+          layout (C-96), so it has no curve.
+        </p>
+        <p>
+          <b>Scaling with rate.</b> With the geometry fixed, bandwidth is proportional to the wire rate. UCIe-S at 48 and
+          64 GT/s is the exception: the consortium&#8217;s table gives 278 and 370 GB/s/mm (C-68), less than its 32 GT/s
+          module scaled up, so its layout changes there and the panel uses the table.
+        </p>
+        <p>
+          <b>Bump-field density.</b> Bandwidth over edge times depth, divided by the wire rate, gives 47.6 GB/s per mm&#178;
+          per Gb/s for BoW&#8217;s interposer example at 40 &#181;m and 25.95 for the UCIe-A module at 55 &#181;m. Moved to
+          40 &#181;m, the UCIe-A figure becomes 25.95 &#215; (55/40)&#178; = 49.1. This counts the whole rectangle each
+          layout occupies, power and ground bumps included.
+        </p>
+        <p>
+          <b>BoW&#8217;s own density figure.</b> BoW quotes a target of up to 2 to 12+ Tbps per mm of chip edge (C-88)
+          without saying whether it counts one direction or both, so the panel does not use it.
+        </p>
+      </div>
+    </details>
+
+    <h2 class="section-rule"><span>In the real world</span></h2>
+    <p>
+      The standard is usually chosen for you, by the chiplets you can buy and the ecosystem you are joining, and the
+      three are closer electrically than their names suggest. What remains an engineering decision is the layout: how
+      fine a bump pitch the package allows, how deep the interface may reach into the die, and whether the wire is
+      short and resistive enough to run open. Those set the bandwidth per millimetre, the power and the margin. Read
+      <a href="ucie.html">UCIe</a> for the termination and timing detail, and
+      <a href="../package-board/package-families.html">package families</a> for the packaging side.
+    </p>
+    <h3>Where the numbers come from</h3>
+    <p>
+      The BoW PHY Specification 2.0 (OCP, March 2023), the AIB Specification 2.0.3 (CHIPS Alliance, June 2022), an
+      Intel guide to UCIe and AIB interoperability, and the UCIe sources already in the ledger. Every figure is quoted
+      with its section in the claim ledger (C-78 to C-99); the comparisons are arithmetic on those figures, checked by
+      the site&#8217;s number gate.
+    </p>
+    <h3>Related</h3>
+    <ul class="tight">
+      <li><a href="ucie.html">UCIe 3.0 Signal Integrity: 64 GT/s Chiplet Links vs PCIe</a></li>
+      <li><a href="../package-board/package-families.html">IC Package Types: Wirebond, Flip-Chip, FOWLP, Chiplets</a></li>
+      <li><a href="../fundamentals/when-is-a-trace-a-transmission-line.html">When Is a Trace a Transmission Line? Critical Length</a></li>
+    </ul>
+  </div>
+
+  <!-- share:foot:start --><div class="share share--foot" data-share data-share-url="https://sipi.work/topics/interfaces/chiplet-interconnects.html" data-share-title="Chiplet Interconnects: UCIe vs BoW vs AIB Compared"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Fchiplet-interconnects.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Fchiplet-interconnects.html&amp;text=Chiplet%20Interconnects%3A%20UCIe%20vs%20BoW%20vs%20AIB%20Compared" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=Chiplet%20Interconnects%3A%20UCIe%20vs%20BoW%20vs%20AIB%20Compared&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Fchiplet-interconnects.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:foot:end -->
+
+<!-- sources:start -->
+    <section class="sources">
+      <h2 class="section-rule"><span>Sources</span></h2>
+      <ul class="sources__list">
+      <li><a href="https://www.opencompute.org/marketplace/it-infrastructure/bunch-of-wires-bow-phy-specification-2-0/" target="_blank" rel="noopener">ODSA BoW workstream (OCP) — Bunch of Wires (BoW) PHY Specification, Version 2.0, 1 March 2023</a> <span class="src__for">C-78</span></li>
+      <li><a href="https://github.com/chipsalliance/AIB-specification/blob/master/AIB_Specification%202_0.pdf" target="_blank" rel="noopener">CHIPS Alliance — Advanced Interface Bus (AIB) Specification, Revision 2.0.3, June 2022</a> <span class="src__for">C-89</span></li>
+      <li><a href="https://github.com/chipsalliance/AIB-specification/blob/master/UCIe_AIB_Interoperability_Guide_v7.pdf" target="_blank" rel="noopener">Intel — UCIe and AIB Interoperability Guide, v7, August 2022</a> <span class="src__for">C-97</span></li>
+      </ul>
+      <p class="sources__note">Rows marked with a claim id are tracked in <a href="../../docs/claims.md">the claim ledger</a>, which records what each source can and cannot establish.</p>
+    </section>
+    <!-- sources:end -->
+  <!-- pager:start -->
+  <nav class="pager" aria-label="Previous and next topic">
+    <a class="prev" href="../../topics/interfaces/ucie.html"><span class="dir">Previous</span><span>UCIe 3.0 Signal Integrity: 64 GT/s Chiplet Links vs PCIe</span></a>
+    <a class="next" href="../../topics/interfaces/usb-3x.html"><span class="dir">Next</span><span>USB 3.1 and 3.2 Signal Integrity: SSC and Compliance</span></a>
+  </nav>
+  <!-- pager:end -->
+</main>
+
+<footer class="site-foot">
+  <span>SIPI &#8212; signal and power integrity, visualised.</span>
+  <nav class="site-foot__nav" aria-label="Site, footer">
+    <a href="../../start.html">Start</a>
+    <a href="../../labs.html">Labs</a>
+    <a href="../../calculators.html">Calculators</a>
+    <a href="../../reference.html">Reference</a>
+    <a href="../../interview.html">Interview guide</a>
+    <a href="../../colophon.html">About &amp; AI disclosure</a>
+    <a href="../../model-contract.html">Model assumptions</a>
+    <a href="../../docs/claims.md">Claim ledger (Markdown)</a>
+  </nav>
+  <span>Created and directed by <a href="https://www.linkedin.com/in/geetansh-arora-a645714a/" target="_blank" rel="author noopener">Geetansh Arora</a>. Text <a href="../../LICENSE-CONTENT">CC BY 4.0</a>, code <a href="../../LICENSE-CODE">MIT</a>.</span>
+</footer>
+
+<script src="../../js/site.js?v=61b8ff31" defer></script>
+<script src="../../js/viz-kit.js?v=80b25b0d" defer></script>
+<script src="../../js/models/d2d-model.js?v=de313d6c" defer></script>
+<script src="../../js/viz/d2d-compare.js?v=be52b1d0" defer></script>
+<script src="../../js/viz-loader.js?v=3395e118" defer></script>
+<script src="../../js/search.js?v=dcc1e06b" defer></script>
+</body>
+</html>

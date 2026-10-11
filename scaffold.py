@@ -2411,6 +2411,23 @@ def cmd_stats():
             lambda m: f"{m.group(1)}{st['words']}{m.group(2)}{st['median']}{m.group(3)}",
             text,
         )
+        # The status table's counts, from the same numbers readme_problems checks.
+        def put(pattern, value):
+            nonlocal new
+            if value is not None:
+                new = re.sub(pattern, lambda m: m.group(1) + str(value) + m.group(2), new, count=1)
+        put(r"(\| Topic pages \| \*\*)\d+(\*\*)", st["pages"])
+        put(r"(\| Interactive panels \| \*\*)\d+(\*\*)", st["panels"])
+        put(r"(\| SVG figures \| )\d+(\D)", st["svg"])
+        put(r"(\| Arithmetic claims checked \| \*\*)\d+(\*\*)", st["claims"])
+        put(r"(\| Arithmetic claims checked \| \*\*\d+\*\* across )\d+( pages)", st["claim_pages"])
+        put(r"(\| Model assertions \| \*\*)\d+(\*\*)", st["assertions"])
+        put(r"(\| Mutation coverage \| \*\*)\d+( of )", st["mutations_active"])
+        put(r"(\| Mutation coverage \| \*\*\d+ of )\d+(\*\*)", st["mutations"])
+        put(r"(\| Specification claims \| \*\*)\d+( tracked)", st["ledger"])
+        put(r"(\| Specification claims \| \*\*\d+ tracked: )\d+( verified)", st["ledger_verified"])
+        put(r"(\| Specification claims \| \*\*\d+ tracked: \d+ verified, )\d+( scoped)", st["ledger_scoped"])
+        put(r"(\| Specification claims \| \*\*\d+ tracked: \d+ verified, \d+ scoped, )\d+( awaiting)", st["ledger_awaiting"])
         if new != text:
             readme.write_text(new, encoding="utf-8")
             print("  README.md    updated")

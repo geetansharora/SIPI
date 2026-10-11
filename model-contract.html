@@ -47,10 +47,10 @@
   <div class="page-head">
     <p class="crumb"><a href="index.html">SIPI</a> / model contracts</p>
     <h1>Interactive model assumptions and evidence</h1>
-    <p class="byline"><span>Generated from <code>docs/model-types.json</code></span><span>48 panels</span><span>fidelity: 18 analytical, 13 exact, 7 illustrative, 10 numerical · evidence: 6 computed, 37 independent, 5 plausible</span></p>
+    <p class="byline"><span>Generated from <code>docs/model-types.json</code></span><span>49 panels</span><span>fidelity: 18 analytical, 14 exact, 7 illustrative, 10 numerical · evidence: 6 computed, 38 independent, 5 plausible</span></p>
     <p class="answer">
       Each interactive panel uses a model with a defined scope. This page publishes the
-      contract for all 48 panels: the
+      contract for all 49 panels: the
       topology, the reference planes, the equations, the units, the range over which it is
       valid, how it is computed, and the evidence available for its behavior.
     </p>
@@ -69,7 +69,7 @@
       The fourth level is listed for reference and is currently unused. These model labels do not
       claim validation against a published specification. Where a page states a
       specification claim, it is recorded in the
-      <a href="docs/claims.md">claim ledger</a> with its status. Of its 87 claims, 58 have been read against the source they cite, 29 have been narrowed to what their source supports, and none still awaits a source. None of the verified ones rests on the normative text of a standard; they rest on vendor documents, public announcements and measured data, and the source checks were made by an AI model, not by a person.
+      <a href="docs/claims.md">claim ledger</a> with its status. Of its 109 claims, 59 have been read against the source they cite, 50 have been narrowed to what their source supports, and none still awaits a source. None of the verified ones rests on the normative text of a standard; they rest on vendor documents, public announcements and measured data, and the source checks were made by an AI model, not by a person.
     </p>
     <p>
       <em>Kind</em> and <em>evidence</em> answer different questions. A deliberately
@@ -520,6 +520,25 @@
       <dt>Numerics</dt><dd>Closed form superposition over the coupled length.</dd>
       <dt>Known limitations</dt><dd>Weak coupling, ratios &lt;= 0.30. One aggressor, not a bus.</dd>
       <dt>Evidence</dt><dd>check-models.js — Crosstalk (FEXT cancels when the ratios are equal; NEXT saturates past tr/2tpd).</dd>
+    </dl>
+  </section>
+  <section class="contract" id="d2dCompare">
+    <div class="contract__head">
+      <h2>d2dCompare</h2>
+      <span class="model-tag model-tag--exact">exact model</span>
+      <span class="ev ev--independent">independent</span>
+      <span class="contract__ver">v1.0 &#183; reviewed 2026-10-11</span>
+    </div>
+    <p class="contract__purpose">Compare the bandwidth that published UCIe and BoW layouts put through each millimetre of die edge, and through each square millimetre of bumps once the bump pitch is taken out.</p>
+    <dl class="contract__body">
+      <dt>Topology</dt><dd>No channel: arithmetic on four published layouts, the UCIe-S and UCIe-A modules (C-76) and BoW's example link on laminate and on an interposer (C-87).</dd>
+      <dt>Reference planes</dt><dd>Die edge and bump field, both directions counted.</dd>
+      <dt>Equations</dt><dd><ul class="tight"><li><code>edge density = data wires * wire rate / 8 / edge width</code></li><li><code>UCIe-S at 48 and 64 GT/s: the consortium table (C-68)</code></li><li><code>bump density = data wires / 8 / (edge * depth), per Gb/s of wire rate</code></li><li><code>at a common pitch: bump density * (own pitch / common pitch)^2</code></li></ul></dd>
+      <dt>Units</dt><dd>Gb/s per wire, GB/s/mm, GB/s/mm2 per Gb/s, um</dd>
+      <dt>Validity</dt><dd>Exact arithmetic on the published dimensions. Each layout is one example, not the only layout the standard allows; BoW does not specify bump patterns.</dd>
+      <dt>Numerics</dt><dd>Direct evaluation at the nine wire rates the standards define.</dd>
+      <dt>Known limitations</dt><dd>AIB publishes no comparable layout and is not drawn. Bump density counts the whole rectangle a layout occupies, power and ground bumps included. The pitch scaling assumes the same bump arrangement at the new pitch.</dd>
+      <dt>Evidence</dt><dd>check-models.js suite Chiplet layouts: the BoW example's own 2.0 Tb/s each way, the UCIe modules reproducing the consortium's shoreline table, bandwidth proportional to wire rate at fixed geometry, the inverse-square pitch law, undefined rates reported as undefined, and malformed inputs refused. check-numbers.py recomputes every figure the prose states.</dd>
     </dl>
   </section>
   <section class="contract" id="ddr5">

@@ -163,6 +163,18 @@
       ]
     },
     {
+      "url": "topics/interfaces/chiplet-interconnects.html",
+      "panels": [
+        "d2dCompare"
+      ],
+      "presets": [
+        "area40",
+        "edge16",
+        "fast",
+        "organic"
+      ]
+    },
+    {
       "url": "topics/interfaces/ddr5.html",
       "panels": [
         "ddr5",
@@ -527,8 +539,8 @@
     }
   ],
   "totals": {
-    "pages": 45,
-    "panels": 49,
-    "presets": 173
+    "pages": 46,
+    "panels": 50,
+    "presets": 177
   }
 }
