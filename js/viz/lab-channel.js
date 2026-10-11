@@ -710,6 +710,7 @@
   const eyeStep = (need) => EYE_STEPS.find((v) => v >= need) || Math.ceil(need * 2) / 2;
 
   NS.viz.labChannel = function (root) {
+    const axes = K.axisMemo(root);   // sticky ranges: inputs move the waveform, not the axis
     const $ = (s) => root.querySelector(s);
     let frequencyIndex=0, frequencyInspector=null;
     const cv = {};
@@ -918,11 +919,11 @@
       const s = K.canvas(cv.delay, 210);
       const gds = M.sweep.map((d) => d.gd * 1e12);
       const lo = Math.min.apply(null, gds), hi = Math.max.apply(null, gds);
-      const pad = Math.max(2, (hi - lo) * 0.2);
+      const gr = K.stickyAxis(axes, 'gd', lo, hi, { zero: false, head: 0.2, minSpan: 4 });
       const P = K.plot(s, T, {
         pad: { l: 56, r: 16, t: 16, b: 30 },
         x: { min: 0.1, max: 3.2 * M.fNyq / 1e9, count: 4, fmt: (v) => v.toFixed(0), title: 'GHz' },
-        y: { min: lo - pad, max: hi + pad, count: 4, fmt: (v) => v.toFixed(0), title: 'ps' }
+        y: { min: gr.min, max: gr.max, count: 4, fmt: (v) => v.toFixed(0), title: 'ps' }
       }).grid();
       P.trace(M.sweep.map((d) => [d.f / 1e9, d.gd * 1e12]), T.signal, { width: 2.2 });
       P.hline(M.tdTotal * 1e12, T.muted, [4, 4], 'flat-line delay');
@@ -941,7 +942,7 @@
         pad: {l: 60, r: 18, t: 18, b: 35},
         x: {min: data.offset * 1e9, max: (data.offset + (data.count - 1) * data.dt) * 1e9,
           count: 4, fmt: value => value.toFixed(2), title: impulseAbsolute ? 'ns from input reference' : 'ns after removed delay'},
-        y: {min: data.min, max: data.max, count: 4, fmt: value => value.toFixed(3), title: 'weight (V/V)'}
+        y: Object.assign({}, K.stickyAxis(axes, 'impulse', data.min, data.max, { head: 0 }), {count: 4, fmt: value => value.toFixed(3), title: 'weight (V/V)'})
       }).grid();
       P.trace(i => [(data.offset + i * data.dt) * 1e9, data.raw[i]], T.muted,
         {n: data.count, width: 1.4, dash: [4, 3]});
@@ -979,7 +980,7 @@
       const P = K.plot(s, T, {
         pad: { l: 52, r: 16, t: 16, b: 30 },
         x: { min: -3.6, max: 10.6, ticks: [-2, 0, 2, 4, 6, 8, 10], fmt: (v) => v.toFixed(0), title: 'UI from cursor' },
-        y: { min: low - margin, max: high + margin, count: 4, fmt: (v) => (v * 1000).toFixed(0), title: 'mV' }
+        y: Object.assign({}, K.stickyAxis(axes, 'pulse', low - margin, high + margin, { head: 0 }), { count: 4, fmt: (v) => (v * 1000).toFixed(0), title: 'mV' })
       }).grid();
       const ctx = s.ctx;
       taps.forEach(([k, v]) => {

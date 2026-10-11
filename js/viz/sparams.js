@@ -36,6 +36,7 @@
   }
 
   NS.viz.sparams = function (root) {
+    const axes = K.axisMemo(root);   // sticky ranges: inputs move the waveform, not the axis
     const $ = (s) => root.querySelector(s);
     const cv = $('[data-cv="s21"]');
 
@@ -67,7 +68,7 @@
         pts.push([f, -tot]); smooth.push([f, -c]);
         if (tot > worst) worst = tot;
       }
-      const floor = Math.min(-60, -Math.min(worst, 70) * 1.05);
+      const floor = K.stickyAxis(axes, 'db', Math.min(-57, -Math.min(worst, 70)), 2, { head: 0.05 }).min;
       const P = K.plot(s, T, {
         pad: { l: 58, r: 76, t: 18, b: 32 },
         x: { min: F_LO, max: F_HI, log: true, fmt: (v) => v < 1 ? v.toFixed(1) : v.toFixed(0), title: 'GHz' },

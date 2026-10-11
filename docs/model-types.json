@@ -1046,5 +1046,52 @@
     "version": "1.0",
     "reviewed": "2026-10-02",
     "reviewer": "Geetansh Arora"
+  },
+  "ucie": {
+    "kind": "exact",
+    "evidence": "independent",
+    "purpose": "Show how much die edge a die-to-die bandwidth needs on a standard or an advanced package, at each UCIe data rate, and the power it burns.",
+    "topology": "No channel: arithmetic on the UCIe Consortium's published key metrics for UCIe-S (110 um reference pitch) and UCIe-A (45 um).",
+    "planes": "Die edge, in the consortium's shoreline terms.",
+    "equations": [
+      "edge = bandwidth / shoreline",
+      "shoreline(r) = shoreline(32 GT/s) * r / 32 for r <= 32 GT/s; table values at 48 and 64",
+      "power = bandwidth * 8 * energy per bit",
+      "t_round = 2 * reach * 6.7 ps/mm"
+    ],
+    "units": "TB/s, GB/s/mm, mm, GT/s, pJ/b, W, ps",
+    "validity": "The consortium's reference pitches and its energy targets. Shoreline counts both directions together, as the module sizes in C-76 show, so the bandwidth is the total of both directions.",
+    "numerics": "Direct evaluation at the eight rates the standard defines.",
+    "limitations": "Energy figures are targets, not measurements; no figure exists for UCIe-S at 24 GT/s, so a range is shown. At 8, 12, 16 and 24 GT/s the shoreline is scaled from the 32 GT/s figure, not read from the table, and the readout says so. No crosstalk, skew, supply or channel model. The round trip assumes a dielectric constant near 4.",
+    "verified": "check-models.js suite UCIe shoreline: the linear scaling reproduces the table's own 4 GT/s figures, the advanced package needs less edge than the standard one at every rate, edge falls with rate, power is bandwidth times energy, and malformed inputs are refused. check-numbers.py recomputes every figure the prose states.",
+    "suites": [
+      "UCIe shoreline"
+    ],
+    "reviewed": "2026-10-11",
+    "version": "1.1"
+  },
+  "ucieEcho": {
+    "kind": "analytical",
+    "evidence": "independent",
+    "purpose": "Show whether a UCIe wire needs a receiver termination: when echoes settle before the mid-bit sample, and when they do not.",
+    "topology": "One lossless 50 ohm line from a resistive driver to a receiver that is open or terminated in 50 ohm.",
+    "planes": "The receiver input, sampled at the centre of each bit.",
+    "equations": [
+      "v_rx(t) = sum_k (b_k - b_k-1) * step_line(t - k*UI)",
+      "step_line from K.line1D: waves a0*(GL*GS)^m",
+      "GL = (RL-Z0)/(RL+Z0), GS = (Rs-Z0)/(Rs+Z0)",
+      "t_round = 2 * L * 6.7 ps/mm"
+    ],
+    "units": "ps, mm, ohm, fraction of settled swing",
+    "validity": "Exact for a lossless line with resistive ends and a raised edge of 30% of a unit interval.",
+    "numerics": "Superposition of closed-form step responses over a twenty-bit pattern, 80 reflection terms.",
+    "limitations": "No pad, ESD or receiver capacitance, no loss, no crosstalk, no equalization. Z0, the edge and 6.7 ps/mm are choices, not UCIe figures. A mechanism, not a sign-off margin.",
+    "verified": "check-models.js suite UCIe echo: a matched receiver and a matched driver each give no echo at any rate and length, the first arrival at an open receiver is 2*Z0/(Rs+Z0) of the source swing as the line equations give, a very short line behaves as a lumped load, and the long-run level settles to the resistive divider. The shared solver K.line1D is checked by the Line1D suite.",
+    "suites": [
+      "UCIe echo",
+      "Line1D"
+    ],
+    "reviewed": "2026-10-11",
+    "version": "1.0"
   }
 }

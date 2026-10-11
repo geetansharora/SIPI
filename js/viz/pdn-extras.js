@@ -247,6 +247,7 @@
 
   /* ═══════════ SSN ═══════════ */
   NS.viz.ssn = function (root) {
+    const axes = K.axisMemo(root);   // sticky ranges: inputs move the waveform, not the axis
     const $ = (s) => root.querySelector(s);
     const cv = $('[data-cv="ssn"]');
     const p = { nbits: 16, ibit: 13, tr: 150, lret: 50, budget: 100 };
@@ -275,7 +276,7 @@
       const P = K.plot(s, T, {
         pad: { l: 56, r: 84, t: 20, b: 32 },
         x: { min: -p.tr * 0.4, max: tMax - p.tr * 0.4, count: 5, fmt: (x) => x.toFixed(0), title: 'ps' },
-        y: { min: -0.05, max: Math.max(vpk * 1.25, p.budget / 1000 * 1.3), count: 5,
+        y: { min: -0.05, max: K.stickyAxis(axes, 'b', -0.05, Math.max(vpk, p.budget / 1000 * 1.04), { min: -0.05, head: 0.25 }).max, count: 5,
              fmt: (y) => (y * 1000).toFixed(0), title: 'mV' }
       }).grid();
       P.hline(p.budget / 1000, T.alarm, [4, 4], 'noise budget ' + p.budget + ' mV');
@@ -311,6 +312,7 @@
 
   /* ═══════════ VRM load step ═══════════ */
   NS.viz.vrmStep = function (root) {
+    const axes = K.axisMemo(root);   // sticky ranges: inputs move the waveform, not the axis
     const $ = (s) => root.querySelector(s);
     const cv = $('[data-cv="vrm"]');
     const p = { bw: 100, cbulk: 500, istep: 10, avp: 0 };   // kHz, µF, A, on/off
@@ -337,7 +339,7 @@
       const P = K.plot(s, T, {
         pad: { l: 62, r: 16, t: 20, b: 32 },
         x: { min: 0, max: tMax * 1e6, count: 5, fmt: (x) => x.toFixed(1), title: 'µs' },
-        y: { min: -Math.max(sag * 1.3, lim * 1.25), max: Math.max(0.026, offset * 1.7), count: 5,
+        y: { ...(({ min, max }) => ({ min, max }))(K.stickyAxis(axes, 'v', -Math.max(sag * 1.3, lim * 1.25), Math.max(0.026, offset * 1.7), { head: 0 })), count: 5,
              fmt: (y) => (y * 1000).toFixed(0), title: 'mV from nominal' }
       }).grid();
       P.hline(-lim, T.alarm, [4, 4], 'lower limit');
@@ -527,6 +529,7 @@
   };
 
   NS.viz.pdnJitter = function (root) {
+    const axes = K.axisMemo(root);   // sticky ranges: inputs move the waveform, not the axis
     const $ = (s) => root.querySelector(s);
     const cvA = $('[data-cv="ripple"]'), cvB = $('[data-cv="edge"]');
     const LOOP_FC = PSIJ_LOOP_FC;
@@ -555,7 +558,7 @@
       const s = K.canvas(cvA, 210);
       const period = 1e6 / p.fnoise;                      // MHz -> ps.  THIS was 1000.
       const tMax = 3 * period;
-      const amp = Math.max(p.ripple / 1000, 0.002) * 1.35;
+      const amp = K.stickyAxis(axes, 'a', -Math.max(p.ripple / 1000, 0.002), Math.max(p.ripple / 1000, 0.002), { head: 0.35 }).max;
       const P = K.plot(s, T, {
         pad: { l: 56, r: 16, t: 18, b: 30 },
         x: { min: 0, max: tMax, count: 6,

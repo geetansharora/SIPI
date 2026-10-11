@@ -38,6 +38,7 @@
   }
 
   NS.viz.isi = function (root) {
+    const axes = K.axisMemo(root);   // sticky ranges: inputs move the waveform, not the axis
     const $ = (s) => root.querySelector(s);
     const cvP = $('[data-cv="pulse"]'), cvW = $('[data-cv="pattern"]');
     const p = { loss: 14, rate: 16 };
@@ -74,8 +75,8 @@
       const P = K.plot(s, T, {
         pad: { l: 54, r: 16, t: 18, b: 30 },
         x: { min: -3.5, max: 8.5, ticks: [-3,-2,-1,0,1,2,3,4,5,6,7,8], fmt: (v) => v === 0 ? '0' : (v > 0 ? '+' + v : v), title: 'UI from cursor' },
-        y: { min: Math.min(-0.05, ...M.taps.map(t => t[1])) * 1.2, max: Math.max(0.05, ...M.taps.map(t => t[1])) * 1.15,
-             count: 5, fmt: (v) => (v * 1000).toFixed(0), title: 'mV' }
+        y: Object.assign({}, K.stickyAxis(axes, 'taps', Math.min(-0.05, ...M.taps.map(t => t[1])), Math.max(0.05, ...M.taps.map(t => t[1])), { head: 0.2 }), {
+             count: 5, fmt: (v) => (v * 1000).toFixed(0), title: 'mV' })
       }).grid();
       const ctx = s.ctx, y0 = P.Y(0);
       for (const [k, v] of M.taps) {

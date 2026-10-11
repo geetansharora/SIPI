@@ -601,6 +601,7 @@ def reference_library_problems():
 
 
 TITLE_RENAMES = {
+    "UCIe Signal Integrity: Die-to-Die Links for Chiplets": "UCIe 3.0 Signal Integrity: 64 GT/s Chiplet Links vs PCIe",
     "Units, conventions, and the numbers people mix up": "SI/PI Units and Conventions: dB, Rise Time, RMS",
     "Time, frequency, and how to move between them": "Time vs Frequency Domain: Impulse, Step, Convolution",
     "Edge rate, not clock rate": "Rise Time and Bandwidth: Edge Rate, Not Clock Rate",
@@ -1954,7 +1955,16 @@ def stamp_review():
             when = (f'<time datetime="{esc(st["reviewed"])}" '
                     f'title="Technical review by {esc(who)} on this date">{esc(shown)}</time>')
         else:
-            when = "<span>Updated Sep 2026</span>"
+            # A page not yet reviewed says when it last changed, not a review. The date
+            # comes from the topic's `updated` field, or the page keeps the one it has:
+            # never today's date, which would re-date every unchanged page each month.
+            if t.get("updated"):
+                y, mo, _d = t["updated"].split("-")
+                shown = f"{MONTHS[int(mo) - 1]} {y}"
+            else:
+                had = re.search(r"<span>Updated (\w{3} \d{4})</span>", html)
+                shown = had.group(1) if had else "Sep 2026"
+            when = f"<span>Updated {shown}</span>"
 
         blk = (REVIEW_START
                + f"<span>By {author_link(esc(author))} — Principal SI/PI Engineer</span>"
@@ -2318,7 +2328,9 @@ def site_stats():
         n = len(re.sub(r"<[^>]+>", " ", stripped).split())
         counts.append(n)
         words += n
-    claims = len(re.findall(r'^\s*\(\w+ \+ "', (ROOT / "check-numbers.py").read_text(), re.M))
+    # Counted by the number gate itself: a regex over check-numbers.py once matched
+    # only an old entry format and reported 165 while the gate checked 313.
+    claims, claim_pages = _number_gate_counts()
     gate = _run_model_gate() or ""
     m = re.search(r"ok (\d+) model assertion", gate)
     pend = re.search(r"(\d+) claim\(s\) PENDING", gate)
@@ -2341,7 +2353,7 @@ def site_stats():
     return {
         "pages": pages, "panels": panels, "svg": svg, "words": words,
         "median": int(statistics.median(counts)) if counts else 0,
-        "claims": claims,
+        "claims": claims, "claim_pages": claim_pages,
         "assertions": int(m.group(1)) if m else None,
         "pending": int(pend.group(1)) if pend else 0,
         "mutations": mut_total, "mutations_active": mut_active,
@@ -2350,6 +2362,17 @@ def site_stats():
         "deeper": sum(1 for t in flat if t["path"].exists()
                       and 'class="deeper"' in t["path"].read_text(encoding="utf-8")),
     }
+
+
+def _number_gate_counts():
+    import subprocess
+    try:
+        r = subprocess.run([sys.executable, "check-numbers.py"], cwd=ROOT,
+                           capture_output=True, text=True, timeout=120)
+        m = re.search(r"(\d+) derivable claim\(s\) checked across (\d+) page", r.stdout)
+        return (int(m.group(1)), int(m.group(2))) if m else (None, None)
+    except Exception:
+        return (None, None)
 
 
 def _run_model_gate():
@@ -2832,7 +2855,9 @@ def readme_problems():
     want("median words", r"\| Words \|.*?median ([\d,]+)", st["median"])
     want("interactive panels", r"\| Interactive panels \| \*\*(\d+)\*\*", st["panels"])
     want("SVG figures", r"\| SVG figures \| (\d+)", st["svg"])
-    want("arithmetic claims", r"\| Arithmetic claims checked \| \*\*(\d+)\*\*", st["claims"])
+    if st["claims"] is not None:
+        want("arithmetic claims", r"\| Arithmetic claims checked \| \*\*(\d+)\*\*", st["claims"])
+        want("arithmetic claim pages", r"\| Arithmetic claims checked \| \*\*\d+\*\* across (\d+) pages", st["claim_pages"])
     if st["assertions"]:
         want("model assertions", r"\| Model assertions \| \*\*(\d+)\*\*", st["assertions"])
         want("pending claims", r"\| Model assertions \|.*?\*\*(\d+) claims pending\*\*",
@@ -2867,7 +2892,9 @@ def mobile_note_problems():
     out = []
     for f in site_html():
         html = f.read_text(encoding="utf-8")
-        has_note = "mobilenote:start" in html
+        # The note itself, not just its markers: DDR5 and LPDDR6 shipped with an
+        # empty marker pair, which this used to accept as a note (11 Oct 2026).
+        has_note = bool(re.search(r"<!-- mobilenote:start -->\s*<p class=\"mobile-note\"", html))
         has_panel = bool(re.search(r'<(?:div|section)[^>]*class="[^"]*\binstrument\b', html))
         charts = len(re.findall(r"<canvas\b", html))
         should = has_panel and charts >= 2

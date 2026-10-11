@@ -79,6 +79,7 @@
   };
 
   NS.viz.adcLab = function (root) {
+    const axes = K.axisMemo(root);   // sticky ranges: inputs move the waveform, not the axis
     const A = (NS.models || {}).adcLab;
     /* The model is a separate script. Without it the panel would draw an empty
        frame and blame nothing; the loader turns a throw here into a message in
@@ -598,7 +599,8 @@
       const probe = (th) => { const v = agg.atPhase(th); if (v < gmin) gmin = v; if (v > gmax) gmax = v; };
       for (let i = 0; i < 2048; i++) probe(i / 2048);
       [agg.r, 0.5 + agg.r].forEach(probe);
-      const lim = Math.max(Math.abs(gmin), Math.abs(gmax)) * 1.18 || 1e-9;
+      const big = Math.max(Math.abs(gmin), Math.abs(gmax)) || 1e-9;
+      const lim = K.stickyAxis(axes, 'pin', -big, big, { head: 0.18 }).max;
       const [us, uname] = lim >= 1 ? [1, 'V'] : lim >= 1e-3 ? [1e3, 'mV'] : lim >= 1e-6 ? [1e6, 'µV'] : [1e9, 'nV'];
       const yl = sig(lim * us, 2);
       const P = K.plot(s, T, {
@@ -735,7 +737,8 @@
       });
       const offs = sweep.off.map((v) => v * 1e6);
       const big = offs.filter(isFinite).reduce((a, v) => Math.max(a, Math.abs(v)), 0);
-      const lim = sig(Math.max(big * 1.15, 1), 2);
+      // 0.86 x 1.15 headroom = 0.99, which rounds to the old 1 µV floor (0.87 gave 1.0005 and a 1.2 floor).
+      const lim = K.stickyAxis(axes, 'offset', -Math.max(big, 0.86), Math.max(big, 0.86), { head: 0.15 }).max;
       const Po = K.plot(s, T, { pad, x: xAxis, y: { min: -lim, max: lim } });
       Po.trace(sweep.xs.map((x, i) => [x, offs[i]]), T.reflect, { width: 1.3, id: 'offset-sweep', label: 'offset', unit: 'µV' });
       [-lim, 0, lim].forEach((v) => K.text(ctx, String(sig(v, 2)), Po.box.R + 6, Po.Y(v), T.reflect, 10, 'left'));

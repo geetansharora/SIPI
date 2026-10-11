@@ -57,8 +57,11 @@ function readouts(doc) {
     .join('|');
 }
 
-function pressedName(doc) {
-  const on = [...doc.querySelectorAll('.preset[data-preset][aria-pressed="true"]')];
+/* Scoped to the instrument the preset belongs to: a page with two instruments
+   (DDR5's bus lab and fly-by lab) legitimately has one pressed preset in each,
+   and counting across the page reported that as MULTIPLE on every DDR5 check. */
+function pressedName(scope) {
+  const on = [...scope.querySelectorAll('.preset[data-preset][aria-pressed="true"]')];
   return on.length === 1 ? on[0].dataset.preset : (on.length ? 'MULTIPLE' : 'NONE');
 }
 
@@ -95,7 +98,7 @@ async function clickAndCheck(ctx, btn, label, expectName) {
   await sleep(SETTLE);
   const after = readouts(ctx.doc);
   const newErrs = ctx.errs.slice(nErrBefore);
-  const pressed = pressedName(ctx.doc);
+  const pressed = pressedName(btn.closest('[data-viz]') || btn.closest('.instrument') || ctx.doc);
   const changed = before !== after;
   const pressedOk = pressed === expectName;
   const pass = newErrs.length === 0 && pressedOk && (changed || wasPressed);

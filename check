@@ -26,7 +26,12 @@
 set -e
 cd "$(dirname "$0")"
 echo "── structure ─────────────────────────────────────────"
-python3 scaffold.py contract && python3 scaffold.py claims && python3 scaffold.py check
+# One command per line. Under `set -e` a failure inside an && chain does not stop
+# the script unless it is the last command: when `contract` failed, `claims` and
+# `check` were skipped and the run still ended "All gates passed" (11 Oct 2026).
+python3 scaffold.py contract
+python3 scaffold.py claims
+python3 scaffold.py check
 echo ""
 echo "── models ────────────────────────────────────────────"
 node check-models.js "$@"

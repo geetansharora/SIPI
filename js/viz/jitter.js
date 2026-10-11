@@ -63,6 +63,7 @@
 
   /* ─────────── jitter distribution ─────────── */
   NS.viz.jitter = function (root) {
+    const axes = K.axisMemo(root);   // sticky ranges: inputs move the waveform, not the axis
     const $ = (s) => root.querySelector(s);
     const cv = $('[data-cv="hist"]');
     const p = { rj: 1.0, dj: 12, ui: 62.5, beri: 2 };
@@ -76,14 +77,14 @@
 
     function draw(T) {
       const ber = BERS[p.beri], q = Qinv(ber), tj = p.dj + 2 * q * p.rj;
-      const span = Math.max(tj * 0.62, p.dj + 6 * p.rj);
+      const span = K.stickyAxis(axes, 'x', 0, Math.max(tj * 0.62, p.dj + 6 * p.rj), { min: 0, head: 0 }).max;
       const s = K.canvas(cv, 260);
       const pk = norm(0, p.rj) * 0.5;
 
       const P = K.plot(s, T, {
         pad: { l: 52, r: 16, t: 20, b: 32 },
         x: { min: -span, max: span, count: 6, fmt: (v) => v.toFixed(0), title: 'ps from ideal edge' },
-        y: { min: 0, max: pk * 1.18, count: 4, fmt: () => '', title: 'density' }
+        y: { min: 0, max: K.stickyAxis(axes, 'y', 0, pk, { min: 0, head: 0.18 }).max, count: 4, fmt: () => '', title: 'density' }
       }).grid();
 
       const pdf = (t) => 0.5 * norm(t + p.dj / 2, p.rj) + 0.5 * norm(t - p.dj / 2, p.rj);

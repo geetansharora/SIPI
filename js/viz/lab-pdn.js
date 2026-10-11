@@ -382,7 +382,7 @@
     const $ = (s) => root.querySelector(s);
     /* Remembered axis ranges, one per plot (K.stickyAxis): an input change moves
        the waveform, not the axis. A preset clears them so its scene is framed afresh. */
-    const axes = {};
+    const axes = K.axisMemo(root);
     const cv = {};
     root.querySelectorAll('canvas[data-cv]').forEach((c) => (cv[c.dataset.cv] = c));
 
@@ -970,7 +970,6 @@
         Object.assign(p, q, {imax2:0,tr2:800,startNs:786.4,widthNs:1835,start2Ns:786.4,width2Ns:1835});
         root.querySelectorAll('.preset[data-preset]').forEach((o) => o.setAttribute('aria-pressed', String(o === b)));
         $('[data-out="note"]').textContent = q.note;
-        for (const k in axes) delete axes[k];
         rebuild();
       });
     });

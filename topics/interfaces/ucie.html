@@ -1,0 +1,562 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- theme:start -->
+  <meta name="theme-color" content="#F7F8FA">
+  <script>(function(){try{var t=localStorage.getItem('sipi-theme');if(t==='dark'||t==='system'){document.documentElement.setAttribute('data-theme',t);var m=document.querySelector('meta[name=theme-color]');if(m&&(t==='dark'||matchMedia('(prefers-color-scheme:dark)').matches))m.content='#0B1015';}}catch(e){}})();</script>
+  <!-- theme:end -->
+<title>UCIe 3.0 Signal Integrity: 64 GT/s Chiplet Links vs PCIe | SIPI</title>
+<meta name="description" content="UCIe 3.0 for chiplet designers: how the die-to-die standard differs from PCIe, why bandwidth is sized by die edge and bump pitch, and when a 2 mm wire needs termination at 64 GT/s.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<link rel="stylesheet" href="../../css/base.css?v=1e3ae753">
+<link rel="stylesheet" href="../../css/components.css?v=9f8a948d">
+  <!-- meta:start -->
+  <link rel="canonical" href="https://sipi.work/topics/interfaces/ucie.html">
+  <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="SIPI">
+  <meta property="og:title" content="UCIe 3.0 Signal Integrity: 64 GT/s Chiplet Links vs PCIe | SIPI">
+  <meta property="og:description" content="UCIe 3.0 for chiplet designers: how the die-to-die standard differs from PCIe, why bandwidth is sized by die edge and bump pitch, and when a 2 mm wire needs termination at 64 GT/s.">
+  <meta property="og:url" content="https://sipi.work/topics/interfaces/ucie.html">
+  <meta property="og:image" content="https://sipi.work/assets/og/interfaces/ucie.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="UCIe 3.0 Signal Integrity: 64 GT/s Chiplet Links vs PCIe: a figure from the page, on SIPI">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="UCIe 3.0 Signal Integrity: 64 GT/s Chiplet Links vs PCIe | SIPI">
+  <meta name="twitter:description" content="UCIe 3.0 for chiplet designers: how the die-to-die standard differs from PCIe, why bandwidth is sized by die edge and bump pitch, and when a 2 mm wire needs termination at 64 GT/s.">
+  <meta name="twitter:image" content="https://sipi.work/assets/og/interfaces/ucie.png">
+  <meta name="twitter:image:alt" content="UCIe 3.0 Signal Integrity: 64 GT/s Chiplet Links vs PCIe: a figure from the page, on SIPI">
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"UCIe 3.0 Signal Integrity: 64 GT/s Chiplet Links vs PCIe","description":"UCIe 3.0 for chiplet designers: how the die-to-die standard differs from PCIe, why bandwidth is sized by die edge and bump pitch, and when a 2 mm wire needs termination at 64 GT/s.","url":"https://sipi.work/topics/interfaces/ucie.html","articleSection":"Interface sign-off","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer","url":"https://www.linkedin.com/in/geetansh-arora-a645714a/","sameAs":["https://www.linkedin.com/in/geetansh-arora-a645714a/"]},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-10-11","image":"https://sipi.work/assets/og/interfaces/ucie.png"}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"SIPI","item":"https://sipi.work/"},{"@type":"ListItem","position":2,"name":"Interface sign-off","item":"https://sipi.work/#interfaces"},{"@type":"ListItem","position":3,"name":"UCIe 3.0 Signal Integrity: 64 GT/s Chiplet Links vs PCIe"}]}</script>
+  <!-- meta:end -->
+</head>
+<body>
+
+<header class="masthead">
+  <a class="wordmark" href="../../index.html">SIPI</a>
+  <button class="theme-toggle" data-act="theme" type="button">Light</button>
+  <nav aria-label="Site">
+    <a href="../../start.html">Start</a>
+    <a href="../../index.html#groundwork">Topics</a>
+    <a href="../../labs.html">Labs</a>
+    <a href="../../calculators.html">Calculators</a>
+    <a href="../../colophon.html">About</a>
+  </nav>
+</header>
+
+<main>
+  <div class="page-head">
+    <p class="crumb"><a href="../../index.html#interfaces">Interface sign-off</a> / 06</p>
+    <h1>UCIe 3.0 Signal Integrity: 64 GT/s Chiplet Links vs PCIe</h1>
+    <p class="byline">
+      <!-- review:start --><span>By <a href="https://www.linkedin.com/in/geetansh-arora-a645714a/" target="_blank" rel="author noopener">Geetansh Arora</a> — Principal SI/PI Engineer</span><time datetime="2026-10-11" title="Technical review by Geetansh Arora on this date">11 Oct 2026</time><span>11 min</span><!-- review:end -->
+    </p>
+    <!-- share:head:start --><div class="share share--head" data-share data-share-url="https://sipi.work/topics/interfaces/ucie.html" data-share-title="UCIe 3.0 Signal Integrity: 64 GT/s Chiplet Links vs PCIe"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Fucie.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Fucie.html&amp;text=UCIe%203.0%20Signal%20Integrity%3A%2064%20GT%2Fs%20Chiplet%20Links%20vs%20PCIe" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=UCIe%203.0%20Signal%20Integrity%3A%2064%20GT%2Fs%20Chiplet%20Links%20vs%20PCIe&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Fucie.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:head:end -->
+    <p class="answer">
+      UCIe is the open standard for wiring chiplets together inside one package. Its links are millimetres long,
+      so loss, which dominates a board link, barely matters. What runs out first is room along the die edge to
+      place enough bumps, followed by the energy each bit costs, and the crosstalk between hundreds of
+      single-ended wires packed side by side.
+    </p>
+  </div>
+
+  <div class="prose">
+    <h2 class="section-rule" id="at-a-glance"><span>UCIe at a glance</span></h2>
+    <h3>What is UCIe?</h3>
+    <p>
+      Universal Chiplet Interconnect Express: a die-to-die interface, published by the UCIe Consortium, that lets
+      chiplets from different designers talk inside one package. It defines the physical layer, a die-to-die
+      adapter, and the mapping of protocols such as PCIe and CXL onto it, plus a raw mode for anything else.
+    </p>
+    <h3>What is the difference between UCIe and PCIe?</h3>
+    <p>
+      The distance they cross, and so what they spend their effort on. PCIe crosses a board, tens of centimetres, with
+      a few fast differential lanes, heavy equalisation and a clock recovered from the data. UCIe crosses millimetres
+      inside a package, with many slower single-ended lanes, a clock sent alongside the data and little or no
+      equalisation, and its scarce resources are die edge and energy per bit. They are not rivals: UCIe can carry the
+      PCIe and CXL protocols over its own physical layer. <a href="#ucie-vs-pcie">More below</a>.
+    </p>
+    <h3>How fast is UCIe?</h3>
+    <p>
+      4, 8, 12, 16, 24 and 32 GT/s per lane, and UCIe 3.0 adds 48 and 64 GT/s (C-64). A lane is one single-ended,
+      one-way wire; a module groups 16 lanes on a standard package and 64 on an advanced one (C-65).
+    </p>
+    <h3>Standard, advanced and 3D: what is the difference?</h3>
+    <p>
+      The package. A standard package routes between dies through an organic substrate, with bumps 100 to 130 &#181;m
+      apart and reach up to 25 mm. An advanced package uses a silicon bridge or interposer, with bumps 25 to 55 &#181;m
+      apart and reach up to 2 mm (C-66, C-67). UCIe-3D stacks one die on another with hybrid bonding, at a pitch
+      of 10 &#181;m or less (C-66).
+    </p>
+    <h3>How much bandwidth does UCIe give?</h3>
+    <p>
+      The consortium quotes it per millimetre of die edge, counting both directions together: 28 to 224 GB/s/mm on a
+      standard package and 165 to 1317 GB/s/mm on an advanced one across 4 to 32 GT/s, and 370 and 2634 GB/s/mm at
+      64 GT/s (C-68, C-76). The panel below turns that into the edge a given bandwidth needs.
+    </p>
+    <h3>Does UCIe use PAM4?</h3>
+    <p>
+      No. Even at 48 and 64 GT/s it stays NRZ, with a forwarded clock at a quarter of the data rate (C-70). A wire this
+      short has little loss to save, so the eye margin that PAM4 would cost is not worth paying.
+    </p>
+  </div>
+
+  <!-- ───────────── the picture ───────────── -->
+  <!-- mobilenote:start -->
+  <p class="mobile-note" role="note">
+    <b>Best viewed on a laptop or desktop.</b>
+    These panels are built so you can move a slider and watch several charts
+    answer at once. A phone has no room to put them side by side.
+  </p>
+  <!-- mobilenote:end -->
+  <section class="instrument" data-viz="ucie" aria-label="Interactive plot of the die edge needed for a chosen die-to-die bandwidth, counting both directions, against UCIe data rate, for a standard and an advanced package, with the power that bandwidth burns">
+    <script type="application/json" data-contract>{"kind":"exact","evidence":"independent","purpose":"Show how much die edge a die-to-die bandwidth needs on a standard or an advanced package, at each UCIe data rate, and the power it burns.","equations":["edge = bandwidth / shoreline","shoreline(r) = shoreline(32 GT/s) * r / 32 for r <= 32 GT/s; table values at 48 and 64","power = bandwidth * 8 * energy per bit","t_round = 2 * reach * 6.7 ps/mm"],"units":"TB/s, GB/s/mm, mm, GT/s, pJ/b, W, ps","validity":"The consortium's reference pitches and its energy targets. Shoreline counts both directions together, as the module sizes in C-76 show, so the bandwidth is the total of both directions.","numerics":"Direct evaluation at the eight rates the standard defines.","limitations":"Energy figures are targets, not measurements; no figure exists for UCIe-S at 24 GT/s, so a range is shown. At 8, 12, 16 and 24 GT/s the shoreline is scaled from the 32 GT/s figure, not read from the table, and the readout says so. No crosstalk, skew, supply or channel model. The round trip assumes a dielectric constant near 4.","suites":["UCIe shoreline"],"version":"1.1","reviewed":"2026-10-11","panel":"ucie"}</script>
+    <div class="instrument__bar">
+      <span class="instrument__title">How much die edge a bandwidth costs</span>
+        <span data-evidence="independent" data-model-version="1.1" class="model-tag model-tag--exact" title="">exact</span>
+      <span class="instrument__readout" role="status" aria-live="polite" aria-label="Current values">
+        <span>shoreline <b data-out="shore">—</b></span>
+        <span>die edge <b data-out="edge">—</b></span>
+        <span>power <b data-out="power">—</b></span>
+        <span>energy <b data-out="energy">—</b></span>
+        <span>module <b data-out="module">—</b></span>
+        <span>round trip <b data-out="trip">—</b></span>
+      </span>
+    </div>
+    <div class="panels">
+      <div class="panel">
+        <span class="panel__label">Die edge needed against data rate</span>
+        <canvas data-cv="edge" role="img" aria-label="Millimetres of die edge needed for the chosen bandwidth, on a logarithmic axis, against UCIe data rate from 4 to 64 GT/s, for a standard package and an advanced package, with the chosen package and rate marked."></canvas>
+        <div class="legend"><span><i style="background:var(--signal)"></i>advanced package (UCIe-A)</span><span><i style="background:var(--reflect)"></i>standard package (UCIe-S)</span></div>
+        <p class="panel__note" data-out="detail">—</p>
+      </div>
+    </div>
+    <div class="controls">
+      <div class="ctl">
+        <div class="ctl__head"><label for="uc-pkg">Package</label></div>
+        <select id="uc-pkg"><option value="A">Advanced: silicon bridge or interposer</option><option value="S">Standard: organic substrate</option></select>
+        <span class="ctl__note">Sets the bump pitch, and so the wires per millimetre</span>
+      </div>
+      <div class="ctl">
+        <div class="ctl__head"><label for="uc-rate">Data rate</label><output id="uc-rate-out" for="uc-rate">32 GT/s</output></div>
+        <input type="range" id="uc-rate" min="0" max="7" step="1" value="5">
+        <span class="ctl__note">The eight rates the standard defines</span>
+      </div>
+      <div class="ctl">
+        <div class="ctl__head"><label for="uc-bw">Bandwidth, both directions</label><output id="uc-bw-out" for="uc-bw">4 TB/s</output></div>
+        <input type="range" id="uc-bw" min="0" max="24" step="1" value="16">
+        <span class="ctl__note">The total each way and back, as the consortium counts it: 0.25 to 16 TB/s</span>
+      </div>
+    </div>
+    <div class="presets">
+      <button class="preset" type="button" data-preset="accel" aria-pressed="true">4 TB/s total, advanced, 32 GT/s</button>
+      <button class="preset" type="button" data-preset="organic" aria-pressed="false">Same, on organic</button>
+      <button class="preset" type="button" data-preset="fast" aria-pressed="false">64 GT/s</button>
+      <button class="preset" type="button" data-preset="slowS" aria-pressed="false">1 TB/s total, standard, 16 GT/s</button>
+    </div>
+    <div class="transport"><span data-out="note">—</span></div>
+  </section>
+
+  <div class="prose">
+    <h2 class="section-rule" id="what-it-is"><span>What UCIe is</span></h2>
+    <p>
+      A large processor used to be one die. Past a certain size that stops working: the lithography field limits how
+      big one die can be, and a large die yields worse than several small ones. So the design is split into
+      chiplets, and the question becomes how they talk. Inside a package they are millimetres apart, not the tens of
+      centimetres of a board link, and that changes almost every signal integrity decision.
+    </p>
+    <figure class="figure">
+      <div class="figure__bar"><span>Three ways to put two dies side by side, or on top of each other</span></div>
+      <div class="figure__body"><svg viewBox="0 0 660 240" role="img" aria-label="Three package cross-sections. Standard: two dies on an organic substrate, connected through the substrate, with coarse bumps and up to 25 millimetres of reach. Advanced: two dies joined by a silicon bridge under their facing edges, with fine bumps and up to 2 millimetres of reach. 3D: one die bonded face to face on another with hybrid bonding, connected vertically.">
+        <text class="lbl-hi" x="110" y="18" text-anchor="middle">standard (UCIe-S)</text>
+        <rect class="plane" x="22" y="84" width="76" height="34" rx="2"/>
+        <rect class="plane" x="122" y="84" width="76" height="34" rx="2"/>
+        <rect class="dielectric" x="12" y="130" width="196" height="54"/>
+        <g class="copper"><circle cx="34" cy="124" r="4"/><circle cx="52" cy="124" r="4"/><circle cx="70" cy="124" r="4"/><circle cx="88" cy="124" r="4"/><circle cx="132" cy="124" r="4"/><circle cx="150" cy="124" r="4"/><circle cx="168" cy="124" r="4"/><circle cx="186" cy="124" r="4"/></g>
+        <rect class="copper" x="86" y="128" width="4" height="22"/><rect class="copper" x="130" y="128" width="4" height="22"/><rect class="copper" x="86" y="148" width="48" height="3"/>
+        <text class="lbl" x="110" y="174" text-anchor="middle">organic substrate</text>
+        <text class="lbl" x="110" y="204" text-anchor="middle">bumps 100&#8211;130 &#181;m</text>
+        <text class="lbl" x="110" y="220" text-anchor="middle">reach up to 25 mm</text>
+
+        <text class="lbl-hi" x="330" y="18" text-anchor="middle">advanced (UCIe-A)</text>
+        <rect class="plane" x="246" y="84" width="76" height="34" rx="2"/>
+        <rect class="plane" x="338" y="84" width="76" height="34" rx="2"/>
+        <rect class="dielectric" x="232" y="130" width="196" height="54"/>
+        <rect class="copper-2" x="296" y="126" width="68" height="14" rx="1"/>
+        <g class="copper"><circle cx="302" cy="122" r="2"/><circle cx="309" cy="122" r="2"/><circle cx="316" cy="122" r="2"/><circle cx="344" cy="122" r="2"/><circle cx="351" cy="122" r="2"/><circle cx="358" cy="122" r="2"/></g>
+        <text class="lbl" x="330" y="158" text-anchor="middle">silicon bridge</text>
+        <text class="lbl" x="330" y="174" text-anchor="middle">in the substrate</text>
+        <text class="lbl" x="330" y="204" text-anchor="middle">bumps 25&#8211;55 &#181;m</text>
+        <text class="lbl" x="330" y="220" text-anchor="middle">reach up to 2 mm</text>
+
+        <text class="lbl-hi" x="550" y="18" text-anchor="middle">3D (UCIe-3D)</text>
+        <rect class="plane" x="500" y="58" width="100" height="34" rx="2"/>
+        <rect class="plane" x="490" y="100" width="120" height="34" rx="2"/>
+        <g class="copper"><rect x="506" y="94" width="88" height="2"/></g>
+        <rect class="dielectric" x="472" y="142" width="156" height="42"/>
+        <text class="lbl" x="550" y="167" text-anchor="middle">package</text>
+        <text class="lbl" x="550" y="204" text-anchor="middle">hybrid bond &#8804; 10 &#181;m</text>
+        <text class="lbl" x="550" y="220" text-anchor="middle">vertical, no reach</text>
+      </svg></div>
+      <figcaption>The three package families UCIe defines (C-66, C-67). Bump pitch sets how many wires fit along an edge, and reach sets how long they can be. Schematic, not to scale.</figcaption>
+    </figure>
+
+    <h2 class="section-rule" id="ucie-vs-pcie"><span>UCIe vs PCIe: why a die-to-die link is not a SerDes</span></h2>
+    <p>
+      A PCIe or Ethernet SerDes is built for a long, lossy channel: a few fast differential lanes, heavy equalisation,
+      and a clock recovered from the data. Each lane is expensive in power and area, and that is acceptable because
+      there are few of them and the channel leaves no choice.
+    </p>
+    <p>
+      Inside a package the trade turns over. The channel is short enough that loss hardly matters, and what is scarce is
+      the edge of the die, because every wire needs a bump and bumps can only be packed so tightly. So UCIe goes wide
+      and simple: many single-ended lanes, each at a modest rate, with the clock sent alongside the data on its own
+      wires. A forwarded clock sees nearly the same delay and noise as the data beside it, so much of the jitter
+      cancels, and no clock-recovery loop is needed. That saves power and latency, which is the point of the whole
+      design.
+    </p>
+    <p>
+      The x16 module of a standard package at 32 GT/s carries 512 Gb/s in each direction: sixteen lanes at 32 Gb/s
+      (C-65). A PCIe 6.0 x16 link carries twice that, but over a board, with sixteen differential pairs and the
+      equalisation to cross it.
+    </p>
+
+    <h2 class="section-rule" id="shoreline"><span>Shoreline: the number that sizes the design</span></h2>
+    <p>
+      If wires per millimetre of edge are fixed by the bump pitch, bandwidth per millimetre is that count times the
+      data rate. The consortium quotes it directly: 224 GB/s/mm on a standard package and 1317 GB/s/mm on an advanced
+      one at 32 GT/s, for bump pitches of 110 and 45 &#181;m (C-68). The bumps are about 2.44 times finer, and the
+      bandwidth per millimetre is about 5.9 times higher, because a finer pitch packs more rows of bumps into the
+      same depth as well as more along the edge.
+    </p>
+    <p>
+      Those figures count both directions together. The consortium&#8217;s chair gives the size of a module at 32 GT/s
+      (C-76): a 64-lane advanced-package module is 0.389 mm wide and sends 256 GB/s each way, and 512 GB/s over
+      0.389 mm is 1316 GB/s/mm, the table&#8217;s figure. A 32-lane standard-package module is 1.143 mm wide and sends
+      128 GB/s each way, and 256 GB/s over 1.143 mm is 224 GB/s/mm. Count one direction only and both come out at half
+      the table&#8217;s figure. So for a link that has to carry a given bandwidth each way, the edge it needs is twice
+      what the one-way figure divided by the shoreline suggests.
+    </p>
+    <p>
+      The table&#8217;s own figures confirm the linear scaling with rate: divide the 32 GT/s numbers by eight and you get
+      28.0 and 164.6 GB/s/mm, against the 28 and 165 it lists for 4 GT/s. Above 32 GT/s the advanced package keeps
+      scaling, 2634 GB/s/mm at 64 GT/s, twice its 32 GT/s figure. The standard package does not: 370 GB/s/mm, only
+      1.65 times its 32 GT/s figure (C-68). The overview does not say why.
+    </p>
+    <p>
+      That is the number an architect sizes a chiplet with. Moving 4 TB/s in total across one edge, 2 TB/s each way,
+      at 32 GT/s takes about 3.04 mm of edge on an advanced package and about 17.9 mm on a standard one. A large die
+      has a few tens of millimetres per side, and memory, I/O and power all want some of it.
+    </p>
+
+    <h2 class="section-rule" id="termination"><span>When does a 2 mm wire need termination?</span></h2>
+    <p>
+      The <a href="../fundamentals/when-is-a-trace-a-transmission-line.html">critical-length</a> rule says that at these
+      edge rates even 2 mm is a transmission line. An open receiver can still work, if every echo has died away before
+      the receiver samples, in the middle of the bit. So the first test is the round trip against half a unit interval.
+    </p>
+    <div class="eq">t<sub>round trip</sub> = 2 &#183; L &#183; t<sub>pd</sub> &nbsp;&nbsp;against&nbsp;&nbsp; &#189; UI = 1 / (2 &#183; data rate)</div>
+    <p>
+      With a dielectric constant near 4, t<sub>pd</sub> is about 6.7 ps/mm, so a 2 mm advanced-package wire has a round
+      trip of about 26.8 ps. At 16 GT/s half a unit interval is 31.25 ps, and the echoes settle before the sample. At
+      32 GT/s it is 15.6 ps: the first echo now arrives after the sample, and an open receiver samples the overshoot
+      the driver&#8217;s mismatch leaves. For a 40 &#937; driver on a 50 &#937; line the first arrival overshoots by
+      2&#183;50/90 &#8722; 1 = 11.1% of the swing, and in the panel below, where earlier bits leave their own residue, the
+      worst mid-bit sample is off by about 12.5%. A driver matched to the line would leave none, but driver impedance
+      moves with process, voltage and temperature. A receiver termination removes the echo whatever the driver does,
+      which is the robust answer once rates rise, and UCIe 3.0 requires it on both package types at 48 and 64 GT/s
+      (C-70).
+    </p>
+    <p>
+      Half a unit interval is the test for a driver close to the line&#8217;s impedance, where the first echo is nearly
+      all there is. Each round trip multiplies the echo by &#915;<sub>S</sub>&#915;<sub>L</sub>, so the further the
+      driver is from 50 &#937;, the more round trips the echo needs to die away, and the more of them have to fit before
+      the sample. Set the panel to 1.5 mm at 16 GT/s with a 20 &#937; driver: the round trip is only 0.32 of a unit
+      interval, and the worst sample still misses by about 20%, because the second arrival undershoots just before the
+      sample. A 25 mm standard-package wire has a round trip of about 335 ps: 1.34 unit intervals at 4 GT/s and
+      5.36 at 16 GT/s, so its reflections have to be controlled at every rate.
+    </p>
+
+  </div>
+
+  <section class="instrument" data-viz="ucieEcho" aria-label="Interactive received waveform of a bit pattern on a UCIe wire, open or terminated at the receiver, showing whether reflections settle before the mid-bit sample">
+    <script type="application/json" data-contract>{"kind":"analytical","evidence":"independent","purpose":"Show whether a UCIe wire needs a receiver termination: when echoes settle before the mid-bit sample, and when they do not.","equations":["v_rx(t) = sum_k (b_k - b_k-1) * step_line(t - k*UI)","step_line from K.line1D: waves a0*(GL*GS)^m","GL = (RL-Z0)/(RL+Z0), GS = (Rs-Z0)/(Rs+Z0)","t_round = 2 * L * 6.7 ps/mm"],"units":"ps, mm, ohm, fraction of settled swing","validity":"Exact for a lossless line with resistive ends and a raised edge of 30% of a unit interval.","numerics":"Superposition of closed-form step responses over a twenty-bit pattern, 80 reflection terms.","limitations":"No pad, ESD or receiver capacitance, no loss, no crosstalk, no equalization. Z0, the edge and 6.7 ps/mm are choices, not UCIe figures. A mechanism, not a sign-off margin.","suites":["UCIe echo","Line1D"],"version":"1.0","reviewed":"2026-10-11","panel":"ucieEcho"}</script>
+    <div class="instrument__bar">
+      <span class="instrument__title">Does this wire need a termination?</span>
+        <span data-evidence="independent" data-model-version="1.0" class="model-tag model-tag--analytical" title="">analytical</span>
+      <span class="instrument__readout" role="status" aria-live="polite" aria-label="Current values">
+        <span>round trip <b data-out="rt">—</b></span>
+        <span>half a UI <b data-out="half">—</b></span>
+        <span>echo factor &#915;<sub>L</sub>&#915;<sub>S</sub> <b data-out="echo">—</b></span>
+        <span>worst mid-bit error <b data-out="err">—</b></span>
+      </span>
+    </div>
+    <div class="panels">
+      <div class="panel">
+        <span class="panel__label">The received bit pattern, against the levels it should settle to</span>
+        <canvas data-cv="echo" role="img" aria-label="Received voltage of a twenty-bit pattern at the end of a UCIe wire, as a fraction of the settled swing, with the ideal levels dashed, bit boundaries dotted, and each mid-bit sample marked, in red where it misses its level by more than 10 percent."></canvas>
+        <div class="legend"><span><i style="background:var(--signal)"></i>received</span><span><i class="dash" style="color:var(--muted)"></i>level each bit settles to</span><span><i style="background:var(--alarm)"></i>mid-bit sample off by more than 10%</span></div>
+      </div>
+    </div>
+    <div class="controls">
+      <div class="ctl">
+        <div class="ctl__head"><label for="ue-rate">Data rate</label><output id="ue-rate-out" for="ue-rate">32 GT/s</output></div>
+        <input type="range" id="ue-rate" min="0" max="7" step="1" value="5">
+        <span class="ctl__note">Edge taken as 30% of a unit interval</span>
+      </div>
+      <div class="ctl">
+        <div class="ctl__head"><label for="ue-len">Wire length</label><output id="ue-len-out" for="ue-len">2 mm</output></div>
+        <input type="range" id="ue-len" min="0" max="11" step="1" value="4">
+        <span class="ctl__note">Advanced packages reach 2 mm, standard 25 mm</span>
+      </div>
+      <div class="ctl">
+        <div class="ctl__head"><label for="ue-term">Receiver</label></div>
+        <select id="ue-term"><option value="open">Open, no termination</option><option value="matched">Terminated in 50 &#937;</option></select>
+        <span class="ctl__note">A 50 &#937; line, lossless</span>
+      </div>
+      <div class="ctl">
+        <div class="ctl__head"><label for="ue-rs">Driver impedance</label><output id="ue-rs-out" for="ue-rs">40 &#937;</output></div>
+        <input type="range" id="ue-rs" min="20" max="80" step="5" value="40">
+        <span class="ctl__note">50 &#937; matches the line; real drivers drift</span>
+      </div>
+    </div>
+    <div class="presets">
+      <button class="preset" type="button" data-preset="slow" aria-pressed="false">2 mm, 16 GT/s, open</button>
+      <button class="preset" type="button" data-preset="open32" aria-pressed="true">2 mm, 32 GT/s, open</button>
+      <button class="preset" type="button" data-preset="term64" aria-pressed="false">64 GT/s, terminated</button>
+      <button class="preset" type="button" data-preset="long" aria-pressed="false">25 mm, open</button>
+    </div>
+    <div class="transport"><span data-out="note">—</span></div>
+  </section>
+
+  <div class="prose">
+    <p>
+      Drag the driver to 50 &#937; with the receiver open and the echo vanishes at any rate: a matched driver absorbs
+      it, which is series termination. Move it away and the open receiver samples the overshoot. Terminate the
+      receiver and the driver stops mattering. The model is a lossless 50 &#937; line with resistive ends and no pad or
+      receiver capacitance, so it shows the mechanism, not a sign-off margin.
+    </p>
+
+    <h2 class="section-rule" id="inside-64g"><span>Inside a 48 and 64 GT/s link</span></h2>
+    <p>
+      UCIe 3.0 doubles the rate without changing what a lane is. What changes is the clock, the training and a little
+      equalisation, all published in the consortium&#8217;s overview (C-72 to C-74).
+    </p>
+    <p>
+      <b>The clock.</b> At 64 GT/s the forwarded clock runs at 16 GHz and at 48 GT/s at 12 GHz, a quarter of the data
+      rate, and quarter rate is the only option there. At 24 and 32 GT/s the table lists both a half-rate and a
+      quarter-rate clock, and from 4 to 16 GT/s only half rate. Each is listed with two phases, 90&#176; and 270&#176;
+      at half rate and 45&#176; and 135&#176; at quarter rate. Deskew, aligning each lane to the clock, is required at
+      every rate from 12 GT/s up and optional only at 4 and 8 GT/s (C-72).
+    </p>
+    <p>
+      <b>The training.</b> During link training the receiver calibrates its clock phases, then tries the transmitter&#8217;s
+      equaliser presets and keeps the one with the best receive eye margin (C-73). The six presets are three-tap FFE
+      settings, one pre-cursor and one post-cursor tap around the main one. Their taps always add up to 1 in magnitude,
+      so the high-frequency swing stays fixed while the low-frequency level drops; the drop is the de-emphasis:
+    </p>
+    <div class="table-scroll">
+      <table class="data">
+        <caption>UCIe 3.0 transmitter presets at 48 and 64 GT/s (C-73), with the de-emphasis they imply</caption>
+        <thead><tr><th>Preset</th><th>C(&#8722;1)</th><th>C(0)</th><th>C(+1)</th><th>low-frequency level</th><th>de-emphasis</th></tr></thead>
+        <tbody>
+          <tr><td>P0</td><td>0</td><td>1</td><td>0</td><td>1.00</td><td>0 dB</td></tr>
+          <tr><td>P1</td><td>&#8722;0.05</td><td>0.95</td><td>0</td><td>0.90</td><td>0.92 dB</td></tr>
+          <tr><td>P2</td><td>0</td><td>0.9</td><td>&#8722;0.1</td><td>0.80</td><td>1.94 dB</td></tr>
+          <tr><td>P3</td><td>&#8722;0.05</td><td>0.85</td><td>&#8722;0.1</td><td>0.70</td><td>3.10 dB</td></tr>
+          <tr><td>P4</td><td>0</td><td>0.8</td><td>&#8722;0.2</td><td>0.60</td><td>4.44 dB</td></tr>
+          <tr><td>P5</td><td>&#8722;0.05</td><td>0.75</td><td>&#8722;0.2</td><td>0.50</td><td>6.02 dB</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>
+      Six presets topping out at 6 dB is very little next to a board SerDes, which can equalise tens of decibels. That
+      is the short channel showing again: there is little loss to undo.
+    </p>
+    <p>
+      <b>The power.</b> The target at these rates is 0.5 to 0.75 pJ/b, of which roughly 40% goes to the transmitter,
+      40% to the receiver and 20% to common circuits (C-74): at 0.5 pJ/b, about 0.2 pJ/b each end and 0.1 shared. To
+      save some of it, UCIe 3.0 lets the transmitter, not only the receiver, adjust clock-to-data skew during runtime
+      recalibration, using the wider range it already has from link start-up (C-75).
+    </p>
+
+    <h2 class="section-rule" id="timing"><span>Where a 15.6 ps unit interval goes</span></h2>
+    <p>
+      With loss out of the way, what closes the eye of a forwarded-clock link is timing: every lane in a 64-lane module
+      has to land its bit inside the window of the clock that samples it. At 64 GT/s that window is 15.6 ps, and length
+      alone eats it fast. One millimetre of mismatch on a 6.7 ps/mm interposer is 6.7 ps, 43% of the unit interval.
+      Training removes that static part: UCIe requires deskew at every rate from 12 GT/s up (C-72).
+    </p>
+    <p>
+      What deskew cannot remove is what changes from bit to bit:
+    </p>
+    <ul class="tight">
+      <li><b>Crosstalk-induced jitter.</b> A victim&#8217;s delay depends on what its neighbours are doing, because coupled lines switching together and apart travel at different speeds. With hundreds of lanes side by side that is a pattern-dependent timing error on every lane.</li>
+      <li><b>Supply noise that is not common.</b> The forwarded clock cancels jitter that hits clock and data alike. Noise that reaches a data driver but not the clock driver, or arrives at a different time, does not cancel; see <a href="../power-integrity/pdn-induced-jitter.html">supply-induced jitter</a>.</li>
+      <li><b>Residual reflections</b>, from the panel above, as voltage noise that the slope of the edge turns into timing error.</li>
+      <li><b>The receiver&#8217;s own window</b>, the setup and hold time its sampler needs.</li>
+    </ul>
+    <p>
+      A full timing budget lays these out against the unit interval as a <a href="ddr5.html">DDR</a> timing budget
+      does. This page does not build one, because every term depends on the package and the circuits, and the
+      consortium publishes none of them. What carries over is the structure: because deskew is trained, the static
+      terms are removed before the eye is measured, and the dynamic ones have to fit in what is left at the target
+      error rate.
+    </p>
+
+    <h2 class="section-rule" id="crosstalk"><span>Crosstalk, and the bump field</span></h2>
+    <p>
+      Hundreds of single-ended wires, millimetres long and packed as tightly as the bump field and the routing layers
+      allow, couple. Each victim
+      sees every aggressor around it, and with no differential pair to cancel common noise, the
+      <a href="../fundamentals/crosstalk.html">crosstalk</a> budget is spent on spacing, shielding wires and the return
+      path. The return current flows through the ground bumps nearest the signal, so the ratio of signal bumps to
+      ground bumps, and where the grounds sit, is as much an SI decision as trace spacing. Switching many lanes
+      together also pulls current from the same local supply, which is
+      <a href="../power-integrity/ssn-ground-bounce.html">simultaneous switching noise</a> on a supply shared by many
+      drivers.
+    </p>
+
+    <h2 class="section-rule" id="power"><span>Energy per bit is the budget</span></h2>
+    <p>
+      Die-to-die power is quoted in picojoules per bit, and multiplying by the bit rate gives watts. The consortium&#8217;s
+      targets are 0.5 pJ/b on a standard package up to 16 GT/s and 0.75 at 32 GT/s and above, and 0.25 to 0.5 pJ/b on an
+      advanced package, rising with rate (C-69). Moving 1 TB/s at 0.3 pJ/b costs 2.4 W; 4 TB/s costs 9.6 W. The higher
+      rates buy edge with energy: 64 GT/s halves the edge an advanced package needs, at 0.5 pJ/b against 0.3, 1.67 times
+      the energy per bit.
+    </p>
+
+    <h2 class="section-rule" id="3d"><span>UCIe-3D: from an edge to an area</span></h2>
+    <p>
+      Stack one die on another and the interface is no longer limited to an edge; it can use the whole overlap. The
+      number of wires then grows as the inverse square of the bump pitch. The consortium gives about 4 TB/s/mm&#178; at
+      a 9 &#181;m pitch and about 300 TB/s/mm&#178; at 1 &#181;m (C-71). The square law checks it: (9/1)&#178; = 81, and 81
+      times 4 TB/s/mm&#178; is 324 TB/s/mm&#178;. With that many wires none of them has to be fast: UCIe-3D runs at up
+      to 4 GT/s (C-64), and the consortium keeps its circuits simple and its frequency low, at the dies&#8217; own logic
+      clock, because power is what matters; the near-zero distance between the dies removes most of the wire&#8217;s
+      parasitics (C-77). The target is below 0.05 pJ/b at a 9 &#181;m pitch (C-69). The SI problem becomes a
+      power-delivery and thermal one.
+    </p>
+
+    <h2 class="section-rule"><span>What it takes to sign off</span></h2>
+    <ul class="tight">
+      <li><b>Lane-to-lane skew against the forwarded clock</b>, across the whole module, because the module works only if every lane lands inside the window of the clock it shares.</li>
+      <li><b>Crosstalk from the worst-case neighbourhood</b>, with every adjacent lane switching, not a single aggressor.</li>
+      <li><b>Supply noise during simultaneous switching</b>, as timing jitter: <a href="../power-integrity/pdn-induced-jitter.html">supply-induced jitter</a> on a forwarded clock is only partly common to the data.</li>
+      <li><b>Reflections at the chosen rate</b>: whether the round trip still fits inside half a unit interval, or termination and equalisation are needed.</li>
+      <li><b>Training margins</b>: the link trains its clock-to-data alignment and, at 48 and 64 GT/s, its equaliser presets, so margin is reported after training, as it is for <a href="ddr5.html">DDR5</a>.</li>
+    </ul>
+
+    <details class="deeper">
+      <summary>Go deeper: the arithmetic, and what the figures do and do not say</summary>
+      <div class="deeper__body">
+        <p>
+          <b>Edge for a bandwidth.</b> Edge (mm) = bandwidth (GB/s) / shoreline (GB/s/mm). At or below 32 GT/s the panel
+          scales the consortium&#8217;s 32 GT/s shoreline linearly with rate, which fixed geometry implies and the table&#8217;s
+          4 GT/s figures confirm to within rounding; at 48 and 64 GT/s it uses the table&#8217;s own figures.
+        </p>
+        <p>
+          <b>Which direction?</b> The table does not say, but the module sizes do (C-76): only the total of both
+          directions reproduces the table, 224 and 1316 GB/s/mm. The panel&#8217;s bandwidth is that total, so a link
+          that must carry 2 TB/s each way is a 4 TB/s link on the panel. One loose end: the 0.389 mm advanced-package
+          module is quoted at a 55 &#181;m pitch and the table at 45 &#181;m, yet the width reproduces the table; neither
+          source explains the difference.
+        </p>
+        <p>
+          <b>Energy figures are targets</b>, not measurements of any implementation. The table gives none for a standard
+          package at 24 GT/s, so the panel shows the range between its neighbours.
+        </p>
+        <p>
+          <b>Error rates.</b> At 48 GT/s the bit error rate target is 10<sup>&#8722;15</sup> and at 64 GT/s 10<sup>&#8722;12</sup>,
+          with CRC and replay to recover errors (C-70). A raw error rate that high is acceptable only because the link
+          layer catches and resends what the physical layer gets wrong, the same bargain as
+          <a href="pcie-gen6.html">PCIe 6.0</a> makes with its FLIT and FEC.
+        </p>
+        <p>
+          <b>Equalisation, at 48 and 64 GT/s only</b>: a three-tap transmit FFE (one pre-cursor, one post-cursor), a
+          first-order passive receive CTLE, and an optional one-tap receive DFE (C-70). Compare a board SerDes, which
+          relies on equalisation at every rate.
+        </p>
+        <p>
+          <b>The round-trip estimate</b> uses 6.7 ps/mm, the site&#8217;s figure for a dielectric constant near 4; an interposer
+          oxide is close to that, and an organic build-up film somewhat lower. It sets a scale, not a sign-off number.
+        </p>
+      </div>
+    </details>
+
+    <h2 class="section-rule"><span>In the real world</span></h2>
+    <p>
+      The decision that matters most is made before any SI analysis: which package. At 32 GT/s an advanced package
+      buys about 5.9 times the bandwidth per millimetre of edge at 40% of the energy per bit, and pays for it in
+      package cost and assembly. Once that is chosen, the data rate trades edge against energy, and the SI work is to prove that a wide,
+      dense, single-ended bus keeps its skew, crosstalk and supply noise inside a unit interval that shrinks as the
+      rate rises. Read <a href="../package-board/package-families.html">package families</a> for the packaging side, and
+      <a href="../package-board/package-and-system.html">package interconnects</a> for when a package wire stops being a
+      lumped element.
+    </p>
+    <h3>Where the numbers come from</h3>
+    <p>
+      The UCIe Consortium&#8217;s overview deck and its UCIe 3.0 white paper, and module sizes from a 2025 talk by the
+      consortium&#8217;s chair (ledger C-64 to C-77). The <a href="https://www.uciexpress.org/specifications" target="_blank" rel="noopener">UCIe 3.0
+      specification</a> is available from the consortium on request and has not been read for this page. Everything else is arithmetic on those figures, checked by the
+      site&#8217;s number gate.
+    </p>
+    <h3>Related</h3>
+    <ul class="tight">
+      <li><a href="../package-board/package-families.html">IC Package Types: Wirebond, Flip-Chip, FOWLP, Chiplets</a></li>
+      <li><a href="pcie-gen6.html">PCIe 6.0 Signal Integrity: PAM4, FLIT, and FEC</a></li>
+      <li><a href="../fundamentals/crosstalk.html">PCB Crosstalk: NEXT, FEXT, and Mutual Coupling</a></li>
+      <li><a href="../fundamentals/when-is-a-trace-a-transmission-line.html">When Is a Trace a Transmission Line? Critical Length</a></li>
+    </ul>
+  </div>
+
+  <!-- share:foot:start --><div class="share share--foot" data-share data-share-url="https://sipi.work/topics/interfaces/ucie.html" data-share-title="UCIe 3.0 Signal Integrity: 64 GT/s Chiplet Links vs PCIe"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Fucie.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Fucie.html&amp;text=UCIe%203.0%20Signal%20Integrity%3A%2064%20GT%2Fs%20Chiplet%20Links%20vs%20PCIe" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=UCIe%203.0%20Signal%20Integrity%3A%2064%20GT%2Fs%20Chiplet%20Links%20vs%20PCIe&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Fucie.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:foot:end -->
+
+<!-- sources:start -->
+    <section class="sources">
+      <h2 class="section-rule"><span>Sources</span></h2>
+      <ul class="sources__list">
+      <li><a href="https://www.uciexpress.org/_files/ugd/0c1418_b4744fe368c94e3e9c7eaa13ead632bf.pdf" target="_blank" rel="noopener">UCIe Consortium — overview deck, 2025, with the key metrics for UCIe 3.0</a> <span class="src__for">C-64</span></li>
+      <li><a href="https://www.uciexpress.org/_files/ugd/8dc731_746ce30fe54b4988af132f574b6e36d6.pdf" target="_blank" rel="noopener">UCIe Consortium — UCIe 3.0 white paper</a> <span class="src__for">C-70</span></li>
+      <li><a href="https://hoti.org/assets/slides/2025_08_21_day2_SessionD_UCIe_Mem.pdf" target="_blank" rel="noopener">Das Sharma, UCIe for on-package memory, Hot Interconnects (HOTI) 2025 slides</a> <span class="src__for">C-76</span></li>
+      </ul>
+      <p class="sources__note">Rows marked with a claim id are tracked in <a href="../../docs/claims.md">the claim ledger</a>, which records what each source can and cannot establish.</p>
+    </section>
+    <!-- sources:end -->
+  <!-- pager:start -->
+  <nav class="pager" aria-label="Previous and next topic">
+    <a class="prev" href="../../topics/interfaces/pcie-gen6.html"><span class="dir">Previous</span><span>PCIe 6.0 Signal Integrity: PAM4, FLIT, and FEC</span></a>
+    <a class="next" href="../../topics/interfaces/usb-3x.html"><span class="dir">Next</span><span>USB 3.1 and 3.2 Signal Integrity: SSC and Compliance</span></a>
+  </nav>
+  <!-- pager:end -->
+</main>
+
+<footer class="site-foot">
+  <span>SIPI &#8212; signal and power integrity, visualised.</span>
+  <nav class="site-foot__nav" aria-label="Site, footer">
+    <a href="../../start.html">Start</a>
+    <a href="../../labs.html">Labs</a>
+    <a href="../../calculators.html">Calculators</a>
+    <a href="../../reference.html">Reference</a>
+    <a href="../../interview.html">Interview guide</a>
+    <a href="../../colophon.html">About &amp; AI disclosure</a>
+    <a href="../../model-contract.html">Model assumptions</a>
+    <a href="../../docs/claims.md">Claim ledger (Markdown)</a>
+  </nav>
+  <span>Created and directed by <a href="https://www.linkedin.com/in/geetansh-arora-a645714a/" target="_blank" rel="author noopener">Geetansh Arora</a>. Text <a href="../../LICENSE-CONTENT">CC BY 4.0</a>, code <a href="../../LICENSE-CODE">MIT</a>.</span>
+</footer>
+
+<script src="../../js/site.js?v=61b8ff31" defer></script>
+<script src="../../js/viz-kit.js?v=80b25b0d" defer></script>
+<script src="../../js/models/ucie-model.js?v=709e1adc" defer></script>
+<script src="../../js/viz/ucie.js?v=a4572a81" defer></script>
+<script src="../../js/viz/ucie-echo.js?v=a9ea257b" defer></script>
+<script src="../../js/viz-loader.js?v=3395e118" defer></script>
+<script src="../../js/search.js?v=dcc1e06b" defer></script>
+</body>
+</html>

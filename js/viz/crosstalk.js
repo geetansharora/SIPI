@@ -41,6 +41,7 @@
   M.dEdge = dEdge;
 
   NS.viz.crosstalk = function (root) {
+    const axes = K.axisMemo(root);   // sticky ranges: inputs move the waveform, not the axis
     const $ = (s) => root.querySelector(s);
     const cv = $('[data-cv="xtalk"]');
 
@@ -100,6 +101,7 @@
       let lo = 0, hi = VSW * 1.05;
       for (const arr of [nx, fx]) for (const [, v] of arr) { if (v < lo) lo = v; if (v > hi) hi = v; }
       lo = Math.min(lo * 1.25, -0.06); hi = Math.max(hi * 1.1, VSW * 1.05);
+      { const r = K.stickyAxis(axes, 'v', lo, hi, { head: 0 }); lo = r.min; hi = r.max; }
 
       const P = K.plot(s, T, {
         pad: { l: 56, r: 96, t: 18, b: 32 },

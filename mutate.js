@@ -203,6 +203,52 @@ const MUTATIONS = [
     active: true, fast: true
   },
   {
+    id: 'ucie-packages-swapped',
+    file: 'js/models/ucie-model.js',
+    find: '      at32: 1317, high: { 48: 1975, 64: 2634 },',
+    with: '      at32: 224, high: { 48: 1975, 64: 2634 },',
+    suite: 'UCIe shoreline —',
+    expect: 'the advanced package needs less die edge than the standard one at every rate',
+    why: 'The advanced package given the standard package\'s shoreline: the panel would '
+       + 'tell an architect that a silicon bridge buys no edge at all, the opposite '
+       + 'of the reason it exists.',
+    active: true, fast: true
+  },
+  {
+    id: 'ucie-echo-always-terminated',
+    file: 'js/models/ucie-model.js',
+    find: "    const M = K.line1D({ Z0, Rs: p.rs, td, tr, open: p.term === 'open', RL: Z0, vs: 1, nWave: 80 });",
+    with: "    const M = K.line1D({ Z0, Rs: p.rs, td, tr, open: false, RL: Z0, vs: 1, nWave: 80 });",
+    suite: 'UCIe echo —',
+    expect: 'the first wave to reach an open receiver is 2*Z0/(Rs+Z0)',
+    why: 'An open receiver quietly modelled as a terminated one: every echo vanishes and '
+       + 'the panel would say no wire ever needs a termination.',
+    active: true, fast: true
+  },
+  {
+    id: 'ucie-echo-sampled-at-bit-end',
+    file: 'js/models/ucie-model.js',
+    find: '      const t = td + (k + 0.5) * ui, v = at(t) / swing;',
+    with: '      const t = td + (k + 1) * ui, v = at(t) / swing;',
+    suite: 'UCIe echo —',
+    expect: 'when the echo returns after the sample, the sample is the first arrival',
+    why: 'The receiver sampled at the end of the bit instead of its middle: the half-UI '
+       + 'rule the page teaches becomes a whole-UI rule, and echoes that land between the '
+       + 'centre and the end of a bit are counted as errors they are not.',
+    active: true, fast: true
+  },
+  {
+    id: 'ucie-advanced-energy-flat',
+    file: 'js/models/ucie-model.js',
+    find: '      pj: (r) => (r <= 12 ? [0.25, 0.25] : r <= 32 ? [0.3, 0.3] : [0.5, 0.5])',
+    with: '      pj: (r) => (r <= 12 ? [0.25, 0.25] : [0.3, 0.3])',
+    suite: 'UCIe shoreline —',
+    expect: 'every energy target is the table’s',
+    why: 'The 48 and 64 GT/s energy target dropped: the panel would say UCIe 3.0 halves the '
+       + 'edge for free, when the consortium prices it at 0.5 pJ/b against 0.3.',
+    active: true, fast: true
+  },
+  {
     id: 'il-from-the-budget',
     file: 'js/viz/lab-channel.js',
     find: '    const ilNyq = 20 * Math.log10(Math.hypot(Snyq.s21r, Snyq.s21i));',

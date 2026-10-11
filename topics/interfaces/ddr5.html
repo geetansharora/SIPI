@@ -66,6 +66,11 @@
   </div>
 
   <!-- mobilenote:start -->
+  <p class="mobile-note" role="note">
+    <b>Best viewed on a laptop or desktop.</b>
+    These panels are built so you can move a slider and watch several charts
+    answer at once. A phone has no room to put them side by side.
+  </p>
   <!-- mobilenote:end -->
   <section class="instrument lab" data-viz="ddr5" aria-label="Interactive DDR5 data bus: one or two DIMMs on a shared net, with the voltage on every section against time, the eye at the receiver after the DRAM's equaliser, a sweep of both terminations and the pass/fail map training would see">
     <script type="application/json" data-contract>{"kind":"numerical","evidence":"independent","purpose":"Show how a DDR5 data net with one or two DIMMs behaves in time: where each reflection comes from and which later bit it lands on, what the terminations trade, what the DRAM's 4-tap DFE can and cannot cancel, and what training sees.","equations":["Method of characteristics: V = (sum 2 a_i/Z_i + Vs/Rs + J_C)/(sum 1/Z_i + 1/Rs + 1/RTT + 2C/dt); each line carries V - a_i away","Capacitors by the trapezoidal companion: i = (2C/dt) v - J, J' = (2C/dt) v + i","POD swing = VDDQ RTT_eff/(Ron + RTT_eff), RTT_eff every termination in parallel","pulse p(t) = s(t) - s(t - UI); worst-case eye h0 - sum|h_k - c_k|, c_k the DFE taps on k = 1..4","DFE taps clipped to the data sheet ranges (t1 -200..+50, t2 +/-75, t3 +/-60, t4 +/-45 mV, 5 mV steps, |t2|+|t3|+|t4| < 60 mV)"],"units":"ps, V, mV, ohm, pF, mm","validity":"Lossless TEM lines at 6.7 ps/mm with whole-picosecond delays; lumped die capacitance; linear drivers and terminations; single-rank DIMMs; no crosstalk, SSN or supply noise; the driver edge is a raised cosine of 30% of a UI, held between 30 and 70 ps.","numerics":"1 ps time step over the whole tree; pulse sampled at 32 points a UI; PRBS-11 eye with 64 bits of history; training phase chosen within one UI of the pulse peak by the worst-case eye; shmoo with seeded 5 mV rms noise and 2 ps rms jitter, VrefDQ in 0.5% of VDDQ steps; termination sweep of 8 x 8 runs.","limitations":"No loss, so long mainboard routes are optimistic; no crosstalk or SSN; the controller's read equalisation is not modelled; the stressed-eye diamond is the receiver's test condition, not a channel mask; the shmoo's noise is a model choice. No ESD clamps or loss, so an open stub rings past both rails further than silicon would allow.","suites":["DDR5 page"],"version":"1.0","reviewed":"2026-10-02","panel":"ddr5"}</script>
@@ -1107,9 +1112,9 @@
 </footer>
 
 <script src="../../js/site.js?v=61b8ff31" defer></script>
-<script src="../../js/viz-kit.js?v=b73fadb3" defer></script>
+<script src="../../js/viz-kit.js?v=80b25b0d" defer></script>
 <script src="../../js/models/ddr5-model.js?v=aa4478aa" defer></script>
-<script src="../../js/viz/ddr5.js?v=c979fc9a" defer></script>
+<script src="../../js/viz/ddr5.js?v=a7ec0ec4" defer></script>
 <script src="../../js/viz/ddr5-flyby.js?v=3633a93c" defer></script>
 <script src="../../js/lab-workspace.js?v=49b1d309" defer></script>
 <script src="../../js/viz-loader.js?v=3395e118" defer></script>

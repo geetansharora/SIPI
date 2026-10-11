@@ -67,6 +67,11 @@
   </div>
 
   <!-- mobilenote:start -->
+  <p class="mobile-note" role="note">
+    <b>Best viewed on a laptop or desktop.</b>
+    These panels are built so you can move a slider and watch several charts
+    answer at once. A phone has no room to put them side by side.
+  </p>
   <!-- mobilenote:end -->
   <section class="instrument lab" data-viz="lpddr6" aria-label="Interactive comparison of three ways to carry the same memory bandwidth: faster NRZ on 16 pins, PAM4 on 16 pins, and wide NRZ on 24 pins, through one channel at LVSTL's swing, with each eye and what noise and jitter leave of it">
     <script type="application/json" data-contract>{"kind":"numerical","evidence":"independent","purpose":"Show why LPDDR6 raised bandwidth by going wider at NRZ rather than faster or to PAM4: the same raw bandwidth carried three ways through one short channel at LVSTL's swing.","equations":["raw bandwidth = 24 x LPDDR6 rate; fast rate = raw/16, PAM4 baud = raw/32, wide rate = raw/N","loss at a road's Nyquist = L5 (0.35 sqrt(f/5 GHz) + 0.65 f/5 GHz)","swing = VDDQ RTT/(Ron + RTT) = 0.5 V x 40/80 = 250 mV; PAM4 level spacing = swing/3","margin = eye - 2 Q sigma, Q = 7, vertically in mV and horizontally in ps"],"units":"mV, ps, Gb/s, GBd, dB","validity":"Linear channel; LVSTL swing with Ron = RTT = 40 ohm (model choice); one echo; crosstalk and supply noise folded into one rms figure; ideal one-tap DFE when on.","numerics":"Kit channel impulse on a 4096-point grid at 32 samples a symbol; raised-cosine edge of 0.3 UI; PRBS-11 (NRZ) and PRBS-11 pairs (PAM4) superposed over the pulse response; eye openings measured with the kit's eyeContour.","limitations":"No crosstalk modelled from neighbours, no SSN, no supply noise beyond the rms figure; the same echo on every road; equalisation is either none or an ideal one-tap DFE; the PAM4 receiver is ideal.","suites":["LPDDR6 page"],"version":"1.0","reviewed":"2026-10-02","panel":"lpddr6"}</script>
@@ -988,9 +993,9 @@
 </footer>
 
 <script src="../../js/site.js?v=61b8ff31" defer></script>
-<script src="../../js/viz-kit.js?v=b73fadb3" defer></script>
+<script src="../../js/viz-kit.js?v=80b25b0d" defer></script>
 <script src="../../js/models/lpddr6-model.js?v=61b91f9d" defer></script>
-<script src="../../js/viz/lpddr6.js?v=e7b62ee7" defer></script>
+<script src="../../js/viz/lpddr6.js?v=b71572bd" defer></script>
 <script src="../../js/viz/lpddr6-packet.js?v=71162a62" defer></script>
 <script src="../../js/lab-workspace.js?v=49b1d309" defer></script>
 <script src="../../js/viz-loader.js?v=3395e118" defer></script>

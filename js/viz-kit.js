@@ -171,18 +171,27 @@
        lo, hi     the data extremes this frame
        opts.log   decade axis; opts.decades fixes its depth below the top
        opts.min   a fixed lower bound (e.g. 0 for a current that cannot go negative)
-       opts.head  headroom above the data when a range is fitted (default 10%)       */
+       opts.head  headroom above the data when a range is fitted (default 10%)
+       opts.zero  false for data far from zero: frame the data rather than include 0
+       opts.fine  log axis rounded to 1, 2 or 5 x 10^k instead of whole decades, for a
+                  curve that spans two decades or less and would sit in a corner */
   K.stickyAxis = function (memo, key, lo, hi, opts) {
     opts = opts || {};
     const head = opts.head === undefined ? 0.1 : opts.head, shrink = opts.shrink === undefined ? 0.15 : opts.shrink;
     if (!Number.isFinite(lo) || !Number.isFinite(hi)) return memo[key] || { min: 0, max: 1 };
     if (opts.log) {
-      const top = (v) => Math.pow(10, Math.ceil(Math.log10(v) - 1e-9));
+      const step125 = (v, up) => {
+        const e = Math.pow(10, Math.floor(Math.log10(v))), ms = up ? [1, 2, 5, 10] : [10, 5, 2, 1];
+        for (const m of ms) if (up ? m * e >= v * (1 - 1e-9) : m * e <= v * (1 + 1e-9)) return +(m * e).toPrecision(12);
+        return up ? 10 * e : e;
+      };
+      const top = (v) => opts.fine ? step125(v, true) : Math.pow(10, Math.ceil(Math.log10(v) - 1e-9));
       const H = Math.max(hi, opts.floor || 1e-15);
       const fit = () => {
         const max = top(H * (1 + head));
         const min = opts.min !== undefined ? opts.min
           : opts.decades ? max / Math.pow(10, opts.decades)
+          : opts.fine ? step125(Math.max(lo, 1e-300) / (1 + head), false)
           : Math.pow(10, Math.floor(Math.log10(Math.max(lo, 1e-300) / (1 + head)) + 1e-9));
         return { min: Math.min(min, max / 10), max };
       };
@@ -199,6 +208,15 @@
       return 10 * e;
     };
     const fit = () => {
+      if (opts.zero === false) {
+        // Data far from zero (a group delay, a rail at half the supply): frame the
+        // data itself, on a round step, instead of stretching the axis to include 0.
+        const span = Math.max(hi - lo, opts.minSpan || 1e-3), step = nice(span * (1 + 2 * head) / 4);
+        // The tolerance stops 0.3 / 0.1 = 2.9999999999999996 adding an empty step below
+        // a bound that already sits on the grid; toPrecision drops the float residue.
+        const on = (n) => +(n * step).toPrecision(12);
+        return { min: on(Math.floor((lo - head * span) / step + 1e-9)), max: on(Math.ceil((hi + head * span) / step - 1e-9)) };
+      }
       let min = opts.min !== undefined ? opts.min : (lo < 0 ? -nice(-lo * (1 + head)) : 0);
       let max = hi > 0 ? nice(hi * (1 + head)) : 0;
       if (!(max > min)) max = min + (opts.minSpan || 1e-3);
@@ -207,6 +225,19 @@
     const r = memo[key];
     const keep = r && lo >= r.min && hi <= r.max && (hi - lo) >= shrink * (r.max - r.min);
     return (memo[key] = keep ? r : fit());
+  };
+
+  /* A module's remembered axis ranges for K.stickyAxis, cleared whenever one of
+     its own preset buttons is pressed, so a preset frames its scene afresh while
+     ordinary control changes move the waveform. The listener runs in the capture
+     phase, before the module's own click handler redraws. */
+  K.axisMemo = function (root) {
+    const memo = {};
+    if (root && root.addEventListener) root.addEventListener('click', (e) => {
+      const b = e.target && e.target.closest ? e.target.closest('.preset[data-preset]') : null;
+      if (b && root.contains(b)) for (const k of Object.keys(memo)) delete memo[k];
+    }, true);
+    return memo;
   };
 
   K.plot = function (surface, T, opts) {

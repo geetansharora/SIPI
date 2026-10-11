@@ -196,6 +196,7 @@
   };
 
   NS.viz.labWaves = function (root) {
+    const axes = K.axisMemo(root);   // sticky ranges: inputs move the waveform, not the axis
     const $ = (s) => root.querySelector(s);
     const cvLine = $('[data-cv="line"]'), cvCur = $('[data-cv="current"]'),
           cvProbe = $('[data-cv="probe"]'), cvLat = $('[data-cv="lattice"]'),
@@ -306,7 +307,8 @@
       }
       const vp = Math.max(0.1, (vhi - vlo) * 0.15);
       const ip = Math.max(0.002, (ihi - ilo) * 0.15);
-      return { vlo: vlo - vp, vhi: vhi + vp, ilo: ilo - ip, ihi: ihi + ip };
+      const v = K.stickyAxis(axes, 'v', vlo - vp, vhi + vp, { head: 0 }), i = K.stickyAxis(axes, 'i', ilo - ip, ihi + ip, { head: 0 });
+      return { vlo: v.min, vhi: v.max, ilo: i.min, ihi: i.max };
     }
     let R = null;
 
@@ -510,7 +512,7 @@
       const P = K.plot(s, T, {
         pad: { l: 58, r: 18, t: 20, b: 126 },
         x: { min: 0, max: TMAX / 1000, count: 6, fmt: v => v.toFixed(1) },
-        y: { min: low - pad, max: high + pad, count: 4, fmt: v => v.toFixed(1), title: 'pJ' }
+        y: Object.assign({}, K.stickyAxis(axes, 'energy', low - pad, high + pad, { head: 0 }), { count: 4, fmt: v => v.toFixed(1), title: 'pJ' })
       }).grid();
       const colours = [T.ink, T.reflect, T.signal, T.muted];
       const dashes = [[], [5, 3], [], [2, 3]];

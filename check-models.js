@@ -55,7 +55,7 @@ function loadSite() {
   };
   global.getComputedStyle = () => ({ getPropertyValue: () => '#000000' });
   global.fetch = () => new Promise(() => {});
-  const files = ['js/viz-kit.js', 'js/models/calc-models.js', 'js/models/laminates.js', 'js/models/coupling-model.js', 'js/models/tdr-model.js', 'js/models/ddr5-model.js', 'js/models/lpddr6-model.js', 'js/viz/jitter.js', 'js/viz/crosstalk.js',
+  const files = ['js/viz-kit.js', 'js/models/calc-models.js', 'js/models/laminates.js', 'js/models/coupling-model.js', 'js/models/tdr-model.js', 'js/models/ddr5-model.js', 'js/models/lpddr6-model.js', 'js/models/ucie-model.js', 'js/viz/jitter.js', 'js/viz/crosstalk.js',
                  'js/viz/spectrum.js', 'js/viz/pdn-extras.js',
                  'js/viz/lab-waves.js', 'js/viz/lab-channel.js', 'js/viz/lab-pdn.js',
                  'js/viz/cdr.js', 'js/models/adc-model.js',
@@ -4270,6 +4270,107 @@ suite('Lab C transient — against an independently written solver', () => {
   const d800 = MODELS.labPdn(Object.assign({}, P0, { tr: 800 }));
   ok('the model still reports its pre-event drift as a separate diagnostic',
      d800.status === 'ok' && d800.measurements.droop > 0);
+});
+
+suite('UCIe shoreline — the consortium table, read back and checked against itself', () => {
+  /* The literals here are the UCIe Consortium's key-metrics table (ledger C-64 to
+     C-71), written out independently of js/models/ucie-model.js, which scales its
+     32 GT/s figures with rate. The table's own 4 GT/s entries are the check on
+     that scaling. */
+  const U = MODELS.ucie, RATES = [4, 8, 12, 16, 24, 32, 48, 64];
+  ok('the model offers exactly the eight rates the table lists', JSON.stringify(U.RATES) === JSON.stringify(RATES));
+  ok('scaling 32 GT/s down to 4 reproduces the table’s own 4 GT/s shoreline (28 and 165 GB/s/mm)',
+     Math.abs(U.shoreline('S', 4) - 28) < 0.5 && Math.abs(U.shoreline('A', 4) - 165) < 1,
+     U.shoreline('S', 4).toFixed(2) + ', ' + U.shoreline('A', 4).toFixed(2));
+  ok('the 48 and 64 GT/s figures are the table’s (278, 370, 1975, 2634), not an extrapolation',
+     U.shoreline('S', 48) === 278 && U.shoreline('S', 64) === 370 && U.shoreline('A', 48) === 1975 && U.shoreline('A', 64) === 2634);
+  const at = (pkg, rate, tbps) => U({ pkg, rate, tbps: tbps || 4 }).measurements;
+  ok('the advanced package needs less die edge than the standard one at every rate',
+     RATES.every((r) => at('A', r).edgeMm < at('S', r).edgeMm));
+  ok('a faster rate never needs more edge, on either package',
+     ['S', 'A'].every((k) => RATES.every((r, i) => i === 0 || at(k, r).edgeMm < at(k, RATES[i - 1]).edgeMm)));
+  // Regression guards: these restate the model's own arithmetic (edge = bandwidth / shoreline,
+  // power = bandwidth x energy), so they catch a drift, not a wrong formula.
+  ok('regression guard: 4 TB/s at 32 GT/s is 3.04 mm advanced and 17.9 mm standard',
+     Math.abs(at('A', 32).edgeMm - 4000 / 1317) < 1e-9 && Math.abs(at('S', 32).edgeMm - 4000 / 224) < 1e-9);
+  ok('regression guard: 1 TB/s at 0.3 pJ/b is 2.4 W',
+     Math.abs(at('A', 16, 1).powerLoW - 2.4) < 1e-12 && at('A', 16, 1).energyLo === 0.3);
+  ok('a UCIe-S x16 module at 32 GT/s carries 512 Gb/s each way, as the consortium states',
+     at('S', 32).moduleGBps * 8 === 512);
+  ok('the table gives no UCIe-S energy at 24 GT/s, so the model reports the span between its neighbours',
+     at('S', 24).energyLo === 0.5 && at('S', 24).energyHi === 0.75);
+  // Regression guard: uses the model's own 6.7 ps/mm, so it checks the page's claim, not the delay.
+  ok('regression guard: a 2 mm advanced-package round trip is under half a UI at 16 GT/s and over it at 32',
+     at('A', 16).roundTripUI < 0.5 && at('A', 32).roundTripUI > 0.5,
+     at('A', 16).roundTripUI.toFixed(2) + ' and ' + at('A', 32).roundTripUI.toFixed(2) + ' UI');
+  /* Direction, from module sizes (ledger C-76) that the model never sees: an x64
+     UCIe-A module is 0.389 mm wide and an x32 UCIe-S module 1.143 mm, at 32 GT/s.
+     Only the total of both directions reproduces the shoreline the model uses. */
+  const both = (lanes, mm) => 2 * lanes * 32 / 8 / mm, oneWay = (lanes, mm) => lanes * 32 / 8 / mm;
+  ok('the shoreline counts both directions: the published module sizes reproduce it only that way',
+     Math.abs(both(64, 0.389) / U.shoreline('A', 32) - 1) < 0.005 && Math.abs(both(32, 1.143) / U.shoreline('S', 32) - 1) < 0.005
+       && Math.abs(oneWay(64, 0.389) / U.shoreline('A', 32) - 0.5) < 0.005,
+     both(64, 0.389).toFixed(1) + ' and ' + both(32, 1.143).toFixed(1) + ' GB/s/mm');
+  // The whole energy-target table (C-69), cell by cell, as the consortium prints it.
+  const PJ = { S: { 4: 0.5, 8: 0.5, 12: 0.5, 16: 0.5, 32: 0.75, 48: 0.75, 64: 0.75 },
+               A: { 4: 0.25, 8: 0.25, 12: 0.25, 16: 0.3, 24: 0.3, 32: 0.3, 48: 0.5, 64: 0.5 } };
+  ok('every energy target is the table’s, on both packages and at every rate it lists',
+     ['S', 'A'].every((k) => Object.keys(PJ[k]).every((r) => {
+       const m = at(k, +r); return m.energyLo === PJ[k][r] && m.energyHi === PJ[k][r];
+     })));
+  ok('the readout knows which shorelines are the table’s and which are scaled',
+     [4, 32, 48, 64].every((r) => at('A', r).fromTable) && [8, 12, 16, 24].every((r) => !at('A', r).fromTable));
+  ok('malformed inputs are refused, not answered',
+     [{ pkg: 'X', rate: 32, tbps: 1 }, { pkg: 'A', rate: 20, tbps: 1 }, { pkg: 'A', rate: 32, tbps: 0 }, { pkg: 'S', rate: 32, tbps: NaN }]
+       .every((q) => U(q).status === 'unsupported'));
+});
+
+suite('UCIe echo — when a wire needs a receiver termination', () => {
+  /* Analytic limits of a lossless line with resistive ends, independent of the
+     superposition in js/models/ucie-model.js: a matched end reflects nothing, the
+     first wave to reach an open end is doubled from a0 = Z0/(Rs+Z0), and a line much
+     shorter than its edge behaves as a lumped load. */
+  const E = MODELS.ucieEcho, Z0 = 50;
+  const grid = [];
+  for (const rate of [8, 32, 64]) for (const lenMm of [0.5, 2, 25]) grid.push({ rate, lenMm });
+  ok('a terminated receiver leaves no echo, at any rate and length, whatever the driver',
+     grid.every((q) => [20, 40, 80].every((rs) => E({ ...q, term: 'matched', rs }).measurements.worstSampleError < 1e-9)));
+  ok('a driver matched to the line leaves no echo at an open receiver either: series termination',
+     grid.every((q) => E({ ...q, term: 'open', rs: Z0 }).measurements.worstSampleError < 1e-9));
+  const far = E({ rate: 64, lenMm: 25, term: 'open', rs: 30 });
+  ok('the first wave to reach an open receiver is 2*Z0/(Rs+Z0) of the source swing, before any echo returns',
+     Math.abs(far.generated.samples[1][1] - 2 * Z0 / (30 + Z0)) < 1e-6,
+     far.generated.samples[1][1].toFixed(6) + ' against ' + (2 * Z0 / 80).toFixed(6));
+  /* Lattice diagram, worked here: the pattern starts low, so the first 1 is a lone step.
+     Its first wave reaches the open end at td and doubles to 2*Z0/(Rs+Z0); the echo
+     returns 2*td later. Wherever the round trip is at least 0.8 UI, the edge (0.3 UI)
+     has finished and the echo has not arrived by the mid-bit sample, so the sample
+     is exactly the first arrival, whatever the rate, length or driver. That is the
+     "after the sample" half of the half-UI rule. */
+  const late = [];
+  for (const rate of [4, 8, 16, 32, 48, 64]) for (const lenMm of [1, 2, 4, 8, 16, 25]) for (const rs of [20, 30, 40, 60, 80]) {
+    const R = E({ rate, lenMm, term: 'open', rs });
+    if (R.measurements.roundTripUI >= 0.8) late.push([R.generated.samples[1][1], 2 * Z0 / (rs + Z0), rate, lenMm, rs]);
+  }
+  const lateBad = late.filter(([v, want]) => Math.abs(v - want) > 1e-6);
+  ok('when the echo returns after the sample, the sample is the first arrival 2*Z0/(Rs+Z0), at every rate, length and driver',
+     late.length > 50 && lateBad.length === 0, late.length + ' cases' + (lateBad.length ? ', first miss ' + JSON.stringify(lateBad[0]) : ''));
+  ok('a line far shorter than its edge behaves as a lumped load and needs no termination',
+     E({ rate: 8, lenMm: 0.2, term: 'open', rs: 30 }).measurements.worstSampleError < 0.005);
+  ok('a terminated receiver settles to the resistive divider Z0/(Rs+Z0)',
+     Math.abs(E({ rate: 32, lenMm: 2, term: 'matched', rs: 30 }).measurements.settledSwing - Z0 / 80) < 1e-12);
+  // Regression guard for the figure the page quotes, not an independent validation.
+  const quoted = E({ rate: 32, lenMm: 2, term: 'open', rs: 40 }).measurements.worstSampleError;
+  ok('regression guard: 2 mm at 32 GT/s, open, 40 ohm driver gives the 12.5% the page quotes',
+     Math.abs(quoted - 0.125) < 0.003, (quoted * 100).toFixed(2) + '%');
+  const low = E({ rate: 16, lenMm: 1.5, term: 'open', rs: 20 }).measurements.worstSampleError;
+  ok('regression guard: 1.5 mm at 16 GT/s, open, 20 ohm driver misses by about 20%, as the page says',
+     Math.abs(low - 0.2) < 0.01, (low * 100).toFixed(2) + '%');
+  ok('the same wire at 16 GT/s settles before the sample',
+     E({ rate: 16, lenMm: 2, term: 'open', rs: 40 }).measurements.worstSampleError < 0.02);
+  ok('malformed echo inputs are refused',
+     [{ rate: 20, lenMm: 2, term: 'open', rs: 40 }, { rate: 32, lenMm: 0, term: 'open', rs: 40 }, { rate: 32, lenMm: 2, term: 'x', rs: 40 }]
+       .every((q) => E(q).status === 'unsupported'));
 });
 
 suite('Lab C ring-down — extremes after the plotted window', () => {

@@ -216,6 +216,23 @@
       ]
     },
     {
+      "url": "topics/interfaces/ucie.html",
+      "panels": [
+        "ucie",
+        "ucieEcho"
+      ],
+      "presets": [
+        "accel",
+        "fast",
+        "long",
+        "open32",
+        "organic",
+        "slow",
+        "slowS",
+        "term64"
+      ]
+    },
+    {
       "url": "topics/labs/adc-interference.html",
       "panels": [
         "adcLab"
@@ -510,8 +527,8 @@
     }
   ],
   "totals": {
-    "pages": 44,
-    "panels": 47,
-    "presets": 165
+    "pages": 45,
+    "panels": 49,
+    "presets": 173
   }
 }

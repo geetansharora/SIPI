@@ -46,6 +46,7 @@
   const hexRgb = (h) => { h = (h || '#000000').replace('#', ''); return [0, 2, 4].map((i) => parseInt(h.slice(i, i + 2), 16)); };
 
   NS.viz.ddr5 = function (root) {
+    const axes = K.axisMemo(root);   // sticky ranges: inputs move the waveform, not the axis
     const M = (NS.models || {}).ddr5;
     if (!M) throw new Error('js/models/ddr5-model.js must load before this panel');
     const $ = (s) => root.querySelector(s);
@@ -214,6 +215,7 @@
       let lo = Infinity, hi = -Infinity;
       for (let b = W.lead; b < W.n; b++) for (let k = -sps; k <= sps; k++) { const v = sample(b, k); if (v !== undefined) { lo = Math.min(lo, v); hi = Math.max(hi, v); } }
       lo = Math.floor((lo - 0.03) * 20) / 20; hi = Math.ceil((hi + 0.03) * 20) / 20;
+      { const r = K.stickyAxis(axes, 'eye', lo, hi, { head: 0, zero: false }); lo = r.min; hi = r.max; }
       const P = K.plot(s, T, {
         pad: { l: 50, r: 14, t: 18, b: 30 },
         x: { min: -1, max: 1, ticks: [-1, -0.5, 0, 0.5, 1], fmt: (v) => (v * ui).toFixed(0), title: 'ps from the eye’s best sampling instant' },

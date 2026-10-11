@@ -34,6 +34,7 @@
   }
 
   NS.viz.loss = function (root) {
+    const axes = K.axisMemo(root);   // sticky ranges: inputs move the waveform, not the axis
     const $ = (s) => root.querySelector(s);
     const cv = $('[data-cv="loss"]');
     // k_c is calibrated so that k_c·√f·K_rough lands on a realistic measured
@@ -55,7 +56,7 @@
       const P = K.plot(s, T, {
         pad: { l: 58, r: 92, t: 18, b: 32 },
         x: { min: F_LO, max: F_HI, log: true, fmt: (v) => v < 1 ? v.toFixed(1) : v.toFixed(0), title: 'GHz' },
-        y: { min: 0, max: Math.max(1.2, terms(p, F_HI).total * 1.1), count: 6,
+        y: { min: 0, max: K.stickyAxis(axes, 'y', 0, Math.max(1.1, terms(p, F_HI).total), { min: 0 }).max, count: 6,
              fmt: (v) => v.toFixed(1), title: 'dB/in' }
       }).grid();
 

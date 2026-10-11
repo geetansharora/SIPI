@@ -189,6 +189,7 @@
   };
 
   NS.viz.cdr = function (root) {
+    const axes = K.axisMemo(root);   // sticky ranges: inputs move the waveform, not the axis
     const $ = (s) => root.querySelector(s);
     const cv = {};
     root.querySelectorAll('canvas[data-cv]').forEach((c) => (cv[c.dataset.cv] = c));
@@ -300,9 +301,8 @@
         /* The floor came from the margin alone, so at zeta 0.15 the minimum of
            0.0890 UI fell below a 0.15 UI axis — the dip that damping exists to
            produce, drawn off the bottom. It now follows the actual minimum. */
-        y: { min: Math.min(p.margin * 0.5, M.measurements.minTolerance * 0.7),
-             max: Math.max(hi * 1.4, p.margin * 4), log: true,
-             fmt: (v) => v.toFixed(v < 1 ? 2 : 0), title: 'UI pp' }
+        y: Object.assign({}, K.stickyAxis(axes, 'tol', Math.min(p.margin * 0.5, M.measurements.minTolerance * 0.7), Math.max(hi * 1.4, p.margin * 4), { log: true, head: 0, fine: true }), { log: true,
+             fmt: (v) => v.toFixed(v < 1 ? 2 : 0), title: 'UI pp' })
       }).grid();
       /* The part of the curve the loop sets, and the part a declared ceiling
          sets, drawn differently — because only the first comes from the model. */
@@ -320,7 +320,7 @@
     function drawPhase() {
       if (!cv.phase) return;
       const xs = M.generated.phaseTime.map((t) => t * 1e9);
-      const lim = M.measurements.phaseAxisLimit;
+      const lim = K.stickyAxis(axes, 'phase', -M.measurements.phaseAxisLimit, M.measurements.phaseAxisLimit, { head: 0 }).max;
       const s = K.canvas(cv.phase, 220);
       const P = K.plot(s, T, {
         pad: { l: 56, r: 16, t: 18, b: 32 },

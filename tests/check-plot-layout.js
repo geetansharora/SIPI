@@ -107,3 +107,13 @@ console.log('Plot label layout: ' + cases + ' widths passed (synthetic font metr
     const e = 10 ** Math.floor(Math.log10(v)); return Math.abs(K.stickyAxis({}, 'x', 0, v / 1.1).max - m * e) < 1e-12; }), 'fitted bounds are round numbers');
   console.log('Sticky axes: hold, grow, shrink and round as specified.');
 }
+{
+  const m = {}, r = K.stickyAxis(m, 'gd', 480, 520, { zero: false, head: 0.2 });
+  assert(r.min > 400 && r.min <= 480 && r.max >= 520 && r.max < 600, 'zero:false frames the data, not zero: ' + JSON.stringify(r));
+  assert.deepEqual(K.stickyAxis(m, 'gd', 490, 515, { zero: false, head: 0.2 }), r, 'and still holds while the data fits');
+  const memoRoot = { addEventListener(type, fn, cap) { this.fn = fn; this.cap = cap; }, contains: () => true };
+  const memo = K.axisMemo(memoRoot); memo.a = { min: 0, max: 1 };
+  memoRoot.fn({ target: { closest: () => ({}) } });
+  assert(memoRoot.cap === true && !('a' in memo), 'a preset click clears the axis memory, in the capture phase');
+  console.log('Sticky axes: offset data framed without zero; presets clear the memory.');
+}

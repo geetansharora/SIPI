@@ -1415,6 +1415,272 @@
       "sourceCheckedOn": "2026-10-02",
       "humanReviewedBy": null,
       "humanReviewedOn": null
+    },
+    {
+      "id": "C-64",
+      "statement": "UCIe defines data rates of 4, 8, 12, 16, 24 and 32 GT/s, and UCIe 3.0 adds 48 and 64 GT/s, for both UCIe-S and UCIe-A; UCIe-3D runs up to 4 GT/s.",
+      "pages": [
+        "interfaces/ucie"
+      ],
+      "source_type": "public-rate",
+      "source": "UCIe Consortium overview deck (2025), Key Metrics with UCIe 3.0",
+      "conditions": "Planar packages; 3D separately",
+      "status": "verified",
+      "note": "Key-metrics table: 'Data Rate (GT/s) 4, 8, 12, 16, 24, 32, 48, 64', 'Up to 4' for UCIe-3D, 'Added 48G and 64G with UCIe 3.0'.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-11",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null,
+      "source_title": "UCIe Consortium — overview deck, 2025, with the key metrics for UCIe 3.0",
+      "source_url": "https://www.uciexpress.org/_files/ugd/0c1418_b4744fe368c94e3e9c7eaa13ead632bf.pdf"
+    },
+    {
+      "id": "C-65",
+      "statement": "A UCIe module (cluster) is 16 lanes wide on a standard package, 64 on an advanced package and 80 for UCIe-3D; a UCIe-S x16 at 32 GT/s carries 512 Gb/s per direction, against 1024 for PCIe 6.0 x16.",
+      "pages": [
+        "interfaces/ucie"
+      ],
+      "source_type": "public-rate",
+      "source": "UCIe Consortium overview deck (2025), Key Metrics with UCIe 3.0",
+      "conditions": "Main band; sideband excluded",
+      "status": "verified",
+      "note": "Key-metrics table, 'Width (each cluster) 16 64 80'; interface-bandwidth slide, 'UCIe-S x16 512 Gb/s/dir main @ 32G' and 'PCIe6.0 x16 1024 Gb/s/dir'.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-11",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null,
+      "source_title": "UCIe Consortium — overview deck, 2025, with the key metrics for UCIe 3.0",
+      "source_url": "https://www.uciexpress.org/_files/ugd/0c1418_b4744fe368c94e3e9c7eaa13ead632bf.pdf"
+    },
+    {
+      "id": "C-66",
+      "statement": "Bump pitch is 100-130 um for UCIe-S, 25-55 um for UCIe-A, and 10 um or less (optimized) or 10-25 um (functional) for UCIe-3D, which must support hybrid bonding.",
+      "pages": [
+        "interfaces/ucie"
+      ],
+      "source_type": "public-rate",
+      "source": "UCIe Consortium overview deck (2025), Key Metrics with UCIe 3.0",
+      "conditions": "Consortium targets",
+      "status": "verified",
+      "note": "Key-metrics table, 'Bump Pitch (um) 100 130 25 55 < 10 (optimized) > 10 25 (functional)', 'UCIe-3D must support hybrid bonding'. The table's inequality glyphs are underlined, i.e. at most, not strictly under.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-11",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null,
+      "source_title": "UCIe Consortium — overview deck, 2025, with the key metrics for UCIe 3.0",
+      "source_url": "https://www.uciexpress.org/_files/ugd/0c1418_b4744fe368c94e3e9c7eaa13ead632bf.pdf"
+    },
+    {
+      "id": "C-67",
+      "statement": "Channel reach is up to 25 mm for UCIe-S and up to 2 mm for UCIe-A; UCIe-3D is vertical.",
+      "pages": [
+        "interfaces/ucie"
+      ],
+      "source_type": "public-rate",
+      "source": "UCIe Consortium overview deck (2025), Key Metrics with UCIe 3.0",
+      "conditions": "Main band",
+      "status": "verified",
+      "note": "Key-metrics table, 'Channel Reach (mm) < 25 < 2 3D vertical'. The glyphs are underlined, i.e. at most.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-11",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null,
+      "source_title": "UCIe Consortium — overview deck, 2025, with the key metrics for UCIe 3.0",
+      "source_url": "https://www.uciexpress.org/_files/ugd/0c1418_b4744fe368c94e3e9c7eaa13ead632bf.pdf"
+    },
+    {
+      "id": "C-68",
+      "statement": "Shoreline bandwidth is 28-224 GB/s/mm for UCIe-S and 165-1317 GB/s/mm for UCIe-A across 4-32 GT/s, and 278/370 and 1975/2634 GB/s/mm at 48/64 GT/s, for 110 um (UCIe-S) and 45 um (UCIe-A) pitches.",
+      "pages": [
+        "interfaces/ucie"
+      ],
+      "source_type": "public-rate",
+      "source": "UCIe Consortium overview deck (2025), Key Metrics with UCIe 3.0",
+      "conditions": "Reference pitches as stated. Both directions together: the deck does not say so, but the module sizes in C-76 reproduce the table only that way.",
+      "status": "verified",
+      "note": "Key-metrics table, 'BW Shoreline (GB/s/mm) 28 224 278, 370 165 1317 1975, 2634', 'Numbers are for 45u (UCIe-A) and 110u (UCIe-S)'.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-11",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null,
+      "source_title": "UCIe Consortium — overview deck, 2025, with the key metrics for UCIe 3.0",
+      "source_url": "https://www.uciexpress.org/_files/ugd/0c1418_b4744fe368c94e3e9c7eaa13ead632bf.pdf"
+    },
+    {
+      "id": "C-69",
+      "statement": "Power-efficiency targets: UCIe-S 0.5 pJ/b at or below 16 GT/s and 0.75 at or above 32 GT/s; UCIe-A 0.25 at or below 12 GT/s, 0.3 from 16 to 32 GT/s and 0.5 at or above 48 GT/s; UCIe-3D under 0.05 pJ/b at 9 um.",
+      "pages": [
+        "interfaces/ucie"
+      ],
+      "source_type": "public-rate",
+      "source": "UCIe Consortium overview deck (2025), Key Metrics with UCIe 3.0",
+      "conditions": "Targets, not measurements; no UCIe-S figure at 24 GT/s",
+      "status": "verified",
+      "note": "Key-metrics table, 'Power Efficiency Target (pJ/b) 0.5 (<=16 G) 0.75 (>= 32 G) 0.25 (<=12G) 0.3 (16G 32G) 0.5 (>= 48G) <0.05 at 9 um'.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-11",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null,
+      "source_title": "UCIe Consortium — overview deck, 2025, with the key metrics for UCIe 3.0",
+      "source_url": "https://www.uciexpress.org/_files/ugd/0c1418_b4744fe368c94e3e9c7eaa13ead632bf.pdf"
+    },
+    {
+      "id": "C-70",
+      "statement": "At 48 and 64 GT/s UCIe 3.0 signals NRZ, unidirectional, with quarter-rate clocking; receiver termination is required on both UCIe-S and UCIe-A; equalization is a 3-tap TX FFE, a first-order passive RX CTLE and an optional 1-tap RX DFE; the BER is 1e-15 at 48 GT/s and 1e-12 at 64 GT/s, with CRC and replay.",
+      "pages": [
+        "interfaces/ucie"
+      ],
+      "source_type": "public-rate",
+      "source": "UCIe Consortium overview deck (2025) and UCIe 3.0 white paper",
+      "conditions": "48 and 64 GT/s only",
+      "status": "verified",
+      "note": "Deck: 'Signaling: NRZ Uni-directional', 'Clocking: Quarter rate for 48/64 GT/s', 'BER: 10-15 for 48 GT/s and 10-12 for 64 GT/s', 'Termination: RX Termination required for both UCIe-S and UCIe-A', '3-tap TX FFE (1-pre + 1-post); 1st order (passive) RX CTLE', 'Optional 1-tap RX DFE'. The 3.0 white paper repeats the BER, CRC and replay, and equalization.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-11",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null,
+      "source_title": "UCIe Consortium — UCIe 3.0 white paper",
+      "source_url": "https://www.uciexpress.org/_files/ugd/8dc731_746ce30fe54b4988af132f574b6e36d6.pdf"
+    },
+    {
+      "id": "C-71",
+      "statement": "UCIe-3D areal bandwidth density is about 4 TB/s/mm2 at a 9 um pitch and about 300 TB/s/mm2 at 1 um.",
+      "pages": [
+        "interfaces/ucie"
+      ],
+      "source_type": "public-rate",
+      "source": "UCIe Consortium overview deck (2025), Key Metrics with UCIe 3.0",
+      "conditions": "Hybrid bonding",
+      "status": "verified",
+      "note": "Key-metrics table, 'BW Density (GB/s/mm2) ... 4,000 (9 um) 300,000 (1 um)'.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-11",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null,
+      "source_title": "UCIe Consortium — overview deck, 2025, with the key metrics for UCIe 3.0",
+      "source_url": "https://www.uciexpress.org/_files/ugd/0c1418_b4744fe368c94e3e9c7eaa13ead632bf.pdf"
+    },
+    {
+      "id": "C-72",
+      "statement": "The UCIe forwarded clock runs at 16 GHz for 64 GT/s and 12 GHz for 48 GT/s (quarter rate, the only option there); at 24 and 32 GT/s the table lists both a half-rate and a quarter-rate clock, and from 4 to 16 GT/s half rate only. Half-rate clocks are listed with phases of 90 and 270 degrees, quarter-rate with 45 and 135. Deskew is required from 12 GT/s up and optional at 4 and 8 GT/s.",
+      "pages": [
+        "interfaces/ucie"
+      ],
+      "source_type": "public-rate",
+      "source": "UCIe Consortium overview deck (2025)",
+      "conditions": "Planar packages",
+      "status": "verified",
+      "note": "Deck table 'Forward Clock Frequency and Phase', every row: '64 16 45 135 Required', '48 12 45 135 Required', '32 16 90 270 Required' and '8 45 135 Required', '24 12 90 270 Required' and '6 45 135 Required', '16 8 90 270 Required', '12 6 90 270 Required', '8 4 90 270 Optional', '4 2 90 270 Optional'; and 'Quarter rate and free running clock only for 48 and 64 GT/s'. An earlier version of this row left out the 32 and 24 GT/s quarter-rate rows and wrongly said half rate below 48 GT/s.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-11",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null,
+      "source_title": "UCIe Consortium — overview deck, 2025, with the key metrics for UCIe 3.0",
+      "source_url": "https://www.uciexpress.org/_files/ugd/0c1418_b4744fe368c94e3e9c7eaa13ead632bf.pdf"
+    },
+    {
+      "id": "C-73",
+      "statement": "At 48 and 64 GT/s the transmitter offers six FFE presets, P0 to P5, with taps C(-1), C(0), C(+1) of (0, 1, 0), (-0.05, 0.95, 0), (0, 0.9, -0.1), (-0.05, 0.85, -0.1), (0, 0.8, -0.2) and (-0.05, 0.75, -0.2), each to within 0.025; training picks the preset with the best receive eye margin.",
+      "pages": [
+        "interfaces/ucie"
+      ],
+      "source_type": "public-rate",
+      "source": "UCIe Consortium overview deck (2025)",
+      "conditions": "48 and 64 GT/s",
+      "status": "verified",
+      "note": "Deck, 'Training and Equalization at 48/64 GT/s': 'TX Preset selection (of 6) is accomplished in RXDESKEW phase', 'Pick best Preset based on RX Eye Margin', and the preset table with accuracy +/- 0.025.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-11",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null,
+      "source_title": "UCIe Consortium — overview deck, 2025, with the key metrics for UCIe 3.0",
+      "source_url": "https://www.uciexpress.org/_files/ugd/0c1418_b4744fe368c94e3e9c7eaa13ead632bf.pdf"
+    },
+    {
+      "id": "C-74",
+      "statement": "At 48 and 64 GT/s the power target is 0.5 to 0.75 pJ/b, broken down as about 40% transmitter, 40% receiver and 20% common circuits.",
+      "pages": [
+        "interfaces/ucie"
+      ],
+      "source_type": "public-rate",
+      "source": "UCIe Consortium overview deck (2025)",
+      "conditions": "Targets, not measurements",
+      "status": "verified",
+      "note": "Deck: 'Power Target: 0.5 - 0.75pJ/b Break down: ~ 40% TX, 40% RX, 20% common circuits'.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-11",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null,
+      "source_title": "UCIe Consortium — overview deck, 2025, with the key metrics for UCIe 3.0",
+      "source_url": "https://www.uciexpress.org/_files/ugd/0c1418_b4744fe368c94e3e9c7eaa13ead632bf.pdf"
+    },
+    {
+      "id": "C-75",
+      "statement": "UCIe 3.0 lets the transmitter, as well as the receiver, adjust clock-to-data skew during runtime recalibration, reusing the wider range it has from link initialization, to save power.",
+      "pages": [
+        "interfaces/ucie"
+      ],
+      "source_type": "public-rate",
+      "source": "UCIe Consortium overview deck (2025)",
+      "conditions": "UCIe 3.0",
+      "status": "verified",
+      "note": "Deck, 'Runtime Recalibration Enhancement': 'Permits TX adjustment of clock to data skew during runtime recalibration of the Link (previously was only available on the Rx side)', 'Saves power because Tx has wider adjustment range already during Link Initialization flows'.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-11",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null,
+      "source_title": "UCIe Consortium — overview deck, 2025, with the key metrics for UCIe 3.0",
+      "source_url": "https://www.uciexpress.org/_files/ugd/0c1418_b4744fe368c94e3e9c7eaa13ead632bf.pdf"
+    },
+    {
+      "id": "C-76",
+      "statement": "At 32 GT/s a UCIe-A x64 module is 0.389 mm of shoreline by 1.585 mm deep (at 55 um), and a UCIe-S x32 is 1.143 mm by 1.54 mm (at 110 um); with 256 and 128 GB/s each way, only the total of both directions reproduces the key-metrics shoreline of 1317 and 224 GB/s/mm.",
+      "pages": [
+        "interfaces/ucie"
+      ],
+      "source_type": "public-rate",
+      "source": "D. Das Sharma (UCIe Consortium chair), Hot Interconnects 2025, UCIe for on-package memory",
+      "conditions": "Module sizes as quoted; the direction is derived arithmetic, not a sentence in the source. The x64 width is quoted at 55 um while the table's density is for 45 um.",
+      "status": "verified",
+      "note": "Slide 'Bandwidth Density and Power Efficiency Evaluation': 'UCIe-S: 1.143 mm (shoreline) x 1.54 mm (depth) for x32 @ 110um', 'UCIe-A: 0.389 mm x 1.585 mm for x64 @ 55 um', 'UCIe is bump-limited - so circuits fit within bump area at 32G'. Key-metrics slide: 'Width (per direction) 16 64 80', 'B/W Shoreline (GB/s/mm) 28-224 165-1317'. Arithmetic: 2 x 32 x 32/8 / 1.143 = 224.0; 2 x 64 x 32/8 / 0.389 = 1316.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-11",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null,
+      "source_title": "Das Sharma, UCIe for on-package memory, Hot Interconnects (HOTI) 2025 slides",
+      "source_url": "https://hoti.org/assets/slides/2025_08_21_day2_SessionD_UCIe_Mem.pdf"
+    },
+    {
+      "id": "C-77",
+      "statement": "UCIe-3D is designed for simple circuits and lower frequency, running at the SoC's own frequency with no die-to-die adapter; its low power comes from the near-zero interconnect distance between the dies.",
+      "pages": [
+        "interfaces/ucie"
+      ],
+      "source_type": "public-rate",
+      "source": "UCIe Consortium overview deck (2025), UCIe-3D slide",
+      "conditions": "Design intent, not a measurement",
+      "status": "verified",
+      "note": "Deck, UCIe-3D slide: 'Low power: Reduced interconnect distance (~0) between dies, electrical parasitics', 'Simple circuits and lower frequency are essential: No D2D adapter, SoC frequency, cluster-level repair', 'Number of wires increases inversely as the square of bump pitch'.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-11",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null,
+      "source_title": "UCIe Consortium — overview deck, 2025, with the key metrics for UCIe 3.0",
+      "source_url": "https://www.uciexpress.org/_files/ugd/0c1418_b4744fe368c94e3e9c7eaa13ead632bf.pdf"
     }
   ]
 }

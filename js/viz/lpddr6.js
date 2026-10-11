@@ -39,6 +39,7 @@
   }
 
   NS.viz.lpddr6 = function (root) {
+    const axes = K.axisMemo(root);   // sticky ranges: inputs move the waveform, not the axis
     const M = (NS.models || {}).lpddr6;
     if (!M) throw new Error('js/models/lpddr6-model.js must load before this panel');
     const $ = (s) => root.querySelector(s);
@@ -114,7 +115,7 @@
       const P = K.plot(s, T, {
         pad: { l: 50, r: 14, t: 18, b: 30 },
         x: { min: -100, max: tMax, ticks: ticks(0, tMax, 6), fmt: (v) => v.toFixed(0), title: 'ps from each symbol’s centre' },
-        y: { min: lo - 0.05, max: hi * 1.1, ticks: ticks(0, 1, 4), fmt: (v) => v.toFixed(2), title: 'share of a full symbol' }
+        y: Object.assign({}, K.stickyAxis(axes, 'pulse', lo - 0.05, hi, { head: 0.1 }), { ticks: ticks(0, 1, 4), fmt: (v) => v.toFixed(2), title: 'share of a full symbol' })
       }).grid();
       R.forEach((e) => {
         const dt = e.r.ui / M.SPS, pts = [];

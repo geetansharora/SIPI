@@ -251,6 +251,7 @@
   }
 
   NS.viz.impairments = function (root) {
+    const axes = K.axisMemo(root);   // sticky ranges: inputs move the waveform, not the axis
     const $ = (s) => root.querySelector(s);
     const cvE = $('[data-cv="eye"]'), cvT = $('[data-cv="tdr"]'), cvB = $('[data-cv="bars"]');
     const p = Object.assign({ rsrc: 50 }, IFACES.pcie4);
@@ -347,7 +348,8 @@
           if (v !== undefined && Math.abs(v) > amp) amp = Math.abs(v);
         }
       }
-      amp = Math.max(amp * 1.18, 0.02);
+      amp = Math.max(amp, 0.017);
+      amp = K.stickyAxis(axes, 'eye', -amp, amp, { head: 0.18 }).max;
       const tick = amp / 2;
       const P = K.plot(s, T, {
         pad: { l: 52, r: 16, t: 20, b: 30 },
