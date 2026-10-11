@@ -15,10 +15,10 @@
   const PITCHES = [10, 15, 20, 25, 30, 36, 40, 45, 55, 70, 90, 110, 130, 150];   // um
 
   const PRESETS = {
-    edge16: { view: 'edge', ri: 4, pi: 6, note: 'At 16 Gb/s per wire, the UCIe-A module carries about twice the bandwidth per millimetre of edge of BoW’s interposer example, although BoW’s bumps are finer.' },
-    area40: { view: 'area', ri: 4, pi: 6, note: 'The same layouts per square millimetre of bumps, at a common 40 µm pitch and per Gb/s of wire rate: UCIe-A and both BoW examples land within about 3% of each other. The difference in edge density came from how deep each layout goes.' },
+    edge16: { view: 'edge', ri: 4, pi: 6, note: 'At 16 Gb/s per wire, the UCIe-A module carries about twice the bandwidth per millimetre of edge of BoW’s interposer example, although BoW’s bumps are finer: the UCIe-A module is about 3.8 times deeper.' },
+    area40: { view: 'area', ri: 4, pi: 6, note: 'Per square millimetre of bumps, at a common 40 µm pitch and per Gb/s of wire rate. The UCIe sources disagree, so UCIe is a band: BoW’s one layout falls inside UCIe-A’s band, which runs from about 31% below it to 37% above.' },
     fast: { view: 'edge', ri: 8, pi: 6, note: '64 Gb/s per wire: only UCIe defines it. BoW stops at 32 Gb/s; AIB specifies no maximum, with 6.4 Gb/s typical.' },
-    organic: { view: 'area', ri: 4, pi: 12, note: 'At a common 130 µm, the UCIe-S module needs about 40% more bump area for the same bandwidth than the other three layouts. The sources do not say why.' }
+    area130: { view: 'area', ri: 4, pi: 12, note: 'At a common 130 µm, both readings of UCIe-S, from the x32 rectangle and from the consortium’s areal row, sit below BoW’s example, by about 6% to 29%.' }
   };
   const SHORT = { ucieS: 'UCIe-S', ucieA: 'UCIe-A', bowL: 'BoW laminate', bowI: 'BoW interposer' };
 
@@ -50,31 +50,39 @@
           pts.forEach(([x, y]) => K.dot(P.ctx, P.X(x), P.Y(y), col(k), T.surface, x === RATES[p.ri] ? 4 : 2.2));
         });
       } else {
-        const vals = g.keys.flatMap((k) => g.lines[k].map((q) => q[1]));
-        const yr = K.stickyAxis(axes, 'area', Math.min(...vals), Math.max(...vals), { log: true, head: 0.1 });
+        // One row per standard at the chosen common pitch: each published reading a dot, the
+        // spread between them a bar, and BoW's value as a reference line through every row.
+        const rows = [['bow', 1, 'BoW'], ['ucieS', 2, 'UCIe-S'], ['ucieA', 3, 'UCIe-A']];
+        const vals = g.keys.flatMap((k) => m.area[k].values);
+        const xr = K.stickyAxis(axes, 'area', Math.min(...vals), Math.max(...vals), { log: true, head: 0.25, fine: true });
         P = K.plot(s, T, {
-          pad: { l: 58, r: 24, t: 18, b: 32 },
-          x: { min: 10, max: 150, log: true, ticks: [10, 20, 40, 55, 110, 150], fmt: (v) => String(v), title: 'common bump pitch, µm' },
-          y: { min: yr.min, max: yr.max, log: true, fmt: (v) => String(+v.toPrecision(2)), title: 'GB/s per mm² per Gb/s of wire rate' }
+          pad: { l: 70, r: 24, t: 18, b: 32 },
+          x: { min: xr.min, max: xr.max, log: true, fmt: (v) => String(+v.toPrecision(2)), title: 'GB/s per mm² of bumps, per Gb/s of wire rate, at ' + PITCHES[p.pi] + ' µm' },
+          y: { min: 0.4, max: 3.6, ticks: [1, 2, 3], fmt: (v) => (rows.find((r) => r[1] === v) || [, , ''])[2] }
         }).grid();
-        P.vline(PITCHES[p.pi], T.muted, [2, 4]);
-        g.keys.forEach((k) => {
-          P.trace(g.lines[k], col(k), { width: 2, dash: dash(k), id: 'area-' + k, label: SHORT[k], unit: 'GB/s/mm²/(Gb/s)' });
-          const L = g.layouts[k];
-          K.dot(P.ctx, P.X(L.pitch), P.Y(D.areaDensity(k)), col(k), T.ink, 3.5);   // the layout at its own pitch
+        const ref = m.area.bowI.lo, c = P.ctx;
+        P.vline(ref, T.muted, [4, 4]);
+        rows.forEach(([k, y]) => {
+          const vs = k === 'bow' ? [m.area.bowL.lo, m.area.bowI.lo] : m.area[k].values;
+          const colr = k === 'bow' ? T.ink : col(k);
+          c.save(); c.globalAlpha = 0.35; c.strokeStyle = colr; c.lineWidth = 10; c.lineCap = 'round';
+          c.beginPath(); c.moveTo(P.X(Math.min(...vs)), P.Y(y)); c.lineTo(P.X(Math.max(...vs)), P.Y(y)); c.stroke(); c.restore();
+          vs.forEach((v) => K.dot(c, P.X(v), P.Y(y), colr, T.surface, 4));
         });
+        K.text(c, 'BoW', P.X(ref) + 4, P.Y(3.55), T.muted, 10, 'left');
       }
       P.frame();
 
       const set = (k, v) => { const e = $('[data-out="' + k + '"]'); if (e) e.textContent = v; };
       const fmtE = (v) => (v === null ? 'not defined' : Math.round(v) + ' GB/s/mm');
+      const pct = (r) => (r >= 1 ? '+' : '−') + Math.abs(100 * (r - 1)).toFixed(0) + '%';
       if (p.view === 'edge') g.keys.forEach((k) => set(k, fmtE(m.edge[k])));
-      else g.keys.forEach((k) => set(k, m.areaAtCommonPitch[k].toPrecision(3)));
+      else g.keys.forEach((k) => { const a = m.area[k]; set(k, a.lo === a.hi ? a.lo.toPrecision(3) : a.lo.toPrecision(3) + '–' + a.hi.toPrecision(3)); });
       set('unit', p.view === 'edge' ? 'per mm of edge at ' + RATES[p.ri] + ' Gb/s per wire' : 'per mm² per Gb/s at ' + PITCHES[p.pi] + ' µm');
       set('aib', 'no layout published');
       set('detail', p.view === 'edge'
-        ? 'Each curve is one published layout with its geometry fixed, so bandwidth rises in step with the wire rate. The UCIe-S curve rises more slowly above 32 GT/s, where the consortium’s own table is used. Where a standard defines no such rate, its readout says so.'
-        : 'Each line is one layout’s bump-field density moved to a common pitch, which multiplies it by (its own pitch / common pitch)². Dots mark each layout at its real pitch. At the same pitch, UCIe-A is ' + (100 * (1 / m.interposerRatio - 1)).toFixed(0) + '% above BoW’s interposer example and the UCIe-S module ' + (100 * (1 - 1 / m.organicRatio)).toFixed(0) + '% below BoW’s laminate one.');
+        ? 'Each curve is one published layout with its geometry fixed, so bandwidth rises in step with the wire rate. The UCIe-S curve rises more slowly above 32 GT/s, where the consortium’s own table is used; the deck does not say how its layout changes there. Where a standard defines no such rate, its readout says so.'
+        : 'Each dot is one published reading of bump-field density, moved to the common pitch, which multiplies it by (its own pitch / common pitch)²; the bar spans the readings. Halve the pitch and every value grows fourfold, but the spread between readings stays the same. The UCIe bars span readings that disagree: a module rectangle labelled 55 µm on one slide and 45 µm in the consortium’s table, and the table’s own areal row. BoW’s laminate and interposer examples are one layout at two pitches, so their two dots almost coincide; the dashed line marks BoW. At any pitch UCIe-A spans ' + pct(m.ucieAVsBow[0]) + ' to ' + pct(m.ucieAVsBow[1]) + ' against BoW, and UCIe-S ' + pct(m.ucieSVsBow[0]) + ' to ' + pct(m.ucieSVsBow[1]) + '.');
       $('#dc-view').value = p.view;
       $('#dc-rate').value = p.ri; $('#dc-rate-out').value = RATES[p.ri] + ' Gb/s';
       $('#dc-pitch').value = p.pi; $('#dc-pitch-out').value = PITCHES[p.pi] + ' µm';

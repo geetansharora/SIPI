@@ -1104,17 +1104,18 @@
       "edge density = data wires * wire rate / 8 / edge width",
       "UCIe-S at 48 and 64 GT/s: the consortium table (C-68)",
       "bump density = data wires / 8 / (edge * depth), per Gb/s of wire rate",
-      "at a common pitch: bump density * (own pitch / common pitch)^2"
+      "at a common pitch: bump density * (own pitch / common pitch)^2",
+      "UCIe bump density: the range over its published readings (C-76, C-100)"
     ],
     "units": "Gb/s per wire, GB/s/mm, GB/s/mm2 per Gb/s, um",
-    "validity": "Exact arithmetic on the published dimensions. Each layout is one example, not the only layout the standard allows; BoW does not specify bump patterns.",
+    "validity": "Exact arithmetic on the published dimensions. Each layout is one example, not the only layout a standard allows; BoW does not specify bump patterns, and its two examples are one layout at two pitches.",
     "numerics": "Direct evaluation at the nine wire rates the standards define.",
-    "limitations": "AIB publishes no comparable layout and is not drawn. Bump density counts the whole rectangle a layout occupies, power and ground bumps included. The pitch scaling assumes the same bump arrangement at the new pitch.",
-    "verified": "check-models.js suite Chiplet layouts: the BoW example's own 2.0 Tb/s each way, the UCIe modules reproducing the consortium's shoreline table, bandwidth proportional to wire rate at fixed geometry, the inverse-square pitch law, undefined rates reported as undefined, and malformed inputs refused. check-numbers.py recomputes every figure the prose states.",
+    "limitations": "The UCIe sources disagree on bump density: the module rectangle is labelled 55 um on one slide while the consortium's table states 45 um, and the table's areal row is about 1.3 times denser than the rectangles. The panel shows the range rather than choosing. AIB gives no comparable layout and is not drawn. Bump density counts the whole rectangle a layout occupies. The pitch scaling assumes the same bump arrangement, and the circuits still fitting, at the new pitch.",
+    "verified": "check-models.js suite Chiplet layouts: the BoW example's own 2.0 Tb/s each way, the UCIe module widths reproducing the consortium's shoreline table, bandwidth proportional to wire rate at fixed geometry, the inverse-square pitch law, the UCIe range spanning every published reading, undefined rates reported as undefined, and malformed inputs refused. check-numbers.py recomputes every figure the prose states.",
     "suites": [
       "Chiplet layouts"
     ],
     "reviewed": "2026-10-11",
-    "version": "1.0"
+    "version": "1.1"
   }
 }

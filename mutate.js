@@ -251,8 +251,8 @@ const MUTATIONS = [
   {
     id: 'd2d-bow-without-aux-fec',
     file: 'js/models/d2d-model.js',
-    find: "    bowI:  { name: 'BoW example, interposer', std: 'BoW', pkg: 'interposer', wires: 256, edge: 1.60, depth: 0.42, pitch: 40,",
-    with: "    bowI:  { name: 'BoW example, interposer', std: 'BoW', pkg: 'interposer', wires: 256, edge: 1.28, depth: 0.42, pitch: 40,",
+    find: "    bowI:  { name: 'BoW example, interposer', std: 'BoW', pkg: 'interposer', wires: 256, edge: 1.60, depth: 0.42,",
+    with: "    bowI:  { name: 'BoW example, interposer', std: 'BoW', pkg: 'interposer', wires: 256, edge: 1.28, depth: 0.42,",
     suite: 'Chiplet layouts —',
     expect: 'the BoW interposer edge counts the full slice with AUX and FEC',
     why: 'BoW measured without its optional wires while UCIe is measured with all of its lanes: '
@@ -262,12 +262,34 @@ const MUTATIONS = [
   {
     id: 'd2d-pitch-linear',
     file: 'js/models/d2d-model.js',
-    find: '      areaAt[k] = area[k] * Math.pow(L.pitch / p.pitch, 2);',
-    with: '      areaAt[k] = area[k] * (L.pitch / p.pitch);',
+    find: '    const v = READINGS[key].map((r) => r.d * Math.pow(r.pitch / pitch, 2));',
+    with: '    const v = READINGS[key].map((r) => r.d * (r.pitch / pitch));',
     suite: 'Chiplet layouts —',
     expect: 'halving the common pitch quadruples',
     why: 'Bump count scaled linearly with pitch instead of as its inverse square: the '
-       + 'normalisation that shows the layouts agree would be dimensionally wrong.',
+       + 'normalisation that compares the layouts would be dimensionally wrong.',
+    active: true, fast: true
+  },
+  {
+    id: 'd2d-ucie-a-one-reading',
+    file: 'js/models/d2d-model.js',
+    find: "    ucieA: [{ src: 'x64 rectangle read at 45 um (C-68)', d: rect('ucieA'), pitch: 45 },",
+    with: "    ucieA: [{ src: 'x64 rectangle read at 45 um (C-68)', d: rect('ucieA'), pitch: 55 },",
+    suite: 'Chiplet layouts —',
+    expect: 'the UCIe-A range spans the rectangle at 45 and at 55 um',
+    why: 'One of the conflicting UCIe-A readings silently replaced by another: the band '
+       + 'would shrink and the page would claim more agreement than the sources support.',
+    active: true, fast: true
+  },
+  {
+    id: 'd2d-ucie-s-table-dropped',
+    file: 'js/models/d2d-model.js',
+    find: "             rates: [4, 8, 12, 16, 24, 32, 48, 64], table: { 48: 278, 64: 370 } },",
+    with: "             rates: [4, 8, 12, 16, 24, 32, 48, 64], table: {} },",
+    suite: 'Chiplet layouts —',
+    expect: 'UCIe-S at 48 and 64 GT/s follows the table',
+    why: 'UCIe-S scaled past 32 GT/s instead of taking the consortium table: the panel would '
+       + 'credit the standard package with bandwidth the consortium does not claim.',
     active: true, fast: true
   },
   {

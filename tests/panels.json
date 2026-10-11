@@ -168,10 +168,10 @@
         "d2dCompare"
       ],
       "presets": [
+        "area130",
         "area40",
         "edge16",
-        "fast",
-        "organic"
+        "fast"
       ]
     },
     {

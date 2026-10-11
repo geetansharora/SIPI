@@ -339,11 +339,11 @@
       Drag the driver to 50 &#937; with the receiver open and the echo vanishes at any rate: a matched driver absorbs
       it, which is series termination. Move it away and the open receiver samples the overshoot. Terminate the
       receiver and the driver stops mattering. The model is a lossless 50 &#937; line with resistive ends and no pad or
-      receiver capacitance, so it shows the mechanism, not a sign-off margin. A real interposer wire is resistive
-      enough that each echo returns smaller than the lossless panel shows, which is why the
+      receiver capacitance, so it shows the mechanism, not a sign-off margin. A real interposer wire is also
+      resistive, so each echo returns smaller than the lossless panel shows. Consistent with that, the
       <a href="chiplet-interconnects.html">BoW specification</a> recommends unterminated 2 mm wires on advanced
-      packaging up to 32 Gb/s per wire (C-81, C-82), and UCIe requires a receiver termination only from 48 GT/s
-      (C-70).
+      packaging up to 32 Gb/s per wire, because the traces are short and resistive (C-81, C-82), and UCIe 3.0 lists a
+      receiver termination as required at 48 and 64 GT/s (C-70).
     </p>
 
     <h2 class="section-rule" id="inside-64g"><span>Inside a 48 and 64 GT/s link</span></h2>

@@ -1420,6 +1420,7 @@
       "id": "C-64",
       "statement": "UCIe defines data rates of 4, 8, 12, 16, 24 and 32 GT/s, and UCIe 3.0 adds 48 and 64 GT/s, for both UCIe-S and UCIe-A; UCIe-3D runs up to 4 GT/s.",
       "pages": [
+        "interfaces/chiplet-interconnects",
         "interfaces/ucie"
       ],
       "source_type": "public-rate",
@@ -1439,6 +1440,7 @@
       "id": "C-65",
       "statement": "A UCIe module (cluster) is 16 lanes wide on a standard package, 64 on an advanced package and 80 for UCIe-3D; a UCIe-S x16 at 32 GT/s carries 512 Gb/s per direction, against 1024 for PCIe 6.0 x16.",
       "pages": [
+        "interfaces/chiplet-interconnects",
         "interfaces/ucie"
       ],
       "source_type": "public-rate",
@@ -1458,6 +1460,7 @@
       "id": "C-66",
       "statement": "Bump pitch is 100-130 um for UCIe-S, 25-55 um for UCIe-A, and 10 um or less (optimized) or 10-25 um (functional) for UCIe-3D, which must support hybrid bonding.",
       "pages": [
+        "interfaces/chiplet-interconnects",
         "interfaces/ucie"
       ],
       "source_type": "public-rate",
@@ -1477,6 +1480,7 @@
       "id": "C-67",
       "statement": "Channel reach is up to 25 mm for UCIe-S and up to 2 mm for UCIe-A; UCIe-3D is vertical.",
       "pages": [
+        "interfaces/chiplet-interconnects",
         "interfaces/ucie"
       ],
       "source_type": "public-rate",
@@ -1496,6 +1500,7 @@
       "id": "C-68",
       "statement": "Shoreline bandwidth is 28-224 GB/s/mm for UCIe-S and 165-1317 GB/s/mm for UCIe-A across 4-32 GT/s, and 278/370 and 1975/2634 GB/s/mm at 48/64 GT/s, for 110 um (UCIe-S) and 45 um (UCIe-A) pitches.",
       "pages": [
+        "interfaces/chiplet-interconnects",
         "interfaces/ucie"
       ],
       "source_type": "public-rate",
@@ -1515,6 +1520,7 @@
       "id": "C-69",
       "statement": "Power-efficiency targets: UCIe-S 0.5 pJ/b at or below 16 GT/s and 0.75 at or above 32 GT/s; UCIe-A 0.25 at or below 12 GT/s, 0.3 from 16 to 32 GT/s and 0.5 at or above 48 GT/s; UCIe-3D under 0.05 pJ/b at 9 um.",
       "pages": [
+        "interfaces/chiplet-interconnects",
         "interfaces/ucie"
       ],
       "source_type": "public-rate",
@@ -1534,6 +1540,7 @@
       "id": "C-70",
       "statement": "At 48 and 64 GT/s UCIe 3.0 signals NRZ, unidirectional, with quarter-rate clocking; receiver termination is required on both UCIe-S and UCIe-A; equalization is a 3-tap TX FFE, a first-order passive RX CTLE and an optional 1-tap RX DFE; the BER is 1e-15 at 48 GT/s and 1e-12 at 64 GT/s, with CRC and replay.",
       "pages": [
+        "interfaces/chiplet-interconnects",
         "interfaces/ucie"
       ],
       "source_type": "public-rate",
@@ -1572,6 +1579,7 @@
       "id": "C-72",
       "statement": "The UCIe forwarded clock runs at 16 GHz for 64 GT/s and 12 GHz for 48 GT/s (quarter rate, the only option there); at 24 and 32 GT/s the table lists both a half-rate and a quarter-rate clock, and from 4 to 16 GT/s half rate only. Half-rate clocks are listed with phases of 90 and 270 degrees, quarter-rate with 45 and 135. Deskew is required from 12 GT/s up and optional at 4 and 8 GT/s.",
       "pages": [
+        "interfaces/chiplet-interconnects",
         "interfaces/ucie"
       ],
       "source_type": "public-rate",
@@ -1648,11 +1656,12 @@
       "id": "C-76",
       "statement": "At 32 GT/s a UCIe-A x64 module is 0.389 mm of shoreline by 1.585 mm deep (at 55 um), and a UCIe-S x32 is 1.143 mm by 1.54 mm (at 110 um); with 256 and 128 GB/s each way, only the total of both directions reproduces the key-metrics shoreline of 1317 and 224 GB/s/mm.",
       "pages": [
+        "interfaces/chiplet-interconnects",
         "interfaces/ucie"
       ],
       "source_type": "public-rate",
       "source": "D. Das Sharma (UCIe Consortium chair), Hot Interconnects 2025, UCIe for on-package memory",
-      "conditions": "Module sizes as quoted; the direction is derived arithmetic, not a sentence in the source. The x64 width is quoted at 55 um while the table's density is for 45 um.",
+      "conditions": "Module sizes as quoted; the direction is derived arithmetic, not a sentence in the source. The x64 width is quoted at 55 um while the table's density is for 45 um. The UCIe deck states its own density figures are for 45 um, so the rectangle's pitch is uncertain; the deck's areal row (C-100) is also about 1.3 times denser than the rectangles.",
       "status": "verified",
       "note": "Slide 'Bandwidth Density and Power Efficiency Evaluation': 'UCIe-S: 1.143 mm (shoreline) x 1.54 mm (depth) for x32 @ 110um', 'UCIe-A: 0.389 mm x 1.585 mm for x64 @ 55 um', 'UCIe is bump-limited - so circuits fit within bump area at 32G'. Key-metrics slide: 'Width (per direction) 16 64 80', 'B/W Shoreline (GB/s/mm) 28-224 165-1317'. Arithmetic: 2 x 32 x 32/8 / 1.143 = 224.0; 2 x 64 x 32/8 / 0.389 = 1316.",
       "owner": "Geetansh",
@@ -1684,7 +1693,7 @@
     },
     {
       "id": "C-78",
-      "statement": "A BoW slice is 16 single-ended data wires plus a differential clock pair, with optional FEC and AUX wires; a slice is unidirectional when operating.",
+      "statement": "A BoW slice is 16 single-ended data wires plus a differential clock pair, with optional FEC and AUX wires; a half slice, new in 2.0, has 8 data wires. A slice is unidirectional when operating.",
       "pages": [
         "interfaces/chiplet-interconnects"
       ],
@@ -1692,7 +1701,7 @@
       "source": "BoW PHY 2.0, 6.1 and 6.2",
       "conditions": "Per slice",
       "status": "scoped",
-      "note": "'each BoW slice consists of a differential clock pair, 16 single-ended data wires, and an optional pair of wires FEC and AUX'; 'Each BoW PHY slice is unidirectional when in operation'. Read in the specification itself, at the section named in source; the ledger records normative rows as scoped by rule. Both happened: the source check by Claude Opus 5.5 against the PDF, and Geetansh Arora's review of this row in the draft claims table on 11 Oct 2026.",
+      "note": "'each BoW slice consists of a differential clock pair, 16 single-ended data wires, and an optional pair of wires FEC and AUX'; 'Each BoW PHY slice is unidirectional when in operation'. Read in the specification itself, at the section named in source; the ledger records normative rows as scoped by rule. Both happened: the source check by Claude Opus 5.5 against the PDF, and Geetansh Arora's review of this row in the draft claims table on 11 Oct 2026. 8.4, 'a half-link or 8-bit link consisting of 8 data wires per half-slice'.",
       "owner": "Geetansh",
       "sourceCheckedBy": "Claude Opus 5.5",
       "sourceCheckedOn": "2026-10-11",
@@ -1950,7 +1959,7 @@
     },
     {
       "id": "C-92",
-      "statement": "In Gen2 mode AIB transfers data at double data rate only, and every channel forwards its transmit clock, quasi-differential between the chiplets.",
+      "statement": "In Gen2 mode AIB transfers data at double data rate (SDR remains only for the sideband shift register), and every channel forwards its transmit clock, quasi-differential between the chiplets.",
       "pages": [
         "interfaces/chiplet-interconnects"
       ],
@@ -1969,7 +1978,7 @@
     },
     {
       "id": "C-93",
-      "statement": "An AIB channel carries 20 to 80 balanced data signals (half TX, half RX) at a 55 um bump pitch or coarser, and up to 320 at 10 um, in steps of 20.",
+      "statement": "An AIB channel carries 20 to 80 balanced data signals (half TX, half RX) at microbump pitches up to 55 um, and up to 320 at a 10 um pitch, in steps of 20; finer pitches allow more signals.",
       "pages": [
         "interfaces/chiplet-interconnects"
       ],
@@ -1977,7 +1986,7 @@
       "source": "AIB 2.0.3, Table 5",
       "conditions": "Balanced interface",
       "status": "scoped",
-      "note": "Table 5, 'Number of Data Signals per Channel': '<=55: 20-80 (20)', '10: 20-320 (20)'. Read in the specification itself, at the section named in source; the ledger records normative rows as scoped by rule. Both happened: the source check by Claude Opus 5.5 against the PDF, and Geetansh Arora's review of this row in the draft claims table on 11 Oct 2026.",
+      "note": "Table 5, 'Number of Data Signals per Channel': '<=55: 20-80 (20)', '10: 20-320 (20)'. Read in the specification itself, at the section named in source; the ledger records normative rows as scoped by rule. Both happened: the source check by Claude Opus 5.5 against the PDF, and Geetansh Arora's review of this row in the draft claims table on 11 Oct 2026. Corrected 11 Oct 2026: an earlier statement read the '<=55' row as '55 um or coarser'; the row means 55 um or finer.",
       "owner": "Geetansh",
       "sourceCheckedBy": "Claude Opus 5.5",
       "sourceCheckedOn": "2026-10-11",
@@ -2072,7 +2081,7 @@
       "source": "AIB 2.0.3, 2.1.5 and whole text",
       "conditions": "A statement of absence, plus 2.1.5",
       "status": "scoped",
-      "note": "2.1.5, 'All inputs and outputs shall have an associated weak pull-up and weak pull-down ... configurable either with the pull-up, with the pull-down, or with neither'. A search of the full extracted text finds no occurrence of 'terminat'. Read in the specification itself, at the section named in source; the ledger records normative rows as scoped by rule.",
+      "note": "2.1.5, 'All inputs and outputs shall have an associated weak pull-up and weak pull-down ... configurable either with the pull-up, with the pull-down, or with neither'. A search of the full extracted text finds 'termination' nowhere; 'terminate' appears once, about where a redundancy shift ends, not about the line. Read in the specification itself, at the section named in source; the ledger records normative rows as scoped by rule.",
       "owner": "Geetansh",
       "sourceCheckedBy": "Claude Opus 5.5",
       "sourceCheckedOn": "2026-10-11",
@@ -2099,6 +2108,44 @@
       "humanReviewedOn": null,
       "source_title": "ODSA BoW workstream (OCP) — Bunch of Wires (BoW) PHY Specification, Version 2.0, 1 March 2023",
       "source_url": "https://www.opencompute.org/marketplace/it-infrastructure/bunch-of-wires-bow-phy-specification-2-0/"
+    },
+    {
+      "id": "C-100",
+      "statement": "The UCIe Consortium's key-metrics table gives areal bandwidth density of 22-192 GB/s/mm2 for UCIe-S and 188-1646 GB/s/mm2 for UCIe-A across 4-32 GT/s, for 110 um (UCIe-S) and 45 um (UCIe-A) pitches.",
+      "pages": [
+        "interfaces/chiplet-interconnects"
+      ],
+      "source_type": "public-rate",
+      "source": "UCIe Consortium overview deck (2025), Key Metrics with UCIe 3.0",
+      "conditions": "Reference pitches as stated; the deck does not say what area the figures count. At the same pitch they are about 1.3 times the density of the module rectangles in C-76.",
+      "status": "verified",
+      "note": "Key-metrics table, 'BW Density (GB/s/mm2) 22 - 192 188 - 1646', 'Numbers are for 45u (UCIe-A) and 110u (UCIe-S)'. The older HOTI 2025 table gives 22-125 and 188-1350 for the same row.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-11",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null,
+      "source_title": "UCIe Consortium — overview deck, 2025, with the key metrics for UCIe 3.0",
+      "source_url": "https://www.uciexpress.org/_files/ugd/0c1418_b4744fe368c94e3e9c7eaa13ead632bf.pdf"
+    },
+    {
+      "id": "C-101",
+      "statement": "The AIB specification specifies no equalization: no transmit FFE or de-emphasis, no CTLE and no DFE.",
+      "pages": [
+        "interfaces/chiplet-interconnects"
+      ],
+      "source_type": "normative",
+      "source": "AIB 2.0.3, whole text",
+      "conditions": "A statement of absence",
+      "status": "scoped",
+      "note": "A whole-word search of the full extracted text for equalization, equalisation, FFE, CTLE, DFE and emphasis finds none.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-11",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null,
+      "source_title": "CHIPS Alliance — Advanced Interface Bus (AIB) Specification, Revision 2.0.3, June 2022",
+      "source_url": "https://github.com/chipsalliance/AIB-specification/blob/master/AIB_Specification%202_0.pdf"
     }
   ]
 }

@@ -4374,37 +4374,51 @@ suite('UCIe echo — when a wire needs a receiver termination', () => {
 });
 
 suite('Chiplet layouts — UCIe and BoW compared from their published dimensions', () => {
-  /* The literals here are the sources' own words (ledger C-68, C-76, C-87), written out
-     independently of js/models/d2d-model.js. */
+  /* The literals here are the sources' own words (ledger C-68, C-76, C-87, C-100), written
+     out independently of js/models/d2d-model.js. */
   const D = MODELS.d2d, at = (rate, pitch) => D({ rate, pitch: pitch || 40 }).measurements;
+  const sq = (a, b) => (a / b) * (a / b);
   // BoW 2.0, 8.11: "provides a total of 2.0 Tb/s in each direction" for 16 slices of 16 wires at 16 Gb/s.
   const bowEachWay = 16 * 16 * 16 / 2 / 1000;
   ok('the BoW example carries the 2.0 Tb/s each way its specification states',
-     Math.abs(bowEachWay - 2.0) < 0.05 && Math.abs(at(16).edge.bowI * 1.60 * 8 / 2 / 1000 - bowEachWay) < 1e-9,
-     bowEachWay.toFixed(3) + ' Tb/s');
-  ok('the UCIe module sizes reproduce the consortium shoreline table (28 and 224, 165 and 1317 GB/s/mm; 1975 and 2634 for UCIe-A)',
+     Math.abs(bowEachWay - 2.0) < 0.05, bowEachWay.toFixed(3) + ' Tb/s');
+  ok('the UCIe module widths reproduce the consortium shoreline table (28 and 224, 165 and 1317 GB/s/mm; 1975 and 2634 for UCIe-A)',
      Math.abs(at(4).edge.ucieS - 28) < 0.5 && Math.abs(at(32).edge.ucieS - 224) < 0.5
        && Math.abs(at(4).edge.ucieA / 165 - 1) < 0.005 && Math.abs(at(32).edge.ucieA / 1317 - 1) < 0.005
        && Math.abs(at(48).edge.ucieA / 1975 - 1) < 0.005 && Math.abs(at(64).edge.ucieA / 2634 - 1) < 0.005);
-  ok('UCIe-S at 48 and 64 GT/s is the table’s 278 and 370, not its 32 GT/s module scaled up',
-     at(48).edge.ucieS === 278 && at(64).edge.ucieS === 370);
+  ok('UCIe-S at 48 and 64 GT/s follows the table (278 and 370), below its 32 GT/s figure scaled up (336 and 448)',
+     at(48).edge.ucieS === 278 && at(64).edge.ucieS === 370 && 224 * 48 / 32 > 278 && 224 * 64 / 32 > 370);
   ok('with the geometry fixed, edge bandwidth is proportional to wire rate',
      ['ucieA', 'bowL', 'bowI'].every((k) => Math.abs(at(32).edge[k] / at(16).edge[k] - 2) < 1e-12 && Math.abs(at(8).edge[k] / at(4).edge[k] - 2) < 1e-12));
   ok('a rate a standard does not define is reported as undefined, not extrapolated',
      at(2).edge.ucieS === null && at(2).edge.ucieA === null && at(48).edge.bowI === null && at(64).edge.bowL === null && at(12).edge.bowI === null);
-  // Dimensional check: bumps per area go as 1/pitch^2, independent of the layout.
-  ok('halving the common pitch quadruples every layout’s bump-field density',
-     ['ucieS', 'ucieA', 'bowL', 'bowI'].every((k) => Math.abs(at(16, 20).areaAtCommonPitch[k] / at(16, 40).areaAtCommonPitch[k] - 4) < 1e-12));
-  ok('at its own pitch, a layout’s density is its bandwidth over its rectangle, per Gb/s',
-     Math.abs(at(16, 40).areaAtCommonPitch.bowI - 256 / 8 / (1.60 * 0.42)) < 1e-9
-       && Math.abs(at(16, 55).areaAtCommonPitch.ucieA - 128 / 8 / (0.389 * 1.585)) < 1e-9);
   ok('the BoW interposer edge counts the full slice with AUX and FEC, like a UCIe module: 320 GB/s/mm at 16 Gb/s',
-     Math.abs(at(16).edge.bowI - 320) < 1e-9);
+     Math.abs(at(16).edge.bowI - 256 * 16 / 8 / 1.60) < 1e-9);
+  // Dimensional check: bumps per area go as 1/pitch^2, independent of the layout and the reading.
+  ok('halving the common pitch quadruples every reading of bump-field density',
+     ['ucieS', 'ucieA', 'bowL', 'bowI'].every((k) => at(16, 20).area[k].values.every((v, i) => Math.abs(v / at(16, 40).area[k].values[i] - 4) < 1e-12)));
+  /* The UCIe range must span every published reading, each at the pitch its source states,
+     computed here from the sources' numbers. */
+  const A40 = [128 / 8 / (0.389 * 1.585) * sq(45, 40), 128 / 8 / (0.389 * 1.585) * sq(55, 40), 1646 / 32 * sq(45, 40)];
+  const S40 = [64 / 8 / (1.143 * 1.54) * sq(110, 40), 192 / 32 * sq(110, 40)];
+  const a = at(16, 40).area;
+  ok('the UCIe-A range spans the rectangle at 45 and at 55 um and the consortium areal row at 45 um',
+     Math.abs(a.ucieA.lo - Math.min(...A40)) < 1e-9 && Math.abs(a.ucieA.hi - Math.max(...A40)) < 1e-9,
+     a.ucieA.lo.toFixed(1) + ' to ' + a.ucieA.hi.toFixed(1));
+  ok('the UCIe-S range spans its x32 rectangle and the consortium areal row, both at 110 um',
+     Math.abs(a.ucieS.lo - Math.min(...S40)) < 1e-9 && Math.abs(a.ucieS.hi - Math.max(...S40)) < 1e-9,
+     a.ucieS.lo.toFixed(1) + ' to ' + a.ucieS.hi.toFixed(1));
+  ok('BoW has one layout: its laminate and interposer examples agree within 2% once moved to one pitch',
+     Math.abs(a.bowL.lo / a.bowI.lo - 1) < 0.02 && a.bowI.lo === a.bowI.hi);
+  ok('edge density is bump density times depth: the 2.06 edge ratio is the depth ratio times the bump-density ratio as built',
+     Math.abs((at(16).edge.ucieA / at(16).edge.bowI) - (1.585 / 0.42) * ((128 / 8 / (0.389 * 1.585)) / (256 / 8 / (1.60 * 0.42)))) < 1e-9);
   // Regression guards for the figures the page quotes, not independent validations.
-  ok('regression guard: at a common pitch UCIe-A is within 3% of BoW’s interposer example',
-     Math.abs(at(16).interposerRatio - 1) < 0.03, (100 * (1 / at(16).interposerRatio - 1)).toFixed(1) + '%');
-  ok('regression guard: the UCIe-S module needs about 40% more bump area than BoW’s laminate example',
-     Math.abs(at(16).organicRatio - 1.40) < 0.02, at(16).organicRatio.toFixed(3));
+  ok('regression guard: UCIe-A runs from about 31% below to 37% above BoW at a common pitch',
+     Math.abs(at(16).ucieAVsBow[0] - 0.69) < 0.01 && Math.abs(at(16).ucieAVsBow[1] - 1.37) < 0.01,
+     at(16).ucieAVsBow.map((v) => v.toFixed(3)).join(' to '));
+  ok('regression guard: UCIe-S runs from about 29% to 6% below BoW at a common pitch',
+     Math.abs(at(16).ucieSVsBow[0] - 0.71) < 0.01 && Math.abs(at(16).ucieSVsBow[1] - 0.94) < 0.01,
+     at(16).ucieSVsBow.map((v) => v.toFixed(3)).join(' to '));
   ok('malformed inputs are refused, not answered',
      [{ rate: 10, pitch: 40 }, { rate: 16, pitch: 5 }, { rate: 16, pitch: NaN }, null].every((q) => D(q).status === 'unsupported'));
 });
