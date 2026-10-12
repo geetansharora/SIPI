@@ -292,14 +292,15 @@
   </div>
 
   <section class="instrument" data-viz="ucieEcho" aria-label="Interactive received waveform of a bit pattern on a UCIe wire, open or terminated at the receiver, showing whether reflections settle before the mid-bit sample">
-    <script type="application/json" data-contract>{"kind":"analytical","evidence":"independent","purpose":"Show whether a UCIe wire needs a receiver termination: when echoes settle before the mid-bit sample, and when they do not.","equations":["v_rx(t) = sum_k (b_k - b_k-1) * step_line(t - k*UI)","step_line from K.line1D: waves a0*(GL*GS)^m","GL = (RL-Z0)/(RL+Z0), GS = (Rs-Z0)/(Rs+Z0)","t_round = 2 * L * 6.7 ps/mm"],"units":"ps, mm, ohm, fraction of settled swing","validity":"Exact for a lossless line with resistive ends and a raised edge of 30% of a unit interval.","numerics":"Superposition of closed-form step responses over a twenty-bit pattern, 80 reflection terms.","limitations":"No pad, ESD or receiver capacitance, no loss, no crosstalk, no equalization. Z0, the edge and 6.7 ps/mm are choices, not UCIe figures. A mechanism, not a sign-off margin.","suites":["UCIe echo","Line1D"],"version":"1.0","reviewed":"2026-10-11","panel":"ucieEcho"}</script>
+    <script type="application/json" data-contract>{"kind":"numerical","evidence":"independent","purpose":"Show whether a UCIe wire needs a receiver termination: when echoes settle before the mid-bit sample, and when they do not.","equations":["lossless: v_rx(t) = sum_k (b_k - b_k-1) * step_line(t - k*UI), step_line from K.line1D: waves a0*(GL*GS)^m","resistive: Z = R' + jwL', Y = jwC', gamma = sqrt(ZY), Zc = sqrt(Z/Y), L' = Z0*tpd, C' = tpd/Z0","V_rx/V_s = 1 / (A + B/ZL + Rs*C + Rs*D/ZL), A = D = cosh(gamma*l), B = Zc*sinh(gamma*l), C = sinh(gamma*l)/Zc","t_round = 2 * L * 6.7 ps/mm"],"units":"ps, mm, ohm, fraction of settled swing","validity":"Exact for the line as modelled: lossless by the lattice of reflections, resistive by the frequency-domain telegrapher solution, with a raised edge of 30% of a unit interval.","numerics":"Lossless: superposition of closed-form step responses over a twenty-bit pattern, 80 reflection terms. Resistive: FFT of the source pattern, record long enough for echoes to fall below 1e-6, at least 32 samples per unit interval.","limitations":"No pad, ESD or receiver capacitance, no crosstalk, no equalization. Resistance is constant with frequency (no skin effect), which suits thin, DC-resistance-dominated interposer traces. Z0, the edge and 6.7 ps/mm are choices, not UCIe figures. A mechanism, not a sign-off margin.","suites":["UCIe echo","Line1D"],"version":"1.1","reviewed":"2026-10-12","panel":"ucieEcho"}</script>
     <div class="instrument__bar">
       <span class="instrument__title">Does this wire need a termination?</span>
-        <span data-evidence="independent" data-model-version="1.0" class="model-tag model-tag--analytical" title="">analytical</span>
+        <span data-evidence="independent" data-model-version="1.1" class="model-tag model-tag--numerical" title="">numerical</span>
       <span class="instrument__readout" role="status" aria-live="polite" aria-label="Current values">
         <span>round trip <b data-out="rt">—</b></span>
         <span>half a UI <b data-out="half">—</b></span>
         <span>echo factor &#915;<sub>L</sub>&#915;<sub>S</sub> <b data-out="echo">—</b></span>
+        <span>wire <b data-out="wire">—</b></span>
         <span>worst mid-bit error <b data-out="err">—</b></span>
       </span>
     </div>
@@ -324,12 +325,17 @@
       <div class="ctl">
         <div class="ctl__head"><label for="ue-term">Receiver</label></div>
         <select id="ue-term"><option value="open">Open, no termination</option><option value="matched">Terminated in 50 &#937;</option></select>
-        <span class="ctl__note">A 50 &#937; line, lossless</span>
+        <span class="ctl__note">A 50 &#937; line; add its resistance below</span>
       </div>
       <div class="ctl">
         <div class="ctl__head"><label for="ue-rs">Driver impedance</label><output id="ue-rs-out" for="ue-rs">40 &#937;</output></div>
         <input type="range" id="ue-rs" min="20" max="80" step="5" value="40">
         <span class="ctl__note">50 &#937; matches the line; real drivers drift</span>
+      </div>
+      <div class="ctl">
+        <div class="ctl__head"><label for="ue-rw">Wire resistance</label><output id="ue-rw-out" for="ue-rw">0 &#937;/mm</output></div>
+        <input type="range" id="ue-rw" min="0" max="7" step="1" value="0">
+        <span class="ctl__note">A 2 &#215; 1 &#181;m copper line is about 8.6 &#937;/mm</span>
       </div>
     </div>
     <div class="presets">
@@ -337,6 +343,7 @@
       <button class="preset" type="button" data-preset="open32" aria-pressed="true">2 mm, 32 GT/s, open</button>
       <button class="preset" type="button" data-preset="term64" aria-pressed="false">64 GT/s, terminated</button>
       <button class="preset" type="button" data-preset="long" aria-pressed="false">25 mm, open</button>
+      <button class="preset" type="button" data-preset="lossy" aria-pressed="false">2 mm, 32 GT/s, resistive</button>
     </div>
     <div class="transport"><span data-out="note">—</span></div>
   </section>
@@ -345,12 +352,20 @@
     <p>
       Drag the driver to 50 &#937; with the receiver open and the echo vanishes at any rate: a matched driver absorbs
       it, which is series termination. Move it away and the open receiver samples the overshoot. Terminate the
-      receiver and the driver stops mattering. The model is a lossless 50 &#937; line with resistive ends and no pad or
-      receiver capacitance, so it shows the mechanism, not a sign-off margin. A real interposer wire is also
-      resistive, so each echo returns smaller than the lossless panel shows. Consistent with that, the
-      <a href="chiplet-interconnects.html">BoW specification</a> recommends unterminated 2 mm wires on advanced
-      packaging up to 32 Gb/s per wire, because the traces are short and resistive (C-81, C-82), and UCIe 3.0 lists a
-      receiver termination as required at 48 and 64 GT/s (C-70).
+      receiver and the driver stops mattering.
+    </p>
+    <p>
+      Now add the wire&#8217;s own resistance. A copper line 2 &#181;m wide and 1 &#181;m thick has about 8.6 &#937;/mm,
+      copper&#8217;s resistivity over its cross-section. Each echo loses energy on its round trip, so on the 2 mm,
+      32 GT/s, 40 &#937; case the worst mid-bit error falls from 12.5% with no resistance to about 3% at 8.6 &#937;/mm.
+      Add too much and the wire behaves like a slow RC network instead, smearing each edge into the next bit: at
+      20 &#937;/mm the error is back up to about 7%. So a resistive wire can run open, within a range. That is
+      consistent with the <a href="chiplet-interconnects.html">BoW specification</a>&#8217;s unterminated 2 mm wires on
+      advanced packaging up to 32 Gb/s per wire, recommended because the traces are short and resistive (C-81, C-82).
+      Terminating such a wire also costs swing, because the wire&#8217;s resistance joins the divider: at 20 &#937;/mm
+      over 2 mm the settled level falls from 0.56 to 0.38 of the source. UCIe 3.0 lists a receiver termination as
+      required at 48 and 64 GT/s (C-70). The model has no pad or receiver capacitance and holds the resistance constant
+      with frequency, so it shows the mechanism, not a sign-off margin.
     </p>
 
     <h2 class="section-rule" id="inside-64g"><span>Inside a 48 and 64 GT/s link</span></h2>
@@ -654,9 +669,9 @@
 
 <script src="../../js/site.js?v=61b8ff31" defer></script>
 <script src="../../js/viz-kit.js?v=80b25b0d" defer></script>
-<script src="../../js/models/ucie-model.js?v=2b9a06d5" defer></script>
+<script src="../../js/models/ucie-model.js?v=a85b67d1" defer></script>
 <script src="../../js/viz/ucie.js?v=a4572a81" defer></script>
-<script src="../../js/viz/ucie-echo.js?v=a9ea257b" defer></script>
+<script src="../../js/viz/ucie-echo.js?v=5327dcb1" defer></script>
 <script src="../../js/viz/ucie-3d.js?v=298638d0" defer></script>
 <script src="../../js/viz-loader.js?v=3395e118" defer></script>
 <script src="../../js/search.js?v=dcc1e06b" defer></script>

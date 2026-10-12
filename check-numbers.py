@@ -651,6 +651,9 @@ CLAIMS = [
     ("interfaces/chiplet-interconnects", "UCIe-A density moved to 40 um", 128 / 8 / (0.389 * 1.585) * (55 / 40) ** 2, r"\(55/40\)2 = (\d+\.\d)", 0.2),
     ("interfaces/chiplet-interconnects", "BoW slices: 8 TX + 8 RX at 16 wires, 16 Gb/s each way (Tb/s)", 8 * 16 * 16 / 1000, r"per wire carry ([\d.]+) Tb/s each way", 3),
 
+    ("interfaces/ucie", "copper 2 x 1 um line, 1.72e-8 / (2e-6 x 1e-6) (ohm/mm)", 1.72e-8 / (2e-6 * 1e-6) / 1000, r"1 um thick has about ([\d.]+) ohm/mm", 1),
+    ("interfaces/ucie", "terminated swing with no wire resistance, 50 / (50 + 40)", 50 / 90, r"settled level falls from ([\d.]+) to", 1),
+    ("interfaces/ucie", "terminated swing with 20 ohm/mm over 2 mm, 50 / (50 + 40 + 40)", 50 / 130, r"falls from [\d.]+ to ([\d.]+) of the source", 1.5),
     ("interfaces/ucie", "3D: 4,000 GB/s/mm2 x 8 x 0.05 pJ/b (W/mm2)", 4000 * 8 * 0.05 / 1000, r"0\.05 pJ/b is ([\d.]+) W/mm2", 0.1),
     ("interfaces/ucie", "3D: 300,000 GB/s/mm2 x 8 x 0.01 pJ/b (W/mm2)", 300000 * 8 * 0.01 / 1000, r"0\.01 pJ/b target is (\d+) W/mm2", 0.1),
     ("interfaces/ucie", "3D: H100 700 W over 814 mm2 (W/mm2)", 700 / 814, r"averages about ([\d.]+) W/mm2", 0.5),

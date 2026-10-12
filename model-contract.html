@@ -47,7 +47,7 @@
   <div class="page-head">
     <p class="crumb"><a href="index.html">SIPI</a> / model contracts</p>
     <h1>Interactive model assumptions and evidence</h1>
-    <p class="byline"><span>Generated from <code>docs/model-types.json</code></span><span>50 panels</span><span>fidelity: 19 analytical, 14 exact, 7 illustrative, 10 numerical · evidence: 6 computed, 39 independent, 5 plausible</span></p>
+    <p class="byline"><span>Generated from <code>docs/model-types.json</code></span><span>50 panels</span><span>fidelity: 18 analytical, 14 exact, 7 illustrative, 11 numerical · evidence: 6 computed, 39 independent, 5 plausible</span></p>
     <p class="answer">
       Each interactive panel uses a model with a defined scope. This page publishes the
       contract for all 50 panels: the
@@ -924,20 +924,20 @@
   <section class="contract" id="ucieEcho">
     <div class="contract__head">
       <h2>ucieEcho</h2>
-      <span class="model-tag model-tag--analytical">analytical model</span>
+      <span class="model-tag model-tag--numerical">numerical model</span>
       <span class="ev ev--independent">independent</span>
-      <span class="contract__ver">v1.0 &#183; reviewed 2026-10-11</span>
+      <span class="contract__ver">v1.1 &#183; reviewed 2026-10-12</span>
     </div>
     <p class="contract__purpose">Show whether a UCIe wire needs a receiver termination: when echoes settle before the mid-bit sample, and when they do not.</p>
     <dl class="contract__body">
-      <dt>Topology</dt><dd>One lossless 50 ohm line from a resistive driver to a receiver that is open or terminated in 50 ohm.</dd>
+      <dt>Topology</dt><dd>One 50 ohm line, 6.7 ps/mm, from a resistive driver to a receiver that is open or terminated in 50 ohm, with an optional series resistance per mm.</dd>
       <dt>Reference planes</dt><dd>The receiver input, sampled at the centre of each bit.</dd>
-      <dt>Equations</dt><dd><ul class="tight"><li><code>v_rx(t) = sum_k (b_k - b_k-1) * step_line(t - k*UI)</code></li><li><code>step_line from K.line1D: waves a0*(GL*GS)^m</code></li><li><code>GL = (RL-Z0)/(RL+Z0), GS = (Rs-Z0)/(Rs+Z0)</code></li><li><code>t_round = 2 * L * 6.7 ps/mm</code></li></ul></dd>
+      <dt>Equations</dt><dd><ul class="tight"><li><code>lossless: v_rx(t) = sum_k (b_k - b_k-1) * step_line(t - k*UI), step_line from K.line1D: waves a0*(GL*GS)^m</code></li><li><code>resistive: Z = R' + jwL', Y = jwC', gamma = sqrt(ZY), Zc = sqrt(Z/Y), L' = Z0*tpd, C' = tpd/Z0</code></li><li><code>V_rx/V_s = 1 / (A + B/ZL + Rs*C + Rs*D/ZL), A = D = cosh(gamma*l), B = Zc*sinh(gamma*l), C = sinh(gamma*l)/Zc</code></li><li><code>t_round = 2 * L * 6.7 ps/mm</code></li></ul></dd>
       <dt>Units</dt><dd>ps, mm, ohm, fraction of settled swing</dd>
-      <dt>Validity</dt><dd>Exact for a lossless line with resistive ends and a raised edge of 30% of a unit interval.</dd>
-      <dt>Numerics</dt><dd>Superposition of closed-form step responses over a twenty-bit pattern, 80 reflection terms.</dd>
-      <dt>Known limitations</dt><dd>No pad, ESD or receiver capacitance, no loss, no crosstalk, no equalization. Z0, the edge and 6.7 ps/mm are choices, not UCIe figures. A mechanism, not a sign-off margin.</dd>
-      <dt>Evidence</dt><dd>check-models.js suite UCIe echo: a matched receiver and a matched driver each give no echo at any rate and length, the first arrival at an open receiver is 2*Z0/(Rs+Z0) of the source swing as the line equations give, a very short line behaves as a lumped load, and the long-run level settles to the resistive divider. The shared solver K.line1D is checked by the Line1D suite.</dd>
+      <dt>Validity</dt><dd>Exact for the line as modelled: lossless by the lattice of reflections, resistive by the frequency-domain telegrapher solution, with a raised edge of 30% of a unit interval.</dd>
+      <dt>Numerics</dt><dd>Lossless: superposition of closed-form step responses over a twenty-bit pattern, 80 reflection terms. Resistive: FFT of the source pattern, record long enough for echoes to fall below 1e-6, at least 32 samples per unit interval.</dd>
+      <dt>Known limitations</dt><dd>No pad, ESD or receiver capacitance, no crosstalk, no equalization. Resistance is constant with frequency (no skin effect), which suits thin, DC-resistance-dominated interposer traces. Z0, the edge and 6.7 ps/mm are choices, not UCIe figures. A mechanism, not a sign-off margin.</dd>
+      <dt>Evidence</dt><dd>check-models.js suite UCIe echo: a matched receiver and a matched driver each give no echo, the first arrival at an open receiver is 2*Z0/(Rs+Z0), a very short line behaves as a lumped load, the long-run level settles to the resistive divider; and for the resistive line, an independent frequency-domain solver reproduces the lattice at vanishing resistance, the first arrival is attenuated by exp(-R l / 2 Z0), and a terminated wire settles to Z0/(Z0+Rs+R l). The shared solver K.line1D is checked by the Line1D suite.</dd>
     </dl>
   </section>
   <section class="contract" id="lpddrBudget">

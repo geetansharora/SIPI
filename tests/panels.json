@@ -238,6 +238,7 @@
         "accel",
         "fast",
         "long",
+        "lossy",
         "open32",
         "organic",
         "p1",
@@ -546,6 +547,6 @@
   "totals": {
     "pages": 46,
     "panels": 51,
-    "presets": 181
+    "presets": 182
   }
 }

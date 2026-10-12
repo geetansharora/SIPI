@@ -1071,28 +1071,28 @@
     "version": "1.1"
   },
   "ucieEcho": {
-    "kind": "analytical",
+    "kind": "numerical",
     "evidence": "independent",
     "purpose": "Show whether a UCIe wire needs a receiver termination: when echoes settle before the mid-bit sample, and when they do not.",
-    "topology": "One lossless 50 ohm line from a resistive driver to a receiver that is open or terminated in 50 ohm.",
+    "topology": "One 50 ohm line, 6.7 ps/mm, from a resistive driver to a receiver that is open or terminated in 50 ohm, with an optional series resistance per mm.",
     "planes": "The receiver input, sampled at the centre of each bit.",
     "equations": [
-      "v_rx(t) = sum_k (b_k - b_k-1) * step_line(t - k*UI)",
-      "step_line from K.line1D: waves a0*(GL*GS)^m",
-      "GL = (RL-Z0)/(RL+Z0), GS = (Rs-Z0)/(Rs+Z0)",
+      "lossless: v_rx(t) = sum_k (b_k - b_k-1) * step_line(t - k*UI), step_line from K.line1D: waves a0*(GL*GS)^m",
+      "resistive: Z = R' + jwL', Y = jwC', gamma = sqrt(ZY), Zc = sqrt(Z/Y), L' = Z0*tpd, C' = tpd/Z0",
+      "V_rx/V_s = 1 / (A + B/ZL + Rs*C + Rs*D/ZL), A = D = cosh(gamma*l), B = Zc*sinh(gamma*l), C = sinh(gamma*l)/Zc",
       "t_round = 2 * L * 6.7 ps/mm"
     ],
     "units": "ps, mm, ohm, fraction of settled swing",
-    "validity": "Exact for a lossless line with resistive ends and a raised edge of 30% of a unit interval.",
-    "numerics": "Superposition of closed-form step responses over a twenty-bit pattern, 80 reflection terms.",
-    "limitations": "No pad, ESD or receiver capacitance, no loss, no crosstalk, no equalization. Z0, the edge and 6.7 ps/mm are choices, not UCIe figures. A mechanism, not a sign-off margin.",
-    "verified": "check-models.js suite UCIe echo: a matched receiver and a matched driver each give no echo at any rate and length, the first arrival at an open receiver is 2*Z0/(Rs+Z0) of the source swing as the line equations give, a very short line behaves as a lumped load, and the long-run level settles to the resistive divider. The shared solver K.line1D is checked by the Line1D suite.",
+    "validity": "Exact for the line as modelled: lossless by the lattice of reflections, resistive by the frequency-domain telegrapher solution, with a raised edge of 30% of a unit interval.",
+    "numerics": "Lossless: superposition of closed-form step responses over a twenty-bit pattern, 80 reflection terms. Resistive: FFT of the source pattern, record long enough for echoes to fall below 1e-6, at least 32 samples per unit interval.",
+    "limitations": "No pad, ESD or receiver capacitance, no crosstalk, no equalization. Resistance is constant with frequency (no skin effect), which suits thin, DC-resistance-dominated interposer traces. Z0, the edge and 6.7 ps/mm are choices, not UCIe figures. A mechanism, not a sign-off margin.",
+    "verified": "check-models.js suite UCIe echo: a matched receiver and a matched driver each give no echo, the first arrival at an open receiver is 2*Z0/(Rs+Z0), a very short line behaves as a lumped load, the long-run level settles to the resistive divider; and for the resistive line, an independent frequency-domain solver reproduces the lattice at vanishing resistance, the first arrival is attenuated by exp(-R l / 2 Z0), and a terminated wire settles to Z0/(Z0+Rs+R l). The shared solver K.line1D is checked by the Line1D suite.",
     "suites": [
       "UCIe echo",
       "Line1D"
     ],
-    "reviewed": "2026-10-11",
-    "version": "1.0"
+    "reviewed": "2026-10-12",
+    "version": "1.1"
   },
   "d2dCompare": {
     "kind": "exact",

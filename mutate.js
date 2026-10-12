@@ -249,6 +249,28 @@ const MUTATIONS = [
     active: true, fast: true
   },
   {
+    id: 'ucie-echo-lossy-capacitance-sign',
+    file: 'js/models/ucie-model.js',
+    find: '      const Z = [Rw, w * Lp], Y = [0, w * Cp];',
+    with: '      const Z = [Rw, w * Lp], Y = [0, -w * Cp];',
+    suite: 'UCIe echo —',
+    expect: 'the frequency-domain solver at vanishing resistance reproduces the lattice',
+    why: 'The line capacitance given the wrong sign: the resistive solver would describe '
+       + 'a different, unphysical line while still producing a plausible-looking wave.',
+    active: true, fast: true
+  },
+  {
+    id: 'ucie-echo-lossy-double-resistance',
+    file: 'js/models/ucie-model.js',
+    find: '      const Z = [Rw, w * Lp], Y = [0, w * Cp];',
+    with: '      const Z = [2 * Rw, w * Lp], Y = [0, w * Cp];',
+    suite: 'UCIe echo —',
+    expect: 'is attenuated by exp(-R l / 2 Z0)',
+    why: 'Twice the wire resistance in the line equations: every echo would look twice as '
+       + 'damped and the panel would flatter an unterminated resistive wire.',
+    active: true, fast: true
+  },
+  {
     id: 'ucie3d-units',
     file: 'js/models/ucie-model.js',
     find: '    const pd = (q, a) => dens(q) * 8 * epb(q) * 1e-3 * a;              // W/mm2',

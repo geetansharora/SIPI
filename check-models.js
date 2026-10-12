@@ -4368,8 +4368,30 @@ suite('UCIe echo — when a wire needs a receiver termination', () => {
      Math.abs(low - 0.2) < 0.01, (low * 100).toFixed(2) + '%');
   ok('the same wire at 16 GT/s settles before the sample',
      E({ rate: 16, lenMm: 2, term: 'open', rs: 40 }).measurements.worstSampleError < 0.02);
+  /* The resistive line is solved a second, independent way: the telegrapher
+     equations in frequency, transformed back. At vanishing resistance it must agree
+     with the lattice of reflections above, sample by sample. */
+  const cases = [{ rate: 32, lenMm: 2, term: 'open', rs: 40 }, { rate: 8, lenMm: 12, term: 'open', rs: 20 },
+                 { rate: 64, lenMm: 0.5, term: 'matched', rs: 80 }, { rate: 16, lenMm: 25, term: 'matched', rs: 30 }];
+  const gap = cases.map((c) => { const a = E(c).generated.samples, b = E({ ...c, rPerMm: 1e-9 }).generated.samples;
+    return Math.max(...a.map((q, i) => Math.abs(q[1] - b[i][1]))); });
+  ok('the frequency-domain solver at vanishing resistance reproduces the lattice of reflections at every sample',
+     gap.every((g) => g < 2e-3) && E({ ...cases[0], rPerMm: 1e-9 }).measurements.solver === 'frequency', Math.max(...gap).toExponential(1));
+  // Low-loss limit: a wave crossing a line of length l is attenuated by exp(-R' l / (2 Z0)).
+  const lowLoss = [0.5, 1, 2].map((r) => [E({ rate: 64, lenMm: 25, term: 'open', rs: Z0, rPerMm: r }).generated.samples[1][1], Math.exp(-r * 25 / (2 * Z0))]);
+  ok('the first arrival on a long, slightly resistive line is attenuated by exp(-R l / 2 Z0)',
+     lowLoss.every(([v, want]) => Math.abs(v / want - 1) < 0.03), lowLoss.map(([v, w]) => v.toFixed(3) + '/' + w.toFixed(3)).join(' '));
+  ok('a terminated resistive wire settles to the DC divider Z0 / (Z0 + Rs + R l)',
+     Math.abs(E({ rate: 32, lenMm: 2, term: 'matched', rs: 40, rPerMm: 20 }).measurements.settledSwing - Z0 / (Z0 + 40 + 40)) < 1e-12);
+  const err = (r) => E({ rate: 32, lenMm: 2, term: 'open', rs: 40, rPerMm: r }).measurements.worstSampleError;
+  ok('on the 2 mm, 32 GT/s open wire, some resistance damps the echo: the error falls steadily up to 10 ohm/mm',
+     [0, 1, 2, 5, 8.6, 10].every((r, i, a) => i === 0 || err(r) < err(a[i - 1])));
+  ok('regression guard: 12.5% with no resistance, about 3% at 8.6 ohm/mm, about 7% at 20, worse again at 50',
+     Math.abs(err(8.6) - 0.028) < 0.003 && Math.abs(err(20) - 0.072) < 0.005 && err(50) > err(20),
+     [0, 8.6, 20, 50].map((r) => (100 * err(r)).toFixed(1) + '%').join(' '));
   ok('malformed echo inputs are refused',
-     [{ rate: 20, lenMm: 2, term: 'open', rs: 40 }, { rate: 32, lenMm: 0, term: 'open', rs: 40 }, { rate: 32, lenMm: 2, term: 'x', rs: 40 }]
+     [{ rate: 20, lenMm: 2, term: 'open', rs: 40 }, { rate: 32, lenMm: 0, term: 'open', rs: 40 }, { rate: 32, lenMm: 2, term: 'x', rs: 40 },
+      { rate: 32, lenMm: 2, term: 'open', rs: 40, rPerMm: -1 }]
        .every((q) => E(q).status === 'unsupported'));
 });
 

@@ -85,16 +85,83 @@
      fraction of the settled swing. An echo that dies within the bit costs nothing;
      one that arrives in the next bit is inter-symbol interference. */
   const PATTERN = [0, 1, 0, 1, 1, 0, 0, 1, 1, 1, 0, 1, 0, 0, 0, 1, 0, 1, 1, 0];
+  /* ---------- a resistive line, solved exactly in frequency ----------
+     A wire with series resistance R' per mm as well as its inductance and
+     capacitance (RLC, no G, R' independent of frequency: a thin interposer or RDL
+     trace, where the DC resistance dominates). The telegrapher solution is exact at
+     every frequency:
+
+       Z = R' + jwL',  Y = jwC',  gamma = sqrt(ZY),  Zc = sqrt(Z/Y)
+       ABCD of the line: A = D = cosh(gamma*l), B = Zc*sinh(gamma*l), C = sinh(gamma*l)/Zc
+       V_rx / V_s = 1 / (A + B/ZL + Rs*C + Rs*D/ZL)          (1 / (A + Rs*C) when open)
+
+     with L' = Z0*tpd and C' = tpd/Z0, so that at R' = 0 it is the same 50 ohm,
+     6.7 ps/mm line as the lossless lattice. The source waveform, with the same
+     smoothstep edges, is transformed, multiplied and transformed back; the record is
+     long enough for the echoes to die below 1e-6, so the FFT's periodic wrap does not
+     reach the samples. At DC the open end sees the full swing and a terminated end
+     the divider RL / (RL + Rs + R'*l). */
+  function lossyLineWave(p, ui, td, tr, Z0, steps) {
+    const Rw = p.rPerMm, len = p.lenMm, Lp = Z0 * TPD, Cp = TPD / Z0;        // ohm/mm, ohm.ps/mm, ps/(ohm.mm)
+    const open = p.term === 'open', RL = Z0;
+    const echo = Math.max(0.05, Math.abs((open ? 1 : 0) * (p.rs - Z0) / (p.rs + Z0)));
+    const trips = Math.min(60, Math.ceil(Math.log(1e-6) / Math.log(echo)));
+    const t0 = -tr, span = PATTERN.length * ui + td + trips * 2 * td + 20 * tr + 50;
+    const dt = Math.min(ui / 32, tr / 8);
+    let N = 1; while (N < span / dt) N <<= 1;
+    const re = new Float64Array(N), im = new Float64Array(N);
+    for (let i = 0; i < N; i++) {
+      const t = t0 + i * dt;
+      re[i] = steps.reduce((v, q) => v + q.d * K.smoothStep(t - q.t, tr), 0);
+    }
+    K.fft(re, im, false);
+    // Complex helpers on [re, im] pairs.
+    const mul = (a, b) => [a[0] * b[0] - a[1] * b[1], a[0] * b[1] + a[1] * b[0]];
+    const div = (a, b) => { const d = b[0] * b[0] + b[1] * b[1]; return [(a[0] * b[0] + a[1] * b[1]) / d, (a[1] * b[0] - a[0] * b[1]) / d]; };
+    const csqrt = (a) => { const r = Math.hypot(a[0], a[1]), x = Math.sqrt((r + a[0]) / 2), y = Math.sign(a[1] || 1) * Math.sqrt(Math.max(0, (r - a[0]) / 2)); return [x, y]; };
+    const cexp = (a) => { const e = Math.exp(a[0]); return [e * Math.cos(a[1]), e * Math.sin(a[1])]; };
+    const H = (k) => {
+      if (k === 0) return [open ? 1 : RL / (RL + p.rs + Rw * len), 0];
+      const w = 2 * Math.PI * k / (N * dt);                                  // rad/ps
+      const Z = [Rw, w * Lp], Y = [0, w * Cp];
+      const g = csqrt(mul(Z, Y)), Zc = csqrt(div(Z, Y));
+      const gl = [g[0] * len, g[1] * len], ep = cexp(gl), em = cexp([-gl[0], -gl[1]]);
+      const ch = [(ep[0] + em[0]) / 2, (ep[1] + em[1]) / 2], sh = [(ep[0] - em[0]) / 2, (ep[1] - em[1]) / 2];
+      const B = mul(Zc, sh), C = div(sh, Zc);
+      let den = [ch[0] + p.rs * C[0], ch[1] + p.rs * C[1]];
+      if (!open) den = [den[0] + B[0] / RL + p.rs * ch[0] / RL, den[1] + B[1] / RL + p.rs * ch[1] / RL];
+      return div([1, 0], den);
+    };
+    for (let k = 0; k <= N / 2; k++) {
+      const h = H(k);
+      const a = mul([re[k], im[k]], h);
+      re[k] = a[0]; im[k] = a[1];
+      if (k > 0 && k < N / 2) { const b = mul([re[N - k], im[N - k]], [h[0], -h[1]]); re[N - k] = b[0]; im[N - k] = b[1]; }
+    }
+    K.fft(re, im, true);
+    const swing = open ? 1 : RL / (RL + p.rs + Rw * len);
+    const at = (t) => {
+      const x = (t - t0) / dt, i = Math.floor(x);
+      if (i < 0) return 0;
+      if (i >= N - 1) return re[N - 1];
+      return re[i] + (x - i) * (re[i + 1] - re[i]);
+    };
+    return { at, swing };
+  }
+
   NS.models.ucieEcho = function (p) {
+    p = p && Object.assign({ rPerMm: 0 }, p);
     const ok = p && RATES.includes(p.rate) && Number.isFinite(p.lenMm) && p.lenMm >= 0.2 && p.lenMm <= 30
-      && (p.term === 'open' || p.term === 'matched') && Number.isFinite(p.rs) && p.rs >= 5 && p.rs <= 200;
-    if (!ok) return K.result({ model: 'ucieEcho', version: '1.0', status: 'unsupported', params: p,
-      why: 'Rate must be a UCIe rate, length 0.2 to 30 mm, receiver open or matched, driver 5 to 200 ohm.' });
+      && (p.term === 'open' || p.term === 'matched') && Number.isFinite(p.rs) && p.rs >= 5 && p.rs <= 200
+      && Number.isFinite(p.rPerMm) && p.rPerMm >= 0 && p.rPerMm <= 100;
+    if (!ok) return K.result({ model: 'ucieEcho', version: '1.1', status: 'unsupported', params: p,
+      why: 'Rate must be a UCIe rate, length 0.2 to 30 mm, receiver open or matched, driver 5 to 200 ohm, wire resistance 0 to 100 ohm/mm.' });
     const Z0 = 50, ui = 1000 / p.rate, td = p.lenMm * TPD, tr = 0.3 * ui;
     const M = K.line1D({ Z0, Rs: p.rs, td, tr, open: p.term === 'open', RL: Z0, vs: 1, nWave: 80 });
     const steps = PATTERN.map((b, k) => ({ t: k * ui, d: b - (k ? PATTERN[k - 1] : 0) })).filter((q) => q.d);
-    const at = (t) => steps.reduce((v, q) => v + q.d * K.line1DAt(M, 1, t - q.t).v, 0);
-    const swing = M.vFinal, end = td + PATTERN.length * ui, n = 900;
+    const lossy = p.rPerMm > 0 ? lossyLineWave(p, ui, td, tr, Z0, steps) : null;
+    const at = lossy ? lossy.at : (t) => steps.reduce((v, q) => v + q.d * K.line1DAt(M, 1, t - q.t).v, 0);
+    const swing = lossy ? lossy.swing : M.vFinal, end = td + PATTERN.length * ui, n = 900;
     const wave = [], ideal = [], samples = [];
     for (let i = 0; i <= n; i++) {
       const t = end * i / n;
@@ -109,11 +176,12 @@
       if (k) worst = Math.max(worst, Math.abs(v - b));
     });
     return K.result({
-      model: 'ucieEcho', version: '1.0', status: 'ok', params: p,
-      units: { rate: 'GT/s', lenMm: 'mm', rs: 'ohm', time: 'ps', voltage: 'fraction of settled swing' },
+      model: 'ucieEcho', version: '1.1', status: 'ok', params: p,
+      units: { rate: 'GT/s', lenMm: 'mm', rs: 'ohm', rPerMm: 'ohm/mm', time: 'ps', voltage: 'fraction of settled swing' },
       measurements: {
         uiPs: ui, tdPs: td, roundTripPs: 2 * td, roundTripUI: 2 * td / ui,
         gammaLoad: M.GL, gammaSource: M.GS, echo: M.GL * M.GS, settledSwing: swing,
+        wireOhms: p.rPerMm * p.lenMm, solver: lossy ? 'frequency' : 'lattice',
         worstSampleError: worst
       },
       generated: { wave, ideal, samples, pattern: PATTERN, end }
