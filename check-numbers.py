@@ -564,6 +564,10 @@ CLAIMS = [
     ("../interview-signal-integrity", "chiplets: 1 mm at 6.7 ps/mm as a share of the 64 GT/s UI (%)", 100 * 6.7 / ui_ps(64e9), r"6\.7 ps/mm is (\d+)% of the", 1),
     ("../interview-signal-integrity", "chiplets: UI at 64 GT/s (ps)", ui_ps(64e9), r"6\.7 ps/mm is \d+% of the ([\d.]+) ps unit interval", 0.5),
     ("../interview-signal-integrity", "chiplets: PAM4 penalty, 20 log10(3) (dB)", 20 * math.log10(3), r"costing about ([\d.]+) dB of signal-to-noise", 1),
+    ("../interview-signal-integrity", "3D: 4,000 GB/s/mm2 x 8 x 0.05 pJ/b (W/mm2)", 4000 * 8 * 0.05 / 1000, r"rises from ([\d.]+) W/mm2 to", 0.1),
+    ("../interview-signal-integrity", "3D: 300,000 GB/s/mm2 x 8 x 0.01 pJ/b (W/mm2)", 300000 * 8 * 0.01 / 1000, r"W/mm2 to (\d+) W/mm2 if every", 0.1),
+    ("../interview-signal-integrity", "3D: 24 W/mm2 over 700 W / 814 mm2", 24 / (700 / 814), r"about (\d+) times the average of a 700 W", 1),
+    ("../interview-signal-integrity", "3D: density rise from 9 to 1 um", 300000 / 4000, r"density rises faster than energy falls, (\d+)-fold", 0.1),
     ("../interview-power-integrity", "PSIJ: 40 mV x 0.12 ps/mV (ps)", 40 * 0.12, r"turns 40 mV of ripple into ([\d.]+) ps", 0.1),
     ("../interview-power-integrity", "PSIJ: UI of a 32 Gb/s NRZ link (ps)", ui_ps(32e9), r"the ([\d.]+) ps unit interval of a 32", 0.1),
     ("../interview-power-integrity", "PSIJ: 4.8 ps as a share of that UI (%)", 100 * 4.8 / ui_ps(32e9), r"which is (\d+)% of the 31", 3),
@@ -647,6 +651,12 @@ CLAIMS = [
     ("interfaces/chiplet-interconnects", "UCIe-A density moved to 40 um", 128 / 8 / (0.389 * 1.585) * (55 / 40) ** 2, r"\(55/40\)2 = (\d+\.\d)", 0.2),
     ("interfaces/chiplet-interconnects", "BoW slices: 8 TX + 8 RX at 16 wires, 16 Gb/s each way (Tb/s)", 8 * 16 * 16 / 1000, r"per wire carry ([\d.]+) Tb/s each way", 3),
 
+    ("interfaces/ucie", "3D: 4,000 GB/s/mm2 x 8 x 0.05 pJ/b (W/mm2)", 4000 * 8 * 0.05 / 1000, r"0\.05 pJ/b is ([\d.]+) W/mm2", 0.1),
+    ("interfaces/ucie", "3D: 300,000 GB/s/mm2 x 8 x 0.01 pJ/b (W/mm2)", 300000 * 8 * 0.01 / 1000, r"0\.01 pJ/b target is (\d+) W/mm2", 0.1),
+    ("interfaces/ucie", "3D: H100 700 W over 814 mm2 (W/mm2)", 700 / 814, r"averages about ([\d.]+) W/mm2", 0.5),
+    ("interfaces/ucie", "3D: 24 W/mm2 over the H100 average", 24 / (700 / 814), r"run about (\d+) times hotter", 1),
+    ("interfaces/ucie", "3D: share of wires busy within the H100 average at 1 um (%)", 100 * (700 / 814) / 24, r"allows only about ([\d.]+)% of the wires", 1),
+    ("interfaces/ucie", "3D: density rise from 9 to 1 um", 300000 / 4000, r"density rises (\d+)-fold", 0.1),
     # ── LPDDR6 ──────────────────────────────────────────────────────────────
     ("interfaces/lpddr6", "glance: raw bandwidth at 10.667 (GB/s)", 24 * 10.667 / 8, r"carries ([\d.]+) GB/s of raw bandwidth", 0.2),
     ("interfaces/lpddr6", "glance: data bandwidth at 10.667 (GB/s)", 24 * 10.667 / 8 * 256 / 288, r"per pin, ([\d.]+) GB/s of it data", 0.3),

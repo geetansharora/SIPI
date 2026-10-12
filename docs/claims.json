@@ -2146,6 +2146,63 @@
       "humanReviewedOn": null,
       "source_title": "CHIPS Alliance — Advanced Interface Bus (AIB) Specification, Revision 2.0.3, June 2022",
       "source_url": "https://github.com/chipsalliance/AIB-specification/blob/master/AIB_Specification%202_0.pdf"
+    },
+    {
+      "id": "C-102",
+      "statement": "The UCIe-3D power-efficiency target falls from under 0.05 pJ/b at a 9 um bond pitch to 0.01 pJ/b at 1 um.",
+      "pages": [
+        "interfaces/ucie"
+      ],
+      "source_type": "public-rate",
+      "source": "UCIe Consortium overview deck (2025), Key Metrics with UCIe 3.0",
+      "conditions": "Targets, not measurements; hybrid bonding",
+      "status": "verified",
+      "note": "Key-metrics table, 'Power Efficiency Target (pJ/b) ... <0.05 at 9um -> 0.01 at 1 um'. The HOTI 2025 slides give the same row as '0.05 (9u) - 0.01 (1 u)'.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-11",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null,
+      "source_title": "UCIe Consortium — overview deck, 2025, with the key metrics for UCIe 3.0",
+      "source_url": "https://www.uciexpress.org/_files/ugd/0c1418_b4744fe368c94e3e9c7eaa13ead632bf.pdf"
+    },
+    {
+      "id": "C-103",
+      "statement": "NVIDIA rates the H100 SXM's maximum thermal design power at up to 700 W, configurable.",
+      "pages": [
+        "interfaces/ucie"
+      ],
+      "source_type": "commercial",
+      "source": "NVIDIA H100 product page, specifications",
+      "conditions": "Module power: the whole SXM module, memory stacks included, not the GPU die alone",
+      "status": "verified",
+      "note": "Specifications table, 'Max thermal design power (TDP) Up to 700W (configurable)' for H100 SXM.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-11",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null,
+      "source_title": "NVIDIA — H100 Tensor Core GPU, product specifications",
+      "source_url": "https://www.nvidia.com/en-us/data-center/h100/"
+    },
+    {
+      "id": "C-104",
+      "statement": "NVIDIA's GH100 die, used in the H100, is 814 mm2, made on TSMC 4N with 80 billion transistors.",
+      "pages": [
+        "interfaces/ucie"
+      ],
+      "source_type": "commercial",
+      "source": "NVIDIA Technical Blog, 'NVIDIA Hopper Architecture In-Depth'",
+      "conditions": "One product, used as a reference point only",
+      "status": "verified",
+      "note": "'fabricated using the TSMC 4N process customized for NVIDIA, with 80 billion transistors, and a die size of 814 mm2'; Table 3 lists 814 mm2 for H100 SXM5 and PCIe.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-11",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null,
+      "source_title": "NVIDIA — Hopper Architecture In-Depth (Technical Blog)",
+      "source_url": "https://developer.nvidia.com/blog/nvidia-hopper-architecture-in-depth/"
     }
   ]
 }

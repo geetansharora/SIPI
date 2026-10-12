@@ -168,6 +168,26 @@
    the wider viewport and the real culprit hides. */
 .transport { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s3); padding: 0 var(--s4) var(--s4); background: var(--surface); font-family: var(--font-mono); font-size: .74rem; color: var(--muted); min-width: 0; }
 .transport > * { min-width: 0; }
+
+/* An instrument whose controls sit beside its plots on a laptop, so inputs, numbers
+   and pictures share one screen (Geetansh's one-screen rule, 24 Sep 2026). Below
+   62rem it stacks exactly like any other instrument. */
+.side-layout { display: block; }
+.side__note { padding: 0 var(--s4) var(--s4); margin: 0; background: var(--surface); font-size: .82rem; }
+@media (min-width: 62rem) {
+  .instrument--side .side-layout { display: grid; grid-template-columns: minmax(0, 1fr) 17rem; gap: 1px; background: var(--border-soft); }
+  .instrument--side .side { display: flex; flex-direction: column; background: var(--surface); min-width: 0; }
+  .instrument--side .side .controls { grid-template-columns: 1fr; gap: var(--s3); border-top: 0; padding: var(--s3) var(--s4); }
+  .instrument--side .side .presets { padding-top: 0; display: grid; grid-template-columns: 1fr 1fr; }
+  /* When the plots are taller than the screen, the controls ride along beside them. */
+  .instrument--side .side__inner { position: sticky; top: 0; }
+  .instrument--side .panel { padding: var(--s2) var(--s4) var(--s3); gap: var(--s1); }
+  /* The tall-panel rule pins controls to the screen's bottom edge; beside the plots
+     they are already in view, so they stay where they are. */
+  .instrument--side.is-tall .side .controls,
+  .instrument--side.is-tall .side .presets,
+  .instrument--side.is-tall .side .transport { position: static; box-shadow: none; backdrop-filter: none; }
+}
 .transport button {
   font-family: var(--font-mono); font-size: .74rem;
   background: var(--surface-2); color: var(--ink);

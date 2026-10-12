@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
 <link rel="stylesheet" href="css/base.css?v=1e3ae753">
-<link rel="stylesheet" href="css/components.css?v=9f8a948d">
+<link rel="stylesheet" href="css/components.css?v=d53a657c">
   <!-- meta:start -->
   <link rel="canonical" href="https://sipi.work/model-contract.html">
   <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
@@ -47,10 +47,10 @@
   <div class="page-head">
     <p class="crumb"><a href="index.html">SIPI</a> / model contracts</p>
     <h1>Interactive model assumptions and evidence</h1>
-    <p class="byline"><span>Generated from <code>docs/model-types.json</code></span><span>49 panels</span><span>fidelity: 18 analytical, 14 exact, 7 illustrative, 10 numerical · evidence: 6 computed, 38 independent, 5 plausible</span></p>
+    <p class="byline"><span>Generated from <code>docs/model-types.json</code></span><span>50 panels</span><span>fidelity: 19 analytical, 14 exact, 7 illustrative, 10 numerical · evidence: 6 computed, 39 independent, 5 plausible</span></p>
     <p class="answer">
       Each interactive panel uses a model with a defined scope. This page publishes the
-      contract for all 49 panels: the
+      contract for all 50 panels: the
       topology, the reference planes, the equations, the units, the range over which it is
       valid, how it is computed, and the evidence available for its behavior.
     </p>
@@ -69,7 +69,7 @@
       The fourth level is listed for reference and is currently unused. These model labels do not
       claim validation against a published specification. Where a page states a
       specification claim, it is recorded in the
-      <a href="docs/claims.md">claim ledger</a> with its status. Of its 111 claims, 60 have been read against the source they cite, 51 have been narrowed to what their source supports, and none still awaits a source. None of the verified ones rests on the normative text of a standard; they rest on vendor documents, public announcements and measured data, and the source checks were made by an AI model, not by a person.
+      <a href="docs/claims.md">claim ledger</a> with its status. Of its 114 claims, 63 have been read against the source they cite, 51 have been narrowed to what their source supports, and none still awaits a source. None of the verified ones rests on the normative text of a standard; they rest on vendor documents, public announcements and measured data, and the source checks were made by an AI model, not by a person.
     </p>
     <p>
       <em>Kind</em> and <em>evidence</em> answer different questions. A deliberately
@@ -900,6 +900,25 @@
       <dt>Numerics</dt><dd>Direct evaluation at the eight rates the standard defines.</dd>
       <dt>Known limitations</dt><dd>Energy figures are targets, not measurements; no figure exists for UCIe-S at 24 GT/s, so a range is shown. At 8, 12, 16 and 24 GT/s the shoreline is scaled from the 32 GT/s figure, not read from the table, and the readout says so. No crosstalk, skew, supply or channel model. The round trip assumes a dielectric constant near 4.</dd>
       <dt>Evidence</dt><dd>check-models.js suite UCIe shoreline: the linear scaling reproduces the table's own 4 GT/s figures, the advanced package needs less edge than the standard one at every rate, edge falls with rate, power is bandwidth times energy, and malformed inputs are refused. check-numbers.py recomputes every figure the prose states.</dd>
+    </dl>
+  </section>
+  <section class="contract" id="ucie3d">
+    <div class="contract__head">
+      <h2>ucie3d</h2>
+      <span class="model-tag model-tag--analytical">analytical model</span>
+      <span class="ev ev--independent">independent</span>
+      <span class="contract__ver">v1.0 &#183; reviewed 2026-10-12</span>
+    </div>
+    <p class="contract__purpose">Show how hot a hybrid-bonded UCIe-3D interface runs: power per square millimetre of bonded area against bond pitch and activity, against a heat budget.</p>
+    <dl class="contract__body">
+      <dt>Topology</dt><dd>No channel: arithmetic on the consortium's two published UCIe-3D targets (C-71, C-102), at 9 and 1 um bond pitch.</dd>
+      <dt>Reference planes</dt><dd>The bond layer between two dies bonded face to face.</dd>
+      <dt>Equations</dt><dd><ul class="tight"><li><code>density(p) = 4000 * (9/p)^kD GB/s/mm2, kD = ln(75)/ln(9)</code></li><li><code>energy(p) = 0.05 * (p/9)^kE pJ/b, kE = ln(5)/ln(9)</code></li><li><code>power density = density * 8 * energy * 1e-3 * activity W/mm2</code></li><li><code>reference budget = 700 W / 814 mm2 (C-103, C-104)</code></li></ul></dd>
+      <dt>Units</dt><dd>um, GB/s/mm2, pJ/b, W/mm2, TB/s, W, mm2</dd>
+      <dt>Validity</dt><dd>Exact at the two published points; between them a power law through both, which is an interpolation. Pitch limited to the 1 to 9 um the targets cover.</dd>
+      <dt>Numerics</dt><dd>Closed form, evaluated on 81 points across the pitch range.</dd>
+      <dt>Known limitations</dt><dd>The figures are consortium targets, not measurements. Full activity is a worst case. The budget is one product's average and over-states its die, because module power includes memory; the interface's heat adds to the logic's own. No thermal spreading, no hot spots, no power-delivery model.</dd>
+      <dt>Evidence</dt><dd>check-models.js suite UCIe-3D heat: the two published targets give 1.6 and 24 W/mm2, power is proportional to activity and area, finer pitch raises density and power density and lowers energy per bit, the interpolation passes through both published points, the activity cap times full power equals the budget, units check (GB/s x 8 x pJ/b = mW), and out-of-range inputs are refused.</dd>
     </dl>
   </section>
   <section class="contract" id="ucieEcho">

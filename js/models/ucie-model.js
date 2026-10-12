@@ -120,6 +120,57 @@
     });
   };
 
+  /* ---------- UCIe-3D: how hot a bonded interface runs ----------
+     Two dies bonded face to face carry bandwidth through their overlap, so it is set
+     per square millimetre. The consortium publishes two points (C-71, C-102):
+       9 um bond pitch: 4,000 GB/s/mm2 at under 0.05 pJ/b
+       1 um bond pitch: 300,000 GB/s/mm2 at 0.01 pJ/b
+     Between them the model draws a power law through both points, the straight line on
+     log axes. For density the exponent is ln(75)/ln(9) = 1.965, close to the square
+     law the bump count implies; for energy it is ln(5)/ln(9) = 0.732. Only the two end
+     points are published, so everything between them is an interpolation, and the pitch
+     is limited to the 1 to 9 um the targets cover.
+
+     Power density is bandwidth density x energy per bit x the share of wires busy:
+     GB/s/mm2 x 8 b/B x pJ/b = mW/mm2. The reference it is compared with is one product's
+     average, an H100 SXM module's 700 W over its 814 mm2 die (C-103, C-104), which
+     over-states the die's own average because the module power includes its memory. */
+  const P3 = { lo: 1, hi: 9, dLo: 300000, dHi: 4000, eLo: 0.01, eHi: 0.05 };
+  const H100 = 700 / 814;                                  // W/mm2, module power over die area
+  NS.models.ucie3d = function (p) {
+    const ok = p && Number.isFinite(p.pitch) && p.pitch >= P3.lo && p.pitch <= P3.hi
+      && Number.isFinite(p.activity) && p.activity > 0 && p.activity <= 1
+      && Number.isFinite(p.area) && p.area > 0 && p.area <= 1000
+      && Number.isFinite(p.budget) && p.budget > 0 && p.budget <= 100;
+    if (!ok) return K.result({ model: 'ucie3d', version: '1.0', status: 'unsupported', params: p,
+      why: 'Bond pitch must be 1 to 9 um (the published targets), activity 0 to 1, area up to 1000 mm2 and budget up to 100 W/mm2.' });
+    const kD = Math.log(P3.dLo / P3.dHi) / Math.log(P3.hi / P3.lo);
+    const kE = Math.log(P3.eHi / P3.eLo) / Math.log(P3.hi / P3.lo);
+    const dens = (q) => P3.dHi * Math.pow(P3.hi / q, kD);              // GB/s/mm2
+    const epb = (q) => P3.eHi * Math.pow(q / P3.hi, kE);               // pJ/b
+    const pd = (q, a) => dens(q) * 8 * epb(q) * 1e-3 * a;              // W/mm2
+    const full = pd(p.pitch, 1), now = full * p.activity;
+    const curve = [], fullCurve = [];
+    for (let i = 0; i <= 80; i++) {
+      const q = P3.lo * Math.pow(P3.hi / P3.lo, i / 80);
+      curve.push([q, pd(q, p.activity)]); fullCurve.push([q, pd(q, 1)]);
+    }
+    return K.result({
+      model: 'ucie3d', version: '1.0', status: 'ok', params: p,
+      units: { pitch: 'um', density: 'GB/s/mm2', energy: 'pJ/b', powerDensity: 'W/mm2', bandwidth: 'TB/s', power: 'W', area: 'mm2' },
+      measurements: {
+        density: dens(p.pitch), energy: epb(p.pitch), powerDensity: now, powerDensityFull: full,
+        bandwidth: dens(p.pitch) * p.area / 1000, power: now * p.area,
+        ratioToBudget: now / p.budget, maxActivity: Math.min(1, p.budget / full),
+        published: p.pitch === P3.lo || p.pitch === P3.hi,
+        exponents: { density: kD, energy: kE }
+      },
+      generated: { curve, fullCurve, points: [[P3.hi, pd(P3.hi, 1)], [P3.lo, pd(P3.lo, 1)]], h100: H100 }
+    });
+  };
+  NS.models.ucie3d.H100 = H100;
+  NS.models.ucie3d.RANGE = [P3.lo, P3.hi];
+
   NS.models.ucie.RATES = RATES;
   NS.models.ucie.shoreline = shoreline;
   NS.models.ucie.TPD = TPD;

@@ -29,7 +29,7 @@ distinction cannot quietly erode.
 | **scoped** | wording narrowed so it no longer asserts more than is known |
 | **awaiting** | stated on the page and not yet checked against its source |
 
-**111 claims: 60 verified, 51 scoped, 0 awaiting a source.**
+**114 claims: 63 verified, 51 scoped, 0 awaiting a source.**
 
 Compound claims are split, because verifying one half used to verify the whole
 row. "Gen 4 is 28 dB and Gen 5 is 36 dB" is two budgets against two editions;
@@ -150,3 +150,6 @@ row. "Gen 4 is 28 dB and Gen 5 is 36 dB" is two budgets against two editions;
 | C-99 | The BoW PHY specification leaves the definition of protocols for logical data transfer outside its scope. | `interfaces/chiplet-interconnects` | BoW PHY 2.0, 4 | `normative` | **scoped** — 4, 'The following activities are outside the scope of this document: ... d. Definition of protocols for logical data transfer'. Read in the specification itself, at the section named in source; the ledger records normative rows as scoped by rule. | — |
 | C-100 | The UCIe Consortium's key-metrics table gives areal bandwidth density of 22-192 GB/s/mm2 for UCIe-S and 188-1646 GB/s/mm2 for UCIe-A across 4-32 GT/s, for 110 um (UCIe-S) and 45 um (UCIe-A) pitches. | `interfaces/chiplet-interconnects` | UCIe Consortium overview deck (2025), Key Metrics with UCIe 3.0 | `public-rate` | **verified** — Key-metrics table, 'BW Density (GB/s/mm2) 22 - 192 188 - 1646', 'Numbers are for 45u (UCIe-A) and 110u (UCIe-S)'. The older HOTI 2025 table gives 22-125 and 188-1350 for the same row. | — |
 | C-101 | The AIB specification specifies no equalization: no transmit FFE or de-emphasis, no CTLE and no DFE. | `interfaces/chiplet-interconnects` | AIB 2.0.3, whole text | `normative` | **scoped** — A whole-word search of the full extracted text for equalization, equalisation, FFE, CTLE, DFE and emphasis finds none. | — |
+| C-102 | The UCIe-3D power-efficiency target falls from under 0.05 pJ/b at a 9 um bond pitch to 0.01 pJ/b at 1 um. | `interfaces/ucie` | UCIe Consortium overview deck (2025), Key Metrics with UCIe 3.0 | `public-rate` | **verified** — Key-metrics table, 'Power Efficiency Target (pJ/b) ... <0.05 at 9um -> 0.01 at 1 um'. The HOTI 2025 slides give the same row as '0.05 (9u) - 0.01 (1 u)'. | — |
+| C-103 | NVIDIA rates the H100 SXM's maximum thermal design power at up to 700 W, configurable. | `interfaces/ucie` | NVIDIA H100 product page, specifications | `commercial` | **verified** — Specifications table, 'Max thermal design power (TDP) Up to 700W (configurable)' for H100 SXM. | — |
+| C-104 | NVIDIA's GH100 die, used in the H100, is 814 mm2, made on TSMC 4N with 80 billion transistors. | `interfaces/ucie` | NVIDIA Technical Blog, 'NVIDIA Hopper Architecture In-Depth' | `commercial` | **verified** — 'fabricated using the TSMC 4N process customized for NVIDIA, with 80 billion transistors, and a die size of 814 mm2'; Table 3 lists 814 mm2 for H100 SXM5 and PCIe. | — |

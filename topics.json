@@ -11,8 +11,8 @@
       {
         "slug": "interview",
         "title": "Signal and Power Integrity Interview Guide",
-        "updated": "2026-10-11",
-        "reviewed": "2026-10-11",
+        "updated": "2026-10-12",
+        "reviewed": "2026-10-12",
         "keywords": [
           "interview",
           "interview questions",
@@ -28,8 +28,8 @@
       {
         "slug": "interview-signal-integrity",
         "title": "Signal Integrity Interview Questions and Answers",
-        "updated": "2026-10-11",
-        "reviewed": "2026-10-11",
+        "updated": "2026-10-12",
+        "reviewed": "2026-10-12",
         "keywords": [
           "interview",
           "interview questions",
@@ -1097,8 +1097,8 @@
           "title": "UCIe 3.0 Signal Integrity: 64 GT/s Chiplet Links vs PCIe",
           "status": "live",
           "viz": "ucie",
-          "updated": "2026-10-11",
-          "reviewed": "2026-10-11",
+          "updated": "2026-10-12",
+          "reviewed": "2026-10-12",
           "reviewer": "Geetansh Arora",
           "keywords": [
             "UCIe",

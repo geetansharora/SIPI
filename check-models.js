@@ -4373,6 +4373,38 @@ suite('UCIe echo — when a wire needs a receiver termination', () => {
        .every((q) => E(q).status === 'unsupported'));
 });
 
+suite('UCIe-3D heat — power density of a bonded interface', () => {
+  /* The literals are the consortium's targets (C-71, C-102) and NVIDIA's figures
+     (C-103, C-104), written out independently of js/models/ucie-model.js. */
+  const H = MODELS.ucie3d, at = (pitch, activity, area, budget) =>
+    H({ pitch, activity: activity === undefined ? 1 : activity, area: area || 10, budget: budget || 700 / 814 }).measurements;
+  // Units: GB/s/mm2 x 8 b/B = Gb/s/mm2; x pJ/b = mW/mm2.
+  ok('the 9 um target, 4,000 GB/s/mm2 at 0.05 pJ/b, is 1.6 W/mm2 with every wire busy',
+     Math.abs(at(9).powerDensity - 4000 * 8 * 0.05 / 1000) < 1e-9 && Math.abs(4000 * 8 * 0.05 / 1000 - 1.6) < 1e-12);
+  ok('the 1 um target, 300,000 GB/s/mm2 at 0.01 pJ/b, is 24 W/mm2 with every wire busy',
+     Math.abs(at(1).powerDensity - 300000 * 8 * 0.01 / 1000) < 1e-9 && Math.abs(300000 * 8 * 0.01 / 1000 - 24) < 1e-12);
+  ok('the interpolation passes through both published points',
+     Math.abs(at(9).density - 4000) < 1e-6 && Math.abs(at(1).density - 300000) < 1e-3
+       && Math.abs(at(9).energy - 0.05) < 1e-12 && Math.abs(at(1).energy - 0.01) < 1e-12);
+  const ps = [1, 1.5, 2, 3, 4, 5, 6, 7, 8, 9];
+  ok('a finer pitch carries more bandwidth per mm2, at less energy per bit, and runs hotter',
+     ps.every((q, i) => i === 0 || (at(ps[i - 1]).density > at(q).density && at(ps[i - 1]).energy < at(q).energy && at(ps[i - 1]).powerDensity > at(q).powerDensity)));
+  ok('density stays within 10% of the inverse-square law the bump count implies',
+     ps.every((q) => Math.abs(at(q).density / (4000 * (9 / q) * (9 / q)) - 1) < 0.1));
+  ok('power density is proportional to activity, and total power and bandwidth to area',
+     Math.abs(at(3, 0.25).powerDensity * 4 - at(3, 1).powerDensity) < 1e-12
+       && Math.abs(at(3, 1, 20).power - 2 * at(3, 1, 10).power) < 1e-9 && Math.abs(at(3, 1, 20).bandwidth - 2 * at(3, 1, 10).bandwidth) < 1e-9);
+  ok('the activity the budget allows, times full power, is the budget',
+     [1, 2, 5, 9].every((q) => { const m = at(q, 1, 10, 0.5); return m.maxActivity < 1 ? Math.abs(m.maxActivity * m.powerDensityFull - 0.5) < 1e-12 : m.powerDensityFull <= 0.5; }));
+  ok('the default budget is an H100 module over its die: 700 W over 814 mm2, about 0.86 W/mm2',
+     Math.abs(H.H100 - 700 / 814) < 1e-12 && Math.abs(700 / 814 - 0.86) < 0.005);
+  ok('regression guard: a fully busy 1 um interface is about 28 times that average, and 3.6% busy fits it',
+     Math.abs(at(1).ratioToBudget - 27.9) < 0.1 && Math.abs(at(1).maxActivity - 0.0358) < 0.0005, at(1).ratioToBudget.toFixed(2));
+  ok('pitches outside the published 1 to 9 um, and malformed inputs, are refused',
+     [{ pitch: 0.5, activity: 1, area: 1, budget: 1 }, { pitch: 12, activity: 1, area: 1, budget: 1 }, { pitch: 3, activity: 0, area: 1, budget: 1 },
+      { pitch: 3, activity: 1, area: 1, budget: NaN }, null].every((q) => H(q).status === 'unsupported'));
+});
+
 suite('Chiplet layouts — UCIe and BoW compared from their published dimensions', () => {
   /* The literals here are the sources' own words (ledger C-68, C-76, C-87, C-100), written
      out independently of js/models/d2d-model.js. */

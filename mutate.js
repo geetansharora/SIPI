@@ -249,6 +249,28 @@ const MUTATIONS = [
     active: true, fast: true
   },
   {
+    id: 'ucie3d-units',
+    file: 'js/models/ucie-model.js',
+    find: '    const pd = (q, a) => dens(q) * 8 * epb(q) * 1e-3 * a;              // W/mm2',
+    with: '    const pd = (q, a) => dens(q) * epb(q) * 1e-3 * a;              // W/mm2',
+    suite: 'UCIe-3D heat —',
+    expect: 'the 9 um target, 4,000 GB/s/mm2 at 0.05 pJ/b, is 1.6 W/mm2',
+    why: 'Bytes taken for bits: every power density eight times too low, and the panel '
+       + 'would show a 1 um interface inside a flagship die\'s budget.',
+    active: true, fast: true
+  },
+  {
+    id: 'ucie3d-energy-rises-with-density',
+    file: 'js/models/ucie-model.js',
+    find: '    const epb = (q) => P3.eHi * Math.pow(q / P3.hi, kE);               // pJ/b',
+    with: '    const epb = (q) => P3.eHi * Math.pow(P3.hi / q, kE);               // pJ/b',
+    suite: 'UCIe-3D heat —',
+    expect: 'the interpolation passes through both published points',
+    why: 'Energy per bit growing as the pitch shrinks instead of falling: the consortium '
+       + 'targets run the other way, and the heat at 1 um would be overstated 25-fold.',
+    active: true, fast: true
+  },
+  {
     id: 'd2d-bow-without-aux-fec',
     file: 'js/models/d2d-model.js',
     find: "    bowI:  { name: 'BoW example, interposer', std: 'BoW', pkg: 'interposer', wires: 256, edge: 1.60, depth: 0.42,",

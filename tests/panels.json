@@ -231,7 +231,8 @@
       "url": "topics/interfaces/ucie.html",
       "panels": [
         "ucie",
-        "ucieEcho"
+        "ucieEcho",
+        "ucie3d"
       ],
       "presets": [
         "accel",
@@ -239,6 +240,10 @@
         "long",
         "open32",
         "organic",
+        "p1",
+        "p1cap",
+        "p4",
+        "p9",
         "slow",
         "slowS",
         "term64"
@@ -540,7 +545,7 @@
   ],
   "totals": {
     "pages": 46,
-    "panels": 50,
-    "presets": 177
+    "panels": 51,
+    "presets": 181
   }
 }

@@ -13,7 +13,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
 <link rel="stylesheet" href="../../css/base.css?v=1e3ae753">
-<link rel="stylesheet" href="../../css/components.css?v=9f8a948d">
+<link rel="stylesheet" href="../../css/components.css?v=d53a657c">
   <!-- meta:start -->
   <link rel="canonical" href="https://sipi.work/topics/interfaces/ucie.html">
   <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
@@ -31,7 +31,7 @@
   <meta name="twitter:description" content="UCIe 3.0 for chiplet designers: how the die-to-die standard differs from PCIe, why bandwidth is sized by die edge and bump pitch, and when a 2 mm wire needs termination at 64 GT/s.">
   <meta name="twitter:image" content="https://sipi.work/assets/og/interfaces/ucie.png">
   <meta name="twitter:image:alt" content="UCIe 3.0 Signal Integrity: 64 GT/s Chiplet Links vs PCIe: a figure from the page, on SIPI">
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"UCIe 3.0 Signal Integrity: 64 GT/s Chiplet Links vs PCIe","description":"UCIe 3.0 for chiplet designers: how the die-to-die standard differs from PCIe, why bandwidth is sized by die edge and bump pitch, and when a 2 mm wire needs termination at 64 GT/s.","url":"https://sipi.work/topics/interfaces/ucie.html","articleSection":"Interface sign-off","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer","url":"https://www.linkedin.com/in/geetansh-arora-a645714a/","sameAs":["https://www.linkedin.com/in/geetansh-arora-a645714a/"]},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-10-11","image":"https://sipi.work/assets/og/interfaces/ucie.png"}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"UCIe 3.0 Signal Integrity: 64 GT/s Chiplet Links vs PCIe","description":"UCIe 3.0 for chiplet designers: how the die-to-die standard differs from PCIe, why bandwidth is sized by die edge and bump pitch, and when a 2 mm wire needs termination at 64 GT/s.","url":"https://sipi.work/topics/interfaces/ucie.html","articleSection":"Interface sign-off","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer","url":"https://www.linkedin.com/in/geetansh-arora-a645714a/","sameAs":["https://www.linkedin.com/in/geetansh-arora-a645714a/"]},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-10-12","image":"https://sipi.work/assets/og/interfaces/ucie.png"}</script>
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"SIPI","item":"https://sipi.work/"},{"@type":"ListItem","position":2,"name":"Interface sign-off","item":"https://sipi.work/#interfaces"},{"@type":"ListItem","position":3,"name":"UCIe 3.0 Signal Integrity: 64 GT/s Chiplet Links vs PCIe"}]}</script>
   <!-- meta:end -->
 </head>
@@ -54,7 +54,7 @@
     <p class="crumb"><a href="../../index.html#interfaces">Interface sign-off</a> / 06</p>
     <h1>UCIe 3.0 Signal Integrity: 64 GT/s Chiplet Links vs PCIe</h1>
     <p class="byline">
-      <!-- review:start --><span>By <a href="https://www.linkedin.com/in/geetansh-arora-a645714a/" target="_blank" rel="author noopener">Geetansh Arora</a> — Principal SI/PI Engineer</span><time datetime="2026-10-11" title="Technical review by Geetansh Arora on this date">11 Oct 2026</time><span>11 min</span><!-- review:end -->
+      <!-- review:start --><span>By <a href="https://www.linkedin.com/in/geetansh-arora-a645714a/" target="_blank" rel="author noopener">Geetansh Arora</a> — Principal SI/PI Engineer</span><time datetime="2026-10-12" title="Technical review by Geetansh Arora on this date">12 Oct 2026</time><span>11 min</span><!-- review:end -->
     </p>
     <!-- share:head:start --><div class="share share--head" data-share data-share-url="https://sipi.work/topics/interfaces/ucie.html" data-share-title="UCIe 3.0 Signal Integrity: 64 GT/s Chiplet Links vs PCIe"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Fucie.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Fucie.html&amp;text=UCIe%203.0%20Signal%20Integrity%3A%2064%20GT%2Fs%20Chiplet%20Links%20vs%20PCIe" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=UCIe%203.0%20Signal%20Integrity%3A%2064%20GT%2Fs%20Chiplet%20Links%20vs%20PCIe&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Fucie.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:head:end -->
     <p class="answer">
@@ -98,6 +98,13 @@
       The consortium quotes it per millimetre of die edge, counting both directions together: 28 to 224 GB/s/mm on a
       standard package and 165 to 1317 GB/s/mm on an advanced one across 4 to 32 GT/s, and 370 and 2634 GB/s/mm at
       64 GT/s (C-68, C-76). The panel below turns that into the edge a given bandwidth needs.
+    </p>
+    <h3>What is UCIe-3D?</h3>
+    <p>
+      The UCIe option for stacking one die on another. The dies are joined face to face by hybrid bonding at a bond
+      pitch of 10 &#181;m or less (C-66), run at up to 4 GT/s (C-64), and quote bandwidth per square millimetre of
+      overlap rather than per millimetre of edge: about 4 TB/s/mm&#178; at 9 &#181;m and 300 at 1 &#181;m (C-71).
+      <a href="#ucie-3d-hybrid-bonding">Why heat, not wire count, sets its limit</a>.
     </p>
     <h3>Does UCIe use PAM4?</h3>
     <p>
@@ -435,16 +442,104 @@
       the energy per bit.
     </p>
 
-    <h2 class="section-rule" id="3d"><span>UCIe-3D: from an edge to an area</span></h2>
+    <h2 class="section-rule" id="ucie-3d-hybrid-bonding"><span id="3d">UCIe-3D and hybrid bonding: why a finer bond pitch runs hotter</span></h2>
     <p>
-      Stack one die on another and the interface is no longer limited to an edge; it can use the whole overlap. The
-      number of wires then grows as the inverse square of the bump pitch. The consortium gives about 4 TB/s/mm&#178; at
+      Stacking one chiplet on another with hybrid bonding turns die-to-die bandwidth from a property of the die edge
+      into a property of area. As the bond pitch shrinks from 9 &#181;m to 1 &#181;m, bandwidth density rises 75-fold
+      while energy per bit falls only fivefold, so the bonded interface can run hotter than the logic around it. Drag
+      the pitch below and watch it happen.
+    </p>
+    <p>
+      With the whole overlap available, the number of wires grows as the inverse square of the bump pitch. The consortium gives about 4 TB/s/mm&#178; at
       a 9 &#181;m pitch and about 300 TB/s/mm&#178; at 1 &#181;m (C-71). The square law checks it: (9/1)&#178; = 81, and 81
       times 4 TB/s/mm&#178; is 324 TB/s/mm&#178;. With that many wires none of them has to be fast: UCIe-3D runs at up
       to 4 GT/s (C-64), and the consortium keeps its circuits simple and its frequency low, at the dies&#8217; own logic
       clock, because power is what matters; the near-zero distance between the dies removes most of the wire&#8217;s
       parasitics (C-77). The target is below 0.05 pJ/b at a 9 &#181;m pitch (C-69). The SI problem becomes a
       power-delivery and thermal one.
+    </p>
+    <p>
+      Here is why. Power per square millimetre of bonded area is bandwidth density times energy per bit. At 9 &#181;m,
+      4 TB/s/mm&#178; at 0.05 pJ/b is 1.6 W/mm&#178;; at 1 &#181;m, 300 TB/s/mm&#178; at the consortium&#8217;s 0.01 pJ/b
+      target is 24 W/mm&#178; (C-102), if every wire were busy. For scale, a 700 W H100 module over its 814 mm&#178; die
+      averages about 0.86 W/mm&#178; (C-103, C-104), and that over-states the die, because the module&#8217;s power
+      includes its memory. A fully busy 1 &#181;m interface would run about 28 times hotter than that average, before
+      the logic in either die adds its own heat.
+    </p>
+  </div>
+
+  <section class="instrument instrument--side" data-viz="ucie3d" aria-label="Interactive view of a hybrid-bonded UCIe-3D interface: two dies bonded face to face with a zoomed window on the bond layer, shaded by its power density against a heat budget, and a chart of power density against bond pitch">
+    <script type="application/json" data-contract>{"kind":"analytical","evidence":"independent","purpose":"Show how hot a hybrid-bonded UCIe-3D interface runs: power per square millimetre of bonded area against bond pitch and activity, against a heat budget.","equations":["density(p) = 4000 * (9/p)^kD GB/s/mm2, kD = ln(75)/ln(9)","energy(p) = 0.05 * (p/9)^kE pJ/b, kE = ln(5)/ln(9)","power density = density * 8 * energy * 1e-3 * activity W/mm2","reference budget = 700 W / 814 mm2 (C-103, C-104)"],"units":"um, GB/s/mm2, pJ/b, W/mm2, TB/s, W, mm2","validity":"Exact at the two published points; between them a power law through both, which is an interpolation. Pitch limited to the 1 to 9 um the targets cover.","numerics":"Closed form, evaluated on 81 points across the pitch range.","limitations":"The figures are consortium targets, not measurements. Full activity is a worst case. The budget is one product's average and over-states its die, because module power includes memory; the interface's heat adds to the logic's own. No thermal spreading, no hot spots, no power-delivery model.","suites":["UCIe-3D heat"],"version":"1.0","reviewed":"2026-10-12","panel":"ucie3d"}</script>
+    <div class="instrument__bar">
+      <span class="instrument__title">How hot does a bonded interface run?</span>
+        <span data-evidence="independent" data-model-version="1.0" class="model-tag model-tag--analytical" title="">analytical</span>
+      <span class="instrument__readout" role="status" aria-live="polite" aria-label="Current values">
+        <span>power <b data-out="pd">—</b></span>
+        <span>bandwidth <b data-out="dens">—</b></span>
+        <span>energy <b data-out="epb">—</b></span>
+        <span>area total <b data-out="total">—</b></span>
+        <span>busy allowed <b data-out="cap">—</b></span>
+      </span>
+    </div>
+    <div class="side-layout">
+    <div class="panels">
+      <div class="panel">
+        <span class="panel__label">Two dies bonded face to face, and a 20-micrometre window on the bond layer</span>
+        <canvas data-cv="bond" role="img" aria-label="Cross-section of two dies bonded face to face, with the bond layer shaded blue, amber or red by its power density against the budget, and a zoomed window showing how many bonds fit across 20 micrometres at the chosen pitch, with the power density in large type."></canvas>
+      </div>
+      <div class="panel">
+        <span class="panel__label">Exploded view: 16 hybrid bonds as the pitch shrinks</span>
+        <canvas data-cv="bonds" role="img" aria-label="Exploded view of two bonded die faces with 16 bond sites drawn as lines between matching pads, squeezed closer together as the pitch shrinks, faint pads where more bonds would fit, lines lit by the share busy and coloured blue, amber or red by heat, with the change in energy per bit, area and power per square millimetre against 9 micrometres."></canvas>
+      </div>
+      <div class="panel">
+        <span class="panel__label">Power density against bond pitch</span>
+        <canvas data-cv="pd" role="img" aria-label="Power density of the bonded interface in watts per square millimetre against bond pitch from 1 to 9 micrometres, on logarithmic axes, with every wire busy dashed, at the chosen activity solid, the two published targets marked, and the heat budget as a red line."></canvas>
+        <div class="legend"><span><i style="background:var(--signal)"></i>chosen share busy</span><span><i class="dash" style="color:var(--muted)"></i>all busy</span><span><i class="dash" style="color:var(--alarm)"></i>heat budget</span></div>
+      </div>
+    </div>
+    <div class="side">
+    <div class="side__inner">
+    <div class="controls">
+      <div class="ctl">
+        <div class="ctl__head"><label for="u3-pitch">Bond pitch</label><output id="u3-pitch-out" for="u3-pitch">1 µm</output></div>
+        <input type="range" id="u3-pitch" min="0" max="9" step="1" value="0">
+        <span class="ctl__note">1&#8211;9 &#181;m, the published span</span>
+      </div>
+      <div class="ctl">
+        <div class="ctl__head"><label for="u3-act">Wires busy</label><output id="u3-act-out" for="u3-act">100%</output></div>
+        <input type="range" id="u3-act" min="0" max="9" step="1" value="9">
+        <span class="ctl__note">100% is the worst case</span>
+      </div>
+      <div class="ctl">
+        <div class="ctl__head"><label for="u3-area">Bonded area</label><output id="u3-area-out" for="u3-area">10 mm²</output></div>
+        <input type="range" id="u3-area" min="0" max="6" step="1" value="3">
+        <span class="ctl__note">Sets the totals only</span>
+      </div>
+      <div class="ctl">
+        <div class="ctl__head"><label for="u3-budget">Heat budget</label><output id="u3-budget-out" for="u3-budget">0.86 W/mm²</output></div>
+        <input type="range" id="u3-budget" min="0" max="8" step="1" value="3">
+        <span class="ctl__note">Default: an H100, 700 W over 814 mm&#178;</span>
+      </div>
+    </div>
+    <div class="presets">
+      <button class="preset" type="button" data-preset="p9" aria-pressed="false">9 &#181;m &#183; 100%</button>
+      <button class="preset" type="button" data-preset="p1" aria-pressed="true">1 &#181;m &#183; 100%</button>
+      <button class="preset" type="button" data-preset="p1cap" aria-pressed="false">1 &#181;m &#183; 3%</button>
+      <button class="preset" type="button" data-preset="p4" aria-pressed="false">4 &#181;m &#183; 30%</button>
+    </div>
+    <div class="transport"><span data-out="note">—</span></div>
+    </div>
+    </div>
+    </div>
+  </section>
+
+  <div class="prose">
+    <p>
+      So at the finest pitches heat, not the number of wires, sets the usable bandwidth: at 1 &#181;m, staying at that
+      average allows only about 3.6% of the wires to be busy at once. Real interfaces are rarely all busy, and the
+      figures are targets, so read them as the shape of the problem, not a design limit. It is also why energy per bit
+      has to fall as the pitch shrinks: from 9 &#181;m to 1 &#181;m the consortium&#8217;s density rises 75-fold and its
+      energy target falls only fivefold.
     </p>
 
     <h2 class="section-rule"><span>What it takes to sign off</span></h2>
@@ -528,6 +623,8 @@
       <li><a href="https://www.uciexpress.org/_files/ugd/0c1418_b4744fe368c94e3e9c7eaa13ead632bf.pdf" target="_blank" rel="noopener">UCIe Consortium — overview deck, 2025, with the key metrics for UCIe 3.0</a> <span class="src__for">C-64</span></li>
       <li><a href="https://www.uciexpress.org/_files/ugd/8dc731_746ce30fe54b4988af132f574b6e36d6.pdf" target="_blank" rel="noopener">UCIe Consortium — UCIe 3.0 white paper</a> <span class="src__for">C-70</span></li>
       <li><a href="https://hoti.org/assets/slides/2025_08_21_day2_SessionD_UCIe_Mem.pdf" target="_blank" rel="noopener">Das Sharma, UCIe for on-package memory, Hot Interconnects (HOTI) 2025 slides</a> <span class="src__for">C-76</span></li>
+      <li><a href="https://www.nvidia.com/en-us/data-center/h100/" target="_blank" rel="noopener">NVIDIA — H100 Tensor Core GPU, product specifications</a> <span class="src__for">C-103</span></li>
+      <li><a href="https://developer.nvidia.com/blog/nvidia-hopper-architecture-in-depth/" target="_blank" rel="noopener">NVIDIA — Hopper Architecture In-Depth (Technical Blog)</a> <span class="src__for">C-104</span></li>
       </ul>
       <p class="sources__note">Rows marked with a claim id are tracked in <a href="../../docs/claims.md">the claim ledger</a>, which records what each source can and cannot establish.</p>
     </section>
@@ -557,9 +654,10 @@
 
 <script src="../../js/site.js?v=61b8ff31" defer></script>
 <script src="../../js/viz-kit.js?v=80b25b0d" defer></script>
-<script src="../../js/models/ucie-model.js?v=709e1adc" defer></script>
+<script src="../../js/models/ucie-model.js?v=2b9a06d5" defer></script>
 <script src="../../js/viz/ucie.js?v=a4572a81" defer></script>
 <script src="../../js/viz/ucie-echo.js?v=a9ea257b" defer></script>
+<script src="../../js/viz/ucie-3d.js?v=298638d0" defer></script>
 <script src="../../js/viz-loader.js?v=3395e118" defer></script>
 <script src="../../js/search.js?v=dcc1e06b" defer></script>
 </body>

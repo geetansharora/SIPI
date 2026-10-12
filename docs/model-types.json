@@ -1117,5 +1117,28 @@
     ],
     "reviewed": "2026-10-11",
     "version": "1.1"
+  },
+  "ucie3d": {
+    "kind": "analytical",
+    "evidence": "independent",
+    "purpose": "Show how hot a hybrid-bonded UCIe-3D interface runs: power per square millimetre of bonded area against bond pitch and activity, against a heat budget.",
+    "topology": "No channel: arithmetic on the consortium's two published UCIe-3D targets (C-71, C-102), at 9 and 1 um bond pitch.",
+    "planes": "The bond layer between two dies bonded face to face.",
+    "equations": [
+      "density(p) = 4000 * (9/p)^kD GB/s/mm2, kD = ln(75)/ln(9)",
+      "energy(p) = 0.05 * (p/9)^kE pJ/b, kE = ln(5)/ln(9)",
+      "power density = density * 8 * energy * 1e-3 * activity W/mm2",
+      "reference budget = 700 W / 814 mm2 (C-103, C-104)"
+    ],
+    "units": "um, GB/s/mm2, pJ/b, W/mm2, TB/s, W, mm2",
+    "validity": "Exact at the two published points; between them a power law through both, which is an interpolation. Pitch limited to the 1 to 9 um the targets cover.",
+    "numerics": "Closed form, evaluated on 81 points across the pitch range.",
+    "limitations": "The figures are consortium targets, not measurements. Full activity is a worst case. The budget is one product's average and over-states its die, because module power includes memory; the interface's heat adds to the logic's own. No thermal spreading, no hot spots, no power-delivery model.",
+    "verified": "check-models.js suite UCIe-3D heat: the two published targets give 1.6 and 24 W/mm2, power is proportional to activity and area, finer pitch raises density and power density and lowers energy per bit, the interpolation passes through both published points, the activity cap times full power equals the budget, units check (GB/s x 8 x pJ/b = mW), and out-of-range inputs are refused.",
+    "suites": [
+      "UCIe-3D heat"
+    ],
+    "reviewed": "2026-10-12",
+    "version": "1.0"
   }
 }
