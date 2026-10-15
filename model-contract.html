@@ -47,10 +47,10 @@
   <div class="page-head">
     <p class="crumb"><a href="index.html">SIPI</a> / model contracts</p>
     <h1>Interactive model assumptions and evidence</h1>
-    <p class="byline"><span>Generated from <code>docs/model-types.json</code></span><span>50 panels</span><span>fidelity: 18 analytical, 14 exact, 7 illustrative, 11 numerical · evidence: 6 computed, 39 independent, 5 plausible</span></p>
+    <p class="byline"><span>Generated from <code>docs/model-types.json</code></span><span>51 panels</span><span>fidelity: 18 analytical, 14 exact, 7 illustrative, 12 numerical · evidence: 6 computed, 40 independent, 5 plausible</span></p>
     <p class="answer">
       Each interactive panel uses a model with a defined scope. This page publishes the
-      contract for all 50 panels: the
+      contract for all 51 panels: the
       topology, the reference planes, the equations, the units, the range over which it is
       valid, how it is computed, and the evidence available for its behavior.
     </p>
@@ -69,7 +69,7 @@
       The fourth level is listed for reference and is currently unused. These model labels do not
       claim validation against a published specification. Where a page states a
       specification claim, it is recorded in the
-      <a href="docs/claims.md">claim ledger</a> with its status. Of its 114 claims, 63 have been read against the source they cite, 51 have been narrowed to what their source supports, and none still awaits a source. None of the verified ones rests on the normative text of a standard; they rest on vendor documents, public announcements and measured data, and the source checks were made by an AI model, not by a person.
+      <a href="docs/claims.md">claim ledger</a> with its status. Of its 152 claims, 70 have been read against the source they cite, 82 have been narrowed to what their source supports, and none still awaits a source. None of the verified ones rests on the normative text of a standard; they rest on vendor documents, public announcements and measured data, and the source checks were made by an AI model, not by a person.
     </p>
     <p>
       <em>Kind</em> and <em>evidence</em> answer different questions. A deliberately
@@ -596,6 +596,25 @@
       <dt>Numerics</dt><dd>Half-open tap window; CTLE normalised to unity peak gain.</dd>
       <dt>Known limitations</dt><dd>Ideal or decision-directed DFE as selected; no adaptation dynamics.</dd>
       <dt>Evidence</dt><dd>check-models.js — CTLE (causality, normalisation) and DFE (exact cancellation, window width).</dd>
+    </dl>
+  </section>
+  <section class="contract" id="ethLane">
+    <div class="contract__head">
+      <h2>ethLane</h2>
+      <span class="model-tag model-tag--numerical">numerical model</span>
+      <span class="ev ev--independent">independent</span>
+      <span class="contract__ver">v1.0 &#183; reviewed 2026-10-15</span>
+    </div>
+    <p class="contract__purpose">Show what doubling the Ethernet lane rate costs on the same board trace: loss per inch at the 112G and 224G Nyquist frequencies, the reach a budget buys at each, and the single-bit pulse each rate gets.</p>
+    <dl class="contract__body">
+      <dt>Topology</dt><dd>One stripline leg of a 90 ohm differential pair, 6 mil wide, 45 ohm odd mode (C-119's geometry), in a published laminate; board trace only, ball to ball, no packages, vias or connectors.</dd>
+      <dt>Reference planes</dt><dd>The trace alone; the 112G and 224G Nyquist frequencies, 26.5625 and 53.125 GHz (C-106, C-115).</dd>
+      <dt>Equations</dt><dd><ul class="tight"><li><code>loss per inch = dielectric + conductor, C.loss: alpha_d = pi f sqrt(Dk) Df / c, alpha_c = Rs K / (2 Z0 w), Rs = rho / skin depth</code></li><li><code>K = 1 + (2/pi) atan(1.4 (Rq / skin depth)^2), Hammerstad and Bekkadal</code></li><li><code>Dk, Df at each frequency from the manufacturer's published table (js/models/laminates.js), interpolated within one measurement series</code></li><li><code>reach = budget / loss per inch at each Nyquist</code></li><li><code>pulse: K.channelImpulse(loss at that rate's Nyquist) then K.singleBit</code></li></ul></dd>
+      <dt>Units</dt><dd>GHz, dB/in, dB, in, ps, fraction of the swing</dd>
+      <dt>Validity</dt><dd>First-order loss of a smooth-walled TEM line with the conductor current on one face of the strip, which equals the wide-stripline limit of strip plus planes. Laminate values are typical published values, not guaranteed.</dd>
+      <dt>Numerics</dt><dd>Loss evaluated at 1 GHz steps to 60 GHz. Pulses by FFT of a minimum-phase channel, 32 samples per unit interval, 4096 points.</dd>
+      <dt>Known limitations</dt><dd>No vias, packages, connectors, crosstalk or reflections. Narrow-strip fringing and differential coupling change the conductor loss; a measured trace (C-119, laminate not named) loses 1.25-1.40 dB/in at 53.125 GHz. FR-4 data stop at 10 GHz and are held flat above it. The pulse shape is the site's shared channel model with its fixed split of copper and dielectric loss; only the loss at each Nyquist comes from the laminate. No equalisation.</dd>
+      <dt>Evidence</dt><dd>check-models.js suite Ethernet lane: a pure-dielectric line doubles its loss per inch from 112G to 224G Nyquist and a smooth pure-conductor line rises by sqrt 2, any constant-Df mix lies between, dielectric loss per wavelength equals pi times Df, reach scales inversely with loss, the 224G pulse is lower than the 112G pulse on any trace, more loss never raises a pulse, and malformed inputs are refused. check-numbers.py recomputes every figure the prose states.</dd>
     </dl>
   </section>
   <section class="contract" id="eye">

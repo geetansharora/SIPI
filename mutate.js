@@ -293,6 +293,49 @@ const MUTATIONS = [
     active: true, fast: true
   },
   {
+    id: 'eth-nyquist-is-baud',
+    file: 'js/models/ethernet-model.js',
+    find: '  const NYQ = { g112: BAUD.g112 / 2, g224: BAUD.g224 / 2 };',
+    with: '  const NYQ = { g112: BAUD.g112, g224: BAUD.g224 };',
+    suite: 'Ethernet lane —',
+    expect: 'the two Nyquist frequencies are half of 53.125 and 106.25 GBd',
+    why: 'Loss read at the symbol rate instead of half of it: every dB/in on the page would be '
+       + 'quoted at twice the frequency the standards specify.',
+    active: true, fast: true
+  },
+  {
+    id: 'eth-reach-ratio-inverted',
+    file: 'js/models/ethernet-model.js',
+    find: '        reach112: p.budget / a.per, reach224: p.budget / b.per, reachRatio: a.per / b.per,',
+    with: '        reach112: p.budget / a.per, reach224: p.budget / b.per, reachRatio: b.per / a.per,',
+    suite: 'Ethernet lane —',
+    expect: 'at a fixed budget, reach falls by exactly the loss ratio',
+    why: 'A reach ratio above 1 would say 224G reaches further than 112G on the same budget.',
+    active: true, fast: true
+  },
+  {
+    id: 'eth-pulse-same-loss',
+    file: 'js/models/ethernet-model.js',
+    find: '        pulse224: want ? pulse(loss224, BAUD.g224) : null',
+    with: '        pulse224: want ? pulse(loss112, BAUD.g224) : null',
+    suite: 'Ethernet lane —',
+    expect: 'on every trace the 224G pulse is lower than the 112G pulse',
+    why: 'The 224G pulse given the 112G loss: doubling the rate would look free, which is the '
+       + 'opposite of the lesson.',
+    active: true, fast: true
+  },
+  {
+    id: 'eth-one-frequency',
+    file: 'js/models/ethernet-model.js',
+    find: '    const a = perInch(p.lam, NYQ.g112, p.rq), b = perInch(p.lam, NYQ.g224, p.rq);',
+    with: '    const a = perInch(p.lam, NYQ.g112, p.rq), b = perInch(p.lam, NYQ.g112, p.rq);',
+    suite: 'Ethernet lane —',
+    expect: 'preset "low loss, 10 in"',
+    why: 'Both rates read at the 112G Nyquist: the loss ratio collapses to 1 and the page would '
+       + 'disagree with its own preset notes.',
+    active: true, fast: true
+  },
+  {
     id: 'd2d-bow-without-aux-fec',
     file: 'js/models/d2d-model.js',
     find: "    bowI:  { name: 'BoW example, interposer', std: 'BoW', pkg: 'interposer', wires: 256, edge: 1.60, depth: 0.42,",

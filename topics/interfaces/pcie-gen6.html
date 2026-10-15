@@ -7,8 +7,8 @@
   <meta name="theme-color" content="#F7F8FA">
   <script>(function(){try{var t=localStorage.getItem('sipi-theme');if(t==='dark'||t==='system'){document.documentElement.setAttribute('data-theme',t);var m=document.querySelector('meta[name=theme-color]');if(m&&(t==='dark'||matchMedia('(prefers-color-scheme:dark)').matches))m.content='#0B1015';}}catch(e){}})();</script>
   <!-- theme:end -->
-<title>PCIe 6.0 Signal Integrity: PAM4, FLIT, and FEC | SIPI</title>
-<meta name="description" content="What changes for the SI engineer when PCIe goes to PAM4: the same Nyquist frequency, a 9.5 dB amplitude penalty, and a raw BER you can actually measure.">
+<title>PCIe 6.0 vs PCIe 5.0: PAM4, FLIT, FEC and Signal Integrity | SIPI</title>
+<meta name="description" content="PCIe 6.0 vs 5.0: 64 GT/s PAM4, 128 GB/s per direction on x16, a 32 dB channel loss budget, flits with FEC, and bandwidth tables for PCIe 1.0 to 7.0.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
@@ -19,20 +19,20 @@
   <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
   <meta property="og:type" content="article">
   <meta property="og:site_name" content="SIPI">
-  <meta property="og:title" content="PCIe 6.0 Signal Integrity: PAM4, FLIT, and FEC | SIPI">
-  <meta property="og:description" content="What changes for the SI engineer when PCIe goes to PAM4: the same Nyquist frequency, a 9.5 dB amplitude penalty, and a raw BER you can actually measure.">
+  <meta property="og:title" content="PCIe 6.0 vs PCIe 5.0: PAM4, FLIT, FEC and Signal Integrity | SIPI">
+  <meta property="og:description" content="PCIe 6.0 vs 5.0: 64 GT/s PAM4, 128 GB/s per direction on x16, a 32 dB channel loss budget, flits with FEC, and bandwidth tables for PCIe 1.0 to 7.0.">
   <meta property="og:url" content="https://sipi.work/topics/interfaces/pcie-gen6.html">
   <meta property="og:image" content="https://sipi.work/assets/og/interfaces/pcie-gen6.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
-  <meta property="og:image:alt" content="PCIe 6.0 Signal Integrity: PAM4, FLIT, and FEC: a figure from the page, on SIPI">
+  <meta property="og:image:alt" content="PCIe 6.0 vs PCIe 5.0: PAM4, FLIT, FEC and Signal Integrity: a figure from the page, on SIPI">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="PCIe 6.0 Signal Integrity: PAM4, FLIT, and FEC | SIPI">
-  <meta name="twitter:description" content="What changes for the SI engineer when PCIe goes to PAM4: the same Nyquist frequency, a 9.5 dB amplitude penalty, and a raw BER you can actually measure.">
+  <meta name="twitter:title" content="PCIe 6.0 vs PCIe 5.0: PAM4, FLIT, FEC and Signal Integrity | SIPI">
+  <meta name="twitter:description" content="PCIe 6.0 vs 5.0: 64 GT/s PAM4, 128 GB/s per direction on x16, a 32 dB channel loss budget, flits with FEC, and bandwidth tables for PCIe 1.0 to 7.0.">
   <meta name="twitter:image" content="https://sipi.work/assets/og/interfaces/pcie-gen6.png">
-  <meta name="twitter:image:alt" content="PCIe 6.0 Signal Integrity: PAM4, FLIT, and FEC: a figure from the page, on SIPI">
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"PCIe 6.0 Signal Integrity: PAM4, FLIT, and FEC","description":"What changes for the SI engineer when PCIe goes to PAM4: the same Nyquist frequency, a 9.5 dB amplitude penalty, and a raw BER you can actually measure.","url":"https://sipi.work/topics/interfaces/pcie-gen6.html","articleSection":"Interface sign-off","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer","url":"https://www.linkedin.com/in/geetansh-arora-a645714a/","sameAs":["https://www.linkedin.com/in/geetansh-arora-a645714a/"]},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-10-10","image":"https://sipi.work/assets/og/interfaces/pcie-gen6.png"}</script>
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"SIPI","item":"https://sipi.work/"},{"@type":"ListItem","position":2,"name":"Interface sign-off","item":"https://sipi.work/#interfaces"},{"@type":"ListItem","position":3,"name":"PCIe 6.0 Signal Integrity: PAM4, FLIT, and FEC"}]}</script>
+  <meta name="twitter:image:alt" content="PCIe 6.0 vs PCIe 5.0: PAM4, FLIT, FEC and Signal Integrity: a figure from the page, on SIPI">
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"PCIe 6.0 vs PCIe 5.0: PAM4, FLIT, FEC and Signal Integrity","description":"PCIe 6.0 vs 5.0: 64 GT/s PAM4, 128 GB/s per direction on x16, a 32 dB channel loss budget, flits with FEC, and bandwidth tables for PCIe 1.0 to 7.0.","url":"https://sipi.work/topics/interfaces/pcie-gen6.html","articleSection":"Interface sign-off","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer","url":"https://www.linkedin.com/in/geetansh-arora-a645714a/","sameAs":["https://www.linkedin.com/in/geetansh-arora-a645714a/"]},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-10-15","image":"https://sipi.work/assets/og/interfaces/pcie-gen6.png"}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"SIPI","item":"https://sipi.work/"},{"@type":"ListItem","position":2,"name":"Interface sign-off","item":"https://sipi.work/#interfaces"},{"@type":"ListItem","position":3,"name":"PCIe 6.0 vs PCIe 5.0: PAM4, FLIT, FEC and Signal Integrity"}]}</script>
   <!-- meta:end -->
 </head>
 <body>
@@ -52,79 +52,131 @@
 <main>
   <div class="page-head">
     <p class="crumb"><a href="../../index.html#interfaces">Interface sign-off</a> / 05</p>
-    <h1>PCIe 6.0 Signal Integrity: PAM4, FLIT, and FEC</h1>
+    <h1>PCIe 6.0 vs PCIe 5.0: PAM4, FLIT, FEC and Signal Integrity</h1>
     <p class="byline">
-      <!-- review:start --><span>By <a href="https://www.linkedin.com/in/geetansh-arora-a645714a/" target="_blank" rel="author noopener">Geetansh Arora</a> — Principal SI/PI Engineer</span><time datetime="2026-10-10" title="Technical review by Geetansh Arora on this date">10 Oct 2026</time><span>9 min</span><!-- review:end -->
+      <!-- review:start --><span>By <a href="https://www.linkedin.com/in/geetansh-arora-a645714a/" target="_blank" rel="author noopener">Geetansh Arora</a> — Principal SI/PI Engineer</span><time datetime="2026-10-15" title="Technical review by Geetansh Arora on this date">15 Oct 2026</time><span>11 min</span><!-- review:end -->
     </p>
-    <!-- share:head:start --><div class="share share--head" data-share data-share-url="https://sipi.work/topics/interfaces/pcie-gen6.html" data-share-title="PCIe 6.0 Signal Integrity: PAM4, FLIT, and FEC"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Fpcie-gen6.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Fpcie-gen6.html&amp;text=PCIe%206.0%20Signal%20Integrity%3A%20PAM4%2C%20FLIT%2C%20and%20FEC" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=PCIe%206.0%20Signal%20Integrity%3A%20PAM4%2C%20FLIT%2C%20and%20FEC&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Fpcie-gen6.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:head:end -->
+    <!-- share:head:start --><div class="share share--head" data-share data-share-url="https://sipi.work/topics/interfaces/pcie-gen6.html" data-share-title="PCIe 6.0 vs PCIe 5.0: PAM4, FLIT, FEC and Signal Integrity"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Fpcie-gen6.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Fpcie-gen6.html&amp;text=PCIe%206.0%20vs%20PCIe%205.0%3A%20PAM4%2C%20FLIT%2C%20FEC%20and%20Signal%20Integrity" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=PCIe%206.0%20vs%20PCIe%205.0%3A%20PAM4%2C%20FLIT%2C%20FEC%20and%20Signal%20Integrity&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Fpcie-gen6.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:head:end -->
     <p class="answer">
-      Gen 6 keeps the symbol rate and doubles the data rate by sending two bits per symbol. That
-      means the channel sees the same Nyquist frequency as Gen 5, which is the central bandwidth benefit,
-      but the receiver now has to resolve four levels instead of two, and the raw error rate that
-      results is high enough that forward error correction stops being optional.
+      PCIe 6.0 doubles PCIe 5.0&#8217;s 32 GT/s (gigatransfers per second) to 64 GT/s per lane without raising the
+      symbol rate. It switches from NRZ, two voltage levels and one bit per symbol, to PAM4, four levels and two bits,
+      so both generations run at 32 GBd (billion symbols per second) and the channel still has to carry a 16 GHz
+      Nyquist frequency, half the symbol rate. The price is an eye a third as tall, about 9.5 dB less eye height, and a
+      raw error rate high enough that forward error correction, carried in fixed 256-byte flits, becomes part of every
+      64 GT/s link. An x16 link moves 128 GB/s in each direction before coding.
+    </p>
+  </div>
+
+  <div class="prose">
+    <h2 class="section-rule" id="at-a-glance"><span>At a glance</span></h2>
+    <h3>What is PCIe 6.0?</h3>
+    <p>
+      The sixth generation of PCI Express, released by PCI-SIG on 11 January 2022 (C-126). It runs 64 GT/s per lane,
+      twice PCIe 5.0, using PAM4 signalling, a lightweight forward error correction (FEC) with a cyclic redundancy
+      check (CRC) to detect what it misses, and a fixed-size flow-control unit, the flit, to carry them (C-126,
+      C-8a). It is backwards compatible with every earlier
+      generation (C-126).
+    </p>
+    <h3>How fast is PCIe 6.0?</h3>
+    <p>
+      64 GT/s per lane, so an x16 link carries 64 &#215; 16 &#247; 8 = 128 GB/s in each direction: the 256 GB/s that
+      PCI-SIG quotes counts both directions together (C-126). After the flit&#8217;s CRC and FEC, 242 of every 256 bytes
+      carry packets and 6 bytes of data-link information: about 121 GB/s each way on x16, 60.5 on x8, 30.3 on x4 and
+      7.56 GB/s per lane (C-8d). The
+      <a href="#generations">bandwidth table</a> below gives every generation and link width.
+    </p>
+    <h3>PCIe 6.0 vs PCIe 5.0: what changed?</h3>
+    <p>
+      The data rate doubled and the symbol rate did not: both run at 32 GBd with a 16 GHz Nyquist frequency, NRZ at
+      Gen 5 and PAM4 at Gen 6 (C-125). The channel loss budget at 16 GHz tightened from 36 to 32 dB, the reference
+      receiver grew from a 3-tap to a 16-tap decision feedback equaliser (DFE), and error handling moved from CRC and replay
+      alone to FEC, CRC and replay in 256-byte flits (C-128, C-129, C-132). The <a href="#side-by-side">side-by-side
+      table</a> lists the rest.
+    </p>
+    <h3>Is PCIe 6.0 backward compatible?</h3>
+    <p>
+      Yes. A PCIe 6.0 device works with PCIe 1.0 to 5.0 devices, and the link runs at a rate both ends support (C-126,
+      C-131). One detail matters on the bench: flit mode is negotiated when the link trains, a 64 GT/s link always runs
+      in it, and once a link has entered flit mode it stays there at every rate, 2.5 GT/s included (C-8a, C-10, C-132).
+    </p>
+    <h3>What is the PCIe 6.0 channel loss budget?</h3>
+    <p>
+      A nominal 32 dB at 16 GHz from root complex (the host end, usually the CPU) to endpoint, 4 dB less than PCIe
+      5.0&#8217;s 36 dB at the same frequency (C-128, C-6b). In an add-in-card system about 23.5 dB of it belongs to the
+      system side and 8.5 dB to the card, which leaves the motherboard about 15.7 dB for its traces, vias and
+      capacitors (C-130). Exactly where the budget is measured, and how retimers (chips that recover and resend the
+      signal part-way along) change it, are set in the Base specification, which this page has not read.
+    </p>
+    <h3>What about PCIe 7.0?</h3>
+    <p>
+      PCI-SIG released PCIe 7.0 to its members on 11 June 2025: 128 GT/s, still PAM4 and flits, and up to 512 GB/s for
+      an x16 link counting both directions (C-127). PAM4 is already in use, so this doubling has to come from the
+      symbol rate, which works out to 64 GBd and a 32 GHz Nyquist frequency, twice what the Gen 6 channel carries.
+      Pathfinding for PCIe 8.0 was already under way at that release (C-127). The 7.0 channel budget is not covered
+      here.
+    </p>
+    <h3>What is a flit in PCIe 6.0?</h3>
+    <p>
+      A flow-control unit: a fixed 256-byte block that carries 236 bytes of transaction-layer packets, 6 of data-link
+      information, 8 of CRC and 6 of FEC (C-8d). A block code needs the same bytes every time to compute its check
+      bytes over, which variable-length packets cannot give it. At 64 GT/s on x16 one flit passes in 2 ns. The
+      <a href="#flit">flit diagram</a> draws it to scale.
+    </p>
+    <h3>How much latency does PCIe 6.0 FEC add?</h3>
+    <p>
+      Very little, by design. PCIe 6.0 was specified to add under 10 ns to transmitter plus receiver over a 32 GT/s
+      link, FEC included, and the FEC correction and CRC check together take under 2 ns (C-131, C-132). That is why
+      the code is light: it corrects short bursts quickly and leaves anything worse to the CRC and a replay. A new
+      power state, L0p, lets a link scale its power with the bandwidth in use without stopping traffic (C-131).
     </p>
   </div>
 
   <!-- ───────────── the picture ───────────── -->
   <figure class="figure">
-    <div class="figure__bar"><span>PAM4 &#183; the same Nyquist, a third the eye, and FEC in the budget</span></div>
-    <div class="figure__body"><svg viewBox="-4 14 732 250" role="img" aria-label="Gen 6 compared with Gen 5: the same 16 gigahertz Nyquist frequency, twice the data rate, a third of the eye amplitude, and a raw error rate a million times worse that forward error correction brings back.">
-  <g>
-    <text class="lbl-hi" x="0" y="34">what did not change</text>
-    <rect x="0" y="46" width="300" height="30" rx="2" fill="var(--signal)" opacity=".35"/>
-    <text class="lbl-hi" x="150" y="66" text-anchor="middle">Nyquist stays at 16 GHz</text>
-    <text class="lbl" x="0" y="94">so the channel work is familiar: same insertion loss</text>
-    <text class="lbl" x="0" y="110">budget, same intolerance of via stubs, same connectors</text>
-    <text class="lbl-sig" x="0" y="134">32 Gbaud carrying 64 Gb/s — two bits per symbol</text>
-  </g>
-  <g transform="translate(370,0)">
-    <text class="lbl-hi" x="0" y="34">what it cost</text>
-    <rect x="0" y="46" width="60" height="30" rx="2" fill="var(--reflect)" opacity=".7"/>
-    <text class="lbl-hi" x="30" y="66" text-anchor="middle">NRZ</text>
-    <rect x="90" y="46" width="20" height="30" rx="2" fill="var(--alarm)" opacity=".7"/>
-    <rect x="114" y="46" width="20" height="30" rx="2" fill="var(--alarm)" opacity=".7"/>
-    <rect x="138" y="46" width="20" height="30" rx="2" fill="var(--alarm)" opacity=".7"/>
-    <text class="lbl-hi" x="124" y="66" text-anchor="middle">PAM4</text>
-    <text class="lbl-bad" x="190" y="66">&#8722;9.5 dB</text>
-    <text class="lbl" x="0" y="98">three eyes in the swing that held one</text>
-    <text class="lbl" x="0" y="114">and they are not identical — Tx linearity is now specified</text>
-  </g>
-  <g transform="translate(0,166)">
-    <text class="lbl-hi" x="0" y="0">and the fix that changes sign-off</text>
-    <rect x="0" y="14" width="170" height="26" rx="2" fill="var(--alarm)" opacity=".45"/>
-    <text class="lbl-hi" x="85" y="32" text-anchor="middle">raw BER ~1e&#8722;6</text>
-    <path class="flow" d="M176,27 L206,27"/>
-    <rect x="212" y="14" width="150" height="26" rx="2" fill="var(--reflect)" opacity=".5"/>
-    <text class="lbl-hi" x="287" y="32" text-anchor="middle">FLIT + FEC</text>
-    <path class="flow" d="M368,27 L398,27"/>
-    <rect x="404" y="14" width="170" height="26" rx="2" fill="var(--signal)" opacity=".5"/>
-    <text class="lbl-hi" x="489" y="32" text-anchor="middle">delivered 1e&#8722;12 and better</text>
-    <text class="lbl-sig" x="0" y="60">a raw error every ~16 µs at 64 GT/s — measurable</text>
-    <text class="lbl-sig" x="0" y="76">so the bathtub is acquired, not extrapolated six decades</text>
-    <text class="lbl" x="676" y="60" text-anchor="end">precoding breaks DFE error bursts, which is</text>
-    <text class="lbl" x="676" y="76" text-anchor="end">what a lightweight FEC handles worst</text>
-  </g>
-</svg></div>
-    <figcaption><b>Gen 6 doubles the rate without doubling the frequency the channel must carry.</b> Two bits per symbol means 64 GT/s uses the same 32 Gbaud &#8212; and therefore the same 16 GHz Nyquist &#8212; as Gen 5's NRZ. An NRZ implementation at the same transfer rate would need 32 GHz, where practical copper channels have much greater loss. PAM4 instead introduces an amplitude cost of 20&#183;log&#8321;&#8320;(3) &#8776; 9.5 dB before its additional error events. The standard addresses this with a raw error rate near 10<sup>&#8722;6</sup> and FEC. At that raw BER, an error occurs about every 16 microseconds, making direct bathtub acquisition more practical than at much lower BER targets.</figcaption>
+    <div class="figure__bar"><span>PCIe 5.0 vs PCIe 6.0 &#183; one symbol, the same swing</span></div>
+    <div class="figure__body">
+        <svg viewBox="0 0 400 222" role="img" aria-label="Two eye diagrams side by side, one symbol wide, at the same 31.25 picosecond symbol time and the same voltage swing. Left, PCIe 5.0 NRZ at 32 gigabaud: two levels and one eye that spans the whole swing. Right, PCIe 6.0 PAM4 at 32 gigabaud: four levels and three stacked eyes, each a third as tall, 9.5 dB less, and a little narrower. A cartoon, not a simulated eye. Both have a 16 gigahertz Nyquist frequency.">
+        <text class="lbl-ref" x="10" y="14">PCIe 5.0 &#183; NRZ</text>
+        <text class="lbl" x="10" y="28">32 GBd, 1 bit per symbol</text>
+        <text class="lbl-sig" x="210" y="14">PCIe 6.0 &#183; PAM4</text>
+        <text class="lbl" x="210" y="28">32 GBd, 2 bits per symbol</text>
+        <polygon points="60.5,95 80,43 120,43 139.5,95 120,147 80,147" fill="var(--reflect)" opacity=".18"/>
+        <path class="field-2" style="opacity:.8" d="M20,40 L80,150 M20,150 L80,40 M120,40 L180,150 M120,150 L180,40 M80,40 H120 M10,40 H20 M180,40 H190 M80,150 H120 M10,150 H20 M180,150 H190"/>
+        <path class="tick" d="M50,156 V161 H150 V156"/>
+        <polygon points="266.5,58.33 286,43 314,43 333.5,58.33 314,73.67 286,73.67" fill="var(--signal)" opacity=".18"/>
+        <polygon points="266.5,95 286,79.67 314,79.67 333.5,95 314,110.33 286,110.33" fill="var(--signal)" opacity=".18"/>
+        <polygon points="266.5,131.67 286,116.33 314,116.33 333.5,131.67 314,147 286,147" fill="var(--signal)" opacity=".18"/>
+        <path class="field" style="opacity:.8" d="M220,40 L280,76.67 M220,40 L280,113.33 M220,40 L280,150 M220,76.67 L280,40 M220,76.67 L280,113.33 M220,76.67 L280,150 M220,113.33 L280,40 M220,113.33 L280,76.67 M220,113.33 L280,150 M220,150 L280,40 M220,150 L280,76.67 M220,150 L280,113.33 M320,40 L380,76.67 M320,40 L380,113.33 M320,40 L380,150 M320,76.67 L380,40 M320,76.67 L380,113.33 M320,76.67 L380,150 M320,113.33 L380,40 M320,113.33 L380,76.67 M320,113.33 L380,150 M320,150 L380,40 M320,150 L380,76.67 M320,150 L380,113.33 M280,40 H320 M210,40 H220 M380,40 H390 M280,76.67 H320 M210,76.67 H220 M380,76.67 H390 M280,113.33 H320 M210,113.33 H220 M380,113.33 H390 M280,150 H320 M210,150 H220 M380,150 H390"/>
+        <path class="tick" d="M250,156 V161 H350 V156"/>
+        <text class="lbl" x="10" y="178">one eye, the full swing</text>
+        <text class="lbl" x="210" y="178">three eyes, each a third</text>
+        <text class="lbl-bad" x="210" y="192">&#8722;9.5 dB of eye height</text>
+        <text class="lbl-hi" x="200" y="214" text-anchor="middle">same 31.25 ps symbol, same 16 GHz Nyquist</text>
+        </svg>
+    </div>
+    <figcaption><b>Twice the data, the same frequency.</b> PCIe 6.0 sends two bits in each 31.25 ps symbol where PCIe 5.0 sent one, so both run at 32 GBd and the channel still carries a 16 GHz Nyquist frequency. The four levels share the swing that held two, so each of the three eyes is a third as tall: 20&#183;log&#8321;&#8320;(3) &#8776; 9.5 dB less. The eyes are a little narrower too, because a step between adjacent levels slews more slowly than a full-swing one (C-133). A cartoon, not a simulated eye; Gen 6 accepts a raw error rate no worse than about 10<sup>&#8722;6</sup> and lets FEC and replay clean it up (C-131).</figcaption>
   </figure>
 
   <div class="prose">
-    <h2>Why the rate could not simply double again</h2>
+    <h2 class="section-rule"><span>Why the rate could not simply double again</span></h2>
 
     <p>
-      Every previous PCIe generation doubled the data rate by doubling the symbol rate. Gen 5 runs
-      at 32 GT/s NRZ, so Gen 6 the same way would mean 64 Gbaud and a 32 GHz Nyquist.
+      PCIe 1.0 to 5.0 each raised the symbol rate: 2.5, 5, 8, 16 and 32 GBd. Gen 5 runs at 32 GT/s NRZ, so doubling it
+      the same way would mean 64 GBd and a 32 GHz Nyquist frequency.
     </p>
 
     <p>
-      Channel loss at 32 GHz is not something a connectorised copper channel of useful length can
-      survive. Not "difficult" — the reach would collapse to something that does not reach a slot.
+      Loss in a board trace, in dB, grows between the square root of frequency and in step with it, and faster still where the
+      laminate&#8217;s loss tangent rises, so a channel that loses 36 dB at 16 GHz would lose roughly 51 to 72 dB at
+      32 GHz. The <a href="ethernet-112g-224g.html">112G vs 224G Ethernet</a> page works through why the factor lands
+      between &#8730;2 and 2. A channel that long would leave the receiver no eye to recover.
     </p>
 
     <p>
       So Gen 6 changes the modulation instead. Four voltage levels, two bits per symbol, the same
-      32 Gbaud symbol rate, and therefore the same Nyquist frequency as Gen 5. The channel's job
-      does not get harder. The receiver's does.
+      32 GBd symbol rate, and therefore the same Nyquist frequency as Gen 5. The channel&#8217;s job
+      stays familiar. The receiver&#8217;s gets harder. The <a href="../signal-integrity/nrz-vs-pam4.html">NRZ vs
+      PAM4</a> panel runs exactly this trade at 64 GT/s: change the channel&#8217;s loss and watch which eye stays open.
     </p>
 
     <h2 class="section-rule"><span>The trade PAM4 makes</span></h2>
@@ -136,7 +188,7 @@
 
     <div class="eq">
       SNR penalty = 20·log<sub>10</sub>(3) ≈ 9.5 dB
-      <span class="cap">Before accounting for the extra transitions and the additional error events PAM4 introduces, which push the practical penalty higher still. Nine and a half decibels is a large fraction of a channel budget to give away at the start.</span>
+      <span class="cap">Eye height at the same swing and the same noise. The slower steps between adjacent levels cost some eye width as well (C-133).</span>
     </div>
 
     <p>
@@ -146,57 +198,166 @@
       transmitter measurements for it (C-34).
     </p>
 
-    <h2 class="section-rule"><span>Why FEC becomes mandatory</span></h2>
+    <h2 class="section-rule" id="side-by-side"><span>PCIe 6.0 vs 5.0, side by side</span></h2>
+    <div class="table-scroll">
+      <table class="data">
+        <caption>What changed for signal integrity (ledger rows in brackets; electrical values as reported from the Base specification)</caption>
+        <thead><tr><th></th><th>PCIe 5.0</th><th>PCIe 6.0</th></tr></thead>
+        <tbody>
+          <tr><th>Released</th><td>2019 (C-125)</td><td>11 Jan 2022 (C-126)</td></tr>
+          <tr><th>Data rate per lane</th><td>32 GT/s</td><td>64 GT/s (C-125)</td></tr>
+          <tr><th>Signalling</th><td>NRZ, 1 bit per symbol</td><td>PAM4, 2 bits per symbol (C-125)</td></tr>
+          <tr><th>Symbol rate; one symbol</th><td>32 GBd; 31.25 ps</td><td>32 GBd; 31.25 ps</td></tr>
+          <tr><th>Nyquist frequency</th><td>16 GHz</td><td>16 GHz</td></tr>
+          <tr><th>Eye height, same swing</th><td>one eye, the full swing</td><td>three eyes, a third each: &#8722;9.5 dB</td></tr>
+          <tr><th>Channel loss at 16 GHz</th><td>36 dB (C-6b)</td><td>32 dB (C-128)</td></tr>
+          <tr><th>Reference CTLE</th><td>4 poles, 2 zeros</td><td>6 poles, 3 zeros (C-129)</td></tr>
+          <tr><th>Reference DFE</th><td>3 taps</td><td>16 taps (C-129)</td></tr>
+          <tr><th>Line code</th><td>128b/130b (C-125)</td><td>256-byte flit (C-8d)</td></tr>
+          <tr><th>Error handling</th><td>CRC and replay (C-132)</td><td>FEC, CRC and replay (C-126)</td></tr>
+          <tr><th>Raw error target</th><td>&#8212;</td><td>first bit error rate no worse than about 1e-6 (C-131)</td></tr>
+          <tr><th>Transmitter linearity</th><td>&#8212;</td><td>ratio of level mismatch (RLM) and signal-to-noise-and-distortion ratio (SNDR), new in 6.0 (C-34)</td></tr>
+          <tr><th>New power state</th><td>&#8212;</td><td>L0p, power scales with bandwidth used (C-131)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2 class="section-rule" id="fec"><span>Why Gen 6 adds FEC</span></h2>
 
     <p>
-      Nine decibels of lost amplitude cannot be recovered from the channel, so Gen 6 changes the target
-      instead. The raw bit error rate is relaxed to around 10<sup>−6</sup>, and forward error correction
-      brings the delivered rate back to 10<sup>−12</sup> and better. FEC is no longer a protocol nicety
-      — it is a term in the electrical budget, and the link is designed knowing the correction is there.
+      PAM4 costs 9.5 dB of eye height, far more than the 4 dB the tighter channel budget gives back. Gen 6 closes the
+      gap in three ways: a stronger reference receiver with a 16-tap DFE, a channel budget cut from 36 to 32 dB, and a
+      relaxed raw error target (C-128, C-129). That target is a first bit error rate no worse than about
+      10<sup>&#8722;6</sup>: it counts the first error of each burst, before DFE error propagation adds more (C-131).
+      Forward error correction, the CRC and replay then deliver the reliability. PCI-SIG&#8217;s stated target is a
+      failure-in-time rate well below one failure per billion hours for an x16 link, and vendors quote a delivered
+      error rate near 10<sup>&#8722;12</sup> (C-131, C-9). The link is designed knowing the correction is there.
     </p>
 
     <p>
-      That requires a fixed-size transport to carry the code words, which is what <strong>FLIT mode</strong>
-      provides: fixed-length flow control units with FEC and CRC in known positions. Gen 6 is FLIT-only,
-      and a Gen 6-capable link uses FLIT mode at lower rates too.
+      That requires a fixed-size transport to carry the code words, which is what <strong>flit mode</strong>
+      provides: fixed-length flow control units with FEC and CRC in known positions. Flit mode is negotiated when the
+      link trains; a 64 GT/s link always runs in it, and a link in flit mode stays there at lower rates too (C-8a,
+      C-10, C-132).
     </p>
+  </div>
+
+  <figure class="figure">
+    <div class="figure__bar" id="flit"><span>Inside a PCIe 6.0 flit &#183; 256 bytes, drawn to scale</span></div>
+    <div class="figure__body">
+        <svg viewBox="0 0 400 192" role="img" aria-label="One 256-byte PCIe 6.0 flit drawn to scale: 236 bytes of transaction-layer packets, then 6 bytes of data-link information, 8 bytes of CRC and 6 bytes of FEC. The last 20 bytes are shown enlarged below. The FEC corrects any burst up to 3 bytes; the CRC catches up to 8 bad bytes and the flit is replayed. One flit lasts 2 nanoseconds on an x16 link and 32 nanoseconds on x1.">
+        <text class="lbl-hi" x="20" y="14">one flit, 256 bytes, to scale</text>
+        <rect class="copper" x="20" y="22" width="331.88" height="26" opacity="0.85"/>
+        <rect class="copper-2" x="351.88" y="22" width="8.44" height="26" opacity="0.5"/>
+        <rect class="copper-2" x="360.31" y="22" width="11.25" height="26" opacity="0.75"/>
+        <rect class="copper-2" x="371.56" y="22" width="8.44" height="26" opacity="1"/>
+        <text class="lbl-hi" x="186" y="39" text-anchor="middle" style="fill:var(--surface)">236 bytes of transaction-layer packets</text>
+        <path class="edge dash" d="M351.88,50 L160,88 M380,50 L380,88"/>
+        <rect class="copper-2" x="160" y="88" width="66" height="26" opacity="0.5"/>
+        <text class="lbl-hi" x="193" y="105" text-anchor="middle">link 6</text>
+        <rect class="copper-2" x="226" y="88" width="88" height="26" opacity="0.75"/>
+        <text class="lbl-hi" x="270" y="105" text-anchor="middle">CRC 8</text>
+        <rect class="copper-2" x="314" y="88" width="66" height="26" opacity="1"/>
+        <text class="lbl-hi" x="347" y="105" text-anchor="middle">FEC 6</text>
+        <text class="lbl" x="20" y="98">the last 20 bytes,</text>
+        <text class="lbl" x="20" y="112">enlarged</text>
+        <text class="lbl" x="20" y="140">FEC: corrects any burst up to 3 bytes</text>
+        <text class="lbl" x="20" y="156">CRC: catches up to 8 bad bytes; the flit is replayed</text>
+        <text class="lbl-sig" x="20" y="180">one flit lasts 2 ns on x16 and 32 ns on x1</text>
+        </svg>
+    </div>
+    <figcaption><b>Fourteen bytes in every 256 buy the error correction.</b> A public overview by a PCI-SIG board director divides the flit into 236 bytes of transaction-layer packets (TLPs), 6 of data-link-layer information, drawn as &#8220;link&#8221;, 8 of CRC and 6 of FEC (C-8d). The FEC is three interleaved codes that each correct one byte, so any burst up to 3 bytes long is fixed in place; the CRC is guaranteed to catch up to 8 bad bytes, and a flit that fails it is sent again (C-132).</figcaption>
+  </figure>
+
+  <div class="prose">
+    <div class="table-scroll">
+      <table class="data">
+        <caption>Four mechanisms, four jobs (C-8a to C-8c, C-132)</caption>
+        <thead><tr><th>Mechanism</th><th>Its job</th><th>Its limit</th></tr></thead>
+        <tbody>
+          <tr><th>Flit</th><td>a fixed 256-byte block, so the code always protects the same bytes</td><td>14 of every 256 bytes go to CRC and FEC</td></tr>
+          <tr><th>FEC</th><td>corrects the common case on the fly: any burst up to 3 bytes</td><td>a longer burst, or more errors than one per interleave</td></tr>
+          <tr><th>CRC</th><td>detects what the FEC missed, guaranteed up to 8 bad bytes</td><td>corrects nothing</td></tr>
+          <tr><th>Replay</th><td>resends the failed flit from the sender&#8217;s buffer: that flit alone when it can, or everything from it onward</td><td>costs bandwidth and latency each time</td></tr>
+        </tbody>
+      </table>
+    </div>
 
     <p>
       <strong>Precoding</strong> completes the picture. A DFE that makes a wrong decision feeds that
       error back and can produce a burst, and burst errors are exactly what a lightweight FEC handles
-      worst. Precoding at the transmitter breaks the correlation so DFE errors arrive isolated rather
-      than clustered, which is what makes the correction budget work.
+      worst. Precoding at the transmitter limits how many errors one wrong DFE decision can cause, so a burst leaves
+      fewer bad symbols for the FEC (C-131); the deeper section below shows how.
     </p>
 
     <div class="note">
       <b>The change that most affects day-to-day work</b>
-      A raw BER of 10<sup>−6</sup> is <em>measurable</em>. At 64 GT/s that is an error roughly every
-      16 microseconds — a bathtub curve you can actually acquire rather than extrapolate. That removes one
+      A first bit error rate of 10<sup>−6</sup> is <em>measurable</em>. At 64 GT/s a new error burst starts about every
+      16 microseconds on one lane — a bathtub curve you can actually acquire rather than extrapolate. That removes one
       large source of uncertainty in sign-off: fitting Gaussian tails six decades below anything observed.
       It does not remove all of it. Whether FEC delivers depends on how the errors cluster, and a raw error
       rate says nothing about that; the burst point below is the other half of the picture.
     </div>
 
+    <h2 class="section-rule" id="budget"><span>Where the 32 dB goes</span></h2>
+    <p>
+      Gen 6 kept Gen 5&#8217;s Nyquist frequency but not its budget: the channel may lose a nominal 32 dB at 16 GHz end to end,
+      against 36 dB before (C-128, C-6b). Split the way Synopsys and Tektronix describe it for an add-in card, about
+      23.5 dB sits on the system side and 8.5 dB on the card, whose share includes a 4.6 dB package. The motherboard is
+      left about 15.7 dB for its traces, vias and AC-coupling capacitors from the root port to the slot, and the same
+      paper expects motherboards to carry retimers and better laminate as a result (C-130). PCI-SIG&#8217;s goal was a
+      reach similar to PCIe 5.0 in a similar set-up, with at most two retimers (C-131).
+    </p>
+  </div>
+
+  <figure class="figure">
+    <div class="figure__bar"><span>The channel budget at 16 GHz &#183; PCIe 5.0 vs PCIe 6.0, drawn to scale in dB</span></div>
+    <div class="figure__body">
+        <svg viewBox="0 0 400 172" role="img" aria-label="Two channel loss budgets at 16 gigahertz drawn to one scale. PCIe 5.0: 36 dB end to end. PCIe 6.0: 32 dB end to end, 4 dB less, split as about 23.5 dB on the system side, of which about 15.7 dB is left for motherboard traces, and 8.5 dB on the add-in card, including a 4.6 dB package.">
+        <text class="lbl-ref" x="20" y="14">PCIe 5.0 &#183; 36 dB at 16 GHz, end to end</text>
+        <rect class="copper-2" x="20" y="22" width="360" height="24" opacity=".85"/>
+        <text class="lbl-hi" x="200" y="38" text-anchor="middle" style="fill:var(--surface)">36 dB</text>
+        <text class="lbl-sig" x="20" y="72">PCIe 6.0 &#183; 32 dB at 16 GHz, end to end</text>
+        <rect class="copper" x="20" y="80" width="235" height="24" opacity=".85"/>
+        <rect class="copper" x="255" y="80" width="85" height="24" opacity=".55"/>
+        <rect class="edge dash" x="340" y="80" width="40" height="24"/>
+        <text class="lbl-hi" x="137.5" y="96" text-anchor="middle" style="fill:var(--surface)">system side &#8776; 23.5</text>
+        <text class="lbl-hi" x="297.5" y="96" text-anchor="middle">card 8.5</text>
+        <text class="lbl-bad" x="360" y="96" text-anchor="middle">&#8722;4 dB</text>
+        <path class="tick" d="M59,110 V116 H216 V110"/>
+        <text class="lbl" x="137.5" y="130" text-anchor="middle">motherboard routing &#8776; 15.7</text>
+        <path class="tick" d="M255,110 V116 H340 V110"/>
+        <text class="lbl" x="297.5" y="130" text-anchor="middle">incl. 4.6 pkg</text>
+        <text class="lbl-hi" x="200" y="160" text-anchor="middle">same frequency as PCIe 5.0, 4 dB less to spend</text>
+        </svg>
+    </div>
+    <figcaption><b>Gen 6 kept the frequency and gave back 4 dB.</b> Both bars are end-to-end channel budgets at 16 GHz on one scale: 36 dB for PCIe 5.0 and 32 dB for PCIe 6.0 (C-6b, C-128). The PCIe 6.0 split is the add-in-card example Synopsys and Tektronix describe: about 23.5 dB for the system side, of which about 15.7 dB is left for motherboard traces, vias and capacitors, and 8.5 dB for the card, including a 4.6 dB package (C-130). The bracket shows the size of the board&#8217;s share, not where it sits along the path.</figcaption>
+  </figure>
+
+  <div class="prose">
+    <p>
+      Take the vias, capacitors and breakouts out of the 15.7 dB first; the <a href="../tools/loss-budget.html">loss
+      budget calculator</a> turns what is left into inches of trace for your laminate,
+      and <a href="../signal-integrity/channel-budgeting.html">channel budgeting</a> covers how the pieces add up.
+    </p>
+
     <h2 class="section-rule"><span>What stays the same</span></h2>
 
     <p>
-      Because Nyquist has not moved, the channel work is familiar: the same 16 GHz insertion loss
-      budget, the same intolerance of via stubs, the same connector and escape discontinuities. What
-      changes is how little margin there is to absorb any of it, and how much more a reflection or a
-      crosstalk aggressor costs when it lands on an eye a third the size.
+      Because Nyquist has not moved, the channel work is familiar: loss is judged at the same 16 GHz, via stubs
+      resonate at the same frequencies, and the connector and breakout discontinuities are the same ones. What changes is how
+      little margin there is to absorb any of it: 4 dB less loss allowed, and every reflection or crosstalk aggressor
+      landing on an eye a third the size.
     </p>
 
-    <h3>Sources</h3>
-    <ul class="tight refs">
-      <li>FLIT mode, FEC, CRC and replay as four separate mechanisms &#8212; vendor descriptions, ledger claims C-8 to C-10. The PCI-SIG Base 6.0 specification itself has not been read for this page; check any limit against the revision you sign off to.</li>
-    </ul>
-      <h2 class="section-rule"><span>Why this decides how your board behaves</span></h2>
+    <h2 class="section-rule"><span>Why this decides how your board behaves</span></h2>
 
     <ul class="tight">
       <li><strong>Everything that is not loss now matters three times more.</strong> Crosstalk,
         reflections and supply noise all eat three times the fraction of an eye they did at NRZ.</li>
-      <li><strong>Return loss becomes disproportionately important.</strong> Backdrilling, launch
-        design and connector footprints move up the priority list relative to laminate choice.</li>
+      <li><strong>Return loss matters more.</strong> A reflection now lands on an eye a third the height, so
+        backdrilling, launch design and connector footprints matter as much as the laminate, which the same
+        Synopsys and Tektronix paper expects to improve on Gen 6 boards too (C-130).</li>
       <li><strong>A high raw error rate is normal.</strong> Designing to an NRZ instinct about
         acceptable raw BER leads to over-design; reading a raw number as a failure leads to
         alarm.</li>
@@ -209,7 +370,9 @@
 
     <p>
       <strong>Re-budget noise, not just loss.</strong> The temptation is to reuse a Gen 5 channel
-      because Nyquist did not move. The loss budget survives; the noise budget does not.
+      because Nyquist did not move. The loss budget tightens by 4 dB, but the eye is 9.5 dB smaller and the stronger
+      equaliser wins back only part of that, so budget crosstalk, reflections and supply noise explicitly instead of
+      carrying over Gen 5&#8217;s margins.
     </p>
 
     <p>
@@ -232,13 +395,64 @@
       <b>Using this to find a fault</b>
       <ul class="tight">
         <li><b>One eye much worse than the other two.</b> Level linearity or threshold placement —
-          a device issue, since the channel treats all three alike.</li>
+          usually a device issue, since the channel treats all three alike.</li>
         <li><b>Post-FEC errors with an acceptable raw rate.</b> Bursts. Look at error spacing, not
           just error count.</li>
-        <li><b>A channel that was comfortable at Gen 5 and marginal at Gen 6.</b> Check crosstalk
-          and return loss before loss, since loss is the one thing that did not change.</li>
+        <li><b>A channel that was comfortable at Gen 5 and marginal at Gen 6.</b> Measure loss against the new
+          32 dB, then check crosstalk and return loss: the frequency did not change, but the budget shrank by 4 dB and
+          every eye by two thirds.</li>
       </ul>
     </div>
+
+    <h2 class="section-rule" id="generations"><span>PCIe 1.0 to 7.0: GT/s and GB/s by lane count</span></h2>
+    <p>
+      Every generation has roughly doubled the bandwidth per lane (C-125, C-127), but not always by doubling the
+      transfer rate. Gen 3 raised the
+      rate only 1.6 times, from 5 to 8 GT/s, and made up the rest by changing the line code from 8b/10b, which spends
+      20% of the bits on coding, to 128b/130b, which spends 1.5%. Gen 6 doubled with PAM4 instead of a faster symbol
+      rate, and Gen 7 doubles the symbol rate again.
+    </p>
+    <div class="table-scroll">
+      <table class="data">
+        <caption>PCIe generations (C-125, C-126, C-127); symbol rate and Nyquist frequency follow from the signalling</caption>
+        <thead><tr><th>Generation</th><th>Released</th><th>Transfer rate</th><th>Signalling, line code</th><th>Symbol rate</th><th>Nyquist</th></tr></thead>
+        <tbody>
+          <tr><th>PCIe 1.0</th><td>2003</td><td>2.5 GT/s</td><td>NRZ, 8b/10b</td><td>2.5 GBd</td><td>1.25 GHz</td></tr>
+          <tr><th>PCIe 2.0</th><td>2007</td><td>5 GT/s</td><td>NRZ, 8b/10b</td><td>5 GBd</td><td>2.5 GHz</td></tr>
+          <tr><th>PCIe 3.0</th><td>2010</td><td>8 GT/s</td><td>NRZ, 128b/130b</td><td>8 GBd</td><td>4 GHz</td></tr>
+          <tr><th>PCIe 4.0</th><td>2017</td><td>16 GT/s</td><td>NRZ, 128b/130b</td><td>16 GBd</td><td>8 GHz</td></tr>
+          <tr><th>PCIe 5.0</th><td>2019</td><td>32 GT/s</td><td>NRZ, 128b/130b</td><td>32 GBd</td><td>16 GHz</td></tr>
+          <tr><th>PCIe 6.0</th><td>2022</td><td>64 GT/s</td><td>PAM4, flit</td><td>32 GBd</td><td>16 GHz</td></tr>
+          <tr><th>PCIe 7.0</th><td>2025</td><td>128 GT/s</td><td>PAM4, flit</td><td>64 GBd</td><td>32 GHz</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="table-scroll">
+      <table class="data">
+        <caption>PCIe bandwidth by link width, GB/s in each direction: after 8b/10b or 128b/130b line coding for 1.0 to 5.0, after the flit&#8217;s CRC and FEC for 6.0, and the raw rate for 7.0 (*)</caption>
+        <thead><tr><th>Generation</th><th>x1</th><th>x4</th><th>x8</th><th>x16</th></tr></thead>
+        <tbody>
+          <tr><th>PCIe 1.0</th><td>0.25</td><td>1.0</td><td>2.0</td><td>4.0</td></tr>
+          <tr><th>PCIe 2.0</th><td>0.5</td><td>2.0</td><td>4.0</td><td>8.0</td></tr>
+          <tr><th>PCIe 3.0</th><td>0.985</td><td>3.94</td><td>7.88</td><td>15.8</td></tr>
+          <tr><th>PCIe 4.0</th><td>1.97</td><td>7.88</td><td>15.8</td><td>31.5</td></tr>
+          <tr><th>PCIe 5.0</th><td>3.94</td><td>15.8</td><td>31.5</td><td>63.0</td></tr>
+          <tr><th>PCIe 6.0</th><td>7.56</td><td>30.3</td><td>60.5</td><td>121</td></tr>
+          <tr><th>PCIe 7.0</th><td>16*</td><td>64*</td><td>128*</td><td>256*</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>
+      Line coding takes its share first: 8b/10b keeps 80% of the bits, 128b/130b keeps 98.5%, and a Gen 6 flit keeps
+      242 of its 256 bytes, 6 of which are data-link information; packet headers and flow control come out of what is
+      left in every generation. That is not quite like for like: the flit also drops the sync headers, framing tokens
+      and per-packet CRCs that Gen 5 pays for on top of 128b/130b, and PCI-SIG aimed for under 2% bandwidth
+      inefficiency against Gen 5 (C-131). *The Gen 7 row is the raw rate, transfer rate &#215; lanes &#247; 8, because
+      the sources used here do not give its flit layout. So a Gen 4 x4 SSD
+      link carries 7.88 GB/s each way, Gen 5 x4 15.8 GB/s, and a Gen 5 x16 graphics slot 63.0 GB/s. PCI-SIG&#8217;s
+      headline figures are raw and count both directions: 256 GB/s for a Gen 6 x16 link and 512 GB/s for Gen 7
+      (C-126, C-127).
+    </p>
 
     <details class="deeper">
       <summary>Go deeper — the mechanisms Gen 6 adds, and what they are each for</summary>
@@ -252,7 +466,7 @@
       </p>
 
       <p>
-        Precoding at the transmitter encodes each symbol relative to the one before it, and the receiver undoes
+        In its usual form, 1/(1+D), precoding at the transmitter encodes each symbol relative to the one before it, and the receiver undoes
         that by combining each decision with the previous one. A DFE error run alternates in sign, so after decoding
         it leaves an error at its start and one at its end rather than one per symbol. The burst becomes two
         isolated errors, which is the shape the FEC was sized for. The precoder&#8217;s exact definition, and when a
@@ -268,21 +482,31 @@
       </p>
 
       <p>
-        The code is deliberately weak. It corrects little and decodes fast, because a load-store interconnect cannot
-        afford the decode delay of the long Reed&#8211;Solomon codes Ethernet uses. What it cannot correct, the CRC
-        detects, and the link replays that FLIT from the partner&#8217;s buffer. So there are four mechanisms with
-        four jobs: the FLIT fixes the block, the FEC corrects the common case, the CRC catches the rest, and replay
-        recovers it.
+        The code is deliberately light, because a load-store interconnect cannot wait for a long decode. Gen 6 was
+        designed to add under 10 ns to transmitter plus receiver over a 32 GT/s link, FEC included, and the same
+        overview contrasts that with the roughly 100 ns FEC latency of PAM4 networking (C-131); the long
+        <a href="ethernet-112g-224g.html#fec">Ethernet RS(544,514)</a> code belongs to that family. Correction and the CRC check take under 2 ns (C-132). A flit lasts
+        256 &#215; 8 bits &#247; (64 GT/s &#215; 16 lanes) = 2 ns on x16 and 32 ns on x1. What the FEC cannot correct, the
+        CRC detects, and the link replays that flit from the partner&#8217;s buffer: the flit fixes the block, the FEC
+        corrects the common case, the CRC catches the rest, and replay recovers it.
       </p>
 
       <p>
         <strong>Transmitter linearity.</strong> An NRZ transmitter is judged on swing and edges. A PAM4 transmitter
         also has to place its four levels evenly: a driver that compresses near its rails squeezes the outer eyes,
         and noise that would be harmless on an even eye then lands on a short one. Gen 6 therefore specifies
-        linearity, as a level-separation mismatch ratio (how unevenly the three eyes are spaced) and as a
+        linearity, as a ratio of level mismatch, RLM (how unevenly the four levels are spaced), and as a
         signal-to-noise-and-distortion ratio, each measured through a defined test setup (C-34). Take the limits from
         the revision you sign off to; they are not reproduced here because the specification has not been read for
         this page.
+      </p>
+
+      <p>
+        <strong>A stronger reference receiver.</strong> Compliance scores a channel through a reference receiver, and
+        Gen 6&#8217;s is stronger: a CTLE with six poles and three zeros against four and two, and a 16-tap DFE against
+        3 taps (C-129). More DFE taps cancel more of the reflections that arrive a few symbols late, which is part of
+        how a 32 dB channel with a third of the eye still closes. The
+        <a href="../signal-integrity/equalization.html">equalisation</a> page explains each block.
       </p>
     </details>
 
@@ -296,14 +520,27 @@
 
     <p>
       The practical consequence is that the first instinct has to change. On a marginal NRZ link the
-      question was usually "how do I get less loss?". On a marginal Gen 6 link it is more often "what
-      is adding noise, and does it arrive in bursts?".
+      question was usually &#8220;how do I get less loss?&#8221;. On a marginal Gen 6 link it is more often &#8220;what
+      is adding noise, and does it arrive in bursts?&#8221;. PCIe 7.0 adds the old question back: at 128 GT/s the
+      Nyquist frequency doubles to 32 GHz, so for a similar channel loss returns to the top of the list as well.
+    </p>
+
+    <h3>Where the numbers come from</h3>
+    <p>
+      Rates, dates and headline bandwidths from PCI-SIG&#8217;s own press releases and a public overview by a PCI-SIG
+      board director. The channel budget, its split and the reference receiver from test-equipment, IP and connector
+      vendors who quote the specification. The PCI-SIG Base specification is available to members only and has not
+      been read for this page, so every electrical figure is marked scoped in the claim ledger; check limits against the
+      revision you sign off to. Bandwidths, symbol rates and Nyquist frequencies are arithmetic on those rates, checked
+      by the site&#8217;s number gate.
     </p>
 
     <h3>Related</h3>
     <ul class="tight">
       <li><a href="../signal-integrity/nrz-vs-pam4.html">NRZ vs PAM4 Signaling: Bandwidth and SNR Trade-off</a></li>
-      <li><a href="../interfaces/pcie-gen4-gen5.html">PCIe Gen 4 and Gen 5 Signal Integrity: Loss and EQ</a></li>
+      <li><a href="../interfaces/pcie-gen4-gen5.html">PCIe 4.0 vs 5.0: Loss Budget, Tx Presets, Link Equalization</a></li>
+      <li><a href="../interfaces/ethernet-112g-224g.html">112G vs 224G Ethernet Signal Integrity: 802.3ck and 802.3dj</a></li>
+      <li><a href="../signal-integrity/channel-budgeting.html">Channel Loss Budgeting Across Die, Package, and Board</a></li>
       <li><a href="../fundamentals/bathtub-curves.html">Bathtub Curves and BER Extrapolation</a></li>
       <li><a href="../signal-integrity/equalization.html">SerDes Equalization: CTLE, FFE, DFE and CDR</a></li>
     </ul>
@@ -318,15 +555,20 @@
       <li><a href="https://www.cadence.com/content/dam/cadence-www/global/en_US/documents/tools/silicon-solutions/design-ip/pcie-6-0-electrical-testing-for-high-data-bandwidth-applications.pdf" target="_blank" rel="noopener">Cadence — PCIe 6.0 electrical testing for high data bandwidth applications</a> <span class="src__for">C-9</span></li>
       <li><a href="https://www.chipestimate.com/Unraveling-PCIe-60-FLIT-Mode-Challenges/Cadence/blogs/3640" target="_blank" rel="noopener">Cadence — Unravelling PCIe 6.0 FLIT mode challenges</a> <span class="src__for">C-10</span></li>
       <li><a href="https://blog.teledynelecroy.com/2022/06/get-ready-for-pci-express-60-base.html" target="_blank" rel="noopener">Teledyne LeCroy — Get Ready for PCIe 6.0 Base Tx Testing</a> <span class="src__for">C-34</span></li>
+      <li><a href="https://www.design-reuse.com/news/51221/pci-sig-pcie-6-0-specification.html" target="_blank" rel="noopener">PCI-SIG — PCI-SIG Releases PCIe 6.0 Specification Delivering Record Performance to Power Big Data Applications, 11 Jan 2022</a> <span class="src__for">C-126</span></li>
+      <li><a href="https://www.signalintegrityjournal.com/articles/3984-pci-sig-releases-pcie-70-specification-to-support-the-bandwidth-demands-of-artificial-intelligence-at-1280-gt-s-transfer-rates" target="_blank" rel="noopener">PCI-SIG — PCI-SIG Releases PCIe 7.0 Specification to Support the Bandwidth Demands of Artificial Intelligence at 128.0 GT/s Transfer Rates, Jun 2025</a> <span class="src__for">C-127</span></li>
+      <li><a href="https://www.teledynelecroy.com/doc/docview.aspx?id=14227" target="_blank" rel="noopener">Teledyne LeCroy (A. Mickens) — How PAM4 Signaling is Changing PCIe 6.0 Jitter Measurements, Jan 2023</a> <span class="src__for">C-128</span></li>
+      <li><a href="https://www.signalintegrityjournal.com/articles/2964-how-to-choose-an-interconnect-for-pcie-60-high-speed-systems" target="_blank" rel="noopener">Signal Integrity Journal (S. Krooswyk, A. Fellbaum, M. Burns, Samtec) — How To Choose an Interconnect for PCIe 6.0 High-Speed Systems, Jan 2023</a> <span class="src__for">C-129</span></li>
+      <li><a href="https://www.tek.com/en/documents/whitepaper/pcie-6-phy-validation" target="_blank" rel="noopener">Synopsys (M. Sanyal) and Tektronix — PCIe 6.0 PHY Validation white paper</a> <span class="src__for">C-130</span></li>
       </ul>
       <p class="sources__note">Rows marked with a claim id are tracked in <a href="../../docs/claims.md">the claim ledger</a>, which records what each source can and cannot establish.</p>
     </section>
     <!-- sources:end -->
-  <!-- share:foot:start --><div class="share share--foot" data-share data-share-url="https://sipi.work/topics/interfaces/pcie-gen6.html" data-share-title="PCIe 6.0 Signal Integrity: PAM4, FLIT, and FEC"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Fpcie-gen6.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Fpcie-gen6.html&amp;text=PCIe%206.0%20Signal%20Integrity%3A%20PAM4%2C%20FLIT%2C%20and%20FEC" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=PCIe%206.0%20Signal%20Integrity%3A%20PAM4%2C%20FLIT%2C%20and%20FEC&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Fpcie-gen6.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:foot:end -->
+  <!-- share:foot:start --><div class="share share--foot" data-share data-share-url="https://sipi.work/topics/interfaces/pcie-gen6.html" data-share-title="PCIe 6.0 vs PCIe 5.0: PAM4, FLIT, FEC and Signal Integrity"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Fpcie-gen6.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Fpcie-gen6.html&amp;text=PCIe%206.0%20vs%20PCIe%205.0%3A%20PAM4%2C%20FLIT%2C%20FEC%20and%20Signal%20Integrity" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=PCIe%206.0%20vs%20PCIe%205.0%3A%20PAM4%2C%20FLIT%2C%20FEC%20and%20Signal%20Integrity&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Fpcie-gen6.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:foot:end -->
 
   <!-- pager:start -->
   <nav class="pager" aria-label="Previous and next topic">
-    <a class="prev" href="../../topics/interfaces/pcie-gen4-gen5.html"><span class="dir">Previous</span><span>PCIe Gen 4 and Gen 5 Signal Integrity: Loss and EQ</span></a>
+    <a class="prev" href="../../topics/interfaces/pcie-gen4-gen5.html"><span class="dir">Previous</span><span>PCIe 4.0 vs 5.0: Loss Budget, Tx Presets, Link Equalization</span></a>
     <a class="next" href="../../topics/interfaces/ucie.html"><span class="dir">Next</span><span>UCIe 3.0 Signal Integrity: 64 GT/s Chiplet Links vs PCIe</span></a>
   </nav>
   <!-- pager:end -->

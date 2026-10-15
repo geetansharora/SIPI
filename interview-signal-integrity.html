@@ -31,7 +31,7 @@
   <meta name="twitter:description" content="Signal integrity interview questions with layered answers: impedance, reflections, termination, loss, ISI, eyes, jitter, crosstalk, S-parameters, equalisation, plots and debug.">
   <meta name="twitter:image" content="https://sipi.work/assets/og/guides/interview-signal-integrity.png">
   <meta name="twitter:image:alt" content="Signal Integrity Interview Questions and Answers: a figure from the page, on SIPI">
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Signal Integrity Interview Questions and Answers","description":"Signal integrity interview questions with layered answers: impedance, reflections, termination, loss, ISI, eyes, jitter, crosstalk, S-parameters, equalisation, plots and debug.","url":"https://sipi.work/interview-signal-integrity.html","articleSection":"Interview preparation","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer","url":"https://www.linkedin.com/in/geetansh-arora-a645714a/","sameAs":["https://www.linkedin.com/in/geetansh-arora-a645714a/"]},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-10-12","image":"https://sipi.work/assets/og/guides/interview-signal-integrity.png"}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Signal Integrity Interview Questions and Answers","description":"Signal integrity interview questions with layered answers: impedance, reflections, termination, loss, ISI, eyes, jitter, crosstalk, S-parameters, equalisation, plots and debug.","url":"https://sipi.work/interview-signal-integrity.html","articleSection":"Interview preparation","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer","url":"https://www.linkedin.com/in/geetansh-arora-a645714a/","sameAs":["https://www.linkedin.com/in/geetansh-arora-a645714a/"]},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-10-15","image":"https://sipi.work/assets/og/guides/interview-signal-integrity.png"}</script>
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"SIPI","item":"https://sipi.work/"},{"@type":"ListItem","position":2,"name":"Interview guide","item":"https://sipi.work/interview.html"},{"@type":"ListItem","position":3,"name":"Signal Integrity Interview Questions and Answers"}]}</script>
   <!-- meta:end -->
 </head>
@@ -53,10 +53,10 @@
   <div class="page-head">
     <p class="crumb"><a href="interview.html">Interview guide</a> / signal integrity</p>
     <h1>Signal Integrity Interview Questions and Answers</h1>
-    <p class="byline"><!-- review:start --><span>By <a href="https://www.linkedin.com/in/geetansh-arora-a645714a/" target="_blank" rel="author noopener">Geetansh Arora</a> — Principal SI/PI Engineer</span><time datetime="2026-10-12" title="Technical review by Geetansh Arora on this date">12 Oct 2026</time><!-- review:end --><span>39 questions</span><span>60&#8211;75 min of practice</span></p>
+    <p class="byline"><!-- review:start --><span>By <a href="https://www.linkedin.com/in/geetansh-arora-a645714a/" target="_blank" rel="author noopener">Geetansh Arora</a> — Principal SI/PI Engineer</span><time datetime="2026-10-15" title="Technical review by Geetansh Arora on this date">15 Oct 2026</time><!-- review:end --><span>42 questions</span><span>60&#8211;75 min of practice</span></p>
     <!-- share:head:start --><div class="share share--head" data-share data-share-url="https://sipi.work/interview-signal-integrity.html" data-share-title="Signal Integrity Interview Questions and Answers"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Finterview-signal-integrity.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Finterview-signal-integrity.html&amp;text=Signal%20Integrity%20Interview%20Questions%20and%20Answers" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=Signal%20Integrity%20Interview%20Questions%20and%20Answers&amp;body=https%3A%2F%2Fsipi.work%2Finterview-signal-integrity.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:head:end -->
     <p class="answer">
-      39 signal integrity questions of the kind asked in SI and high-speed design interviews, each answered in three
+      42 signal integrity questions of the kind asked in SI and high-speed design interviews, each answered in three
       layers: the short answer, what a strong answer adds, and the follow-up an interviewer is likely to ask next. Every
       answer links to the page that teaches it, and many to a panel where you can see it happen.
     </p>
@@ -73,14 +73,14 @@
       <a href="#loss">Loss, ISI and eyes</a> &#183; <a href="#crosstalk">Crosstalk</a> &#183;
       <a href="#sparams">Differential and S-parameters</a> &#183; <a href="#eq">Equalisation and clock recovery</a> &#183;
       <a href="#board">Package, board and vias</a> &#183; <a href="#methods">Methods and measurement</a> &#183;
-      <a href="#plots">Read the plot</a> &#183; <a href="#chiplets">Chiplets and die-to-die links</a> &#183; <a href="#debug">Debug scenarios</a></nav>
+      <a href="#plots">Read the plot</a> &#183; <a href="#chiplets">Chiplets and die-to-die links</a> &#183; <a href="#ethernet">High-speed Ethernet</a> &#183; <a href="#debug">Debug scenarios</a></nav>
     <div class="qa-tools" data-qa-tools hidden>
       <button type="button" class="preset" data-qa="random">Random question</button>
       <button type="button" class="preset" data-qa="all" aria-pressed="false">Show all answers</button>
     </div>
     <h2 class="section-rule" id="fundamentals"><span>Fundamentals</span></h2>
     <div class="qa" id="q-what-is-si">
-      <p class="qa__n">Question 1 of 39</p>
+      <p class="qa__n">Question 1 of 42</p>
       <h3>What is signal integrity?</h3>
       <details class="qa__ans">
         <summary><span class="qa__show">Show answer</span><span class="qa__hide">Hide answer</span></summary>
@@ -91,7 +91,7 @@
       </details>
     </div>
     <div class="qa" id="q-edge">
-      <p class="qa__n">Question 2 of 39</p>
+      <p class="qa__n">Question 2 of 42</p>
       <h3>A 100 MHz clock: why does its edge matter more than its frequency?</h3>
       <details class="qa__ans">
         <summary><span class="qa__show">Show answer</span><span class="qa__hide">Hide answer</span></summary>
@@ -102,7 +102,7 @@
       </details>
     </div>
     <div class="qa" id="q-z0">
-      <p class="qa__n">Question 3 of 39</p>
+      <p class="qa__n">Question 3 of 42</p>
       <h3>What is characteristic impedance, and what sets it?</h3>
       <details class="qa__ans">
         <summary><span class="qa__show">Show answer</span><span class="qa__hide">Hide answer</span></summary>
@@ -113,7 +113,7 @@
       </details>
     </div>
     <div class="qa" id="q-tl">
-      <p class="qa__n">Question 4 of 39</p>
+      <p class="qa__n">Question 4 of 42</p>
       <h3>When does a trace need to be treated as a transmission line?</h3>
       <details class="qa__ans">
         <summary><span class="qa__show">Show answer</span><span class="qa__hide">Hide answer</span></summary>
@@ -125,7 +125,7 @@
     </div>
     <h2 class="section-rule" id="reflections"><span>Reflections and termination</span></h2>
     <div class="qa" id="q-reflection">
-      <p class="qa__n">Question 5 of 39</p>
+      <p class="qa__n">Question 5 of 42</p>
       <h3>What happens when a signal meets an impedance discontinuity?</h3>
       <details class="qa__ans">
         <summary><span class="qa__show">Show answer</span><span class="qa__hide">Hide answer</span></summary>
@@ -136,7 +136,7 @@
       </details>
     </div>
     <div class="qa" id="q-termination">
-      <p class="qa__n">Question 6 of 39</p>
+      <p class="qa__n">Question 6 of 42</p>
       <h3>Series or parallel termination: when do you use each?</h3>
       <details class="qa__ans">
         <summary><span class="qa__show">Show answer</span><span class="qa__hide">Hide answer</span></summary>
@@ -147,7 +147,7 @@
       </details>
     </div>
     <div class="qa" id="q-flyby">
-      <p class="qa__n">Question 7 of 39</p>
+      <p class="qa__n">Question 7 of 42</p>
       <h3>Why do memory buses route commands in a fly-by chain instead of branching to each chip?</h3>
       <details class="qa__ans">
         <summary><span class="qa__show">Show answer</span><span class="qa__hide">Hide answer</span></summary>
@@ -158,7 +158,7 @@
       </details>
     </div>
     <div class="qa" id="q-return">
-      <p class="qa__n">Question 8 of 39</p>
+      <p class="qa__n">Question 8 of 42</p>
       <h3>Where does the return current flow, and what happens when a trace crosses a split in its reference plane?</h3>
       <details class="qa__ans">
         <summary><span class="qa__show">Show answer</span><span class="qa__hide">Hide answer</span></summary>
@@ -170,7 +170,7 @@
     </div>
     <h2 class="section-rule" id="loss"><span>Loss, ISI and eyes</span></h2>
     <div class="qa" id="q-loss">
-      <p class="qa__n">Question 9 of 39</p>
+      <p class="qa__n">Question 9 of 42</p>
       <h3>What causes loss in a PCB trace, and how does it scale with frequency?</h3>
       <details class="qa__ans">
         <summary><span class="qa__show">Show answer</span><span class="qa__hide">Hide answer</span></summary>
@@ -181,7 +181,7 @@
       </details>
     </div>
     <div class="qa" id="q-isi">
-      <p class="qa__n">Question 10 of 39</p>
+      <p class="qa__n">Question 10 of 42</p>
       <h3>What is intersymbol interference?</h3>
       <details class="qa__ans">
         <summary><span class="qa__show">Show answer</span><span class="qa__hide">Hide answer</span></summary>
@@ -192,7 +192,7 @@
       </details>
     </div>
     <div class="qa" id="q-eye">
-      <p class="qa__n">Question 11 of 39</p>
+      <p class="qa__n">Question 11 of 42</p>
       <h3>What does an eye diagram tell you, and what doesn&#8217;t it?</h3>
       <details class="qa__ans">
         <summary><span class="qa__show">Show answer</span><span class="qa__hide">Hide answer</span></summary>
@@ -203,7 +203,7 @@
       </details>
     </div>
     <div class="qa" id="q-jitter">
-      <p class="qa__n">Question 12 of 39</p>
+      <p class="qa__n">Question 12 of 42</p>
       <h3>What are the kinds of jitter, and why does total jitter depend on BER?</h3>
       <details class="qa__ans">
         <summary><span class="qa__show">Show answer</span><span class="qa__hide">Hide answer</span></summary>
@@ -214,7 +214,7 @@
       </details>
     </div>
     <div class="qa" id="q-timing">
-      <p class="qa__n">Question 13 of 39</p>
+      <p class="qa__n">Question 13 of 42</p>
       <h3>How do you build a timing budget for a source-synchronous bus such as DDR?</h3>
       <details class="qa__ans">
         <summary><span class="qa__show">Show answer</span><span class="qa__hide">Hide answer</span></summary>
@@ -226,7 +226,7 @@
     </div>
     <h2 class="section-rule" id="crosstalk"><span>Crosstalk</span></h2>
     <div class="qa" id="q-crosstalk">
-      <p class="qa__n">Question 14 of 39</p>
+      <p class="qa__n">Question 14 of 42</p>
       <h3>What is the difference between near-end and far-end crosstalk?</h3>
       <details class="qa__ans">
         <summary><span class="qa__show">Show answer</span><span class="qa__hide">Hide answer</span></summary>
@@ -237,7 +237,7 @@
       </details>
     </div>
     <div class="qa" id="q-3w">
-      <p class="qa__n">Question 15 of 39</p>
+      <p class="qa__n">Question 15 of 42</p>
       <h3>What is the 3W rule, and how far should you trust it?</h3>
       <details class="qa__ans">
         <summary><span class="qa__show">Show answer</span><span class="qa__hide">Hide answer</span></summary>
@@ -249,7 +249,7 @@
     </div>
     <h2 class="section-rule" id="sparams"><span>Differential signalling and S-parameters</span></h2>
     <div class="qa" id="q-diff">
-      <p class="qa__n">Question 16 of 39</p>
+      <p class="qa__n">Question 16 of 42</p>
       <h3>Why use differential signalling, and what is differential impedance?</h3>
       <details class="qa__ans">
         <summary><span class="qa__show">Show answer</span><span class="qa__hide">Hide answer</span></summary>
@@ -260,7 +260,7 @@
       </details>
     </div>
     <div class="qa" id="q-sparams">
-      <p class="qa__n">Question 17 of 39</p>
+      <p class="qa__n">Question 17 of 42</p>
       <h3>What do S11 and S21 tell you, and what is mode conversion?</h3>
       <details class="qa__ans">
         <summary><span class="qa__show">Show answer</span><span class="qa__hide">Hide answer</span></summary>
@@ -271,7 +271,7 @@
       </details>
     </div>
     <div class="qa" id="q-cm-emc">
-      <p class="qa__n">Question 18 of 39</p>
+      <p class="qa__n">Question 18 of 42</p>
       <h3>A differential link has a clean eye but fails radiated emissions. Where do you look?</h3>
       <details class="qa__ans">
         <summary><span class="qa__show">Show answer</span><span class="qa__hide">Hide answer</span></summary>
@@ -283,7 +283,7 @@
     </div>
     <h2 class="section-rule" id="eq"><span>Equalisation and clock recovery</span></h2>
     <div class="qa" id="q-eq">
-      <p class="qa__n">Question 19 of 39</p>
+      <p class="qa__n">Question 19 of 42</p>
       <h3>CTLE, FFE and DFE: what does each one fix, and what does each cost?</h3>
       <details class="qa__ans">
         <summary><span class="qa__show">Show answer</span><span class="qa__hide">Hide answer</span></summary>
@@ -294,7 +294,7 @@
       </details>
     </div>
     <div class="qa" id="q-cdr">
-      <p class="qa__n">Question 20 of 39</p>
+      <p class="qa__n">Question 20 of 42</p>
       <h3>What does a clock and data recovery circuit do, and what are jitter transfer and jitter tolerance?</h3>
       <details class="qa__ans">
         <summary><span class="qa__show">Show answer</span><span class="qa__hide">Hide answer</span></summary>
@@ -305,19 +305,19 @@
       </details>
     </div>
     <div class="qa" id="q-pam4">
-      <p class="qa__n">Question 21 of 39</p>
+      <p class="qa__n">Question 21 of 42</p>
       <h3>Why move from NRZ to PAM4, and what does it cost?</h3>
       <details class="qa__ans">
         <summary><span class="qa__show">Show answer</span><span class="qa__hide">Hide answer</span></summary>
         <p><b>Short answer.</b> PAM4 sends two bits per symbol, so the symbol rate and the Nyquist frequency halve for the same bit rate, and the channel loss at Nyquist drops. The cost is that three eyes share the same swing, each a third of the height, about 9.5 dB less.</p>
         <p><b>A strong answer adds.</b> The receiver needs three slicers instead of one. It pays when loss at Nyquist is large enough that halving the frequency saves more than 9.5 dB, as in long backplanes and PCIe 6.0. On a short, noisy channel it does not, which is why LPDDR6 went to wider NRZ instead. PAM4 links usually rely on forward error correction because their raw error rate is higher.</p>
         <p class="qa__follow"><b>Likely follow-up:</b> <em>Why is the PAM4 eye width smaller too?</em> Transitions between non-adjacent levels cross the thresholds at different times, and the eyes are shorter, so timing margin shrinks as well.</p>
-        <p class="qa__more"><b>Read:</b> <a href="topics/signal-integrity/nrz-vs-pam4.html">NRZ vs PAM4 Signaling: Bandwidth and SNR Trade-off</a> &#183; <a href="topics/interfaces/lpddr6.html">LPDDR6 Signal Integrity: Wide NRZ and Sub-Channels</a> &#183; <a href="topics/interfaces/pcie-gen6.html">PCIe 6.0 Signal Integrity: PAM4, FLIT, and FEC</a><br><b>Try it:</b> <a href="topics/interfaces/lpddr6.html">the three-roads panel on the LPDDR6 page</a></p>
+        <p class="qa__more"><b>Read:</b> <a href="topics/signal-integrity/nrz-vs-pam4.html">NRZ vs PAM4 Signaling: Bandwidth and SNR Trade-off</a> &#183; <a href="topics/interfaces/lpddr6.html">LPDDR6 Signal Integrity: Wide NRZ and Sub-Channels</a> &#183; <a href="topics/interfaces/pcie-gen6.html">PCIe 6.0 vs PCIe 5.0: PAM4, FLIT, FEC and Signal Integrity</a><br><b>Try it:</b> <a href="topics/interfaces/lpddr6.html">the three-roads panel on the LPDDR6 page</a></p>
       </details>
     </div>
     <h2 class="section-rule" id="board"><span>Package, board and vias</span></h2>
     <div class="qa" id="q-via">
-      <p class="qa__n">Question 22 of 39</p>
+      <p class="qa__n">Question 22 of 42</p>
       <h3>Why do vias matter at high speed, and what is a via stub?</h3>
       <details class="qa__ans">
         <summary><span class="qa__show">Show answer</span><span class="qa__hide">Hide answer</span></summary>
@@ -328,7 +328,7 @@
       </details>
     </div>
     <div class="qa" id="q-stackup">
-      <p class="qa__n">Question 23 of 39</p>
+      <p class="qa__n">Question 23 of 42</p>
       <h3>How would you plan a stackup for a high-speed board?</h3>
       <details class="qa__ans">
         <summary><span class="qa__show">Show answer</span><span class="qa__hide">Hide answer</span></summary>
@@ -339,7 +339,7 @@
       </details>
     </div>
     <div class="qa" id="q-weave">
-      <p class="qa__n">Question 24 of 39</p>
+      <p class="qa__n">Question 24 of 42</p>
       <h3>What is glass-weave skew, and why can&#8217;t length matching fix it?</h3>
       <details class="qa__ans">
         <summary><span class="qa__show">Show answer</span><span class="qa__hide">Hide answer</span></summary>
@@ -350,7 +350,7 @@
       </details>
     </div>
     <div class="qa" id="q-ac">
-      <p class="qa__n">Question 25 of 39</p>
+      <p class="qa__n">Question 25 of 42</p>
       <h3>Why do high-speed links have AC-coupling capacitors, and where do they go?</h3>
       <details class="qa__ans">
         <summary><span class="qa__show">Show answer</span><span class="qa__hide">Hide answer</span></summary>
@@ -362,7 +362,7 @@
     </div>
     <h2 class="section-rule" id="methods"><span>Methods and measurement</span></h2>
     <div class="qa" id="q-tdr">
-      <p class="qa__n">Question 26 of 39</p>
+      <p class="qa__n">Question 26 of 42</p>
       <h3>How do you read a TDR, and what limits its resolution?</h3>
       <details class="qa__ans">
         <summary><span class="qa__show">Show answer</span><span class="qa__hide">Hide answer</span></summary>
@@ -373,7 +373,7 @@
       </details>
     </div>
     <div class="qa" id="q-measure">
-      <p class="qa__n">Question 27 of 39</p>
+      <p class="qa__n">Question 27 of 42</p>
       <h3>When would you use a VNA, and when an oscilloscope?</h3>
       <details class="qa__ans">
         <summary><span class="qa__show">Show answer</span><span class="qa__hide">Hide answer</span></summary>
@@ -384,7 +384,7 @@
       </details>
     </div>
     <div class="qa" id="q-ami">
-      <p class="qa__n">Question 28 of 39</p>
+      <p class="qa__n">Question 28 of 42</p>
       <h3>What is IBIS-AMI, and when do you need it instead of a transistor-level model?</h3>
       <details class="qa__ans">
         <summary><span class="qa__show">Show answer</span><span class="qa__hide">Hide answer</span></summary>
@@ -396,7 +396,7 @@
     </div>
     <h2 class="section-rule" id="chiplets"><span>Chiplets and die-to-die links</span></h2>
     <div class="qa" id="q-d2d">
-      <p class="qa__n">Question 29 of 39</p>
+      <p class="qa__n">Question 29 of 42</p>
       <h3>Why doesn&#8217;t a die-to-die link like UCIe use SerDes lanes?</h3>
       <details class="qa__ans">
         <summary><span class="qa__show">Show answer</span><span class="qa__hide">Hide answer</span></summary>
@@ -407,7 +407,7 @@
       </details>
     </div>
     <div class="qa" id="q-shoreline">
-      <p class="qa__n">Question 30 of 39</p>
+      <p class="qa__n">Question 30 of 42</p>
       <h3>What is shoreline (beachfront) bandwidth, and what sets it?</h3>
       <details class="qa__ans">
         <summary><span class="qa__show">Show answer</span><span class="qa__hide">Hide answer</span></summary>
@@ -418,7 +418,7 @@
       </details>
     </div>
     <div class="qa" id="q-d2d-term">
-      <p class="qa__n">Question 31 of 39</p>
+      <p class="qa__n">Question 31 of 42</p>
       <h3>Does a 2 mm wire between two chiplets need a termination?</h3>
       <details class="qa__ans">
         <summary><span class="qa__show">Show answer</span><span class="qa__hide">Hide answer</span></summary>
@@ -429,7 +429,7 @@
       </details>
     </div>
     <div class="qa" id="q-fwd-clock">
-      <p class="qa__n">Question 32 of 39</p>
+      <p class="qa__n">Question 32 of 42</p>
       <h3>Why forward the clock instead of recovering it from the data?</h3>
       <details class="qa__ans">
         <summary><span class="qa__show">Show answer</span><span class="qa__hide">Hide answer</span></summary>
@@ -440,18 +440,18 @@
       </details>
     </div>
     <div class="qa" id="q-d2d-nrz">
-      <p class="qa__n">Question 33 of 39</p>
+      <p class="qa__n">Question 33 of 42</p>
       <h3>Why does UCIe stay NRZ at 64 GT/s when PCIe 6.0 moved to PAM4?</h3>
       <details class="qa__ans">
         <summary><span class="qa__show">Show answer</span><span class="qa__hide">Hide answer</span></summary>
         <p><b>Short answer.</b> Because a millimetre-scale channel has little loss to save. PAM4 halves the symbol rate but puts three eyes in the swing of one, costing about 9.5 dB of signal-to-noise; that trade only pays when the channel would otherwise lose more than that at the NRZ Nyquist frequency.</p>
         <p><b>A strong answer adds.</b> UCIe 3.0 handles 48 and 64 GT/s with modest equalisation instead: a three-tap transmit FFE, a passive receive CTLE and an optional one-tap DFE, with six presets topping out near 6 dB of de-emphasis. It also accepts a raw bit error rate of 10<sup>&#8722;12</sup> at 64 GT/s and recovers errors with CRC and replay, the same bargain PCIe 6.0 makes with FLIT and FEC.</p>
         <p class="qa__follow"><b>Likely follow-up:</b> <em>Where would you expect PAM4 to appear in die-to-die links?</em> On longer, lossier package channels at the highest rates, where NRZ loss at Nyquist would exceed the PAM4 penalty.</p>
-        <p class="qa__more"><b>Read:</b> <a href="topics/interfaces/ucie.html">UCIe 3.0 Signal Integrity: 64 GT/s Chiplet Links vs PCIe</a> &#183; <a href="topics/signal-integrity/nrz-vs-pam4.html">NRZ vs PAM4 Signaling: Bandwidth and SNR Trade-off</a> &#183; <a href="topics/interfaces/pcie-gen6.html">PCIe 6.0 Signal Integrity: PAM4, FLIT, and FEC</a></p>
+        <p class="qa__more"><b>Read:</b> <a href="topics/interfaces/ucie.html">UCIe 3.0 Signal Integrity: 64 GT/s Chiplet Links vs PCIe</a> &#183; <a href="topics/signal-integrity/nrz-vs-pam4.html">NRZ vs PAM4 Signaling: Bandwidth and SNR Trade-off</a> &#183; <a href="topics/interfaces/pcie-gen6.html">PCIe 6.0 vs PCIe 5.0: PAM4, FLIT, FEC and Signal Integrity</a></p>
       </details>
     </div>
     <div class="qa" id="q-d2d-3d">
-      <p class="qa__n">Question 34 of 39</p>
+      <p class="qa__n">Question 34 of 42</p>
       <h3>What changes when chiplets are stacked in 3D instead of placed side by side?</h3>
       <details class="qa__ans">
         <summary><span class="qa__show">Show answer</span><span class="qa__hide">Hide answer</span></summary>
@@ -461,9 +461,43 @@
         <p class="qa__more"><b>Read:</b> <a href="topics/interfaces/ucie.html#ucie-3d-hybrid-bonding">UCIe-3D and hybrid bonding: why a finer bond pitch runs hotter</a> &#183; <a href="topics/interfaces/chiplet-interconnects.html">Chiplet Interconnects: UCIe vs BoW vs AIB Compared</a> &#183; <a href="topics/package-board/package-families.html">IC Package Types: Wirebond, Flip-Chip, FOWLP, Chiplets</a><br><b>Try it:</b> <a href="topics/interfaces/ucie.html#ucie-3d-hybrid-bonding">the bonded-interface panel</a></p>
       </details>
     </div>
+    <h2 class="section-rule" id="ethernet"><span>High-speed Ethernet</span></h2>
+    <div class="qa" id="q-eth-loss">
+      <p class="qa__n">Question 35 of 42</p>
+      <h3>Going from 112G to 224G Ethernet doubles the symbol rate. Does it double the channel loss?</h3>
+      <details class="qa__ans">
+        <summary><span class="qa__show">Show answer</span><span class="qa__hide">Hide answer</span></summary>
+        <p><b>Short answer.</b> No. The Nyquist frequency doubles, from 26.56 to 53.125 GHz, but for a laminate whose Df is flat a trace&#8217;s loss per inch rises by between about 1.41 and 2 times, not by exactly 2. Dielectric loss in dB grows in step with frequency, while copper loss from the skin effect grows only as its square root.</p>
+        <p><b>A strong answer adds.</b> Real low-loss laminates sit in the upper part of that range, about 1.6 to 2 on the site&#8217;s panel, because their Df also rises with frequency, so the same budget reaches a little over half the length. Rough copper adds loss at every rate even though it lowers the ratio, and heat adds more: one board measured for an 802.3dj contribution went from 1.25 to 1.40 dB/in at 53.125 GHz between room temperature and hot (80 &#176;C).</p>
+        <p class="qa__follow"><b>Likely follow-up:</b> <em>So is a better laminate the answer?</em> It lowers the dB but barely changes the ratio. In the worked examples contributed to the task force, twinax cable at 53 GHz loses roughly 0.3 to 0.4 dB per inch against about 1.4 for a board trace, which is the case for running the long stretch in cable from a connector beside the package.</p>
+        <p class="qa__more"><b>Read:</b> <a href="topics/interfaces/ethernet-112g-224g.html">112G vs 224G Ethernet Signal Integrity: 802.3ck and 802.3dj</a> &#183; <a href="topics/tools/loss-budget.html">Loss budget calculator</a></p>
+      </details>
+    </div>
+    <div class="qa" id="q-eth-planes">
+      <p class="qa__n">Question 36 of 42</p>
+      <h3>802.3ck recommends 28 dB and the 802.3dj draft sets a 40 dB objective. Did the channel budget grow by 12 dB?</h3>
+      <details class="qa__ans">
+        <summary><span class="qa__show">Show answer</span><span class="qa__hide">Hide answer</span></summary>
+        <p><b>Short answer.</b> Not like for like. 802.3ck&#8217;s 28 dB at 26.56 GHz is a recommended limit measured ball to ball, between the package-to-board interfaces, with the packages added only inside COM. 802.3dj&#8217;s 40 dB objective at 53.125 GHz is measured die to die, packages included.</p>
+        <p><b>A strong answer adds.</b> Take the packages back out, 5 dB each in a contribution&#8217;s nominal example, or 9 dB at one end when a high-loss host is paired with a nominal one, and 30 or 26 dB remain between the balls, against 28.5 dB for a 112G copper cable channel. The board-and-cable budget stayed roughly where it was, at twice the frequency, and the packages now take 10 to 14 dB of the 40. And insertion loss is not the pass/fail test: compliance is a channel operating margin of at least 3 dB.</p>
+        <p class="qa__follow"><b>Likely follow-up:</b> <em>What does a die-to-die budget change for the designer?</em> It puts the packages inside the number everyone designs to, where a ball-to-ball figure leaves them in a separate compliance model. At 224G the packages are 10 to 14 dB of the 40, a quarter to a third, so knowing which end points a budget uses matters.</p>
+        <p class="qa__more"><b>Read:</b> <a href="topics/interfaces/ethernet-112g-224g.html">112G vs 224G Ethernet Signal Integrity: 802.3ck and 802.3dj</a> &#183; <a href="topics/signal-integrity/compliance-masks.html">Compliance masks and COM</a></p>
+      </details>
+    </div>
+    <div class="qa" id="q-eth-fec">
+      <p class="qa__n">Question 37 of 42</p>
+      <h3>What error correction does 224G Ethernet use, and what changed from 112G?</h3>
+      <details class="qa__ans">
+        <summary><span class="qa__show">Show answer</span><span class="qa__hide">Hide answer</span></summary>
+        <p><b>Short answer.</b> The same code: RS(544,514), a Reed&#8211;Solomon code over 10-bit symbols, whose 30 parity symbols correct up to 15 wrong symbols per 544. What changed is the error ratio the links start from: 802.3ck designs to a detector error ratio of 1e-4, and the 802.3dj draft adopted 2e-4 for backplane and copper cable.</p>
+        <p><b>A strong answer adds.</b> Because the code corrects symbols, several bit errors inside one 10-bit symbol cost a single correction, while the same errors spread over many symbols cost one each, so how errors cluster matters as much as how many there are. Keeping the code and relaxing the starting error ratio moves more of the work from the channel to the receiver and the FEC.</p>
+        <p class="qa__follow"><b>Likely follow-up:</b> <em>Is a detector error ratio of 2e-4 the same as a bit error ratio of 2e-4?</em> No. It counts wrong PAM4 symbol decisions. With Gray coding, a decision that lands on the adjacent level flips one of the symbol&#8217;s two bits, so to first order, ignoring precoding, the bit error ratio is about half the detector error ratio for those errors.</p>
+        <p class="qa__more"><b>Read:</b> <a href="topics/interfaces/ethernet-112g-224g.html">112G vs 224G Ethernet Signal Integrity: 802.3ck and 802.3dj</a> &#183; <a href="topics/signal-integrity/nrz-vs-pam4.html">NRZ vs PAM4 Signaling: Bandwidth and SNR Trade-off</a></p>
+      </details>
+    </div>
     <h2 class="section-rule" id="plots"><span>Read the plot</span></h2>
     <div class="qa" id="q-plot-tdr">
-      <p class="qa__n">Question 35 of 39</p>
+      <p class="qa__n">Question 38 of 42</p>
       <h3>A TDR trace dips, then returns to 50 &#937;, partway along a line. What is it, and how big?</h3>
       <figure class="figure qa__fig">
         <div class="figure__bar"><span>TDR &#183; reflection against round-trip time</span></div>
@@ -512,7 +546,7 @@
       </details>
     </div>
     <div class="qa" id="q-plot-notch">
-      <p class="qa__n">Question 36 of 39</p>
+      <p class="qa__n">Question 39 of 42</p>
       <h3>Insertion loss falls smoothly, then has a sharp notch near 20 GHz. What causes it?</h3>
       <figure class="figure qa__fig">
         <div class="figure__bar"><span>Insertion loss &#183; one board channel</span></div>
@@ -553,7 +587,7 @@
       </details>
     </div>
     <div class="qa" id="q-plot-eye">
-      <p class="qa__n">Question 37 of 39</p>
+      <p class="qa__n">Question 40 of 42</p>
       <h3>An eye closes mostly after long runs of identical bits, as in the waveform below. What does that point to?</h3>
       <figure class="figure qa__fig">
         <div class="figure__bar"><span>Received waveform &#183; the pattern above each bit</span></div>
@@ -632,7 +666,7 @@
     </div>
     <h2 class="section-rule" id="debug"><span>Debug scenarios</span></h2>
     <div class="qa" id="q-debug-lab">
-      <p class="qa__n">Question 38 of 39</p>
+      <p class="qa__n">Question 41 of 42</p>
       <h3>A link passes in simulation but fails in the lab. How do you approach it?</h3>
       <details class="qa__ans">
         <summary><span class="qa__show">Show answer</span><span class="qa__hide">Hide answer</span></summary>
@@ -643,7 +677,7 @@
       </details>
     </div>
     <div class="qa" id="q-debug-xtalk">
-      <p class="qa__n">Question 39 of 39</p>
+      <p class="qa__n">Question 42 of 42</p>
       <h3>Errors appear only when a neighbouring interface is active. What do you suspect?</h3>
       <details class="qa__ans">
         <summary><span class="qa__show">Show answer</span><span class="qa__hide">Hide answer</span></summary>

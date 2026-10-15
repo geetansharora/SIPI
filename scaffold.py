@@ -601,6 +601,9 @@ def reference_library_problems():
 
 
 TITLE_RENAMES = {
+    "PCIe 4.0 vs PCIe 5.0: Loss Budget, Tx Presets and Link Equalization": "PCIe 4.0 vs 5.0: Loss Budget, Tx Presets, Link Equalization",
+    "PCIe Gen 4 and Gen 5 Signal Integrity: Loss and EQ": "PCIe 4.0 vs 5.0: Loss Budget, Tx Presets, Link Equalization",
+    "PCIe 6.0 Signal Integrity: PAM4, FLIT, and FEC": "PCIe 6.0 vs PCIe 5.0: PAM4, FLIT, FEC and Signal Integrity",
     "UCIe Signal Integrity: Die-to-Die Links for Chiplets": "UCIe 3.0 Signal Integrity: 64 GT/s Chiplet Links vs PCIe",
     "Units, conventions, and the numbers people mix up": "SI/PI Units and Conventions: dB, Rise Time, RMS",
     "Time, frequency, and how to move between them": "Time vs Frequency Domain: Impulse, Step, Convolution",
@@ -655,8 +658,8 @@ TITLE_RENAMES = {
     "Layer transitions and stitching vias": "Stitching Vias and PCB Layer Transitions",
     "Connectors, cables, and their discontinuities": "High-Speed Connectors and Cables",
     "LPDDR5/5X — timing budget, ODT, training": "LPDDR5/5X Signal Integrity: WCK, ODT and Training",
-    "PCIe Gen 4/5 — loss budget and equalisation": "PCIe Gen 4 and Gen 5 Signal Integrity: Loss and EQ",
-    "PCIe Gen 6 — PAM4, FLIT, FEC": "PCIe 6.0 Signal Integrity: PAM4, FLIT, and FEC",
+    "PCIe Gen 4/5 — loss budget and equalisation": "PCIe 4.0 vs 5.0: Loss Budget, Tx Presets, Link Equalization",
+    "PCIe Gen 6 — PAM4, FLIT, FEC": "PCIe 6.0 vs PCIe 5.0: PAM4, FLIT, FEC and Signal Integrity",
     "USB 3.1/3.2 — SSC and compliance": "USB 3.1 and 3.2 Signal Integrity: SSC and Compliance",
     "UFS 4.0 — M-PHY HS-Gear5": "UFS 4.0 Signal Integrity: M-PHY Gear 5",
 }

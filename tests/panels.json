@@ -198,6 +198,18 @@
       ]
     },
     {
+      "url": "topics/interfaces/ethernet-112g-224g.html",
+      "panels": [
+        "ethLane"
+      ],
+      "presets": [
+        "fr4",
+        "low10",
+        "rough",
+        "smooth"
+      ]
+    },
+    {
       "url": "topics/interfaces/lpddr5x.html",
       "panels": [
         "lpddrBudget"
@@ -545,8 +557,8 @@
     }
   ],
   "totals": {
-    "pages": 46,
-    "panels": 51,
-    "presets": 182
+    "pages": 47,
+    "panels": 52,
+    "presets": 186
   }
 }

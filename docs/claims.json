@@ -165,12 +165,14 @@
       "source": "none — channel-dependent practice",
       "conditions": "Stub length relative to the Nyquist quarter-wave",
       "status": "scoped",
-      "note": "Treated as an implementation remedy, never a specification requirement.",
+      "note": "Treated as an implementation remedy, never a specification requirement. Texas Instruments SNLA426 section 24 (15 Oct 2026): 'When via transitions result in stubs longer than 15 mils, back-drill the resulting stubs to reduce insertion losses and to make sure that they do not resonate.'",
       "owner": "Geetansh",
       "sourceCheckedBy": "Claude Opus 5",
       "sourceCheckedOn": "2026-09-11",
       "humanReviewedBy": null,
-      "humanReviewedOn": null
+      "humanReviewedOn": null,
+      "source_title": "Texas Instruments (V. Flores Prado) — High-Speed PCB Layout for PCIe Gen 5, SNLA426, Jun 2023",
+      "source_url": "https://www.ti.com/lit/pdf/snla426"
     },
     {
       "id": "C-8a",
@@ -296,7 +298,7 @@
       "source": "Tektronix, \"10 Things to Know about PCIe\"; Synopsys PCIe 5.0 technical bulletin",
       "conditions": "Per edition; the preset table is edition-specific",
       "status": "scoped",
-      "note": "Vendor test and IP documentation consistently gives eleven transmitter presets, P0 to P10, for Gen 3 onwards. The preset TABLE — the preshoot and de-emphasis each one defines — is in the Base specification and has not been read, so the page states the count and the mechanism, not the values.",
+      "note": "Vendor test and IP documentation consistently gives eleven transmitter presets, P0 to P10, for Gen 3 onwards. The preset TABLE — the preshoot and de-emphasis each one defines — is in the Base specification, which has not been read; the page gives the values as Tektronix reproduces them, in C-136.",
       "owner": "Geetansh",
       "sourceCheckedBy": "Claude Opus 5",
       "sourceCheckedOn": "2026-09-19",
@@ -2203,6 +2205,729 @@
       "humanReviewedOn": null,
       "source_title": "NVIDIA — Hopper Architecture In-Depth (Technical Blog)",
       "source_url": "https://developer.nvidia.com/blog/nvidia-hopper-architecture-in-depth/"
+    },
+    {
+      "id": "C-105",
+      "statement": "IEEE 802.3ck, approved on 21 September 2022, defines 100, 200 and 400 Gb/s Ethernet over one, two and four electrical lanes of 100 Gb/s, including 100GBASE-KR1 for backplanes and 100GBASE-CR1 for copper cable.",
+      "pages": [
+        "interfaces/ethernet-112g-224g"
+      ],
+      "source_type": "normative",
+      "source": "IEEE Std 802.3ck-2022, front matter and Table 80-1",
+      "conditions": "Published standard",
+      "status": "scoped",
+      "note": "'Approved 21 September 2022 IEEE SA Standards Board'; Table 80-1 lists 100GBASE-KR1 'over one lane of an electrical backplane' and 100GBASE-CR1 'over one lane of shielded balanced copper cabling'. The ledger records normative rows as scoped by rule. Source check by Claude Opus 5.5 against the document, then an independent re-check of the quote by Claude Sonnet 5.5; Geetansh approved the agreed keep/cut list for the draft claims table on 14 Oct 2026.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-14",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null,
+      "source_title": "IEEE Std 802.3ck-2022, IEEE Standard for Ethernet Amendment 4: Physical Layer Specifications and Management Parameters for 100 Gb/s, 200 Gb/s, and 400 Gb/s Electrical Interfaces Based on 100 Gb/s Signaling",
+      "source_url": "https://standards.ieee.org/ieee/802.3ck/7322/"
+    },
+    {
+      "id": "C-106",
+      "statement": "802.3ck signals PAM4 at 53.125 GBd per lane.",
+      "pages": [
+        "interfaces/ethernet-112g-224g"
+      ],
+      "source_type": "normative",
+      "source": "IEEE Std 802.3ck-2022, 100GAUI-1 description; Table 163-11",
+      "conditions": "Published standard",
+      "status": "scoped",
+      "note": "'100GAUI-1 is a 53.125 GBd by one-lane PAM4 physical instantiation'; Table 163-11 'Signaling rate fb 53.125 GBd'. The ledger records normative rows as scoped by rule. Source check by Claude Opus 5.5 against the document, then an independent re-check of the quote by Claude Sonnet 5.5; Geetansh approved the agreed keep/cut list for the draft claims table on 14 Oct 2026.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-14",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null,
+      "source_title": "IEEE Std 802.3ck-2022, IEEE Standard for Ethernet Amendment 4: Physical Layer Specifications and Management Parameters for 100 Gb/s, 200 Gb/s, and 400 Gb/s Electrical Interfaces Based on 100 Gb/s Signaling",
+      "source_url": "https://standards.ieee.org/ieee/802.3ck/7322/"
+    },
+    {
+      "id": "C-107",
+      "statement": "802.3ck recommends a backplane channel insertion loss of at most 28 dB at 26.56 GHz, from TP0 to TP5 at the package-to-board interface, so the packages are excluded and enter only through the COM package model (12 mm and 31/29 mm lines). The limit is a curve, ILdd(f) = 0.693 + 2.161 sqrt(f) + 0.607 f dB with f in GHz, up to 26.5625 GHz.",
+      "pages": [
+        "interfaces/ethernet-112g-224g"
+      ],
+      "source_type": "normative",
+      "source": "IEEE Std 802.3ck-2022, Table 80-1, 163.10.2, Equation 163-5, Figure 163-2, Table 163-11",
+      "conditions": "Recommended ('should'), not mandatory; compliance is COM (C-108)",
+      "status": "scoped",
+      "note": "163.10.2 'The channel insertion loss should meet Equation (163-5)'; Table 80-1 'total insertion loss up to 28 dB at 26.56 GHz'; Figure 163-2 places TP0 and TP5 at the 'Package-to-board interface'; Table 163-11 'Device package model ... Transmission line length, Test 1 ... 12 mm'. The ledger records normative rows as scoped by rule. Source check by Claude Opus 5.5 against the document, then an independent re-check of the quote by Claude Sonnet 5.5; Geetansh approved the agreed keep/cut list for the draft claims table on 14 Oct 2026.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-14",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null,
+      "source_title": "IEEE Std 802.3ck-2022, IEEE Standard for Ethernet Amendment 4: Physical Layer Specifications and Management Parameters for 100 Gb/s, 200 Gb/s, and 400 Gb/s Electrical Interfaces Based on 100 Gb/s Signaling",
+      "source_url": "https://standards.ieee.org/ieee/802.3ck/7322/"
+    },
+    {
+      "id": "C-108",
+      "statement": "802.3ck backplane compliance is a Channel Operating Margin of at least 3 dB, computed with a short and a long package. Its reference receiver is a CTLE with a 12-tap DFE plus floating taps, after a 5-tap transmitter FFE, at a target detector error ratio of 1e-4. Its receiver test channels are 13.5 to 14.5 dB and 27.5 to 28.5 dB at 26.5625 GHz.",
+      "pages": [
+        "interfaces/ethernet-112g-224g"
+      ],
+      "source_type": "normative",
+      "source": "IEEE Std 802.3ck-2022, 163.10.1, Table 163-11, Table 163-9",
+      "conditions": "Published standard; the reference receiver is a computational reference, not a required design",
+      "status": "scoped",
+      "note": "163.10.1 'COM shall be greater than or equal to 3 dB for both Test 1 and Test 2'; Table 163-11 'Decision feedback equalizer (DFE) length Nb 12 UI', 'Target detector error ratio DER0 10^-4', CTLE gDC and gDC2, c(-3) to c(1); Table 163-9 Test 1 and Test 2 insertion loss. The ledger records normative rows as scoped by rule. Source check by Claude Opus 5.5 against the document, then an independent re-check of the quote by Claude Sonnet 5.5; Geetansh approved the agreed keep/cut list for the draft claims table on 14 Oct 2026.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-14",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null,
+      "source_title": "IEEE Std 802.3ck-2022, IEEE Standard for Ethernet Amendment 4: Physical Layer Specifications and Management Parameters for 100 Gb/s, 200 Gb/s, and 400 Gb/s Electrical Interfaces Based on 100 Gb/s Signaling",
+      "source_url": "https://standards.ieee.org/ieee/802.3ck/7322/"
+    },
+    {
+      "id": "C-109",
+      "statement": "802.3ck copper cable: the objective is at least 2 m; compliance is in dB, a cable assembly of at most 19.75 dB at 26.56 GHz measured with its test fixtures, inside an informative channel budget of 28.5 dB from TP0 to TP5 that allows 6.875 dB for each host board.",
+      "pages": [
+        "interfaces/ethernet-112g-224g"
+      ],
+      "source_type": "normative",
+      "source": "IEEE 802.3ck objectives (Mar 2018); IEEE Std 802.3ck-2022, 162.11, 162.11.2, Table 162A-1, 162A.4",
+      "conditions": "Cable assembly limit normative; channel budget informative; metres are an objective",
+      "status": "scoped",
+      "note": "Objectives 'twin-axial copper cables with lengths up to at least 2 m'; 162.11.2 'shall be less than or equal to 19.75 dB'; 162.11 NOTE 'Length of a cable assembly does not imply compliance'; Table 162A-1 'ILddChmax 28.5 dB'; 162A.4 '6.875 dB at 26.56 GHz'. The ledger records normative rows as scoped by rule. Source check by Claude Opus 5.5 against the document, then an independent re-check of the quote by Claude Sonnet 5.5; Geetansh approved the agreed keep/cut list for the draft claims table on 14 Oct 2026.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-14",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null,
+      "source_title": "IEEE Std 802.3ck-2022, IEEE Standard for Ethernet Amendment 4: Physical Layer Specifications and Management Parameters for 100 Gb/s, 200 Gb/s, and 400 Gb/s Electrical Interfaces Based on 100 Gb/s Signaling",
+      "source_url": "https://standards.ieee.org/ieee/802.3ck/7322/"
+    },
+    {
+      "id": "C-110",
+      "statement": "802.3ck transcodes 64B/66B blocks to 256B/257B and protects them with RS(544,514), which carries 30 parity symbols per 544 and corrects up to 15 ten-bit symbols per codeword.",
+      "pages": [
+        "interfaces/ethernet-112g-224g"
+      ],
+      "source_type": "normative",
+      "source": "IEEE Std 802.3ck-2022, 161.5.2.5, 91.5.2.7",
+      "conditions": "Published standard; 15 = 30/2 is arithmetic",
+      "status": "scoped",
+      "note": "161.5.2.5 '64B/66B to 256B/257B transcoder'; 'the RS-FEC sublayer shall implement RS(544,514)'. The ledger records normative rows as scoped by rule. Source check by Claude Opus 5.5 against the document, then an independent re-check of the quote by Claude Sonnet 5.5; Geetansh approved the agreed keep/cut list for the draft claims table on 14 Oct 2026.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-14",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null,
+      "source_title": "IEEE Std 802.3ck-2022, IEEE Standard for Ethernet Amendment 4: Physical Layer Specifications and Management Parameters for 100 Gb/s, 200 Gb/s, and 400 Gb/s Electrical Interfaces Based on 100 Gb/s Signaling",
+      "source_url": "https://standards.ieee.org/ieee/802.3ck/7322/"
+    },
+    {
+      "id": "C-111",
+      "statement": "IEEE P802.3dj, the 200 Gb/s per lane project, is a draft, not an approved standard: its PAR was approved on 3 December 2022, and in September 2026 it was at draft D3.2 in Standards Association ballot.",
+      "pages": [
+        "interfaces/ethernet-112g-224g"
+      ],
+      "source_type": "normative",
+      "source": "IEEE SA project page P802.3dj; Chief Editor's Report, Sept 2026",
+      "conditions": "Status as of October 2026; will go stale",
+      "status": "scoped",
+      "note": "IEEE SA page 'Active PAR', 'PAR approval date 2022-12-03'; Chief Editor's Report 'P802.3dj D3.2', 'second SA Ballot recirculation ... Closed on 15 August 2026', 'Generate D3.3 and initiate third SA Ballot recirculation'. The ledger records normative rows as scoped by rule. Source check by Claude Opus 5.5 against the document, then an independent re-check of the quote by Claude Sonnet 5.5; Geetansh approved the agreed keep/cut list for the draft claims table on 14 Oct 2026.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-14",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null,
+      "source_title": "IEEE P802.3dj Task Force — Chief Editor's Report, September 2026",
+      "source_url": "https://www.ieee802.org/3/dj/public/26_09/brown_3dj_01_2609.pdf"
+    },
+    {
+      "id": "C-112",
+      "statement": "802.3dj's objectives define 200 Gb/s, 400 Gb/s, 800 Gb/s and 1.6 Tb/s Ethernet over 1, 2, 4 and 8 lanes of 200 Gb/s, with electrical backplanes supporting a die-to-die insertion loss of at most 40 dB at 53.125 GHz.",
+      "pages": [
+        "interfaces/ethernet-112g-224g"
+      ],
+      "source_type": "normative",
+      "source": "P802.3dj objectives, closing report 14 Mar 2024, pages 7-8; Key Motions 05-2023 #5",
+      "conditions": "Project objectives of a draft standard",
+      "status": "scoped",
+      "note": "'over 1 lane over electrical backplanes supporting a die-to-die insertion loss <= 40 dB at 53.125 GHz'; the 400G, 800G and 1.6T objectives repeat it for 2, 4 and 8 lanes. The ledger records normative rows as scoped by rule. Source check by Claude Opus 5.5 against the document, then an independent re-check of the quote by Claude Sonnet 5.5; Geetansh approved the agreed keep/cut list for the draft claims table on 14 Oct 2026.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-14",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null,
+      "source_title": "IEEE P802.3dj Task Force — closing report, March 2024 plenary (objectives)",
+      "source_url": "https://ieee802.org/3/minutes/mar24/2403_3dj_closed_report.pdf"
+    },
+    {
+      "id": "C-113",
+      "statement": "802.3dj adopted the same 40 dB die-to-die limit at 53.125 GHz for its copper cable PHYs, host plus cable plus host, and its copper cable objective is at least 1.0 m.",
+      "pages": [
+        "interfaces/ethernet-112g-224g"
+      ],
+      "source_type": "normative",
+      "source": "P802.3dj Key Motions 07-2023 #7; objectives, March 2024",
+      "conditions": "Adopted baseline and objective of a draft standard",
+      "status": "scoped",
+      "note": "'adopt a die-to-die insertion loss <= 40 dB at 53.125 GHz for 200GBASE-CR1, 400GBASE-CR2, 800GBASE-CR4 and 1.6TBASE-CR8'; 'with a reach of up to at least 1.0 meter'. The ledger records normative rows as scoped by rule. Source check by Claude Opus 5.5 against the document, then an independent re-check of the quote by Claude Sonnet 5.5; Geetansh approved the agreed keep/cut list for the draft claims table on 14 Oct 2026.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-14",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null,
+      "source_title": "IEEE P802.3dj Task Force — Key Motions, as of 16 May 2024",
+      "source_url": "https://www.ieee802.org/3/dj/projdoc/KeyMotions_3dj_240516.pdf"
+    },
+    {
+      "id": "C-114",
+      "statement": "In the proposal for the 40 dB backplane objective, its authors reported that SerDes designers had asked for 36 to 37 dB and system builders for 42 to 45 dB, and proposed 40 dB as the compromise.",
+      "pages": [
+        "interfaces/ethernet-112g-224g"
+      ],
+      "source_type": "vendor",
+      "source": "Mellitz et al., '200 Gb/s per lane KR Backplane Objective Proposal', May 2023, slide 6",
+      "conditions": "One proposal's account of the feedback, not a task-force record; the 40 dB itself was adopted (C-112)",
+      "status": "scoped",
+      "note": "'Feedback from people building SERDES: 36-37dB IL target'; 'Feedback from people building systems: 42-45 dB IL target'; 'COMPROMISE'. Source check by Claude Opus 5.5 against the document, then an independent re-check of the quote by Claude Sonnet 5.5; Geetansh approved the agreed keep/cut list for the draft claims table on 14 Oct 2026.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-14",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null,
+      "source_title": "Mellitz et al. (Samtec, Intel, Arista, Amphenol, TE, Synopsys) — 200 Gb/s per lane KR Backplane Objective Proposal, May 2023",
+      "source_url": "https://www.ieee802.org/3/dj/public/23_05/mellitz_3dj_01a_2305.pdf"
+    },
+    {
+      "id": "C-115",
+      "statement": "802.3dj adopted differential PAM4 for all its 200 Gb/s per lane copper cable and backplane PHYs, with RS(544,514,10) as their only FEC, the same code as 802.3ck; the signalling rate is 106.25 GBd.",
+      "pages": [
+        "interfaces/ethernet-112g-224g"
+      ],
+      "source_type": "normative",
+      "source": "P802.3dj Key Motions 05-2023 #6; 200G/lane KR baseline, Mar 2024, slides 6 and 11",
+      "conditions": "Adopted baseline of a draft standard",
+      "status": "scoped",
+      "note": "'Adopt differential PAM4 signaling as the basis for all of the 200 Gbps/lane passive copper cable and backplane PMDs and adopt RS(544,514,10) as the only FEC encoding'; KR baseline transmitter '106.25 ± 50 ppm' GBd. The ledger records normative rows as scoped by rule. Source check by Claude Opus 5.5 against the document, then an independent re-check of the quote by Claude Sonnet 5.5; Geetansh approved the agreed keep/cut list for the draft claims table on 14 Oct 2026.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-14",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null,
+      "source_title": "IEEE P802.3dj Task Force — Key Motions, as of 16 May 2024",
+      "source_url": "https://www.ieee802.org/3/dj/projdoc/KeyMotions_3dj_240516.pdf"
+    },
+    {
+      "id": "C-116",
+      "statement": "802.3dj adopted a target detector error ratio of 2e-4 for its backplane and copper cable links, twice 802.3ck's 1e-4.",
+      "pages": [
+        "interfaces/ethernet-112g-224g"
+      ],
+      "source_type": "normative",
+      "source": "P802.3dj Key Motions 11-2023 #12; IEEE Std 802.3ck-2022 Table 163-11",
+      "conditions": "Adopted baseline of a draft standard; a detector error ratio is not a bit error ratio",
+      "status": "scoped",
+      "note": "'adopt DER_0 = 2e-4 for 200 Gb/s per lane backplane and copper cable PMD link'; 802.3ck Table 163-11 'DER0 10^-4'. The ledger records normative rows as scoped by rule. Source check by Claude Opus 5.5 against the document, then an independent re-check of the quote by Claude Sonnet 5.5; Geetansh approved the agreed keep/cut list for the draft claims table on 14 Oct 2026.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-14",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null,
+      "source_title": "IEEE P802.3dj Task Force — Key Motions, as of 16 May 2024",
+      "source_url": "https://www.ieee802.org/3/dj/projdoc/KeyMotions_3dj_240516.pdf"
+    },
+    {
+      "id": "C-117",
+      "statement": "802.3dj's informative copper cable budget splits the 40 dB as 11.5 dB host + 17 dB cable assembly + 11.5 dB host, with host allowances of 6.5, 11.5 and 16.5 dB (package plus board) paired with cable assemblies of 12, 17, 22 and 27 dB, all at 53.125 GHz.",
+      "pages": [
+        "interfaces/ethernet-112g-224g"
+      ],
+      "source_type": "normative",
+      "source": "DiMinico, Sept 2023, slide 7; Tracy et al., Nov 2023, slide 12; Key Motions 09-2023 #5 and 11-2023 #11",
+      "conditions": "Adopted informative budget of a draft standard; the class names are still to be decided",
+      "status": "scoped",
+      "note": "'TP0d-TP5d= 11.5+17+11.5= 40 dB'; 'Host-Low 6.5 dB ... Host-Nominal 11.5 dB ... Host-High 16.5 dB'; cable '12 dB ... 17 dB ... 22 dB ... 27 dB'; motion 11-2023 #11 'Specific host and cable assembly nomenclature is a TBD'. The ledger records normative rows as scoped by rule. Source check by Claude Opus 5.5 against the document, then an independent re-check of the quote by Claude Sonnet 5.5; Geetansh approved the agreed keep/cut list for the draft claims table on 14 Oct 2026.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-14",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null,
+      "source_title": "Tracy et al. (TE Connectivity) — A Baseline Proposal To Enable More Flexible Architectures and Longer Reach 200Gb/Lane Passive Copper Cables, Nov 2023",
+      "source_url": "https://www.ieee802.org/3/dj/public/23_11/tracy_3dj_01a_2311.pdf"
+    },
+    {
+      "id": "C-118",
+      "statement": "Worked host examples contributed to the task force: the 11.5 dB host is a 5 dB package, 0.5 dB BGA and 6 dB for about 4.28 in of board trace, or 2.8 dB for 2 in of board, a 1 dB near-package connector and 2.2 dB for 6.8 in of 30 AWG twinax; the 16.5 dB host has a 9 dB package and is paired only with an 11.5 or 6.5 dB host, never with another 16.5 dB host; the 6.5 dB host a 3.9 dB package.",
+      "pages": [
+        "interfaces/ethernet-112g-224g"
+      ],
+      "source_type": "vendor",
+      "source": "Tracy et al., Nov 2023, slides 7-9 and 12",
+      "conditions": "Examples ('Possible Implementation'), not requirements",
+      "status": "scoped",
+      "note": "'5dB package'; '6dB for PCB trace, ~4.28\" reach'; '2.8dB for PCB trace, ~2\" reach'; '1dB for the Near package connector'; '2.2dB for 30AWG-6.8in cable'; '9dB package'; '3.2dB for 32AWG-8in cable'; '3.9dB for package loss'; the link-configuration table marks Host-High with Host-High 'not supported' (also DiMinico, Sep 2023). The pairing was added on 15 Oct 2026 after Sonnet's page review found the page pairing two 9 dB packages. Source check by Claude Opus 5.5 against the document, then an independent re-check of the quote by Claude Sonnet 5.5; Geetansh approved the agreed keep/cut list for the draft claims table on 14 Oct 2026.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-14",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null,
+      "source_title": "Tracy et al. (TE Connectivity) — A Baseline Proposal To Enable More Flexible Architectures and Longer Reach 200Gb/Lane Passive Copper Cables, Nov 2023",
+      "source_url": "https://www.ieee802.org/3/dj/public/23_11/tracy_3dj_01a_2311.pdf"
+    },
+    {
+      "id": "C-119",
+      "statement": "A host board trace contributed to the task force (90 ohm differential, 6 mil wide; laminate not named) loses about 1.25 dB/in at 53.125 GHz at room temperature and about 1.40 dB/in hot (80 °C by the appendix data file names).",
+      "pages": [
+        "interfaces/ethernet-112g-224g"
+      ],
+      "source_type": "measured",
+      "source": "Weaver and Chan (Arista), 212Gb/s per lane PAM4 chip-to-module channels, 31 Aug 2023, slide 4",
+      "conditions": "One board's traces, measured like Delta-L; laminate unstated",
+      "status": "verified",
+      "note": "'Room Temp: ~ 1.25 dB/in @ 53.125 GHz'; 'Hi Temp: ~ 1.40 dB/in @ 53.125 GHz'; '90 ohm @ 6 mil line width'. The slide says 'Hi Temp'; 80 °C appears only in the appendix s4p file names ('_80C_'). The slide's 'nothing exotic' refers to the vias and breakout, not the laminate. Source check by Claude Opus 5.5 against the document, then an independent re-check of the quote by Claude Sonnet 5.5; Geetansh approved the agreed keep/cut list for the draft claims table on 14 Oct 2026.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-14",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null,
+      "source_title": "Weaver and Chan (Arista Networks) — 212Gb/s Per Lane PAM4 Chip-to-Module Conventional Channels, Room vs. Hi Temp, Aug 2023",
+      "source_url": "https://www.ieee802.org/3/dj/public/adhoc/electrical/23_0831/weaver_3dj_elec_01_230831.pdf"
+    },
+    {
+      "id": "C-120",
+      "statement": "A task-force feasibility study for the 40 dB backplane assumed a receiver with a long feed-forward equalizer and maximum-likelihood sequence detection (MLSE), and called its settings not a parameter proposal.",
+      "pages": [
+        "interfaces/ethernet-112g-224g"
+      ],
+      "source_type": "vendor",
+      "source": "Mellitz et al., May 2023, slides 8-10",
+      "conditions": "Feasibility example only; not the adopted reference receiver",
+      "status": "scoped",
+      "note": "'MLSE used yes'; 'Rx FFE pre/post cursor 6/60'; 'THIS IS NOT A PARAMETER PROPOSAL'. Source check by Claude Opus 5.5 against the document, then an independent re-check of the quote by Claude Sonnet 5.5; Geetansh approved the agreed keep/cut list for the draft claims table on 14 Oct 2026.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-14",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null,
+      "source_title": "Mellitz et al. (Samtec, Intel, Arista, Amphenol, TE, Synopsys) — 200 Gb/s per lane KR Backplane Objective Proposal, May 2023",
+      "source_url": "https://www.ieee802.org/3/dj/public/23_05/mellitz_3dj_01a_2305.pdf"
+    },
+    {
+      "id": "C-121",
+      "statement": "Broadcom began shipping Tomahawk 6 in June 2025: 102.4 Tb/s of switching in one chip with 200G or 100G PAM4 SerDes, including an option for 1,024 100G SerDes; a co-packaged optics version was announced as to follow.",
+      "pages": [
+        "interfaces/ethernet-112g-224g"
+      ],
+      "source_type": "commercial",
+      "source": "Broadcom press release, 3 June 2025",
+      "conditions": "One vendor's product claims",
+      "status": "verified",
+      "note": "'world's first 102.4 Terabits/sec of switching capacity in a single chip'; '200G or 100G PAM4 SerDes with support for long-reach passive copper'; 'option for 1,024 100G SerDes on a single chip'; 'will also be available with co-packaged optics'. Source check by Claude Opus 5.5 against the document, then an independent re-check of the quote by Claude Sonnet 5.5; Geetansh approved the agreed keep/cut list for the draft claims table on 14 Oct 2026.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-14",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null,
+      "source_title": "Broadcom — Broadcom Ships Tomahawk 6: World's First 102.4 Tbps Switch, 3 June 2025",
+      "source_url": "https://investors.broadcom.com/news-releases/news-release-details/broadcom-ships-tomahawk-6-worlds-first-1024-tbps-switch"
+    },
+    {
+      "id": "C-122",
+      "statement": "OIF's CEI-112G family runs PAM4 at 36 to 58 GBd at several reaches: XSR inside a system in a package; VSR chip to module (at least 200 mm of host board and a connector, plus 20 mm of module board); MR 500 mm of board and one connector; LR 1000 mm of backplane and two connectors; XSR+ up to 13 dB including the packages.",
+      "pages": [
+        "interfaces/ethernet-112g-224g"
+      ],
+      "source_type": "normative",
+      "source": "OIF-CEI-05.3 (17 Jul 2025), clauses 24.1-28.1; first published in OIF-CEI-05.0 (5 May 2022)",
+      "conditions": "Implementation agreement",
+      "status": "scoped",
+      "note": "'within the range from 36.0 Gsym/s to 58.0 Gsym/s'; 'system in a package (SIP)'; 'a minimum of 200 mm of host PCB trace plus one connector and a minimum of 20 mm of module PCB trace'; 'up to 500 mm of PCB and up to 1 connector'; 'up to 1000 mm of backplane and up to 2 connectors'; 'insertion loss up to 13 dB. The channel may include an ASIC package'. The ledger records normative rows as scoped by rule. Source check by Claude Opus 5.5 against the document, then an independent re-check of the quote by Claude Sonnet 5.5; Geetansh approved the agreed keep/cut list for the draft claims table on 14 Oct 2026.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-14",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null,
+      "source_title": "OIF — OIF-CEI-05.3, Common Electrical I/O (CEI) Implementation Agreement, July 2025",
+      "source_url": "https://www.oiforum.com/wp-content/uploads/OIF-CEI-05.3.pdf"
+    },
+    {
+      "id": "C-123",
+      "statement": "OIF CEI-112G-LR tests its receiver over a 28 dB channel at Nyquist measured between the transmitter and receiver package balls, at a raw BER of 1e-4 with FEC assumed to reach 1e-15; its COM is 802.3's Annex 93A as modified by 802.3ck, so it shares 802.3ck's reference plane and method.",
+      "pages": [
+        "interfaces/ethernet-112g-224g"
+      ],
+      "source_type": "normative",
+      "source": "OIF-CEI-05.3, clause 27, Table 27-10 and 27.2.4.2",
+      "conditions": "Receiver interference tolerance test channel, not a channel limit",
+      "status": "scoped",
+      "note": "'Insertion loss at Nyquist, Note 1 14 28 dB' (Test 1, Test 2); Note 1 'Measured between TX and RX package balls'; 'Pre-FEC Bit Error Ratio (BER) 10-4'; 'corrected BER of 10-15 or better per lane'; COM per 'Annex 93A of IEEE Std 802.3 as modified by IEEE Std 802.3ck'. The ledger records normative rows as scoped by rule. Source check by Claude Opus 5.5 against the document, then an independent re-check of the quote by Claude Sonnet 5.5; Geetansh approved the agreed keep/cut list for the draft claims table on 14 Oct 2026.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-14",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null,
+      "source_title": "OIF — OIF-CEI-05.3, Common Electrical I/O (CEI) Implementation Agreement, July 2025",
+      "source_url": "https://www.oiforum.com/wp-content/uploads/OIF-CEI-05.3.pdf"
+    },
+    {
+      "id": "C-124",
+      "statement": "As of 14 October 2026 OIF has published no CEI-224G implementation agreement (its electrical I/O list ends at CEI-05.3), and the 802.3dj backplane baseline planned to leverage OIF's CEI-224G-LR draft.",
+      "pages": [
+        "interfaces/ethernet-112g-224g"
+      ],
+      "source_type": "normative",
+      "source": "OIF Implementation Agreements list, read 14 Oct 2026; Li et al., 200G/Lane KR Baseline, Mar 2024, slides 3-4",
+      "conditions": "Status as of October 2026; will go stale",
+      "status": "scoped",
+      "note": "IA list: OIF-CEI-05.3, 05.2, 05.1, 05.0, 04.0 ...; KR baseline 'Leverage the OIF/CEI-224G-LR-PAM4 latest specification draft', 'Maintain the alignment when appropriate/possible'. The ledger records normative rows as scoped by rule. Source check by Claude Opus 5.5 against the document, then an independent re-check of the quote by Claude Sonnet 5.5; Geetansh approved the agreed keep/cut list for the draft claims table on 14 Oct 2026.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-14",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null,
+      "source_title": "OIF — Implementation Agreements",
+      "source_url": "https://www.oiforum.com/technical-work/implementation-agreements-ias/"
+    },
+    {
+      "id": "C-125",
+      "statement": "PCIe 1.0 to 5.0 signal NRZ and 6.0 PAM4; they run at 2.5 GT/s (8b/10b, 2003), 5.0 GT/s (8b/10b, 2007), 8.0 GT/s (128b/130b, 2010), 16.0 GT/s (128b/130b, 2017), 32.0 GT/s (128b/130b, 2019) and 64.0 GT/s (PAM4, Flit, 2022).",
+      "pages": [
+        "interfaces/pcie-gen6",
+        "interfaces/pcie-gen4-gen5"
+      ],
+      "source_type": "public-rate",
+      "source": "Das Sharma, 2022 OFA Virtual Workshop, slide 4",
+      "conditions": "Specification release years and line coding; says nothing about the electricals",
+      "status": "verified",
+      "note": "Slide 4 table: '1.0 2.5 (8b/10b) 2003' through '6.0 64.0 (PAM4, Flit) 2022'. Slide 3: 'a x16 PCIe 5.0 device interoperates with a x1 PCIe 1.0 device!'. NRZ for 1.0 to 5.0 from Teledyne LeCroy (2023): 'it moves from the nonreturn-to-zero (NRZ) signaling of the previous generations to four-level pulse amplitude modulation (PAM4)'. Source check by Claude Opus 5.5 against the document on 15 Oct 2026; Geetansh approved the page plan the same day.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-15",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null,
+      "source_title": "D. Das Sharma (Intel Senior Fellow; Director, PCI-SIG Board) — PCIe 6.0 Specification, 2022 OFA Virtual Workshop",
+      "source_url": "https://www.openfabrics.org/wp-content/uploads/2022-workshop/2022-workshop-presentations/206_DDasSharma.pdf"
+    },
+    {
+      "id": "C-126",
+      "statement": "PCI-SIG released the PCIe 6.0 specification on 11 January 2022: 64 GT/s raw data rate, up to 256 GB/s via x16, PAM4 signalling, lightweight FEC and CRC, Flit-based encoding, and backwards compatibility with all previous generations.",
+      "pages": [
+        "interfaces/pcie-gen6"
+      ],
+      "source_type": "public-rate",
+      "source": "PCI-SIG press release, 11 Jan 2022, as reposted by Design & Reuse",
+      "conditions": "Headline rate and features; 256 GB/s is both directions of an x16 link, raw",
+      "status": "verified",
+      "note": "'64 GT/s raw data rate and up to 256 GB/s via x16 configuration'; 'Lightweight Forward Error Correct (FEC) and Cyclic Redundancy Check (CRC)'; 'Maintains backwards compatibility with all previous generations of PCIe technology'. pcisig.com refuses scripted and browser access from here, so the repost was read; its text matches the release as quoted by other outlets. Source check by Claude Opus 5.5 against the document on 15 Oct 2026; Geetansh approved the page plan the same day.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-15",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null,
+      "source_title": "PCI-SIG — PCI-SIG Releases PCIe 6.0 Specification Delivering Record Performance to Power Big Data Applications, 11 Jan 2022",
+      "source_url": "https://www.design-reuse.com/news/51221/pci-sig-pcie-6-0-specification.html"
+    },
+    {
+      "id": "C-127",
+      "statement": "PCI-SIG released the PCIe 7.0 specification to its members on 11 June 2025: 128.0 GT/s raw bit rate, up to 512 GB/s bi-directionally via x16, PAM4 signalling and Flit-based encoding, backwards compatible; pathfinding for PCIe 8.0 is in progress.",
+      "pages": [
+        "interfaces/pcie-gen6"
+      ],
+      "source_type": "public-rate",
+      "source": "PCI-SIG press release, 11 Jun 2025, as reposted by Signal Integrity Journal",
+      "conditions": "Headline rate only; the 7.0 electricals and Flit layout are not public",
+      "status": "verified",
+      "note": "'Delivers 128.0 GT/s raw bit rate and up to 512 GB/s bi-directionally via x16 configuration'; 'Utilizes PAM4 ... signaling and Flit-based encoding'; 'Pathfinding for the PCIe 8.0 specification is already in progress'. Business Wire carries the original, datelined 11 June 2025. Source check by Claude Opus 5.5 against the document on 15 Oct 2026; Geetansh approved the page plan the same day.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-15",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null,
+      "source_title": "PCI-SIG — PCI-SIG Releases PCIe 7.0 Specification to Support the Bandwidth Demands of Artificial Intelligence at 128.0 GT/s Transfer Rates, Jun 2025",
+      "source_url": "https://www.signalintegrityjournal.com/articles/3984-pci-sig-releases-pcie-70-specification-to-support-the-bandwidth-demands-of-artificial-intelligence-at-1280-gt-s-transfer-rates"
+    },
+    {
+      "id": "C-128",
+      "statement": "The nominal PCIe 6.0 channel insertion loss budget is 32 dB at the 16 GHz Nyquist frequency, down from 36 dB for PCIe 5.0, end to end from root complex to endpoint.",
+      "pages": [
+        "interfaces/pcie-gen6"
+      ],
+      "source_type": "normative",
+      "source": "PCI Express Base Specification 6.0/6.0.1, channel budget; as reported by Teledyne LeCroy (2023), Samtec authors in Signal Integrity Journal (2023) and Synopsys with Tektronix",
+      "conditions": "Measured at 16 GHz; reference planes are defined in the Base and CEM specifications, which have not been read",
+      "status": "scoped",
+      "note": "LeCroy: 'the nominal channel loss going down from 36 dB for PCIe 5.0 to 32 dB for PCIe 6.0'. Krooswyk, Fellbaum and Burns (SIJ, Jan 2023): 'the channel target was reduced from 36 to 32 dB'. Synopsys/Tektronix: 'the PCIe 6.0.1 channel insertion loss budget of 32 dB at 16 GHz Nyquist'. A 2021 trade report of 36 dB for 6.0 predates the release; Astera Labs speaks of 36 dB per segment with a retimer, so the page states 32 dB as the end-to-end budget. Scoped because the reference planes are in the specification. Source check by Claude Opus 5.5 against the document on 15 Oct 2026; Geetansh approved the page plan the same day.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-15",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null,
+      "source_title": "Teledyne LeCroy (A. Mickens) — How PAM4 Signaling is Changing PCIe 6.0 Jitter Measurements, Jan 2023",
+      "source_url": "https://www.teledynelecroy.com/doc/docview.aspx?id=14227"
+    },
+    {
+      "id": "C-129",
+      "statement": "The PCIe 6.0 reference receiver has a CTLE with six poles and three zeros, against four poles and two zeros for PCIe 5.0, and a 16-tap DFE, against 3 taps.",
+      "pages": [
+        "interfaces/pcie-gen6"
+      ],
+      "source_type": "normative",
+      "source": "PCI Express Base Specification 6.0, reference receiver; as reported by Teledyne LeCroy (2023) and Samtec authors in Signal Integrity Journal (2023)",
+      "conditions": "Reference (behavioural) receiver used for compliance, not an implementation",
+      "status": "scoped",
+      "note": "LeCroy: 'six poles with three zeros, compared to four poles with two zeros for PCIe 5.0' and 'increasing the number of decision feedback equalization (DFE) taps from three to 16'. SIJ: 'an increase in decision feedback equalization (DFE) from 3-taps to 16-taps'. Source check by Claude Opus 5.5 against the document on 15 Oct 2026; Geetansh approved the page plan the same day.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-15",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null,
+      "source_title": "Signal Integrity Journal (S. Krooswyk, A. Fellbaum, M. Burns, Samtec) — How To Choose an Interconnect for PCIe 6.0 High-Speed Systems, Jan 2023",
+      "source_url": "https://www.signalintegrityjournal.com/articles/2964-how-to-choose-an-interconnect-for-pcie-60-high-speed-systems"
+    },
+    {
+      "id": "C-130",
+      "statement": "Of the 32 dB, about 23.5 dB goes to the root complex side (the system) and 8.5 dB to the non-root side, such as a CEM add-in card whose share includes a 4.6 dB package; the system designer is left about 15.7 dB for board traces, vias and capacitors from the root-port pads to the add-in-card connector, so motherboards will likely carry retimers and thicker boards of higher-quality materials.",
+      "pages": [
+        "interfaces/pcie-gen6"
+      ],
+      "source_type": "normative",
+      "source": "PCI Express 6.0.1 channel budget allocation, as described by Synopsys and Tektronix",
+      "conditions": "Example allocation for a CEM add-in-card topology; the retimer remark is the authors' expectation",
+      "status": "scoped",
+      "note": "'shared with ~23.5 dB for a Root Complex (system) and 8.5 dB for a Non-Root Complex (e.g., CEM add-in card (AIC)'; 'a Non-Root Complex package loss of 4.6 dB'; 'System designers are left with ~15.7 dB budget'; 'motherboards will likely include retimers and thicker PCBs comprised of higherquality materials'; the 15.7 dB is for 'board traces via capacitors from RP pads on the PCB to the AIC connectors'. The same paper says PAM4 reduces the vertical eye opening 'by 33%', which is not used: each eye is a third of the swing. Source check by Claude Opus 5.5 against the document on 15 Oct 2026; Geetansh approved the page plan the same day.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-15",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null,
+      "source_title": "Synopsys (M. Sanyal) and Tektronix — PCIe 6.0 PHY Validation white paper",
+      "source_url": "https://www.tek.com/en/documents/whitepaper/pcie-6-phy-validation"
+    },
+    {
+      "id": "C-131",
+      "statement": "PCIe 6.0 was designed to a first bit error rate of 1e-6, with Gray coding and precoding, a latency adder under 10 ns for transmitter plus receiver including FEC, under 2% bandwidth inefficiency over PCIe 5.0, channel reach similar to PCIe 5.0 with up to two retimers, a new L0p power state, a failure-in-time (FIT) rate well below 1 for an x16 link, and full backwards compatibility with PCIe 1.x to 5.0.",
+      "pages": [
+        "interfaces/pcie-gen6"
+      ],
+      "source_type": "normative",
+      "source": "PCI Express Base Specification 6.0 design requirements, as presented by Das Sharma, 2022 OFA Virtual Workshop, slides 5-6",
+      "conditions": "Design targets as presented by a PCI-SIG board director; the specification itself has not been read",
+      "status": "scoped",
+      "note": "'Latency <10ns adder for Transmitter + Receiver over 32.0 GT/s (including FEC)'; 'Bandwidth Inefficiency <2 % adder over PCIe 5.0'; 'Channel Reach Similar to PCIe 5.0 specification under similar set up for Retimer(s) (maximum 2)'; 'Addition of a new power state (L0p)'; 'Fully backwards compatible with PCIe 1.x specification through PCIe 5.0'; 'Reliability 0 < FIT << 1 for a x16 (FIT – Failure in Time, number of failures in 109 hours)'; 'Gray Coding', 'Precoding to minimize errors in a burst', 'FBER: First bit error rate', 'need FBER < 10-6'. Source check by Claude Opus 5.5 against the document on 15 Oct 2026; Geetansh approved the page plan the same day.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-15",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null,
+      "source_title": "D. Das Sharma (Intel Senior Fellow; Director, PCI-SIG Board) — PCIe 6.0 Specification, 2022 OFA Virtual Workshop",
+      "source_url": "https://www.openfabrics.org/wp-content/uploads/2022-workshop/2022-workshop-presentations/206_DDasSharma.pdf"
+    },
+    {
+      "id": "C-132",
+      "statement": "The PCIe 6.0 FEC is three-way interleaved and corrects a single symbol in each, so it corrects any burst within 3 bytes; the CRC is guaranteed to detect up to 8 byte errors; FEC correction and CRC check take under 2 ns; a link in Flit mode stays in Flit mode at every rate from 2.5 to 64 GT/s; and a failed flit can be retried alone, as an optimisation of the existing Go-Back-N retry.",
+      "pages": [
+        "interfaces/pcie-gen6"
+      ],
+      "source_type": "normative",
+      "source": "PCI Express Base Specification 6.0, Flit mode, as presented by Das Sharma, 2022 OFA Virtual Workshop, slides 10-12; Teledyne LeCroy (2023)",
+      "conditions": "As presented; the specification itself has not been read",
+      "status": "scoped",
+      "note": "'FEC: 3-way interleaved, single symbol correct – corrects a burst within 3 bytes'; 'CRC: RS based – up to 8 byte errors guaranteed detect'; 'Low latency: <2ns FEC correct and CRC check'; 'Once in Flit mode, we are always in Flit mode at all speeds (2.5 GT/s through 64.0 GT/s)'; 'Optimization: Retry error Flit only with existing Go-Back-N retry'; slide 12 shows both a selective Nak (one flit replayed) and a standard Nak (replay from the failed flit onward). LeCroy independently gives the flit as '242 bytes of payload' plus 'eight bytes of CRC' plus 'six bytes of FEC', which matches C-8d (236 + 6 = 242), and says of the CRC: 'the PCIe 6.0 specification also features cyclic redundancy check (CRC), as does PCIe 5.0', with FEC new in 6.0. Source check by Claude Opus 5.5 against the document on 15 Oct 2026; Geetansh approved the page plan the same day.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-15",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null,
+      "source_title": "D. Das Sharma (Intel Senior Fellow; Director, PCI-SIG Board) — PCIe 6.0 Specification, 2022 OFA Virtual Workshop",
+      "source_url": "https://www.openfabrics.org/wp-content/uploads/2022-workshop/2022-workshop-presentations/206_DDasSharma.pdf"
+    },
+    {
+      "id": "C-133",
+      "statement": "At the same peak-to-peak voltage as PCIe 5.0 NRZ, the three eyes of a PCIe 6.0 PAM4 signal have reduced eye height and eye width, and a step between adjacent levels slews more slowly than a full-swing step.",
+      "pages": [
+        "interfaces/pcie-gen6"
+      ],
+      "source_type": "vendor",
+      "source": "Teledyne LeCroy (A. Mickens), How PAM4 Signaling is Changing PCIe 6.0 Jitter Measurements, Jan 2023",
+      "conditions": "Qualitative; no eye-width figure given",
+      "status": "verified",
+      "note": "'The peak-to-peak voltage level for a PCIe 5.0 32-GT/s NRZ signal is the same as that for a PCIe 6.0 64-GT/s PAM4 signal, but the three eyes of a PAM4 signal have a reduced eye height and eye width'; 'a 0 to 1 transition has a much slower slew rate compared to a 0 to 3 transition'. Source check by Claude Opus 5.5 against the document on 15 Oct 2026, added after Sonnet's page review.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-15",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null,
+      "source_title": "Teledyne LeCroy (A. Mickens) — How PAM4 Signaling is Changing PCIe 6.0 Jitter Measurements, Jan 2023",
+      "source_url": "https://www.teledynelecroy.com/doc/docview.aspx?id=14227"
+    },
+    {
+      "id": "C-134",
+      "statement": "A Texas Instruments layout note breaks the PCIe Gen 3, Gen 4 and Gen 5 system loss budgets into CPU package 3.5, 5 and 9.0 dB; system board trace (9 in, high-loss material) 13, 14 and 16 dB; CEM connector 0.5, 0.5 and 1.5 dB; and a 4 in add-in card 6.5, 8.5 and 9.5 dB, totalling 23.5, 28 and 36 dB. It adds a crosstalk allowance of under 2 dB at Gen 4 and 4 to 5 dB at Gen 5, and 2 to 3 dB for temperature and humidity at Gen 5.",
+      "pages": [
+        "interfaces/pcie-gen4-gen5"
+      ],
+      "source_type": "commercial",
+      "source": "Texas Instruments SNLA426, Table 2-1 and section 4",
+      "conditions": "One vendor's example allocation; TI does not state the frequency, though the Gen 4 and Gen 5 totals match the budgets usually quoted at 8 and 16 GHz (C-6a, C-6b); the CEM specification sets the form-factor split",
+      "status": "scoped",
+      "note": "Table 2-1: 'CPU Package 3.5 5 9.0', 'System Board Trace (9-inch trace with high-loss material) 13 14 16', 'CEM Connector 0.5 0.5 1.5', '4” Add-In-Card 6.5 8.5 9.5', 'Total System Loss 23.5 28 36', 'Cross Talk Mitigation Negligible <2 4-5', 'Temp/Humidity Loss - - 2-3'. Replaces an unsourced CEM split (3.5 / 17.0 / 1.5 / 9.5 / 3.5 / 1.0 dB) and OCP/EDSFF figures the page carried until 15 Oct 2026. Source check by Claude Opus 5.5 against the document on 15 Oct 2026; Geetansh asked for this page's upgrade the same day.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-15",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null,
+      "source_title": "Texas Instruments (V. Flores Prado) — High-Speed PCB Layout for PCIe Gen 5, SNLA426, Jun 2023",
+      "source_url": "https://www.ti.com/lit/pdf/snla426"
+    },
+    {
+      "id": "C-135",
+      "statement": "The same TI note gives the eye a Gen 3, 4 and 5 receiver must see after equalisation as an extrapolated eye height of 25, 15 and 15 mV and a minimum eye width of 0.3 UI (37.5, 18.75 and 9.375 ps), and a target bit error rate of 1e-12.",
+      "pages": [
+        "interfaces/pcie-gen4-gen5"
+      ],
+      "source_type": "normative",
+      "source": "PCI Express Base Specification receiver eye requirements, as tabulated by Texas Instruments SNLA426, Table 2-2 and section 4",
+      "conditions": "Measured after equalisation; TI's own figure is taken before the 3-tap DFE at a redriver output; the specification itself has not been read",
+      "status": "scoped",
+      "note": "Table 2-2: 'Extrapolated Eye Height after EQ 25 mV 15 ± 1.5mV 15 ± 1.5mV'; 'Minimum Eye Width after EQ 0.3UI (37.5ps) 0.3UI (18.75 ± 0.55ps) 0.3UI (9.375 ± 0.5ps)'; section 4: 'the targeted BER (1E-12)'; section 3: 'measured post-equalization before the 3-tap DFE blocks. This means at the output of the PCIe redriver'. Source check by Claude Opus 5.5 against the document on 15 Oct 2026; Geetansh asked for this page's upgrade the same day.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-15",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null,
+      "source_title": "Texas Instruments (V. Flores Prado) — High-Speed PCB Layout for PCIe Gen 5, SNLA426, Jun 2023",
+      "source_url": "https://www.ti.com/lit/pdf/snla426"
+    },
+    {
+      "id": "C-136",
+      "statement": "The eleven PCIe transmitter presets for 8 GT/s and 16 GT/s are, as preshoot and de-emphasis in dB: P0 0 and -6.0; P1 0 and -3.5; P2 0 and -4.4; P3 0 and -2.5; P4 0 and 0; P5 1.9 and 0; P6 2.5 and 0; P7 3.5 and -6.0; P8 3.5 and -3.5; P9 3.5 and 0; P10 0 and a de-emphasis set by the advertised LF level. De-emphasis = 20 log10(Vb/Va), preshoot = 20 log10(Vc/Vb), boost = 20 log10(Vd/Vb).",
+      "pages": [
+        "interfaces/pcie-gen4-gen5"
+      ],
+      "source_type": "normative",
+      "source": "PCI Express Base Specification transmitter presets, as reproduced by Tektronix, Top 10 Things to Know about PCIe, section 05",
+      "conditions": "Nominal values; tolerances of ±1 to ±1.5 dB apply; the table is given for Gen 3 and Gen 4",
+      "status": "scoped",
+      "note": "Table 'Compliance Presets': 'P4 0 0', 'P1 0 -3.5 ± 1 dB', 'P0 0 -6.0 ± 1.5 dB', 'P9 3.5 ± 1 dB 0', 'P8 3.5 ± 1 dB -3.5 ± 1 dB', 'P7 3.5 ± 1 dB -6.0 ± 1.5 dB', 'P5 1.9 ± 1 dB 0', 'P6 2.5 ± 1 dB 0', 'P3 0 -2.5 ± 1 dB', 'P2 0 -4.4 ± 1.5 dB', 'P10 0 Variable'; 'De-emphasis = 20log10 Vb/Va', 'Preshoot = 20log10 Vc/Vb', 'Boost = 20log10 Vd/Vb'; 'P10 levels are not fixed; its de-emphasis level is a function of the LF level that the Tx advertises during training.' The page's tap coefficients are derived from these dB values, not quoted. Replaces preset values the page carried until 15 Oct 2026 that disagreed with this table (P0 flat, P4 -2.2 dB). Source check by Claude Opus 5.5 against the document on 15 Oct 2026; Geetansh asked for this page's upgrade the same day.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-15",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null,
+      "source_title": "Tektronix — Top 10 Things to Know about PCIe",
+      "source_url": "https://download.tek.com/document/10-Things-to-Know-about-PCIe-eBook-65W-61046-0.pdf"
+    },
+    {
+      "id": "C-137",
+      "statement": "PCIe 4.0 kept 128b/130b coding at 16 GT/s; its channel is limited, so longer channels or a second connector need a repeater (redriver or retimer); its receiver test channel is about 12 in with 28 dB of loss; its connector stayed backwards compatible with Gen 1 to 3; it added lane margining, which measures eye height and width margin at the end of the channel; and it lowered the minimum eye height to 15 mVpp.",
+      "pages": [
+        "interfaces/pcie-gen4-gen5"
+      ],
+      "source_type": "normative",
+      "source": "PCI Express Base Specification 4.0, as summarised by Tektronix, Top 10 Things to Know about PCIe, section 02",
+      "conditions": "As summarised by a test-equipment vendor in 2017",
+      "status": "scoped",
+      "note": "'16 GT/s, using scrambling, same as 8 GT/s, no encoding change from Gen3 (128b/130b)'; 'Gen4 connector backwards-compatible with Gen1/2/3'; 'Limited channel: requires use of repeater (both redriver & retimer) for longer channels and/or 2nd connector'; 'Test channel is around 12” long and has a total of -28 dB loss'; 'New Rx Lane Margining feature measures Eye Height (EH)/Eye Width (EW) margin at the end of the channel'; 'The minimum eye height for Gen4 has been reduced to 15mVpp'. Source check by Claude Opus 5.5 against the document on 15 Oct 2026; Geetansh asked for this page's upgrade the same day.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-15",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null,
+      "source_title": "Tektronix — Top 10 Things to Know about PCIe",
+      "source_url": "https://download.tek.com/document/10-Things-to-Know-about-PCIe-eBook-65W-61046-0.pdf"
+    },
+    {
+      "id": "C-138",
+      "statement": "PCIe 4.0 and 5.0 transmitters use a 3-tap FFE (one pre-cursor, one post-cursor tap); the PCIe 4.0 reference receiver has a CTLE with 7 configurations and a 2-tap DFE limited to ±30 mV and ±20 mV; the PCIe 5.0 reference receiver has a CTLE with 11 configurations and a 3-tap DFE limited to ±80, ±20 and ±20 mV.",
+      "pages": [
+        "interfaces/pcie-gen4-gen5"
+      ],
+      "source_type": "normative",
+      "source": "PCIe 4 and PCIe 5 Base Specifications, as implemented in MathWorks SerDes Toolbox examples (PCIe4 and PCIe5 Transmitter/Receiver IBIS-AMI Model)",
+      "conditions": "Reference (behavioural) receivers for compliance, as modelled by a tool vendor",
+      "status": "scoped",
+      "note": "PCIe4 page: 'A PCIe4 compliant transmitter uses a 3-tap feed forward equalizer (FFE) with one pre-tap and one post-tap'; 'The Rx CTLE block is set up for 7 configurations'; 'set up for two DFE taps'; '+/-30 mV for tap1 and +/-20 mV for tap2'. PCIe5 page: 'one pre-tap, one main tap, and one post-tap'; '11 configurations (0 through 10)' that 'matches the Poles and Zeros given in the PCIe Gen5 Base Specification'; 'set up for three DFE taps'; tap limits ±80, ±20 and ±20 mV. Consistent with C-129's 3-tap DFE for PCIe 5.0. Source check by Claude Opus 5.5 against the document on 15 Oct 2026; Geetansh asked for this page's upgrade the same day.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-15",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null,
+      "source_title": "MathWorks — PCIe5 Transmitter/Receiver IBIS-AMI Model (SerDes Toolbox example; PCIe4 example alongside)",
+      "source_url": "https://www.mathworks.com/help/serdes/ug/PCIe5TxRxIBISAMIModel.html"
+    },
+    {
+      "id": "C-139",
+      "statement": "PCIe link equalisation runs in four phases inside Recovery.Equalization: in Phase 0 the system sends the add-in card a starting transmitter preset with the speed-change request, at the lower rate; in Phase 1 the two ends reach the new rate with an error ratio no worse than 1e-4 and advertise their equalisation capabilities; in Phase 2 the add-in card adjusts the system's transmitter while tuning its own receiver; in Phase 3 the system adjusts the card's transmitter while tuning its own receiver; on exit the link should run at a bit error ratio of 1e-12 or better.",
+      "pages": [
+        "interfaces/pcie-gen4-gen5"
+      ],
+      "source_type": "normative",
+      "source": "PCI Express Base Specification, Recovery.Equalization, as described by Teledyne LeCroy (Nov 2014)",
+      "conditions": "Described for 8 GT/s; C-140 gives the same phases at 16 and 32 GT/s",
+      "status": "scoped",
+      "note": "'Phase 0 starts at a rate of 2.5 GT/s. The system (upstream) sends a speed-change request along with a TxEQ preset to the add-in card (downstream)'; 'establish communication with a bit-error rate of at least 10-4'; 'In Phase 1, the system and add-in card advertise their equalization capabilities'; 'In Phase 2, the downstream add-in card adjusts the upstream system's TxEQ settings while tweaking its own RxEQ settings. In Phase 3, that process reverses'; 'operating at a BER of at least 10-12'. Replaces a phase description the page carried until 15 Oct 2026 that had the roles reversed. Source check by Claude Opus 5.5 against the document on 15 Oct 2026; Geetansh asked for this page's upgrade the same day.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-15",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null,
+      "source_title": "Teledyne LeCroy — An Under-the-Hood View of PCIe 3.0 Link Equalization, Nov 2014",
+      "source_url": "https://blog.teledynelecroy.com/2014/11/an-under-hood-view-of-pcie-30-link.html"
+    },
+    {
+      "id": "C-140",
+      "statement": "A link trains to 2.5 GT/s and then equalises at 8, 16 and 32 GT/s in turn, with the same four phases at each rate; vendors put each speed step at about 100 ms, about 300 ms to reach 32 GT/s; PCIe 5.0 added two optional modes to shorten this, equalisation bypass to the highest rate and a no-equalisation-required mode.",
+      "pages": [
+        "interfaces/pcie-gen4-gen5"
+      ],
+      "source_type": "normative",
+      "source": "PCI Express Base Specification 5.0, link equalisation, as described by Synopsys (Oct 2019)",
+      "conditions": "Timing as reported by vendors; the bypass modes are optional",
+      "status": "scoped",
+      "note": "'The link must initially train to L0 at 2.5 GT/s followed by equalization at 8.0 GT/s, 16 GT/s and 32 GT/s sequentially'; 'single speed transition with equalization takes about ~100ms'; 'it would take ~300ms to bring-up link to 32GT/s'; 'The equalization phases (phase 0,1,2,3) for PCIe 5.0 remain the same as the previous generations'; 'Equalization bypass to highest rate' and 'No equalization required' mode. Source check by Claude Opus 5.5 against the document on 15 Oct 2026; Geetansh asked for this page's upgrade the same day.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-15",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null,
+      "source_title": "Synopsys — Reduce Link Bring-Up Time with PCIe 5.0 Modes, Oct 2019",
+      "source_url": "https://www.synopsys.com/blogs/chip-design/reduce-pcie-5-0-link-time.html"
+    },
+    {
+      "id": "C-141",
+      "statement": "TI's PCIe Gen 5 layout note gives the loss of 1 in of trace at 8 and 16 GHz as 0.189 and 0.336 dB on Megtron 6, 0.251 and 0.411 dB on Rogers, 0.548 and 1.017 dB on GETEK, 0.578 and 1.078 dB on Nelco 4000-6, 0.686 and 1.289 dB on FR4, and 0.961 and 1.844 dB on tetra-functional FR4.",
+      "pages": [
+        "interfaces/pcie-gen4-gen5"
+      ],
+      "source_type": "commercial",
+      "source": "Texas Instruments SNLA426, Table 9-1",
+      "conditions": "Computed by TI from a closed-form loss formula for one trace geometry; trace only, no vias, connectors or packages",
+      "status": "verified",
+      "note": "Table 9-1 '1\" Trace Loss Over Frequency for Various PCB Materials': 'Megtron 6 3.4 0.002 0.189 0.336', 'Roger 3.48 0.0037 0.251 0.411', 'GETEK 4.1 0.011 0.548 1.017', 'Nelco 4000-6 4.0 0.012 0.578 1.078', 'FR4 4.4 0.014 0.686 1.289', 'Tetra Functional FR4 4.1 0.022 0.961 1.844'. Source check by Claude Opus 5.5 against the document on 15 Oct 2026, added after Sonnet's page review.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-15",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null,
+      "source_title": "Texas Instruments (V. Flores Prado) — High-Speed PCB Layout for PCIe Gen 5, SNLA426, Jun 2023",
+      "source_url": "https://www.ti.com/lit/pdf/snla426"
+    },
+    {
+      "id": "C-142",
+      "statement": "The PCIe specification allows 70 to 100 ohm differential impedance for high-speed lanes; add-in cards are required to be 85 ohm differential so they interoperate with any root complex and endpoint; the 100 MHz reference clock targets 100 ohm.",
+      "pages": [
+        "interfaces/pcie-gen4-gen5"
+      ],
+      "source_type": "normative",
+      "source": "PCI Express Base and CEM Specifications, impedance, as summarised by Texas Instruments SNLA426 section 10",
+      "conditions": "As summarised by TI; vias, capacitor pads, connectors and cables are exempt",
+      "status": "scoped",
+      "note": "'The PCIe specification requires 70 to 100 Ω differential impedance. To interoperate with different root complexes and end points, Add-In-Cards require 85 Ω differential impedance. This requirement does not apply to vias, AC coupling capacitor pads, connectors, or cables'; 'the differential 100 MHz reference clock target impedance is 100 Ω'. Source check by Claude Opus 5.5 against the document on 15 Oct 2026, added after Sonnet's page review.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-15",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null,
+      "source_title": "Texas Instruments (V. Flores Prado) — High-Speed PCB Layout for PCIe Gen 5, SNLA426, Jun 2023",
+      "source_url": "https://www.ti.com/lit/pdf/snla426"
     }
   ]
 }

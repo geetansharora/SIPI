@@ -55,7 +55,7 @@ function loadSite() {
   };
   global.getComputedStyle = () => ({ getPropertyValue: () => '#000000' });
   global.fetch = () => new Promise(() => {});
-  const files = ['js/viz-kit.js', 'js/models/calc-models.js', 'js/models/laminates.js', 'js/models/coupling-model.js', 'js/models/tdr-model.js', 'js/models/ddr5-model.js', 'js/models/lpddr6-model.js', 'js/models/ucie-model.js', 'js/models/d2d-model.js', 'js/viz/jitter.js', 'js/viz/crosstalk.js',
+  const files = ['js/viz-kit.js', 'js/models/calc-models.js', 'js/models/laminates.js', 'js/models/coupling-model.js', 'js/models/tdr-model.js', 'js/models/ddr5-model.js', 'js/models/lpddr6-model.js', 'js/models/ucie-model.js', 'js/models/d2d-model.js', 'js/models/ethernet-model.js', 'js/viz/ethernet-lane.js', 'js/viz/jitter.js', 'js/viz/crosstalk.js',
                  'js/viz/spectrum.js', 'js/viz/pdn-extras.js',
                  'js/viz/lab-waves.js', 'js/viz/lab-channel.js', 'js/viz/lab-pdn.js',
                  'js/viz/cdr.js', 'js/models/adc-model.js',
@@ -4475,6 +4475,74 @@ suite('Chiplet layouts — UCIe and BoW compared from their published dimensions
      at(16).ucieSVsBow.map((v) => v.toFixed(3)).join(' to '));
   ok('malformed inputs are refused, not answered',
      [{ rate: 10, pitch: 40 }, { rate: 16, pitch: 5 }, { rate: 16, pitch: NaN }, null].every((q) => D(q).status === 'unsupported'));
+});
+
+suite('Ethernet lane — 112G against 224G on the same board trace', () => {
+  /* The rates are the sources' own (ledger C-106: 53.125 GBd; C-115: 106.25 GBd), written
+     out here, not read from js/models/ethernet-model.js. */
+  const E = MODELS.ethernet, PI = E.perInch;
+  const f1 = 53.125e9 / 2, f2 = 106.25e9 / 2;
+  ok('the two Nyquist frequencies are half of 53.125 and 106.25 GBd: 26.5625 and 53.125 GHz',
+     E.NYQ.g112 === f1 && E.NYQ.g224 === f2);
+  // Analytical limits. A flat Df makes dielectric loss proportional to f; smooth copper
+  // (no roughness, K = 1) makes conductor loss proportional to sqrt(f), the skin effect.
+  const flat = { dk: 3.5, df: 0.004 };
+  const d = PI(flat, f2, 0).ad / PI(flat, f1, 0).ad, cu = PI(flat, f2, 0).ac / PI(flat, f1, 0).ac;
+  nearAbs('a pure-dielectric line doubles its loss per inch from 112G to 224G Nyquist', d, 2, 1e-12, '');
+  nearAbs('smooth copper raises conductor loss by sqrt 2 over the same octave', cu, Math.SQRT2, 1e-12, '');
+  let lo = Infinity, hi = -Infinity;
+  for (const dk of [2.5, 3.5, 4.5]) for (const df of [0, 0.001, 0.004, 0.015, 0.03]) {
+    const r = PI({ dk, df }, f2, 0).per / PI({ dk, df }, f1, 0).per;
+    lo = Math.min(lo, r); hi = Math.max(hi, r);
+  }
+  ok('any flat-Df laminate with smooth copper lies between the two limits, sqrt 2 and 2',
+     lo >= Math.SQRT2 - 1e-12 && hi <= 2 + 1e-12, lo.toFixed(3) + ' to ' + hi.toFixed(3));
+  // Independent identity: a TEM line's dielectric loss per wavelength is pi * tan(delta) nepers.
+  const q = PI(flat, f2, 0), npPerM = q.ad / (20 / Math.log(10)) / 0.0254, lam = 299792458 / (f2 * Math.sqrt(flat.dk));
+  nearAbs('dielectric loss per wavelength equals pi times Df, in nepers', npPerM * lam, Math.PI * flat.df, 1e-9, 'Np');
+  // Roughness and loss direction.
+  ok('rougher copper never loses less, at either Nyquist',
+     [f1, f2].every((f) => PI('megtron6n', f, 1.2).per > PI('megtron6n', f, 0.5).per && PI('megtron6n', f, 0.5).per > PI('megtron6n', f, 0.1).per));
+  ok('a laminate whose published Df rises with frequency costs more than a flat one would: megtron4 and megtron6n exceed their own flat-Df dielectric doubling',
+     ['megtron4', 'megtron6n'].every((id) => PI(id, f2, 0.3).ad / PI(id, f1, 0.3).ad > 2));
+  ok('the four sourced low-loss laminates are tabulated at both Nyquists, not extrapolated',
+     ['megtron4', 'megtron6n', 'megtron7gn'].every((id) => !E({ lam: id, rq: 0.3, len: 1, budget: 20, pulses: false }).measurements.clamped));
+  ok('FR-4 (370HR) is flagged as held flat above its last published point',
+     E({ lam: 'isola-370hr', rq: 0.3, len: 1, budget: 20, pulses: false }).measurements.clamped === true);
+  // Reach and loss.
+  const r = E({ lam: 'megtron6n', rq: 0.3, len: 10, budget: 20 }).measurements;
+  nearAbs('loss over a length is loss per inch times length', r.loss224, r.per224 * 10, 1e-9, 'dB');
+  ok('at a fixed budget, reach falls by exactly the loss ratio',
+     Math.abs(r.reach224 / r.reach112 - 1 / r.ratio) < 1e-12 && Math.abs(r.reachRatio - r.reach224 / r.reach112) < 1e-12 && r.reachRatio < 1,
+     r.reachRatio.toFixed(3));
+  // Pulses through the shared channel model: more loss never raises the cursor.
+  const pulseAt = (lam, len) => E({ lam, rq: 0.3, len, budget: 20 }).generated;
+  ok('on every trace the 224G pulse is lower than the 112G pulse',
+     [['megtron7gn', 2], ['megtron6n', 10], ['megtron4', 20], ['isola-370hr', 4]].every(([l, n]) => { const g = pulseAt(l, n); return g.pulse224.height < g.pulse112.height; }));
+  ok('a longer trace never raises either pulse', [2, 4, 8, 16].every((n, i, a) => i === 0
+     || (pulseAt('megtron6n', n).pulse112.height < pulseAt('megtron6n', a[i - 1]).pulse112.height
+       && pulseAt('megtron6n', n).pulse224.height < pulseAt('megtron6n', a[i - 1]).pulse224.height)));
+  ok('malformed inputs are refused, not drawn',
+     E({ lam: 'nope', rq: 0.3, len: 1, budget: 20 }).status === 'unsupported'
+       && E({ lam: 'megtron6n', rq: -1, len: 1, budget: 20 }).status === 'unsupported'
+       && E({ lam: 'megtron6n', rq: 0.3, len: 0, budget: 20 }).status === 'unsupported'
+       && E({ lam: { dk: 3, df: 0.5 }, rq: 0.3, len: 1, budget: 20 }).status === 'unsupported');
+  // The preset notes state numbers; each is checked against the state the preset sets.
+  const V = SIPI.viz.ethLane, G = V.GRID, at = (k) => { const q = V.PRESETS[k];
+    return E({ lam: G.LAMS[q.li], rq: G.RQ[q.ri], len: G.LEN[q.ni], budget: G.BUDGET[q.bi], pulses: false }).measurements; };
+  const pl = at('low10'), pf = at('fr4'), ps = at('smooth'), pr = at('rough');
+  ok('preset "low loss, 10 in": about 1.8 times the loss per inch, and a little over half the length',
+     Math.abs(pl.ratio - 1.8) < 0.05 && pl.reachRatio > 0.5 && pl.reachRatio < 0.6, pl.ratio.toFixed(2) + ', ' + pl.reachRatio.toFixed(2));
+  ok('preset "FR-4": 4 in loses about 30 dB at 224G, about half as much again as the 20 dB budget, on data held flat',
+     Math.abs(pf.loss224 - 30) < 1.5 && Math.abs(pf.loss224 / 20 - 1.5) < 0.1 && pf.clamped, pf.loss224.toFixed(1) + ' dB');
+  ok('preset "smooth": about 1 dB/in at 112G and 1.8 at 224G, ratio near 1.8',
+     Math.abs(ps.per112 - 1) < 0.05 && Math.abs(ps.per224 - 1.8) < 0.06 && Math.abs(ps.ratio - 1.8) < 0.05, ps.per112.toFixed(2) + ' / ' + ps.per224.toFixed(2));
+  let rlo = Infinity, rhi = -Infinity;
+  G.LAMS.forEach((lam) => G.RQ.forEach((rq) => { const x = E({ lam, rq, len: 1, budget: 20, pulses: false }).measurements.ratio; rlo = Math.min(rlo, x); rhi = Math.max(rhi, x); }));
+  ok('the prose says "about 1.6 to 2" on the panel\'s laminates: every setting lies in 1.55 to 2, and both ends are reached',
+     rlo >= 1.55 && rhi <= 2 && rlo < 1.65 && rhi > 1.9, rlo.toFixed(2) + ' to ' + rhi.toFixed(2));
+  ok('preset "rough": copper dominates and the ratio falls toward 1.6',
+     Math.abs(pr.ratio - 1.6) < 0.05 && pr.dielShare224 < 0.5 && pr.ratio < ps.ratio, pr.ratio.toFixed(2));
 });
 
 suite('Lab C ring-down — extremes after the plotted window', () => {

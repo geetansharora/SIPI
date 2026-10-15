@@ -1,0 +1,454 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- theme:start -->
+  <meta name="theme-color" content="#F7F8FA">
+  <script>(function(){try{var t=localStorage.getItem('sipi-theme');if(t==='dark'||t==='system'){document.documentElement.setAttribute('data-theme',t);var m=document.querySelector('meta[name=theme-color]');if(m&&(t==='dark'||matchMedia('(prefers-color-scheme:dark)').matches))m.content='#0B1015';}}catch(e){}})();</script>
+  <!-- theme:end -->
+<title>112G vs 224G Ethernet Signal Integrity: 802.3ck and 802.3dj | SIPI</title>
+<meta name="description" content="112G vs 224G Ethernet from the standards: why doubling the Nyquist frequency leaves a board trace only a little over half its reach, where 802.3dj's 40 dB die-to-die budget goes, and why the long run moves into cable.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<link rel="stylesheet" href="../../css/base.css?v=1e3ae753">
+<link rel="stylesheet" href="../../css/components.css?v=d53a657c">
+  <!-- meta:start -->
+  <link rel="canonical" href="https://sipi.work/topics/interfaces/ethernet-112g-224g.html">
+  <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="SIPI">
+  <meta property="og:title" content="112G vs 224G Ethernet Signal Integrity: 802.3ck and 802.3dj | SIPI">
+  <meta property="og:description" content="112G vs 224G Ethernet from the standards: why doubling the Nyquist frequency leaves a board trace only a little over half its reach, where 802.3dj's 40 dB die-to-die budget goes, and why the long run moves into cable.">
+  <meta property="og:url" content="https://sipi.work/topics/interfaces/ethernet-112g-224g.html">
+  <meta property="og:image" content="https://sipi.work/assets/og/interfaces/ethernet-112g-224g.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="112G vs 224G Ethernet Signal Integrity: 802.3ck and 802.3dj: a figure from the page, on SIPI">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="112G vs 224G Ethernet Signal Integrity: 802.3ck and 802.3dj | SIPI">
+  <meta name="twitter:description" content="112G vs 224G Ethernet from the standards: why doubling the Nyquist frequency leaves a board trace only a little over half its reach, where 802.3dj's 40 dB die-to-die budget goes, and why the long run moves into cable.">
+  <meta name="twitter:image" content="https://sipi.work/assets/og/interfaces/ethernet-112g-224g.png">
+  <meta name="twitter:image:alt" content="112G vs 224G Ethernet Signal Integrity: 802.3ck and 802.3dj: a figure from the page, on SIPI">
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"112G vs 224G Ethernet Signal Integrity: 802.3ck and 802.3dj","description":"112G vs 224G Ethernet from the standards: why doubling the Nyquist frequency leaves a board trace only a little over half its reach, where 802.3dj's 40 dB die-to-die budget goes, and why the long run moves into cable.","url":"https://sipi.work/topics/interfaces/ethernet-112g-224g.html","articleSection":"Interface sign-off","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer","url":"https://www.linkedin.com/in/geetansh-arora-a645714a/","sameAs":["https://www.linkedin.com/in/geetansh-arora-a645714a/"]},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-10-15","image":"https://sipi.work/assets/og/interfaces/ethernet-112g-224g.png"}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"SIPI","item":"https://sipi.work/"},{"@type":"ListItem","position":2,"name":"Interface sign-off","item":"https://sipi.work/#interfaces"},{"@type":"ListItem","position":3,"name":"112G vs 224G Ethernet Signal Integrity: 802.3ck and 802.3dj"}]}</script>
+  <!-- meta:end -->
+</head>
+<body>
+
+<header class="masthead">
+  <a class="wordmark" href="../../index.html">SIPI</a>
+  <button class="theme-toggle" data-act="theme" type="button">Light</button>
+  <nav aria-label="Site">
+    <a href="../../start.html">Start</a>
+    <a href="../../index.html#groundwork">Topics</a>
+    <a href="../../labs.html">Labs</a>
+    <a href="../../calculators.html">Calculators</a>
+    <a href="../../colophon.html">About</a>
+  </nav>
+</header>
+
+<main>
+  <div class="page-head">
+    <p class="crumb"><a href="../../index.html#interfaces">Interface sign-off</a> / 08</p>
+    <h1>112G vs 224G Ethernet Signal Integrity: 802.3ck and 802.3dj</h1>
+    <p class="byline">
+      <!-- review:start --><span>By <a href="https://www.linkedin.com/in/geetansh-arora-a645714a/" target="_blank" rel="author noopener">Geetansh Arora</a> — Principal SI/PI Engineer</span><time datetime="2026-10-15" title="Technical review by Geetansh Arora on this date">15 Oct 2026</time><span>10 min</span><!-- review:end -->
+    </p>
+    <!-- share:head:start --><div class="share share--head" data-share data-share-url="https://sipi.work/topics/interfaces/ethernet-112g-224g.html" data-share-title="112G vs 224G Ethernet Signal Integrity: 802.3ck and 802.3dj"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Fethernet-112g-224g.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Fethernet-112g-224g.html&amp;text=112G%20vs%20224G%20Ethernet%20Signal%20Integrity%3A%20802.3ck%20and%20802.3dj" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=112G%20vs%20224G%20Ethernet%20Signal%20Integrity%3A%20802.3ck%20and%20802.3dj&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Fethernet-112g-224g.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:head:end -->
+    <p class="answer">
+      224G Ethernet signals PAM4 at 106.25 GBd (billion symbols per second), twice the 53.125 GBd of 112G, so its
+      Nyquist frequency, half the symbol rate and the frequency of the fastest alternating pattern, doubles from 26.56
+      to 53.125 GHz. On the laminates in this page&#8217;s panel a board trace loses roughly 1.6 to 2 times as many
+      decibels per inch there, so the same loss budget buys only a little over half the length. The 802.3dj draft
+      answers with a 40 dB objective measured die to die, packages included, and the same error-correcting code as
+      112G; worked examples contributed to its task force route the long runs in cable rather than in the board.
+    </p>
+  </div>
+
+  <div class="prose">
+    <h2 class="section-rule" id="at-a-glance"><span>At a glance</span></h2>
+    <h3>What is 224G Ethernet?</h3>
+    <p>
+      Ethernet built on electrical lanes of 200 Gb/s each. The IEEE 802.3dj project defines 200 Gb/s, 400 Gb/s,
+      800 Gb/s and 1.6 Tb/s Ethernet over 1, 2, 4 and 8 such lanes (C-112), so a 1.6T port is eight of them. Its
+      predecessor, 802.3ck, did the same with 100 Gb/s lanes for 100, 200 and 400 Gb/s (C-105). &#8220;112G&#8221; and
+      &#8220;224G&#8221; are the industry&#8217;s names for these two lane classes, used for example by OIF&#8217;s CEI-112G
+      and CEI-224G work (C-122, C-124). On the wire the lanes carry 106.25 and 212.5 Gb/s, data plus coding overhead.
+    </p>
+    <h3>Is 802.3dj approved?</h3>
+    <p>
+      Not yet. 802.3ck was approved on 21 September 2022 (C-105). 802.3dj was a draft in September 2026, at D3.2, going
+      through the IEEE Standards Association ballot (C-111), and by mid-October 2026 OIF had not published a CEI-224G
+      agreement either (C-124). This page therefore quotes the 802.3dj objectives and the baselines its task force adopted by vote, and
+      marks them as draft: a later draft can still change a number.
+    </p>
+    <h3>112G vs 224G: what changed?</h3>
+    <p>
+      The symbol rate doubled and the modulation did not: both are PAM4 (C-106, C-115). The loss budget moved from a
+      recommended 28 dB measured between the package balls to a 40 dB objective measured die to die (C-107, C-112). The error
+      correction stayed the same Reed&#8211;Solomon code (C-110, C-115), and the error ratio it starts from was relaxed
+      from 1e-4 to 2e-4 (C-116). The copper cable objective fell from at least 2 m to at least 1 m (C-109, C-113).
+    </p>
+  </div>
+
+  <!-- ───────────── the picture ───────────── -->
+  <!-- mobilenote:start -->
+  <p class="mobile-note" role="note">
+    <b>Best viewed on a laptop or desktop.</b>
+    These panels are built so you can move a slider and watch several charts
+    answer at once. A phone has no room to put them side by side.
+  </p>
+  <!-- mobilenote:end -->
+  <section class="instrument instrument--side" data-viz="ethLane" aria-label="Interactive comparison of one board trace at 112G and 224G: loss per inch against frequency with both Nyquist frequencies marked, and the single-bit pulse each rate gets through the same length">
+    <script type="application/json" data-contract>{"kind":"numerical","evidence":"independent","purpose":"Show what doubling the Ethernet lane rate costs on the same board trace: loss per inch at the 112G and 224G Nyquist frequencies, the reach a budget buys at each, and the single-bit pulse each rate gets.","equations":["loss per inch = dielectric + conductor, C.loss: alpha_d = pi f sqrt(Dk) Df / c, alpha_c = Rs K / (2 Z0 w), Rs = rho / skin depth","K = 1 + (2/pi) atan(1.4 (Rq / skin depth)^2), Hammerstad and Bekkadal","Dk, Df at each frequency from the manufacturer's published table (js/models/laminates.js), interpolated within one measurement series","reach = budget / loss per inch at each Nyquist","pulse: K.channelImpulse(loss at that rate's Nyquist) then K.singleBit"],"units":"GHz, dB/in, dB, in, ps, fraction of the swing","validity":"First-order loss of a smooth-walled TEM line with the conductor current on one face of the strip, which equals the wide-stripline limit of strip plus planes. Laminate values are typical published values, not guaranteed.","numerics":"Loss evaluated at 1 GHz steps to 60 GHz. Pulses by FFT of a minimum-phase channel, 32 samples per unit interval, 4096 points.","limitations":"No vias, packages, connectors, crosstalk or reflections. Narrow-strip fringing and differential coupling change the conductor loss; a measured trace (C-119, laminate not named) loses 1.25-1.40 dB/in at 53.125 GHz. FR-4 data stop at 10 GHz and are held flat above it. The pulse shape is the site's shared channel model with its fixed split of copper and dielectric loss; only the loss at each Nyquist comes from the laminate. No equalisation.","suites":["Ethernet lane","Convergence"],"version":"1.0","reviewed":"2026-10-15","panel":"ethLane"}</script>
+    <div class="instrument__bar">
+      <span class="instrument__title">Same board, twice the rate</span>
+        <span data-evidence="independent" data-model-version="1.0" class="model-tag model-tag--numerical" title="">numerical</span>
+      <span class="instrument__readout" role="status" aria-live="polite" aria-label="Current values">
+        <span>112G loss <b data-out="l112">—</b></span>
+        <span>224G loss <b data-out="l224">—</b></span>
+        <span>per inch <b data-out="ratio">—</b></span>
+        <span>reach <b data-out="reach">—</b></span>
+        <span>pulse <b data-out="h">—</b></span>
+      </span>
+    </div>
+    <div class="side-layout">
+    <div class="panels">
+      <div class="panel">
+        <span class="panel__label">Loss per inch of one trace, and where each rate&#8217;s Nyquist frequency falls</span>
+        <canvas data-cv="loss" role="img" aria-label="Loss per inch of the chosen trace from 0 to 60 GHz, with its dielectric part dashed, and dots at the 112G Nyquist frequency of 26.56 GHz and the 224G Nyquist frequency of 53.125 GHz"></canvas>
+        <div class="legend"><span><i style="background:var(--ink)"></i>total</span><span><i class="dash" style="color:var(--muted)"></i>dielectric part</span><span><i style="background:var(--signal)"></i>112G</span><span><i style="background:var(--reflect)"></i>224G</span></div>
+      </div>
+      <div class="panel">
+        <span class="panel__label">One symbol through the same length, at each rate</span>
+        <canvas data-cv="pulse" role="img" aria-label="Single-bit pulse responses of the chosen trace at 112G and 224G on one time axis in picoseconds, with dots one symbol apart showing how much each pulse spills into its neighbours"></canvas>
+      </div>
+    </div>
+    <div class="side">
+    <div class="side__inner">
+    <div class="controls">
+      <div class="ctl">
+        <div class="ctl__head"><label for="el-lam">Board material</label></div>
+        <select id="el-lam"><option value="0">Isola 370HR (FR-4)</option><option value="1">Panasonic MEGTRON 4</option><option value="2" selected>Panasonic MEGTRON 6 (N)</option><option value="3">Panasonic MEGTRON 7 (GN)</option></select>
+        <span class="ctl__note">Dk and Df as the makers publish them</span>
+      </div>
+      <div class="ctl">
+        <div class="ctl__head"><label for="el-rq">Copper roughness</label><output id="el-rq-out" for="el-rq">0.3 µm</output></div>
+        <input type="range" id="el-rq" min="0" max="5" step="1" value="2">
+        <span class="ctl__note">RMS; smoother foil loses less</span>
+      </div>
+      <div class="ctl">
+        <div class="ctl__head"><label for="el-len">Trace length</label><output id="el-len-out" for="el-len">10 in</output></div>
+        <input type="range" id="el-len" min="0" max="11" step="1" value="6">
+        <span class="ctl__note">6 mil leg of a 90 &#937; pair</span>
+      </div>
+      <div class="ctl">
+        <div class="ctl__head"><label for="el-budget">Trace budget</label><output id="el-budget-out" for="el-budget">20 dB</output></div>
+        <input type="range" id="el-budget" min="0" max="6" step="1" value="2">
+        <span class="ctl__note">Sets the reach readout only</span>
+      </div>
+    </div>
+    <div class="presets">
+      <button class="preset" type="button" data-preset="low10" aria-pressed="true">Low loss, 10 in</button>
+      <button class="preset" type="button" data-preset="fr4" aria-pressed="false">FR-4, 4 in</button>
+      <button class="preset" type="button" data-preset="smooth" aria-pressed="false">Smooth copper</button>
+      <button class="preset" type="button" data-preset="rough" aria-pressed="false">Rough copper</button>
+    </div>
+    <div class="transport"><span data-out="note">—</span></div>
+    </div>
+    </div>
+    </div>
+  </section>
+
+  <div class="prose">
+    <p>
+      Reading the panel: the dots on the loss curve are the loss per inch at each rate&#8217;s Nyquist frequency, and
+      the dashed line is the part the dielectric contributes. The dots on the pulses sit one symbol apart, 18.8 ps at
+      112G and 9.4 ps at 224G; every dot after the peak is a neighbouring symbol the pulse spills into. Through the
+      same length the 224G pulse is lower and spills into more of its neighbours, which the receiver&#8217;s equaliser
+      has to undo. The pulse shapes come from the site&#8217;s shared channel model, with each rate&#8217;s loss at its
+      own Nyquist frequency and one fixed split between copper and dielectric loss, so the two pulses differ only in
+      that loss and in the symbol time.
+    </p>
+
+    <h2 class="section-rule" id="loss-scaling"><span>Twice the rate is not twice the loss</span></h2>
+    <p>
+      Loss in a board trace has two parts that grow differently with frequency. The dielectric turns a fixed fraction
+      of the field&#8217;s energy into heat on every cycle, and an inch of trace holds twice as many cycles at twice the
+      frequency, so its loss in dB grows in step with frequency: double the frequency, double the loss. Copper loss
+      comes from the skin effect, which crowds the current into a layer whose depth shrinks as one over the square
+      root of frequency, so the resistance, and the loss, grow only as the square root of frequency, about 1.41 times
+      per doubling. Rough copper grows a little faster than that, but still slower than the dielectric part.
+    </p>
+    <div class="eq">loss per inch(f) &#8776; a &#183; &#8730;f &nbsp;+&nbsp; b &#183; f &nbsp;&nbsp;&#8658;&nbsp;&nbsp; loss(53.125 GHz) / loss(26.56 GHz) between &#8730;2 and 2</div>
+    <p>
+      So moving from 112G to 224G multiplies the loss per inch by something between 1.41 and 2, depending on the mix,
+      for a laminate whose Df, the dielectric&#8217;s loss tangent, is flat and copper that is smooth. Real low-loss
+      laminates sit in the upper part of that range, because their Df also rises slowly with frequency: on the
+      laminates in the panel the factor is about 1.6 to 2. A fixed budget then reaches about half to 70% as far, in
+      practice a little over half. The
+      <a href="../tools/loss-budget.html">loss budget calculator</a> splits the two parts for any one frequency.
+    </p>
+    <p>
+      Absolute numbers depend on the board. One host board measured for a contribution to the task force, with a
+      6 mil trace in a 90 &#937; pair, lost about 1.25 dB/in at 53.125 GHz at room temperature and about 1.40 dB/in hot,
+      at 80 &#176;C by its data files&#8217; names (C-119). Its laminate is not named, and it is lower than any setting
+      in the panel, whose laminates and first-order copper estimate are not that board. Use the panel for the ratio
+      between the rates, and your own measured stackup for the dB.
+    </p>
+
+    <h2 class="section-rule" id="reference-planes"><span>Where the 40 dB is measured</span></h2>
+    <p>
+      A loss budget means little until you know its end points. 802.3ck recommends a backplane channel of at most
+      28 dB at 26.56 GHz from TP0 to TP5, test points at the package-to-board interface: the balls under each package
+      (C-107). The packages sit outside that number and enter only the compliance calculation, COM (channel operating
+      margin), as modelled package traces. OIF&#8217;s CEI-112G-LR, which shares 802.3ck&#8217;s method, measures its 28 dB test channel between the same
+      package balls (C-123). 802.3dj&#8217;s objective is instead 40 dB at 53.125 GHz die to die, packages included,
+      for both backplanes and copper cable (C-112, C-113). Only the copper cable link has a published split, so the
+      like-for-like comparison below is for copper cable.
+    </p>
+  </div>
+
+  <figure class="figure">
+    <div class="figure__bar"><span>Two budgets, two pairs of end points &#183; copper cable links, drawn to scale in dB</span></div>
+    <div class="figure__body">
+      <svg viewBox="0 0 400 236" role="img" aria-label="Two horizontal bars drawn to scale in decibels. Top, 112G copper cable under 802.3ck: a 28.5 dB channel budget from package ball to package ball at 26.56 GHz, with the packages drawn dashed outside it because they enter only the compliance calculation. Bottom, 224G copper cable under the 802.3dj draft: 40 dB from die to die at 53.125 GHz, split as 5 dB package, 6.5 dB BGA and board, 17 dB cable assembly, 6.5 dB board and BGA, 5 dB package. Between the package balls that leaves about 30 dB, or about 26 dB when one end is a high-loss host with a 9 dB package.">
+        <text class="lbl-sig" x="20" y="16">112G copper cable, 802.3ck</text>
+        <text class="lbl" x="20" y="30">28.5 dB at 26.56 GHz, ball to ball</text>
+        <rect class="edge dash" x="35.75" y="40" width="36" height="24"/>
+        <rect class="edge dash" x="328.25" y="40" width="36" height="24"/>
+        <text class="lbl" x="53.75" y="56" text-anchor="middle">pkg</text>
+        <text class="lbl" x="346.25" y="56" text-anchor="middle">pkg</text>
+        <rect class="copper" x="71.75" y="40" width="256.5" height="24" opacity="0.85"/>
+        <text class="lbl-hi" x="200" y="56" text-anchor="middle" style="fill:var(--surface)">board + cable: 28.5 dB</text>
+        <text class="lbl" x="200" y="80" text-anchor="middle">packages (not to scale) sit outside; COM adds them</text>
+
+        <text class="lbl-ref" x="20" y="108">224G copper cable, 802.3dj draft</text>
+        <text class="lbl" x="20" y="122">40 dB at 53.125 GHz, die to die</text>
+        <rect class="copper-2" x="20" y="132" width="45" height="24" opacity="0.55"/>
+        <rect class="copper-2" x="65" y="132" width="58.5" height="24" opacity="0.8"/>
+        <rect class="copper-2" x="123.5" y="132" width="153" height="24" opacity="0.95"/>
+        <rect class="copper-2" x="276.5" y="132" width="58.5" height="24" opacity="0.8"/>
+        <rect class="copper-2" x="335" y="132" width="45" height="24" opacity="0.55"/>
+        <text class="lbl-hi" x="42.5" y="148" text-anchor="middle">pkg 5</text>
+        <text class="lbl-hi" x="94.25" y="148" text-anchor="middle">board 6.5</text>
+        <text class="lbl-hi" x="200" y="148" text-anchor="middle">cable 17</text>
+        <text class="lbl-hi" x="305.75" y="148" text-anchor="middle">board 6.5</text>
+        <text class="lbl-hi" x="357.5" y="148" text-anchor="middle">pkg 5</text>
+        <path class="tick" d="M65,164 V172 H335 V164"/>
+        <text class="lbl" x="200" y="186" text-anchor="middle">between the balls: 30 dB, or 26 with one 9 dB pkg</text>
+        <path class="tick" d="M20,198 V206 H380 V198"/>
+        <text class="lbl" x="200" y="222" text-anchor="middle">die to die: 11.5 + 17 + 11.5 = 40 dB</text>
+      </svg>
+    </div>
+    <figcaption><b>Roughly the same dB between the balls, at twice the frequency.</b> Both bars are informative budgets for a copper cable link, drawn to one scale. 802.3ck counts 28.5 dB from ball to ball and leaves the packages to its compliance model (C-107, C-109). The 802.3dj draft counts 40 dB from die to die, split 11.5 + 17 + 11.5 (C-117); the 5 dB packages are a contribution&#8217;s nominal example, and its high-loss host uses 9 dB, paired only with a nominal or low-loss host at the other end (C-118).</figcaption>
+  </figure>
+
+  <div class="prose">
+    <p>
+      A like-for-like comparison tells more than &#8220;the budget grew by 12 dB&#8221;. 802.3dj&#8217;s copper cable
+      budget splits as 11.5 dB for each host, package plus board, and 17 dB for the cable assembly (C-117). In a
+      contribution&#8217;s nominal example each package takes 5 dB; its high-loss host takes 9 dB and is paired only
+      with a nominal or low-loss host (C-118). Take two nominal packages out and 30 dB remains between the balls, or
+      26 dB when one end is the high-loss host, against 28.5 dB for a 112G copper cable link (C-109). In dB, the part
+      on the board and in the cable stayed roughly where it was, now at twice the frequency, which fits the cable
+      objective falling from 2 m to 1 m; the packages take 10 to 14 dB, a quarter to a third of the 40.
+    </p>
+    <p>
+      The 40 dB itself was a negotiation. The proposal for it reported that SerDes designers had asked for 36 to
+      37 dB and system builders for 42 to 45 dB, and called 40 the compromise (C-114). Whatever loss the channel is
+      allowed, the receiver&#8217;s equaliser and the error-correcting code have to recover.
+    </p>
+
+    <h2 class="section-rule" id="cable"><span>The long run moves into cable</span></h2>
+    <p>
+      If the board cannot carry 53 GHz far, carry it in something else. Worked examples contributed to the task force
+      show how (C-118). A nominal host spends 6 dB on about 4.28 in of board trace, 1.4 dB per inch. The same host built with
+      cable spends 2.8 dB on 2 in of board, 1 dB on a connector beside the package and 2.2 dB on 6.8 in of 30 AWG
+      twinax, 0.32 dB per inch; a high-loss host runs 8 in of 32 AWG twinax for 3.2 dB, 0.40 dB per inch. Per inch at
+      53 GHz, the cable loses 3.5 to 4.3 times less than the board trace. That is the case for routing the long
+      stretch of a lane over the board in cable, from a connector next to the package, rather than through it. The
+      <a href="../package-board/connectors-cables.html">connectors and cables</a> page covers the parts themselves.
+    </p>
+
+    <h2 class="section-rule" id="fec"><span>The same code, a looser start</span></h2>
+    <p>
+      Both generations protect the data with RS(544,514), a Reed&#8211;Solomon code over 10-bit symbols (C-110, C-115).
+      Its 30 parity symbols in every 544 let the receiver correct up to 15 wrong symbols per codeword. 802.3ck sized its
+      links for a detector error ratio, the rate of wrong symbol decisions before correction, of 1e-4 (C-108); 802.3dj
+      adopted 2e-4 for its backplane and copper cable links, twice as many (C-116). Keeping the code and relaxing the
+      starting error ratio is another way the budget shifts work from the channel to the receiver. The
+      <a href="../signal-integrity/nrz-vs-pam4.html">NRZ vs PAM4</a> page explains why PAM4 needs the correction at
+      all.
+    </p>
+
+    <h2 class="section-rule" id="side-by-side"><span>Side by side</span></h2>
+    <div class="table-scroll">
+      <table class="data">
+        <caption>112G from the published 802.3ck; 224G from the 802.3dj draft&#8217;s objectives and adopted baselines (ledger rows in brackets)</caption>
+        <thead><tr><th></th><th>112G, 802.3ck</th><th>224G, 802.3dj draft</th></tr></thead>
+        <tbody>
+          <tr><th>Status</th><td>approved 21 Sep 2022 (C-105)</td><td>draft D3.2 in ballot, Sep 2026 (C-111)</td></tr>
+          <tr><th>Data per lane</th><td>100 Gb/s (C-105)</td><td>200 Gb/s (C-112)</td></tr>
+          <tr><th>Signalling</th><td>PAM4, 53.125 GBd (C-106)</td><td>PAM4, 106.25 GBd (C-115)</td></tr>
+          <tr><th>Nyquist; one symbol</th><td>26.56 GHz; 18.8 ps</td><td>53.125 GHz; 9.4 ps</td></tr>
+          <tr><th>Backplane budget</th><td>28 dB, ball to ball, recommended (C-107)</td><td>40 dB objective, die to die (C-112)</td></tr>
+          <tr><th>Copper cable objective</th><td>at least 2 m (C-109)</td><td>at least 1 m (C-113)</td></tr>
+          <tr><th>Error correction</th><td>RS(544,514) (C-110)</td><td>RS(544,514), the only code for cable and backplane (C-115)</td></tr>
+          <tr><th>Target detector error ratio</th><td>1e-4 (C-108)</td><td>2e-4 (C-116)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2 class="section-rule" id="oif"><span>OIF&#8217;s reach ladder at 112G</span></h2>
+    <p>
+      The OIF, an industry forum, writes implementation agreements for the electrical links between chips, modules
+      and backplanes. Its CEI-112G family defines a ladder of reaches, all PAM4 at 36 to 58 GBd (C-122).
+    </p>
+    <div class="table-scroll">
+      <table class="data">
+        <caption>OIF CEI-112G, from OIF-CEI-05.3 (C-122, C-123)</caption>
+        <thead><tr><th>Reach</th><th>Connects</th><th>Channel</th></tr></thead>
+        <tbody>
+          <tr><th>XSR</th><td>dies inside a system in a package</td><td>inside the package</td></tr>
+          <tr><th>VSR</th><td>chip to module</td><td>at least 200 mm of host board and a connector, plus 20 mm in the module</td></tr>
+          <tr><th>MR</th><td>across a board</td><td>500 mm of board, one connector</td></tr>
+          <tr><th>LR</th><td>across a backplane</td><td>1000 mm and two connectors; tested at 28 dB between package balls</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>
+      At 224G the OIF agreements were not yet published, and the 802.3dj backplane baseline planned to leverage
+      OIF&#8217;s long-reach draft (C-124).
+    </p>
+
+    <h2 class="section-rule"><span>What it takes to sign off</span></h2>
+    <ul class="tight">
+      <li><b>The budget at the right end points.</b> Know whether your channel model runs ball to ball or die to die, and whether the package models are inside it or added by COM.</li>
+      <li><b>Laminate data at 53 GHz, on your stackup.</b> Df keeps rising with frequency, and loss rises with temperature: 1.25 to 1.40 dB/in from room temperature to hot (80 &#176;C) on one measured board (C-119).</li>
+      <li><b>COM, not insertion loss alone.</b> 802.3ck&#8217;s 28 dB is a recommendation; the requirement is a channel operating margin of at least 3 dB (C-107, C-108). See <a href="../signal-integrity/compliance-masks.html">compliance masks and COM</a>.</li>
+      <li><b>The package as a budget line.</b> In the contributed 224G examples each package takes 5 to 9 dB of the 40 (C-118).</li>
+      <li><b>The current draft.</b> 802.3dj is still changing; check the latest draft&#8217;s numbers before a design depends on them.</li>
+    </ul>
+
+    <details class="deeper">
+      <summary>Go deeper: rates, the 28 dB curve and the reference receivers</summary>
+      <div class="deeper__body">
+        <p>
+          <b>From 100 Gb/s to 53.125 GBd.</b> 802.3ck transcodes 64B/66B blocks into 256B/257B and adds RS(544,514)
+          (C-110). The overhead is 66/64 &#215; 257/264 &#215; 544/514 = 17/16, so 100 Gb/s of data becomes 106.25 Gb/s
+          on the wire, 53.125 GBd at two bits per PAM4 symbol (C-106). The same chain turns 200 Gb/s into 212.5 Gb/s,
+          106.25 GBd, the rate the 802.3dj baseline uses (C-115). One symbol lasts 18.8 ps at 112G and 9.4 ps at 224G,
+          and Nyquist is half the symbol rate: 26.5625 and 53.125 GHz.
+        </p>
+        <p>
+          <b>The 28 dB is a curve.</b> 802.3ck&#8217;s recommended backplane channel loss is
+        </p>
+        <div class="eq">IL(f) &#8804; 0.693 + 2.161 &#183; &#8730;f + 0.607 &#183; f &nbsp; dB, &nbsp; f in GHz, up to 26.5625 GHz</div>
+        <p>
+          which reaches 27.95 dB at 26.5625 GHz, the &#8220;28 dB&#8221; (C-107). It is a constant, a square-root term that
+          behaves like copper loss and a linear term that behaves like dielectric loss: the two-term shape this page uses,
+          plus a constant.
+        </p>
+        <p>
+          <b>Two test channels.</b> 802.3ck checks a receiver over a low-loss and a high-loss channel, 13.5 to 14.5 dB
+          and 27.5 to 28.5 dB at 26.5625 GHz (C-108). OIF&#8217;s CEI-112G-LR uses the same pair, 14 and 28 dB between
+          the package balls (C-123).
+        </p>
+        <p>
+          <b>Reference receivers.</b> COM scores a channel by running it through a reference receiver. 802.3ck&#8217;s is a
+          CTLE and a 12-tap DFE with floating taps, after a 5-tap transmitter FFE (C-108). A feasibility study
+          contributed to the task force for the 40 dB backplane assumed a long feed-forward equaliser and maximum-likelihood sequence detection
+          (MLSE), and said plainly that its settings were not a parameter proposal (C-120). It shows the direction,
+          not the final reference receiver. The <a href="../signal-integrity/equalization.html">equalisation</a> page
+          explains each block.
+        </p>
+        <p>
+          <b>What the panel leaves out.</b> Loss per inch comes from a first-order line model with the makers&#8217;
+          published Dk and Df: no vias, packages, connectors, crosstalk or reflections, and a narrow differential trace
+          loses somewhat differently. The pulses use the site&#8217;s shared channel model, with only the loss at each
+          Nyquist taken from the laminate, and no equalisation. They show the mechanism, not a link margin.
+        </p>
+      </div>
+    </details>
+
+    <h2 class="section-rule"><span>In the real world</span></h2>
+    <p>
+      Broadcom began shipping Tomahawk 6 in June 2025, a 102.4 Tb/s switch with 200G or
+      100G PAM4 SerDes, including an option for 1,024 lanes of 100G, and announced a co-packaged optics version (C-121).
+      At 200G the same capacity is 512 lanes. A 1.6 Tb/s port is eight 200 Gb/s lanes (C-112), and every one of them
+      faces the budget on this page. Where the board cannot carry 53 GHz far enough, the lane can go into cable beside the
+      package, into a retimer, or into optics mounted on or beside the package.
+    </p>
+    <h3>Where the numbers come from</h3>
+    <p>
+      112G from the published IEEE Std 802.3ck-2022 and OIF&#8217;s CEI-05.3 agreement. 224G from the 802.3dj
+      task force&#8217;s public objectives, adopted motions and presentations, not from the draft itself, which is not
+      public; every 224G figure is marked draft in the claim ledger (C-105 to C-124). The comparisons are arithmetic on
+      those figures, checked by the site&#8217;s number gate.
+    </p>
+    <h3>Related</h3>
+    <ul class="tight">
+      <li><a href="pcie-gen6.html">PCIe 6.0 vs PCIe 5.0: PAM4, FLIT, FEC and Signal Integrity</a></li>
+      <li><a href="../signal-integrity/nrz-vs-pam4.html">NRZ vs PAM4 Signaling: Bandwidth and SNR Trade-off</a></li>
+      <li><a href="../signal-integrity/compliance-masks.html">Compliance masks and COM</a></li>
+      <li><a href="../package-board/stackup-design.html">Stackup design and laminate choice</a></li>
+      <li><a href="chiplet-interconnects.html">Chiplet Interconnects: UCIe vs BoW vs AIB Compared</a></li>
+    </ul>
+  </div>
+
+  <!-- share:foot:start --><div class="share share--foot" data-share data-share-url="https://sipi.work/topics/interfaces/ethernet-112g-224g.html" data-share-title="112G vs 224G Ethernet Signal Integrity: 802.3ck and 802.3dj"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Fethernet-112g-224g.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Fethernet-112g-224g.html&amp;text=112G%20vs%20224G%20Ethernet%20Signal%20Integrity%3A%20802.3ck%20and%20802.3dj" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=112G%20vs%20224G%20Ethernet%20Signal%20Integrity%3A%20802.3ck%20and%20802.3dj&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Fethernet-112g-224g.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:foot:end -->
+
+<!-- sources:start -->
+    <section class="sources">
+      <h2 class="section-rule"><span>Sources</span></h2>
+      <ul class="sources__list">
+      <li><a href="https://standards.ieee.org/ieee/802.3ck/7322/" target="_blank" rel="noopener">IEEE Std 802.3ck-2022, IEEE Standard for Ethernet Amendment 4: Physical Layer Specifications and Management Parameters for 100 Gb/s, 200 Gb/s, and 400 Gb/s Electrical Interfaces Based on 100 Gb/s Signaling</a> <span class="src__for">C-105</span></li>
+      <li><a href="https://www.ieee802.org/3/dj/public/26_09/brown_3dj_01_2609.pdf" target="_blank" rel="noopener">IEEE P802.3dj Task Force — Chief Editor's Report, September 2026</a> <span class="src__for">C-111</span></li>
+      <li><a href="https://ieee802.org/3/minutes/mar24/2403_3dj_closed_report.pdf" target="_blank" rel="noopener">IEEE P802.3dj Task Force — closing report, March 2024 plenary (objectives)</a> <span class="src__for">C-112</span></li>
+      <li><a href="https://www.ieee802.org/3/dj/projdoc/KeyMotions_3dj_240516.pdf" target="_blank" rel="noopener">IEEE P802.3dj Task Force — Key Motions, as of 16 May 2024</a> <span class="src__for">C-113</span></li>
+      <li><a href="https://www.ieee802.org/3/dj/public/23_05/mellitz_3dj_01a_2305.pdf" target="_blank" rel="noopener">Mellitz et al. (Samtec, Intel, Arista, Amphenol, TE, Synopsys) — 200 Gb/s per lane KR Backplane Objective Proposal, May 2023</a> <span class="src__for">C-114</span></li>
+      <li><a href="https://www.ieee802.org/3/dj/public/23_11/tracy_3dj_01a_2311.pdf" target="_blank" rel="noopener">Tracy et al. (TE Connectivity) — A Baseline Proposal To Enable More Flexible Architectures and Longer Reach 200Gb/Lane Passive Copper Cables, Nov 2023</a> <span class="src__for">C-117</span></li>
+      <li><a href="https://www.ieee802.org/3/dj/public/adhoc/electrical/23_0831/weaver_3dj_elec_01_230831.pdf" target="_blank" rel="noopener">Weaver and Chan (Arista Networks) — 212Gb/s Per Lane PAM4 Chip-to-Module Conventional Channels, Room vs. Hi Temp, Aug 2023</a> <span class="src__for">C-119</span></li>
+      <li><a href="https://investors.broadcom.com/news-releases/news-release-details/broadcom-ships-tomahawk-6-worlds-first-1024-tbps-switch" target="_blank" rel="noopener">Broadcom — Broadcom Ships Tomahawk 6: World's First 102.4 Tbps Switch, 3 June 2025</a> <span class="src__for">C-121</span></li>
+      <li><a href="https://www.oiforum.com/wp-content/uploads/OIF-CEI-05.3.pdf" target="_blank" rel="noopener">OIF — OIF-CEI-05.3, Common Electrical I/O (CEI) Implementation Agreement, July 2025</a> <span class="src__for">C-122</span></li>
+      <li><a href="https://www.oiforum.com/technical-work/implementation-agreements-ias/" target="_blank" rel="noopener">OIF — Implementation Agreements</a> <span class="src__for">C-124</span></li>
+      </ul>
+      <p class="sources__note">Rows marked with a claim id are tracked in <a href="../../docs/claims.md">the claim ledger</a>, which records what each source can and cannot establish.</p>
+    </section>
+    <!-- sources:end -->
+  <!-- pager:start -->
+  <nav class="pager" aria-label="Previous and next topic">
+    <a class="prev" href="../../topics/interfaces/chiplet-interconnects.html"><span class="dir">Previous</span><span>Chiplet Interconnects: UCIe vs BoW vs AIB Compared</span></a>
+    <a class="next" href="../../topics/interfaces/usb-3x.html"><span class="dir">Next</span><span>USB 3.1 and 3.2 Signal Integrity: SSC and Compliance</span></a>
+  </nav>
+  <!-- pager:end -->
+</main>
+
+<footer class="site-foot">
+  <span>SIPI &#8212; signal and power integrity, visualised.</span>
+  <nav class="site-foot__nav" aria-label="Site, footer">
+    <a href="../../start.html">Start</a>
+    <a href="../../labs.html">Labs</a>
+    <a href="../../calculators.html">Calculators</a>
+    <a href="../../reference.html">Reference</a>
+    <a href="../../interview.html">Interview guide</a>
+    <a href="../../colophon.html">About &amp; AI disclosure</a>
+    <a href="../../model-contract.html">Model assumptions</a>
+    <a href="../../docs/claims.md">Claim ledger (Markdown)</a>
+  </nav>
+  <span>Created and directed by <a href="https://www.linkedin.com/in/geetansh-arora-a645714a/" target="_blank" rel="author noopener">Geetansh Arora</a>. Text <a href="../../LICENSE-CONTENT">CC BY 4.0</a>, code <a href="../../LICENSE-CODE">MIT</a>.</span>
+</footer>
+
+<script src="../../js/site.js?v=61b8ff31" defer></script>
+<script src="../../js/viz-kit.js?v=80b25b0d" defer></script>
+<script src="../../js/models/calc-models.js?v=d640a591" defer></script>
+<script src="../../js/models/laminates.js?v=32f3413d" defer></script>
+<script src="../../js/models/ethernet-model.js?v=7e023a05" defer></script>
+<script src="../../js/viz/ethernet-lane.js?v=9e809f42" defer></script>
+<script src="../../js/viz-loader.js?v=3395e118" defer></script>
+<script src="../../js/search.js?v=dcc1e06b" defer></script>
+</body>
+</html>
