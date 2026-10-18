@@ -610,6 +610,7 @@ def reference_library_problems():
 
 
 TITLE_RENAMES = {
+    "UFS 4.0 Signal Integrity: M-PHY Gear 5": "UFS 3.1 vs 4.0 vs 5.0: M-PHY Gears, Burst Mode and Signal Integrity",
     "USB 3.1 and 3.2 Signal Integrity: SSC and Compliance": "USB 3.2 Gen 1 vs Gen 2 vs Gen 2x2: Loss Budget, SSC and Compliance",
     "PCIe 4.0 vs PCIe 5.0: Loss Budget, Tx Presets and Link Equalization": "PCIe 4.0 vs 5.0: Loss Budget, Tx Presets, Link Equalization",
     "PCIe Gen 4 and Gen 5 Signal Integrity: Loss and EQ": "PCIe 4.0 vs 5.0: Loss Budget, Tx Presets, Link Equalization",
@@ -671,7 +672,7 @@ TITLE_RENAMES = {
     "PCIe Gen 4/5 — loss budget and equalisation": "PCIe 4.0 vs 5.0: Loss Budget, Tx Presets, Link Equalization",
     "PCIe Gen 6 — PAM4, FLIT, FEC": "PCIe 6.0 vs PCIe 5.0: PAM4, FLIT, FEC and Signal Integrity",
     "USB 3.1/3.2 — SSC and compliance": "USB 3.2 Gen 1 vs Gen 2 vs Gen 2x2: Loss Budget, SSC and Compliance",
-    "UFS 4.0 — M-PHY HS-Gear5": "UFS 4.0 Signal Integrity: M-PHY Gear 5",
+    "UFS 4.0 — M-PHY HS-Gear5": "UFS 3.1 vs 4.0 vs 5.0: M-PHY Gears, Burst Mode and Signal Integrity",
 }
 
 

@@ -7,8 +7,8 @@
   <meta name="theme-color" content="#F7F8FA">
   <script>(function(){try{var t=localStorage.getItem('sipi-theme');if(t==='dark'||t==='system'){document.documentElement.setAttribute('data-theme',t);var m=document.querySelector('meta[name=theme-color]');if(m&&(t==='dark'||matchMedia('(prefers-color-scheme:dark)').matches))m.content='#0B1015';}}catch(e){}})();</script>
   <!-- theme:end -->
-<title>UFS 4.0 Signal Integrity: M-PHY Gear 5 | SIPI</title>
-<meta name="description" content="23.32 Gbps per lane on a phone board: what burst-mode signalling changes, and why the hard part is the escape rather than the channel.">
+<title>UFS 3.1 vs 4.0 vs 5.0: M-PHY Gears, Burst Mode and Signal Integrity | SIPI</title>
+<meta name="description" content="UFS 3.1, 4.0, 4.1 and 5.0 compared for signal integrity: M-PHY HS-G4, HS-G5 and PAM4 HS-G6, coding, throughput, STALL vs HIBERN8 and UFS 5.0 link EQ.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
@@ -19,20 +19,20 @@
   <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
   <meta property="og:type" content="article">
   <meta property="og:site_name" content="SIPI">
-  <meta property="og:title" content="UFS 4.0 Signal Integrity: M-PHY Gear 5 | SIPI">
-  <meta property="og:description" content="23.32 Gbps per lane on a phone board: what burst-mode signalling changes, and why the hard part is the escape rather than the channel.">
+  <meta property="og:title" content="UFS 3.1 vs 4.0 vs 5.0: M-PHY Gears, Burst Mode and Signal Integrity | SIPI">
+  <meta property="og:description" content="UFS 3.1, 4.0, 4.1 and 5.0 compared for signal integrity: M-PHY HS-G4, HS-G5 and PAM4 HS-G6, coding, throughput, STALL vs HIBERN8 and UFS 5.0 link EQ.">
   <meta property="og:url" content="https://sipi.work/topics/interfaces/ufs4.html">
   <meta property="og:image" content="https://sipi.work/assets/og/interfaces/ufs4.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
-  <meta property="og:image:alt" content="UFS 4.0 Signal Integrity: M-PHY Gear 5: a figure from the page, on SIPI">
+  <meta property="og:image:alt" content="UFS 3.1 vs 4.0 vs 5.0: M-PHY Gears, Burst Mode and Signal Integrity: a figure from the page, on SIPI">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="UFS 4.0 Signal Integrity: M-PHY Gear 5 | SIPI">
-  <meta name="twitter:description" content="23.32 Gbps per lane on a phone board: what burst-mode signalling changes, and why the hard part is the escape rather than the channel.">
+  <meta name="twitter:title" content="UFS 3.1 vs 4.0 vs 5.0: M-PHY Gears, Burst Mode and Signal Integrity | SIPI">
+  <meta name="twitter:description" content="UFS 3.1, 4.0, 4.1 and 5.0 compared for signal integrity: M-PHY HS-G4, HS-G5 and PAM4 HS-G6, coding, throughput, STALL vs HIBERN8 and UFS 5.0 link EQ.">
   <meta name="twitter:image" content="https://sipi.work/assets/og/interfaces/ufs4.png">
-  <meta name="twitter:image:alt" content="UFS 4.0 Signal Integrity: M-PHY Gear 5: a figure from the page, on SIPI">
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"UFS 4.0 Signal Integrity: M-PHY Gear 5","description":"23.32 Gbps per lane on a phone board: what burst-mode signalling changes, and why the hard part is the escape rather than the channel.","url":"https://sipi.work/topics/interfaces/ufs4.html","articleSection":"Interface sign-off","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer","url":"https://www.linkedin.com/in/geetansh-arora-a645714a/","sameAs":["https://www.linkedin.com/in/geetansh-arora-a645714a/"]},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-10-10","image":"https://sipi.work/assets/og/interfaces/ufs4.png"}</script>
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"SIPI","item":"https://sipi.work/"},{"@type":"ListItem","position":2,"name":"Interface sign-off","item":"https://sipi.work/#interfaces"},{"@type":"ListItem","position":3,"name":"UFS 4.0 Signal Integrity: M-PHY Gear 5"}]}</script>
+  <meta name="twitter:image:alt" content="UFS 3.1 vs 4.0 vs 5.0: M-PHY Gears, Burst Mode and Signal Integrity: a figure from the page, on SIPI">
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"UFS 3.1 vs 4.0 vs 5.0: M-PHY Gears, Burst Mode and Signal Integrity","description":"UFS 3.1, 4.0, 4.1 and 5.0 compared for signal integrity: M-PHY HS-G4, HS-G5 and PAM4 HS-G6, coding, throughput, STALL vs HIBERN8 and UFS 5.0 link EQ.","url":"https://sipi.work/topics/interfaces/ufs4.html","articleSection":"Interface sign-off","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer","url":"https://www.linkedin.com/in/geetansh-arora-a645714a/","sameAs":["https://www.linkedin.com/in/geetansh-arora-a645714a/"]},"publisher":{"@type":"Person","name":"Geetansh Arora"},"image":"https://sipi.work/assets/og/interfaces/ufs4.png"}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"SIPI","item":"https://sipi.work/"},{"@type":"ListItem","position":2,"name":"Interface sign-off","item":"https://sipi.work/#interfaces"},{"@type":"ListItem","position":3,"name":"UFS 3.1 vs 4.0 vs 5.0: M-PHY Gears, Burst Mode and Signal Integrity"}]}</script>
   <!-- meta:end -->
 </head>
 <body>
@@ -52,279 +52,366 @@
 <main>
   <div class="page-head">
     <p class="crumb"><a href="../../index.html#interfaces">Interface sign-off</a> / 07</p>
-    <h1>UFS 4.0 Signal Integrity: M-PHY Gear 5</h1>
+    <h1>UFS 3.1 vs 4.0 vs 5.0: M-PHY Gears, Burst Mode and Signal Integrity</h1>
     <p class="byline">
-      <!-- review:start --><span>By <a href="https://www.linkedin.com/in/geetansh-arora-a645714a/" target="_blank" rel="author noopener">Geetansh Arora</a> — Principal SI/PI Engineer</span><time datetime="2026-10-10" title="Technical review by Geetansh Arora on this date">10 Oct 2026</time><span>9 min</span><!-- review:end -->
+      <!-- review:start --><span>By <a href="https://www.linkedin.com/in/geetansh-arora-a645714a/" target="_blank" rel="author noopener">Geetansh Arora</a> — Principal SI/PI Engineer</span><span>Updated Oct 2026</span><span>11 min</span><!-- review:end -->
     </p>
-    <!-- share:head:start --><div class="share share--head" data-share data-share-url="https://sipi.work/topics/interfaces/ufs4.html" data-share-title="UFS 4.0 Signal Integrity: M-PHY Gear 5"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Fufs4.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Fufs4.html&amp;text=UFS%204.0%20Signal%20Integrity%3A%20M-PHY%20Gear%205" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=UFS%204.0%20Signal%20Integrity%3A%20M-PHY%20Gear%205&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Fufs4.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:head:end -->
+    <!-- share:head:start --><div class="share share--head" data-share data-share-url="https://sipi.work/topics/interfaces/ufs4.html" data-share-title="UFS 3.1 vs 4.0 vs 5.0: M-PHY Gears, Burst Mode and Signal Integrity"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Fufs4.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Fufs4.html&amp;text=UFS%203.1%20vs%204.0%20vs%205.0%3A%20M-PHY%20Gears%2C%20Burst%20Mode%20and%20Signal%20Integrity" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=UFS%203.1%20vs%204.0%20vs%205.0%3A%20M-PHY%20Gears%2C%20Burst%20Mode%20and%20Signal%20Integrity&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Fufs4.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:head:end -->
     <p class="answer">
-      UFS is a serial storage link that lives entirely inside a handset &#8212; a few centimetres
-      of channel, which makes loss nearly a non-issue. What makes it distinctive is that it does
-      not run continuously. It powers down between bursts to save battery, and the consequences of
-      waking up repeatedly are the interesting part.
+      UFS is the storage link inside a phone: MIPI M-PHY lanes, two in each direction, running a short distance from
+      the processor to the flash. UFS 4.0 and 4.1 run HS-G5 at 23.32 Gb/s per lane; UFS 5.0 doubles that to 46.6 Gb/s
+      with PAM4 HS-G6, at almost the same Nyquist frequency of about 11.7 GHz. Because the channel is short, most of
+      the signal integrity work is less about loss than about the edges of each transfer: the receiver re-locks at the
+      start of every burst, the PHY wakes from deep sleep on its own schedule, and the supply rail sees every one of
+      those transitions.
+    </p>
+  </div>
+
+  <div class="prose">
+    <h2 class="section-rule" id="at-a-glance"><span>At a glance</span></h2>
+    <h3>UFS 3.1 vs 4.0 vs 5.0: what is the difference?</h3>
+    <p>
+      Each step doubled the rate on each lane. UFS 3.0 (2018) and 3.1 (2020) use M-PHY HS-G4 at up to 11.6 Gb/s per
+      lane; UFS 4.0 (2022) moved to M-PHY v5.0 and HS-G5 at 23.32 Gb/s; UFS 5.0 (2026) moves to M-PHY v6.0 and HS-G6,
+      which uses PAM4 to carry 46.6 Gb/s (C-157, C-158, C-12c, C-161). All of them use two lanes in each direction.
+      The <a href="#versions">versions table</a> lines them up.
+    </p>
+    <h3>How fast is UFS 4.0?</h3>
+    <p>
+      Two HS-G5 lanes carry 46.64 Gb/s on the wire in each direction. After 8b10b coding that is 4.66 GB/s, and JEDEC
+      quotes about 4.2 GB/s for reads and writes, roughly 90% of it once the protocol takes its share (C-159, C-163).
+      UFS 3.0 and 3.1 reach 23.2 Gb/s on the wire over two HS-G4 lanes (C-157).
+    </p>
+    <h3>Is UFS 4.1 faster than UFS 4.0?</h3>
+    <p>
+      No. UFS 4.1 keeps M-PHY v5.0, UniPro v2.0 and about 4.2 GB/s, and is hardware compatible with UFS 4.0; its
+      changes are in device and host-controller features such as defragmentation and WriteBooster management (C-160).
+      For signal integrity, a UFS 4.1 link is a UFS 4.0 link.
+    </p>
+    <h3>What changes in UFS 5.0 for signal and power integrity?</h3>
+    <p>
+      Four things. The top gear becomes HS-G6, which uses four-level PAM4 signalling at up to 46.694 Gb/s per lane; a
+      new 1b1b line coding cuts the coding overhead below 10%; the link gains equalisation and training; and UFS 5.0
+      gives the PHY its own supply rail, isolated from the memory subsystem&#8217;s noise (C-161, C-162). JEDEC quotes
+      up to about 10.8 GB/s over two lanes.
+    </p>
+    <h3>Does UFS power down between bursts?</h3>
+    <p>
+      Not completely, and the difference matters. Between high-speed bursts an M-PHY lane waits in STALL, which it
+      leaves in nanoseconds; every new burst opens with a synchronisation sequence on which the receiver re-locks. Only
+      a longer idle sends the lane to HIBERN8, an ultra-low-power state whose exit takes hundreds to thousands of
+      microseconds (C-163). <a href="#burst">The burst section</a> shows both.
+    </p>
+    <h3>How long can a UFS trace be?</h3>
+    <p>
+      The channel limits are in the M-PHY specification, which only MIPI members can read, and the UFS standard
+      itself is sold by JEDEC, so this page does not quote a length or a loss budget. The SoC and flash vendors&#8217;
+      layout guidelines are where a board designer gets those numbers.
+    </p>
+    <h3>Is UFS 5.0 backward compatible?</h3>
+    <p>
+      JEDEC describes UFS 5.0 as compatible with UFS 4.x hardware, UFS 4.1 as hardware compatible with UFS 4.0, and
+      UFS 4.0 as backward compatible with UFS 3.1 and 3.0 (C-159, C-160, C-161). M-PHY v5.0 itself is backward
+      compatible through v4.1 (C-162).
     </p>
   </div>
 
   <!-- ───────────── the picture ───────────── -->
-  <figure class="figure">
-    <div class="figure__bar"><span>A burst, from cold &#183; every time</span></div>
-    <div class="figure__body"><svg viewBox="-4 14 680 230" role="img" aria-label="An M-PHY burst: the line sits powered down, wakes, sends a short preamble during which the receiver must acquire lock, transfers a burst, then powers down again.">
-  <text class="lbl-hi" x="0" y="34">M-PHY does not run continuously — and that is the whole problem</text>
-  <g transform="translate(0,50)">
-    <rect x="0" y="0" width="90" height="34" rx="2" fill="var(--muted)" opacity=".25"/>
-    <text class="lbl" x="45" y="21" text-anchor="middle">powered down</text>
-    <rect x="90" y="0" width="46" height="34" rx="2" fill="var(--reflect)" opacity=".55"/>
-    <text class="lbl-hi" x="113" y="21" text-anchor="middle">wake</text>
-    <rect x="136" y="0" width="86" height="34" rx="2" fill="var(--alarm)" opacity=".55"/>
-    <text class="lbl-hi" x="179" y="21" text-anchor="middle">preamble</text>
-    <rect x="222" y="0" width="300" height="34" rx="2" fill="var(--signal)" opacity=".55"/>
-    <text class="lbl-hi" x="372" y="21" text-anchor="middle">HS burst — 23.32 Gbps per lane</text>
-    <rect x="522" y="0" width="140" height="34" rx="2" fill="var(--muted)" opacity=".25"/>
-    <text class="lbl" x="592" y="21" text-anchor="middle">powered down</text>
-    <path class="edge dash" d="M136,40 L136,66 M222,40 L222,66" stroke="var(--alarm)"/>
-    <path class="flow-bad" d="M136,58 L222,58"/>
-    <text class="lbl-bad" x="179" y="82" text-anchor="middle">the CDR must lock inside this</text>
-  </g>
-  <g transform="translate(0,160)">
-    <text class="lbl-hi" x="0" y="0">so the requirements shift to things a continuous link ignores</text>
-    <text class="lbl" x="0" y="20">· squelch threshold vs the noise floor</text>
-    <text class="lbl" x="0" y="36">· how fast the eye is usable after turn-on</text>
-    <text class="lbl" x="340" y="20">· supply noise from whatever else woke up</text>
-    <text class="lbl" x="340" y="36">· behaviour through power-state transitions</text>
-    <text class="lbl-bad" x="0" y="62">a link that is stable once running but drops the odd burst is an acquisition problem, not a channel one</text>
-  </g>
-</svg></div>
-    <figcaption><b>M-PHY is built for battery-powered systems, so it powers down between transfers.</b> That saves substantial energy and creates the interface's characteristic problem: the receiver must acquire from nothing, every burst. A continuously-running link's CDR has effectively unlimited time to settle; an M-PHY receiver gets a short preamble, and if it has not locked by the end of it the burst is lost. So the requirements move to things a continuous link barely cares about &#8212; squelch detection thresholds, wake timing, how quickly the eye is usable after the driver turns on, and how much residual noise is left on the rail by whatever else woke at the same moment. The margin itself mostly goes to the <b>escape</b> rather than the trace: 23.32 Gbps across a few centimetres is a modest loss budget, but getting four differential pairs out of a fine-pitch ball field through a thin phone stackup, without breaking pair symmetry, is where the discontinuities are. And a link that is stable once running but occasionally drops a burst is almost never a channel problem &#8212; simulate the burst <em>start</em>, not the steady-state eye.</figcaption>
+  <figure class="figure" id="burst">
+    <div class="figure__bar"><span>M-PHY between transfers &#183; STALL vs HIBERN8</span></div>
+    <div class="figure__body">
+        <svg viewBox="0 0 400 226" role="img" aria-label="Two ways an M-PHY lane waits between transfers. Top: a run of high-speed bursts. Each burst is PREPARE, then a SYNC sequence on which the receiver locks its clock recovery, then data; between bursts the lane sits in STALL and comes back in nanoseconds. Bottom: after a longer idle the lane is in HIBERN8, an ultra-low-power state whose exit takes hundreds to thousands of microseconds, before PREPARE, SYNC and data follow. Every burst re-locks on SYNC; only a deep sleep restarts the PHY. The timings come from an M-PHY v1-era source.">
+        <text class="lbl-hi" x="20" y="14">two ways an M-PHY lane waits between transfers</text>
+        <text class="lbl-sig" x="20" y="38">a run of bursts: STALL between them, back in ns</text>
+        <rect class="dielectric" x="20" y="46" width="34" height="24" opacity="1"/>
+        <text class="lbl-hi" x="37" y="62" text-anchor="middle">PREP</text>
+        <rect class="copper-2" x="54" y="46" width="40" height="24" opacity=".75"/>
+        <text class="lbl-hi" x="74" y="62" text-anchor="middle" style="fill:var(--surface)">SYNC</text>
+        <rect class="copper" x="94" y="46" width="112" height="24" opacity=".85"/>
+        <text class="lbl-hi" x="150" y="62" text-anchor="middle" style="fill:var(--surface)">data, 23.32 Gb/s</text>
+        <rect class="plane" x="206" y="46" width="40" height="24" opacity=".35"/>
+        <text class="lbl" x="226" y="62" text-anchor="middle">STALL</text>
+        <rect class="dielectric" x="246" y="46" width="34" height="24" opacity="1"/>
+        <text class="lbl-hi" x="263" y="62" text-anchor="middle">PREP</text>
+        <rect class="copper-2" x="280" y="46" width="40" height="24" opacity=".75"/>
+        <text class="lbl-hi" x="300" y="62" text-anchor="middle" style="fill:var(--surface)">SYNC</text>
+        <rect class="copper" x="320" y="46" width="60" height="24" opacity=".85"/>
+        <text class="lbl-hi" x="350" y="62" text-anchor="middle" style="fill:var(--surface)">data</text>
+        <path class="tick" d="M74,74 V80 M300,74 V80"/>
+        <text class="lbl" x="74" y="92" text-anchor="middle">the CDR locks here</text>
+        <text class="lbl-ref" x="20" y="124">after a long idle: HIBERN8, exit in &#181;s to ms</text>
+        <rect class="plane" x="20" y="132" width="150" height="24" opacity=".25"/>
+        <text class="lbl" x="95" y="148" text-anchor="middle">HIBERN8</text>
+        <rect class="copper-2" x="170" y="132" width="62" height="24" opacity=".4"/>
+        <text class="lbl-hi" x="201" y="148" text-anchor="middle">exit</text>
+        <rect class="dielectric" x="232" y="132" width="34" height="24" opacity="1"/>
+        <text class="lbl-hi" x="249" y="148" text-anchor="middle">PREP</text>
+        <rect class="copper-2" x="266" y="132" width="40" height="24" opacity=".75"/>
+        <text class="lbl-hi" x="286" y="148" text-anchor="middle" style="fill:var(--surface)">SYNC</text>
+        <rect class="copper" x="306" y="132" width="74" height="24" opacity=".85"/>
+        <text class="lbl-hi" x="343" y="148" text-anchor="middle" style="fill:var(--surface)">data</text>
+        <text class="lbl" x="20" y="174">hundreds to thousands of &#181;s, programmable (C-163)</text>
+        <text class="lbl-hi" x="20" y="200">every burst re-locks on SYNC; deep sleep restarts</text>
+        <text class="lbl" x="20" y="216">timings from an M-PHY v1-era source; see the ledger</text>
+        </svg>
+    </div>
+    <figcaption><b>The receiver re-locks on every burst, but it does not start from cold every time.</b> Each high-speed burst begins with PREPARE and a SYNC sequence, and the receiver&#8217;s clock and data recovery (CDR) locks its phase and frequency on that sequence; the specification leaves its length to the application. Between bursts the lane sits in STALL and returns in nanoseconds. After a longer idle the lane drops to HIBERN8, and leaving it takes hundreds to thousands of microseconds, a setting the system can program (C-163). Those timings come from an article written for M-PHY v1.0; UFS 4.0 added High Speed Link Startup to cut startup latency (C-159), so treat them as the shape of the trade rather than limits.</figcaption>
   </figure>
 
   <div class="prose">
+    <h2>Why UFS is a short link with a power problem</h2>
+
     <p>
-      Whenever a modern flagship smartphone launches an application, captures 8K video, or loads an on-device
-      AI model, it transfers data through Universal Flash Storage (UFS). In UFS 4.0, the underlying physical layer
-      is driven by MIPI M-PHY Gear 5, delivering a raw line rate of <span class="num">23.32 Gbps per lane</span>.
-      Across two dual-simplex differential lanes, the interface provides up to <span class="num">46.6 Gbps</span> of
-      raw throughput — matching enterprise server NVMe speeds, but engineered entirely within the tight battery and
-      thermal envelope of a handheld mobile device.
+      Most of the signal integrity concerns on this site grow with distance. UFS runs a short way from the processor
+      to the flash inside a phone, so the reach questions that dominate PCIe or USB barely arise. What dominates
+      instead is power. A phone cannot afford a link that draws full current while it waits, so M-PHY idles between
+      transfers and wakes for each one.
     </p>
 
     <p>
-      At first glance, routing UFS looks like a trivial signal integrity problem: the flash memory package typically
-      sits immediately adjacent to the application processor (AP) SoC, spanning only 15 to 30 millimetres of board
-      trace. Over a one-inch trace, smooth dielectric insertion loss is barely 2 to 3 dB at Nyquist.
+      That one design choice is where the engineering is. A link that is always on settles once; a link that idles
+      and wakes has to settle correctly every time. Settling involves references, bias currents, clock recovery and,
+      from UFS 5.0, equaliser training, and none of those are instantaneous. The signal integrity question shifts from
+      &#8220;is the eye open?&#8221; to &#8220;is the eye open early enough in each burst, with whatever else woke
+      up at the same moment pulling on the supply?&#8221;
     </p>
 
+    <h2 class="section-rule" id="versions"><span>UFS 3.0, 3.1, 4.0, 4.1 and 5.0, side by side</span></h2>
+    <div class="table-scroll">
+      <table class="data">
+        <caption>The interconnect layer of each UFS version (ledger rows in brackets)</caption>
+        <thead><tr><th></th><th>UFS 3.0</th><th>UFS 3.1</th><th>UFS 4.0</th><th>UFS 4.1</th><th>UFS 5.0</th></tr></thead>
+        <tbody>
+          <tr><th>JEDEC standard, published</th><td>JESD220D, Jan 2018</td><td>JESD220E, Jan 2020</td><td>JESD220F, Aug 2022</td><td>JESD220G, Dec 2024</td><td>JESD220H, Feb 2026</td></tr>
+          <tr><th>M-PHY, UniPro</th><td>v4.1, v1.8</td><td>v4.1, v1.8</td><td>v5.0, v2.0</td><td>v5.0, v2.0</td><td>v6.0, v3.0</td></tr>
+          <tr><th>Top gear</th><td colspan="2">HS-G4, NRZ</td><td colspan="2">HS-G5, NRZ</td><td>HS-G6, PAM4</td></tr>
+          <tr><th>Rate per lane, on the wire</th><td colspan="2">up to 11.6 Gb/s</td><td colspan="2">23.32 Gb/s</td><td>46.6 Gb/s</td></tr>
+          <tr><th>Lanes</th><td colspan="5">two in each direction</td></tr>
+          <tr><th>Unit interval</th><td colspan="2">86 ps</td><td colspan="2">42.9 ps</td><td>42.8 ps per symbol</td></tr>
+          <tr><th>Nyquist frequency</th><td colspan="2">5.8 GHz</td><td colspan="2">11.66 GHz</td><td>11.67 GHz</td></tr>
+          <tr><th>Line coding</th><td colspan="4">8b10b (C-163)</td><td>1b1b, overhead below 10% (C-162)</td></tr>
+          <tr><th>JEDEC&#8217;s quoted throughput</th><td colspan="2">23.2 Gb/s on the wire</td><td colspan="2">about 4.2 GB/s</td><td>about 10.8 GB/s</td></tr>
+          <tr><th>Added for the link</th><td>Adapt: channel monitoring and training</td><td>DeepSleep state</td><td>High Speed Link Startup, Eye Monitor</td><td>no PHY change</td><td>link equalisation, separate PHY supply rail</td></tr>
+          <tr><th>Sources</th><td>C-157</td><td>C-158</td><td>C-12c, C-159</td><td>C-160</td><td>C-12d, C-161, C-162</td></tr>
+        </tbody>
+      </table>
+    </div>
     <p>
-      However, UFS 4.0 operates under mobile constraints that invert standard enterprise SerDes assumptions.
-      To preserve battery life, the PHY cannot run continuously: it powers down completely between data transfers,
-      waking up in bursts thousands of times every second. This means the receiver's Clock and Data Recovery (CDR)
-      cannot afford hundreds of thousands of bits to settle; it must achieve bit lock from a dead stop within a
-      microscopic preamble lasting only a few hundred nanoseconds. Combined with dense smartphone BGA breakout
-      vias and severe transient power supply droop when adjacent compute blocks wake simultaneously, UFS 4.0 turns
-      a short, simple trace into one of the most demanding transient acquisition challenges in hardware.
+      Two rows deserve a second look. The unit interval halves from UFS 3.1 to 4.0 and then stays put, because HS-G6
+      sends two bits in each symbol. And the &#8220;added for the link&#8221; row is a short history of how a burst
+      link gets harder: UFS 3.0 added receiver adaptation, UFS 4.0 a way to see the eye inside the receiver, and UFS 5.0
+      full link equalisation and a quieter supply.
     </p>
 
-    <h2>A short channel with a power-management problem</h2>
-
+    <h2 class="section-rule"><span>M-PHY burst mode: STALL, HIBERN8 and the SYNC sequence</span></h2>
     <p>
-      Most of this site's signal integrity concerns scale with distance. UFS sits a few centimetres
-      from the SoC inside a phone, so loss is small, the channel is simple, and the reach questions
-      that dominate PCIe barely arise.
+      M-PHY carries data in high-speed bursts. Each burst opens with a PREPARE period and then a synchronisation
+      sequence, SYNC, on which the receiver&#8217;s CDR locks to the incoming phase and frequency; the length of that
+      sequence is chosen by the application rather than fixed by the PHY specification (C-14, C-163). Between bursts
+      the lane waits in STALL, and the return to a burst takes nanoseconds. For longer idles the lane can go to
+      HIBERN8, an ultra-low-power state that keeps its configuration but takes hundreds to thousands of microseconds
+      to leave (C-163). M-PHY also has a slow pulse-width-modulated mode, whose clock is embedded in each bit&#8217;s
+      pulse width, so it needs no CDR at all (C-163).
     </p>
-
     <p>
-      What dominates instead is power. A phone cannot afford a link that draws current continuously
-      when it is idle, so the PHY is built to power down between bursts and wake for each transfer.
-    </p>
-
-    <p>
-      That single design choice is where the engineering is. A link that is always on settles once.
-      A link that wakes thousands of times a second has to settle correctly <em>every time</em>, and
-      settling involves references, biases, clock recovery and equaliser adaptation — none of which
-      are instantaneous.
-    </p>
-
-    <h2 class="section-rule"><span>What it is</span></h2>
-
-    <p>
-      JEDEC's storage interface, layered on MIPI's M-PHY. UFS 4.0 (JESD220F) is built on M-PHY v5.0, which adds HS-Gear5, roughly
-      <strong>23.32 Gbps per lane</strong>, with two lanes in each direction. UniPro sits above the PHY
-      as the link layer. Unlike LPDDR this is a serial, embedded-clock link; unlike PCIe it lives
-      entirely inside a handset, a few centimetres from the SoC. This page describes UFS 4.0; JEDEC published
-      UFS 5.0 (JESD220H) in February 2026, built on M-PHY v6.0, whose HS-Gear6 doubles the HS-Gear5 rate (C-12c, C-12d).
-    </p>
-
-    <h2 class="section-rule"><span>Burst mode is the distinctive part</span></h2>
-
-    <p>
-      M-PHY does not run continuously. It is built for battery-powered systems, so it powers down
-      between transfers and wakes into a burst when there is data. It also has low-power PWM modes for
-      slow traffic alongside the high-speed gears.
-    </p>
-
-    <p>
-      That saves substantial power and creates the interface's characteristic SI problem: <strong>the
-      receiver must acquire from nothing, every burst.</strong> A continuously-running link's CDR has
-      effectively unlimited time to settle. An M-PHY receiver gets a short preamble, and if it has not
-      locked by the end of it the burst is lost. So the requirements shift toward things a
-      continuously-running link barely cares about — squelch detection thresholds, wake timing, how
-      quickly the eye is usable after the driver turns on, and how much residual noise is left on the
-      rail from whatever else woke up at the same moment.
+      So the receiver&#8217;s job is not to lock from nothing on every burst. It is to lock quickly and reliably on a
+      short SYNC after a STALL, and to come back cleanly from HIBERN8 when the system asks. The two have different
+      failure modes: a SYNC too short for the real receiver after a STALL loses the first data of a burst, while a
+      slow or noisy wake from HIBERN8 shows up as an occasional failed link startup.
     </p>
 
     <div class="note">
       <b>Where this bites in practice</b>
-      A link that is stable once running but occasionally drops a burst is almost never a channel
-      problem. It is an acquisition problem: preamble too short after the real turn-on transient,
-      squelch threshold too close to the noise floor, or supply noise correlated with the wake event
-      itself. Time-domain simulation of the burst start — not the steady-state eye — is what finds it.
+      A link that is stable once running but occasionally loses the start of a burst is rarely a channel problem.
+      It is usually an acquisition problem: a SYNC too short for the receiver, a squelch threshold too close to the
+      noise floor, or supply noise correlated with the wake itself. A time-domain look at the start of a burst, not
+      the steady-state eye, is what finds it.
     </div>
 
-    <h2 class="section-rule"><span>Where the margin goes</span></h2>
+    <h2 class="section-rule" id="gears"><span>HS-G5 vs HS-G6: PAM4 doubles the data, not the Nyquist frequency</span></h2>
+  </div>
 
-    <ul class="tight">
-      <li><strong>The escape, not the trace.</strong> Twenty-three gigabits per second across a few
-        centimetres is a modest loss budget. Getting four differential pairs out of a fine-pitch SoC
-        ball field, through the layer transitions a thin phone stackup allows, without breaking pair
-        symmetry — that is where the discontinuities are.</li>
-      <li><strong>Crosstalk from everything else on the board.</strong> A handset routes this link
-        alongside LPDDR, camera and display interfaces, RF and the PDN, with no spare space to separate
-        them. Aggressors are unrelated to the data, so the coupling appears as bounded uncorrelated
-        jitter.</li>
-      <li><strong>Mode conversion</strong> from asymmetric escape routing, which the receiver does not
-        reject and which couples into neighbouring nets.</li>
-      <li><strong>Spread spectrum</strong>, where the PHY configuration uses it &#8212; do not assume USB's parameters carry across to M-PHY without checking the MIPI revision &#8212; taking its share of the CDR's
-        tracking budget.</li>
-    </ul>
+  <figure class="figure">
+    <div class="figure__bar"><span>M-PHY high-speed gears &#183; rate on the wire vs symbol rate</span></div>
+    <div class="figure__body">
+        <svg viewBox="0 0 400 244" role="img" aria-label="Three M-PHY high-speed gears. HS-G4, used by UFS 3.0 and 3.1, is NRZ at 11.6 Gb/s, so 11.6 gigabaud and a Nyquist frequency of 5.8 GHz. HS-G5, used by UFS 4.0 and 4.1, is NRZ at 23.32 Gb/s: 23.32 gigabaud, Nyquist 11.66 GHz. HS-G6, used by UFS 5.0, is PAM4 at up to 46.694 Gb/s, two bits per symbol, so 23.35 gigabaud and a Nyquist frequency of 11.67 GHz, almost the same as HS-G5; the cost is that each of its three eyes has a third of the swing, 9.5 dB less.">
+        <text class="lbl-hi" x="20" y="14">three gears: rate on the wire vs symbol rate</text>
+        <rect class="dielectric" x="20" y="30" width="34" height="34" rx="2"/>
+        <path class="flow" d="M25,36 H49"/>
+        <path class="flow" d="M25,58 H49"/>
+        <text class="lbl-hi" x="64" y="41">HS-G4 &#183; NRZ &#183; 11.6 Gb/s</text>
+        <text class="lbl-sig" x="64" y="56">11.6 GBd &#8594; Nyquist 5.8 GHz</text>
+        <text class="lbl" x="380" y="41" text-anchor="end">UFS 3.0, 3.1</text>
+        <rect class="dielectric" x="20" y="82" width="34" height="34" rx="2"/>
+        <path class="flow" d="M25,88 H49"/>
+        <path class="flow" d="M25,110 H49"/>
+        <text class="lbl-hi" x="64" y="93">HS-G5 &#183; NRZ &#183; 23.32 Gb/s</text>
+        <text class="lbl-sig" x="64" y="108">23.32 GBd &#8594; Nyquist 11.66 GHz</text>
+        <text class="lbl" x="380" y="93" text-anchor="end">UFS 4.0, 4.1</text>
+        <rect class="dielectric" x="20" y="134" width="34" height="34" rx="2"/>
+        <path class="flow" d="M25,140 H49"/>
+        <path class="flow" d="M25,147.33 H49"/>
+        <path class="flow" d="M25,154.67 H49"/>
+        <path class="flow" d="M25,162 H49"/>
+        <text class="lbl-hi" x="64" y="145">HS-G6 &#183; PAM4 &#183; 46.694 Gb/s</text>
+        <text class="lbl-sig" x="64" y="160">23.35 GBd &#8594; Nyquist 11.67 GHz</text>
+        <text class="lbl" x="380" y="145" text-anchor="end">UFS 5.0</text>
+        <text class="lbl-ref" x="64" y="175">each eye a third of the swing: &#8722;9.5 dB</text>
+        <text class="lbl-hi" x="20" y="204">HS-G6 doubles the data, not the Nyquist frequency</text>
+        <text class="lbl" x="20" y="220">same frequencies on the wire, a third of the eye per level</text>
+        </svg>
+    </div>
+    <figcaption><b>Two bits per symbol.</b> HS-G4 and HS-G5 are NRZ, one bit per symbol, so their Nyquist frequency is half the bit rate. HS-G6 carries up to 46.694 Gb/s with PAM4, two bits per symbol, so it sends 23.35 billion symbols a second and its Nyquist frequency, 11.67 GHz, is almost exactly HS-G5&#8217;s (C-162). The channel sees the same frequencies; what changes is that four levels share the swing two used to, so each of the three eyes has a third of the height, 9.5 dB less. That is the price of the doubling, and the reason UFS 5.0 adds link equalisation and a quieter PHY supply (C-161).</figcaption>
+  </figure>
 
-    <h2 class="section-rule"><span>Sign-off</span></h2>
-
+  <div class="prose">
     <p>
-      An eye mask at the receiver across corners, plus a jitter tolerance test — the receiver must hold
-      its error rate against a signal stressed with defined jitter components. Add to that the
-      burst-specific checks that have no equivalent on a continuous link: acquisition within the
-      preamble, and correct behaviour through the power-state transitions, at the temperature and
-      voltage corners where the PHY is slowest to wake.
+      The <a href="../signal-integrity/nrz-vs-pam4.html">NRZ vs PAM4</a> page works through the 9.5 dB in detail. For a
+      UFS board it means the HS-G5 rule of thumb, that a short channel has loss to spare, holds less well at HS-G6:
+      the loss at Nyquist is about the same, but the eye that loss has to leave behind is a third the size, so
+      crosstalk, reflections and supply noise each take a bigger share of what is left.
     </p>
 
-    <h3>Sources</h3>
-    <ul class="tight refs">
-      <li><strong>JEDEC JESD220F (UFS 4.0), and the MIPI M-PHY revision it references</strong> &#8212; lane rate, burst and power-state behaviour, spread spectrum &#8212; ledger claims C-12 to C-14</li>
-    </ul>
-      <h2 class="section-rule"><span>Why this decides how your board behaves</span></h2>
-
+    <h2 class="section-rule"><span>Where the margin goes</span></h2>
     <ul class="tight">
-      <li><strong>Transient behaviour matters more than steady-state.</strong> The first bits after
-        a wake are the ones at risk, and they are the ones a steady-state eye measurement never
-        shows.</li>
-      <li><strong>The PDN sees a repeating load step.</strong> Waking and sleeping is a current
-        transient at a rate the system controls, and if that rate lands on a PDN resonance it is
-        excited repeatedly rather than once. See
+      <li><strong>The escape, not the trace.</strong> Getting four differential pairs out of a fine-pitch processor
+        ball field, through the layer transitions a thin phone stackup allows, without breaking pair symmetry, is
+        where the discontinuities are.</li>
+      <li><strong>Crosstalk from everything else on the board.</strong> A handset routes this link alongside LPDDR,
+        camera and display interfaces, RF and the power distribution network, with little room to separate them. The
+        aggressors are unrelated to the data, so their coupling appears as bounded, uncorrelated jitter.</li>
+      <li><strong>Supply noise at the wake.</strong> The moments a burst starts or the PHY leaves HIBERN8 are the
+        moments its current changes fastest. UFS 3.1 added a low-power state for systems that share regulators with
+        other functions (C-158), and UFS 5.0 gives the PHY a separate rail for noise isolation (C-161): the standard
+        itself treats the supply as part of the link.</li>
+      <li><strong>Mode conversion</strong> from asymmetric escape routing, which the receiver does not reject and
+        which couples into neighbouring nets.</li>
+      <li><strong>Spread spectrum</strong>, where the PHY configuration uses it. Do not assume USB&#8217;s parameters
+        carry across to M-PHY without checking the revision you are designing to (C-13).</li>
+    </ul>
+
+    <h2 class="section-rule"><span>How UFS links are signed off</span></h2>
+    <p>
+      M-PHY conformance is defined by MIPI&#8217;s conformance test suite, which is members-only, but the test
+      equipment vendors describe its shape (C-164). The transmitter is measured at its own pins, with the HS-G4 and
+      HS-G5 eyes accumulated to a bit error ratio of 10<sup>&#8722;6</sup> and extrapolated to
+      10<sup>&#8722;12</sup>. The receiver is fed a calibrated stressed signal, including a conformant channel that
+      adds intersymbol interference, and must report zero errors: at least 3&#215;10<sup>10</sup> bits for a
+      10<sup>&#8722;10</sup> target, or 3&#215;10<sup>12</sup> for 10<sup>&#8722;12</sup>.
+    </p>
+    <p>
+      A burst-mode link needs more than that. The useful additions are checks with no equivalent on a continuous
+      link: acquisition within the SYNC sequence the system actually configures, and clean behaviour through STALL
+      and HIBERN8 transitions at the temperature and voltage corners where the PHY is slowest to wake. From UFS 4.0,
+      M-PHY&#8217;s Eye Monitor shows the health of the received eye for debug (C-159, C-162), which can turn some of
+      that from a lab measurement into something checked in the product itself.
+    </p>
+
+    <h2 class="section-rule"><span>Why this decides how your board behaves</span></h2>
+    <ul class="tight">
+      <li><strong>Transient behaviour matters more than steady state.</strong> The first bits after a STALL or a wake
+        are the ones at risk, and a steady-state eye measurement never shows them.</li>
+      <li><strong>The supply sees a repeating load step.</strong> Bursting and sleeping is a current transient at a
+        rate the system&#8217;s traffic sets, and if that rate lands near a resonance of the power distribution
+        network, it is excited repeatedly rather than once. See
         <a href="../power-integrity/anti-resonance.html">anti-resonance</a>.</li>
-      <li><strong>AC coupling has to survive the gaps.</strong> A link that goes quiet and returns
-        has to re-establish its DC operating point, and the coupling capacitors' time constants are
-        part of that.</li>
-      <li><strong>Loss is not the constraint, so effort spent there is wasted.</strong> On a
-        centimetres-long channel, crosstalk, return paths and supply noise are where the margin
-        goes.</li>
+      <li><strong>Loss is rarely the first constraint.</strong> On a short channel, crosstalk, return paths and
+        supply noise usually take the margin first, and at HS-G6 each of them takes a bigger share.</li>
     </ul>
 
     <h2 class="section-rule"><span>What to do about it</span></h2>
-
     <p>
-      <strong>Test at the burst boundaries, not in the middle.</strong> A long steady capture
-      measures the easy case. The interesting question is what the first symbols after a wake look
-      like.
+      <strong>Test at the burst boundaries, not in the middle.</strong> A long steady capture measures the easy case.
+      The interesting question is what the first symbols after a STALL or a wake look like.
     </p>
-
     <p>
-      <strong>Check the PDN at the burst repetition rate.</strong> This is the one interface on the
-      site where the load's spectrum is genuinely under system control, and where a resonance can be
-      hit deliberately by accident.
+      <strong>Check the supply at the traffic&#8217;s burst rate.</strong> The load&#8217;s spectrum follows the
+      storage traffic, so compare the rates your workloads produce against the power network&#8217;s impedance
+      curve, and keep the PHY&#8217;s supply as quiet as the standard now asks for.
     </p>
-
     <p>
-      <strong>Give the pair a clean, continuous reference through the routing.</strong> In a phone
-      the routing is dense, flexible-circuit transitions are common, and the return path is where
-      the surprises are.
+      <strong>Give each pair a clean, continuous reference through the routing.</strong> In a phone the routing is
+      dense, flexible-circuit transitions are common, and the return path is where the surprises are.
     </p>
-
     <p>
-      <strong>Keep the pair symmetric through every transition.</strong> Short channel or not, mode
-      conversion still converts, and a handset has plenty of asymmetric structures to convert at.
+      <strong>Keep each pair symmetric through every transition.</strong> Short channel or not, mode conversion still
+      converts, and a handset has plenty of asymmetric structures to convert at.
     </p>
 
     <div class="note">
       <b>Using this to find a fault</b>
       <ul class="tight">
-        <li><b>Errors clustered at the start of a burst.</b> Settling — references, bias, CDR lock
-          or equaliser adaptation. Steady-state measurements will look clean.</li>
-        <li><b>Failures that depend on the traffic pattern rather than the data.</b> Look at the
-          burst rate against the PDN impedance curve.</li>
-        <li><b>A link that works on a rigid board and fails through a flex.</b> Impedance and return
-          path through the flex and its connectors, which are rarely modelled.</li>
-        <li><b>Mode conversion on a very short channel.</b> Check the transitions, not the length —
-          on a few centimetres, structures dominate completely.</li>
+        <li><b>Errors clustered at the start of a burst.</b> Settling: references, bias, CDR lock on SYNC, or
+          equaliser adaptation. Steady-state measurements will look clean.</li>
+        <li><b>An occasional failed link startup.</b> Look at the wake from HIBERN8 and the supply during it, not at
+          the data eye.</li>
+        <li><b>Failures that depend on the traffic pattern rather than the data.</b> Compare the burst rate against
+          the power network&#8217;s impedance curve.</li>
+        <li><b>A link that works on a rigid board and fails through a flex.</b> Impedance and return path through the
+          flex and its connectors, which are rarely modelled.</li>
+        <li><b>Marginal on one board build only.</b> If the PHY offers it, read the Eye Monitor across builds before
+          reaching for a scope.</li>
       </ul>
     </div>
 
-    <details class="deeper">
-      <summary>Go deeper — what a wake actually has to do, and what is not sourced here</summary>
+    <details class="deeper" id="deeper">
+      <summary>Go deeper &#8212; the throughput arithmetic, what a wake has to do, and what is not sourced here</summary>
 
       <p>
-        Powering a PHY back up is not one event. Several things have to happen, in order, and each
-        takes time:
-      </p>
-
-      <ul class="tight">
-        <li>Bias currents and references settle, which is analogue and sets a floor on how fast a
-          wake can be.</li>
-        <li>The clock recovery loop acquires lock, which needs enough transitions to pull in.</li>
-        <li>Any adaptive equalisation converges, or restores previously stored settings.</li>
-        <li>The DC operating point across the AC coupling re-establishes.</li>
-      </ul>
-
-      <p>
-        Those steps are why a burst-mode link's specification includes wake timings at all, and why
-        the trade between deeper sleep states and faster wake is a real one: the more completely you
-        power down, the more of that list has to be redone.
+        <strong>From line rate to GB/s.</strong> Two HS-G5 lanes carry 2 &#215; 23.32 = 46.64 Gb/s. 8b10b coding sends
+        ten bits for every eight of data, leaving 37.3 Gb/s, which is 4.66 GB/s. JEDEC&#8217;s &#8220;about
+        4.2 GB/s&#8221; for UFS 4.0 is about 90% of that, the rest going to the link and transport protocol (C-159,
+        C-163). UFS 5.0&#8217;s 1b1b coding has overhead below 10% (C-162): two lanes at 46.6 Gb/s carry 11.65 GB/s
+        before protocol, and JEDEC&#8217;s about 10.8 GB/s is about 93% of it (C-161). Most of UFS 5.0&#8217;s
+        doubling comes from the gear; the coding change adds the rest.
       </p>
 
       <p>
-        It also explains a diagnostic asymmetry worth remembering. A steady-state eye on a burst-mode
-        link is measuring the part of operation that was never in doubt, and the errors — if there
-        are any — are at the boundaries that the eye's own averaging discards.
+        <strong>What a wake has to do.</strong> Leaving a deep low-power state is not one event. Bias currents and
+        references settle, which is analogue and sets a floor on how fast a wake can be; the clock recovery loop
+        acquires lock, which needs enough transitions to pull in; any adaptive equalisation converges or restores
+        stored settings; and where the line idled unterminated, the termination and the common-mode level have to
+        settle. Those steps are why a burst link&#8217;s specification has wake timings at all, and why deeper sleep
+        and faster wake trade against each other: the more completely the PHY powers down, the more of that list it
+        redoes.
       </p>
 
       <p>
-        <strong>On sourcing.</strong> The gear rates and lane counts on this page come from the
-        published interface family, and the detailed M-PHY claims — power-state definitions, wake
-        timings, the exact revision each applies to — are recorded in the
-        <a href="../../docs/claims.md">claim ledger</a> as awaiting verification against primary
-        sources. The engineering reasoning above does not depend on the exact numbers; a sign-off
-        does, so read the specification for those.
+        <strong>A diagnostic asymmetry.</strong> A steady-state eye on a burst link measures the part of operation
+        that was never in doubt. The errors, if there are any, sit at the boundaries that the eye&#8217;s own
+        averaging discards.
+      </p>
+
+      <p>
+        <strong>What is not sourced here.</strong> M-PHY&#8217;s electrical limits, its channel model and its
+        equalisation settings are in specifications only MIPI members can read, and JEDEC sells the UFS standards.
+        This page therefore quotes rates, versions and features from the standards bodies&#8217; public releases, the
+        burst and state structure from an M-PHY v1-era article, and the conformance framework from test-equipment
+        vendors, each recorded in the <a href="../../docs/claims.md">claim ledger</a> with what it can and cannot
+        establish. The engineering reasoning does not depend on the missing numbers; a sign-off does.
       </p>
     </details>
 
     <h2 class="section-rule"><span>In the real world</span></h2>
-
     <p>
-      UFS is a useful reminder that "high-speed" and "hard" are not the same thing. The channel is
-      short and forgiving; the difficulty lives in power management, in a mechanical environment full
-      of flexes and connectors, and in a system that spends most of its time asleep.
+      UFS is a useful reminder that a fast link and a hard link are not the same thing. The channel is short and
+      forgiving; the difficulty lives in power management, in a mechanical environment full of flexes and connectors,
+      and in a system that spends most of its time asleep.
     </p>
-
     <p>
-      Which means the instincts built on long-channel links mislead here. The question is rarely how
-      much loss there is. It is usually what happens in the first microsecond after something woke
-      up.
+      So instincts built on long-channel links can mislead here. The useful question is rarely how much loss there
+      is. It is usually what happens in the first moments after something wakes up, and from UFS 5.0 onwards, how
+      much of a smaller PAM4 eye is left once the neighbours and the supply have taken their share.
     </p>
 
     <h3>Related</h3>
     <ul class="tight">
+      <li><a href="../signal-integrity/nrz-vs-pam4.html">NRZ vs PAM4</a></li>
       <li><a href="../fundamentals/differential-signalling.html">Differential Signaling: Common Mode and Mode Conversion</a></li>
       <li><a href="../package-board/bga-escape-routing.html">BGA Escape Routing and Breakout Congestion</a></li>
       <li><a href="../signal-integrity/equalization.html">SerDes Equalization: CTLE, FFE, DFE and CDR</a></li>
       <li><a href="../fundamentals/crosstalk.html">PCB Crosstalk: NEXT, FEXT, and Mutual Coupling</a></li>
+      <li><a href="../power-integrity/anti-resonance.html">Anti-resonance</a></li>
     </ul>
   </div>
 
@@ -336,11 +423,16 @@
       <li><a href="https://www.jedec.org/news/pressreleases/jedec-updates-universal-flash-storage-ufs-and-supporting-memory-interface" target="_blank" rel="noopener">JEDEC — JESD220F UFS 4.0 announcement</a> <span class="src__for">C-12c</span></li>
       <li><a href="https://www.jedec.org/node/9631" target="_blank" rel="noopener">JEDEC — UFS 5.0 announcement</a> <span class="src__for">C-12d</span></li>
       <li><a href="https://mixel.com/m-phy-benefits-challenges/" target="_blank" rel="noopener">Mixel — M-PHY benefits and challenges</a> <span class="src__for">C-14</span></li>
+      <li><a href="https://www.jedec.org/news/pressreleases/jedec-publishes-universal-flash-storage-ufs-ufshci-version-30-and-ufs-card" target="_blank" rel="noopener">JEDEC — UFS 3.0 (JESD220D) announcement</a> <span class="src__for">C-157</span></li>
+      <li><a href="https://www.jedec.org/news/pressreleases/jedec-publishes-update-universal-flash-storage-ufs-standard" target="_blank" rel="noopener">JEDEC — UFS 3.1 (JESD220E) announcement</a> <span class="src__for">C-158</span></li>
+      <li><a href="https://www.jedec.org/node/9494" target="_blank" rel="noopener">JEDEC — UFS 4.1 (JESD220G) announcement</a> <span class="src__for">C-160</span></li>
+      <li><a href="https://www.mipi.org/specifications/m-phy" target="_blank" rel="noopener">MIPI Alliance — M-PHY specification page</a> <span class="src__for">C-162</span></li>
+      <li><a href="https://www.graniteriverlabs.com/en-us/technical-blog/mipi-m-phy-receiver-conformance" target="_blank" rel="noopener">Granite River Labs — MIPI M-PHY receiver conformance testing</a> <span class="src__for">C-164</span></li>
       </ul>
       <p class="sources__note">Rows marked with a claim id are tracked in <a href="../../docs/claims.md">the claim ledger</a>, which records what each source can and cannot establish.</p>
     </section>
     <!-- sources:end -->
-  <!-- share:foot:start --><div class="share share--foot" data-share data-share-url="https://sipi.work/topics/interfaces/ufs4.html" data-share-title="UFS 4.0 Signal Integrity: M-PHY Gear 5"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Fufs4.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Fufs4.html&amp;text=UFS%204.0%20Signal%20Integrity%3A%20M-PHY%20Gear%205" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=UFS%204.0%20Signal%20Integrity%3A%20M-PHY%20Gear%205&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Fufs4.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:foot:end -->
+  <!-- share:foot:start --><div class="share share--foot" data-share data-share-url="https://sipi.work/topics/interfaces/ufs4.html" data-share-title="UFS 3.1 vs 4.0 vs 5.0: M-PHY Gears, Burst Mode and Signal Integrity"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Fufs4.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Fufs4.html&amp;text=UFS%203.1%20vs%204.0%20vs%205.0%3A%20M-PHY%20Gears%2C%20Burst%20Mode%20and%20Signal%20Integrity" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=UFS%203.1%20vs%204.0%20vs%205.0%3A%20M-PHY%20Gears%2C%20Burst%20Mode%20and%20Signal%20Integrity&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Fufs4.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:foot:end -->
 
   <!-- pager:start -->
   <nav class="pager" aria-label="Previous and next topic">

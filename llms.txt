@@ -101,7 +101,7 @@ Interface-specific data rates, channel considerations, and source boundaries.
 - [Chiplet Interconnects: UCIe vs BoW vs AIB Compared](https://sipi.work/topics/interfaces/chiplet-interconnects.html)
 - [112G vs 224G Ethernet Signal Integrity: 802.3ck and 802.3dj](https://sipi.work/topics/interfaces/ethernet-112g-224g.html)
 - [USB 3.2 Gen 1 vs Gen 2 vs Gen 2x2: Loss Budget, SSC and Compliance](https://sipi.work/topics/interfaces/usb-3x.html)
-- [UFS 4.0 Signal Integrity: M-PHY Gear 5](https://sipi.work/topics/interfaces/ufs4.html)
+- [UFS 3.1 vs 4.0 vs 5.0: M-PHY Gears, Burst Mode and Signal Integrity](https://sipi.work/topics/interfaces/ufs4.html)
 
 ## Methodology
 

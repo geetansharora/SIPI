@@ -3194,6 +3194,158 @@
       "humanReviewedOn": null,
       "source_title": "USB-IF — Universal Serial Bus 3.2 Specification, Revision 1.1 (June 2022)",
       "source_url": "https://www.usb.org/document-library/usb-32-revision-11-june-2022"
+    },
+    {
+      "id": "C-157",
+      "statement": "JEDEC published UFS 3.0 (JESD220D) on 30 January 2018, the first UFS to use M-PHY HS-Gear4, at up to 11.6 Gbps per lane. It uses M-PHY v4.1 and UniPro v1.8, with two lanes for a maximum of 23.2 Gbps, and uses M-PHY v4.1's Adapt support to monitor and train the channel. It specifies a 2.5 V VCC supply.",
+      "pages": [
+        "interfaces/ufs4"
+      ],
+      "source_type": "public-rate",
+      "source": "JEDEC press release, 30 January 2018",
+      "conditions": "Interface rate is raw, before line coding",
+      "status": "verified",
+      "note": "'the first standard to introduce MIPI M-PHY HS-Gear4, with a data rate of up to 11.6 Gbps per lane'; 'Continues support of 2-Lanes, max data rate of 23.2 Gbps'; 'Utilizes Adapt support in MIPI M-PHY v4.1 ... by monitoring and training the communication channel'. Read on jedec.org on 18 Oct 2026.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-18",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null,
+      "source_title": "JEDEC — UFS 3.0 (JESD220D) announcement",
+      "source_url": "https://www.jedec.org/news/pressreleases/jedec-publishes-universal-flash-storage-ufs-ufshci-version-30-and-ufs-card"
+    },
+    {
+      "id": "C-158",
+      "statement": "JEDEC published UFS 3.1 (JESD220E) on 30 January 2020, still on M-PHY v4.1 and UniPro v1.8. It added DeepSleep, a low-power device state for lower-cost systems whose UFS voltage regulators are shared with other functions.",
+      "pages": [
+        "interfaces/ufs4"
+      ],
+      "source_type": "public-rate",
+      "source": "JEDEC press release, 30 January 2020",
+      "conditions": "Feature list of the release",
+      "status": "verified",
+      "note": "'references the MIPI M-PHY v4.1 physical layer specification and the MIPI UniPro v1.8 transport layer specification'. Read on jedec.org on 18 Oct 2026.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-18",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null,
+      "source_title": "JEDEC — UFS 3.1 (JESD220E) announcement",
+      "source_url": "https://www.jedec.org/news/pressreleases/jedec-publishes-update-universal-flash-storage-ufs-standard"
+    },
+    {
+      "id": "C-159",
+      "statement": "UFS 4.0 (JESD220F, 17 August 2022) uses M-PHY v5.0 and UniPro v2.0 to double the interface bandwidth to about 4.2 GB/s for reads and writes. It also adds High Speed Link Startup and M-PHY's Eye Monitor, lowers VCC from 3.3 V to 2.5 V, and stays backward compatible with UFS 3.1 and 3.0.",
+      "pages": [
+        "interfaces/ufs4"
+      ],
+      "source_type": "public-rate",
+      "source": "JEDEC press release, 17 August 2022",
+      "conditions": "Feature list of the release",
+      "status": "verified",
+      "note": "'Improved system latencies by enabling High Speed Link Startup'; 'introducing Enhanced Device Error History ... and M-PHY's Eye Monitor'; 'Utilizes a more efficient VCC=2.5V as opposed to the 3.3V supported in the prior version'. Read on jedec.org on 18 Oct 2026.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-18",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null,
+      "source_title": "JEDEC — JESD220F UFS 4.0 announcement",
+      "source_url": "https://www.jedec.org/news/pressreleases/jedec-updates-universal-flash-storage-ufs-and-supporting-memory-interface"
+    },
+    {
+      "id": "C-160",
+      "statement": "UFS 4.1 (JESD220G) was announced on 8 January 2025, and JEDEC lists it as superseding UFS 4.0 in December 2024. It keeps M-PHY v5.0 and UniPro v2.0 and about 4.2 GB/s, and is hardware compatible with UFS 4.0; its changes are in the device and host-controller features.",
+      "pages": [
+        "interfaces/ufs4"
+      ],
+      "source_type": "public-rate",
+      "source": "JEDEC press release, 8 January 2025; JEDEC JESD220F document page (status line)",
+      "conditions": "The PHY layer is unchanged from UFS 4.0",
+      "status": "verified",
+      "note": "'maintaining hardware compatibility to UFS 4.0'; listed changes are host-initiated defragmentation, WriteBooster resize, bootable LUs, RPMB authentication, exception types and QLC preparation. The supersession date is from JEDEC's JESD220F page.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-18",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null,
+      "source_title": "JEDEC — UFS 4.1 (JESD220G) announcement",
+      "source_url": "https://www.jedec.org/node/9494"
+    },
+    {
+      "id": "C-161",
+      "statement": "UFS 5.0 (JESD220H, 26 February 2026) reaches 46.6 Gb/s per lane per direction with M-PHY HS-G6, and up to about 10.8 GB/s over two lanes. It integrates link equalization, adds a distinct power-supply rail that isolates the PHY from the memory subsystem's noise, and stays compatible with UFS 4.x hardware.",
+      "pages": [
+        "interfaces/ufs4"
+      ],
+      "source_type": "public-rate",
+      "source": "JEDEC press release, 26 February 2026",
+      "conditions": "Features attributed to the JEDEC and MIPI collaboration",
+      "status": "verified",
+      "note": "'Enhanced signal integrity through integrated link equalization'; 'a distinct power supply rail to provide noise isolation between PHY and memory subsystem'; '46.6 Gb/s per lane per direction and supporting up to ~10.8 GB/s effective read/write operation for UFS 5.0 over 2 M-PHY lanes'. Read on jedec.org on 18 Oct 2026.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-18",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null,
+      "source_title": "JEDEC — UFS 5.0 announcement",
+      "source_url": "https://www.jedec.org/node/9631"
+    },
+    {
+      "id": "C-162",
+      "statement": "M-PHY v5.0 (announced 14 December 2021) added HS-G5 at 23.32 Gbps per lane (93.28 Gbps over four lanes), high-speed startup, eye monitoring and new equalisation attributes, and is backward compatible through v4.1. M-PHY v6.0 (December 2025) adds HS-G6 using PAM-4 at up to 46.694 Gbps per lane, a 1b1b line encoding that cuts PHY coding overhead below 10%, and optional link equalisation and training.",
+      "pages": [
+        "interfaces/ufs4"
+      ],
+      "source_type": "public-rate",
+      "source": "MIPI Alliance M-PHY specification page; M-PHY v5.0 press release (14 December 2021)",
+      "conditions": "Public summaries; the specifications are members-only",
+      "status": "verified",
+      "note": "M-PHY page: 'New high-speed gear (HS-G6), using PAM-4 signaling scheme, doubling the bandwidth of the interface to a maximum of 46.694 Gbps per lane'; 'New 1b1b line encoding for HS-G6, improving throughput efficiency by reducing PHY coding overhead to below 10%'. Press release: 'M-PHY v5.0 is backward compatible through v4.1'.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-18",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null,
+      "source_title": "MIPI Alliance — M-PHY specification page",
+      "source_url": "https://www.mipi.org/specifications/m-phy"
+    },
+    {
+      "id": "C-163",
+      "statement": "In M-PHY, terminated signalling is mandatory in high-speed (HS) mode and unterminated signalling optional, with large and small amplitude settings, and 8b10b coding limits common-mode noise. An HS receiver locks its CDR on a synchronisation sequence whose length the specification leaves to the application; its low-speed PWM mode embeds the clock in the data and needs no CDR. Leaving the STALL state between HS bursts takes nanoseconds, while leaving HIBERN8, the ultra-low-power state, takes hundreds to thousands of microseconds, programmably.",
+      "pages": [
+        "interfaces/ufs4"
+      ],
+      "source_type": "commercial",
+      "source": "Mixel and ST-Ericsson, \"M-PHY Benefits and Challenges\" (A. Takla, C. Bertholom)",
+      "conditions": "Written for M-PHY v1.0, about 2011; later versions added HS-G4 to HS-G6 and high-speed startup, so the timings are indicative of the state structure, not limits for UFS 4.0",
+      "status": "scoped",
+      "note": "'HS operation support of terminated operation is mandatory, while support for un-terminated operation is optional'; 'A synchronization sequence locks the receiver CDR phase and frequency'; 'The M-PHY specification does not dictate this sequence length'; Hibern8: 'takes hundreds to thousands of microseconds'; HS Stall: 'a fast transition in the range of ns'. PWM: 'Since the clock is embedded in PWM data, no Clock/Data Recovery (CDR) or even a PLL is needed.' That 8b10b still applies up to HS-G5 is supported by M-PHY v6.0 introducing 1b1b specifically to cut coding overhead below 10% (C-162), and by JEDEC's ~4.2 GB/s being about 90% of two HS-G5 lanes after 8b10b.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-18",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null,
+      "source_title": "Mixel — M-PHY benefits and challenges",
+      "source_url": "https://mixel.com/m-phy-benefits-challenges/"
+    },
+    {
+      "id": "C-164",
+      "statement": "M-PHY transmitter conformance is specified at the transmitter pins, with HS-G4 and HS-G5 eyes accumulated to 1e-6 and extrapolated to a bit error ratio of 1e-12. Receiver conformance sends a calibrated stressed signal, including a conformant ISI channel, and requires zero errors over at least 3e10 bits for a 1e-10 target or 3e12 bits for 1e-12.",
+      "pages": [
+        "interfaces/ufs4"
+      ],
+      "source_type": "commercial",
+      "source": "Tektronix, 'MIPI M-PHY Transmitter Test Solutions' datasheet (TekExpress M-PHY Tx, MPHY50/MPHY40); Granite River Labs, 'MIPI M-PHY Receiver Conformance Testing for Physical Layer Evaluation' (24 September 2024)",
+      "conditions": "Test-equipment vendors describing the M-PHY v5.0 conformance test suite; the limits themselves are in the members-only CTS",
+      "status": "scoped",
+      "note": "Tektronix: 'measurements are specified at the TX pins'; 'the eye diagram shows the accumulated eye at BER E-6 and extrapolated eye ... at BER of 1E-12'. GRL: 'observable bits of minimum 3E+10 (@ 1E-10 target BER) or 3E+12 (@ 1E-12 target BER)'; the device 'must report zero received errors'.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-18",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null,
+      "source_title": "Granite River Labs — MIPI M-PHY receiver conformance testing",
+      "source_url": "https://www.graniteriverlabs.com/en-us/technical-blog/mipi-m-phy-receiver-conformance"
     }
   ]
 }
