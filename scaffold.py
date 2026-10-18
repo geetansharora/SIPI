@@ -47,10 +47,19 @@ def is_private_doc(rel):
     return rel.startswith("docs/") and rel not in _public_docs()
 
 
+def in_hidden_dir(rel):
+    """True under a dot-directory. .claude/worktrees/ holds other sessions' full
+    checkouts of this repo; on 18 Oct 2026 the stamping commands walked into one and
+    rewrote 89 of its files. Nothing under a dot-directory is a page of this tree."""
+    return any(p.startswith(".") for p in Path(rel).parts[:-1])
+
+
 def site_html():
     """Every HTML file the site actually publishes."""
     for f in sorted(ROOT.rglob("*.html")):
         rel = f.relative_to(ROOT)
+        if in_hidden_dir(rel):
+            continue
         if rel.parts and rel.parts[0] in NON_PAGE_DIRS:
             continue
         if is_private_doc(rel):
@@ -601,6 +610,7 @@ def reference_library_problems():
 
 
 TITLE_RENAMES = {
+    "USB 3.1 and 3.2 Signal Integrity: SSC and Compliance": "USB 3.2 Gen 1 vs Gen 2 vs Gen 2x2: Loss Budget, SSC and Compliance",
     "PCIe 4.0 vs PCIe 5.0: Loss Budget, Tx Presets and Link Equalization": "PCIe 4.0 vs 5.0: Loss Budget, Tx Presets, Link Equalization",
     "PCIe Gen 4 and Gen 5 Signal Integrity: Loss and EQ": "PCIe 4.0 vs 5.0: Loss Budget, Tx Presets, Link Equalization",
     "PCIe 6.0 Signal Integrity: PAM4, FLIT, and FEC": "PCIe 6.0 vs PCIe 5.0: PAM4, FLIT, FEC and Signal Integrity",
@@ -660,7 +670,7 @@ TITLE_RENAMES = {
     "LPDDR5/5X — timing budget, ODT, training": "LPDDR5/5X Signal Integrity: WCK, ODT and Training",
     "PCIe Gen 4/5 — loss budget and equalisation": "PCIe 4.0 vs 5.0: Loss Budget, Tx Presets, Link Equalization",
     "PCIe Gen 6 — PAM4, FLIT, FEC": "PCIe 6.0 vs PCIe 5.0: PAM4, FLIT, FEC and Signal Integrity",
-    "USB 3.1/3.2 — SSC and compliance": "USB 3.1 and 3.2 Signal Integrity: SSC and Compliance",
+    "USB 3.1/3.2 — SSC and compliance": "USB 3.2 Gen 1 vs Gen 2 vs Gen 2x2: Loss Budget, SSC and Compliance",
     "UFS 4.0 — M-PHY HS-Gear5": "UFS 4.0 Signal Integrity: M-PHY Gear 5",
 }
 
@@ -1021,7 +1031,7 @@ def cmd_theme():
     n = 0
     for f in sorted(ROOT.rglob("*.html")):
         rel = f.relative_to(ROOT).as_posix()
-        if rel.startswith("tests/") or "experimental" in rel or is_private_doc(rel):
+        if in_hidden_dir(rel) or rel.startswith("tests/") or "experimental" in rel or is_private_doc(rel):
             continue
         html = f.read_text(encoding="utf-8")
         new = stamp_theme_boot(html)
@@ -3135,7 +3145,7 @@ def cmd_check():
     planned = [t for t in flat if t["status"] == "planned" and not t["path"].exists()]
     orphans = [p for p in sorted((ROOT / "topics").rglob("*.html")) if p.resolve() not in known]
 
-    print(f"{checked} internal link(s) checked across {len(list(ROOT.rglob('*.html')))} page(s)")
+    print(f"{checked} internal link(s) checked across {sum(1 for p in ROOT.rglob('*.html') if not in_hidden_dir(p.relative_to(ROOT)))} page(s)")
     if dead:
         print(f"\n{len(dead)} DEAD LINK(S):")
         for d in dead:

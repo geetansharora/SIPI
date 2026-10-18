@@ -7,8 +7,8 @@
   <meta name="theme-color" content="#F7F8FA">
   <script>(function(){try{var t=localStorage.getItem('sipi-theme');if(t==='dark'||t==='system'){document.documentElement.setAttribute('data-theme',t);var m=document.querySelector('meta[name=theme-color]');if(m&&(t==='dark'||matchMedia('(prefers-color-scheme:dark)').matches))m.content='#0B1015';}}catch(e){}})();</script>
   <!-- theme:end -->
-<title>USB 3.1 and 3.2 Signal Integrity: SSC and Compliance | SIPI</title>
-<meta name="description" content="5, 10 and 20 Gbps over a channel that includes a cable you did not design — spread spectrum, Type-C orientation, and what compliance actually tests.">
+<title>USB 3.2 Gen 1 vs Gen 2 vs Gen 2x2: Loss Budget, SSC and Compliance | SIPI</title>
+<meta name="description" content="USB 3.0, 3.1 and 3.2 decoded for signal integrity: 5, 10 and 20 Gbps, the 23 dB Gen 2 loss budget, Type-C cable limits, SSC, Tx EQ and the compliance eye.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
@@ -19,20 +19,20 @@
   <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
   <meta property="og:type" content="article">
   <meta property="og:site_name" content="SIPI">
-  <meta property="og:title" content="USB 3.1 and 3.2 Signal Integrity: SSC and Compliance | SIPI">
-  <meta property="og:description" content="5, 10 and 20 Gbps over a channel that includes a cable you did not design — spread spectrum, Type-C orientation, and what compliance actually tests.">
+  <meta property="og:title" content="USB 3.2 Gen 1 vs Gen 2 vs Gen 2x2: Loss Budget, SSC and Compliance | SIPI">
+  <meta property="og:description" content="USB 3.0, 3.1 and 3.2 decoded for signal integrity: 5, 10 and 20 Gbps, the 23 dB Gen 2 loss budget, Type-C cable limits, SSC, Tx EQ and the compliance eye.">
   <meta property="og:url" content="https://sipi.work/topics/interfaces/usb-3x.html">
   <meta property="og:image" content="https://sipi.work/assets/og/interfaces/usb-3x.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
-  <meta property="og:image:alt" content="USB 3.1 and 3.2 Signal Integrity: SSC and Compliance: a figure from the page, on SIPI">
+  <meta property="og:image:alt" content="USB 3.2 Gen 1 vs Gen 2 vs Gen 2x2: Loss Budget, SSC and Compliance: a figure from the page, on SIPI">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="USB 3.1 and 3.2 Signal Integrity: SSC and Compliance | SIPI">
-  <meta name="twitter:description" content="5, 10 and 20 Gbps over a channel that includes a cable you did not design — spread spectrum, Type-C orientation, and what compliance actually tests.">
+  <meta name="twitter:title" content="USB 3.2 Gen 1 vs Gen 2 vs Gen 2x2: Loss Budget, SSC and Compliance | SIPI">
+  <meta name="twitter:description" content="USB 3.0, 3.1 and 3.2 decoded for signal integrity: 5, 10 and 20 Gbps, the 23 dB Gen 2 loss budget, Type-C cable limits, SSC, Tx EQ and the compliance eye.">
   <meta name="twitter:image" content="https://sipi.work/assets/og/interfaces/usb-3x.png">
-  <meta name="twitter:image:alt" content="USB 3.1 and 3.2 Signal Integrity: SSC and Compliance: a figure from the page, on SIPI">
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"USB 3.1 and 3.2 Signal Integrity: SSC and Compliance","description":"5, 10 and 20 Gbps over a channel that includes a cable you did not design — spread spectrum, Type-C orientation, and what compliance actually tests.","url":"https://sipi.work/topics/interfaces/usb-3x.html","articleSection":"Interface sign-off","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer","url":"https://www.linkedin.com/in/geetansh-arora-a645714a/","sameAs":["https://www.linkedin.com/in/geetansh-arora-a645714a/"]},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-09-18","image":"https://sipi.work/assets/og/interfaces/usb-3x.png"}</script>
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"SIPI","item":"https://sipi.work/"},{"@type":"ListItem","position":2,"name":"Interface sign-off","item":"https://sipi.work/#interfaces"},{"@type":"ListItem","position":3,"name":"USB 3.1 and 3.2 Signal Integrity: SSC and Compliance"}]}</script>
+  <meta name="twitter:image:alt" content="USB 3.2 Gen 1 vs Gen 2 vs Gen 2x2: Loss Budget, SSC and Compliance: a figure from the page, on SIPI">
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"USB 3.2 Gen 1 vs Gen 2 vs Gen 2x2: Loss Budget, SSC and Compliance","description":"USB 3.0, 3.1 and 3.2 decoded for signal integrity: 5, 10 and 20 Gbps, the 23 dB Gen 2 loss budget, Type-C cable limits, SSC, Tx EQ and the compliance eye.","url":"https://sipi.work/topics/interfaces/usb-3x.html","articleSection":"Interface sign-off","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer","url":"https://www.linkedin.com/in/geetansh-arora-a645714a/","sameAs":["https://www.linkedin.com/in/geetansh-arora-a645714a/"]},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-10-18","image":"https://sipi.work/assets/og/interfaces/usb-3x.png"}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"SIPI","item":"https://sipi.work/"},{"@type":"ListItem","position":2,"name":"Interface sign-off","item":"https://sipi.work/#interfaces"},{"@type":"ListItem","position":3,"name":"USB 3.2 Gen 1 vs Gen 2 vs Gen 2x2: Loss Budget, SSC and Compliance"}]}</script>
   <!-- meta:end -->
 </head>
 <body>
@@ -52,275 +52,466 @@
 <main>
   <div class="page-head">
     <p class="crumb"><a href="../../index.html#interfaces">Interface sign-off</a> / 06</p>
-    <h1>USB 3.1 and 3.2 Signal Integrity: SSC and Compliance</h1>
+    <h1>USB 3.2 Gen 1 vs Gen 2 vs Gen 2x2: Loss Budget, SSC and Compliance</h1>
     <p class="byline">
-      <!-- review:start --><span>By <a href="https://www.linkedin.com/in/geetansh-arora-a645714a/" target="_blank" rel="author noopener">Geetansh Arora</a> — Principal SI/PI Engineer</span><time datetime="2026-09-18" title="Technical review by Geetansh Arora on this date">18 Sep 2026</time><span>9 min</span><!-- review:end -->
+      <!-- review:start --><span>By <a href="https://www.linkedin.com/in/geetansh-arora-a645714a/" target="_blank" rel="author noopener">Geetansh Arora</a> — Principal SI/PI Engineer</span><time datetime="2026-10-18" title="Technical review by Geetansh Arora on this date">18 Oct 2026</time><span>12 min</span><!-- review:end -->
     </p>
-    <!-- share:head:start --><div class="share share--head" data-share data-share-url="https://sipi.work/topics/interfaces/usb-3x.html" data-share-title="USB 3.1 and 3.2 Signal Integrity: SSC and Compliance"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Fusb-3x.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Fusb-3x.html&amp;text=USB%203.1%20and%203.2%20Signal%20Integrity%3A%20SSC%20and%20Compliance" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=USB%203.1%20and%203.2%20Signal%20Integrity%3A%20SSC%20and%20Compliance&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Fusb-3x.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:head:end -->
+    <!-- share:head:start --><div class="share share--head" data-share data-share-url="https://sipi.work/topics/interfaces/usb-3x.html" data-share-title="USB 3.2 Gen 1 vs Gen 2 vs Gen 2x2: Loss Budget, SSC and Compliance"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Fusb-3x.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Fusb-3x.html&amp;text=USB%203.2%20Gen%201%20vs%20Gen%202%20vs%20Gen%202x2%3A%20Loss%20Budget%2C%20SSC%20and%20Compliance" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=USB%203.2%20Gen%201%20vs%20Gen%202%20vs%20Gen%202x2%3A%20Loss%20Budget%2C%20SSC%20and%20Compliance&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Fusb-3x.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:head:end -->
     <p class="answer">
-      USB is the interface where you do not own the channel. The board is yours; the connector, the
-      cable and whatever is at the far end are not. That inverts the usual priorities &#8212; the
-      rates are undemanding, and the engineering is about tolerating variation you cannot
-      characterise.
+      USB 3.2 runs 5 Gbps per lane at Gen 1, with 8b/10b coding, and 10 Gbps at Gen 2, with 128b/132b coding; Gen 2x2
+      carries 20 Gbps over two lanes of a Type-C cable. At Gen 2 the whole channel, from one controller to the other, is
+      allowed 23 dB of loss at 5 GHz, and only about a third of it is on your board: the cable and the product at the
+      far end are chosen by the user after your design ships. So USB design is about keeping your share of the loss small,
+      launching cleanly into the connector, and leaving the receiver&#8217;s equaliser and the mandatory spread-spectrum
+      clock to do the jobs the specification defines for them.
+    </p>
+  </div>
+
+  <div class="prose">
+    <h2 class="section-rule" id="at-a-glance"><span>At a glance</span></h2>
+    <h3>USB 3.0 vs 3.1 vs 3.2: what is the difference?</h3>
+    <p>
+      Mostly names. USB 3.0 (2008) defined 5 Gbps signalling; USB 3.1 (2013) added 10 Gbps and called the two rates
+      Gen 1 and Gen 2; USB 3.2 (2017) absorbed both and added two-lane operation over Type-C, Gen 1x2 at 10 Gbps and
+      Gen 2x2 at 20 Gbps (C-143, C-144, C-146). A &#8220;USB 3.0&#8221; port and a &#8220;USB 3.2 Gen 1&#8221; port are
+      electrically the same 5 Gbps link. The <a href="#names">naming table</a> lines them up.
+    </p>
+    <h3>How fast is USB 3.2 Gen 2x2 really?</h3>
+    <p>
+      After line coding, one Gen 1 lane carries 500 MB/s and one Gen 2 lane about 1.2 GB/s; two lanes double that, to
+      1 GB/s and about 2.4 GB/s for Gen 2x2. Framing, flow control and protocol overhead then bring an application down
+      to 450 MB/s or less per Gen 1 lane and about 1.1 GB/s or less per Gen 2 lane (C-145). Gen is the rate per lane;
+      the &#8220;x2&#8221; is the lane count.
+    </p>
+    <h3>What is the USB 3.2 Gen 2 loss budget?</h3>
+    <p>
+      23 dB at 5 GHz, from a host or device transmitter to the receiver at the far end (C-152). A passive Type-C cable
+      may take 6 dB of that (C-153), which leaves 8.5 dB for each end: the same 8.5 dB the Type-C specification gives
+      a transmitter in a cable plug driving into a controller (C-152). <a href="#budget">The budget section</a> walks
+      through it.
+    </p>
+    <h3>How long can a USB-C cable be for 10 Gbps?</h3>
+    <p>
+      The Type-C specification lists the practical length of a passive Gen 2 cable as up to 1 m, and a Gen 1 cable as up
+      to 2 m (C-153). Those lengths are informative; what a cable must actually meet is a loss limit, no worse than
+      &#8722;6 dB at 5 GHz for Gen 2 and &#8722;7 dB at 2.5 GHz for Gen 1. With the specification&#8217;s own raw-cable
+      examples, 6 dB at 5 GHz is just under 1 m of 34 AWG coax and about 1.9 m of 28 AWG, before the plugs take their
+      share (C-153, C-154).
+    </p>
+    <h3>Is spread-spectrum clocking required for USB 3.2?</h3>
+    <p>
+      Yes, on every port. The data rate is pulled down by between 4000 and 5000 ppm at its deepest and back again, 30
+      to 33 thousand times a second; the shape of the sweep is up to the vendor (C-15). The receiver&#8217;s clock
+      recovery has to follow it, so a simulation or a bench test with a fixed clock leaves out a term the specification
+      assumes is there.
+    </p>
+    <h3>What equalization does USB 3.2 use?</h3>
+    <p>
+      A Gen 1 transmitter applies 3.0 to 4.0 dB of de-emphasis; a Gen 2 transmitter has a three-tap filter with 1.2 to
+      3.2 dB of preshoot and 2.1 to 7.0 dB of de-emphasis (C-147). For compliance the receiver is modelled as a
+      continuous-time linear equaliser (CTLE) at Gen 1, and as a CTLE plus a one-tap decision feedback equaliser (DFE)
+      at Gen 2. Real receivers may use anything, and train on a pattern sent during link-up (C-150).
+    </p>
+    <h3>Why does Gen 2x2 need a Type-C connector?</h3>
+    <p>
+      Because it needs two transmit pairs and two receive pairs, and only Type-C has them. Dual-lane operation is
+      defined for Type-C only (C-146). The receptacle has two sets of SuperSpeed pins so the plug can go in either way
+      up; one lane uses whichever set the orientation selects, and two lanes use both, with the CC pins deciding which
+      is Lane 0 (C-155).
+    </p>
+    <h3>What impedance does USB 3.2 use?</h3>
+    <p>
+      Type-C cables and connectors are specified with S-parameters normalised to 85 &#937; differential, and a mated
+      connector should sit within 85 &#177; 9 &#937; (C-154). The transmitter&#8217;s own DC differential impedance may
+      be 72 to 120 &#937; (C-147). The specifications do not fix your board&#8217;s trace impedance; they expect each
+      silicon vendor to publish layout guidelines for its part (C-156), and those are where the number comes from.
     </p>
   </div>
 
   <!-- ───────────── the picture ───────────── -->
   <figure class="figure">
-    <div class="figure__bar"><span>Two problems PCIe does not have</span></div>
-    <div class="figure__body"><svg viewBox="-4 14 680 260" role="img" aria-label="Spread spectrum clocking shown as a slowly modulated clock frequency, alongside a USB channel made of two boards, two Type-C connectors and a user-supplied cable.">
-  <g>
-    <text class="lbl-hi" x="0" y="34">SSC is mandatory — and the receiver pays for it</text>
-    <path class="edge dash" d="M0,86 L300,86" stroke="var(--muted)"/>
-    <text class="lbl" x="306" y="88">nominal</text>
-    <polyline points="0,112.0 4,109.1 8,106.3 12,103.8 16,101.6 20,99.9 24,98.7 28,98.1 32,98.1 36,98.7 40,99.9 44,101.6 48,103.8 52,106.3 56,109.1 60,112.0 64,114.9 68,117.7 72,120.2 76,122.4 80,124.1 84,125.3 88,125.9 92,125.9 96,125.3 100,124.1 104,122.4 108,120.2 112,117.7 116,114.9 120,112.0 124,109.1 128,106.3 132,103.8 136,101.6 140,99.9 144,98.7 148,98.1 152,98.1 156,98.7 160,99.9 164,101.6 168,103.8 172,106.3 176,109.1 180,112.0 184,114.9 188,117.7 192,120.2 196,122.4 200,124.1 204,125.3 208,125.9 212,125.9 216,125.3 220,124.1 224,122.4 228,120.2 232,117.7 236,114.9 240,112.0 244,109.1 248,106.3 252,103.8 256,101.6 260,99.9 264,98.7 268,98.1 272,98.1 276,98.7 280,99.9 284,101.6 288,103.8 292,106.3 296,109.1 300,112.0" class="flow" fill="none"/>
-    <path class="edge dash" d="M0,126 L300,126" stroke="var(--alarm)"/>
-    <text class="lbl-bad" x="306" y="128">&#8722;5000 ppm</text>
-    <text class="lbl-sig" x="0" y="152">clock wanders down-spread at tens of kHz</text>
-    <text class="lbl" x="0" y="168">emissions energy spread instead of a narrow spike</text>
-    <text class="lbl-bad" x="0" y="190">so the CDR must track a moving clock —</text>
-    <text class="lbl-bad" x="0" y="206">simulating with a fixed clock omits a real term</text>
-  </g>
-  <g transform="translate(400,0)">
-    <text class="lbl-hi" x="0" y="34">and half the channel ships with the user</text>
-    <rect class="edge" x="0" y="48" width="52" height="28" rx="2" fill="var(--surface-2)"/>
-    <text class="lbl" x="26" y="66" text-anchor="middle">host</text>
-    <rect class="copper-2" x="52" y="52" width="14" height="20" rx="2"/>
-    <rect x="66" y="54" width="120" height="16" rx="8" fill="var(--alarm)" opacity=".35"/>
-    <rect class="copper-2" x="186" y="52" width="14" height="20" rx="2"/>
-    <rect class="edge" x="200" y="48" width="52" height="28" rx="2" fill="var(--surface-2)"/>
-    <text class="lbl" x="226" y="66" text-anchor="middle">device</text>
-    <text class="lbl-bad" x="126" y="92" text-anchor="middle">unknown length and quality</text>
-    <text class="lbl-ref" x="59" y="110" text-anchor="middle">Type-C</text>
-    <text class="lbl-ref" x="193" y="110" text-anchor="middle">Type-C</text>
-    <text class="lbl" x="0" y="140">reversible — so a mux or redriver sits</text>
-    <text class="lbl" x="0" y="156">in the signal path, adding its own loss</text>
-    <text class="lbl-bad" x="0" y="182">design against the worst compliant cable,</text>
-    <text class="lbl-bad" x="0" y="198">not a typical one</text>
-  </g>
-</svg></div>
-    <figcaption><b>USB's distinguishing SI problem is not its data rate.</b> At 5 and 10 Gbps the unit intervals are 200 and 100 ps &#8212; undemanding next to Gen 5. It is that half the channel is a cable the user bought and plugged in either way up. <b>Spread spectrum</b> is mandatory: the clock is modulated roughly 0 to &#8722;5000 ppm at a rate in the low tens of kilohertz, which spreads emissions energy across a band instead of concentrating it in a spike. The cost lands on the receiver &#8212; the CDR must track a continuously moving clock, so SSC tracking is a real part of the jitter budget, and a simulation with a fixed-frequency clock has omitted a term the specification assumes is there. <b>Type-C reversibility</b> is a signal-integrity cost paid for a usability feature: the SuperSpeed pairs land on either of two pin sets, and whatever resolves that sits directly in the path. Compliance is a defined test, not an in-house flow &#8212; the transmitter is measured through a reference channel, and the receiver is fed a deliberately stressed signal and must hold its error rate.</figcaption>
+    <div class="figure__bar"><span>The Gen 2 channel, controller to controller &#183; drawn to scale in dB</span></div>
+    <div class="figure__body">
+        <svg viewBox="0 0 400 214" role="img" aria-label="The USB 3.2 Gen 2 loss budget, drawn to scale: 23 dB at 5 GHz from one controller to the other. Your host or device board, package to connector, takes 8.5 dB; a passive Type-C cable up to about 1 metre takes 6 dB; the other product takes 8.5 dB. Your share is 8.5 of 23 dB, about 37 percent; the other 14.5 dB, about 63 percent, ships with the user. At 23 dB, about 7 percent of the launched 5 GHz amplitude arrives.">
+        <text class="lbl-hi" x="20" y="14">USB 3.2 Gen 2 &#183; 23 dB at 5 GHz, controller to controller</text>
+        <rect class="copper" x="20" y="30" width="133.04" height="26" opacity=".85"/>
+        <text class="lbl-hi" x="86.52" y="47" text-anchor="middle" style="fill:var(--surface)">8.5 dB</text>
+        <text class="lbl" x="86.52" y="72" text-anchor="middle">your board</text>
+        <rect class="plane" x="153.04" y="30" width="93.91" height="26" opacity="1"/>
+        <text class="lbl-hi" x="200" y="47" text-anchor="middle" style="fill:var(--surface)">6 dB</text>
+        <text class="lbl" x="200" y="72" text-anchor="middle">cable, &#8804;1 m</text>
+        <rect class="copper" x="246.96" y="30" width="133.04" height="26" opacity=".4"/>
+        <text class="lbl-hi" x="313.48" y="47" text-anchor="middle">8.5 dB</text>
+        <text class="lbl" x="313.48" y="72" text-anchor="middle">their board</text>
+        <rect class="dielectric" x="150.04" y="26" width="6" height="34" rx="1"/>
+        <rect class="dielectric" x="243.96" y="26" width="6" height="34" rx="1"/>
+        <text class="lbl" x="153.04" y="88" text-anchor="middle">Type-C</text>
+        <text class="lbl" x="246.96" y="88" text-anchor="middle">Type-C</text>
+        <path class="flow" d="M20,104 V110 H151.04 V104"/>
+        <path class="flow-2" d="M155.04,104 V110 H380 V104"/>
+        <text class="lbl-sig" x="20" y="126">yours: 8.5 dB, 37%</text>
+        <text class="lbl-ref" x="380" y="126" text-anchor="end">ships with the user: 14.5 dB, 63%</text>
+        <text class="lbl" x="20" y="152">a cable plug driving the controller: 8.5 dB (C-152)</text>
+        <text class="lbl" x="20" y="168">23 dB at 5 GHz: about 7% of the launched amplitude</text>
+        <text class="lbl-hi" x="20" y="190">the eye at the far pin may be closed; equalisers reopen it</text>
+        </svg>
+    </div>
+    <figcaption><b>Most of the channel ships with the user.</b> The Type-C specification gives USB 3.2 Gen 2 a total of 23 dB at 5 GHz, and 8.5 dB for the stretch from a plug to a controller (C-152). With the 6 dB a passive cable is allowed (C-153), that leaves 8.5 dB for each end: package, board trace, any orientation switch, and the receptacle. The split is arithmetic from those two rows rather than a table in the specification. Your design controls the left third; the cable and the other product are whatever the user plugs in.</figcaption>
+  </figure>
+
+  <div class="prose">
+    <h2>Why USB is a channel you do not own</h2>
+
+    <p>
+      Most links on this site are a channel you can measure. A PCIe link lives entirely inside a product, and an LPDDR
+      bus is a few centimetres of your own board: you can build it, characterise it and sign it off. A USB channel is
+      your board, then a connector, then a cable of unknown length and quality made by someone you have never met, then
+      a product you have never seen. At Gen 2 your share is 8.5 of the 23 dB, about 37%; the other 63% arrives with
+      the user.
+    </p>
+
+    <p>
+      So the design target is different. It is not &#8220;make this channel good&#8221;, because you cannot. It is
+      <b>&#8220;leave as much margin as you can for the part you do not control&#8221;</b>, and that idea drives every
+      decision below. USB makes it workable by specifying the parts nobody owns: every cable must meet a loss limit,
+      every transmitter must produce a defined eye at the end of a worst-case reference channel, and every receiver must
+      tolerate a defined stressed signal.
+    </p>
+
+    <h2 class="section-rule" id="names"><span>USB 3.0, 3.1 and 3.2 names, decoded</span></h2>
+    <p>
+      The renaming caused more confusion than any electrical change. Each new specification absorbed the old one and
+      renamed what was already there, so one 5 Gbps link has had three names.
+    </p>
+    <div class="table-scroll">
+      <table class="data">
+        <caption>One link, several names (C-143, C-144, C-146)</caption>
+        <thead><tr><th>Link</th><th>Raw rate</th><th>Lanes</th><th>Coding</th><th>Called in USB 3.0</th><th>in USB 3.1</th><th>in USB 3.2</th></tr></thead>
+        <tbody>
+          <tr><th>5 Gbps</th><td>5 Gbps</td><td>1</td><td>8b/10b</td><td>SuperSpeed</td><td>Gen 1</td><td>Gen 1 (Gen 1x1)</td></tr>
+          <tr><th>10 Gbps</th><td>10 Gbps</td><td>1</td><td>128b/132b</td><td>&#8212;</td><td>Gen 2</td><td>Gen 2 (Gen 2x1)</td></tr>
+          <tr><th>10 Gbps, two lanes</th><td>2 &#215; 5 Gbps</td><td>2, Type-C only</td><td>8b/10b</td><td>&#8212;</td><td>&#8212;</td><td>Gen 1x2</td></tr>
+          <tr><th>20 Gbps</th><td>2 &#215; 10 Gbps</td><td>2, Type-C only</td><td>128b/132b</td><td>&#8212;</td><td>&#8212;</td><td>Gen 2x2</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>
+      For signal integrity the useful labels are the Gen number, which fixes the rate on each wire, and the lane count.
+      A Gen 1x2 link and a Gen 2x1 link both carry 10 Gbps raw, but the first does it with 5 Gbps on each of two lanes
+      and 8b/10b coding, so it delivers less to the application and puts half the frequency on each pair.
+    </p>
+
+    <h2 class="section-rule" id="side-by-side"><span>USB 3.2 Gen 1 vs Gen 2 vs Gen 2x2, side by side</span></h2>
+    <div class="table-scroll">
+      <table class="data">
+        <caption>The electrical numbers that matter for a board (ledger rows in brackets)</caption>
+        <thead><tr><th></th><th>Gen 1</th><th>Gen 2</th><th>Gen 2x2</th></tr></thead>
+        <tbody>
+          <tr><th>Rate per lane, coding</th><td>5 Gbps, 8b/10b</td><td>10 Gbps, 128b/132b</td><td>2 lanes of Gen 2 (C-146)</td></tr>
+          <tr><th>Unit interval</th><td>200 ps</td><td>100 ps</td><td>100 ps</td></tr>
+          <tr><th>Nyquist frequency</th><td>2.5 GHz</td><td>5 GHz</td><td>5 GHz</td></tr>
+          <tr><th>Raw throughput</th><td>500 MB/s</td><td>about 1.2 GB/s</td><td>about 2.4 GB/s (C-145)</td></tr>
+          <tr><th>Transmit swing</th><td colspan="3">0.8 to 1.2 V differential peak-to-peak, nominal 1 V (C-147)</td></tr>
+          <tr><th>Transmit equaliser</th><td>de-emphasis 3.0 to 4.0 dB</td><td colspan="2">3 taps: preshoot 1.2 to 3.2 dB, de-emphasis 2.1 to 7.0 dB (C-147)</td></tr>
+          <tr><th>Reference receiver</th><td>CTLE</td><td colspan="2">first-order CTLE + 1-tap DFE, 0 to 50 mV (C-150)</td></tr>
+          <tr><th>Transmit eye at TP4, after reference EQ</th><td>&#8805; 100 mV, TJ &#8804; 0.66 UI (132 ps)</td><td colspan="2">&#8805; 70 mV, TJ &#8804; 0.671 UI (67.1 ps), per lane (C-149)</td></tr>
+          <tr><th>End-to-end loss budget</th><td>not covered here</td><td colspan="2">23 dB at 5 GHz, per lane (C-152)</td></tr>
+          <tr><th>Type-C cable, practical length</th><td>up to 2 m</td><td colspan="2">up to 1 m (C-153)</td></tr>
+          <tr><th>Cable loss limit (fitted)</th><td>&#8805; &#8722;7 dB at 2.5 GHz</td><td colspan="2">&#8805; &#8722;6 dB at 5 GHz (C-153)</td></tr>
+          <tr><th>Cable mode conversion</th><td>&#8804; &#8722;17 dB</td><td colspan="2">&#8804; &#8722;20 dB, 100 MHz to 10 GHz (C-153)</td></tr>
+          <tr><th>Rx jitter tolerance corner</th><td>4.9 MHz</td><td colspan="2">7.5 MHz (C-151)</td></tr>
+          <tr><th>Spread spectrum</th><td colspan="3">required: 30 to 33 kHz, peak &#8722;4000 to &#8722;5000 ppm (C-15)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2 class="section-rule" id="budget"><span>USB 3.2 Gen 2 loss budget: where the 23 dB goes</span></h2>
+    <p>
+      The Type-C specification states the end-to-end figure directly: a host or device transmitter must drive 23 dB of
+      loss at 5 GHz to the far side (C-152). It also says a transmitter sitting in a cable plug, right next to the port
+      it drives, only has to cover 8.5 dB to the controller&#8217;s receiver. That 8.5 dB is one product&#8217;s share
+      of the channel: package, board trace, any orientation switch or redriver, and the receptacle. Two of them plus the
+      6 dB a passive cable is allowed (C-153) make 8.5 + 6 + 8.5 = 23 dB.
+    </p>
+    <p>
+      Twenty-three decibels at 5 GHz means about 7% of the launched 5 GHz amplitude arrives. The low-frequency content
+      survives much better, so the waveform at the far pin is smeared rather than small, and the USB 3.2 specification
+      says plainly that for long cables and channels the eye at the receiver is closed until it is equalised (C-150).
+      That is the expected state of a compliant link, not a fault.
+    </p>
+    <p>
+      The cable&#8217;s 6 dB is why its length is limited. The Type-C specification&#8217;s raw-cable examples put
+      coaxial pairs at 6.1 dB/m at 5 GHz for 34 AWG and 3.1 dB/m for 28 AWG (C-154): just under 1 m and about 1.9 m of
+      raw cable respectively, before the plugs and their transitions take a share. The practical lengths in the
+      specification, up to 1 m for Gen 2 and up to 2 m for Gen 1, follow from that arithmetic (C-153).
+    </p>
+    <p>
+      Your 8.5 dB has to cover everything between the silicon and the receptacle. Treat it as an allowance to stay
+      well inside rather than a target. Margin you leave on the board is margin available to a worse cable, and the
+      silicon vendor&#8217;s layout guidelines, which the USB specification expects every part to have (C-156), are
+      where the board share is turned into trace lengths and via rules.
+    </p>
+
+    <h2 class="section-rule" id="ssc"><span>Spread-spectrum clocking: what USB 3.2 requires</span></h2>
+    <p>
+      Every USB 3.2 port must spread its clock (C-15). The data rate is swept down from nominal and back at 30 to
+      33 kHz, and the deepest point must land between &#8722;4000 and &#8722;5000 ppm below nominal. Only down-spread is
+      allowed: the sweep only ever slows the clock. The shape of the sweep is the vendor&#8217;s choice, but
+      however it is shaped, its rate of change may not exceed 1250 ppm/&#181;s.
+    </p>
+  </div>
+
+  <figure class="figure">
+    <div class="figure__bar"><span>Down-spread SSC &#183; two cycles at 30 kHz, triangle profile</span></div>
+    <div class="figure__body">
+        <svg viewBox="0 0 400 276" role="img" aria-label="Down-spread spread-spectrum clocking as USB 3.2 requires it. The data rate is pulled from its nominal value down by up to 5000 ppm and back, at 30 to 33 kHz, so one cycle lasts 30 to 33 microseconds. The deepest point must land between minus 4000 and minus 5000 ppm. At Gen 1, 5000 ppm stretches the 200 ps unit interval to 201 ps. A triangle at 30 kHz slews at 300 ppm per microsecond, against a limit of 1250. Relative to the average clock, the data drifts about 21 ns peak to peak, about 104 unit intervals at Gen 1 and 208 at Gen 2, which is why the receiver&#8217;s clock recovery must track it.">
+        <text class="lbl-hi" x="20" y="14">spread spectrum, down-spread, 30 to 33 kHz</text>
+        <rect class="dielectric" x="70" y="136" width="310" height="24"/>
+        <path class="tick" d="M70,40 H380"/>
+        <text class="lbl" x="64" y="43.5" text-anchor="end">0</text>
+        <text class="lbl" x="64" y="103.5" text-anchor="end">&#8722;2500</text>
+        <text class="lbl" x="64" y="139.5" text-anchor="end">&#8722;4000</text>
+        <text class="lbl" x="64" y="163.5" text-anchor="end">&#8722;5000</text>
+        <text class="lbl" x="64" y="178" text-anchor="end">ppm</text>
+        <polyline class="flow" points="70,40 147.5,160 225,40 302.5,160 380,40"/>
+        <path class="flow-2 dash" d="M70,100 H380"/>
+        <text class="lbl-ref" x="147.5" y="95" text-anchor="middle">average</text>
+        <text class="lbl" x="225" y="174" text-anchor="middle">peak lands in this band</text>
+        <path class="tick" d="M70,190 V198 M225,190 V198 M70,194 H225"/>
+        <text class="lbl" x="147.5" y="210" text-anchor="middle">one cycle, 30 to 33 &#181;s</text>
+        <text class="lbl-sig" x="20" y="234">Gen 1 unit interval: 200 ps at 0, 201 ps at &#8722;5000</text>
+        <text class="lbl" x="20" y="250">this triangle slews 300 ppm/&#181;s; the limit is 1250</text>
+        <text class="lbl-hi" x="20" y="266">vs the average clock: 21 ns p-p, 104 UI at Gen 1</text>
+        </svg>
+    </div>
+    <figcaption><b>The clock is never still.</b> A triangular sweep is one profile that meets the rule; the specification fixes the rate (30 to 33 kHz), the depth (a peak between &#8722;4000 and &#8722;5000 ppm) and the steepest allowed slope (1250 ppm/&#181;s), not the shape (C-15). At Gen 1, 5000 ppm stretches the 200 ps unit interval to 201 ps. Small as that looks, its effect adds up: measured against a clock running at the average rate, the data drifts about 21 ns from one extreme to the other, about 104 unit intervals at Gen 1 and 208 at Gen 2, so a receiver that did not track it would lose the data within a cycle.</figcaption>
   </figure>
 
   <div class="prose">
     <p>
-      Universal Serial Bus (USB) is by far the most ubiquitous high-speed digital interface on the planet.
-      Whether connecting a workstation to an external NVMe drive, an ultra-HD webcam, or a mobile phone,
-      USB 3.x (<span class="num">5 Gbps</span> Gen 1, <span class="num">10 Gbps</span> Gen 2, and
-      <span class="num">20 Gbps</span> Gen 2&times;2) is the multi-gigabit interconnect that almost every
-      hardware engineer is tasked with routing and certifying.
+      Spreading the clock spreads the energy of each harmonic across a band of frequencies instead of concentrating it
+      in one narrow line, which lowers the peak an emissions measurement sees. The cost lands on the receiver: its clock
+      and data recovery (CDR) has to follow a clock that is always moving, so SSC tracking is a real part of the jitter
+      budget, and the receiver test keeps SSC switched on throughout (C-151). A simulation of a USB link with a fixed
+      clock leaves out a term the specification assumes is there.
     </p>
 
+    <h2 class="section-rule" id="equalisation"><span>USB 3.2 equalization: de-emphasis, preshoot and the reference receiver</span></h2>
     <p>
-      Yet USB presents a hard design problem that internal enterprise links (like PCIe server backplanes or
-      LPDDR memory buses) never face: <strong>you do not own the channel</strong>. In a closed-box system, the
-      entire physical path between transmitter and receiver is modeled, routed, and bounded within your chassis.
-      With USB, your circuit board terminates abruptly at a surface-mount Type-C receptacle. The remaining
-      two-thirds of the channel is a cheap, twisted, two-metre cable bought by an end-user from an unknown vendor,
-      plugged in upside-down, and connected to an uncharacterized peripheral.
+      With most of the loss outside your product, the link relies on equalisation at both ends, and the specification
+      defines each end differently.
     </p>
+    <ul class="tight">
+      <li><strong>Gen 1 transmitter: de-emphasis.</strong> Each bit after the first in a run is sent at a lower level,
+        3.0 to 4.0 dB below a transition bit, nominally 3.5 dB (C-147). That pre-distorts the waveform the opposite
+        way to the channel&#8217;s low-pass loss.</li>
+      <li><strong>Gen 2 transmitter: three taps.</strong> A three-tap filter adds preshoot, 1.2 to 3.2 dB, which boosts
+        the bit before a transition, to the de-emphasis, 2.1 to 7.0 dB (C-147). The definitions match PCIe&#8217;s:
+        preshoot is 20&#183;log(Vc/Vb), de-emphasis 20&#183;log(Vb/Va), and the three tap weights sum to one. The
+        <a href="#deeper">deeper section</a> works one setting through.</li>
+      <li><strong>Reference receiver.</strong> Compliance models the receiver as a CTLE at Gen 1, and as a first-order
+        CTLE followed by a one-tap DFE limited to 0 to 50 mV at Gen 2 (C-150). These are yardsticks for measuring a
+        transmitter, not a design the receiver must copy; real receivers are implementation-specific.</li>
+      <li><strong>Training.</strong> At link-up the transmitter sends a training pattern, TSEQ, so the receiver can
+        adapt: 65,536 repetitions at Gen 1 and about 8 ms at Gen 2 (C-150). The USB 3.2 specification defines no
+        exchange like PCIe&#8217;s link equalization, in which a receiver asks the far transmitter for different
+        settings; the transmitter&#8217;s setting is chosen by its designer, and the receiver adapts to what arrives.</li>
+    </ul>
 
+    <h2 class="section-rule" id="type-c"><span>Type-C orientation and dual-lane Gen 2x2</span></h2>
     <p>
-      To make true plug-and-play interoperability possible across billions of devices, the USB Implementers
-      Forum (USB-IF) established the industry's most rigorous, publicly standardized compliance framework.
-      A USB 3.x port cannot assume clean conditions: it must survive mandatory Spread-Spectrum Clocking (SSC) to
-      pass FCC emissions, absorb the parasitic losses of reversible Type-C crossbar switches, and prove receiver
-      jitter tolerance against standardized "worst-compliant" test fixtures.
+      A Type-C plug goes in either way up, so the receptacle carries two sets of SuperSpeed transmit and receive pins.
+      The CC pins tell the host which way the plug went in. That fixes the lane ordering and, for two-lane operation,
+      which pair is the Configuration Lane, and it lets a host or device route the signals if it needs to (C-155). A
+      single-lane design needs something to pick the right set: a switch, a redriver with a switch built in, or a
+      controller that does it on chip. Whatever does it sits in the signal path and spends part of your 8.5 dB.
     </p>
-
-    <h2>Designing for a channel you have never seen</h2>
-
     <p>
-      Every other interface on this site is a channel you can measure. A PCIe link lives entirely
-      inside a product; an LPDDR bus is a few centimetres of your own board. You can build it,
-      characterise it, and sign it off.
+      Gen 2x2 uses both sets at once, which is why it exists only on Type-C (C-146). The two lanes may arrive up to
+      6400 ps apart, 64 unit intervals at Gen 2, and the receiver realigns them, so the lanes need not be
+      length-matched to each other the way the two wires of a pair must be. When a two-lane link cannot hold up, it
+      steps down in a defined order.
     </p>
+  </div>
 
-    <p>
-      A USB channel is your board, then a connector, then a cable of unknown length and quality made
-      by someone you have never met, then a device you have never seen. Two thirds of it is outside
-      your control and outside your knowledge.
-    </p>
-
-    <p>
-      So the design target is different. It is not "make this channel good" — you cannot. It is
-      <b>"leave as much margin as possible for the part you do not control"</b>, and that reframing
-      drives every decision below.
-    </p>
-
-    <h2 class="section-rule"><span>What it is</span></h2>
-
-    <p>
-      A differential serial link with an embedded clock, defined by USB-IF at 5 Gbps (Gen 1, 8b/10b),
-      10 Gbps (Gen 2, 128b/132b) and 20 Gbps as two 10 Gbps lanes (Gen 2×2). Unit intervals of 200 ps
-      and 100 ps respectively — undemanding next to PCIe Gen 5, which is fortunate, because the channel
-      is much less controlled.
-    </p>
-
-    <h2 class="section-rule"><span>The channel you don't own</span></h2>
-
-    <p>
-      A PCIe channel is entirely inside a product. A USB channel is a board, a connector, <em>a cable of
-      unknown length and quality</em>, another connector, and another board. The cable is frequently the
-      largest single term in the loss budget and it is chosen by the user after the product ships. Design
-      has to close against the worst compliant cable, not a typical one.
-    </p>
-
-    <p>
-      Type-C adds a second complication that is easy to underestimate. The connector is reversible, so
-      the SuperSpeed pairs appear on either of two pin sets depending on orientation. Something has to
-      resolve that — a mux, a redriver, or a device with both pairs wired — and whatever it is sits
-      directly in the signal path adding its own loss and discontinuity. Reversibility is a
-      signal-integrity cost paid for a usability feature.
-    </p>
-
-    <div class="note">
-      <b>Spread spectrum is not optional</b>
-      USB mandates down-spread SSC — the clock is modulated roughly 0 to −5000 ppm at a modulation rate
-      in the low tens of kilohertz. It spreads the emissions energy across a band instead of
-      concentrating it in a narrow spike, which is what makes the emissions scan pass. The cost lands on
-      the receiver: the CDR must track a continuously moving clock, so SSC tracking is a real part of the
-      jitter budget and a real part of receiver testing. Simulating a USB link with a fixed-frequency
-      clock omits a term that the specification assumes is there.
+  <figure class="figure">
+    <div class="figure__bar"><span>Gen 2x2 fallback order &#183; USB 3.2 Table 7-15</span></div>
+    <div class="figure__body">
+        <svg viewBox="0 0 400 236" role="img" aria-label="The order in which a USB 3.2 Gen 2x2 link falls back when it fails. Gen 2x2, two lanes of 10 Gbps for 20 Gbps, needs Type-C. If one or both lanes fail it tries Gen 2x1, one lane at 10 Gbps. If the link cannot meet the Gen 2 loss budget it tries Gen 1x2, two lanes at 5 Gbps. Last is Gen 1x1, one lane at 5 Gbps. Gen 2x1 and Gen 1x2 both carry 10 Gbps raw, but Gen 1x2 uses 8b/10b coding and delivers less.">
+        <text class="lbl-hi" x="20" y="14">when a Gen 2x2 link fails, it tries</text>
+        <rect class="dielectric" x="20" y="24" width="360" height="34" rx="3"/>
+        <text class="lbl-hi" x="30" y="45">Gen 2x2</text>
+        <text class="lbl" x="98" y="45">2 lanes &#215; 10 Gbps</text>
+        <text class="lbl-sig" x="370" y="45" text-anchor="end">20 Gbps</text>
+        <path class="flow" d="M50,58 V70"/>
+        <text class="lbl-ref" x="60" y="67">if: one or both lanes fail</text>
+        <rect class="dielectric" x="20" y="74" width="360" height="34" rx="3"/>
+        <text class="lbl-hi" x="30" y="95">Gen 2x1</text>
+        <text class="lbl" x="98" y="95">1 lane  &#215; 10 Gbps</text>
+        <text class="lbl-sig" x="370" y="95" text-anchor="end">10 Gbps</text>
+        <path class="flow" d="M50,108 V120"/>
+        <text class="lbl-ref" x="60" y="117">if: the Gen 2 loss budget is not met</text>
+        <rect class="dielectric" x="20" y="124" width="360" height="34" rx="3"/>
+        <text class="lbl-hi" x="30" y="145">Gen 1x2</text>
+        <text class="lbl" x="98" y="145">2 lanes &#215; 5 Gbps</text>
+        <text class="lbl-sig" x="370" y="145" text-anchor="end">10 Gbps</text>
+        <path class="flow" d="M50,158 V170"/>
+        <text class="lbl-ref" x="60" y="167">if: a lane still fails</text>
+        <rect class="dielectric" x="20" y="174" width="360" height="34" rx="3"/>
+        <text class="lbl-hi" x="30" y="195">Gen 1x1</text>
+        <text class="lbl" x="98" y="195">1 lane  &#215; 5 Gbps</text>
+        <text class="lbl-sig" x="370" y="195" text-anchor="end">5 Gbps</text>
+        <text class="lbl" x="20" y="230">2x1 and 1x2 both carry 10 Gbps raw; 1x2 nets less</text>
+        </svg>
     </div>
+    <figcaption><b>Two lanes or two speeds.</b> When a lane misbehaves, a Gen 2x2 link drops to one lane at Gen 2 first; if one lane cannot meet the Gen 2 loss budget, it tries two lanes at the slower Gen 1 rate before settling for one (C-146). A link that runs at Gen 1x2 when you expected Gen 2x2 is therefore telling you about loss, and one at Gen 2x1 about a lane.</figcaption>
+  </figure>
 
-    <h2 class="section-rule"><span>Where the margin goes</span></h2>
-
-    <ul class="tight">
-      <li><strong>The connector footprint.</strong> A Type-C footprint is a dense, fine-pitch
-        discontinuity right where the signal launches. It is usually the worst return-loss feature on
-        the whole board and it is fixed by the mechanical part, so the only lever is the launch geometry
-        around it.</li>
-      <li><strong>The cable.</strong> Loss, skew between the two conductors of a pair, and mode
-        conversion — all outside your control and all budgeted at the worst compliant limit.</li>
-      <li><strong>Mode conversion on the board.</strong> Intra-pair skew from routing asymmetry converts
-        differential energy to common mode, which the receiver does not reject and which then radiates
-        from the cable — turning an SI mistake into an EMI failure.</li>
-    </ul>
-
-    <h2 class="section-rule"><span>Sign-off</span></h2>
-
+  <div class="prose">
+    <h2 class="section-rule" id="sign-off"><span>How USB 3.2 is signed off: the compliance eye and jitter tolerance</span></h2>
     <p>
-      USB compliance is a defined test rather than an in-house simulation flow. The transmitter is
-      measured through a specified reference channel with a specified reference equaliser and must
-      produce an eye that clears the compliance mask. The receiver is tested the other way round: a
-      deliberately stressed signal — calibrated amounts of random jitter, sinusoidal jitter, ISI and
-      SSC — is applied, and the receiver must maintain the specified error rate. Passing your own
-      simulation is not the deliverable; passing the compliance fixture is.
+      USB compliance is a defined set of measurements rather than an in-house simulation flow, and it tests each part of
+      the channel against a worst-case version of the others.
+    </p>
+    <ul class="tight">
+      <li><strong>Transmitter.</strong> Measured at TP4, at the end of a reference channel and a compliant cable,
+        after the reference receiver equaliser has been applied. The eye must be at least 100 mV high with at most
+        0.66 UI of total jitter at Gen 1, and at least 70 mV with at most 0.671 UI at Gen 2, extrapolated from a
+        million unit intervals to a bit error ratio of 10<sup>&#8722;12</sup> (C-149). The specification notes that
+        without the reference equaliser the eye there may be closed.</li>
+      <li><strong>Receiver.</strong> A pattern with calibrated random and sinusoidal jitter goes through the compliance
+        reference channel, with SSC present the whole time, and the receiver loops the data back to be checked. Above
+        the corner frequency (4.9 MHz at Gen 1, 7.5 MHz at Gen 2) it must tolerate 0.2 and 0.17 UI of sinusoidal jitter;
+        below it, much more, because the CDR is expected to track slow jitter (C-151).</li>
+      <li><strong>Cable.</strong> Every cable assembly must meet a fitted loss at each Nyquist frequency, limits on
+        multiple reflections, crosstalk and return loss, and a mode-conversion limit (C-153).</li>
+    </ul>
+    <p>
+      Because the reference channels stand in for the worst real ones, passing your own simulation is evidence, not the
+      result. The result is the compliance measurement, and the silicon vendor&#8217;s layout guidelines are written to
+      make it pass (C-156).
     </p>
 
-    <h3>Sources</h3>
-    <ul class="tight refs">
-      <li><strong>USB-IF USB 3.2 specification</strong> &#8212; SSC parameters and per-generation rates &#8212; ledger claims C-15, C-16</li>
-    </ul>
-      <h2 class="section-rule"><span>Why this decides how your board behaves</span></h2>
-
+    <h2 class="section-rule"><span>Why this decides how your board behaves</span></h2>
     <ul class="tight">
-      <li><strong>Your board's budget share should be small on purpose.</strong> Spending your
-        allocation because the specification permits it leaves nothing for a poor cable.</li>
-      <li><strong>The connector launch is the part you own and the part that fails.</strong> It is
-        a mechanical structure with an electrical footprint you designed.</li>
-      <li><strong>Compliance is the mechanism, not a formality.</strong> It is the only thing
-        guaranteeing the far end behaves, so the test conditions are the contract.</li>
-      <li><strong>The common-mode path leaves the product.</strong> A cable is an antenna attached
-        to your board, which makes mode conversion an emissions problem rather than only a signal
-        one.</li>
+      <li><strong>Your share of the loss should be small on purpose.</strong> Using all 8.5 dB because the budget allows
+        it leaves nothing for a poor cable or a lossy device at the far end.</li>
+      <li><strong>The connector launch is the part you own and the part most likely to fail.</strong> A Type-C
+        footprint is a dense, fine-pitch structure exactly where the signal leaves your board, and its electrical
+        footprint is something you design.</li>
+      <li><strong>Compliance is the mechanism, not a formality.</strong> It is the only guarantee about the far end, so
+        its test conditions are the real contract.</li>
+      <li><strong>The common-mode path leaves the product.</strong> A cable is an antenna attached to your board, which
+        makes mode conversion an emissions problem as well as a signal one.</li>
     </ul>
 
     <h2 class="section-rule"><span>What to do about it</span></h2>
-
     <p>
-      <strong>Spend less than your allocation.</strong> Shorter routes, fewer vias, better launches
-      than the budget strictly requires. The remaining margin helps accommodate cable variation
-      that was not included in the original test set.
+      <strong>Spend less than your allocation.</strong> Shorter routes, fewer vias and a better launch than the budget
+      strictly requires. The margin you keep is available to a cable or a product you never tested with.
     </p>
-
     <p>
-      <strong>Design the connector footprint deliberately.</strong> Ground provision, antipad
-      geometry, via stubs on through-hole pins. It is the highest-leverage part of the channel you
-      own. See <a href="../package-board/connectors-cables.html">connectors and cables</a>.
+      <strong>Design the connector footprint deliberately.</strong> Ground provision, antipad geometry, and via stubs on
+      through-hole pins. It is the highest-leverage part of the channel you own. See
+      <a href="../package-board/connectors-cables.html">connectors and cables</a>.
     </p>
-
     <p>
-      <strong>Treat shield termination as a return-path decision.</strong> A 360° bond gives
-      common-mode current a defined low-inductance path; a pigtail does not, and the shield stops
-      working above the frequency where its inductance dominates.
+      <strong>Count the orientation switch in the budget.</strong> If one lane&#8217;s worth of pins is chosen by a
+      switch or redriver, its loss and its two sets of transitions come out of your 8.5 dB.
     </p>
-
     <p>
-      <strong>Keep the pair symmetric right up to the connector.</strong> Mode conversion on your
-      board becomes common-mode current on someone's cable, and that is what fails an emissions
-      scan.
+      <strong>Treat shield termination as a return-path decision.</strong> A 360&#176; bond gives common-mode current a
+      defined low-inductance path; a pigtail does not, and above the frequency where its inductance dominates, the shield
+      stops working.
+    </p>
+    <p>
+      <strong>Keep each pair symmetric right up to the connector.</strong> Mode conversion on your board becomes
+      common-mode current on someone else&#8217;s cable, and that is what fails an emissions scan. The cable itself is
+      held to &#8722;20 dB of mode conversion at Gen 2 (C-153); your board deserves the same care.
     </p>
 
     <div class="note">
       <b>Using this to find a fault</b>
       <ul class="tight">
-        <li><b>Works with one cable and not another.</b> Expected, and informative: it tells you the
-          margin is thin, not that the design is wrong. Measure with a known-good cable to separate
-          your board from the cable.</li>
-        <li><b>Emissions failure that appears only with a cable attached.</b> Common-mode current
-          leaving on the cable. Look at pair symmetry and shield termination before filtering
-          anything.</li>
-        <li><b>Compliance passes and real devices fail.</b> The reference setup is not your setup.
-          Compare what the compliance channel assumed against what your product has.</li>
-        <li><b>Marginal only at the far end of a long cable.</b> Loss, which you cannot fix — so
-          the question becomes how much of your own budget you can hand back.</li>
+        <li><b>Works with one cable and not another.</b> Expected, and informative: it tells you the margin is thin,
+          not that the design is wrong. A known-good short cable separates your board from the cable.</li>
+        <li><b>A Gen 2x2 port that settles at Gen 1x2.</b> The fallback order points at loss rather than at a single
+          lane (C-146). Check your share of the budget first.</li>
+        <li><b>Emissions failure that appears only with a cable attached.</b> Common-mode current leaving on the cable.
+          Look at pair symmetry and shield termination before adding filtering.</li>
+        <li><b>Compliance passes and real devices fail.</b> The reference setup is not your setup. Compare what the
+          compliance channel assumed against what your product has, including any switch in the path.</li>
+        <li><b>A link that loses lock rather than collecting bit errors.</b> Suspect clock recovery, and check that the
+          test used SSC: a fixed-clock bench hides a receiver that cannot follow the sweep.</li>
       </ul>
     </div>
 
-    <details class="deeper">
-      <summary>Go deeper — what AC coupling and common mode really do here</summary>
+    <details class="deeper" id="deeper">
+      <summary>Go deeper &#8212; the Gen 2 tap algebra, the SSC arithmetic, and where common mode goes</summary>
 
       <p>
-        USB links are AC-coupled, with series capacitors in each line of the pair. That serves a
-        practical purpose: two devices designed independently need not agree on a common-mode
-        voltage, and the capacitors let each end set its own.
+        <strong>One Gen 2 setting, worked through.</strong> The receiver jitter-tolerance stimulus uses 2.2 dB of
+        preshoot and &#8722;3.1 dB of de-emphasis (C-151). With the taps scaled so their magnitudes sum to one, a lone
+        bit reaches the full swing Vd = 1, and the three ratios give two equations in the two outer taps. Their solution
+        is c&#8331;&#8321; = &#8722;0.084 and c&#8330;&#8321; = &#8722;0.125, so the main tap is c&#8320; = 0.791; the
+        steady level of a long run is Vb = 0.582, and the boost is 20&#183;log(1/0.582) = 4.7 dB. These are the same
+        values an earlier revision of the specification printed as informative for its single nominal setting, before an
+        engineering change notice replaced it with today&#8217;s range (C-147). The algebra is the one on the
+        <a href="pcie-gen4-gen5.html#presets">PCIe preset page</a>.
       </p>
 
       <p>
-        It has two consequences worth knowing. Low-frequency content is blocked, which is why the
-        encoding must guarantee enough transitions — a long run of identical bits would drift. And
-        the capacitors are a discontinuity: real parts have package inductance and a footprint, and
-        at the top of the band they are not the short circuit the schematic implies.
+        <strong>How far SSC moves the data.</strong> Take a 30 kHz triangle with 5000 ppm depth. Its frequency swings
+        &#177;2500 ppm about the average, and the phase is the running sum of that offset: over each half-cycle of
+        16.7 &#181;s the data gains or loses &#189; &#215; 2500 ppm &#215; 16.7 &#181;s &#8776; 21 ns against an
+        average-rate clock. That is about 104 unit intervals at Gen 1 and 208 at Gen 2. The sweep is slow, though: the
+        triangle slews at 300 ppm/&#181;s, a quarter of the 1250 ppm/&#181;s limit (C-15), so a CDR with enough
+        bandwidth to follow a 33 kHz modulation tracks it with little residual error. The jitter tolerance curve encodes
+        the same idea: it asks for large jitter tolerance at low frequencies and only 0.17 UI at Gen 2 above 7.5 MHz
+        (C-151).
       </p>
 
       <p>
-        <strong>Common mode is the part that leaves the product.</strong> Differential current on a
-        well-matched pair largely cancels in the far field. Common-mode current does not — it flows
-        out along the cable, using the shield and whatever else it can find as a return, and radiates
-        from a structure the size of the cable.
+        <strong>AC coupling.</strong> Every USB 3.2 transmitter is AC coupled, with 75 to 265 nF in each line, placed with
+        the transmitter or in the cable (C-148). Two products designed independently therefore need not agree on a
+        common-mode voltage. It has two consequences worth knowing. Low-frequency content is blocked, which is why the
+        line coding must guarantee enough transitions. And the capacitors are a discontinuity: a real part has a pad and
+        package inductance, and at the top of the band it is not the short circuit the schematic implies.
       </p>
 
       <p>
-        That makes the chain worth stating explicitly, because it crosses three topics that are
-        usually treated separately: <b>asymmetry on your board → mode conversion → common-mode
-        current → an emissions failure caused by a cable you did not design.</b> See
-        <a href="../fundamentals/differential-signalling.html">differential signalling</a> for the
-        conversion mechanism and SCD21 as the measurement that predicts it.
-      </p>
-
-      <p>
-        <strong>On sourcing.</strong> The rates and unit intervals here are arithmetic. The
-        revision-specific details — which test points apply, what the compliance channel is defined
-        as, the exact encoding per generation — are recorded in the
-        <a href="../../docs/claims.md">claim ledger</a> and should be read from the USB-IF
-        specification for the revision you are designing to.
+        <strong>Common mode is the part that leaves the product.</strong> Differential current on a well-matched pair
+        largely cancels in the far field. Common-mode current does not: it flows out along the cable, using the shield
+        and whatever else it can find as a return, and radiates from a structure the size of the cable. The chain is
+        worth stating because it crosses topics usually kept apart: <b>asymmetry on your board &#8594; mode conversion
+        &#8594; common-mode current &#8594; an emissions failure on a cable you did not design.</b> The cable is held to
+        SCD21 &#8804; &#8722;20 dB at Gen 2 and &#8722;17 dB at Gen 1 for exactly this reason (C-153). See
+        <a href="../fundamentals/differential-signalling.html">differential signalling</a> for the conversion mechanism
+        and SCD21 as the measurement that predicts it.
       </p>
     </details>
 
     <h2 class="section-rule"><span>In the real world</span></h2>
-
     <p>
-      USB is the interface most likely to be treated as solved and most likely to produce a late
-      surprise, because the failure usually arrives from outside: a cable, a hub, a device, or an
-      emissions scan with something plugged in that was not there during development.
+      USB is often treated as a solved problem, and its surprises tend to come late because they come from outside the
+      product: a cable, a hub, a device, or an emissions scan with something plugged in that was not there during
+      development. The specification anticipates this by setting limits on every part that nobody owns, which is what
+      lets a well-made board work with products it has never met.
+    </p>
+    <p>
+      The defence is margin rather than analysis. You cannot simulate a channel you have never seen, so the useful
+      move is to make your third of it, the 8.5 dB between your silicon and your receptacle, as good as you reasonably
+      can, and to leave the rest of the budget for whatever the user plugs in.
     </p>
 
+    <h3>Where the numbers come from</h3>
     <p>
-      The defence is margin rather than analysis. You cannot simulate a channel you have never seen,
-      so the engineering move is to make your third of it as good as you reasonably can and leave the
-      rest of the budget for whatever turns up.
+      The electrical limits on this page were read from the USB 3.2 specification, Revision 1.1, and the USB Type-C
+      Cable and Connector Specification, Release 2.5, both free to download from USB-IF. Clause and table numbers are
+      in the <a href="../../docs/claims.md">claim ledger</a>. The ledger marks normative rows as scoped rather than
+      verified: they were checked against the document, and a sign-off should still be read from the revision you are
+      designing to. The rates, unit intervals, cable reaches and SSC arithmetic are derived here and checked on every
+      build.
     </p>
 
     <h3>Related</h3>
@@ -328,7 +519,9 @@
       <li><a href="../fundamentals/differential-signalling.html">Differential Signaling: Common Mode and Mode Conversion</a></li>
       <li><a href="../signal-integrity/compliance-masks.html">Transmitter Compliance Masks and Receiver Eye Masks</a></li>
       <li><a href="../package-board/connectors-cables.html">High-Speed Connectors and Cables</a></li>
+      <li><a href="../signal-integrity/equalization.html">SerDes Equalization: CTLE, FFE, DFE and CDR</a></li>
       <li><a href="../fundamentals/jitter-taxonomy.html">Jitter Components: RJ, DJ, DCD, PJ, and TJ</a></li>
+      <li><a href="pcie-gen4-gen5.html">PCIe 4.0 vs 5.0: Loss Budget, Tx Presets, Link Equalization</a></li>
     </ul>
   </div>
 
@@ -336,13 +529,14 @@
     <section class="sources">
       <h2 class="section-rule"><span>Sources</span></h2>
       <ul class="sources__list">
-      <li><a href="https://www.ti.com/lit/an/sdaa423/sdaa423.pdf" target="_blank" rel="noopener">Texas Instruments SDAA423 — USB 3.1 Gen 1 host TX electrical compliance</a> <span class="src__for">C-15</span></li>
+      <li><a href="https://www.usb.org/document-library/usb-32-revision-11-june-2022" target="_blank" rel="noopener">USB-IF — Universal Serial Bus 3.2 Specification, Revision 1.1 (June 2022)</a> <span class="src__for">C-15</span></li>
       <li><a href="https://www.usb.org/usb-32-0" target="_blank" rel="noopener">USB-IF — USB 3.2 specification page</a> <span class="src__for">C-16a</span></li>
+      <li><a href="https://www.usb.org/document-library/usb-type-cr-cable-and-connector-specification-release-25" target="_blank" rel="noopener">USB-IF — USB Type-C Cable and Connector Specification, Release 2.5 (March 2026)</a> <span class="src__for">C-152</span></li>
       </ul>
       <p class="sources__note">Rows marked with a claim id are tracked in <a href="../../docs/claims.md">the claim ledger</a>, which records what each source can and cannot establish.</p>
     </section>
     <!-- sources:end -->
-  <!-- share:foot:start --><div class="share share--foot" data-share data-share-url="https://sipi.work/topics/interfaces/usb-3x.html" data-share-title="USB 3.1 and 3.2 Signal Integrity: SSC and Compliance"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Fusb-3x.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Fusb-3x.html&amp;text=USB%203.1%20and%203.2%20Signal%20Integrity%3A%20SSC%20and%20Compliance" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=USB%203.1%20and%203.2%20Signal%20Integrity%3A%20SSC%20and%20Compliance&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Fusb-3x.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:foot:end -->
+  <!-- share:foot:start --><div class="share share--foot" data-share data-share-url="https://sipi.work/topics/interfaces/usb-3x.html" data-share-title="USB 3.2 Gen 1 vs Gen 2 vs Gen 2x2: Loss Budget, SSC and Compliance"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Fusb-3x.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Fusb-3x.html&amp;text=USB%203.2%20Gen%201%20vs%20Gen%202%20vs%20Gen%202x2%3A%20Loss%20Budget%2C%20SSC%20and%20Compliance" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=USB%203.2%20Gen%201%20vs%20Gen%202%20vs%20Gen%202x2%3A%20Loss%20Budget%2C%20SSC%20and%20Compliance&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Fusb-3x.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:foot:end -->
 
   <!-- pager:start -->
   <nav class="pager" aria-label="Previous and next topic">
