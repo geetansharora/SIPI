@@ -19,24 +19,24 @@
     },
     {
       "id": "C-2a",
-      "statement": "LPDDR5X reaches 8533 MT/s.",
+      "statement": "JESD209-5B (July 2021) extended the LPDDR5/5X standard to 8533 MT/s.",
       "pages": [
         "interfaces/lpddr5x",
         "interfaces/ddr5",
         "interfaces/lpddr6"
       ],
       "source_type": "public-rate",
-      "source": "JEDEC press release, \"JEDEC Updates Standard for Low Power Memory Devices: LPDDR5\"",
-      "conditions": "A specific edition and speed bin",
+      "source": "JEDEC press release, \"JEDEC Publishes New and Updated Standards for Low Power Memory Devices Used in 5G and AI Applications\", 28 July 2021",
+      "conditions": "The JESD209-5B edition; a given part supports the bins its data sheet lists",
       "status": "verified",
-      "note": "JEDEC’s own announcement of JESD209-5B states the speed extension to 8533 Mbps. Verifies that the family reaches this rate; says nothing about which speed bin a given part supports, or about the electricals. JESD209-5C (July 2023) is the current revision and is downloadable from jedec.org after registration.",
+      "note": "Re-sourced: the row previously linked the February 2019 JESD209-5 release, which gives 6400 MT/s, not 8533. The 2021 release lists the 8533 Mbps speed extension among the updates to LPDDR5 in the same document that introduces LPDDR5X as an optional extension; vendors and IP suppliers sell the 7500 and 8533 bins as LPDDR5X (C-167). JESD209-5C (July 2023) is the current revision; JEDEC sells it, so its bins have not been read.",
       "owner": "Geetansh",
-      "sourceCheckedBy": "Claude Opus 5",
-      "sourceCheckedOn": "2026-09-19",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-18",
       "humanReviewedBy": null,
       "humanReviewedOn": null,
-      "source_url": "https://www.jedec.org/news/pressreleases/jedec-updates-standard-low-power-memory-devices-lpddr5",
-      "source_title": "JEDEC — LPDDR5 standard update announcement"
+      "source_url": "https://www.jedec.org/news/pressreleases/jedec-publishes-new-and-updated-standards-low-power-memory-devices-used-5g-and-ai",
+      "source_title": "JEDEC — JESD209-5B announcement: LPDDR5 update and LPDDR5X"
     },
     {
       "id": "C-2b",
@@ -46,21 +46,21 @@
         "interfaces/lpddr6"
       ],
       "source_type": "public-rate",
-      "source": "JEDEC press release, \"JEDEC Updates Standard for Low Power Memory Devices: LPDDR5\"",
+      "source": "JEDEC press release, \"JEDEC Updates Standard for Low Power Memory Devices: LPDDR5\", 19 February 2019",
       "conditions": "A specific edition and speed bin",
       "status": "verified",
-      "note": "The same announcement gives 6400 Mbps as the previous revision’s ceiling, which is the LPDDR5 figure. Verifies the rate, not any particular device’s bin.",
+      "note": "The February 2019 announcement of JESD209-5 gives an I/O rate of up to 6400 MT/s, and the 2021 release (C-2a) gives 6400 Mbps as the previous revision’s ceiling. Verifies the rate, not any particular device’s bin.",
       "owner": "Geetansh",
-      "sourceCheckedBy": "Claude Opus 5",
-      "sourceCheckedOn": "2026-09-19",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-18",
       "humanReviewedBy": null,
       "humanReviewedOn": null,
       "source_url": "https://www.jedec.org/news/pressreleases/jedec-updates-standard-low-power-memory-devices-lpddr5",
-      "source_title": "JEDEC — LPDDR5 standard update announcement"
+      "source_title": "JEDEC — JESD209-5 (LPDDR5) publication announcement"
     },
     {
       "id": "C-3",
-      "statement": "An LPDDR5X channel is normally point-to-point, controller to DRAM, with no connector and no fly-by topology — but a dual-rank or two-die configuration puts more than one device on the same data net.",
+      "statement": "An LPDDR5X data net is normally point to point, controller to DRAM, with no fly-by topology; a dual-rank or two-die configuration puts more than one device on it, and a CAMM2 module adds a connector.",
       "pages": [
         "interfaces/lpddr5x",
         "interfaces/ddr5"
@@ -69,10 +69,10 @@
       "source": "Synopsys LPDDR5 technical bulletin and LPDDR5X/5/4X controller documentation, on rank and dual-channel support; byte-mode descriptions of two 8-bit dies on one 16-bit channel",
       "conditions": "Single-rank, single-die is the common case; rank count and byte mode change the loading",
       "status": "scoped",
-      "note": "Corrected. \"Point to point rather than multidrop\" was too strong: LPDDR5 defines non-target ODT precisely because a dual-rank configuration exists, and a device may be built as two 8-bit dies sharing one 16-bit channel. The page already says so — it calls \"never multi-drop\" a step too far and tells the reader to check the configuration — so this row now matches what the page claims rather than what it used to.",
+      "note": "Corrected. \"Point to point rather than multidrop\" was too strong: LPDDR5 defines non-target ODT precisely because a dual-rank configuration exists, and a device may be built as two 8-bit dies sharing one 16-bit channel. The page already says so — it calls \"never multi-drop\" a step too far and tells the reader to check the configuration — so this row now matches what the page claims rather than what it used to. 18 Oct 2026: CAMM2 (JESD318, C-54) puts LPDDR5/5X on a compression-attached module, so \"no connector\" is no longer universal; the page now says so.",
       "owner": "Geetansh",
-      "sourceCheckedBy": "Claude Opus 5",
-      "sourceCheckedOn": "2026-09-19",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-18",
       "humanReviewedBy": null,
       "humanReviewedOn": null,
       "source_title": "Synopsys — Key features designers should know about LPDDR5",
@@ -80,19 +80,19 @@
     },
     {
       "id": "C-4a",
-      "statement": "WCK is the write data clock on LPDDR5X.",
+      "statement": "LPDDR5 and LPDDR5X have no bidirectional DQS: WCK, forwarded by the controller, times writes and an optional RDQS from the DRAM times reads; CK runs at a quarter of the WCK frequency above 3200 Mbps and half of it below.",
       "pages": [
         "interfaces/lpddr5x",
         "interfaces/ddr5"
       ],
       "source_type": "commercial",
-      "source": "Synopsys LPDDR5 technical bulletin, on the WCK and RDQS forwarded clocks",
-      "conditions": "LPDDR5 and its LPDDR5X extension; WCK runs at two or four times the command clock",
+      "source": "Synopsys LPDDR5 technical bulletin (V. Sankaranarayanan, January 2020), new scalable clocking architecture",
+      "conditions": "LPDDR5 and its LPDDR5X extension; single-ended or strobe-less reads are allowed at low speed",
       "status": "scoped",
-      "note": "Confirmed: LPDDR5 introduces two unidirectional strobes, WCK for writes and RDQS for reads, with WCK forwarded at two or four times the CK rate. Scoped rather than verified because the ratio options and their training are in JESD209-5, which has not been read.",
+      "note": "Read on synopsys.com. The bulletin gives CK at 800 MHz for 6400 Mbps, command/address at double data rate on CK, and says a differential RDQS becomes necessary at higher speeds. Scoped because it is an IP vendor’s description of JESD209-5, which JEDEC sells.",
       "owner": "Geetansh",
-      "sourceCheckedBy": "Claude Opus 5",
-      "sourceCheckedOn": "2026-09-19",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-18",
       "humanReviewedBy": null,
       "humanReviewedOn": null,
       "source_title": "Synopsys — Key features designers should know about LPDDR5",
@@ -100,20 +100,22 @@
     },
     {
       "id": "C-5",
-      "statement": "Read and write training centre the strobe in the data eye.",
+      "statement": "LPDDR5/5X bring-up runs Vref training, command (CA) training, WCK2CK leveling and then WCK-to-DQ read and write training; LPDDR5X adds receiver offset calibration.",
       "pages": [
         "interfaces/lpddr5x"
       ],
-      "source_type": "normative",
-      "source": "JESD209-5x training sequences",
-      "conditions": "The training steps a controller actually runs",
+      "source_type": "commercial",
+      "source": "Cadence blogs (S. Sharma): \"Device Training for High Speed DRAMs\", 12 April 2022; \"Taking LPDDR5 to the Next Level\", 19 February 2021",
+      "conditions": "The categories a verification-IP vendor lists; the exact sequence and its timing are in JESD209-5, and a controller may order or repeat steps differently",
       "status": "scoped",
-      "note": "Narrowed: training also adjusts ODT, drive strength and reference levels, so 'training centres the eye' is one of several things it does. The panel labels its training model illustrative.",
+      "note": "Re-sourced from an unread normative reference to two free Cadence articles. The older statement, that training centres the strobe in the eye, is the last of these steps. Offset calibration training is from the 2021 article, which says it is recommended at every power-up and initialisation.",
       "owner": "Geetansh",
-      "sourceCheckedBy": "Claude Opus 5",
-      "sourceCheckedOn": "2026-09-12",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-18",
       "humanReviewedBy": null,
-      "humanReviewedOn": null
+      "humanReviewedOn": null,
+      "source_url": "https://community.cadence.com/cadence_blogs_8/b/fv/posts/device-trainings-for-high-speed-drams",
+      "source_title": "Cadence — Device training for high-speed DRAMs"
     },
     {
       "id": "C-6a",
@@ -1213,7 +1215,8 @@
       "statement": "LPDDR5X has a x16 channel per die, LVSTL I/O at a VDDQ of 0.5 V (0.45 V option, 0.3 V with ODT off), a differential WCK data clock at 2:1 or 4:1 to CK, an optional read strobe RDQS, and optional DRAM-side DFE and pre-emphasis advertised in mode registers.",
       "pages": [
         "interfaces/ddr5",
-        "interfaces/lpddr6"
+        "interfaces/lpddr6",
+        "interfaces/lpddr5x"
       ],
       "source_type": "vendor",
       "source": "Micron 315b x32 Automotive LPDDR5X SDRAM data sheet, Rev. B 11/2022: features, and product-specific mode registers MR0 and MR24",
@@ -1232,7 +1235,8 @@
       "id": "C-54",
       "statement": "JEDEC JESD318 (December 2023) defines CAMM2 modules for both DDR5 and LPDDR5/5X on a common connector with different pinouts, and aims LPDDR5/5X CAMM2s at notebooks and some server segments.",
       "pages": [
-        "interfaces/ddr5"
+        "interfaces/ddr5",
+        "interfaces/lpddr5x"
       ],
       "source_type": "public-rate",
       "source": "JEDEC press release, \"JEDEC Publishes New CAMM2 Memory Module Standard\", 5 December 2023",
@@ -1270,7 +1274,8 @@
       "id": "C-56",
       "statement": "LPDDR6 runs CK at 2667 MHz (LPDDR5X 1066.5 MHz) with only a 2:1 WCK:CK ratio; VDD1/VDD2C/VDD2D/VDDQ are 1.8/1.0/0.875/0.5 V (0.3 V VDDQ option); 16 banks and BL24/48 per sub-channel; LVSTL I/O with DQ ODT to VSSQ; a burst is 12 DQ x 24 = 288 bits, 256 data + 16 metadata + 16 DBI or link ECC/EDC, with no DMI pin.",
       "pages": [
-        "interfaces/lpddr6"
+        "interfaces/lpddr6",
+        "interfaces/lpddr5x"
       ],
       "source_type": "vendor",
       "source": "Samsung (Seunghyun Moon), \"LPDDR6 Key Architecture\", JEDEC LPDDR6 Workshop, 8 April 2025",
@@ -1308,7 +1313,8 @@
       "id": "C-58",
       "statement": "LPDDR6 starts at 10.667 Gb/s per pin and its highest defined rate is 14.4 Gb/s.",
       "pages": [
-        "interfaces/lpddr6"
+        "interfaces/lpddr6",
+        "interfaces/lpddr5x"
       ],
       "source_type": "commercial",
       "source": "Synopsys, \"LPDDR6: A Deep Dive Into the JEDEC Press Release\", JEDEC forum, May 2024; Synopsys blog \"Delivering LPDDR6 read/write eyes at 10.67 Gb/s\", January 2026; Cadence technical article, September 2025",
@@ -1403,7 +1409,8 @@
       "id": "C-63",
       "statement": "LPDDR5 runs CK at 800 MHz with a WCK:CK ratio of 2:1 up to 3200 Mbps or 4:1, 7 command pins and 16 DQ per channel, BL16/32, VDD2 1.05 V (0.9 V) and VDDQ 0.5 V (0.3 V), and carries DM, DBI or link ECC on two DMI pins.",
       "pages": [
-        "interfaces/lpddr6"
+        "interfaces/lpddr6",
+        "interfaces/lpddr5x"
       ],
       "source_type": "vendor",
       "source": "Samsung (Seunghyun Moon), \"LPDDR6 Key Architecture\", JEDEC LPDDR6 Workshop, 8 April 2025, key spec comparison and metadata slides",
@@ -3346,6 +3353,120 @@
       "humanReviewedOn": null,
       "source_title": "Granite River Labs — MIPI M-PHY receiver conformance testing",
       "source_url": "https://www.graniteriverlabs.com/en-us/technical-blog/mipi-m-phy-receiver-conformance"
+    },
+    {
+      "id": "C-165",
+      "statement": "JESD209-5B (July 2021) added TX/RX equalisation and Adaptive Refresh Management to LPDDR5, and introduced LPDDR5X as an optional extension aimed at higher bandwidth and a simpler architecture.",
+      "pages": [
+        "interfaces/lpddr5x"
+      ],
+      "source_type": "public-rate",
+      "source": "JEDEC press release, 28 July 2021",
+      "conditions": "The announcement; the standard itself has not been read",
+      "status": "verified",
+      "note": "Read on jedec.org. The release names the equalisation but not where it sits or how it is set; C-167 and C-53 fill in what vendors describe. The same release quotes Samsung describing LPDDR5X as substantial bandwidth expansion \"with minimal IP change\"; that is a member’s description, not a compatibility guarantee, and the page presents it as such.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-18",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null,
+      "source_url": "https://www.jedec.org/news/pressreleases/jedec-publishes-new-and-updated-standards-low-power-memory-devices-used-5g-and-ai",
+      "source_title": "JEDEC — JESD209-5B announcement: LPDDR5 update and LPDDR5X"
+    },
+    {
+      "id": "C-166",
+      "statement": "JESD209-5 (February 2019) introduced WCK and a read strobe RDQS, a 250 mV signalling voltage, non-target ODT for DQ, DFE, selectable background or command-based ZQ calibration, and dynamic frequency and voltage scaling of core and I/O, and a programmable bank organisation: 8 banks, 4 bank groups of 4 banks, or 16 banks.",
+      "pages": [
+        "interfaces/lpddr5x"
+      ],
+      "source_type": "public-rate",
+      "source": "JEDEC press release, 19 February 2019",
+      "conditions": "The announcement of the first LPDDR5 edition",
+      "status": "verified",
+      "note": "Read on jedec.org, from the list of key specification updates. The release also lets CK, WCK and RDQS each be differential or single-ended.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-18",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null,
+      "source_url": "https://www.jedec.org/news/pressreleases/jedec-updates-standard-low-power-memory-devices-lpddr5",
+      "source_title": "JEDEC — JESD209-5 (LPDDR5) publication announcement"
+    },
+    {
+      "id": "C-167",
+      "statement": "LPDDR5X adds the 7500 and 8533 MT/s bins (CK 937.5 and 1066.5 MHz, WCK 3750 and 4266.5 MHz), a unified non-target ODT behaviour required of every device for dual-rank reads, per-byte transmit pre-emphasis, receiver offset calibration training, per-pin DFE, and extended latencies, and drops the 8-bank mode.",
+      "pages": [
+        "interfaces/lpddr5x"
+      ],
+      "source_type": "commercial",
+      "source": "Cadence blog (S. Sharma), \"Taking LPDDR5 to the Next Level\", 19 February 2021",
+      "conditions": "A verification-IP vendor’s summary written while LPDDR5X was being finalised",
+      "status": "scoped",
+      "note": "Read on community.cadence.com. Written before JESD209-5B was published, so later editions may differ. The DRAM-side DFE and pre-emphasis are optional per device and advertised in mode registers (C-53).",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-18",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null,
+      "source_url": "https://community.cadence.com/cadence_blogs_8/b/fv/posts/taking-lpddr5-to-the-next-level",
+      "source_title": "Cadence — Taking LPDDR5 to the next level (LPDDR5X differences)"
+    },
+    {
+      "id": "C-168",
+      "statement": "LPDDR4 and LPDDR4X run to 4267 Mbps with CK and a bidirectional DQS at the same frequency, at an I/O voltage of 1.1 V (LPDDR4) or 0.6 V (LPDDR4X); LPDDR5 DRAMs have a single-tap DFE on write data.",
+      "pages": [
+        "interfaces/lpddr5x"
+      ],
+      "source_type": "commercial",
+      "source": "Synopsys LPDDR5 technical bulletin (January 2020), table 1 and the clocking and DFE sections",
+      "conditions": "An IP vendor’s comparison table",
+      "status": "scoped",
+      "note": "Read on synopsys.com. The table lists \"1.1V / 0.6V I/O\" for LPDDR4, which is the LPDDR4 and LPDDR4X pair. The same bulletin gives LPDDR5 I/O at 0.5 V and 0.3 V under voltage scaling (C-63 agrees).",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-18",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null,
+      "source_url": "https://www.synopsys.com/designware-ip/technical-bulletin/key-features-about-lpddr5.html",
+      "source_title": "Synopsys — Key features designers should know about LPDDR5"
+    },
+    {
+      "id": "C-169",
+      "statement": "Samsung announced an LPDDR5X DRAM running at up to 10.7 Gb/s in April 2024, on a 12 nm-class process, with mass production planned for the second half of 2024.",
+      "pages": [
+        "interfaces/lpddr5x"
+      ],
+      "source_type": "vendor",
+      "source": "Samsung Newsroom, \"Samsung Develops Industry’s Fastest 10.7Gbps LPDDR5X DRAM, Optimized for AI Applications\", 17 April 2024",
+      "conditions": "One vendor’s product; whether 10.7 Gb/s is a bin in a JEDEC edition is in JESD209-5C, which has not been read",
+      "status": "verified",
+      "note": "Read on news.samsung.com. Verifies the product announcement, not a JEDEC speed bin.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-18",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null,
+      "source_url": "https://news.samsung.com/global/samsung-develops-industrys-fastest-10-7gbps-lpddr5x-dram-optimized-for-ai-applications",
+      "source_title": "Samsung — 10.7 Gb/s LPDDR5X announcement"
+    },
+    {
+      "id": "C-170",
+      "statement": "One FPGA vendor’s LPDDR5 memory-down guideline routes DQ as 40 ohm stripline on upper layers, with via transitions no deeper than 50 mil and at most 3.0 inches in total, and warns that deep-layer via transitions raise crosstalk.",
+      "pages": [
+        "interfaces/lpddr5x"
+      ],
+      "source_type": "vendor",
+      "source": "Altera, External Memory Interfaces Agilex 7 M-Series FPGA IP User Guide, 8.3.7.2 Routing Guidelines for LPDDR5 Memory Down Topology, table 276",
+      "conditions": "One vendor, one platform, single or dual rank; a phone SoC’s guide will differ",
+      "status": "scoped",
+      "note": "Read on docs.altera.com (version 26.1.1). The same section says LPDDR5 eye margin is sensitive to crosstalk, especially on deep layers, and that skew matching includes package as well as PCB routing.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-18",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null,
+      "source_url": "https://docs.altera.com/r/docs/772538/26.1.1/external-memory-interfaces-agilex-7-m-series-fpga-ip-user-guide/routing-guidelines-for-lpddr5-memory-down-topology",
+      "source_title": "Altera — LPDDR5 memory-down routing guidelines (Agilex 7 M-Series EMIF)"
     }
   ]
 }

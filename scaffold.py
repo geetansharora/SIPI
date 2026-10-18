@@ -610,6 +610,7 @@ def reference_library_problems():
 
 
 TITLE_RENAMES = {
+    "LPDDR5/5X Signal Integrity: WCK, ODT and Training": "LPDDR5 vs LPDDR5X: WCK Clocking, Training and Signal Integrity",
     "UFS 4.0 Signal Integrity: M-PHY Gear 5": "UFS 3.1 vs 4.0 vs 5.0: M-PHY Gears, Burst Mode and Signal Integrity",
     "USB 3.1 and 3.2 Signal Integrity: SSC and Compliance": "USB 3.2 Gen 1 vs Gen 2 vs Gen 2x2: Loss Budget, SSC and Compliance",
     "PCIe 4.0 vs PCIe 5.0: Loss Budget, Tx Presets and Link Equalization": "PCIe 4.0 vs 5.0: Loss Budget, Tx Presets, Link Equalization",
@@ -668,7 +669,7 @@ TITLE_RENAMES = {
     "BGA escape routing and breakout congestion": "BGA Escape Routing and Breakout Congestion",
     "Layer transitions and stitching vias": "Stitching Vias and PCB Layer Transitions",
     "Connectors, cables, and their discontinuities": "High-Speed Connectors and Cables",
-    "LPDDR5/5X — timing budget, ODT, training": "LPDDR5/5X Signal Integrity: WCK, ODT and Training",
+    "LPDDR5/5X — timing budget, ODT, training": "LPDDR5 vs LPDDR5X: WCK Clocking, Training and Signal Integrity",
     "PCIe Gen 4/5 — loss budget and equalisation": "PCIe 4.0 vs 5.0: Loss Budget, Tx Presets, Link Equalization",
     "PCIe Gen 6 — PAM4, FLIT, FEC": "PCIe 6.0 vs PCIe 5.0: PAM4, FLIT, FEC and Signal Integrity",
     "USB 3.1/3.2 — SSC and compliance": "USB 3.2 Gen 1 vs Gen 2 vs Gen 2x2: Loss Budget, SSC and Compliance",

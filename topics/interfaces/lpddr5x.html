@@ -7,8 +7,8 @@
   <meta name="theme-color" content="#F7F8FA">
   <script>(function(){try{var t=localStorage.getItem('sipi-theme');if(t==='dark'||t==='system'){document.documentElement.setAttribute('data-theme',t);var m=document.querySelector('meta[name=theme-color]');if(m&&(t==='dark'||matchMedia('(prefers-color-scheme:dark)').matches))m.content='#0B1015';}}catch(e){}})();</script>
   <!-- theme:end -->
-<title>LPDDR5/5X Signal Integrity: WCK, ODT and Training | SIPI</title>
-<meta name="description" content="How an LPDDR5X channel is signed off: WCK/CK architecture, why training exists, and why the enemies are crosstalk and SSN rather than loss.">
+<title>LPDDR5 vs LPDDR5X: WCK Clocking, Training and Signal Integrity | SIPI</title>
+<meta name="description" content="LPDDR5 vs LPDDR5X for signal integrity: 8533 MT/s and 10.7 Gb/s, CK and WCK clocking, RDQS, VDDQ, non-target ODT, pre-emphasis, DFE and training.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
@@ -19,20 +19,20 @@
   <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
   <meta property="og:type" content="article">
   <meta property="og:site_name" content="SIPI">
-  <meta property="og:title" content="LPDDR5/5X Signal Integrity: WCK, ODT and Training | SIPI">
-  <meta property="og:description" content="How an LPDDR5X channel is signed off: WCK/CK architecture, why training exists, and why the enemies are crosstalk and SSN rather than loss.">
+  <meta property="og:title" content="LPDDR5 vs LPDDR5X: WCK Clocking, Training and Signal Integrity | SIPI">
+  <meta property="og:description" content="LPDDR5 vs LPDDR5X for signal integrity: 8533 MT/s and 10.7 Gb/s, CK and WCK clocking, RDQS, VDDQ, non-target ODT, pre-emphasis, DFE and training.">
   <meta property="og:url" content="https://sipi.work/topics/interfaces/lpddr5x.html">
   <meta property="og:image" content="https://sipi.work/assets/og/interfaces/lpddr5x.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
-  <meta property="og:image:alt" content="LPDDR5/5X Signal Integrity: WCK, ODT and Training: a figure from the page, on SIPI">
+  <meta property="og:image:alt" content="LPDDR5 vs LPDDR5X: WCK Clocking, Training and Signal Integrity: a figure from the page, on SIPI">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="LPDDR5/5X Signal Integrity: WCK, ODT and Training | SIPI">
-  <meta name="twitter:description" content="How an LPDDR5X channel is signed off: WCK/CK architecture, why training exists, and why the enemies are crosstalk and SSN rather than loss.">
+  <meta name="twitter:title" content="LPDDR5 vs LPDDR5X: WCK Clocking, Training and Signal Integrity | SIPI">
+  <meta name="twitter:description" content="LPDDR5 vs LPDDR5X for signal integrity: 8533 MT/s and 10.7 Gb/s, CK and WCK clocking, RDQS, VDDQ, non-target ODT, pre-emphasis, DFE and training.">
   <meta name="twitter:image" content="https://sipi.work/assets/og/interfaces/lpddr5x.png">
-  <meta name="twitter:image:alt" content="LPDDR5/5X Signal Integrity: WCK, ODT and Training: a figure from the page, on SIPI">
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"LPDDR5/5X Signal Integrity: WCK, ODT and Training","description":"How an LPDDR5X channel is signed off: WCK/CK architecture, why training exists, and why the enemies are crosstalk and SSN rather than loss.","url":"https://sipi.work/topics/interfaces/lpddr5x.html","articleSection":"Interface sign-off","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer","url":"https://www.linkedin.com/in/geetansh-arora-a645714a/","sameAs":["https://www.linkedin.com/in/geetansh-arora-a645714a/"]},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-10-01","image":"https://sipi.work/assets/og/interfaces/lpddr5x.png"}</script>
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"SIPI","item":"https://sipi.work/"},{"@type":"ListItem","position":2,"name":"Interface sign-off","item":"https://sipi.work/#interfaces"},{"@type":"ListItem","position":3,"name":"LPDDR5/5X Signal Integrity: WCK, ODT and Training"}]}</script>
+  <meta name="twitter:image:alt" content="LPDDR5 vs LPDDR5X: WCK Clocking, Training and Signal Integrity: a figure from the page, on SIPI">
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"LPDDR5 vs LPDDR5X: WCK Clocking, Training and Signal Integrity","description":"LPDDR5 vs LPDDR5X for signal integrity: 8533 MT/s and 10.7 Gb/s, CK and WCK clocking, RDQS, VDDQ, non-target ODT, pre-emphasis, DFE and training.","url":"https://sipi.work/topics/interfaces/lpddr5x.html","articleSection":"Interface sign-off","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer","url":"https://www.linkedin.com/in/geetansh-arora-a645714a/","sameAs":["https://www.linkedin.com/in/geetansh-arora-a645714a/"]},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-10-18","image":"https://sipi.work/assets/og/interfaces/lpddr5x.png"}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"SIPI","item":"https://sipi.work/"},{"@type":"ListItem","position":2,"name":"Interface sign-off","item":"https://sipi.work/#interfaces"},{"@type":"ListItem","position":3,"name":"LPDDR5 vs LPDDR5X: WCK Clocking, Training and Signal Integrity"}]}</script>
   <!-- meta:end -->
 </head>
 <body>
@@ -52,25 +52,83 @@
 <main>
   <div class="page-head">
     <p class="crumb"><a href="../../index.html#interfaces">Interface sign-off</a> / 01</p>
-    <h1>LPDDR5/5X Signal Integrity: WCK, ODT and Training</h1>
+    <h1>LPDDR5 vs LPDDR5X: WCK Clocking, Training and Signal Integrity</h1>
     <p class="byline">
-      <!-- review:start --><span>By <a href="https://www.linkedin.com/in/geetansh-arora-a645714a/" target="_blank" rel="author noopener">Geetansh Arora</a> — Principal SI/PI Engineer</span><time datetime="2026-10-01" title="Technical review by Geetansh Arora on this date">1 Oct 2026</time><span>10 min</span><!-- review:end -->
+      <!-- review:start --><span>By <a href="https://www.linkedin.com/in/geetansh-arora-a645714a/" target="_blank" rel="author noopener">Geetansh Arora</a> — Principal SI/PI Engineer</span><time datetime="2026-10-18" title="Technical review by Geetansh Arora on this date">18 Oct 2026</time><span>14 min</span><!-- review:end -->
     </p>
-    <!-- share:head:start --><div class="share share--head" data-share data-share-url="https://sipi.work/topics/interfaces/lpddr5x.html" data-share-title="LPDDR5/5X Signal Integrity: WCK, ODT and Training"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Flpddr5x.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Flpddr5x.html&amp;text=LPDDR5%2F5X%20Signal%20Integrity%3A%20WCK%2C%20ODT%20and%20Training" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=LPDDR5%2F5X%20Signal%20Integrity%3A%20WCK%2C%20ODT%20and%20Training&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Flpddr5x.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:head:end -->
+    <!-- share:head:start --><div class="share share--head" data-share data-share-url="https://sipi.work/topics/interfaces/lpddr5x.html" data-share-title="LPDDR5 vs LPDDR5X: WCK Clocking, Training and Signal Integrity"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Flpddr5x.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Flpddr5x.html&amp;text=LPDDR5%20vs%20LPDDR5X%3A%20WCK%20Clocking%2C%20Training%20and%20Signal%20Integrity" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=LPDDR5%20vs%20LPDDR5X%3A%20WCK%20Clocking%2C%20Training%20and%20Signal%20Integrity&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Flpddr5x.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:head:end -->
     <p class="answer">
-      LPDDR5X is a wide parallel bus where every bit has its own wire and a strobe travels
-      alongside to say when to sample. That makes it a <em>timing</em> problem rather than a loss
-      problem &#8212; the channel is short, but a data bit occupies about 117 ps and everything
-      that moves an edge is spending it.
+      LPDDR5X is the low-power DRAM interface in phones, thin laptops and edge-AI processors: sixteen single-ended
+      data wires per channel, with a forwarded clock beside them that says when to sample. JEDEC took it to
+      8533 MT/s in 2021, where each bit lasts about 117 ps, and vendors have since announced parts at 10.7 Gb/s. The channel is
+      short, so most of the signal integrity work is about timing: skew, crosstalk and switching noise all spend the
+      same 117 ps, and the interface trains itself at power-up to find the middle of what is left.
+    </p>
+  </div>
+
+  <div class="prose">
+    <h2 class="section-rule" id="at-a-glance"><span>At a glance</span></h2>
+    <h3>LPDDR5 vs LPDDR5X: what is the difference?</h3>
+    <p>
+      LPDDR5X is an optional extension of LPDDR5, defined in the same JEDEC standard, JESD209-5, from its 2021
+      revision onwards (C-165). It adds the 7500 and 8533 MT/s speed bins and, for the channel, transmit
+      pre-emphasis, per-pin decision feedback equalisation (DFE) in the DRAM, receiver offset calibration and a
+      stricter termination rule for dual-rank reads (C-167). LPDDR5 itself tops out at 6400 MT/s (C-2b). The pins and
+      signalling do not change. <a href="#lpddr5-vs-lpddr5x">LPDDR5 vs LPDDR5X</a> sets the two side by side, row by
+      row, and the <a href="#generations">generations table</a> adds LPDDR4X and LPDDR6.
+    </p>
+    <h3>How fast is LPDDR5X?</h3>
+    <p>
+      JESD209-5B (July 2021) extended the standard to 8533 MT/s (C-2a), and the 7500 and 8533 bins are the ones sold
+      as LPDDR5X (C-167). Vendors have since gone further: Samsung announced a 10.7 Gb/s LPDDR5X in April 2024
+      (C-169). A 16-bit channel at 8533 MT/s moves <span class="num">17.1 GB/s</span>, and at 10.7 Gb/s
+      <span class="num">21.4 GB/s</span>; a package with four such channels multiplies that by four. The current
+      edition, JESD209-5C, is sold by JEDEC, so which bins above 8533 it defines is not quoted here.
+    </p>
+    <h3>What clocks does LPDDR5X use?</h3>
+    <p>
+      Two, plus a read strobe. CK carries command and address. WCK, forwarded by the controller, times write data and
+      runs four times as fast as CK above 3200 Mb/s (twice as fast below). Reads come back timed by RDQS, a strobe
+      from the DRAM. There is no bidirectional DQS as on LPDDR4X (C-4a). At 8533 MT/s CK runs at
+      <span class="num">1066.5 MHz</span> and WCK at <span class="num">4266.5 MHz</span>, and data moves on both
+      edges of WCK (C-167). <a href="#clocking">The clocking figure</a> draws one CK cycle.
+    </p>
+    <h3>What voltage does LPDDR5X use?</h3>
+    <p>
+      The I/O supply, V<sub>DDQ</sub>, is <span class="num">0.5 V</span>, with a 0.45 V option and 0.3 V when the
+      termination is off at low speed, and the I/O standard is LVSTL (C-53). JEDEC gives LPDDR5 a
+      signalling voltage of 250 mV (C-166), and the core rail runs at 1.05 V, or 0.9 V when voltage scaling lowers it
+      (C-63). For comparison, LPDDR4X ran its I/O at 0.6 V (C-168).
+    </p>
+    <h3>Does LPDDR5X need training?</h3>
+    <p>
+      Yes. Before it can move data reliably the controller sets the reference voltages, trains the command bus,
+      levels WCK against CK (WCK2CK leveling) and then trains the read and write data against their clocks; LPDDR5X
+      adds a receiver offset calibration, recommended at every power-up (C-5). <a href="#training">Why training is
+      the whole story</a> explains what it can and cannot fix.
+    </p>
+    <h3>How long can an LPDDR5X trace be?</h3>
+    <p>
+      The limits come from the SoC vendor&#8217;s guide, because the standard sets the pin-level timing and leaves
+      the channel to the system. As one public example, an FPGA vendor routes LPDDR5 data as 40 &#937; stripline on
+      the upper layers, at most 3.0 inches in total (C-170). A phone is usually far shorter, and with the DRAM
+      stacked on the processor package there may be no board trace at all.
+    </p>
+    <h3>Is LPDDR5X always soldered down?</h3>
+    <p>
+      Usually, but no longer always. JEDEC&#8217;s CAMM2 standard (JESD318, 2023) puts LPDDR5/5X on a
+      compression-attached module for notebooks and some servers (C-54), which adds a connector to a channel that
+      used to have none (C-3).
     </p>
   </div>
 
   <!-- ───────────── the picture ───────────── -->
+
   <section class="instrument" data-viz="lpddrBudget" aria-label="Interactive LPDDR5X write timing budget shown as a stacked bar across one unit interval, with each contributor adjustable">
-    <script type="application/json" data-contract>{"kind":"illustrative","evidence":"plausible","purpose":"Show how a UI is consumed by contributions that are not all the same kind.","equations":["UI_ps = 1e6 / rate_MTps        (the control is a TRANSFER rate in MT/s)","budget terms summed as an RSS of the independent contributors"],"units":"ps","validity":"ILLUSTRATIVE — the contributions are representative magnitudes, not JEDEC values. Training gain is a labelled model, not a specification.","numerics":"Exact arithmetic on the budget terms. At 8533 MT/s, UI = 1e6/8533 = 117.2 ps, which is what the page states.","limitations":"The contract previously wrote UI = 1/(2*rate), which is the formula for a clock frequency rather than a transfer rate and would have given 58.6 ps. The code was always right; the contract was not. The budget split itself is illustrative — the terms are plausible magnitudes, not a sourced allocation.","suites":["Units","State"],"version":"1.0","reviewed":"2026-09-12","panel":"lpddrBudget"}</script>
+    <script type="application/json" data-contract>{"kind":"illustrative","evidence":"plausible","purpose":"Show how a UI is consumed by contributions that are not all the same kind.","equations":["UI_ps = 1e6 / rate_MTps        (the control is a TRANSFER rate in MT/s)","left_ps = UI_ps - sum(terms)   (a linear, worst-case stack; training scales the tWCK2DQ term by 0.25)"],"units":"ps","validity":"ILLUSTRATIVE — the contributions are representative magnitudes, not JEDEC values. Training gain is a labelled model, not a specification.","numerics":"Exact arithmetic on the budget terms. At 8533 MT/s, UI = 1e6/8533 = 117.2 ps, which is what the page states. The rate control offers bins from 3200 to 10700 MT/s; 9600 and 10700 are vendor parts, not JESD209-5B bins.","limitations":"Until 18 Oct 2026 the contract said the terms were summed as an RSS; the code has always added them linearly, and the contract now says so. The contract previously wrote UI = 1/(2*rate), which is the formula for a clock frequency rather than a transfer rate and would have given 58.6 ps. The code was always right; the contract was not. The budget split itself is illustrative — the terms are plausible magnitudes, not a sourced allocation.","suites":["Units","State"],"version":"1.1","reviewed":"not yet","panel":"lpddrBudget"}</script>
     <div class="instrument__bar">
       <span class="instrument__title">117 ps &#183; and everything that wants a piece of it</span>
-        <span data-evidence="plausible" data-model-version="1.0" class="model-tag model-tag--illustrative" title="Conceptual timing budget. Training gain is assumed, not calibrated.">illustrative</span>
+        <span data-evidence="plausible" data-model-version="1.1" class="model-tag model-tag--illustrative" title="Conceptual timing budget. Training gain is assumed, not calibrated.">illustrative</span>
       <span class="instrument__readout" role="status" aria-live="polite" aria-label="Current values">
         <span>one UI <b data-out="ui">—</b></span>
         <span>left for the mask <b data-out="left">—</b></span>
@@ -88,15 +146,15 @@
     <div class="controls">
       <div class="ctl">
         <div class="ctl__head"><label for="lp-rate">Data rate</label><output id="lp-rate-out" for="lp-rate">8533 MT/s</output></div>
-        <input type="range" id="lp-rate" min="0" max="5" step="1" value="5"
+        <input type="range" id="lp-rate" min="0" max="7" step="1" value="5"
                aria-valuetext="8533 MT/s" list="lp-bins">
-        <datalist id="lp-bins"><option value="0"></option><option value="1"></option><option value="2"></option><option value="3"></option><option value="4"></option><option value="5"></option></datalist>
-        <span class="ctl__note">Speed bins: 3200 · 4266 · 5500 · 6400 · 7500 · 8533. LPDDR5 to 6400, LPDDR5X above it.</span>
+        <datalist id="lp-bins"><option value="0"></option><option value="1"></option><option value="2"></option><option value="3"></option><option value="4"></option><option value="5"></option><option value="6"></option><option value="7"></option></datalist>
+        <span class="ctl__note">Speed bins: 3200 · 4266 · 5500 · 6400 · 7500 · 8533 · 9600 · 10700. LPDDR5 to 6400; LPDDR5X 7500 and 8533 in JESD209-5B; 9600 and 10.7 Gb/s are vendor parts.</span>
       </div>
       <div class="ctl">
-        <div class="ctl__head"><label for="lp-tdqs">tDQS2DQ</label><output id="lp-tdqs-out" for="lp-tdqs">18 ps</output></div>
+        <div class="ctl__head"><label for="lp-tdqs">tWCK2DQ</label><output id="lp-tdqs-out" for="lp-tdqs">18 ps</output></div>
         <input type="range" id="lp-tdqs" min="0" max="40" step="1" value="18">
-        <span class="ctl__note">Inside the DRAM — no board fix exists</span>
+        <span class="ctl__note">The DRAM’s own WCK-to-data offset: no board fix exists</span>
       </div>
       <div class="ctl">
         <div class="ctl__head"><label for="lp-xtalk">Crosstalk</label><output id="lp-xtalk-out" for="lp-xtalk">14 ps</output></div>
@@ -126,7 +184,7 @@
       <div class="ctl">
         <div class="ctl__head"><label for="lp-train">Training</label></div>
         <label class="check" for="lp-train"><input type="checkbox" id="lp-train" checked> read/write training has run</label>
-        <span class="ctl__note">Centres the strobe — removes most of tDQS2DQ</span>
+        <span class="ctl__note">Centres the clock in the eye, removing most of tWCK2DQ</span>
       </div>
     </div>
     <div class="presets">
@@ -141,46 +199,26 @@
 
   <div class="prose">
     <p>
-      Low-Power Double Data Rate 5X (LPDDR5X) SDRAM feeds the CPU, GPU and NPU engines in phones, thin laptops
-      and edge-AI processors. At up to <span class="num">8533 MT/s</span> (megatransfers per second), the unit
-      interval (UI), the time each bit is valid, is <span class="num">117 picoseconds</span>.
-    </p>
-
-    <p>
-      High-speed serial links such as PCIe and USB use differential signalling, where a balanced pair rejects
-      common-mode noise and ground bounce. But memory
-      architectures cannot afford the pin penalty of differential routing: an LPDDR5X interface must route 16
-      or 32 parallel data lines (DQ) across cramped mobile board real estate. As a result, data lanes remain strictly
-      <strong>single-ended</strong>, while the forwarded high-speed write clock (WCK) is differential.
-    </p>
-
-    <p>
-      This hybrid architecture creates an intense signal integrity cross-pressure: raw single-ended data bits
-      must tolerate simultaneous switching noise (SSN), dense trace-to-trace crosstalk, and power supply
-      droop, yet arrive at the receiver aligned within single-digit picoseconds of the differential WCK strobe.
-      LPDDR5X is not an interface you design simply with trace geometry; it is an active, trained subsystem
-      where silicon calibration and board layout must operate as a unified machine.
+      The panel above is a budget, not a simulation: each slider is one thing that spends part of a bit, and what is
+      left is what the DRAM&#8217;s receiver gets. Before you touch it, guess which term you would argue about first
+      in a design review. Then switch training off, or step the rate up to 10.7 Gb/s, and see whether the answer
+      changes.
     </p>
 
     <h2>Parallel and source-synchronous, and why that changes everything</h2>
 
     <p>
-      Almost everything else on this site is a serial link: one differential pair, the clock
-      recovered from the data itself. A DRAM interface is the opposite. Sixteen data wires per
-      channel, all switching together, with a separate strobe that tells the receiver when to
-      sample.
+      Almost everything else on this site is a serial link: one differential pair, with the clock recovered from the
+      data itself. A DRAM interface is the opposite. Sixteen single-ended data wires per channel switch together,
+      and a separate clock travels beside them to tell the receiver when to sample. Differential data would double
+      the pin count, which a phone cannot afford, so only the clocks get a pair.
     </p>
 
     <p>
-      That is called <strong>source-synchronous</strong>, and it has one large advantage: the
-      strobe travels the same path as the data, so anything that delays the data delays the strobe
-      too and cancels. Common-mode delay is free.
-    </p>
-
-    <p>
-      What does not cancel is <em>difference</em>. Skew between one data bit and the strobe, or
-      between bits, spends budget directly. So a DRAM channel is not really about loss — it is
-      short — it is about everything that makes one wire different from another.
+      Sending the clock with the data is called <strong>source-synchronous</strong>, and it has one large advantage:
+      anything that delays the data and the clock equally cancels. What does not cancel is <em>difference</em>. Skew
+      between a data bit and its clock, or between one bit and the next, spends budget directly. So a DRAM channel is
+      mostly about everything that makes one wire different from another.
     </p>
     <figure class="figure">
       <div class="figure__bar"><span>Source-synchronous &#183; the strobe travels with the data, so only the difference costs</span></div>
@@ -200,9 +238,9 @@
   <path d="M104,82 L296,82" class="flow" style="stroke: var(--ink-2); stroke-width: 1.2"/>
   <path d="M104,86 L296,86" class="flow" style="stroke: var(--ink-2); stroke-width: 1.2"/>
   <text class="lbl-hi" x="200.0" y="100.0" text-anchor="middle">DQ[15:0]: data, both directions</text>
-  <text class="lbl" x="200.0" y="154.0" text-anchor="middle">point to point, roughly 10&#8211;30 mm, or stacked on the package</text>
+  <text class="lbl" x="200.0" y="154.0" text-anchor="middle">point to point: on the board, on a CAMM2 module, or on the package</text>
 </svg></div>
-        <div><span class="figure__label">what cancels and what does not</span><svg viewBox="0 0 400 234" role="img" aria-label="Three timing rows. As trained, the strobe edge sits in the middle of the data eye. With a common delay, eye and strobe both shift by the same amount and the edge stays mid-eye. With skew, only the data eye shifts, so the strobe edge sits off-centre and one side of the margin is gone.">
+        <div><span class="figure__label">what cancels and what does not</span><svg viewBox="0 0 400 242" role="img" aria-label="Three timing rows. As trained, the strobe edge sits in the middle of the data eye. With a common delay, eye and strobe both shift by the same amount and the edge stays mid-eye. With skew, only the data eye shifts, so the strobe edge sits off-centre and one side of the margin is gone.">
   <text class="lbl-hi" x="14.0" y="28.0">as trained</text>
   <path d="M130,28.0 L144,14 L212,14 L226,28.0 L212,42 L144,42 z" style="fill: var(--signal); fill-opacity: .1; stroke: var(--signal); stroke-width: 1.3"/>
   <path d="M152.0,62 L178.0,62 L178.0,50 L204.0,50" class="flow-2" style="stroke-width: 1.8"/><path d="M178.0,16 L178.0,62" class="tick" style="stroke: var(--reflect); stroke-dasharray: 3 3"/>
@@ -226,261 +264,349 @@
       <figcaption><b>Delay that data and strobe share cancels; any difference between them is spent from a 117 ps bit.</b> Top: the LPDDR5X wiring. Command and address run on CK at a comparatively slow rate; writes are timed by WCK from the controller; reads come back with their own strobe from the DRAM; sixteen data wires carry both. Bottom: what the receiver cares about. Training places the strobe edge in the middle of the data eye. A delay common to both, from a longer route, a slower corner or a shared supply droop, moves them together, and the edge stays mid-eye. A delay on the data alone (skew between a bit and its strobe, or between bits) moves the eye out from under the edge and eats margin on one side. That is why a DRAM channel is a matching problem more than a loss problem. Schematic: the eyes are idealised and not to scale.</figcaption>
     </figure>
 
-
-    <h2 class="section-rule"><span>What it is</span></h2>
+    <h2 class="section-rule" id="clocking"><span>CK, WCK and RDQS: why LPDDR5X has two clocks</span></h2>
 
     <p>
-      JEDEC's low-power DRAM interface: a source-synchronous parallel bus, x16 per channel. The
-      top speed bin is a property of an <em>edition</em>, not of the family — LPDDR5 was specified
-      to 6400 MT/s and LPDDR5X to 8533 MT/s in the editions this page was written against, and
-      later editions raise both. Its successor, <a href="lpddr6.html">LPDDR6</a>, widens the channel rather than raising the rate much further. Treat those two numbers as "the bins in the revision you are
-      designing to", and go and read which revision that is. At 8533 MT/s a data bit occupies
-      about <strong>117 ps</strong>, which is the entire budget for skew, jitter, noise and every
-      uncertainty in the path.
+      Up to LPDDR4X the command clock CK ran at the same frequency as the data strobe DQS, which itself went both
+      ways: driven by the controller on writes and by the DRAM on reads (C-168). That forced the command and address
+      bus to keep up with the data. LPDDR5 split the job. CK slowed down and carries only command and address; a new
+      write clock, WCK, carries the data rate; and reads get their own strobe, RDQS, driven by the DRAM (C-4a, C-166).
+    </p>
+  <figure class="figure">
+    <div class="figure__bar"><span>One CK cycle at 8533 MT/s &#183; four WCK cycles, eight data bits</span></div>
+    <div class="figure__body"><svg viewBox="0 0 400 252" role="img" aria-label="One CK cycle at 8533 MT/s, 938 ps long. CK, which carries command and address, makes one cycle. WCK, the write clock, makes four cycles in the same time, so it runs at 4266.5 MHz, a period of 234 ps. Data changes on both edges of WCK, so eight data bits fit in one CK cycle, each 117 ps wide. Command and address move on both edges of CK, at 2133 Mb/s, a quarter of the data rate.">
+        <text class="lbl-hi" x="20" y="14">one CK cycle at 8533 MT/s: 938 ps</text>
+        <path class="flow-2" d="M64,48 V30 H224 V48 H384" style="fill:none"/>
+        <text class="lbl-hi" x="20" y="39">CK</text>
+        <text class="lbl" x="20" y="51">1066.5</text>
+        <text class="lbl-ref" x="230" y="64" text-anchor="middle">CK: command and address, 2133 Mb/s on both edges</text>
+        <path class="flow" d="M64,96 V78 H104 V96 H144 V78 H184 V96 H224 V78 H264 V96 H304 V78 H344 V96 H384" style="fill:none"/>
+        <text class="lbl-hi" x="20" y="87">WCK</text>
+        <text class="lbl" x="20" y="99">4266.5</text>
+        <text class="lbl-sig" x="224" y="112" text-anchor="middle">WCK: four cycles per CK, 234 ps each</text>
+        <path d="M65,137 L71,124 L97,124 L103,137 L97,150 L71,150 z" style="fill: var(--signal); fill-opacity: .1; stroke: var(--signal); stroke-width: 1.2"/>
+        <text class="lbl" x="84" y="141" text-anchor="middle">0</text>
+        <path d="M105,137 L111,124 L137,124 L143,137 L137,150 L111,150 z" style="fill: var(--signal); fill-opacity: .1; stroke: var(--signal); stroke-width: 1.2"/>
+        <text class="lbl" x="124" y="141" text-anchor="middle">1</text>
+        <path d="M145,137 L151,124 L177,124 L183,137 L177,150 L151,150 z" style="fill: var(--signal); fill-opacity: .1; stroke: var(--signal); stroke-width: 1.2"/>
+        <text class="lbl" x="164" y="141" text-anchor="middle">2</text>
+        <path d="M185,137 L191,124 L217,124 L223,137 L217,150 L191,150 z" style="fill: var(--signal); fill-opacity: .1; stroke: var(--signal); stroke-width: 1.2"/>
+        <text class="lbl" x="204" y="141" text-anchor="middle">3</text>
+        <path d="M225,137 L231,124 L257,124 L263,137 L257,150 L231,150 z" style="fill: var(--signal); fill-opacity: .1; stroke: var(--signal); stroke-width: 1.2"/>
+        <text class="lbl" x="244" y="141" text-anchor="middle">4</text>
+        <path d="M265,137 L271,124 L297,124 L303,137 L297,150 L271,150 z" style="fill: var(--signal); fill-opacity: .1; stroke: var(--signal); stroke-width: 1.2"/>
+        <text class="lbl" x="284" y="141" text-anchor="middle">5</text>
+        <path d="M305,137 L311,124 L337,124 L343,137 L337,150 L311,150 z" style="fill: var(--signal); fill-opacity: .1; stroke: var(--signal); stroke-width: 1.2"/>
+        <text class="lbl" x="324" y="141" text-anchor="middle">6</text>
+        <path d="M345,137 L351,124 L377,124 L383,137 L377,150 L351,150 z" style="fill: var(--signal); fill-opacity: .1; stroke: var(--signal); stroke-width: 1.2"/>
+        <text class="lbl" x="364" y="141" text-anchor="middle">7</text>
+        <text class="lbl-hi" x="20" y="133">DQ</text>
+        <text class="lbl" x="20" y="145">8533</text>
+        <path class="tick" d="M184,160 V166 H224 V160"/>
+        <text class="lbl-sig" x="204" y="180" text-anchor="middle">one bit: 117 ps</text>
+        <text class="lbl-hi" x="20" y="206">eight bits per CK cycle, two per WCK cycle</text>
+        <text class="lbl" x="20" y="222">only the data path has to meet 117 ps;</text>
+        <text class="lbl" x="20" y="238">command and address get four times as long</text>
+        </svg></div>
+    <figcaption><b>The data path runs four times faster than the command path.</b> At 8533 MT/s CK runs at
+      1066.5 MHz and WCK at 4266.5 MHz (C-167). Data changes on both edges of WCK, so each WCK cycle carries two bits
+      and each CK cycle eight. Command and address also use both edges of CK, so they move at 2133 Mb/s, a quarter of
+      the data rate (C-4a). Only the data wires have to meet a 117 ps bit; the command bus gets 469 ps. Below
+      3200 Mb/s the ratio drops to 2:1. Schematic: edges are drawn ideal.</figcaption>
+  </figure>
+    <p>
+      Two consequences follow for the board. First, the hard timing problem shrinks to the data byte and its clock,
+      which is a small, local group of wires. Second, source-synchronous timing only cancels delay for signals that
+      travel <em>together</em>, and writes and reads travel in opposite directions. A single shared strobe would
+      cancel in one direction and not the other, which is why reads come back with a strobe launched by the DRAM.
+      RDQS is optional at low speed, where a read can run strobe-less or with a single-ended strobe, and it is
+      differential at high speed (C-4a).
     </p>
 
+    <h2 class="section-rule" id="generations"><span>LPDDR4X vs LPDDR5 vs LPDDR5X vs LPDDR6, side by side</span></h2>
+    <div class="table-scroll">
+      <table class="data">
+        <caption>The interface layer of each generation (ledger rows in brackets)</caption>
+        <thead><tr><th></th><th>LPDDR4X</th><th>LPDDR5</th><th>LPDDR5X</th><th>LPDDR6</th></tr></thead>
+        <tbody>
+          <tr><th>JEDEC standard</th><td>JESD209-4 family</td><td>JESD209-5, Feb 2019</td><td>extension in JESD209-5B, Jul 2021</td><td>JESD209-6, Jul 2025</td></tr>
+          <tr><th>Top rate</th><td>4267 Mb/s (C-168)</td><td>6400 MT/s (C-2b)</td><td>8533 MT/s in JESD209-5B (C-2a); 10.7 Gb/s parts (C-169)</td><td>10.667 to 14.4 Gb/s (C-58)</td></tr>
+          <tr><th>Unit interval at the top rate</th><td>234 ps</td><td>156 ps</td><td>117 ps; 93 ps at 10.7 Gb/s</td><td>94 to 69 ps</td></tr>
+          <tr><th>Data pins per channel</th><td>16</td><td>16 DQ + 2 DMI (C-63)</td><td>16 DQ + 2 DMI (C-53)</td><td>two sub-channels of 12 (C-55)</td></tr>
+          <tr><th>Clocks</th><td>CK and a bidirectional DQS, same frequency</td><td>CK + WCK at 2:1 or 4:1, RDQS for reads</td><td>as LPDDR5; CK 1066.5 MHz, WCK 4266.5 MHz at 8533 (C-167)</td><td>WCK at 2:1 only, CK 2667 MHz (C-56)</td></tr>
+          <tr><th>V<sub>DDQ</sub></th><td>0.6 V (C-168)</td><td>0.5 V; 0.3 V at low speed (C-63)</td><td>0.5 V; 0.45 V option; 0.3 V, ODT off (C-53)</td><td>0.5 V; 0.3 V option (C-56)</td></tr>
+          <tr><th>Equalisation</th><td>&#8212;</td><td>DRAM write DFE, single tap (C-166, C-168)</td><td>adds Tx pre-emphasis and per-pin DFE, optional per device (C-167, C-53)</td><td>receive DFE in PHYs (C-61)</td></tr>
+          <tr><th>Dual-rank reads</th><td>&#8212;</td><td>non-target ODT on DQ (C-166)</td><td>unified non-target ODT, required (C-167)</td><td>see the <a href="lpddr6.html">LPDDR6 page</a></td></tr>
+        </tbody>
+      </table>
+    </div>
     <p>
-      The clocking is the part worth understanding, because it is what makes the rate achievable. There
-      are two clocks, not one. <strong>CK</strong> carries command and address and runs comparatively
-      slowly. <strong>WCK</strong> is the fast write strobe supplied by the controller, at a programmable
-      2:1 or 4:1 ratio to CK, and it only runs when it is needed. Reads come back with their own strobe
-      from the DRAM. Separating the slow control path from the fast data path means the command bus
-      never has to meet a 117 ps budget.
+      Read the unit-interval row first. Every generation has cut it, and LPDDR5X at 10.7 Gb/s already reaches the
+      bit length where LPDDR6 starts. The voltage row barely moves after LPDDR5, so each step leaves the same
+      half-volt swing less time. The last two rows are the response: equalisation and better-behaved termination
+      arrive just as the bit gets short enough to need them.
+    </p>
+
+    <h2 class="section-rule" id="lpddr5-vs-lpddr5x"><span>LPDDR5 vs LPDDR5X: what actually differs</span></h2>
+
+    <p>
+      Less than the name suggests. LPDDR5X is not a new standard but an optional extension written into the same JEDEC
+      document as LPDDR5 (C-165). The pins, the signalling and the clocking scheme are the same. What LPDDR5X adds is
+      two faster speed bins and the handful of features needed to make them work. Before reading the table, try a
+      prediction: if the pins and voltages do not change, where would you expect the differences to show up?
+    </p>
+    <div class="table-scroll">
+      <table class="data">
+        <caption>LPDDR5 and LPDDR5X, row by row (ledger rows in brackets)</caption>
+        <thead><tr><th></th><th>LPDDR5</th><th>LPDDR5X</th></tr></thead>
+        <tbody>
+          <tr><th>Where it is defined</th><td>JESD209-5, Feb 2019, and its revisions (C-166)</td><td>optional extension in the same document, from JESD209-5B, Jul 2021 (C-165)</td></tr>
+          <tr><th>Speed bins</th><td>up to 6400 MT/s (C-2b)</td><td>adds 7500 and 8533 MT/s (C-167); 10.7 Gb/s vendor parts (C-169)</td></tr>
+          <tr><th>Bit time at the top bin</th><td>156 ps</td><td>117 ps; 93 ps at 10.7 Gb/s</td></tr>
+          <tr><th>CK and WCK at the top bin</th><td>800 MHz and 3200 MHz (C-4a)</td><td>1066.5 MHz and 4266.5 MHz (C-167)</td></tr>
+          <tr><th>WCK:CK ratio</th><td>2:1 or 4:1 (C-63)</td><td>same (C-53)</td></tr>
+          <tr><th>Pins per channel</th><td>16 DQ + 2 DMI, 7 command (C-63)</td><td>same (C-53, C-56)</td></tr>
+          <tr><th>I/O</th><td>LVSTL, V<sub>DDQ</sub> 0.5 V; 0.3 V at low speed (C-63)</td><td>same; one vendor also lists a 0.45 V option (C-53)</td></tr>
+          <tr><th>Bank organisation</th><td>8 banks, 16 banks, or 4 bank groups (C-166)</td><td>8-bank mode dropped (C-167)</td></tr>
+          <tr><th>Equalisation</th><td>DRAM write DFE (C-166, C-168)</td><td>adds per-byte Tx pre-emphasis and per-pin DFE, each optional per device (C-167, C-53)</td></tr>
+          <tr><th>Dual-rank reads</th><td>non-target ODT on DQ (C-166)</td><td>unified non-target ODT, required of every device (C-167)</td></tr>
+          <tr><th>Training</th><td>Vref, command, WCK2CK leveling, read and write (C-5)</td><td>adds receiver offset calibration (C-5, C-167)</td></tr>
+          <tr><th>Latencies</th><td>&#8212;</td><td>extended read, write and ODT latencies, and WCK2CK sync timings (C-167)</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>
+      So the differences sit exactly where a shorter bit would put pressure: in equalisation, in termination on a shared
+      bus, in calibrating the receiver, and in giving the DRAM core more clock cycles for the same nanoseconds. For the
+      channel, four of them matter:
+    </p>
+    <ul class="tight">
+      <li><strong>Transmit pre-emphasis.</strong> Programmable per byte lane, to make up for loss in the channel
+        (C-167). That is a quiet admission that at 8533 MT/s the short channel is no longer lossless.</li>
+      <li><strong>Per-pin DFE in the DRAM.</strong> LPDDR5 already had a single-tap DFE on write data (C-168); LPDDR5X
+        allows it to be set pin by pin. Both equalisers are optional, and each device says in its mode registers
+        whether it has them (C-53).</li>
+      <li><strong>Unified non-target ODT.</strong> On a dual-rank bus the rank that is not being read still hangs on
+        the data net. LPDDR5X requires every device to terminate it the same way, to protect read signal integrity at
+        speed (C-167).</li>
+      <li><strong>Receiver offset calibration.</strong> A training step that trims the DRAM receiver&#8217;s DC offset,
+        recommended at every power-up (C-5, C-167).</li>
+    </ul>
+
+    <h3>Is LPDDR5X backward compatible with LPDDR5?</h3>
+    <p>
+      At the level of the standard they are one family: same document, same pins, same signalling. When JEDEC published
+      LPDDR5X, Samsung described it as a large bandwidth gain &#8220;with minimal IP change&#8221; (C-165). That is a
+      member&#8217;s description, not a guarantee. Whether a particular controller and PHY support both, and at which
+      bins, is in their own documentation. For a board the more useful question is a different one: a layout that was
+      signed off at 6400 MT/s had a 156 ps bit, and at 8533 it has 117 ps. Same pins, about a quarter less time per bit,
+      so the margin has to be shown again at the new rate rather than inherited.
     </p>
 
     <h2 class="section-rule"><span>The channel</span></h2>
 
     <p>
-      Point-to-point, controller to DRAM, routed on a phone or compute board over roughly 10–30 mm — or
-      no board at all when the DRAM is stacked on the package. There is no DIMM, no connector and no
-      fly-by topology; the <a href="ddr5.html#lpddr5x-vs-ddr5">DDR5 page</a> sets the two side by side. &ldquo;Never multi-drop&rdquo; is a step too far, though: a dual-rank
-      configuration puts two devices on the same data net, and the topology, loading and timing that
-      follow depend on rank count, transfer direction, and the particular controller and PHY. Check
-      the configuration before assuming the simple case.
-    </p>
-    <p>
-      In that simple case, compared with a serial link, this channel is almost trivially short
-      <em>for loss</em>: insertion loss at Nyquist is a fraction of a decibel and equalisation is
-      beside the point.
+      Point to point, controller to DRAM, with no fly-by topology: routed on the board, stacked on the processor
+      package, or, since CAMM2, through a module connector (C-3, C-54). A dual-rank configuration, or two dies sharing
+      one channel, puts more than one device on the same data net, which is what non-target ODT exists for. Check the
+      configuration before assuming the simple case.
     </p>
 
     <p>
       <strong>Short for loss is not short for reflections, and the arithmetic is worth doing.</strong>
       At roughly 6.7 ps/mm, a 10 mm net is 67 ps one way and <b>134 ps</b> per round trip; a 30 mm
-      net is 201 ps and <b>402 ps</b>. Against a 117 ps unit interval, the first reflection arrives
-      between one and three and a half bits late — and a second and third follow it. So reflections
-      here do <em>not</em> settle inside a UI, and the reason they are survivable is not that they
-      are fast: it is that they are small, because the impedance steps on a controlled point-to-point
-      net are modest and on-die termination absorbs most of what does come back. Remove the
-      termination, or add a stub, and the timing consequence appears immediately at these lengths.
+      net is 201 ps and <b>402 ps</b>. At the 3.0-inch limit in the FPGA guide (C-170), the round trip is about
+      <span class="num">1020 ps</span>, nearly <span class="num">8.7</span> bits. Against a 117 ps bit, even a short
+      net&#8217;s first reflection arrives one or more bits late, and a second and third follow it. Reflections here
+      are survivable not because they are fast but because they are small: the impedance steps on a controlled
+      point-to-point net are modest, and on-die termination absorbs most of what comes back. Remove the termination,
+      or add a stub, and the timing cost appears at once.
     </p>
 
     <p>
-      What you get instead is density. Sixteen data lines plus strobes and command signals, escaping a
-      fine-pitch BGA and running as a tightly-packed bundle, all switching within the same few hundred
-      picoseconds.
+      What you get instead is density. Sixteen data lines plus clocks and command signals, escaping a fine-pitch BGA
+      as a tight bundle, all switching within the same few hundred picoseconds.
     </p>
 
     <h2 class="section-rule"><span>Where the margin actually goes</span></h2>
 
     <ul class="tight">
-      <li><strong>Crosstalk</strong> is the dominant channel impairment. Sixteen aggressors in a dense
-        escape, with far-end crosstalk arriving exactly when the data edge does. Spacing is the fix and
-        there is no room for it, which is why so much of the routing effort goes into the breakout.</li>
-      <li><strong>SSN</strong> is the dominant noise term. A x16 bus switching together pushes a large
-        di/dt through shared return inductance and moves the reference the receiver measures against.
-        Data bus inversion exists in the spec to bound this by capping how many bits may switch at once.</li>
-      <li><strong>Reflections</strong> from the package, the escape vias and any stub, all landing well
-        inside a 117 ps window. On-die termination and driver strength are both programmable so the
-        system can be tuned rather than designed exactly.</li>
-      <li><strong>t<sub>DQS2DQ</sub> and its relatives</strong> — internal DRAM skews between strobe and
-        data that vary part to part, voltage to voltage and temperature to temperature. These are not
-        channel effects at all, and no amount of board work removes them.</li>
+      <li><strong>Crosstalk.</strong> Sixteen neighbours in a dense escape, with far-end coupling arriving as the data
+        edge does. The vias count as much as the traces: one vendor&#8217;s LPDDR5 guide warns that deep-layer via
+        transitions add vertical coupling and so more crosstalk, and keeps the data on upper layers (C-170).</li>
+      <li><strong>Simultaneous switching noise (SSN).</strong> A byte switching together pushes a large di/dt through
+        shared return inductance and moves the reference the receiver compares against. Data bus inversion, flagged
+        on the DMI pins, lets the transmitter invert a byte to limit how many lines change or draw current at once
+        (C-63); which rule a given mode uses is set in the standard.</li>
+      <li><strong>Reflections</strong> from the package, the escape vias and any stub, arriving bits late as the
+        arithmetic above shows. Termination and drive strength are both programmable, and ZQ calibration keeps them
+        on value as the die warms (C-166).</li>
+      <li><strong>The DRAM&#8217;s own WCK-to-DQ offset.</strong> Inside the DRAM the data path and the clock path are
+        different circuits, so their delay differs part to part and drifts with voltage and temperature. That is not a
+        channel effect at all, and no board work removes it; training does.</li>
     </ul>
 
-    <div class="note">
+    <div class="note" id="training">
       <b>Why training is the whole story</b>
-      At 117 ps you cannot close the budget with static design margin, because a meaningful fraction of
-      the uncertainty is inside the DRAM and varies with temperature. So the interface is designed to be
-      <em>measured and centred at runtime</em>: CS and CA training, WCK leveling, read training to
-      centre the strobe in the data eye, write training to do the same in the other direction, with
-      periodic retraining as the part heats. Board design's job is to leave a large enough eye for
-      training to find, not to deliver a centred one.
+      At 117 ps you cannot close the budget with static design margin, because a meaningful part of the uncertainty
+      is inside the DRAM and moves with temperature. So the interface is designed to be <em>measured and centred at
+      runtime</em>. The controller sets reference voltages, trains the command bus, levels WCK against CK, then
+      sweeps the read and write data against their clocks and parks each in the middle of its eye (C-5), and repeats
+      parts of that as the part heats. The board&#8217;s job is to leave an eye large enough for training to find,
+      not to deliver a centred one.
     </div>
 
     <h2 class="section-rule"><span>Sign-off</span></h2>
 
     <p>
-      At these rates JEDEC specifies a <strong>receiver mask</strong> rather than simple setup and hold
-      times — a keep-out region in voltage and time at the DRAM pad that the signal must not enter, with
-      the corresponding transmitter requirements at the controller. Sign-off means demonstrating that
-      mask is respected across process, voltage and temperature corners, with worst-case crosstalk
-      patterns and realistic SSN, using a package model that includes the return network.
+      At these rates the DRAM&#8217;s write receiver is specified by an eye mask, a keep-out region in voltage and time
+      that the signal at the pin must stay out of, with matching limits on the controller&#8217;s transmitter. The
+      numbers are in JESD209-5, which JEDEC sells, so this page does not quote them. Sign-off means showing the mask
+      is respected across process, voltage and temperature corners, with worst-case crosstalk patterns, realistic
+      SSN, any equalisation the devices support switched on, and a package model that includes the return network.
     </p>
 
     <p>
-      The practical trap: simulate the data bus alone and it passes comfortably. The failures live in
-      the combinations — worst-case aggressor pattern <em>and</em> maximum simultaneous switching
-      <em>and</em> the fast-strong driver corner. Any two of those is usually fine.
+      The practical trap: simulate the data bus alone and it passes comfortably. The failures live in the
+      combinations: the worst aggressor pattern <em>and</em> maximum simultaneous switching <em>and</em> the
+      fast-strong driver corner. Any two of those is usually fine.
     </p>
 
-    <h3>Sources</h3>
-    <ul class="tight refs">
-      <li><strong>JEDEC JESD209-5x (LPDDR5/5X)</strong> &#8212; speed bins, clocking architecture, DBI modes and training &#8212; ledger claims C-2 to C-5 are awaiting a read against it</li>
-    </ul>
-      <h2 class="section-rule"><span>Why this decides how your board behaves</span></h2>
+    <h2 class="section-rule"><span>Why this decides how your board behaves</span></h2>
 
     <ul class="tight">
-      <li><strong>Skew is the currency, not decibels.</strong> Length matching, via count, layer
-        assignment and glass weave all matter more than laminate choice.</li>
-      <li><strong>Many bits switch together, so SSN is a first-class impairment.</strong> Sixteen
-        outputs changing in the same picosecond is exactly the case on
-        <a href="../power-integrity/ssn-ground-bounce.html">Simultaneous Switching Noise and Ground Bounce</a>, and it is why
-        the quiet bit is the one that fails.</li>
-      <li><strong>Crosstalk is bus-wide.</strong> Every victim has neighbours on both sides, and
-        the worst case is all of them switching the same way at once.</li>
-      <li><strong>The interface is trained, so the board's job is to be trainable.</strong>
-        Training can centre a strobe; it cannot fix a discontinuity or a coupling.</li>
+      <li><strong>Skew is the currency, not decibels.</strong> Length matching, via count, layer assignment and glass
+        weave matter more than laminate choice, though from 8533 MT/s loss is large enough that the devices added
+        equalisation for it.</li>
+      <li><strong>Many bits switch together, so SSN is a first-class impairment.</strong> Sixteen outputs changing in
+        the same picosecond is exactly the case on
+        <a href="../power-integrity/ssn-ground-bounce.html">Simultaneous Switching Noise and Ground Bounce</a>, and it
+        is why the quiet bit is the one that fails.</li>
+      <li><strong>Crosstalk is bus-wide.</strong> Every victim has neighbours on both sides, and the worst case is all
+        of them switching the same way at once.</li>
+      <li><strong>The interface is trained, so the board&#8217;s job is to be trainable.</strong> Training can centre
+        a clock in an eye; it cannot fix a discontinuity or a coupling.</li>
     </ul>
 
     <h2 class="section-rule"><span>What to do about it</span></h2>
 
     <p>
-      <strong>Match within a byte lane tightly and between lanes loosely.</strong> Each lane has its
-      own strobe, so the tight constraint is within a lane. Matching across the whole bus to the
-      same tolerance spends routing effort for nothing.
+      <strong>Match within a byte lane tightly and between lanes loosely.</strong> Each byte has its own clock pair,
+      so the tight constraint is within a byte, and it includes the package routing as well as the board (C-170).
+      Matching the whole bus to the same tolerance spends routing effort for nothing.
     </p>
 
     <p>
-      <strong>Give the return path as much attention as the trace.</strong> Every layer change on a
-      bus this wide multiplies, and the returns share openings.
+      <strong>Keep the data on shallow layers and give the return path as much attention as the trace.</strong>
+      Every layer change on a bus this wide multiplies, the returns share openings, and deep via transitions couple
+      vertically (C-170).
     </p>
 
     <p>
-      <strong>Keep the power delivery close and the pin distribution even.</strong> SSN is set by
-      shared inductance, which is a pinout and package property more than a board one.</p>
+      <strong>Keep the power delivery close and the pin distribution even.</strong> SSN is set by shared inductance,
+      which is a pinout and package property more than a board one.
+    </p>
 
     <p>
-      <strong>Read the training results, not just the pass/fail.</strong> Where training landed —
-      how far from centre, how much eye it found — is the margin information, and it is available
-      from the controller without any instrumentation.
+      <strong>Read the training results, not just the pass/fail.</strong> Where training landed, how far from centre
+      and how much eye it found, is the margin information, and the controller has it without any instrument.
     </p>
 
     <div class="note">
       <b>Using this to find a fault</b>
       <ul class="tight">
-        <li><b>One bit failing while its neighbours pass.</b> Look at that bit's routing
-          differences first: an extra via, a different layer, a longer stub.</li>
-        <li><b>Failures that depend on how many bits switch together.</b> SSN. Compare against data
-          patterns with different switching densities.</li>
-        <li><b>Training margins that vary a lot bit to bit.</b> Skew or crosstalk. The pattern
-          across the bus — edges versus middle — distinguishes them.</li>
-        <li><b>A bus that works cold and fails hot.</b> Timing, via delay and supply, all of which
-          move with temperature. Compare the training results at both.</li>
+        <li><b>One bit failing while its neighbours pass.</b> Look at that bit&#8217;s routing differences first: an
+          extra via, a different layer, a longer stub.</li>
+        <li><b>Failures that depend on how many bits switch together.</b> SSN. Compare data patterns with different
+          switching densities, with data bus inversion on and off.</li>
+        <li><b>Training margins that vary a lot bit to bit.</b> Skew or crosstalk. The pattern across the bus, edges
+          versus middle, tells them apart.</li>
+        <li><b>A bus that works cold and fails hot.</b> Timing, via delay and supply all move with temperature.
+          Compare the training results at both, and check how often the system retrains.</li>
       </ul>
     </div>
 
-    <details class="deeper">
-      <summary>Go deeper — why two clocks, and what training can and cannot fix</summary>
+    <details class="deeper" id="deeper">
+      <summary>Go deeper &#8212; the clock arithmetic, termination on a shared bus, and what training cannot fix</summary>
 
       <p>
-        The clocking is what makes the rate achievable, and it is worth understanding. There are two
-        clocks, not one. A command/address clock runs at a lower rate for the control bus, and a
-        separate faster strobe accompanies the data. Separating them means the wide, slow control
-        bus and the narrow, fast data bus do not have to meet the same timing constraint.
+        <strong>The clock arithmetic.</strong> A transfer rate in MT/s counts bits per pin per microsecond, so the unit
+        interval is 10<sup>6</sup>/8533 = <span class="num">117.2 ps</span>. Data moves on both WCK edges, so WCK runs
+        at half the transfer rate, <span class="num">4266.5 MHz</span>, a period of 234 ps. At 4:1, CK runs at an
+        eighth of the transfer rate, <span class="num">1066.5 MHz</span>, a period of <span class="num">938 ps</span>.
+        The same arithmetic at LPDDR5&#8217;s 6400 MT/s gives the 800 MHz CK that Synopsys quotes (C-4a), and at
+        10.7 Gb/s a bit of <span class="num">93 ps</span>.
       </p>
 
       <p>
-        Reads and writes also use different strobes, because they travel in opposite directions and
-        source-synchronous timing only cancels delay for signals travelling <em>together</em>. A
-        single bidirectional strobe would lose that property in one direction.
+        <strong>The swing.</strong> LVSTL drives a 1 by pulling the line up toward V<sub>DDQ</sub> against termination
+        to ground, so the high level is V<sub>DDQ</sub>&#183;R<sub>TT</sub>/(R<sub>on</sub>&#160;+&#160;R<sub>TT</sub>).
+        With equal driver and termination resistance, a 0.5 V supply gives <span class="num">250 mV</span>, which is
+        the signalling voltage JEDEC quotes for LPDDR5 (C-166). Every receiver decision on the bus is made inside that
+        quarter of a volt, and a 1 draws current while a 0 does not, which is the asymmetry data bus inversion is
+        aimed at.
       </p>
 
       <p>
-        <strong>The WCK-to-DQ clocking architecture.</strong> LPDDR5X replaces the traditional bidirectional
-        data strobe (DQS) with two dedicated differential clock pairs: a low-speed Command/Address clock (CK)
-        and a high-speed forwarded Write Clock (WCK). WCK operates in either <span class="num">1:2</span> or
-        <span class="num">1:4</span> frequency modes relative to the data rate. At 8533 MT/s, in 1:2 mode,
-        WCK operates at <span class="num">4266 MHz</span>, clocking bits on both rising and falling edges.
+        <strong>Termination on a shared bus.</strong> With two ranks on one data net, the rank being written
+        terminates the line, and the other rank can terminate too, as non-target ODT, to damp what its stub reflects
+        (C-166). LPDDR5X made that non-target behaviour uniform across devices, because a read from one rank sees the
+        other rank&#8217;s termination and a mix of behaviours makes the read eye depend on which vendor&#8217;s die
+        sits in which rank (C-167). Termination also has to be on before the first bit of a burst arrives and off when
+        it is not needed, which is why the standard carries ODT latency timings and why LPDDR5X extended them.
       </p>
 
       <p>
-        Because WCK and DQ originate from the controller's PHY but traverse different driver stages, package balls,
-        and receiver buffers inside the DRAM, the static phase offset (<span class="num">t<sub>WCK2DQ</sub></span>)
-        can consume a large fraction of the 117 ps bit period. Maintaining alignment across temperature drift
-        requires continuous background tracking: the memory controller monitors phase drift and dynamically adjusts
-        internal delay lines to keep the sampling edge locked to the eye center.
+        <strong>Why the WCK-to-DQ offset is trained, then tracked.</strong> Inside the DRAM, WCK passes through a
+        clock tree to the data latches and the data passes through input buffers, so the two delays differ, part to
+        part, and drift with voltage and temperature. Training measures where the eye sits relative to the clock and
+        centres it. Because the drift continues after training, controllers re-measure it during operation rather than
+        trusting the power-up result.
       </p>
 
       <p>
-        <strong>Training sequences: how the bus calibrates itself.</strong> At boot, an LPDDR5X bus is completely
-        untrained and cannot transfer a single byte of data. The controller must execute an elaborate sequence of
-        hardware training loops:
-      </p>
-
-      <ul class="tight">
-        <li><strong>Command/Address (CA) Training:</strong> Sweeps the delay of each CA pin relative to CK,
-          centering the command latching point.</li>
-        <li><strong>Write Leveling &amp; WCK2CK Synchronization:</strong> Aligns the arrival of the WCK clock with
-          the memory clock domain inside the DRAM, compensating for PCB flight-time differences across the board.</li>
-        <li><strong>Read/Write DQ Eye Centering:</strong> Sweeps per-bit delay verniers in steps of
-          <span class="num">1 to 2 ps</span>. The controller tracks the early and late boundaries of the data eye
-          independently for every individual DQ pin, placing the sampling strobe at the mathematical median.</li>
-        <li><strong>V<sub>REF</sub> Calibration (VREF_CA and VREF_DQ):</strong> Because LPDDR5X uses low-voltage
-          signalling (sub-0.5 V swings), the receiver's internal reference voltage (<span class="num">V<sub>ref</sub></span>)
-          is trained in millivolt increments to compensate for driver pull-up/pull-down asymmetry and board impedance
-          mismatches.</li>
-      </ul>
-
-      <p>
-        <strong>Dynamic On-Die Termination (ODT) switching.</strong> To balance signal integrity against mobile
-        battery life, LPDDR5X dynamically turns termination resistors on and off. During high-speed writes, the DRAM
-        activates target ODT (e.g. <span class="num">40 &Omega;, 48 &Omega;, or 60 &Omega;</span>) to absorb transmission
-        line reflections; during idle periods, ODT drops to high-impedance to eliminate quiescent current draw.
+        <strong>What training fixes, and what it cannot.</strong> Training removes static and slowly drifting offsets:
+        routing mismatch, package length differences, process variation and the DRAM&#8217;s own internal delay. It
+        cannot remove anything that changes from bit to bit: crosstalk from a particular aggressor pattern, SSN from a
+        particular switching density, ISI from a reflection or loss, or supply droop during a burst. Training centres
+        an eye; it cannot open one that layout has closed. A system that trains with only a few picoseconds to spare
+        may pass on the bench at room temperature and still fail under heavy traffic, when switching noise is at its
+        worst, so plan the margin for that case.
       </p>
 
       <p>
-        The timing hazard is ODT turn-on and turn-off latency (<span class="num">t<sub>ODTon</sub>, t<sub>ODToff</sub></span>).
-        If the termination does not settle to its target impedance before the first symbol of a burst arrives, that initial
-        bit encounters an open-circuit boundary and reflects strongly, which can corrupt the preamble.
-      </p>
-
-      <p>
-        <strong>What training fixes — and what it cannot.</strong> Training removes static skew: routing mismatch,
-        package trace length differences, and semiconductor process variation. This is why board length matching
-        within a byte lane is less burdensome than on older generations.
-      </p>
-
-      <p>
-        <strong>What training cannot fix.</strong> Anything that varies faster than the training loops run:
-        high-frequency crosstalk, SSN ground bounce, multi-reflections from via stubs, and power supply droop.
-        Training centers a data eye; it cannot open an eye that has been closed by bad layout. A system that trains
-        successfully with only 5 ps of residual margin will pass bench testing at room temperature, only to crash in
-        the field when high-density GPU traffic excites maximum switching noise.
+        <strong>What is not sourced here.</strong> JEDEC sells JESD209-5, so the receiver mask, the drive and ODT
+        values, the training timings and the bins above 8533 MT/s in the current edition are not quoted. The page uses
+        JEDEC&#8217;s public announcements for the rates and features, IP and verification vendors for the clocking
+        and the LPDDR5X changes, one vendor data sheet for voltages and equalisation options, and one FPGA vendor for
+        a routing example, each recorded in the <a href="../../docs/claims.md">claim ledger</a> with what it can and
+        cannot establish.
       </p>
     </details>
 
     <h2 class="section-rule"><span>In the real world</span></h2>
 
     <p>
-      LPDDR sign-off is dominated by two things that are decided before layout: the pinout and the
-      package. Everything the board designer can do is bounded by how much shared inductance the
-      package presents and how the byte lanes map onto physical positions.
+      LPDDR sign-off is dominated by two things that are decided before layout: the pinout and the package. Everything
+      the board designer can do is bounded by how much shared inductance the package presents and how the byte lanes
+      map onto physical positions.
     </p>
 
     <p>
-      Which makes the early conversation the valuable one. Once the ballout is fixed, the remaining
-      levers are length matching and return paths — necessary, and much smaller than the decisions
-      already made.
+      That makes the early conversation the valuable one. Once the ballout is fixed, the remaining levers are length
+      matching and return paths: necessary, and much smaller than the decisions already made. And as rates pass
+      10 Gb/s, the trend in the table holds: the devices bring more of their own equalisation and termination
+      control, and the board&#8217;s job is to stay within what those can correct.
     </p>
 
     <h3>Related</h3>
     <ul class="tight">
+      <li><a href="lpddr6.html">LPDDR6 Signal Integrity: Wide NRZ and Sub-Channels</a>, the next generation: 24 data pins a channel at 10.7 to 14.4 Gb/s</li>
+      <li><a href="ddr5.html">DDR5</a>, the module-based cousin, set side by side with LPDDR5X on that page</li>
       <li><a href="../fundamentals/crosstalk.html">PCB Crosstalk: NEXT, FEXT, and Mutual Coupling</a></li>
       <li><a href="../power-integrity/ssn-ground-bounce.html">Simultaneous Switching Noise and Ground Bounce</a></li>
       <li><a href="../fundamentals/termination-schemes.html">Termination Schemes: Series, Parallel, Thevenin and AC</a></li>
       <li><a href="../package-board/bga-escape-routing.html">BGA Escape Routing and Breakout Congestion</a></li>
-      <li><a href="lpddr6.html">LPDDR6 Signal Integrity: Wide NRZ and Sub-Channels</a> — the next generation: 24 data pins a channel at 10.7 to 14.4 Gb/s</li>
     </ul>
   </div>
 
@@ -488,13 +614,22 @@
     <section class="sources">
       <h2 class="section-rule"><span>Sources</span></h2>
       <ul class="sources__list">
-      <li><a href="https://www.jedec.org/news/pressreleases/jedec-updates-standard-low-power-memory-devices-lpddr5" target="_blank" rel="noopener">JEDEC — LPDDR5 standard update announcement</a> <span class="src__for">C-2a</span></li>
+      <li><a href="https://www.jedec.org/news/pressreleases/jedec-publishes-new-and-updated-standards-low-power-memory-devices-used-5g-and-ai" target="_blank" rel="noopener">JEDEC — JESD209-5B announcement: LPDDR5 update and LPDDR5X</a> <span class="src__for">C-2a</span></li>
+      <li><a href="https://www.jedec.org/news/pressreleases/jedec-updates-standard-low-power-memory-devices-lpddr5" target="_blank" rel="noopener">JEDEC — JESD209-5 (LPDDR5) publication announcement</a> <span class="src__for">C-2b</span></li>
       <li><a href="https://www.synopsys.com/designware-ip/technical-bulletin/key-features-about-lpddr5.html" target="_blank" rel="noopener">Synopsys — Key features designers should know about LPDDR5</a> <span class="src__for">C-3</span></li>
+      <li><a href="https://community.cadence.com/cadence_blogs_8/b/fv/posts/device-trainings-for-high-speed-drams" target="_blank" rel="noopener">Cadence — Device training for high-speed DRAMs</a> <span class="src__for">C-5</span></li>
+      <li><a href="https://www.farnell.com/datasheets/3928121.pdf" target="_blank" rel="noopener">Micron — x32 Automotive LPDDR5X SDRAM data sheet (315b)</a> <span class="src__for">C-53</span></li>
+      <li><a href="https://www.jedec.org/news/pressreleases/jedec-publishes-new-camm2-memory-module-standard" target="_blank" rel="noopener">JEDEC — CAMM2 memory module standard announcement</a> <span class="src__for">C-54</span></li>
+      <li><a href="https://www.jedec.org/sites/default/files/Seunghyun%20Moon_03_29_25_Final.pdf" target="_blank" rel="noopener">Samsung — LPDDR6 Key Architecture (JEDEC workshop)</a> <span class="src__for">C-56</span></li>
+      <li><a href="https://www.synopsys.com/blogs/chip-design/delivering-lpddr6-read-write-eyes-10-6-gbps.html" target="_blank" rel="noopener">Synopsys — Delivering LPDDR6 read/write eyes at 10.67 Gb/s</a> <span class="src__for">C-58</span></li>
+      <li><a href="https://community.cadence.com/cadence_blogs_8/b/fv/posts/taking-lpddr5-to-the-next-level" target="_blank" rel="noopener">Cadence — Taking LPDDR5 to the next level (LPDDR5X differences)</a> <span class="src__for">C-167</span></li>
+      <li><a href="https://news.samsung.com/global/samsung-develops-industrys-fastest-10-7gbps-lpddr5x-dram-optimized-for-ai-applications" target="_blank" rel="noopener">Samsung — 10.7 Gb/s LPDDR5X announcement</a> <span class="src__for">C-169</span></li>
+      <li><a href="https://docs.altera.com/r/docs/772538/26.1.1/external-memory-interfaces-agilex-7-m-series-fpga-ip-user-guide/routing-guidelines-for-lpddr5-memory-down-topology" target="_blank" rel="noopener">Altera — LPDDR5 memory-down routing guidelines (Agilex 7 M-Series EMIF)</a> <span class="src__for">C-170</span></li>
       </ul>
       <p class="sources__note">Rows marked with a claim id are tracked in <a href="../../docs/claims.md">the claim ledger</a>, which records what each source can and cannot establish.</p>
     </section>
     <!-- sources:end -->
-  <!-- share:foot:start --><div class="share share--foot" data-share data-share-url="https://sipi.work/topics/interfaces/lpddr5x.html" data-share-title="LPDDR5/5X Signal Integrity: WCK, ODT and Training"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Flpddr5x.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Flpddr5x.html&amp;text=LPDDR5%2F5X%20Signal%20Integrity%3A%20WCK%2C%20ODT%20and%20Training" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=LPDDR5%2F5X%20Signal%20Integrity%3A%20WCK%2C%20ODT%20and%20Training&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Flpddr5x.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:foot:end -->
+  <!-- share:foot:start --><div class="share share--foot" data-share data-share-url="https://sipi.work/topics/interfaces/lpddr5x.html" data-share-title="LPDDR5 vs LPDDR5X: WCK Clocking, Training and Signal Integrity"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Flpddr5x.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Flpddr5x.html&amp;text=LPDDR5%20vs%20LPDDR5X%3A%20WCK%20Clocking%2C%20Training%20and%20Signal%20Integrity" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=LPDDR5%20vs%20LPDDR5X%3A%20WCK%20Clocking%2C%20Training%20and%20Signal%20Integrity&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Flpddr5x.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:foot:end -->
 
   <!-- pager:start -->
   <nav class="pager" aria-label="Previous and next topic">
@@ -521,7 +656,7 @@
 
 <script src="../../js/site.js?v=61b8ff31" defer></script>
 <script src="../../js/viz-kit.js?v=80b25b0d" defer></script>
-<script src="../../js/viz/lpddr.js?v=c201fbab" defer></script>
+<script src="../../js/viz/lpddr.js?v=3422e053" defer></script>
 <script src="../../js/viz-loader.js?v=3395e118" defer></script>
 <script src="../../js/search.js?v=dcc1e06b" defer></script>
 </body>

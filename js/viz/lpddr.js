@@ -2,7 +2,8 @@
  * Where an LPDDR5X write timing budget actually goes.
  *
  * Arithmetic, not simulation: a 117 ps unit interval at 8533 MT/s, minus each
- * contributor, is what is left for the receiver mask. Every term is a control,
+ * contributor, is what is left for the receiver mask. The terms add linearly, a
+ * worst-case stack: an RSS would assume they never peak together. Every term is a control,
  * so the reader can find out which one they should actually be arguing about.
  *
  * Requires js/viz-kit.js.
@@ -12,7 +13,7 @@
   const K = NS.kit;
 
   const TERMS = [
-    { key: 'tdqs',  label: 'tDQS2DQ (inside the DRAM)',  colour: 'reflect', note: 'varies with V and T — training chases it' },
+    { key: 'tdqs',  label: 'tWCK2DQ (inside the DRAM)',  colour: 'reflect', note: 'varies with V and T — training chases it' },
     { key: 'xtalk', label: 'crosstalk',                   colour: 'alarm',   note: 'x16 in a dense escape' },
     { key: 'ssn',   label: 'SSN / reference shift',       colour: 'alarm',   note: 'all sixteen switching at once' },
     { key: 'isi',   label: 'ISI and reflections',         colour: 'muted',   note: 'package, vias, any stub' },
@@ -27,16 +28,16 @@
        step 133, so 8533 was not on the grid at all — the nearest step is 8520,
        and the panel displayed 8533 while computing 8520. A rate is a bin, so the
        control should offer bins. */
-    const BINS = [3200, 4266, 5500, 6400, 7500, 8533];
+    const BINS = [3200, 4266, 5500, 6400, 7500, 8533, 9600, 10700];
     const binOf = (r) => { let b = 0; BINS.forEach((v, i) => { if (Math.abs(v - r) < Math.abs(BINS[b] - r)) b = i; }); return b; };
 
     const p = { rate: 8533, tdqs: 18, xtalk: 14, ssn: 12, isi: 16, skew: 6, jit: 9, trained: 1 };
 
     const PRESETS = {
       typ:   { rate: 8533, tdqs: 18, xtalk: 14, ssn: 12, isi: 16, skew: 6, jit: 9, trained: 1,
-        note: 'A trained LPDDR5X channel at 8533 MT/s. Training has centred the strobe, so tDQS2DQ mostly disappears.' },
+        note: 'A trained LPDDR5X channel at 8533 MT/s. Training has centred the clock in the eye, so tWCK2DQ mostly disappears.' },
       untr:  { rate: 8533, tdqs: 18, xtalk: 14, ssn: 12, isi: 16, skew: 6, jit: 9, trained: 0,
-        note: 'The same channel without training. tDQS2DQ alone eats most of what was left — which is why the interface is designed to be measured at runtime.' },
+        note: 'The same channel without training. The whole DRAM offset stays in the budget and becomes the largest single term, and at the hot corner it grows. That is why the interface is measured and centred at runtime.' },
       hot:   { rate: 8533, tdqs: 26, xtalk: 14, ssn: 12, isi: 16, skew: 6, jit: 9, trained: 1,
         note: 'At the hot corner the DRAM internal skew grows. This is what periodic retraining is for.' },
       dense: { rate: 8533, tdqs: 18, xtalk: 24, ssn: 20, isi: 16, skew: 6, jit: 9, trained: 1,

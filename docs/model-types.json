@@ -489,19 +489,19 @@
     "planes": "Controller pin to DRAM pin.",
     "equations": [
       "UI_ps = 1e6 / rate_MTps        (the control is a TRANSFER rate in MT/s)",
-      "budget terms summed as an RSS of the independent contributors"
+      "left_ps = UI_ps - sum(terms)   (a linear, worst-case stack; training scales the tWCK2DQ term by 0.25)"
     ],
     "units": "ps",
     "validity": "ILLUSTRATIVE — the contributions are representative magnitudes, not JEDEC values. Training gain is a labelled model, not a specification.",
-    "numerics": "Exact arithmetic on the budget terms. At 8533 MT/s, UI = 1e6/8533 = 117.2 ps, which is what the page states.",
-    "limitations": "The contract previously wrote UI = 1/(2*rate), which is the formula for a clock frequency rather than a transfer rate and would have given 58.6 ps. The code was always right; the contract was not. The budget split itself is illustrative — the terms are plausible magnitudes, not a sourced allocation.",
+    "numerics": "Exact arithmetic on the budget terms. At 8533 MT/s, UI = 1e6/8533 = 117.2 ps, which is what the page states. The rate control offers bins from 3200 to 10700 MT/s; 9600 and 10700 are vendor parts, not JESD209-5B bins.",
+    "limitations": "Until 18 Oct 2026 the contract said the terms were summed as an RSS; the code has always added them linearly, and the contract now says so. The contract previously wrote UI = 1/(2*rate), which is the formula for a clock frequency rather than a transfer rate and would have given 58.6 ps. The code was always right; the contract was not. The budget split itself is illustrative — the terms are plausible magnitudes, not a sourced allocation.",
     "verified": "check-numbers.py — the UI at 8533 MT/s is recomputed. The allocation is not sourced; see docs/claims.md.",
     "suites": [
       "Units",
       "State"
     ],
-    "version": "1.0",
-    "reviewed": "2026-09-12"
+    "version": "1.1",
+    "reviewed": "not yet"
   },
   "pam4": {
     "kind": "numerical",

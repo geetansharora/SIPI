@@ -69,7 +69,7 @@
       The fourth level is listed for reference and is currently unused. These model labels do not
       claim validation against a published specification. Where a page states a
       specification claim, it is recorded in the
-      <a href="docs/claims.md">claim ledger</a> with its status. Of its 174 claims, 77 have been read against the source they cite, 97 have been narrowed to what their source supports, and none still awaits a source. None of the verified ones rests on the normative text of a standard; they rest on vendor documents, public announcements and measured data, and the source checks were made by an AI model, not by a person.
+      <a href="docs/claims.md">claim ledger</a> with its status. Of its 180 claims, 80 have been read against the source they cite, 100 have been narrowed to what their source supports, and none still awaits a source. None of the verified ones rests on the normative text of a standard; they rest on vendor documents, public announcements and measured data, and the source checks were made by an AI model, not by a person.
     </p>
     <p>
       <em>Kind</em> and <em>evidence</em> answer different questions. A deliberately
@@ -964,17 +964,17 @@
       <h2>lpddrBudget</h2>
       <span class="model-tag model-tag--illustrative">illustrative model</span>
       <span class="ev ev--plausible">plausible</span>
-      <span class="contract__ver">v1.0 &#183; reviewed 2026-09-12</span>
+      <span class="contract__ver">v1.1 &#183; not yet reviewed</span>
     </div>
     <p class="contract__purpose">Show how a UI is consumed by contributions that are not all the same kind.</p>
     <dl class="contract__body">
       <dt>Topology</dt><dd>A budget, not a circuit.</dd>
       <dt>Reference planes</dt><dd>Controller pin to DRAM pin.</dd>
-      <dt>Equations</dt><dd><ul class="tight"><li><code>UI_ps = 1e6 / rate_MTps        (the control is a TRANSFER rate in MT/s)</code></li><li><code>budget terms summed as an RSS of the independent contributors</code></li></ul></dd>
+      <dt>Equations</dt><dd><ul class="tight"><li><code>UI_ps = 1e6 / rate_MTps        (the control is a TRANSFER rate in MT/s)</code></li><li><code>left_ps = UI_ps - sum(terms)   (a linear, worst-case stack; training scales the tWCK2DQ term by 0.25)</code></li></ul></dd>
       <dt>Units</dt><dd>ps</dd>
       <dt>Validity</dt><dd>ILLUSTRATIVE — the contributions are representative magnitudes, not JEDEC values. Training gain is a labelled model, not a specification.</dd>
-      <dt>Numerics</dt><dd>Exact arithmetic on the budget terms. At 8533 MT/s, UI = 1e6/8533 = 117.2 ps, which is what the page states.</dd>
-      <dt>Known limitations</dt><dd>The contract previously wrote UI = 1/(2*rate), which is the formula for a clock frequency rather than a transfer rate and would have given 58.6 ps. The code was always right; the contract was not. The budget split itself is illustrative — the terms are plausible magnitudes, not a sourced allocation.</dd>
+      <dt>Numerics</dt><dd>Exact arithmetic on the budget terms. At 8533 MT/s, UI = 1e6/8533 = 117.2 ps, which is what the page states. The rate control offers bins from 3200 to 10700 MT/s; 9600 and 10700 are vendor parts, not JESD209-5B bins.</dd>
+      <dt>Known limitations</dt><dd>Until 18 Oct 2026 the contract said the terms were summed as an RSS; the code has always added them linearly, and the contract now says so. The contract previously wrote UI = 1/(2*rate), which is the formula for a clock frequency rather than a transfer rate and would have given 58.6 ps. The code was always right; the contract was not. The budget split itself is illustrative — the terms are plausible magnitudes, not a sourced allocation.</dd>
       <dt>Evidence</dt><dd>check-numbers.py — the UI at 8533 MT/s is recomputed. The allocation is not sourced; see docs/claims.md.</dd>
     </dl>
   </section>
