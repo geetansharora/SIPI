@@ -872,7 +872,8 @@
       "id": "C-35",
       "statement": "JESD79-5C (April 2024) extended DDR5 timing definitions to 8800 MT/s.",
       "pages": [
-        "interfaces/ddr5"
+        "interfaces/ddr5",
+        "interfaces/lpddr5x"
       ],
       "source_type": "public-rate",
       "source": "JEDEC press release, \"JEDEC Updates JESD79-5C DDR5 SDRAM Standard\", 17 April 2024",
@@ -910,7 +911,8 @@
       "id": "C-37",
       "statement": "DDR5 runs VDD = VDDQ = 1.1 V and VPP = 1.8 V, with pseudo-open-drain I/O; DDR4 ran 1.2/1.2/2.5 V.",
       "pages": [
-        "interfaces/ddr5"
+        "interfaces/ddr5",
+        "interfaces/lpddr5x"
       ],
       "source_type": "vendor",
       "source": "Micron DDR5 SDRAM core data sheet, Rev. D 10/2022 (stated JESD79-5B compliant); Micron white paper \"Introducing Micron DDR5 SDRAM: More Than a Generational Update\", table 1",
@@ -967,7 +969,8 @@
       "id": "C-40",
       "statement": "The DDR5 DRAM has a 4-tap DFE on its DQ inputs; at 3200-6400 MT/s tap 1 spans -200 to +50 mV, tap 2 +/-75, tap 3 +/-60 and tap 4 +/-45 mV in 5 mV steps, with gain of +/-6 dB in 2 dB steps, and the stressed-eye test requires |t2| + |t3| + |t4| < 60 mV.",
       "pages": [
-        "interfaces/ddr5"
+        "interfaces/ddr5",
+        "interfaces/lpddr5x"
       ],
       "source_type": "vendor",
       "source": "Micron DDR5 SDRAM core data sheet, Rev. D 10/2022 (stated JESD79-5B compliant), Decision Feedback Equalization, tables 233 and 234, and the Rx stressed eye notes",
@@ -1024,7 +1027,8 @@
       "id": "C-43",
       "statement": "DDR5 modules route command, address and clock fly-by from the RCD, and data and strobes point to point; write leveling compensates the resulting CK-to-DQS skew at each DRAM, and DDR5 adds an internal cycle alignment step for the DRAM's unmatched internal path.",
       "pages": [
-        "interfaces/ddr5"
+        "interfaces/ddr5",
+        "interfaces/lpddr5x"
       ],
       "source_type": "vendor",
       "source": "Micron DDR5 SDRAM core data sheet, Rev. D 10/2022 (stated JESD79-5B compliant), Write Leveling Training Mode; Micron technical brief \"DDR5: Key Module Features\"",
@@ -1043,7 +1047,8 @@
       "id": "C-44",
       "statement": "A DDR5 DIMM has two independent subchannels, each 32 data bits plus 8 for ECC on an ECC module; with burst length 16 one subchannel delivers 64 bytes.",
       "pages": [
-        "interfaces/ddr5"
+        "interfaces/ddr5",
+        "interfaces/lpddr5x"
       ],
       "source_type": "vendor",
       "source": "Micron technical brief \"DDR5: Key Module Features\"; Micron white paper \"DDR5 SDRAM: New Features\"",
@@ -1195,7 +1200,8 @@
       "id": "C-52",
       "statement": "Lenovo's ThinkSystem SR650 V3 runs DDR5 at a lower rate with two DIMMs per channel than with one: 4800 against 4400 MT/s with 4th Gen Xeon processors, 5600 against 4800 MT/s with 5th Gen.",
       "pages": [
-        "interfaces/ddr5"
+        "interfaces/ddr5",
+        "interfaces/lpddr5x"
       ],
       "source_type": "commercial",
       "source": "Lenovo Press LP1601, ThinkSystem SR650 V3 product guide",
@@ -1233,7 +1239,7 @@
     },
     {
       "id": "C-54",
-      "statement": "JEDEC JESD318 (December 2023) defines CAMM2 modules for both DDR5 and LPDDR5/5X on a common connector with different pinouts, and aims LPDDR5/5X CAMM2s at notebooks and some server segments.",
+      "statement": "JEDEC JESD318 (December 2023) defines CAMM2 modules for both DDR5 and LPDDR5/5X on a common connector with different pinouts, and aims LPDDR5/5X CAMM2s at notebooks and some server segments; mounting differs on purpose, so a module cannot be fitted where the other kind belongs.",
       "pages": [
         "interfaces/ddr5",
         "interfaces/lpddr5x"
@@ -1244,10 +1250,10 @@
       "source_title": "JEDEC — CAMM2 memory module standard announcement",
       "conditions": "The announcement; the standard itself has not been read",
       "status": "verified",
-      "note": "Read on jedec.org.",
+      "note": "Read on jedec.org; re-read 19 Oct 2026 for the mounting detail. The release also describes stackable single-channel CAMM2s, with DDR5 examples.",
       "owner": "Geetansh",
       "sourceCheckedBy": "Claude Opus 5.5",
-      "sourceCheckedOn": "2026-10-02",
+      "sourceCheckedOn": "2026-10-19",
       "humanReviewedBy": null,
       "humanReviewedOn": null
     },
@@ -3467,6 +3473,196 @@
       "humanReviewedOn": null,
       "source_url": "https://docs.altera.com/r/docs/772538/26.1.1/external-memory-interfaces-agilex-7-m-series-fpga-ip-user-guide/routing-guidelines-for-lpddr5-memory-down-topology",
       "source_title": "Altera — LPDDR5 memory-down routing guidelines (Agilex 7 M-Series EMIF)"
+    },
+    {
+      "id": "C-171",
+      "statement": "JESD406-5 (August 2024) defines the SPD contents of LPDDR5/5X modules, including CAMM2s, so that firmware can read a module’s capacity, speed and I/O configuration; CAMM2 raw card E is an LPDDR5/5X module of one or two ranks organised as eight sub-channels of x16 I/O.",
+      "pages": [
+        "interfaces/lpddr5x"
+      ],
+      "source_type": "public-rate",
+      "source": "JEDEC press release, \"JEDEC Releases New Standard for LPDDR5/5X Serial Presence Detect (SPD) Contents\", 22 August 2024",
+      "conditions": "The announcement; the release said the raw card E design itself was still in process",
+      "status": "verified",
+      "note": "Read on jedec.org. Eight x16 sub-channels are 128 data bits, which is the width the page uses for a CAMM2 in its bandwidth table.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-19",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null,
+      "source_url": "https://www.jedec.org/news/pressreleases/jedec-releases-new-standard-lpddr55x-serial-presence-detect-spd-contents",
+      "source_title": "JEDEC — LPDDR5/5X SPD contents (JESD406-5) announcement"
+    },
+    {
+      "id": "C-172",
+      "statement": "PS-007A (October 2024) is JEDEC’s LPDDR5 CAMM2 connector performance standard, free to download; JEDEC lists better signal integrity and RFI, lower power and a 50% smaller form factor at similar height as its benefits over a DDR5 SODIMM connector.",
+      "pages": [
+        "interfaces/lpddr5x"
+      ],
+      "source_type": "public-rate",
+      "source": "JEDEC press release, \"JEDEC Publishes LPDDR5 CAMM2 Connector Performance Standard\", 31 October 2024",
+      "conditions": "The announcement; the standard’s electrical limits have not been read",
+      "status": "verified",
+      "note": "Read on jedec.org. The benefits are JEDEC’s own description, and the page presents them as such. The standard itself was read on 19 Oct 2026; its limits are C-179 and C-180.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-19",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null,
+      "source_url": "https://www.jedec.org/node/9458",
+      "source_title": "JEDEC — LPDDR5 CAMM2 connector performance standard (PS-007A) announcement"
+    },
+    {
+      "id": "C-173",
+      "statement": "An LP5 CAMM2 (LPDDR5 or LPDDR5X) is x128, eight x16 sub-channels; a channel is four 16-bit sub-channels, each with its own clock, command, address, chip selects and data. LP5 CAMM2s are expected to start at 6400 MT/s and rise with the DRAM, and the module covers the whole connector with the DRAM placed over it.",
+      "pages": [
+        "interfaces/lpddr5x"
+      ],
+      "source_type": "normative",
+      "source": "JEDEC JESD318B, Compression Attached Memory Module (CAMM2) Common Standard, Version 1.14, November 2025, §1 Scope, Table 1, §6.1, §6.2",
+      "conditions": "The standard; a given module’s rate is in its SPD and data sheet",
+      "status": "scoped",
+      "note": "Read from the standard (a free download after JEDEC registration); the copy is kept private and the page paraphrases it. The standard names the LPDDR5 read strobe DQS in its signal table (corrected in v1.13 to match the DRAM definition); the page calls it RDQS, as elsewhere.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-19",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null,
+      "source_url": "https://www.jedec.org/standards-documents/docs/jesd318b",
+      "source_title": "JEDEC — JESD318B CAMM2 Common Standard (v1.14, Nov 2025)"
+    },
+    {
+      "id": "C-174",
+      "statement": "CAMM2 connector pins sit on 1.0 x 1.38 mm centres in 14 rows; the dual-channel variations have 356 pins with ground shields between rows, or 644 or 666 pins without; an LP5 CAMM2 commonly uses a shieldless variation, and a solid 17.4 x 78.4 mm ground plane under the connector carries no traces because shield segments break at supplier-dependent places.",
+      "pages": [
+        "interfaces/lpddr5x"
+      ],
+      "source_type": "normative",
+      "source": "JEDEC JESD318B, Compression Attached Memory Module (CAMM2) Common Standard, Version 1.14, November 2025, Table 1, §6.5, §6.15.1",
+      "conditions": "Connector geometry from the module standard; the connector’s electrical performance is in PS-007A, not read",
+      "status": "scoped",
+      "note": "Read from the standard (a free download after JEDEC registration); the copy is kept private and the page paraphrases it. The no-traces rule is given as a module requirement and a motherboard recommendation.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-19",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null,
+      "source_url": "https://www.jedec.org/standards-documents/docs/jesd318b",
+      "source_title": "JEDEC — JESD318B CAMM2 Common Standard (v1.14, Nov 2025)"
+    },
+    {
+      "id": "C-175",
+      "statement": "An LP5 CAMM2 carries a PMIC5200 that makes VDD2H 1.05 V, VDD2L 0.9 V, VDDQ 0.5 V and VDD1 1.8 V from a 5 V input; VDDQ may be split-rail (required: separate regulators for SoC and DRAM) or common (optional: one regulator). Split rails can drift to opposite ends of their tolerance and erode I/O margin; a common rail shares one tolerance between board and module, and in range 1 the host must hold 0.477 to 0.577 V (0.507 V typical) at the footprint, which includes 7 mV for connector and module plane drop.",
+      "pages": [
+        "interfaces/lpddr5x"
+      ],
+      "source_type": "normative",
+      "source": "JEDEC JESD318B, Compression Attached Memory Module (CAMM2) Common Standard, Version 1.14, November 2025, §4.1, Table 9, §4.3, Table 12",
+      "conditions": "The module standard; DRAM limits are in JESD209-5",
+      "status": "scoped",
+      "note": "Read from the standard (a free download after JEDEC registration); the copy is kept private and the page paraphrases it. The first LP5 CAMM2 designs use a discrete VDDQ regulator, and then support neither VDD2L nor a 0.3 V VDDQ. Range 2 (0.3 V class) is for ODT disabled.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-19",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null,
+      "source_url": "https://www.jedec.org/standards-documents/docs/jesd318b",
+      "source_title": "JEDEC — JESD318B CAMM2 Common Standard (v1.14, Nov 2025)"
+    },
+    {
+      "id": "C-176",
+      "statement": "The JESD318B reference 10-layer CAMM2 stackup has LP5 data, command and chip select at 40 ohm +/-5 single-ended, and every signal group references ground; its simulation example uses a 40 mm motherboard at 40 ohm (75 ohm differential for clocks and strobes) and a 34 ohm driver; CAMM2s have no DQ or CA stub resistors, and the LP5 ZQ resistor is 240 ohm +/-1% to VDDQ.",
+      "pages": [
+        "interfaces/lpddr5x"
+      ],
+      "source_type": "normative",
+      "source": "JEDEC JESD318B, Compression Attached Memory Module (CAMM2) Common Standard, Version 1.14, November 2025, §6.4 Table 18, §6.10.4, §6.10.5, §6.11.1, Table 22",
+      "conditions": "Reference designs and a simulation example, not limits a product must meet",
+      "status": "scoped",
+      "note": "Read from the standard (a free download after JEDEC registration); the copy is kept private and the page paraphrases it. The standard says reference stackups only demonstrate feasibility; vendors define their own. Its total thickness is not quoted on the page: the reference stackup table sums to 1.40 mm, while PS-007A specifies a connector mated to a 1.20 mm nominal module.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-19",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null,
+      "source_url": "https://www.jedec.org/standards-documents/docs/jesd318b",
+      "source_title": "JEDEC — JESD318B CAMM2 Common Standard (v1.14, Nov 2025)"
+    },
+    {
+      "id": "C-177",
+      "statement": "CAMM2 length matching offsets each connector row by 1 mm so that the motherboard-plus-module path is matched rather than each board separately; on the LP5 module, DQ to WCK per x16 is held to -2 to +3.2 mm, DQ to the read strobe per x8 to +/-0.6 mm, WCK to CK to -1 to +2 mm, DQ within a byte to under 0.025 mm and each differential pair to under 0.05 mm; full-channel rules come from the SoC supplier.",
+      "pages": [
+        "interfaces/lpddr5x"
+      ],
+      "source_type": "normative",
+      "source": "JEDEC JESD318B, Compression Attached Memory Module (CAMM2) Common Standard, Version 1.14, November 2025, §6.5, §6.6, Table 21",
+      "conditions": "Module-side bounds, stated as a task-group starting point",
+      "status": "scoped",
+      "note": "Read from the standard (a free download after JEDEC registration); the copy is kept private and the page paraphrases it. The page converts the bounds to time at 6.7 ps/mm, which is its own assumption, not the standard’s.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-19",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null,
+      "source_url": "https://www.jedec.org/standards-documents/docs/jesd318b",
+      "source_title": "JEDEC — JESD318B CAMM2 Common Standard (v1.14, Nov 2025)"
+    },
+    {
+      "id": "C-178",
+      "statement": "JESD318B asks that signal vias not sit close together (differential pairs excepted), with power or ground vias between them, that vias of different channels be at least 2 mm apart to limit channel-to-channel crosstalk, and that ground vias sit close to signal vias for the return current.",
+      "pages": [
+        "interfaces/lpddr5x"
+      ],
+      "source_type": "normative",
+      "source": "JEDEC JESD318B, Compression Attached Memory Module (CAMM2) Common Standard, Version 1.14, November 2025, §6.10.1, §6.15.3",
+      "conditions": "Module layout requirements and recommendations",
+      "status": "scoped",
+      "note": "Read from the standard (a free download after JEDEC registration); the copy is kept private and the page paraphrases it. ",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-19",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null,
+      "source_url": "https://www.jedec.org/standards-documents/docs/jesd318b",
+      "source_title": "JEDEC — JESD318B CAMM2 Common Standard (v1.14, Nov 2025)"
+    },
+    {
+      "id": "C-179",
+      "statement": "PS-007A defines a compression-mount LPDDR5 CAMM2 connector on a 1.38 x 1.0 mm pitch for channels beyond 6.4 GT/s, mated to a 1.20 mm nominal module; each contact has at most 50 mohm initial resistance and carries 1.0 A at a 30 C rise.",
+      "pages": [
+        "interfaces/lpddr5x"
+      ],
+      "source_type": "normative",
+      "source": "JEDEC PS-007A, LPDDR5 CAMM2 Connector Performance Standard, Issue A, July 2024, §1 Scope, §1.1, Table 6",
+      "conditions": "Connector requirements; the module and system are separate standards",
+      "status": "scoped",
+      "note": "Read from the standard (a free download after JEDEC registration); the copy is kept private and the page paraphrases it. Contact resistance may rise by no more than 20 mohm after stress.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-19",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null,
+      "source_url": "https://www.jedec.org/standards-documents/docs/ps-007a",
+      "source_title": "JEDEC — PS-007A LPDDR5 CAMM2 Connector Performance Standard (Jul 2024)"
+    },
+    {
+      "id": "C-180",
+      "statement": "PS-007A limits the connector, measured with its pads and 0.25 mm micro-vias at a 40 ohm reference, to insertion loss better than -0.40 dB from 3 to 8 GHz, return loss below -20 dB from 2 to 6 GHz, NEXT below -34 dB from 4 to 6 GHz, FEXT below -38 dB from 3 to 5 GHz and -36 dB from 5 to 7 GHz, and power-sum FEXT below -35 dB from 3 to 5 GHz and -32 dB from 5 to 7 GHz, all specified to 20 GHz; in the time domain its impedance must stay within 40 to 45 ohm for a 40 ps (10-90%) edge.",
+      "pages": [
+        "interfaces/lpddr5x"
+      ],
+      "source_type": "normative",
+      "source": "JEDEC PS-007A, LPDDR5 CAMM2 Connector Performance Standard, Issue A, July 2024, §10.1 Table 7, §10.2 Table 8, Annex D",
+      "conditions": "The connector with its launch, not a full channel; the page quotes only the bands that hold LPDDR5X’s Nyquist frequencies",
+      "status": "scoped",
+      "note": "Read from the standard (a free download after JEDEC registration); the copy is kept private and the page paraphrases it. The page converts the dB limits to fractions of a 250 mV swing (C-166) as a sense of scale; that conversion is the page’s, not the standard’s.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-19",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null,
+      "source_url": "https://www.jedec.org/standards-documents/docs/ps-007a",
+      "source_title": "JEDEC — PS-007A LPDDR5 CAMM2 Connector Performance Standard (Jul 2024)"
     }
   ]
 }

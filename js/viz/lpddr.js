@@ -124,6 +124,9 @@
       }
       $('#lp-rate').value = binOf(p.rate);
       $('#lp-rate-out').value = p.rate + ' MT/s';
+      /* The slider moves an index into BINS, so without this a screen reader
+         announced "8533 MT/s" (the static attribute) at every setting. */
+      $('#lp-rate').setAttribute('aria-valuetext', p.rate + ' MT/s');
       $('#lp-train').checked = !!p.trained;
     }
 
