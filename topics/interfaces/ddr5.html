@@ -8,7 +8,7 @@
   <script>(function(){try{var t=localStorage.getItem('sipi-theme');if(t==='dark'||t==='system'){document.documentElement.setAttribute('data-theme',t);var m=document.querySelector('meta[name=theme-color]');if(m&&(t==='dark'||matchMedia('(prefers-color-scheme:dark)').matches))m.content='#0B1015';}}catch(e){}})();</script>
   <!-- theme:end -->
 <title>DDR5 Signal Integrity: Fly-by, ODT, DFE and Training | SIPI</title>
-<meta name="description" content="DDR5 signal integrity: DIMM topology, two DIMMs on one wire, ODT, the DRAM&#8217;s 4-tap DFE, fly-by and training, and how DDR5 differs from LPDDR5X. Interactive.">
+<meta name="description" content="DDR5 signal integrity: speed, bandwidth and DDR4 vs DDR5; two DIMMs on one wire, ODT, the DRAM&#8217;s 4-tap DFE, fly-by, training, routing rules, MRDIMM and LPDDR5X vs DDR5. Interactive.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
@@ -20,7 +20,7 @@
   <meta property="og:type" content="article">
   <meta property="og:site_name" content="SIPI">
   <meta property="og:title" content="DDR5 Signal Integrity: Fly-by, ODT, DFE and Training | SIPI">
-  <meta property="og:description" content="DDR5 signal integrity: DIMM topology, two DIMMs on one wire, ODT, the DRAM&amp;#8217;s 4-tap DFE, fly-by and training, and how DDR5 differs from LPDDR5X. Interactive.">
+  <meta property="og:description" content="DDR5 signal integrity: speed, bandwidth and DDR4 vs DDR5; two DIMMs on one wire, ODT, the DRAM&amp;#8217;s 4-tap DFE, fly-by, training, routing rules, MRDIMM and LPDDR5X vs DDR5. Interactive.">
   <meta property="og:url" content="https://sipi.work/topics/interfaces/ddr5.html">
   <meta property="og:image" content="https://sipi.work/assets/og/interfaces/ddr5.png">
   <meta property="og:image:width" content="1200">
@@ -28,10 +28,10 @@
   <meta property="og:image:alt" content="DDR5 Signal Integrity: Fly-by, ODT, DFE and Training: a figure from the page, on SIPI">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="DDR5 Signal Integrity: Fly-by, ODT, DFE and Training | SIPI">
-  <meta name="twitter:description" content="DDR5 signal integrity: DIMM topology, two DIMMs on one wire, ODT, the DRAM&amp;#8217;s 4-tap DFE, fly-by and training, and how DDR5 differs from LPDDR5X. Interactive.">
+  <meta name="twitter:description" content="DDR5 signal integrity: speed, bandwidth and DDR4 vs DDR5; two DIMMs on one wire, ODT, the DRAM&amp;#8217;s 4-tap DFE, fly-by, training, routing rules, MRDIMM and LPDDR5X vs DDR5. Interactive.">
   <meta name="twitter:image" content="https://sipi.work/assets/og/interfaces/ddr5.png">
   <meta name="twitter:image:alt" content="DDR5 Signal Integrity: Fly-by, ODT, DFE and Training: a figure from the page, on SIPI">
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"DDR5 Signal Integrity: Fly-by, ODT, DFE and Training","description":"DDR5 signal integrity: DIMM topology, two DIMMs on one wire, ODT, the DRAM&#8217;s 4-tap DFE, fly-by and training, and how DDR5 differs from LPDDR5X. Interactive.","url":"https://sipi.work/topics/interfaces/ddr5.html","articleSection":"Interface sign-off","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer","url":"https://www.linkedin.com/in/geetansh-arora-a645714a/","sameAs":["https://www.linkedin.com/in/geetansh-arora-a645714a/"]},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-10-10","image":"https://sipi.work/assets/og/interfaces/ddr5.png"}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"DDR5 Signal Integrity: Fly-by, ODT, DFE and Training","description":"DDR5 signal integrity: speed, bandwidth and DDR4 vs DDR5; two DIMMs on one wire, ODT, the DRAM&#8217;s 4-tap DFE, fly-by, training, routing rules, MRDIMM and LPDDR5X vs DDR5. Interactive.","url":"https://sipi.work/topics/interfaces/ddr5.html","articleSection":"Interface sign-off","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer","url":"https://www.linkedin.com/in/geetansh-arora-a645714a/","sameAs":["https://www.linkedin.com/in/geetansh-arora-a645714a/"]},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-10-22","image":"https://sipi.work/assets/og/interfaces/ddr5.png"}</script>
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"SIPI","item":"https://sipi.work/"},{"@type":"ListItem","position":2,"name":"Interface sign-off","item":"https://sipi.work/#interfaces"},{"@type":"ListItem","position":3,"name":"DDR5 Signal Integrity: Fly-by, ODT, DFE and Training"}]}</script>
   <!-- meta:end -->
 </head>
@@ -54,7 +54,7 @@
     <p class="crumb"><a href="../../index.html#interfaces">Interface sign-off</a> / 03</p>
     <h1>DDR5 Signal Integrity: Fly-by, ODT, DFE and Training</h1>
     <p class="byline">
-      <!-- review:start --><span>By <a href="https://www.linkedin.com/in/geetansh-arora-a645714a/" target="_blank" rel="author noopener">Geetansh Arora</a> — Principal SI/PI Engineer</span><time datetime="2026-10-10" title="Technical review by Geetansh Arora on this date">10 Oct 2026</time><span>10 min</span><!-- review:end -->
+      <!-- review:start --><span>By <a href="https://www.linkedin.com/in/geetansh-arora-a645714a/" target="_blank" rel="author noopener">Geetansh Arora</a> — Principal SI/PI Engineer</span><time datetime="2026-10-22" title="Technical review by Geetansh Arora on this date">22 Oct 2026</time><span>13 min</span><!-- review:end -->
     </p>
     <!-- share:head:start --><div class="share share--head" data-share data-share-url="https://sipi.work/topics/interfaces/ddr5.html" data-share-title="DDR5 Signal Integrity: Fly-by, ODT, DFE and Training"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Fddr5.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Fddr5.html&amp;text=DDR5%20Signal%20Integrity%3A%20Fly-by%2C%20ODT%2C%20DFE%20and%20Training" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=DDR5%20Signal%20Integrity%3A%20Fly-by%2C%20ODT%2C%20DFE%20and%20Training&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Fddr5.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:head:end -->
     <p class="answer">
@@ -62,6 +62,73 @@
       connector, a shared wire with a second DIMM hanging off it, a clock that reaches each DRAM at a different time.
       Its signal integrity problem is reflections and timing, not loss, and its answer is to move termination,
       equalisation and calibration into the DRAM itself and to train the whole bus at power-up.
+    </p>
+  </div>
+
+  <div class="prose">
+    <h2 class="section-rule" id="at-a-glance"><span>At a glance</span></h2>
+    <h3>How fast is DDR5?</h3>
+    <p>
+      JEDEC&#8217;s DDR5 standard, JESD79-5, has defined timing up to <span class="num">8800 MT/s</span> since its April
+      2024 revision (C-35), where each bit lasts <span class="num">114 ps</span>. The current edition, JESD79-5D, is
+      sold by JEDEC, so its bins are not quoted here (C-36). What a system actually runs depends on the module and how
+      many there are: clocked client DIMMs take client modules from 6400 to 7200 MT/s (C-50), interface chips for
+      8000 MT/s server RDIMMs have been announced (C-185), and a server runs slower with two DIMMs per channel than with
+      one (C-52).
+    </p>
+    <h3>DDR4 vs DDR5: what changed?</h3>
+    <p>
+      For the signals, five things: a lower supply, 1.1 V against 1.2 V (C-37); two independent 32-bit subchannels per
+      DIMM instead of one 64-bit channel, with a burst of 16 so each still delivers 64 bytes (C-44); a 4-tap decision
+      feedback equaliser inside the DRAM (C-40); on-die termination for command, address and clock as well as data
+      (C-48); and a power management IC on the module (C-47). The <a href="#ddr4-vs-ddr5">comparison table</a> lists
+      them side by side.
+    </p>
+    <h3>What voltage does DDR5 use?</h3>
+    <p>
+      V<sub>DD</sub> and V<sub>DDQ</sub> are 1.1 V and V<sub>PP</sub> is 1.8 V, against DDR4&#8217;s 1.2, 1.2 and
+      2.5 V, and the data bus is pseudo-open-drain (C-37). On a DIMM the module&#8217;s own PMIC makes those rails,
+      from 12 V on server modules and 5 V on client ones (C-47).
+    </p>
+    <h3>How much bandwidth does a DDR5 DIMM have?</h3>
+    <p>
+      Eight bytes per transfer, split across its two subchannels: <span class="num">38.4 GB/s</span> at 4800 MT/s and
+      <span class="num">51.2 GB/s</span> at 6400. ECC bits travel alongside and are not counted. The
+      <a href="#bandwidth">bandwidth table</a> covers the common rates and the MRDIMM.
+    </p>
+    <h3>Does DDR5 have ECC?</h3>
+    <p>
+      Every DDR5 DRAM has on-die ECC: 8 check bits for every 128 data bits, correcting single-bit errors inside its own
+      array (C-45). It does not protect the wire between the controller and the DRAM (C-187). That is what an ECC
+      module is for: each subchannel grows from 32 to 40 bits to carry check bits the controller computes (C-44), and
+      DDR5 adds CRC on reads as well as writes (C-45). On-die ECC alone does not make a module an ECC module.
+    </p>
+    <h3>How long can a DDR5 trace be?</h3>
+    <p>
+      The DRAM standard does not say; the controller vendor&#8217;s guide does. One public example, an FPGA
+      vendor&#8217;s, allows data 4.5 inches in total, as 45 &#937; stripline to soldered-down DRAM or 50 &#937; to a
+      single DIMM, with clock and command at 40 &#937; (C-181, C-182). <a href="#routing">Routing a DDR5 channel</a>
+      works through what those numbers mean.
+    </p>
+    <h3>What is an MRDIMM?</h3>
+    <p>
+      A server module that runs two ranks of ordinary DDR5 DRAM at once and interleaves them, so the bus to the
+      processor runs at twice the DRAM&#8217;s own data rate (C-185). JEDEC plans it to reach up to twice the peak
+      bandwidth of native DRAM on the same pinout as an RDIMM (C-183); the first generation runs 8800 MT/s and the
+      second targets 12,800 (C-184, C-186). For signal integrity, the mainboard channel now runs faster than the DRAMs
+      behind it.
+    </p>
+    <h3>What is a CUDIMM?</h3>
+    <p>
+      A clocked unbuffered DIMM: a client module with a clock driver (CKD) that regenerates the clock locally, so the
+      DRAMs are clocked from a clean copy on the module rather than from the controller&#8217;s clock after the
+      connector. JEDEC presents it as taking client modules from 6400 to 7200 MT/s, with up to 9200 targeted in later
+      versions (C-50). The laptop form is the CSODIMM. Command and address still come from the controller.
+    </p>
+    <h3>LPDDR5X vs DDR5?</h3>
+    <p>
+      Same era, same single-ended data with a strobe, very different channels: one short and private, one long and
+      shared. The <a href="#lpddr5x-vs-ddr5">comparison</a> lays them out row by row.
     </p>
   </div>
 
@@ -214,7 +281,7 @@
       stripes come from and what DDR5 does about each of them.
     </p>
 
-    <h2 class="section-rule"><span>What DDR5 is</span></h2>
+    <h2 class="section-rule" id="ddr4-vs-ddr5"><span>What DDR5 is, and what changed from DDR4</span></h2>
     <p>
       DDR5 SDRAM is JEDEC&#8217;s fifth double-data-rate memory generation, the main memory of servers, desktops and
       laptops. The standard is JESD79-5, first published in 2020 and revised since: JESD79-5C (April 2024) extended the
@@ -252,6 +319,37 @@
       because a 72- or 80-bit bus cannot afford a second wire each. And they still pass through a connector, onto a module
       the board designer did not lay out, often sharing their wire with a second module. If you are weighing DDR5 against LPDDR5X, the
       <a href="#lpddr5x-vs-ddr5">comparison is further down</a>.
+    </p>
+
+    <h2 class="section-rule" id="bandwidth"><span>DDR5 bandwidth per subchannel, DIMM and MRDIMM</span></h2>
+    <p>
+      Peak bandwidth is the transfer rate times the data width, divided by eight for bytes. A DDR5 subchannel has 32
+      data bits and a DIMM has two subchannels, 64 bits; on an ECC module the check bits ride alongside and carry no
+      user data (C-44). An MRDIMM keeps the DIMM&#8217;s width but runs the bus to the processor at twice the rate of
+      its DRAMs (C-185), so its row gives the DRAMs&#8217; own rate as well.
+    </p>
+    <div class="table-scroll">
+      <table class="data">
+        <caption>Peak bandwidth in GB/s, every data pin busy on every transfer</caption>
+        <thead><tr><th>Rate on the bus</th><th>Where it appears</th><th>x32, one subchannel</th><th>x64, one DIMM</th></tr></thead>
+        <tbody>
+          <tr><th>4800 MT/s</th><td>4th Gen Xeon server, one DIMM per channel</td><td>19.2</td><td>38.4</td></tr>
+          <tr><th>5600 MT/s</th><td>5th Gen Xeon server, one DIMM per channel</td><td>22.4</td><td>44.8</td></tr>
+          <tr><th>6400 MT/s</th><td>client DIMMs without a clock driver</td><td>25.6</td><td>51.2</td></tr>
+          <tr><th>7200 MT/s</th><td>clocked client DIMMs, first version</td><td>28.8</td><td>57.6</td></tr>
+          <tr><th>8000 MT/s</th><td>RDIMM interface chips announced</td><td>32.0</td><td>64.0</td></tr>
+          <tr><th>8800 MT/s</th><td>top of the JESD79-5C timing</td><td>35.2</td><td>70.4</td></tr>
+          <tr><th>8800 MT/s</th><td>MRDIMM Gen1, DRAMs at 4400</td><td>35.2</td><td>70.4</td></tr>
+          <tr><th>12800 MT/s</th><td>MRDIMM Gen2 target, DRAMs at 6400</td><td>51.2</td><td>102.4</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>
+      The labels come from the ledger: the Xeon rates from one server&#8217;s product guide (C-52), the client rates
+      from JEDEC&#8217;s clock driver announcement (C-50), 8000 from an interface-chip vendor (C-185), 8800 from the
+      standard (C-35) and the MRDIMM rates from JEDEC&#8217;s roadmap (C-184, C-186). These are ceilings, not what a
+      benchmark reports: refresh, read-to-write turnarounds and bank conflicts all take transfers that carry no data.
+      A processor with several memory channels multiplies the DIMM column by however many it has populated.
     </p>
 
     <h2 class="section-rule"><span>The module, from above</span></h2>
@@ -810,6 +908,58 @@
       above to see what the last DRAM would otherwise do to everyone else&#8217;s clock.
     </p>
 
+    <h2 class="section-rule" id="routing"><span>Routing a DDR5 channel: impedance, length and matching</span></h2>
+    <p>
+      JESD79-5 specifies the DRAM at its pins. The wiring to it belongs to the system, so routing rules come from the
+      controller vendor for the mainboard and from JEDEC&#8217;s module standards for the module. Here is one public
+      example of each. They are worked examples, not limits for your board: every number below assumes its
+      author&#8217;s stackup.
+    </p>
+    <div class="table-scroll">
+      <table class="data">
+        <caption>One FPGA vendor&#8217;s DDR5 routing rules, on its default stackup (C-181, C-182)</caption>
+        <thead><tr><th></th><th>DRAM soldered down</th><th>One DIMM per channel</th></tr></thead>
+        <tbody>
+          <tr><td>Data (DQ, DQS)</td><td>45 &#937; stripline</td><td>50 &#937; stripline</td></tr>
+          <tr><td>Data length, in total</td><td>up to 4.5 in</td><td>up to 4.5 in</td></tr>
+          <tr><td>Clock and command</td><td>40 &#937;, up to 4.0 in to the first DRAM and 6.6 in to the last; 50 &#937; or more between DRAMs</td><td>40 &#937;</td></tr>
+          <tr><td>Data layers</td><td>upper layers, so the vias stay short</td><td>upper layers, so the vias stay short</td></tr>
+          <tr><td>DQ to its DQS</td><td>in the guide, not quoted here</td><td>within &#177;3.5 ps, package routing included</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>
+      <strong>Read the length against the bit.</strong> At about 170 ps/in, 4.5 inches is
+      <span class="num">765 ps</span> one way and <span class="num">1530 ps</span> there and back, about
+      <span class="num">9.8</span> bits at 6400 MT/s. Anything that bounces between the two ends of a route that long
+      comes back far beyond the DRAM&#8217;s four DFE taps, so only matched impedance and the right termination keep it
+      small. In the panel at the top, the mainboard trace runs from 25 to 200 mm; 4.5 inches is
+      <span class="num">114 mm</span>.
+    </p>
+    <p>
+      <strong>The matching is tighter than the length.</strong> &#177;3.5 ps between a data bit and its strobe is about
+      &#177;<span class="num">0.5 mm</span> of trace, and <span class="num">2.2%</span> of a bit at 6400 MT/s. The guide
+      counts package routing in that figure (C-182): skew inside a package spends the same budget as skew on the board.
+    </p>
+    <p>
+      <strong>Two impedances on one command net.</strong> For soldered-down DRAM the guide routes the lead-in at 40
+      &#937; and the fly-by between DRAMs at 50 &#937; or more (C-181). That is the loaded-line arithmetic from the
+      fly-by section, run the other way: a 50 &#937; line with 1 pF of DRAM every 12 mm behaves like
+      <span class="num">39.3</span> &#937;, so a section routed high lands near the lead-in once the DRAMs are on it.
+      The guide does not explain its choice. JEDEC&#8217;s CAMM2 module standard does state a reason for the same
+      pattern on a module: it routes the lead-in at a lower impedance than the loaded section to reduce the
+      discontinuity at the first load (C-188).
+    </p>
+    <p>
+      <strong>On the module.</strong> The same CAMM2 standard shows how a module maker matches its fly-by (C-188).
+      Command, address and chip select are matched to the clock from the connector to <em>each</em> DRAM, not just
+      the first. Microstrip lengths are divided by 1.1 before they are added up, because an outer-layer trace is faster
+      than a buried one. On a two-rank module, command and address see two DRAMs at every node while the clock and chip
+      select see one, so the loaded command line is slower; the clock and chip select segments between DRAMs are
+      routed longer to keep pace. Each data bit is matched to its strobe within &#177;0.025 mm on the module, about
+      <span class="num">0.17 ps</span>.
+    </p>
+
     <h2 class="section-rule"><span>Training: the controller never sees the eye</span></h2>
     <p>
       Everything so far assumes someone knows where the eye is. Nobody does. The controller has no oscilloscope at the
@@ -870,7 +1020,7 @@
       LPDDR5X and DDR5 are JEDEC memories of the same era, and from far away they look alike: single-ended data, a
       strobe travelling with it, everything trained at power-up. The difference is where each one lives, and nearly every
       electrical choice follows from that. LPDDR5X is soldered next to the processor, or stacked on its package, so its
-      channel is a few centimetres of board with nothing in the way. DDR5 sits on a module in a socket, so its channel
+      channel is a short run of board with nothing in the way, or no board at all. DDR5 sits on a module in a socket, so its channel
       crosses a mainboard and a connector and often shares its wire with a second module.
     </p>
     <figure class="figure">
@@ -932,7 +1082,7 @@
     </p>
     <p>
       <strong>The clocking differs.</strong> LPDDR5X separates a slow command clock from a fast write data clock that runs
-      at two or four times its rate and only when it is needed; reads come back with their own strobe. DDR5 uses one
+      at two or four times its rate; reads come back with their own strobe. DDR5 uses one
       differential strobe per byte, driven by whichever end is sending. Both make the data source-synchronous, so delay the
       data and its strobe share cancels, and both train the strobe into the eye at power-up.
     </p>
@@ -948,11 +1098,11 @@
         <thead><tr><th></th><th>LPDDR5X</th><th>DDR5</th></tr></thead>
         <tbody>
           <tr><td>Where it sits</td><td>soldered beside the processor, on its package, or on an LPDDR5X CAMM2</td><td>a module in a socket: RDIMM, UDIMM, SODIMM, clocked UDIMM, or a DDR5 CAMM2</td></tr>
-          <tr><td>Fastest bin in the editions read</td><td>8533 MT/s</td><td>timing defined to 8800 MT/s</td></tr>
+          <tr><td>Fastest rate</td><td>8533 MT/s in JESD209-5B; parts announced at 10.7 Gb/s</td><td>timing defined to 8800 MT/s; MRDIMM Gen2 targets 12,800 on the bus</td></tr>
           <tr><td>Data width</td><td>16 bits a channel; an x32 package carries two channels</td><td>two 32-bit subchannels a DIMM, 40 bits each with ECC</td></tr>
           <tr><td>Signalling and V<sub>DDQ</sub></td><td>LVSTL, 0.5 V (0.3 V with ODT off)</td><td>POD, 1.1 V</td></tr>
           <tr><td>Data timing</td><td>WCK from the controller for writes, at 2:1 or 4:1 to CK; RDQS for reads</td><td>DQS, one per byte, driven by the sender</td></tr>
-          <tr><td>The data channel</td><td>point to point, about 10&#8211;30 mm, no connector on a soldered board</td><td>mainboard, connector and module, often past a second DIMM</td></tr>
+          <tr><td>The data channel</td><td>point to point and short: one FPGA guide allows 3.0 in; none at all when stacked on the package; no connector unless on a CAMM2</td><td>mainboard, connector and module, often past a second DIMM; the same vendor allows 4.5 in to one DIMM</td></tr>
           <tr><td>Command and clock</td><td>straight from the controller</td><td>fly-by along the DRAMs, from the RCD on a registered DIMM</td></tr>
           <tr><td>Equalisation in the DRAM</td><td>optional, advertised per device: a DFE and transmit pre-emphasis</td><td>a 4-tap DFE on every data input</td></tr>
           <tr><td>Power regulation</td><td>the platform&#8217;s regulators, on a soldered board</td><td>a PMIC on the module</td></tr>
@@ -964,8 +1114,10 @@
     <p>
       The line between them is blurring. JEDEC&#8217;s CAMM2 standard puts either memory on a compression-attached module
       with a common connector and different pinouts, and JEDEC aims LPDDR5/5X CAMM2s at notebooks and some server
-      segments. A CAMM2 is still a connector, but a short, flat one, so it buys LPDDR5X upgradability while keeping most of
-      its channel. The choice that remains is the old one: LPDDR5X where power and speed per watt rule and the capacity is
+      segments. A CAMM2 is still a connector in the channel. On an LPDDR5/5X CAMM2 the DRAM sits on top of the connector
+      (C-173), and JEDEC claims better signal integrity for its connector than for a DDR5 SODIMM&#8217;s (C-172); the
+      <a href="lpddr5x.html#camm2">LPDDR5X page</a> works through it. A DDR5 CAMM2 carries one channel, two 32-bit
+      subchannels, or two channels, and the single-channel kind can be stacked (C-188). The choice that remains is the old one: LPDDR5X where power and speed per watt rule and the capacity is
       fixed at build, DDR5 where capacity, upgrades and ECC matter and the board can pay for a longer channel.
     </p>
 
@@ -1025,8 +1177,15 @@
       <strong>Client modules above 6400 MT/s add a clock driver.</strong> On an unbuffered DIMM the controller drives the
       DRAMs&#8217; clock directly, through the connector and along the fly-by. JEDEC&#8217;s clocked UDIMM and SODIMM
       (JESD323 and JESD324) put a clock driver on the module that regenerates the clock locally, which JEDEC presents as
-      the step from 6400 toward 7200 MT/s on client modules. Command and address still come from the controller, so the
-      rest of this page still applies.
+      the step from 6400 to 7200 MT/s on client modules, with up to 9200 targeted in later versions (C-50). Command and
+      address still come from the controller, so the rest of this page still applies.
+    </p>
+    <p>
+      <strong>Servers are getting wider behind the connector as well as faster.</strong> An MRDIMM reads two ranks at once
+      and interleaves them, so the channel on the mainboard runs at twice the rate of the DRAMs: 8800 MT/s on the bus
+      from DRAMs at 4400 in the first generation, and 12,800 targeted for the second (C-184, C-185, C-186). The DRAMs
+      run at a rate they already meet; the mainboard channel and the module&#8217;s data buffers take on the higher rate, on the same
+      connector and pinout as an RDIMM (C-183).
     </p>
     <p>
       <strong>Power is now on the module.</strong> The PMIC regulates V<sub>DD</sub>, V<sub>DDQ</sub> and V<sub>PP</sub> next
@@ -1047,8 +1206,12 @@
       <li><strong>JEDEC JESD79-5D, DDR5 SDRAM</strong> (Nov 2025), and JEDEC&#8217;s JESD79-5C announcement (Apr 2024) &#8212; editions and the 8800 MT/s timing extension; ledger C-35 and C-36. The standard itself is sold and has not been read.</li>
       <li><strong>Micron, DDR5 SDRAM core data sheet</strong> (Rev. D, Oct 2022, stated JESD79-5B compliant) &#8212; supply voltages, ODT and driver values, VrefDQ range and step, DFE tap ranges, stressed-eye limits, BER requirements, write leveling; ledger C-37 to C-43.</li>
       <li><strong>Micron white papers and technical briefs</strong>: &#8220;Introducing Micron DDR5 SDRAM: More Than a Generational Update&#8221;, &#8220;DDR5 SDRAM: New Features&#8221;, &#8220;DDR5: Key Module Features&#8221; and &#8220;DDR5: Client Module Features&#8221; &#8212; the DDR4 comparison, subchannels, PMIC input voltages, the RCD&#8217;s command bus and CA termination groups; ledger C-44 to C-49.</li>
-      <li><strong>JEDEC clocked UDIMM and SODIMM</strong> (JESD323, JESD324), as announced in October 2024 &#8212; ledger C-50.</li>
-      <li><strong>Micron, x32 automotive LPDDR5X data sheet</strong> and <strong>JEDEC&#8217;s CAMM2 announcement</strong> (Dec 2023) &#8212; the LPDDR5X side of the comparison; ledger C-53 and C-54, with C-2a, C-3 and C-4a from the LPDDR5X page.</li>
+      <li><strong>JEDEC&#8217;s clock driver announcement</strong> (Oct 2024) for the clocked UDIMM and SODIMM (JESD323, JESD324) &#8212; ledger C-50.</li>
+      <li><strong>JEDEC&#8217;s MRDIMM announcements</strong> (Jul 2024, Apr 2026), <strong>Rambus&#8217;s MRDIMM and RDIMM chipset announcement</strong> (Oct 2024) and <strong>Lenovo Press LP2028</strong> &#8212; how an MRDIMM works and its rates; ledger C-183 to C-186.</li>
+      <li><strong>Synopsys, &#8220;Error Correction Code (ECC) in DDR Memories&#8221;</strong> &#8212; what on-die ECC does and does not cover; ledger C-187.</li>
+      <li><strong>Altera, External Memory Interfaces Agilex 7 M-Series FPGA IP User Guide</strong> (26.1.1) &#8212; DDR5 routing rules for soldered-down DRAM and one DIMM per channel; ledger C-181 and C-182, with C-170 for LPDDR5.</li>
+      <li><strong>JEDEC JESD318B, CAMM2 Common Standard</strong> (v1.14, Nov 2025), a free download after registration &#8212; DDR5 CAMM2 organisation and the module&#8217;s fly-by matching rules; ledger C-188, with C-172 and C-173 from the LPDDR5X page.</li>
+      <li><strong>Micron, x32 automotive LPDDR5X data sheet</strong> and <strong>JEDEC&#8217;s CAMM2 announcement</strong> (Dec 2023) &#8212; the LPDDR5X side of the comparison; ledger C-53 and C-54, with C-2a, C-3, C-4a and C-169 from the LPDDR5X page.</li>
       <li><strong>ASUS support FAQ</strong>, &#8220;How to install DRAM on motherboard&#8221; &#8212; the slot to fill first; ledger C-51.</li>
       <li><strong>Lenovo Press, ThinkSystem SR650 V3 product guide</strong> &#8212; DDR5 speed at one and two DIMMs per channel; ledger C-52.</li>
     </ul>
@@ -1078,11 +1241,22 @@
       <li><a href="https://www.avnet.com/wcm/connect/630450bf-bb94-4993-b756-4b9f3ef2334e/DDR5-Key-Module-Technical-Brief.pdf?MOD=AJPERES&amp;attachment=false&amp;id=1597182346576" target="_blank" rel="noopener">Micron — DDR5: Key Module Features (technical brief)</a> <span class="src__for">C-44</span></li>
       <li><a href="https://assets.micron.com/adobe/assets/urn:aaid:aem:f1706cdb-4b55-4568-84bc-b7ee42f46236/renditions/original/as/ddr5-more-than-a-generational-update-wp.pdf" target="_blank" rel="noopener">Micron — Introducing Micron DDR5 SDRAM: More Than a Generational Update</a> <span class="src__for">C-45</span></li>
       <li><a href="https://assets.micron.com/adobe/assets/urn:aaid:aem:5902f17e-8bde-4246-971c-8d7f274c6b1a/renditions/original/as/ddr5-key-module-features-wp-client.pdf" target="_blank" rel="noopener">Micron — DDR5: Client Module Features</a> <span class="src__for">C-47</span></li>
-      <li><a href="https://www.edn.com/jedec-unveils-memory-designs-with-ddr5-clock-drivers/" target="_blank" rel="noopener">EDN — JEDEC unveils memory designs with DDR5 clock drivers</a> <span class="src__for">C-50</span></li>
+      <li><a href="https://www.jedec.org/node/9455" target="_blank" rel="noopener">JEDEC — DDR5 clock driver (CUDIMM, CSODIMM) raw card announcement</a> <span class="src__for">C-50</span></li>
       <li><a href="https://www.asus.com/us/support/faq/1049387/" target="_blank" rel="noopener">ASUS — How to install DRAM (memory) on motherboard</a> <span class="src__for">C-51</span></li>
       <li><a href="https://lenovopress.lenovo.com/lp1601-thinksystem-sr650-v3-server" target="_blank" rel="noopener">Lenovo Press — ThinkSystem SR650 V3 product guide</a> <span class="src__for">C-52</span></li>
       <li><a href="https://www.farnell.com/datasheets/3928121.pdf" target="_blank" rel="noopener">Micron — x32 Automotive LPDDR5X SDRAM data sheet (315b)</a> <span class="src__for">C-53</span></li>
       <li><a href="https://www.jedec.org/news/pressreleases/jedec-publishes-new-camm2-memory-module-standard" target="_blank" rel="noopener">JEDEC — CAMM2 memory module standard announcement</a> <span class="src__for">C-54</span></li>
+      <li><a href="https://news.samsung.com/global/samsung-develops-industrys-fastest-10-7gbps-lpddr5x-dram-optimized-for-ai-applications" target="_blank" rel="noopener">Samsung — 10.7 Gb/s LPDDR5X announcement</a> <span class="src__for">C-169</span></li>
+      <li><a href="https://docs.altera.com/r/docs/772538/26.1.1/external-memory-interfaces-agilex-7-m-series-fpga-ip-user-guide/routing-guidelines-for-lpddr5-memory-down-topology" target="_blank" rel="noopener">Altera — LPDDR5 memory-down routing guidelines (Agilex 7 M-Series EMIF)</a> <span class="src__for">C-170</span></li>
+      <li><a href="https://www.jedec.org/node/9458" target="_blank" rel="noopener">JEDEC — LPDDR5 CAMM2 connector performance standard (PS-007A) announcement</a> <span class="src__for">C-172</span></li>
+      <li><a href="https://www.jedec.org/standards-documents/docs/jesd318b" target="_blank" rel="noopener">JEDEC — JESD318B CAMM2 Common Standard (v1.14, Nov 2025)</a> <span class="src__for">C-173</span></li>
+      <li><a href="https://docs.altera.com/r/docs/772538/26.1.1/external-memory-interfaces-agilex-7-m-series-fpga-ip-user-guide/routing-guidelines-for-ddr5-memory-down-single-rank-or-dual-rank-x8-bit-or-x16-bit-configurations" target="_blank" rel="noopener">Altera — DDR5 memory-down routing guidelines (Agilex 7 M-Series EMIF)</a> <span class="src__for">C-181</span></li>
+      <li><a href="https://docs.altera.com/r/docs/772538/26.1.1/external-memory-interfaces-agilex-7-m-series-fpga-ip-user-guide/routing-guidelines-for-ddr5-rdimm-udimm-and-sodimm-configurations" target="_blank" rel="noopener">Altera — DDR5 RDIMM, UDIMM and SODIMM routing guidelines (Agilex 7 M-Series EMIF)</a> <span class="src__for">C-182</span></li>
+      <li><a href="https://www.jedec.org/news/pressreleases/jedec-unveils-plans-ddr5-mrdimm-and-lpddr6-camm-standards-propel-high-performance" target="_blank" rel="noopener">JEDEC — DDR5 MRDIMM plans announcement (July 2024)</a> <span class="src__for">C-183</span></li>
+      <li><a href="https://www.jedec.org/news/pressreleases/jedec%C2%AE-advances-ddr5-mrdimm-ecosystem-new-memory-interface-logic-and-expanded" target="_blank" rel="noopener">JEDEC — DDR5 MRDIMM roadmap announcement (April 2026)</a> <span class="src__for">C-184</span></li>
+      <li><a href="https://www.rambus.com/rambus-unveils-industry-first-complete-chipsets-for-next-generation-ddr5-mrdimms-and-rdimms-to-deliver-breakthrough-performance-for-data-center-and-ai/" target="_blank" rel="noopener">Rambus — DDR5 MRDIMM 12800 and RDIMM 8000 chipsets announcement</a> <span class="src__for">C-185</span></li>
+      <li><a href="https://lenovopress.lenovo.com/lp2028-introduction-to-mrdimm-memory-technology" target="_blank" rel="noopener">Lenovo Press — Introduction to MRDIMM memory technology</a> <span class="src__for">C-186</span></li>
+      <li><a href="https://www.synopsys.com/articles/ecc-memory-error-correction.html" target="_blank" rel="noopener">Synopsys — Error correction code (ECC) in DDR memories</a> <span class="src__for">C-187</span></li>
       </ul>
       <p class="sources__note">Rows marked with a claim id are tracked in <a href="../../docs/claims.md">the claim ledger</a>, which records what each source can and cannot establish.</p>
     </section>

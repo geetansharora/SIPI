@@ -1160,20 +1160,20 @@
     },
     {
       "id": "C-50",
-      "statement": "JEDEC's clocked UDIMM and SODIMM (JESD323, JESD324) add a clock driver that regenerates the clock on the module, presented as taking client modules from 6400 toward 7200 MT/s.",
+      "statement": "JEDEC's clocked UDIMM and SODIMM (JESD323, JESD324, published 2024) put a clock driver (CKD) on the module that regenerates the clock locally; JEDEC presents it as raising client DIMM data rates from 6400 to 7200 Mbps in the initial version, targeting up to 9200 in future versions.",
       "pages": [
         "interfaces/ddr5"
       ],
-      "source_type": "commercial",
-      "source": "EDN, \"JEDEC unveils memory designs with DDR5 clock drivers\", 17 October 2024, reporting JEDEC's announcement",
-      "source_url": "https://www.edn.com/jedec-unveils-memory-designs-with-ddr5-clock-drivers/",
-      "source_title": "EDN — JEDEC unveils memory designs with DDR5 clock drivers",
-      "conditions": "Client modules; the CKD buffers clock only",
-      "status": "scoped",
-      "note": "Reported announcement, not the standards. The page says the CKD regenerates the clock and that command and address still come from the controller.",
+      "source_type": "public-rate",
+      "source": "JEDEC press release, \"JEDEC to Launch New Raw Card DIMM Designs with DDR5 Clock Drivers, Enhancing Client Computing Memory Performance and Stability at 6400 Mbps and Beyond\", 15 October 2024",
+      "source_url": "https://www.jedec.org/node/9455",
+      "source_title": "JEDEC — DDR5 clock driver (CUDIMM, CSODIMM) raw card announcement",
+      "conditions": "Client modules; the CKD buffers the clock only",
+      "status": "verified",
+      "note": "Re-sourced 22 Oct 2026 from an EDN report to JEDEC's own release, read on jedec.org. The release names JESD323 and JESD324 as published earlier in 2024. The page says the CKD regenerates the clock and that command and address still come from the controller.",
       "owner": "Geetansh",
       "sourceCheckedBy": "Claude Opus 5.5",
-      "sourceCheckedOn": "2026-10-01",
+      "sourceCheckedOn": "2026-10-22",
       "humanReviewedBy": null,
       "humanReviewedOn": null
     },
@@ -3440,7 +3440,8 @@
       "id": "C-169",
       "statement": "Samsung announced an LPDDR5X DRAM running at up to 10.7 Gb/s in April 2024, on a 12 nm-class process, with mass production planned for the second half of 2024.",
       "pages": [
-        "interfaces/lpddr5x"
+        "interfaces/lpddr5x",
+        "interfaces/ddr5"
       ],
       "source_type": "vendor",
       "source": "Samsung Newsroom, \"Samsung Develops Industry’s Fastest 10.7Gbps LPDDR5X DRAM, Optimized for AI Applications\", 17 April 2024",
@@ -3459,7 +3460,8 @@
       "id": "C-170",
       "statement": "One FPGA vendor’s LPDDR5 memory-down guideline routes DQ as 40 ohm stripline on upper layers, with via transitions no deeper than 50 mil and at most 3.0 inches in total, and warns that deep-layer via transitions raise crosstalk.",
       "pages": [
-        "interfaces/lpddr5x"
+        "interfaces/lpddr5x",
+        "interfaces/ddr5"
       ],
       "source_type": "vendor",
       "source": "Altera, External Memory Interfaces Agilex 7 M-Series FPGA IP User Guide, 8.3.7.2 Routing Guidelines for LPDDR5 Memory Down Topology, table 276",
@@ -3497,7 +3499,8 @@
       "id": "C-172",
       "statement": "PS-007A (October 2024) is JEDEC’s LPDDR5 CAMM2 connector performance standard, free to download; JEDEC lists better signal integrity and RFI, lower power and a 50% smaller form factor at similar height as its benefits over a DDR5 SODIMM connector.",
       "pages": [
-        "interfaces/lpddr5x"
+        "interfaces/lpddr5x",
+        "interfaces/ddr5"
       ],
       "source_type": "public-rate",
       "source": "JEDEC press release, \"JEDEC Publishes LPDDR5 CAMM2 Connector Performance Standard\", 31 October 2024",
@@ -3516,7 +3519,8 @@
       "id": "C-173",
       "statement": "An LP5 CAMM2 (LPDDR5 or LPDDR5X) is x128, eight x16 sub-channels; a channel is four 16-bit sub-channels, each with its own clock, command, address, chip selects and data. LP5 CAMM2s are expected to start at 6400 MT/s and rise with the DRAM, and the module covers the whole connector with the DRAM placed over it.",
       "pages": [
-        "interfaces/lpddr5x"
+        "interfaces/lpddr5x",
+        "interfaces/ddr5"
       ],
       "source_type": "normative",
       "source": "JEDEC JESD318B, Compression Attached Memory Module (CAMM2) Common Standard, Version 1.14, November 2025, §1 Scope, Table 1, §6.1, §6.2",
@@ -3663,6 +3667,158 @@
       "humanReviewedOn": null,
       "source_url": "https://www.jedec.org/standards-documents/docs/ps-007a",
       "source_title": "JEDEC — PS-007A LPDDR5 CAMM2 Connector Performance Standard (Jul 2024)"
+    },
+    {
+      "id": "C-181",
+      "statement": "One FPGA vendor's DDR5 memory-down guideline routes DQ and DQS as 45 ohm stripline on upper layers, at most 4.5 inches in total to the DRAM for single or dual rank; clock and command/address run 40 ohm from the FPGA, at most 4.0 inches to the first DRAM and 6.6 inches to the last, with the fly-by segments between DRAMs at 50 ohm or more.",
+      "pages": [
+        "interfaces/ddr5"
+      ],
+      "source_type": "vendor",
+      "source": "Altera, External Memory Interfaces Agilex 7 M-Series FPGA IP User Guide (version 26.1.1), 7.4.8.2 Routing Guidelines for DDR5 Memory Down, tables 247 and 249",
+      "source_url": "https://docs.altera.com/r/docs/772538/26.1.1/external-memory-interfaces-agilex-7-m-series-fpga-ip-user-guide/routing-guidelines-for-ddr5-memory-down-single-rank-or-dual-rank-x8-bit-or-x16-bit-configurations",
+      "source_title": "Altera — DDR5 memory-down routing guidelines (Agilex 7 M-Series EMIF)",
+      "conditions": "One vendor, one platform, its default stackup; a CPU or SoC vendor's guide will differ",
+      "status": "scoped",
+      "note": "Read on docs.altera.com. Table 247 is published as an image and was read from it: target Zse 40 ohm on the main CLK and CMD/ADDR/CTRL segment, 50+ on the between-DRAM segment, 45 on DQ and DQS. Table 249 says data must be on upper layers to avoid long-via vertical crosstalk, for 65 or 120 mil boards, and that the FPGA package length is under 34 mm. The guide's lengths assume Altera's default stackup.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-22",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null
+    },
+    {
+      "id": "C-182",
+      "statement": "The same guideline, for one DDR5 UDIMM, RDIMM or SODIMM per channel, routes DQ as 50 ohm stripline at most 4.5 inches in total and clock and command/address at 40 ohm, and asks for DQ matched to its DQS within +/-3.5 ps, package routing included.",
+      "pages": [
+        "interfaces/ddr5"
+      ],
+      "source_type": "vendor",
+      "source": "Altera, External Memory Interfaces Agilex 7 M-Series FPGA IP User Guide (version 26.1.1), 7.4.8.3 Routing Guidelines for DDR5 RDIMM, UDIMM, and SODIMM Configurations, tables 250 to 252",
+      "source_url": "https://docs.altera.com/r/docs/772538/26.1.1/external-memory-interfaces-agilex-7-m-series-fpga-ip-user-guide/routing-guidelines-for-ddr5-rdimm-udimm-and-sodimm-configurations",
+      "source_title": "Altera — DDR5 RDIMM, UDIMM and SODIMM routing guidelines (Agilex 7 M-Series EMIF)",
+      "conditions": "One DIMM per channel, two ranks per DIMM, one vendor's default stackup",
+      "status": "scoped",
+      "note": "Read on docs.altera.com; tables 250 and 251 are images. Table 251 states its limits in time at an assumed 170 ps/in and requires package length to be included; its right-hand column is cut off in the published image, so only the DQ-to-DQS row is used. The guide gives no two-DIMM-per-channel table.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-22",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null
+    },
+    {
+      "id": "C-183",
+      "statement": "JEDEC's DDR5 MRDIMM multiplexes ranks to raise bandwidth with no extra physical connections, is planned to deliver up to twice the peak bandwidth of native DRAM, keeps RDIMM's capacity and RAS features, and uses standard DDR5 DRAM, form factor and pinout, SPD and PMIC, with platform compatibility with RDIMM.",
+      "pages": [
+        "interfaces/ddr5"
+      ],
+      "source_type": "public-rate",
+      "source": "JEDEC press release, \"JEDEC Unveils Plans for DDR5 MRDIMM and LPDDR6 CAMM Standards to Propel High-Performance Computing and AI\", 22 July 2024",
+      "source_url": "https://www.jedec.org/news/pressreleases/jedec-unveils-plans-ddr5-mrdimm-and-lpddr6-camm-standards-propel-high-performance",
+      "source_title": "JEDEC — DDR5 MRDIMM plans announcement (July 2024)",
+      "conditions": "A plan at the time; JEDEC notes standards may change",
+      "status": "verified",
+      "note": "Read on jedec.org. The release also announces a Tall MRDIMM form factor with twice the single-die packages.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-22",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null
+    },
+    {
+      "id": "C-184",
+      "statement": "In April 2026 JEDEC published JESD82-552, a DDR5 multiplexed-rank data buffer (MDB), said the matching registering clock driver (JESD82-542, MRCD) was expected soon, and said Gen2 DDR5 MRDIMM raw cards targeting 12,800 MT/s were in development.",
+      "pages": [
+        "interfaces/ddr5"
+      ],
+      "source_type": "public-rate",
+      "source": "JEDEC press release, \"JEDEC Advances DDR5 MRDIMM Ecosystem with New Memory Interface Logic and Expanded MRDIMM Roadmap\", 30 April 2026",
+      "source_url": "https://www.jedec.org/news/pressreleases/jedec%C2%AE-advances-ddr5-mrdimm-ecosystem-new-memory-interface-logic-and-expanded",
+      "source_title": "JEDEC — DDR5 MRDIMM roadmap announcement (April 2026)",
+      "conditions": "12,800 MT/s is a target for designs in development, not a published bin",
+      "status": "verified",
+      "note": "Read on jedec.org. The release also says the MRDIMM Gen2 module standard is nearing completion and Gen3 is being looked at.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-22",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null
+    },
+    {
+      "id": "C-185",
+      "statement": "Rambus describes an MRDIMM as multiplexing two ranks of DRAM so the host bus runs at twice the data rate of the DRAM devices, with an MRCD that addresses the two ranks on alternate clock cycles and ten data buffers (MDBs) steering the data; in the same announcement it introduced an RCD for RDIMMs at 8000 MT/s.",
+      "pages": [
+        "interfaces/ddr5"
+      ],
+      "source_type": "vendor",
+      "source": "Rambus press release, \"Rambus Unveils Industry-First Complete Chipsets for Next-Generation DDR5 MRDIMMs and RDIMMs\", 15 October 2024",
+      "source_url": "https://www.rambus.com/rambus-unveils-industry-first-complete-chipsets-for-next-generation-ddr5-mrdimms-and-rdimms-to-deliver-breakthrough-performance-for-data-center-and-ai/",
+      "source_title": "Rambus — DDR5 MRDIMM 12800 and RDIMM 8000 chipsets announcement",
+      "conditions": "One interface-chip vendor's products and description",
+      "status": "verified",
+      "note": "Read on rambus.com. The release says the MRDIMM uses the same physical connections as a DDR5 RDIMM and names MRDIMM 12800 and RDIMM 8000 chipsets.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-22",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null
+    },
+    {
+      "id": "C-186",
+      "statement": "Lenovo Press: by running two ranks at once an MRDIMM delivers 128 bytes per access against a regular DDR5 DIMM's 64; JEDEC expects Gen1 MRDIMMs at 8800 MT/s, Gen2 at 12,800 and Gen3 at 17,600; Xeon 6 servers with P-cores support them.",
+      "pages": [
+        "interfaces/ddr5"
+      ],
+      "source_type": "commercial",
+      "source": "Lenovo Press LP2028, \"Introduction to MRDIMM Memory Technology\", A. Rossouw, updated 25 February 2025",
+      "source_url": "https://lenovopress.lenovo.com/lp2028-introduction-to-mrdimm-memory-technology",
+      "source_title": "Lenovo Press — Introduction to MRDIMM memory technology",
+      "conditions": "A system vendor's summary of JEDEC's roadmap",
+      "status": "scoped",
+      "note": "Read on lenovopress.lenovo.com. Only the generation rates and the 128-byte access are used; the paper rounds bandwidths loosely (36 GB/s at 4800), so the page computes its own.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-22",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null
+    },
+    {
+      "id": "C-187",
+      "statement": "DDR5 DRAMs store 8 ECC bits for every 128 data bits and correct single-bit errors in their own array; this on-die ECC gives no protection against errors on the DDR channel, so it is paired with side-band ECC for end-to-end protection.",
+      "pages": [
+        "interfaces/ddr5"
+      ],
+      "source_type": "vendor",
+      "source": "Synopsys article, \"Error Correction Code (ECC) in DDR Memories\", V. Sankaranarayanan, 19 October 2020",
+      "source_url": "https://www.synopsys.com/articles/ecc-memory-error-correction.html",
+      "source_title": "Synopsys — Error correction code (ECC) in DDR memories",
+      "conditions": "DDR5 on-die ECC as described by an IP vendor",
+      "status": "verified",
+      "note": "Read on synopsys.com. Agrees with the 128 + 8 on-die ECC in C-45. The article does not say how on-die corrections are reported, so the page says nothing about that.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-22",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null
+    },
+    {
+      "id": "C-188",
+      "statement": "JESD318B DDR5 CAMM2s: a single-channel module carries 64 data bits as two 32-bit subchannels (72 with ECC) and can be stacked; a dual-channel module carries 128 bits as four subchannels and cannot. On the module, CK, command/address and CS run fly-by, matched from the connector to each DRAM; the lead-in section is routed at a lower impedance than the loaded section to reduce the discontinuity at the first load; microstrip lengths are divided by 1.1 to give a stripline-equivalent length; and on two-rank modules the CK and CS segments between DRAMs are lengthened because command/address has two loads per node. DQ is matched to its DQS within +/-0.025 mm, and a clock driver sits on the module.",
+      "pages": [
+        "interfaces/ddr5"
+      ],
+      "source_type": "normative",
+      "source": "JEDEC JESD318B, Compression Attached Memory Module (CAMM2) Common Standard, Version 1.14, November 2025, §2, §6.1, §6.2, §6.6 Table 20, §6.7.1 to §6.7.4",
+      "source_url": "https://www.jedec.org/standards-documents/docs/jesd318b",
+      "source_title": "JEDEC — JESD318B CAMM2 Common Standard (v1.14, Nov 2025)",
+      "conditions": "CAMM2 modules; the module-side rules, not the motherboard's",
+      "status": "scoped",
+      "note": "Read from the standard (a free download after JEDEC registration); the copy is kept private and the page paraphrases it. The lead-in rule may not be needed for short lead-ins (the standard gives under 25 mm as an example) and is to be decided by simulation. Table 20's CS-to-CK row is not quoted: its bound reads +/-0.0025 mm, which looks like a typographical slip.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-22",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null
     }
   ]
 }
