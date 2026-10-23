@@ -1268,8 +1268,8 @@
           "title": "UCIe 3.0 Signal Integrity: 64 GT/s Chiplet Links vs PCIe",
           "status": "live",
           "viz": "ucie",
-          "updated": "2026-10-12",
-          "reviewed": "2026-10-12",
+          "updated": "2026-10-23",
+          "reviewed": "2026-10-23",
           "reviewer": "Geetansh Arora",
           "keywords": [
             "UCIe",
@@ -1297,7 +1297,19 @@
             "forwarded clock",
             "pJ/bit",
             "energy per bit",
-            "AI accelerator"
+            "AI accelerator",
+            "UCIe ESD",
+            "CDM",
+            "ESD",
+            "microbump",
+            "lane repair",
+            "lane reversal",
+            "UCIe test",
+            "UCIe debug",
+            "sideband",
+            "known good die",
+            "UCIe low power",
+            "UCIe reliability"
           ]
         },
         {

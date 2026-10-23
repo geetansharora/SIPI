@@ -3897,6 +3897,63 @@
       "sourceCheckedOn": "2026-10-23",
       "humanReviewedBy": null,
       "humanReviewedOn": null
+    },
+    {
+      "id": "C-193",
+      "statement": "UCIe's key-metric targets for ESD are 30 V CDM on a standard package and 5 V CDM on an advanced package, heading below 3 V; UCIe-3D starts at 5 V CDM, and wafer-to-wafer hybrid bonding may need no ESD protection at all.",
+      "pages": [
+        "interfaces/ucie"
+      ],
+      "source_type": "public-rate",
+      "source": "UCIe Consortium overview deck (2025), Key Metrics with UCIe 3.0",
+      "source_url": "https://www.uciexpress.org/_files/ugd/0c1418_b4744fe368c94e3e9c7eaa13ead632bf.pdf",
+      "source_title": "UCIe Consortium — overview deck, 2025, with the key metrics for UCIe 3.0",
+      "conditions": "Targets in a consortium overview, not specification limits",
+      "status": "verified",
+      "note": "Read from the key-metrics slide text, which also lists reliability as 0 < FIT << 1 for both planar options.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-23",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null
+    },
+    {
+      "id": "C-194",
+      "statement": "UCIe's physical layer includes lane repair and lane reversal; because microbumps cannot be probed, die and package test use other bumps such as JTAG or a UCIe-S link, repair is supported at assembly and in the field, and UCIe 2.0 adds a test, debug and management infrastructure for use in the lab and field without an analyser or oscilloscope. UCIe-3D uses cluster-level repair. A UCIe-S x16 sideband carries 800 Mb/s per direction.",
+      "pages": [
+        "interfaces/ucie"
+      ],
+      "source_type": "public-rate",
+      "source": "UCIe Consortium overview deck (2025), \"Scope of UCIe Specification\", \"UCIe 2.0: Testability, Manageability, Debug\" and \"UCIe 2.0: Vertical Chiplets with UCIe-3D\"",
+      "source_url": "https://www.uciexpress.org/_files/ugd/0c1418_b4744fe368c94e3e9c7eaa13ead632bf.pdf",
+      "source_title": "UCIe Consortium — overview deck, 2025, with the key metrics for UCIe 3.0",
+      "conditions": "As described in a consortium overview; the specification itself has not been read",
+      "status": "verified",
+      "note": "Read from the slide text.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-23",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null
+    },
+    {
+      "id": "C-195",
+      "statement": "UCIe's key-metric targets give low-power entry and exit of 0.5 ns below 16 GT/s and 0.5 to 1 ns above 24 GT/s on the planar options, and 0 ns for UCIe-3D, which has no preamble or post-amble; areal bandwidth density is 22-192 GB/s/mm2 for UCIe-S and 188-1646 for UCIe-A at 110 and 45 um pitches.",
+      "pages": [
+        "interfaces/ucie"
+      ],
+      "source_type": "public-rate",
+      "source": "UCIe Consortium overview deck (2025), Key Metrics with UCIe 3.0",
+      "source_url": "https://www.uciexpress.org/_files/ugd/0c1418_b4744fe368c94e3e9c7eaa13ead632bf.pdf",
+      "source_title": "UCIe Consortium — overview deck, 2025, with the key metrics for UCIe 3.0",
+      "conditions": "Targets in a consortium overview",
+      "status": "verified",
+      "note": "Read from the key-metrics slide text.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-23",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null
     }
   ]
 }

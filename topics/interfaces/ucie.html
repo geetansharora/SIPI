@@ -31,7 +31,7 @@
   <meta name="twitter:description" content="UCIe 3.0 for chiplet designers: how the die-to-die standard differs from PCIe, why bandwidth is sized by die edge and bump pitch, and when a 2 mm wire needs termination at 64 GT/s.">
   <meta name="twitter:image" content="https://sipi.work/assets/og/interfaces/ucie.png">
   <meta name="twitter:image:alt" content="UCIe 3.0 Signal Integrity: 64 GT/s Chiplet Links vs PCIe: a figure from the page, on SIPI">
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"UCIe 3.0 Signal Integrity: 64 GT/s Chiplet Links vs PCIe","description":"UCIe 3.0 for chiplet designers: how the die-to-die standard differs from PCIe, why bandwidth is sized by die edge and bump pitch, and when a 2 mm wire needs termination at 64 GT/s.","url":"https://sipi.work/topics/interfaces/ucie.html","articleSection":"Interface sign-off","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer","url":"https://www.linkedin.com/in/geetansh-arora-a645714a/","sameAs":["https://www.linkedin.com/in/geetansh-arora-a645714a/"]},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-10-12","image":"https://sipi.work/assets/og/interfaces/ucie.png"}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"UCIe 3.0 Signal Integrity: 64 GT/s Chiplet Links vs PCIe","description":"UCIe 3.0 for chiplet designers: how the die-to-die standard differs from PCIe, why bandwidth is sized by die edge and bump pitch, and when a 2 mm wire needs termination at 64 GT/s.","url":"https://sipi.work/topics/interfaces/ucie.html","articleSection":"Interface sign-off","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer","url":"https://www.linkedin.com/in/geetansh-arora-a645714a/","sameAs":["https://www.linkedin.com/in/geetansh-arora-a645714a/"]},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-10-23","image":"https://sipi.work/assets/og/interfaces/ucie.png"}</script>
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"SIPI","item":"https://sipi.work/"},{"@type":"ListItem","position":2,"name":"Interface sign-off","item":"https://sipi.work/#interfaces"},{"@type":"ListItem","position":3,"name":"UCIe 3.0 Signal Integrity: 64 GT/s Chiplet Links vs PCIe"}]}</script>
   <!-- meta:end -->
 </head>
@@ -54,7 +54,7 @@
     <p class="crumb"><a href="../../index.html#interfaces">Interface sign-off</a> / 06</p>
     <h1>UCIe 3.0 Signal Integrity: 64 GT/s Chiplet Links vs PCIe</h1>
     <p class="byline">
-      <!-- review:start --><span>By <a href="https://www.linkedin.com/in/geetansh-arora-a645714a/" target="_blank" rel="author noopener">Geetansh Arora</a> — Principal SI/PI Engineer</span><time datetime="2026-10-12" title="Technical review by Geetansh Arora on this date">12 Oct 2026</time><span>11 min</span><!-- review:end -->
+      <!-- review:start --><span>By <a href="https://www.linkedin.com/in/geetansh-arora-a645714a/" target="_blank" rel="author noopener">Geetansh Arora</a> — Principal SI/PI Engineer</span><time datetime="2026-10-23" title="Technical review by Geetansh Arora on this date">23 Oct 2026</time><span>12 min</span><!-- review:end -->
     </p>
     <!-- share:head:start --><div class="share share--head" data-share data-share-url="https://sipi.work/topics/interfaces/ucie.html" data-share-title="UCIe 3.0 Signal Integrity: 64 GT/s Chiplet Links vs PCIe"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Fucie.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Fucie.html&amp;text=UCIe%203.0%20Signal%20Integrity%3A%2064%20GT%2Fs%20Chiplet%20Links%20vs%20PCIe" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=UCIe%203.0%20Signal%20Integrity%3A%2064%20GT%2Fs%20Chiplet%20Links%20vs%20PCIe&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Fucie.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:head:end -->
     <p class="answer">
@@ -110,6 +110,12 @@
     <p>
       No. Even at 48 and 64 GT/s it stays NRZ, with a forwarded clock at a quarter of the data rate (C-70). A wire this
       short has little loss to save, so the eye margin that PAM4 would cost is not worth paying.
+    </p>
+    <h3>How is a UCIe link tested if you cannot probe it?</h3>
+    <p>
+      Through the link itself. Microbumps are too small to probe, so testing goes through other bumps, such as JTAG
+      or a UCIe-S link, and UCIe defines lane repair and reversal and a management path for debug in the lab and the
+      field (C-194). <a href="#esd-test-repair">ESD, test and repair</a> covers what that means for signal integrity.
     </p>
   </div>
 
@@ -555,6 +561,35 @@
       figures are targets, so read them as the shape of the problem, not a design limit. It is also why energy per bit
       has to fall as the pitch shrinks: from 9 &#181;m to 1 &#181;m the consortium&#8217;s density rises 75-fold and its
       energy target falls only fivefold.
+    </p>
+
+    <h2 class="section-rule" id="esd-test-repair"><span>ESD, test and repair: what a microbump changes</span></h2>
+    <p>
+      <strong>Less ESD protection, less capacitance.</strong> A pin that faces the outside world needs a large clamp
+      against electrostatic discharge, and every clamp adds capacitance at the pad that each lane has to charge. A
+      microbump inside a package is handled far less, so UCIe can ask for much less: its targets are 30 V CDM on a
+      standard package, 5 V CDM on an advanced one, heading below 3 V, and 5 V for UCIe-3D at introduction, with
+      wafer-to-wafer hybrid bonding perhaps needing none (C-193). The echo panel above leaves pad and ESD capacitance
+      out; a smaller clamp is part of why that is a fair first approximation on an advanced package.
+    </p>
+    <p>
+      <strong>No probe at the bump.</strong> Microbumps cannot be probed, so a die is tested through other bumps,
+      such as JTAG or a UCIe-S link, and UCIe 2.0 defines a test, debug and management infrastructure meant to work in
+      the lab and in the field with no analyser or oscilloscope (C-194). For signal integrity that means the margin you
+      can measure after assembly is the margin the link reports about itself, from training and eye-margin
+      checks, not a waveform at the bump. Simulation before tape-out carries more of the weight than on a board.
+    </p>
+    <p>
+      <strong>Repair instead of rework.</strong> With hundreds of bumps per module, one bad joint should not scrap a
+      package. The physical layer includes lane repair and lane reversal, repair is supported at assembly and in the
+      field, and UCIe-3D repairs whole clusters (C-194). Management traffic rides a sideband: on a UCIe-S x16 it
+      carries 800 Mb/s each way, <span class="num">640</span> times slower than the 512 Gb/s mainband (C-194, C-65).
+    </p>
+    <p>
+      <strong>Waking in a nanosecond.</strong> The low-power entry and exit targets are 0.5 ns below 16 GT/s and
+      0.5 to 1 ns above 24 GT/s, and zero for UCIe-3D (C-195). A module of 64 lanes going from idle to full traffic that
+      fast is a sharp step in supply current, which is a <a href="../power-integrity/ssn-ground-bounce.html">switching
+      noise</a> problem for the local power network as much as a protocol feature.
     </p>
 
     <h2 class="section-rule"><span>What it takes to sign off</span></h2>

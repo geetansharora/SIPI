@@ -650,6 +650,7 @@ CLAIMS = [
     ("interfaces/ucie", "4 TB/s in total is 2 TB/s each way", 4 / 2, r"Moving 4 TB/s in total across one edge, (\d+) TB/s each way", 0.1),
     ("interfaces/ucie", "64 GT/s against 32 GT/s energy on UCIe-A, 0.5 / 0.3", 0.5 / 0.3, r"against 0\.3, ([\d.]+) times the energy per bit", 0.5),
     ("interfaces/ucie", "real world: shoreline ratio at 32 GT/s, 1317 / 224", 1317 / 224, r"buys about ([\d.]+) times the bandwidth per millimetre", 1),
+    ("interfaces/ucie", "sideband vs mainband, 512 Gb/s / 800 Mb/s", 512 / 0.8, r"each way, (\d+) times slower than the 512 Gb/s mainband", 0.1),
     ("interfaces/ucie", "real world: UCIe-A energy as a share of UCIe-S at 32 GT/s, 0.3 / 0.75 (%)", 100 * 0.3 / 0.75, r"edge at (\d+)% of the energy per bit", 0.1),
     ("interfaces/ucie", "1 TB/s at 0.3 pJ/b (W)", 1 * 8 * 0.3, r"1 TB/s at 0\.3 pJ/b costs ([\d.]+) W", 0.1),
     ("interfaces/ucie", "4 TB/s at 0.3 pJ/b (W)", 4 * 8 * 0.3, r"4 TB/s costs ([\d.]+) W", 0.1),
