@@ -1064,10 +1064,29 @@
             "LPDDR6 voltage",
             "LPDDR6 release",
             "what is LPDDR6",
-            "LPDDR6 vs DDR5"
+            "LPDDR6 vs DDR5",
+            "LPDDR6 CAMM",
+            "CAMM2",
+            "SOCAMM",
+            "SOCAMM2",
+            "LPDDR6 SOCAMM2",
+            "LPDDR6 PIM",
+            "PIM",
+            "processing-in-memory",
+            "x6 sub-channel",
+            "x12",
+            "12.8 Gbps",
+            "LPDDR6 bandwidth table",
+            "GB/s",
+            "LPDDR6 Samsung",
+            "LPDDR6 SK hynix",
+            "LPDDR6 availability",
+            "x96",
+            "LPDDR6 module"
           ],
           "reviewed": "2026-10-02",
-          "reviewer": "Geetansh Arora"
+          "reviewer": "Geetansh Arora",
+          "updated": "2026-10-23"
         },
         {
           "slug": "ddr5",

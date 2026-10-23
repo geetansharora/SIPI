@@ -960,6 +960,19 @@ CLAIMS = [
     ("interfaces/lpddr6", "LPDDR5X 16 pins at 8533 (GB/s)", 16 * 8.533 / 8, r"8533 MT/s moves ([\d.]+) GB/s", 0.3),
     ("interfaces/lpddr6", "faster NRZ, 24/16 of 10.667 (Gb/s)", 10.667 * 24 / 16, r"the rate: (\d+) Gb/s for the starting bin", 0.5),
     ("interfaces/lpddr6", "PAM4 baud, half of that (GBd)", 10.667 * 24 / 32, r"at half that, (\d+) GBd", 0.5),
+    # Bandwidth table, figure and comparison (23 Oct 2026): rate x pins / 8, LPDDR6 data = 256/288 of it (C-56, C-192).
+    *[("interfaces/lpddr6", "bandwidth table: %s %s, column %d (GB/s)" % (lab, gen, k), v,
+       re.escape("%s %s " % (lab, gen)) + r"(?:[\d.]+ ){%d}([\d.]+)" % k, 0.2)
+      for lab, gen, r, pins, wide, share in (
+          ("8533 MT/s", "LPDDR5X, x16 channel", 8.533, 16, 64, 1),
+          ("10.7 Gb/s", "LPDDR5X, vendor parts", 10.7, 16, 64, 1),
+          ("10.667 Gb/s", "LPDDR6, x24 channel, first bin", 10.667, 24, 96, 256 / 288),
+          ("12.8 Gb/s", "LPDDR6, in vendor material", 12.8, 24, 96, 256 / 288),
+          ("14.4 Gb/s", "LPDDR6, highest defined", 14.4, 24, 96, 256 / 288))
+      for k, v in enumerate((r * pins / 8, r * pins / 8 * share, r * wide / 8 * share))],
+    ("interfaces/lpddr6", "bandwidth: LPDDR6 at 10.667 vs LPDDR5X at 10.7, data per channel (% more)",
+     100 * ((24 * 10.667 / 8 * 256 / 288) / (16 * 10.7 / 8) - 1), r"channel carries (\d+)% more data", 1.5),
+    ("interfaces/lpddr6", "figure: UI of LPDDR5X at 10700 MT/s (ps)", ui_ps(10.7e9), r"10700 ([\d.]+) ps", 0.1),
 
     # ── DDR5 ────────────────────────────────────────────────────────────────
     ("interfaces/ddr5", "UI at 3200 MT/s (ps)", ui_ps(3200e6), r"At 3200 MT/s a bit lasts ([\d.]+) ps", 0.1),

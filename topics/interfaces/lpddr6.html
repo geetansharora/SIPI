@@ -8,7 +8,7 @@
   <script>(function(){try{var t=localStorage.getItem('sipi-theme');if(t==='dark'||t==='system'){document.documentElement.setAttribute('data-theme',t);var m=document.querySelector('meta[name=theme-color]');if(m&&(t==='dark'||matchMedia('(prefers-color-scheme:dark)').matches))m.content='#0B1015';}}catch(e){}})();</script>
   <!-- theme:end -->
 <title>LPDDR6 Signal Integrity: Wide NRZ and Sub-Channels | SIPI</title>
-<meta name="description" content="LPDDR6 vs LPDDR5X and LPDDR5: speed, bandwidth, voltage, and why LPDDR6 went wide NRZ instead of PAM4, with 12-bit sub-channels and a 288-bit burst. Interactive.">
+<meta name="description" content="LPDDR6 vs LPDDR5X and LPDDR5: speed, bandwidth table, voltage, and why LPDDR6 went wide NRZ instead of PAM4, with 12-bit sub-channels, a 288-bit burst, and the CAMM, SOCAMM2 and x6 roadmap. Interactive.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
@@ -20,7 +20,7 @@
   <meta property="og:type" content="article">
   <meta property="og:site_name" content="SIPI">
   <meta property="og:title" content="LPDDR6 Signal Integrity: Wide NRZ and Sub-Channels | SIPI">
-  <meta property="og:description" content="LPDDR6 vs LPDDR5X and LPDDR5: speed, bandwidth, voltage, and why LPDDR6 went wide NRZ instead of PAM4, with 12-bit sub-channels and a 288-bit burst. Interactive.">
+  <meta property="og:description" content="LPDDR6 vs LPDDR5X and LPDDR5: speed, bandwidth table, voltage, and why LPDDR6 went wide NRZ instead of PAM4, with 12-bit sub-channels, a 288-bit burst, and the CAMM, SOCAMM2 and x6 roadmap. Interactive.">
   <meta property="og:url" content="https://sipi.work/topics/interfaces/lpddr6.html">
   <meta property="og:image" content="https://sipi.work/assets/og/interfaces/lpddr6.png">
   <meta property="og:image:width" content="1200">
@@ -28,10 +28,10 @@
   <meta property="og:image:alt" content="LPDDR6 Signal Integrity: Wide NRZ and Sub-Channels: a figure from the page, on SIPI">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="LPDDR6 Signal Integrity: Wide NRZ and Sub-Channels | SIPI">
-  <meta name="twitter:description" content="LPDDR6 vs LPDDR5X and LPDDR5: speed, bandwidth, voltage, and why LPDDR6 went wide NRZ instead of PAM4, with 12-bit sub-channels and a 288-bit burst. Interactive.">
+  <meta name="twitter:description" content="LPDDR6 vs LPDDR5X and LPDDR5: speed, bandwidth table, voltage, and why LPDDR6 went wide NRZ instead of PAM4, with 12-bit sub-channels, a 288-bit burst, and the CAMM, SOCAMM2 and x6 roadmap. Interactive.">
   <meta name="twitter:image" content="https://sipi.work/assets/og/interfaces/lpddr6.png">
   <meta name="twitter:image:alt" content="LPDDR6 Signal Integrity: Wide NRZ and Sub-Channels: a figure from the page, on SIPI">
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"LPDDR6 Signal Integrity: Wide NRZ and Sub-Channels","description":"LPDDR6 vs LPDDR5X and LPDDR5: speed, bandwidth, voltage, and why LPDDR6 went wide NRZ instead of PAM4, with 12-bit sub-channels and a 288-bit burst. Interactive.","url":"https://sipi.work/topics/interfaces/lpddr6.html","articleSection":"Interface sign-off","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer","url":"https://www.linkedin.com/in/geetansh-arora-a645714a/","sameAs":["https://www.linkedin.com/in/geetansh-arora-a645714a/"]},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-10-02","image":"https://sipi.work/assets/og/interfaces/lpddr6.png"}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"LPDDR6 Signal Integrity: Wide NRZ and Sub-Channels","description":"LPDDR6 vs LPDDR5X and LPDDR5: speed, bandwidth table, voltage, and why LPDDR6 went wide NRZ instead of PAM4, with 12-bit sub-channels, a 288-bit burst, and the CAMM, SOCAMM2 and x6 roadmap. Interactive.","url":"https://sipi.work/topics/interfaces/lpddr6.html","articleSection":"Interface sign-off","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer","url":"https://www.linkedin.com/in/geetansh-arora-a645714a/","sameAs":["https://www.linkedin.com/in/geetansh-arora-a645714a/"]},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-10-02","image":"https://sipi.work/assets/og/interfaces/lpddr6.png"}</script>
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"SIPI","item":"https://sipi.work/"},{"@type":"ListItem","position":2,"name":"Interface sign-off","item":"https://sipi.work/#interfaces"},{"@type":"ListItem","position":3,"name":"LPDDR6 Signal Integrity: Wide NRZ and Sub-Channels"}]}</script>
   <!-- meta:end -->
 </head>
@@ -54,7 +54,7 @@
     <p class="crumb"><a href="../../index.html#interfaces">Interface sign-off</a> / 02</p>
     <h1>LPDDR6 Signal Integrity: Wide NRZ and Sub-Channels</h1>
     <p class="byline">
-      <!-- review:start --><span>By <a href="https://www.linkedin.com/in/geetansh-arora-a645714a/" target="_blank" rel="author noopener">Geetansh Arora</a> — Principal SI/PI Engineer</span><time datetime="2026-10-02" title="Technical review by Geetansh Arora on this date">2 Oct 2026</time><span>10 min</span><!-- review:end -->
+      <!-- review:start --><span>By <a href="https://www.linkedin.com/in/geetansh-arora-a645714a/" target="_blank" rel="author noopener">Geetansh Arora</a> — Principal SI/PI Engineer</span><time datetime="2026-10-02" title="Technical review by Geetansh Arora on this date">2 Oct 2026</time><span>12 min</span><!-- review:end -->
     </p>
     <!-- share:head:start --><div class="share share--head" data-share data-share-url="https://sipi.work/topics/interfaces/lpddr6.html" data-share-title="LPDDR6 Signal Integrity: Wide NRZ and Sub-Channels"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Flpddr6.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Flpddr6.html&amp;text=LPDDR6%20Signal%20Integrity%3A%20Wide%20NRZ%20and%20Sub-Channels" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=LPDDR6%20Signal%20Integrity%3A%20Wide%20NRZ%20and%20Sub-Channels&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Flpddr6.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:head:end -->
     <p class="answer">
@@ -192,40 +192,51 @@
     <h2 class="section-rule" id="at-a-glance"><span>LPDDR6 at a glance</span></h2>
     <h3>How fast is LPDDR6?</h3>
     <p>
-      LPDDR6 starts at 10.667 Gb/s per data pin, and its highest defined rate is 14.4 Gb/s. LPDDR5X reached 8533 MT/s
-      in the editions read for this site and LPDDR5 6400 MT/s. The first LPDDR6 DRAMs, announced in 2026, run at about
-      10.7 Gb/s. <a href="#what-it-is">More on the rates</a>.
+      LPDDR6 starts at 10.667 Gb/s per data pin, and its highest defined rate is 14.4 Gb/s (C-58); vendor material also
+      charts 12.8 Gb/s between them (C-192). JESD209-5B took LPDDR5X to 8533 MT/s (C-2a) and vendors have since
+      announced 10.7 Gb/s LPDDR5X parts (C-169), so LPDDR6&#8217;s first bin gives a bit about the same time as the
+      fastest LPDDR5X. The first LPDDR6 DRAMs, announced in 2026, run at about 10.7 Gb/s (C-60, C-191).
+      <a href="#what-it-is">More on the rates</a>.
     </p>
     <h3>How much bandwidth does LPDDR6 have?</h3>
     <p>
       A 24-bit LPDDR6 channel carries <span class="num">32.0 GB/s</span> of raw bandwidth at 10.667 Gb/s per pin,
-      <span class="num">28.4 GB/s</span> of it data once the metadata and protection bits are set aside, and
+      <span class="num">28.4 GB/s</span> of it data once the metadata and protection bits are set aside (C-56), and
       <span class="num">38.4 GB/s</span> of data at 14.4 Gb/s. A 16-bit LPDDR5X channel at 8533 MT/s carries 17.1 GB/s.
-      <a href="#lpddr5x-vs-lpddr6">The full comparison</a>.
+      The <a href="#bandwidth">bandwidth table</a> gives every rate for one channel and for a 96-bit interface.
     </p>
     <h3>Does LPDDR6 use PAM4?</h3>
     <p>
       No. LPDDR6 keeps two-level NRZ signalling and adds pins instead: twelve data pins per sub-channel and 24 per
-      channel. At LPDDR&#8217;s quarter-volt swing, PAM4&#8217;s three eyes would each be a third of the height, and on a
-      short, noisy channel that costs more than it saves. <a href="#why-wide-nrz">Why wide NRZ</a>, and the panel at the
-      top of this page, show the trade.
+      channel (C-55, C-57). At LPDDR&#8217;s quarter-volt swing, PAM4&#8217;s three eyes would each be a third of the
+      height, and on a short, noisy channel that costs more than it saves. <a href="#why-wide-nrz">Why wide NRZ</a>, and
+      the panel at the top of this page, show the trade.
     </p>
     <h3>What voltage does LPDDR6 use?</h3>
     <p>
       The I/O supply, V<sub>DDQ</sub>, stays at 0.5 V, or 0.3 V with termination off. The core supply splits into two
-      rails that are both mandatory, V<sub>DD2C</sub> at 1.0 V and V<sub>DD2D</sub> at 0.875 V, and V<sub>DD1</sub> stays at 1.8 V.
+      rails that are both mandatory, V<sub>DD2C</sub> at 1.0 V and V<sub>DD2D</sub> at 0.875 V, and V<sub>DD1</sub>
+      stays at 1.8 V (C-55, C-56).
     </p>
-    <h3>What is new in LPDDR6?</h3>
+    <h3>LPDDR6 vs LPDDR5X: what is new?</h3>
     <p>
       Two 12-bit sub-channels per die with four command pins each; a 24-beat burst of 288 bits that carries metadata
       and DBI or link protection on the data pins, with no DMI pin; a much faster command clock; dynamic write
       non-target termination; an ALERT pin for faults; efficiency modes that run on one sub-channel&#8217;s I/O; and
-      per-row activation counting against row hammer.
+      per-row activation counting against row hammer (C-55, C-56, C-59). The
+      <a href="#lpddr5x-vs-lpddr6">comparison table</a> sets the three generations side by side.
     </p>
     <h3>When is LPDDR6 available?</h3>
     <p>
-      JEDEC published the standard, JESD209-6, in July 2025. SK hynix announced an LPDDR6 DRAM above 10.7 Gb/s in March
-      2026, with supply from the second half of that year.
+      JEDEC published the standard, JESD209-6, in July 2025 (C-55). Samsung showed an LPDDR6 part at up to 10.7 Gb/s
+      in January 2026 (C-191), and SK hynix announced one above 10.7 Gb/s in March 2026, with supply from the second
+      half of that year (C-60).
+    </p>
+    <h3>Will LPDDR6 come on a module?</h3>
+    <p>
+      JEDEC is developing one: an LPDDR6 CAMM with a 24-bit subchannel and a 48-bit channel, aimed above 14.4 GT/s
+      (C-190), and an LPDDR6 SOCAMM2 to follow today&#8217;s LPDDR5X SOCAMM2 (C-189). Neither standard has been
+      published. <a href="#roadmap">What comes next</a> covers them and the narrower x6 mode planned for the standard.
     </p>
     <h3>LPDDR6 or DDR5?</h3>
     <p>
@@ -237,14 +248,15 @@
     <h2 class="section-rule" id="what-it-is"><span>What LPDDR6 is</span></h2>
     <p>
       LPDDR6 is JEDEC&#8217;s sixth low-power DRAM generation, JESD209-6, published in July 2025. It is meant for phones
-      and thin laptops, as its predecessors were, and JEDEC also names client computers, edge AI, automotive and
-      servers. IP vendors describe a starting rate of <span class="num">10.667 Gb/s</span> per pin and a highest defined
-      rate of <span class="num">14.4 Gb/s</span>; at those rates a bit lasts <span class="num">93.75 ps</span> and
-      <span class="num">69.4 ps</span>. The first DRAMs announced, in 2026, run at about 10.7 Gb/s.
+      and thin laptops, as its predecessors were, and JEDEC&#8217;s announcement also names edge AI, client computers,
+      data centres and automotive (C-55). IP vendors describe a starting rate of <span class="num">10.667 Gb/s</span>
+      per pin and a highest defined rate of <span class="num">14.4 Gb/s</span> (C-58); at those rates a bit lasts
+      <span class="num">93.75 ps</span> and <span class="num">69.4 ps</span>. The first DRAMs announced, in 2026, run
+      at about 10.7 Gb/s (C-60, C-191).
     </p>
     <figure class="figure">
       <div class="figure__bar"><span>The unit interval by generation &#183; the swing does not grow</span></div>
-      <div class="figure__body"><svg viewBox="0 0 400 192" role="img" aria-label="The unit interval by generation: LPDDR5 at 6400 MT/s, 156.3 ps; LPDDR5X at 8533, 117.2 ps, and at 9600, 104.2 ps; LPDDR6 at 10667, 93.7 ps, and at 14400, 69.4 ps. VDDQ stays at 0.5 V.">
+      <div class="figure__body"><svg viewBox="0 0 400 192" role="img" aria-label="The unit interval by generation: LPDDR5 at 6400 MT/s, 156.3 ps; LPDDR5X at 8533, 117.2 ps, and at 10700, 93.5 ps; LPDDR6 at 10667, 93.7 ps, and at 14400, 69.4 ps. VDDQ stays at 0.5 V.">
   <text class="lbl" x="10.0" y="36.0">LPDDR5</text>
   <text class="lbl" x="112.0" y="36.0" text-anchor="end">6400</text>
   <rect class="plane" x="120.0" y="24.0" width="224.6" height="16.0" rx="2" style="opacity:.55"/>
@@ -254,9 +266,9 @@
   <rect class="plane" x="120.0" y="54.0" width="168.5" height="16.0" rx="2" style="opacity:.55"/>
   <text class="lbl" x="294.5" y="66.0">117.2 ps</text>
   <text class="lbl" x="10.0" y="96.0">LPDDR5X</text>
-  <text class="lbl" x="112.0" y="96.0" text-anchor="end">9600</text>
-  <rect class="plane" x="120.0" y="84.0" width="149.7" height="16.0" rx="2" style="opacity:.55"/>
-  <text class="lbl" x="275.7" y="96.0">104.2 ps</text>
+  <text class="lbl" x="112.0" y="96.0" text-anchor="end">10700</text>
+  <rect class="plane" x="120.0" y="84.0" width="134.3" height="16.0" rx="2" style="opacity:.55"/>
+  <text class="lbl" x="260.3" y="96.0">93.5 ps</text>
   <text class="lbl-hi" x="10.0" y="126.0">LPDDR6</text>
   <text class="lbl" x="112.0" y="126.0" text-anchor="end">10667</text>
   <rect class="copper" x="120.0" y="114.0" width="134.8" height="16.0" rx="2" style="opacity:.55"/>
@@ -327,8 +339,10 @@
       A PAM4 receiver has to tell four levels apart in the same swing NRZ uses for two, so each of its three eyes is a
       third of the height before the channel has done anything: <span class="num">83 mV</span> of a 250 mV swing, a loss
       of <span class="num">9.5 dB</span>. PAM4 earns that back only when the channel is so lossy that halving the
-      symbol rate matters more. An LPDDR channel is the opposite case: a few centimetres, a few decibels of loss, and a
-      great deal of crosstalk and supply noise from a dense bus switching together. Noise is a fixed number of
+      symbol rate matters more. An LPDDR channel is the opposite case. It is short: one public LPDDR5 guide allows
+      3.0 inches of board, and a package stacked on the processor has almost none (C-170). What it has in abundance is
+      crosstalk and supply noise from a dense bus switching together, and the same guide warns that LPDDR5&#8217;s eye
+      margin is sensitive to crosstalk. Noise is a fixed number of
       millivolts, so it takes the largest share of the smallest eye. Running NRZ faster on the same pins avoids that,
       but at 16 Gb/s or more the bit is so short that jitter and skew eat it, and the loss at the higher Nyquist frequency
       is larger.
@@ -337,7 +351,7 @@
       Going wider keeps the rate, the levels and the receivers LPDDR already knew, and spends package balls and board
       routing instead. Samsung&#8217;s presentation at JEDEC&#8217;s LPDDR6 workshop framed the choice the same way,
       putting PAM4 at about half the signal-integrity margin and about one and a half times the I/O power for the same
-      bandwidth. The panel&#8217;s model is simpler than a real channel, but it puts the three roads in the same order.
+      bandwidth (C-57). The panel&#8217;s model is simpler than a real channel, but it puts the three roads in the same order.
     </p>
 
     <h2 class="section-rule"><span>Faster everything else: the clocks</span></h2>
@@ -753,7 +767,7 @@
       termination energy in the panel&#8217;s model.
     </p>
 
-    <h2 class="section-rule"><span>Termination: LVSTL, and who pays</span></h2>
+    <h2 class="section-rule" id="termination"><span>Termination: LVSTL, and who pays</span></h2>
     <figure class="figure">
       <div class="figure__bar"><span>LVSTL against POD &#183; the termination decides which bit costs current</span></div>
       <div class="figure__body"><svg viewBox="0 0 400 222" role="img" aria-label="Two termination schemes side by side. LPDDR uses LVSTL: the receiver terminates to ground, so a 1, which pulls the line up, draws current. DDR5 uses POD: the receiver terminates to VDDQ, so a 0 draws current. DBI minimises whichever bit costs.">
@@ -845,7 +859,7 @@
         <caption>Three generations of LPDDR, from the signals&#8217; point of view</caption>
         <thead><tr><th></th><th>LPDDR5</th><th>LPDDR5X</th><th>LPDDR6</th></tr></thead>
         <tbody>
-          <tr><td>Data rate per pin</td><td>up to 6400 MT/s</td><td>up to 8533 MT/s in the editions read; 9600 in vendor material</td><td>10.667 Gb/s to start, 14.4 Gb/s defined</td></tr>
+          <tr><td>Data rate per pin</td><td>up to 6400 MT/s</td><td>8533 MT/s in JESD209-5B; 10.7 Gb/s parts announced</td><td>10.667 Gb/s to start, 14.4 Gb/s defined</td></tr>
           <tr><td>Organisation of a die</td><td>one 16-bit channel</td><td>one 16-bit channel</td><td>two 12-bit sub-channels, a 24-bit channel</td></tr>
           <tr><td>Command pins</td><td>7 per channel</td><td>7 per channel</td><td>4 per sub-channel</td></tr>
           <tr><td>Command clock</td><td>800 MHz</td><td>1066.5 MHz</td><td>2667 MHz</td></tr>
@@ -865,6 +879,56 @@
       of data. A 16-bit LPDDR5X channel at 8533 MT/s moves <span class="num">17.1 GB/s</span>. The
       <a href="lpddr5x.html">LPDDR5X page</a> covers what both generations share: source-synchronous timing, training,
       and a budget spent on crosstalk and switching noise rather than loss.
+    </p>
+
+    <h2 class="section-rule" id="bandwidth"><span>LPDDR6 bandwidth by rate and width</span></h2>
+    <p>
+      Peak bandwidth is the rate per pin times the number of data pins, divided by eight for bytes. LPDDR6 adds one
+      step: of every 288 bits in a burst, 256 are data and 32 carry metadata and DBI or link protection (C-56), so its
+      data bandwidth is eight ninths of what the pins carry. LPDDR5X carries its extra bits on separate DMI pins, so all
+      sixteen of its data pins carry data. Samsung&#8217;s workshop slides compare a 64-bit LPDDR5X interface with a
+      96-bit LPDDR6 one, and the right-hand column uses the same widths (C-192).
+    </p>
+    <div class="table-scroll">
+      <table class="data">
+        <caption>Peak bandwidth in GB/s, every data pin busy on every transfer</caption>
+        <thead><tr><th>Rate per pin</th><th></th><th>one channel, on the pins</th><th>one channel, data</th><th>x64 LPDDR5X or x96 LPDDR6, data</th></tr></thead>
+        <tbody>
+          <tr><th>8533 MT/s</th><td>LPDDR5X, x16 channel</td><td>17.1</td><td>17.1</td><td>68.3</td></tr>
+          <tr><th>10.7 Gb/s</th><td>LPDDR5X, vendor parts</td><td>21.4</td><td>21.4</td><td>85.6</td></tr>
+          <tr><th>10.667 Gb/s</th><td>LPDDR6, x24 channel, first bin</td><td>32.0</td><td>28.4</td><td>113.8</td></tr>
+          <tr><th>12.8 Gb/s</th><td>LPDDR6, in vendor material</td><td>38.4</td><td>34.1</td><td>136.5</td></tr>
+          <tr><th>14.4 Gb/s</th><td>LPDDR6, highest defined</td><td>43.2</td><td>38.4</td><td>153.6</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>
+      Read the second and third rows together. At nearly the same rate per pin, an LPDDR6 channel carries
+      <span class="num">33%</span> more data than an LPDDR5X channel: half as many pins again, less the ninth of each
+      burst that is not data. These are ceilings; refresh, turnarounds and
+      bank conflicts take transfers that carry no data, and a figure for one channel and one for a whole processor can
+      differ several times over at the same rate.
+    </p>
+
+    <h2 class="section-rule" id="roadmap"><span>What comes next: x6 sub-channels, CAMM, SOCAMM2 and PIM</span></h2>
+    <p>
+      In April 2026 JEDEC previewed the next version of JESD209-6 (C-189). For the signals, the item that matters is
+      width: an x6 sub-channel mode alongside the x12 sub-channel, so that more dies can share a package and a channel.
+      JEDEC gives capacity as the reason. On the board it means more dies on the same data lines, each one more load and
+      one more termination to schedule, which is the job of the dynamic write NT-ODT that the first edition already
+      added (C-55); <a href="#termination">the termination section</a> explains why that matters.
+    </p>
+    <p>
+      LPDDR6 is also heading for modules. JEDEC has been developing a CAMM for LPDDR6 since 2024, with a 24-bit
+      subchannel and a 48-bit channel on a connector array, aimed above 14.4 GT/s (C-190), and now an LPDDR6 SOCAMM2 to
+      follow today&#8217;s LPDDR5X SOCAMM2 (C-189); Samsung says it is developing an LPDDR6-based SOCAMM (C-191).
+      Neither module standard has been published. A module puts a connector into a channel that otherwise has none; the
+      <a href="lpddr5x.html#camm2">CAMM2 section of the LPDDR5X page</a> shows what JEDEC asks of that connector at
+      LPDDR5X rates.
+    </p>
+    <p>
+      The third item, LPDDR6 processing-in-memory, puts compute inside the DRAM so that less data has to cross the
+      interface at all (C-189). JEDEC describes it as nearing completion; no electrical details have been published.
     </p>
 
     <h2 class="section-rule"><span>What it takes to sign off</span></h2>
@@ -923,12 +987,14 @@
       bandwidth on the LPDDR side.
     </p>
     <p>
-      <strong>Expect the first parts at the starting rate.</strong> Announced LPDDR6 DRAMs run at about 10.7 Gb/s. The
+      <strong>Expect the first parts at the starting rate.</strong> Announced LPDDR6 DRAMs run at about 10.7 Gb/s
+      (C-60, C-191). The
       higher bins depend on DRAMs, PHYs and channels that reach them, and a design should be signed off at the bin it
       will run, not the top of the standard.
     </p>
     <p>
-      <strong>Pins and supplies grow even as bandwidth per pin barely does.</strong> Twenty-four data pins a channel and
+      <strong>Pins and supplies grow faster than the rate per pin.</strong> From LPDDR5X&#8217;s 8533 MT/s to
+      LPDDR6&#8217;s 10.667 Gb/s the rate per pin rises by a quarter, while the data pins a channel rise by half. Twenty-four data pins a channel and
       two V<sub>DD2</sub> rails mean more balls, more routing and more decoupling than an LPDDR5X design of the same
       capacity. That is the price of keeping NRZ, and it is paid on the board.
     </p>
@@ -937,8 +1003,10 @@
     <ul class="tight refs">
       <li><strong>JEDEC&#8217;s JESD209-6 announcement</strong> (July 2025) &#8212; the sub-channels, command pins, NT-ODT, supplies, efficiency modes and reliability features. The standard itself has not been read.</li>
       <li><strong>Samsung, &#8220;LPDDR6 Key Architecture&#8221;, JEDEC LPDDR6 workshop</strong> (April 2025) &#8212; the comparison with LPDDR5 and LPDDR5X, clocks, voltages, the packet, and the case for wide NRZ.</li>
-      <li><strong>Synopsys, &#8220;LPDDR6: A Deep Dive Into the JEDEC Press Release&#8221;</strong> (JEDEC forum, May 2024, before the standard was final), and Synopsys and Cadence product material (2025&#8211;2026) &#8212; data rates, DBI, ALERT and PHY equalisation.</li>
-      <li><strong>SK hynix</strong> (March 2026) &#8212; the first LPDDR6 DRAM announcement.</li>
+      <li><strong>Synopsys, &#8220;LPDDR6: A Deep Dive Into the JEDEC Press Release&#8221;</strong> (JEDEC forum, May 2024, before the standard was final), and Synopsys product material (2026) &#8212; data rates, DBI, ALERT and PHY equalisation.</li>
+      <li><strong>Samsung</strong> (January 2026) and <strong>SK hynix</strong> (March 2026) &#8212; the first LPDDR6 DRAM announcements; ledger C-191 and C-60.</li>
+      <li><strong>JEDEC&#8217;s CAMM plans</strong> (July 2024) and <strong>LPDDR6 roadmap preview</strong> (April 2026) &#8212; the LPDDR6 CAMM and SOCAMM2, the x6 sub-channel mode and LPDDR6 PIM; ledger C-190 and C-189.</li>
+      <li><strong>Altera, External Memory Interfaces Agilex 7 M-Series FPGA IP User Guide</strong> &#8212; one public LPDDR5 routing limit; ledger C-170.</li>
     </ul>
 
     <h3>Related</h3>
@@ -965,6 +1033,11 @@
       <li><a href="https://www.jedec.org/sites/default/files/Brett%20Murdock_FINAL_Mobile_2024.pdf" target="_blank" rel="noopener">Synopsys — LPDDR6 deep dive (JEDEC forum, 2024)</a> <span class="src__for">C-59</span></li>
       <li><a href="https://news.skhynix.com/en/1c-lpddr6-development-2026/" target="_blank" rel="noopener">SK hynix — 1c LPDDR6 development</a> <span class="src__for">C-60</span></li>
       <li><a href="https://www.jedec.org/news/pressreleases/jedec-publishes-gddr7-graphics-memory-standard" target="_blank" rel="noopener">JEDEC — GDDR7 announcement</a> <span class="src__for">C-62</span></li>
+      <li><a href="https://news.samsung.com/global/samsung-develops-industrys-fastest-10-7gbps-lpddr5x-dram-optimized-for-ai-applications" target="_blank" rel="noopener">Samsung — 10.7 Gb/s LPDDR5X announcement</a> <span class="src__for">C-169</span></li>
+      <li><a href="https://docs.altera.com/r/docs/772538/26.1.1/external-memory-interfaces-agilex-7-m-series-fpga-ip-user-guide/routing-guidelines-for-lpddr5-memory-down-topology" target="_blank" rel="noopener">Altera — LPDDR5 memory-down routing guidelines (Agilex 7 M-Series EMIF)</a> <span class="src__for">C-170</span></li>
+      <li><a href="https://www.jedec.org/news/pressreleases/jedec%C2%AE-previews-lpddr6-roadmap-expanding-lpddr-data-centers-and-processing-memory" target="_blank" rel="noopener">JEDEC — LPDDR6 roadmap preview (April 2026)</a> <span class="src__for">C-189</span></li>
+      <li><a href="https://www.jedec.org/news/pressreleases/jedec-unveils-plans-ddr5-mrdimm-and-lpddr6-camm-standards-propel-high-performance" target="_blank" rel="noopener">JEDEC — DDR5 MRDIMM and LPDDR6 CAMM plans announcement (July 2024)</a> <span class="src__for">C-190</span></li>
+      <li><a href="https://news.samsungsemiconductor.com/global/ces-innovation-awards-2026-honoree-lpddr6-worlds-first-next-gen-lpddr-optimized-for-high-performing-on-device-ai/" target="_blank" rel="noopener">Samsung Semiconductor — LPDDR6 CES 2026 Innovation Award interview</a> <span class="src__for">C-191</span></li>
       </ul>
       <p class="sources__note">Rows marked with a claim id are tracked in <a href="../../docs/claims.md">the claim ledger</a>, which records what each source can and cannot establish.</p>
     </section>

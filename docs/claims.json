@@ -1269,10 +1269,10 @@
       "source_title": "JEDEC — LPDDR6 (JESD209-6) announcement",
       "conditions": "The announcement; the standard itself has not been read",
       "status": "verified",
-      "note": "Read on jedec.org. The release gives no data rates; those are C-58.",
+      "note": "Read on jedec.org. The release gives no data rates; those are C-58. Re-read 23 Oct 2026: the release quotes the JC-42.6 vice-chair naming edge AI computing, client computers, data centres and automotive as fields LPDDR6 will reach beyond mobile.",
       "owner": "Geetansh",
       "sourceCheckedBy": "Claude Opus 5.5",
-      "sourceCheckedOn": "2026-10-02",
+      "sourceCheckedOn": "2026-10-23",
       "humanReviewedBy": null,
       "humanReviewedOn": null
     },
@@ -1356,7 +1356,7 @@
     },
     {
       "id": "C-60",
-      "statement": "SK hynix announced a 1c-process 16 Gb LPDDR6 DRAM running above 10.7 Gb/s in March 2026, with supply from the second half of 2026.",
+      "statement": "SK hynix announced a 1c-process 16 Gb LPDDR6 DRAM in March 2026, with a base speed over 10.7 Gb/s, 33% faster and more than 20% lower power than LPDDR5X, and supply from the second half of 2026.",
       "pages": [
         "interfaces/lpddr6"
       ],
@@ -1366,10 +1366,10 @@
       "source_title": "SK hynix — 1c LPDDR6 development",
       "conditions": "A vendor announcement",
       "status": "verified",
-      "note": "Read on the SK hynix newsroom.",
+      "note": "Re-read 23 Oct 2026 on news.skhynix.com. The release attributes the power saving to the sub-channel structure and DVFS, and says mass-production preparation was to finish in the first half of the year. Trade-press reports of a 14.4 Gb/s target are not used.",
       "owner": "Geetansh",
       "sourceCheckedBy": "Claude Opus 5.5",
-      "sourceCheckedOn": "2026-10-02",
+      "sourceCheckedOn": "2026-10-23",
       "humanReviewedBy": null,
       "humanReviewedOn": null
     },
@@ -3441,7 +3441,8 @@
       "statement": "Samsung announced an LPDDR5X DRAM running at up to 10.7 Gb/s in April 2024, on a 12 nm-class process, with mass production planned for the second half of 2024.",
       "pages": [
         "interfaces/lpddr5x",
-        "interfaces/ddr5"
+        "interfaces/ddr5",
+        "interfaces/lpddr6"
       ],
       "source_type": "vendor",
       "source": "Samsung Newsroom, \"Samsung Develops Industry’s Fastest 10.7Gbps LPDDR5X DRAM, Optimized for AI Applications\", 17 April 2024",
@@ -3461,7 +3462,8 @@
       "statement": "One FPGA vendor’s LPDDR5 memory-down guideline routes DQ as 40 ohm stripline on upper layers, with via transitions no deeper than 50 mil and at most 3.0 inches in total, and warns that deep-layer via transitions raise crosstalk.",
       "pages": [
         "interfaces/lpddr5x",
-        "interfaces/ddr5"
+        "interfaces/ddr5",
+        "interfaces/lpddr6"
       ],
       "source_type": "vendor",
       "source": "Altera, External Memory Interfaces Agilex 7 M-Series FPGA IP User Guide, 8.3.7.2 Routing Guidelines for LPDDR5 Memory Down Topology, table 276",
@@ -3817,6 +3819,82 @@
       "owner": "Geetansh",
       "sourceCheckedBy": "Claude Opus 5.5",
       "sourceCheckedOn": "2026-10-22",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null
+    },
+    {
+      "id": "C-189",
+      "statement": "In April 2026 JEDEC previewed features planned for the next version of JESD209-6: x12 and an additional x6 sub-channel mode, allowing more die per package and higher capacity per component and per channel; a flexible metadata carve-out; densities beyond the LPDDR5/5X maximum; and, in development, an LPDDR6 SOCAMM2 module standard succeeding today's LPDDR5X SOCAMM2 and an LPDDR6 processing-in-memory (PIM) standard.",
+      "pages": [
+        "interfaces/lpddr6"
+      ],
+      "source_type": "public-rate",
+      "source": "JEDEC press release, \"JEDEC Previews LPDDR6 Roadmap Expanding LPDDR into Data Centers and Processing-in-Memory\", 22 April 2026",
+      "source_url": "https://www.jedec.org/news/pressreleases/jedec%C2%AE-previews-lpddr6-roadmap-expanding-lpddr-data-centers-and-processing-memory",
+      "source_title": "JEDEC — LPDDR6 roadmap preview (April 2026)",
+      "conditions": "Planned features for an unpublished revision; JEDEC notes standards may change",
+      "status": "verified",
+      "note": "Read on jedec.org. The release does not give data rates for the new modes or the modules.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-23",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null
+    },
+    {
+      "id": "C-190",
+      "statement": "In July 2024 JEDEC said its JC-45 committee was developing a next-generation CAMM for LPDDR6, a follow-on to JESD318 CAMM2, targeting a maximum speed greater than 14.4 GT/s, with a 24-bit subchannel, a 48-bit channel and a connector array.",
+      "pages": [
+        "interfaces/lpddr6"
+      ],
+      "source_type": "public-rate",
+      "source": "JEDEC press release, \"JEDEC Unveils Plans for DDR5 MRDIMM and LPDDR6 CAMM Standards to Propel High-Performance Computing and AI\", 22 July 2024",
+      "source_url": "https://www.jedec.org/news/pressreleases/jedec-unveils-plans-ddr5-mrdimm-and-lpddr6-camm-standards-propel-high-performance",
+      "source_title": "JEDEC — DDR5 MRDIMM and LPDDR6 CAMM plans announcement (July 2024)",
+      "conditions": "A plan at the time of the release",
+      "status": "verified",
+      "note": "Read on jedec.org (also the source of C-183 on the DDR5 page).",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-23",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null
+    },
+    {
+      "id": "C-191",
+      "statement": "Samsung's LPDDR6, a CES 2026 Innovation Award honoree, runs at up to 10.7 Gb/s with capacities up to 16 GB and about 21% better energy efficiency than the previous generation; Samsung says it is developing an LPDDR6-based SOCAMM module and LPDDR6-PIM.",
+      "pages": [
+        "interfaces/lpddr6"
+      ],
+      "source_type": "vendor",
+      "source": "Samsung Semiconductor Newsroom, \"[CES Innovation Awards 2026 Honoree] LPDDR6: World's First Next-Gen LPDDR Optimized for High-Performing On-Device AI\", 8 January 2026",
+      "source_url": "https://news.samsungsemiconductor.com/global/ces-innovation-awards-2026-honoree-lpddr6-worlds-first-next-gen-lpddr-optimized-for-high-performing-on-device-ai/",
+      "source_title": "Samsung Semiconductor — LPDDR6 CES 2026 Innovation Award interview",
+      "conditions": "A vendor's own product claims, from internal test results",
+      "status": "verified",
+      "note": "Read on news.samsungsemiconductor.com. The efficiency figure is attributed to split supplies, DVFS, dynamic efficiency mode and a PMIC; the page quotes only the rate and that the efficiency is claimed. Trade-press reports of validation on a specific phone SoC are not used.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-23",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null
+    },
+    {
+      "id": "C-192",
+      "statement": "Samsung's JEDEC workshop slides chart LPDDR data bandwidth for a 64-bit LPDDR5X interface at 8.5, 9.6 and 10.7 Gb/s (68.3, 76.8 and 85.6 GB/s) against a 96-bit LPDDR6 interface at 10.7, 12.8 and 14.4 Gb/s (114.1, 136.5 and 153.6 GB/s).",
+      "pages": [
+        "interfaces/lpddr6"
+      ],
+      "source_type": "vendor",
+      "source": "Samsung (Seunghyun Moon), \"LPDDR6 Key Architecture\", JEDEC LPDDR6 Workshop, 8 April 2025, slide \"High Bandwidth requirement on LPDDR\"",
+      "source_url": "https://www.jedec.org/sites/default/files/Seunghyun%20Moon_03_29_25_Final.pdf",
+      "source_title": "Samsung — LPDDR6 Key Architecture (JEDEC LPDDR6 Workshop, April 2025)",
+      "conditions": "A vendor chart; widths and rates as plotted",
+      "status": "verified",
+      "note": "Read from the slide text. The LPDDR6 figures equal rate x 96 / 8 x 256/288, i.e. data bits only, which is how the page computes its table; the 12.8 Gb/s point is used as a label, not as a JEDEC bin.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-23",
       "humanReviewedBy": null,
       "humanReviewedOn": null
     }
