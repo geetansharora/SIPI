@@ -658,6 +658,24 @@ CLAIMS = [
     ("interfaces/ucie", "81 x 4 TB/s/mm2", 81 * 4, r"is (\d+) TB/s/mm2", 0.1),
     ("interfaces/ucie", "UCIe-S x16 at 32 GT/s per direction (Gb/s)", 16 * 32, r"carries (\d+) Gb/s in each direction", 0.1),
 
+    # Stitching vias and layer transitions: the plane-cavity panel and its notes
+    ("package-board/layer-transitions", "wave speed between the planes, c/sqrt(4) (mm/ns)", 299.792458 / math.sqrt(4), r"about (\d+) mm per nanosecond", 0.5),
+    ("package-board/layer-transitions", "peak dI/dt of a 10 mA Gaussian edge, 60 ps 10-90 (mA/ns)", 10 * 2.5631 / (math.sqrt(2 * math.pi) * 0.060), r"a peak rate of about (\d+) mA per nanosecond", 1),
+    ("package-board/layer-transitions", "signal via to victim, hypot(48, 14) (mm)", math.hypot(78.25 - 30.25, 40.25 - 26.25), r"A victim via (\d+) mm away", 0.5),
+    ("package-board/layer-transitions", "0.7 nH at 1 GHz (ohm)", 2 * math.pi * 1e9 * 0.7e-9, r"inductance alone is ([\d.]+) ohm", 1.5),
+    ("package-board/layer-transitions", "200 x 120 cells of 0.5 mm on 100 x 60 mm", (100 / 0.5) * (60 / 0.5), r"([\d,]+) cells for this board", 0.1),
+    *[("package-board/layer-transitions", desc, val, rx, tol) for desc, val, rx, tol in (lambda einf: [
+        ("FDTD step, 0.95 dx / (v_inf sqrt 2), Debye eps_inf (ps)",
+         0.95 * 0.5 / (299.792458 / math.sqrt(einf) * math.sqrt(2)) * 1e3, r"([\d.]+) ps per step", 0.5),
+        ("steps in a 20 ns record",
+         20e3 / (0.95 * 0.5 / (299.792458 / math.sqrt(einf) * math.sqrt(2)) * 1e3), r"a 20 ns record is about ([\d,]+) steps", 1),
+    ])(4 - 0.2 / (1 + (1 / 2.8) ** 2))],
+    ("package-board/layer-transitions", "first cavity mode f10 on 100 mm, Dk 4 (GHz)", 299.792458 / (2 * 2) / 100, r"along the 100 mm side, is at ([\d.]+) GHz", 0.5),
+    *[("package-board/layer-transitions", desc, val, rx, tol) for desc, val, rx, tol in (lambda qc: [
+        ("copper Q of a 0.2 mm plane pair at 1 GHz, beta / (2 Rs / (eta h))", qc, r"Q for a 0\.2 mm pair is about (\d+)", 1.5),
+        ("plane-pair Q at 1 GHz, 1/(1/50 + 1/Qc)", 1 / (1 / 50 + 1 / qc), r"plane-pair Q of about (\d+)", 1.5),
+    ])((2 * math.pi * 1e9 * 2 / 299792458) / (2 * math.sqrt(math.pi * 1e9 * 4e-7 * math.pi / 5.8e7) / (376.730313 / 2 * 0.2e-3)))],
+
     ("interfaces/ucie", "forwarded clock at 64 GT/s, quarter rate (GHz)", 64 / 4, r"At 64 GT/s the forwarded clock runs at (\d+) GHz", 0.1),
     ("interfaces/ucie", "forwarded clock at 48 GT/s, quarter rate (GHz)", 48 / 4, r"at 48 GT/s at (\d+) GHz", 0.1),
     ("interfaces/ucie", "P1 low-frequency level, sum of taps", -0.05 + 0.95 + 0, r"P1 -0\.05 0\.95 0 ([\d.]+) ", 0.5),

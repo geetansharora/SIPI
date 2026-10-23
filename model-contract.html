@@ -47,10 +47,10 @@
   <div class="page-head">
     <p class="crumb"><a href="index.html">SIPI</a> / model contracts</p>
     <h1>Interactive model assumptions and evidence</h1>
-    <p class="byline"><span>Generated from <code>docs/model-types.json</code></span><span>51 panels</span><span>fidelity: 18 analytical, 14 exact, 7 illustrative, 12 numerical · evidence: 6 computed, 40 independent, 5 plausible</span></p>
+    <p class="byline"><span>Generated from <code>docs/model-types.json</code></span><span>52 panels</span><span>fidelity: 18 analytical, 14 exact, 7 illustrative, 13 numerical · evidence: 6 computed, 41 independent, 5 plausible</span></p>
     <p class="answer">
       Each interactive panel uses a model with a defined scope. This page publishes the
-      contract for all 51 panels: the
+      contract for all 52 panels: the
       topology, the reference planes, the equations, the units, the range over which it is
       valid, how it is computed, and the evidence available for its behavior.
     </p>
@@ -767,6 +767,25 @@
       <dt>Numerics</dt><dd>Direct complex evaluation.</dd>
       <dt>Known limitations</dt><dd>Lumped; no plane modes; no package.</dd>
       <dt>Evidence</dt><dd>check-models.js — PDN (RLC limits and damping).</dd>
+    </dl>
+  </section>
+  <section class="contract" id="planeCavity">
+    <div class="contract__head">
+      <h2>planeCavity</h2>
+      <span class="model-tag model-tag--numerical">numerical model</span>
+      <span class="ev ev--independent">independent</span>
+      <span class="contract__ver">v1.0 &#183; not yet reviewed</span>
+    </div>
+    <p class="contract__purpose">Show where the return current of a signal via that changes reference goes: a wave between the planes when nothing carries it, and how much a stitching via or capacitor, and its distance, changes the noise at another via.</p>
+    <dl class="contract__body">
+      <dt>Topology</dt><dd>One rectangular plane pair, 100 x 60 mm, 0.2 mm apart, Dk 4 at 1 GHz, open edges. The signal via's return current is a current source between the planes; stitching vias and four mounting holes short the planes; between GND and PWR they are series R-L-C capacitors instead.</dd>
+      <dt>Reference planes</dt><dd>The voltage between the two planes, at every cell and at the victim via.</dd>
+      <dt>Equations</dt><dd><ul class="tight"><li><code>TMz: dEz/dt = (dHy/dx - dHx/dy - sigma*Ez - Jp - Jz)/eps_inf, dHx/dt = -(dEz/dy)/mu0, dHy/dt = (dEz/dx)/mu0</code></li><li><code>Debye: tau*dJp/dt + Jp = eps0*dEps*dEz/dt, fp = 2.8 GHz, dEps = 0.2</code></li><li><code>V = -Ez*h; source Jz = I(t)/dx^2, I(t) a Gaussian edge; via: Ez = 0 in its cell</code></li><li><code>capacitor: L di/dt + R i + q/C = V, dq/dt = i</code></li><li><code>Z21(f) = FFT(dV_victim/dt) / FFT(dI/dt)</code></li><li><code>f_mn = c/(2*sqrt(Dk)) * sqrt((m/a)^2 + (n/b)^2)</code></li></ul></dd>
+      <dt>Units</dt><dd>mm, ns, ps, mA, mV, ohm, GHz</dd>
+      <dt>Validity</dt><dd>A plane pair much thinner than a wavelength, so the field between the planes is uniform through the gap, up to about 6 GHz, where a 0.5 mm cell is still 24 cells per wavelength.</dd>
+      <dt>Numerics</dt><dd>Yee grid of 0.5 mm cells (200 x 120), time step 95% of the 2D Courant limit (2.19 ps), 20 ns record. Magnetic-wall edges. Debye polarisation by an auxiliary current, averaged across the step. Lumped capacitor with its resistance semi-implicit. Float32 fields. Transfer impedance from the derivative records, the last 30% tapered.</dd>
+      <dt>Known limitations</dt><dd>One plane pair: no coupled cavities, no antipads, no via barrels above or below the pair. A via is one 0.5 mm cell. Edges do not radiate. The signal's own line is not modelled; its return current is imposed. Loss lumped into one Debye pole and a conductivity, within 15% of a laminate tan d 0.02 plus plane copper from 0.3 to 6 GHz. Mechanism and proportion, not a sign-off number.</dd>
+      <dt>Evidence</dt><dd>check-models.js suite Plane cavity: with no vias and no loss the resonances land on the closed-form f_mn within 0.5%; the discrete field energy after a pulse is conserved within 0.01%; with no DC path the planes charge at Q/C; nothing reaches the victim before the fastest wave; swapping source and victim gives the same waveform; a resonance rings down with Q = 1/tan d of the stated medium; an electrically small board with one capacitor resonates at 1/(2 pi sqrt(L C_plane)); noise at the victim falls as a stitching via comes closer, and rises with a capacitor's mounting inductance, a via beating every capacitor.</dd>
     </dl>
   </section>
   <section class="contract" id="realCaps">

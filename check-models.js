@@ -58,7 +58,7 @@ function loadSite() {
   const files = ['js/viz-kit.js', 'js/models/calc-models.js', 'js/models/laminates.js', 'js/models/coupling-model.js', 'js/models/tdr-model.js', 'js/models/ddr5-model.js', 'js/models/lpddr6-model.js', 'js/models/ucie-model.js', 'js/models/d2d-model.js', 'js/models/ethernet-model.js', 'js/viz/ethernet-lane.js', 'js/viz/jitter.js', 'js/viz/crosstalk.js',
                  'js/viz/spectrum.js', 'js/viz/pdn-extras.js',
                  'js/viz/lab-waves.js', 'js/viz/lab-channel.js', 'js/viz/lab-pdn.js',
-                 'js/viz/cdr.js', 'js/models/adc-model.js',
+                 'js/viz/cdr.js', 'js/models/adc-model.js', 'js/models/plane-cavity-model.js',
                  'js/viz/home-showcase.js', 'js/search.js'];
   for (const f of files) {
     // eslint-disable-next-line no-eval
@@ -5293,6 +5293,114 @@ suite('Coupling — voltage slew, current slew, and the victim', () => {
   // monotonicity in the coupling elements
   const bigger = C.run(Object.assign({}, base, { Cm: 1e-12, M: 2e-9 }));
   ok('more Cm and more M never reduce pickup', bigger.capPeak > a1.capPeak && bigger.indPeak > a1.indPeak);
+});
+
+/* ═════════ Plane cavity — the return current of a layer change, by 2D FDTD ═════════
+   Every assertion here is physics the solver does not contain: closed-form cavity
+   modes, conservation of energy and of charge, causality, reciprocity, the
+   Lorentzian width a loss tangent implies, and monotonicity in via distance and in
+   capacitor inductance. Small boards keep the gate quick; the physics is size-free. */
+suite('Plane cavity — 2D FDTD of a plane pair under a layer change', () => {
+  const PC = MODELS.planeCavity;
+  const C0 = 299.792458;                                    // mm/ns
+  const runTo = (sim) => { while (sim.step(2000)) { /* */ } return sim; };
+  const pk = (a, n) => { let m = 0; for (let k = 0; k <= n; k++) m = Math.max(m, Math.abs(a[k])); return m; };
+
+  // 1 · A bare, lossless rectangle with magnetic walls rings at f_mn = c/(2 sqrt(Dk)) sqrt((m/a)^2 + (n/b)^2).
+  const a = 50, b = 30;
+  const bare = PC.create({ board: { a, b }, ties: [], shape: 'gauss', lossless: true, recordNs: 25, src: [11.75, 8.25], victim: [35.25, 21.75], trPs: 60 });
+  const energy = [];
+  while (bare.step(250)) if (bare.tNs > 0.5) energy.push(bare.energy());
+  const spec = PC.transfer(bare, 4.8);
+  [[1, 0], [0, 1], [1, 1], [2, 1], [3, 0]].forEach(([m, n]) => {
+    const fa = C0 / (2 * Math.sqrt(4)) * Math.sqrt((m / a) ** 2 + (n / b) ** 2);
+    let best = null;
+    for (let k = 1; k < spec.length - 1; k++) {
+      const q = spec[k];
+      if (Math.abs(q.f / fa - 1) < 0.015 && q.z > spec[k - 1].z && q.z > spec[k + 1].z && (!best || q.z > best.z)) best = q;
+    }
+    ok('bare lossless cavity rings at f_' + m + n + ' = ' + fa.toFixed(3) + ' GHz within 0.5%',
+       !!best && Math.abs(best.f / fa - 1) < 0.005, best ? best.f.toFixed(4) + ' GHz' : 'no peak');
+  });
+
+  // 2 · Once the pulse has gone, a lossless cavity neither gains nor loses energy.
+  const e0 = energy[0], dev = Math.max(...energy.map((e) => Math.abs(e / e0 - 1)));
+  const tail = energy.slice(-10).reduce((x, y) => x + y, 0) / 10;
+  ok('lossless field energy holds within 0.01% for 25 ns', dev < 1e-4, (dev * 100).toExponential(1) + '% worst');
+  nearRel('and shows no drift', tail, e0, 1e-4, ' J');
+
+  // 3 · With no DC path, the return current charges the planes: mean V = Q / C, C = eps A / h.
+  const chg = runTo(PC.create({ board: { a, b }, ties: [], lossless: true, recordNs: 3 }));
+  let q = 0; for (let k = 1; k <= chg.n; k++) q += chg.src[k] * 1e-3 * chg.dtPs * 1e-12;
+  let vs = 0; for (let k = 0; k < chg.Ez.length; k++) vs += chg.Ez[k] * chg.toMv;
+  const Cpl = 8.8541878128e-12 * 4 * (a * 1e-3) * (b * 1e-3) / (PC.BOARD.h * 1e-3);
+  nearRel('a step with nowhere to go charges the plane capacitance: mean V = Q/C', vs / chg.Ez.length, q / Cpl * 1e3, 0.002, ' mV');
+
+  // 4 · Nothing reaches the victim before the fastest wave the medium allows.
+  const far = runTo(PC.create({ board: { a, b }, ties: [], recordNs: 1.5, src: [5.25, 15.25], victim: [45.25, 15.25], trPs: 30 }));
+  const vInf = C0 / Math.sqrt(PC.LOSS.epsInf);
+  const tArr = 40 / vInf, tEdge = 0.02;                    // ns: 40 mm, and the edge leaves zero 20 ps in
+  const peakFar = pk(far.vic, far.n);
+  let early = 0;
+  for (let k = 0; k <= far.n; k++) if (k * far.dtPs / 1000 < tArr + tEdge - 0.01) early = Math.max(early, Math.abs(far.vic[k]));
+  ok('causal: below 1e-3 of the peak until 40 mm at c/sqrt(Dk_inf) has passed', early < 1e-3 * peakFar,
+     (early / peakFar).toExponential(1) + ' of peak before ' + (tArr * 1000).toFixed(0) + ' ps');
+
+  // 5 · Reciprocity: Z21 = Z12, capacitors and Debye loss included.
+  const one = { board: { a, b }, planes: 'pwr', ties: [[3, 3], [47, 27]], stitches: [[14, 9], [30, 20]], recordNs: 4 };
+  const fw = runTo(PC.create(Object.assign({}, one, { src: [12.25, 8.25], victim: [38.25, 22.75] })));
+  const bw = runTo(PC.create(Object.assign({}, one, { src: [38.25, 22.75], victim: [12.25, 8.25] })));
+  let rd = 0; for (let k = 0; k <= fw.n; k++) rd = Math.max(rd, Math.abs(fw.vic[k] - bw.vic[k]));
+  ok('reciprocal: swapping the signal via and the victim gives the same waveform', rd < 1e-3 * pk(fw.vic, fw.n),
+     (rd / pk(fw.vic, fw.n)).toExponential(1) + ' of peak');
+
+  // 6 · A resonance rings down as exp(-pi f t / Q), and Q is 1/tan d of the stated medium.
+  const f1 = PC.bareModes(50, 1, (f) => PC.medium(f).dk, 2)[0].f;
+  const strip = runTo(PC.create({ board: { a: 50, b: 1 }, ties: [], shape: 'burst', fGHz: f1, recordNs: 30, src: [0.25, 0.25], victim: [49.75, 0.25] }));
+  const tops = [];
+  for (let k = 1; k < strip.n; k++) {
+    const t = k * strip.dtPs / 1000, v = strip.vic;
+    if (t > 9 && v[k] > v[k - 1] && v[k] >= v[k + 1] && v[k] > 0) tops.push([t, Math.log(v[k])]);
+  }
+  const mt = tops.reduce((x, q) => x + q[0], 0) / tops.length, ml = tops.reduce((x, q) => x + q[1], 0) / tops.length;
+  const slope = tops.reduce((x, q) => x + (q[0] - mt) * (q[1] - ml), 0) / tops.reduce((x, q) => x + (q[0] - mt) ** 2, 0);
+  nearRel('the (1,0) mode of a strip rings down with Q = 1/tan d of the medium', Math.PI * f1 / -slope, 1 / PC.medium(f1).df, 0.05);
+  // and that medium is the laminate plus plane copper it claims, Rs/(eta h) against beta
+  const target = (f) => { const Rs = Math.sqrt(Math.PI * f * 1e9 * 4e-7 * Math.PI / 5.8e7);
+    const eta = 376.730313 / 2, beta = 2 * Math.PI * f * 1e9 * 2 / 299792458;
+    return 0.02 + 2 * Rs / (eta * PC.BOARD.h * 1e-3) / beta; };
+  const worst = Math.max(...[0.3, 0.5, 1, 2, 3, 4, 5, 6].map((f) => Math.abs(PC.medium(f).df / target(f) - 1)));
+  ok('the Debye fit holds tan d within 15% of laminate plus copper from 0.3 to 6 GHz', worst < 0.15, (worst * 100).toFixed(1) + '% worst');
+
+  // 6b · Electrically small, the board is a lumped capacitor: with one stitching capacitor
+  // it resonates at 1/(2 pi sqrt(L C_plane)). 5 nH keeps the spreading inductance a few %.
+  const tiny = runTo(PC.create({ board: { a: 10, b: 10 }, planes: 'pwr', ties: [], stitches: [[2.25, 2.25]], cap: { L: 5, C: 1e5, R: 0 },
+    lossless: true, shape: 'gauss', recordNs: 40, src: [7.75, 7.75], victim: [7.75, 2.25] }));
+  const ts = PC.transfer(tiny, 2);
+  const tp = ts.reduce((x, q) => (q.f > 0.2 && q.z > x.z ? q : x), { z: 0 });
+  const Ctiny = 8.8541878128e-12 * 4 * 1e-4 / (PC.BOARD.h * 1e-3);
+  nearRel('a small board and one capacitor resonate at 1/(2 pi sqrt(L C_plane))', tp.f, 1 / (2 * Math.PI * Math.sqrt(5e-9 * Ctiny)) / 1e9, 0.03, ' GHz');
+
+  // 7 · Monotone in distance: the closer the stitching via, the quieter the victim.
+  const S = PC.DEFAULTS.src, at = (d) => [S[0] + d, S[1]];
+  const noise = (o) => { const r = runTo(PC.create(Object.assign({ recordNs: 8 }, o))); return pk(r.vic, r.n); };
+  const n0 = noise({}), n10 = noise({ stitches: [at(10)] }), n5 = noise({ stitches: [at(5)] }), n1 = noise({ stitches: [at(1)] });
+  const n4 = noise({ stitches: [at(1), at(-1), [S[0], S[1] + 1], [S[0], S[1] - 1]] });
+  ok('victim noise: none > via at 10 mm > 5 mm > 1 mm > four vias at 1 mm', n0 > n10 && n10 > n5 && n5 > n1 && n1 > n4,
+     [n0, n10, n5, n1, n4].map((v) => v.toFixed(2)).join(' > ') + ' mV');
+
+  // 7b · The kick at the signal via follows dI/dt and the return path: a close via or a slower edge shrinks it.
+  const kick = (o) => { const r = runTo(PC.create(Object.assign({ recordNs: 1.5 }, o))); return pk(r.vsrc, r.n); };
+  const k0 = kick({}), k1 = kick({ stitches: [at(1)] }), k4 = kick({ stitches: [at(1), at(-1), [S[0], S[1] + 1], [S[0], S[1] - 1]] }), kSlow = kick({ trPs: 300 });
+  ok('voltage at the signal via: none > via at 1 mm > four vias, and a 300 ps edge < a 60 ps one', k0 > k1 && k1 > k4 && kSlow < k0,
+     [k0, k1, k4, kSlow].map((v) => v.toFixed(1)).join(', ') + ' mV');
+
+  // 8 · Monotone in inductance: more ESL never helps, and a via beats every capacitor.
+  const cap = (L) => noise({ planes: 'pwr', ties: [], stitches: [at(1)], cap: { L, C: 100, R: 10 } });
+  const via = noise({ ties: [], stitches: [at(1)] });
+  const c2 = cap(0.2), c7 = cap(0.7), c12 = cap(1.2);
+  ok('stitching capacitor: via < 0.2 nH < 0.7 nH < 1.2 nH of mounting inductance', via < c2 && c2 < c7 && c7 < c12,
+     [via, c2, c7, c12].map((v) => v.toFixed(2)).join(' < ') + ' mV');
 });
 
 if (!PASS && !FAILS.length && !PENDING.length) {

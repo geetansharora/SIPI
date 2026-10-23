@@ -1165,5 +1165,30 @@
     ],
     "version": "1.0",
     "reviewed": "2026-10-15"
+  },
+  "planeCavity": {
+    "kind": "numerical",
+    "evidence": "independent",
+    "purpose": "Show where the return current of a signal via that changes reference goes: a wave between the planes when nothing carries it, and how much a stitching via or capacitor, and its distance, changes the noise at another via.",
+    "topology": "One rectangular plane pair, 100 x 60 mm, 0.2 mm apart, Dk 4 at 1 GHz, open edges. The signal via's return current is a current source between the planes; stitching vias and four mounting holes short the planes; between GND and PWR they are series R-L-C capacitors instead.",
+    "planes": "The voltage between the two planes, at every cell and at the victim via.",
+    "equations": [
+      "TMz: dEz/dt = (dHy/dx - dHx/dy - sigma*Ez - Jp - Jz)/eps_inf, dHx/dt = -(dEz/dy)/mu0, dHy/dt = (dEz/dx)/mu0",
+      "Debye: tau*dJp/dt + Jp = eps0*dEps*dEz/dt, fp = 2.8 GHz, dEps = 0.2",
+      "V = -Ez*h; source Jz = I(t)/dx^2, I(t) a Gaussian edge; via: Ez = 0 in its cell",
+      "capacitor: L di/dt + R i + q/C = V, dq/dt = i",
+      "Z21(f) = FFT(dV_victim/dt) / FFT(dI/dt)",
+      "f_mn = c/(2*sqrt(Dk)) * sqrt((m/a)^2 + (n/b)^2)"
+    ],
+    "units": "mm, ns, ps, mA, mV, ohm, GHz",
+    "validity": "A plane pair much thinner than a wavelength, so the field between the planes is uniform through the gap, up to about 6 GHz, where a 0.5 mm cell is still 24 cells per wavelength.",
+    "numerics": "Yee grid of 0.5 mm cells (200 x 120), time step 95% of the 2D Courant limit (2.19 ps), 20 ns record. Magnetic-wall edges. Debye polarisation by an auxiliary current, averaged across the step. Lumped capacitor with its resistance semi-implicit. Float32 fields. Transfer impedance from the derivative records, the last 30% tapered.",
+    "limitations": "One plane pair: no coupled cavities, no antipads, no via barrels above or below the pair. A via is one 0.5 mm cell. Edges do not radiate. The signal's own line is not modelled; its return current is imposed. Loss lumped into one Debye pole and a conductivity, within 15% of a laminate tan d 0.02 plus plane copper from 0.3 to 6 GHz. Mechanism and proportion, not a sign-off number.",
+    "verified": "check-models.js suite Plane cavity: with no vias and no loss the resonances land on the closed-form f_mn within 0.5%; the discrete field energy after a pulse is conserved within 0.01%; with no DC path the planes charge at Q/C; nothing reaches the victim before the fastest wave; swapping source and victim gives the same waveform; a resonance rings down with Q = 1/tan d of the stated medium; an electrically small board with one capacitor resonates at 1/(2 pi sqrt(L C_plane)); noise at the victim falls as a stitching via comes closer, and rises with a capacitor's mounting inductance, a via beating every capacitor.",
+    "suites": [
+      "Plane cavity"
+    ],
+    "version": "1.0",
+    "reviewed": "not yet"
   }
 }

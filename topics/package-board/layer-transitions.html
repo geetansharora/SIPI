@@ -54,7 +54,7 @@
     <p class="crumb"><a href="../../index.html#package-board">Package & board</a> / 04</p>
     <h1>Stitching Vias and PCB Layer Transitions</h1>
     <p class="byline">
-      <!-- review:start --><span>By <a href="https://www.linkedin.com/in/geetansh-arora-a645714a/" target="_blank" rel="author noopener">Geetansh Arora</a> — Principal SI/PI Engineer</span><time datetime="2026-09-17" title="Technical review by Geetansh Arora on this date">17 Sep 2026</time><span>8 min</span><!-- review:end -->
+      <!-- review:start --><span>By <a href="https://www.linkedin.com/in/geetansh-arora-a645714a/" target="_blank" rel="author noopener">Geetansh Arora</a> — Principal SI/PI Engineer</span><time datetime="2026-09-17" title="Technical review by Geetansh Arora on this date">17 Sep 2026</time><span>11 min</span><!-- review:end -->
     </p>
     <!-- share:head:start --><div class="share share--head" data-share data-share-url="https://sipi.work/topics/package-board/layer-transitions.html" data-share-title="Stitching Vias and PCB Layer Transitions"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Fpackage-board%2Flayer-transitions.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Fpackage-board%2Flayer-transitions.html&amp;text=Stitching%20Vias%20and%20PCB%20Layer%20Transitions" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=Stitching%20Vias%20and%20PCB%20Layer%20Transitions&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Fpackage-board%2Flayer-transitions.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:head:end -->
     <p class="answer">
@@ -191,6 +191,127 @@
       picoseconds. Distance is the parameter; the via itself is almost incidental.
     </div>
 
+    <h2 class="section-rule" id="watch-the-return"><span>Watch the return current spread</span></h2>
+
+    <p>
+      The three cases are claims about where a current goes. The panel below lets you watch it go.
+      It solves Maxwell&#8217;s equations for the space between two planes 0.2 mm apart on a
+      100 &#215; 60 mm board and draws the voltage between the planes as the height of a sheet,
+      flat while the planes sit at the same potential. The signal via changes reference with a
+      10 mA edge, so its return current has to cross from one plane to the other at that point.
+    </p>
+
+    <p>
+      At the signal via itself, the return current rises from 0 to 10 mA in 60 ps: a peak rate of
+      about <span class="num">170 mA per nanosecond</span>. Forcing that current across the gap
+      kicks up a voltage between the planes right at the via, a spike of a few tens of millivolts
+      that lasts about as long as the edge. It is set by how fast the current changes and by the
+      inductance of whatever path the return can find, so a stitching via close by shrinks it, and
+      so does a slower edge. The panel shows the current, its rate and that voltage beside the via
+      as the edge plays out.
+    </p>
+
+    <p>
+      If there is no via to carry it, the return current crosses through the capacitance between
+      the planes. That launches a ripple that spreads at <span class="num">c/&#8730;D<sub>k</sub></span>,
+      about <span class="num">150 mm per nanosecond</span> for a D<sub>k</sub> of 4, and reflects
+      off the board edges. A victim via 50 mm away sees the first pass, then every reflection
+      after it, because the plane pair is a resonant cavity and goes on ringing for nanoseconds.
+    </p>
+
+  </div>
+
+  <!-- mobilenote:start -->
+  <p class="mobile-note" role="note">
+    <b>Best viewed on a laptop or desktop.</b>
+    These panels are built so you can move a slider and watch several charts
+    answer at once. A phone has no room to put them side by side.
+  </p>
+  <!-- mobilenote:end -->
+  <section class="instrument instrument--side" data-viz="planeCavity" aria-label="Interactive field simulation of a plane pair: a signal via changing reference launches a wave between the planes, drawn as a membrane whose height is the voltage between them; add stitching vias or capacitors and watch the noise at a victim via">
+    <script type="application/json" data-contract>{"kind":"numerical","evidence":"independent","purpose":"Show where the return current of a signal via that changes reference goes: a wave between the planes when nothing carries it, and how much a stitching via or capacitor, and its distance, changes the noise at another via.","equations":["TMz: dEz/dt = (dHy/dx - dHx/dy - sigma*Ez - Jp - Jz)/eps_inf, dHx/dt = -(dEz/dy)/mu0, dHy/dt = (dEz/dx)/mu0","Debye: tau*dJp/dt + Jp = eps0*dEps*dEz/dt, fp = 2.8 GHz, dEps = 0.2","V = -Ez*h; source Jz = I(t)/dx^2, I(t) a Gaussian edge; via: Ez = 0 in its cell","capacitor: L di/dt + R i + q/C = V, dq/dt = i","Z21(f) = FFT(dV_victim/dt) / FFT(dI/dt)","f_mn = c/(2*sqrt(Dk)) * sqrt((m/a)^2 + (n/b)^2)"],"units":"mm, ns, ps, mA, mV, ohm, GHz","validity":"A plane pair much thinner than a wavelength, so the field between the planes is uniform through the gap, up to about 6 GHz, where a 0.5 mm cell is still 24 cells per wavelength.","numerics":"Yee grid of 0.5 mm cells (200 x 120), time step 95% of the 2D Courant limit (2.19 ps), 20 ns record. Magnetic-wall edges. Debye polarisation by an auxiliary current, averaged across the step. Lumped capacitor with its resistance semi-implicit. Float32 fields. Transfer impedance from the derivative records, the last 30% tapered.","limitations":"One plane pair: no coupled cavities, no antipads, no via barrels above or below the pair. A via is one 0.5 mm cell. Edges do not radiate. The signal's own line is not modelled; its return current is imposed. Loss lumped into one Debye pole and a conductivity, within 15% of a laminate tan d 0.02 plus plane copper from 0.3 to 6 GHz. Mechanism and proportion, not a sign-off number.","suites":["Plane cavity"],"version":"1.0","reviewed":"not yet","panel":"planeCavity"}</script>
+    <div class="instrument__bar">
+      <span class="instrument__title">Where does the return current go?</span>
+      <span data-evidence="independent" data-model-version="1.0" class="model-tag model-tag--numerical">numerical</span>
+      <span class="instrument__readout" role="status" aria-live="off" aria-label="Current values">
+        <span>return edge <b data-out="edge">—</b></span>
+        <span>peak dI/dt <b data-out="rate">—</b></span>
+        <span>at the signal via <b data-out="via">—</b></span>
+        <span>victim peak <b data-out="pk">—</b></span>
+        <span>ringing after 5 ns <b data-out="late">—</b></span>
+        <span>nearest return path <b data-out="near">—</b></span>
+      </span>
+    </div>
+    <div class="side-layout">
+    <div class="panels">
+      <div class="panel">
+        <span class="panel__label">Voltage between the planes &#183; click to add or remove a via, drag any via to move it</span>
+        <canvas data-cv="board" role="img" aria-label="A 100 by 60 millimetre plane pair seen from the front and above, drawn as a membrane lifted by the voltage between the planes, blue where positive and amber where negative. A ripple spreads from the signal via and reflects off the board edges; vias stand as pins that hold the membrane at zero; the victim via is marked with a ring."></canvas>
+      </div>
+      <div class="panels two-up">
+        <div class="panel">
+          <span class="panel__label">In time, at the victim via</span>
+          <canvas data-cv="probe" role="img" aria-label="Voltage between the planes at the victim via over twenty nanoseconds, with the previous run dashed for comparison."></canvas>
+          <div class="legend"><span><i style="background:var(--signal)"></i>now</span><span><i class="dash" style="color:var(--muted)"></i>before your change</span></div>
+        </div>
+        <div class="panel">
+          <span class="panel__label">In frequency, from via to victim</span>
+          <canvas data-cv="z21" role="img" aria-label="Transfer impedance from the signal via to the victim against frequency up to 6 gigahertz, on a log scale, with dotted lines at the resonances of a bare rectangular cavity."></canvas>
+          <div class="legend"><span><i style="background:var(--signal)"></i>V/I</span><span><i class="dash" style="color:var(--muted)"></i>bare-board modes</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="side">
+    <div class="side__inner">
+    <div class="controls">
+      <div class="ctl">
+        <div class="ctl__head"><label for="pc-planes">The two planes</label></div>
+        <select id="pc-planes"><option value="gnd">GND to GND: stitch with vias</option><option value="pwr">GND to PWR: stitch with capacitors</option></select>
+        <span class="ctl__note">A via would short PWR to GND</span>
+      </div>
+      <div class="ctl">
+        <div class="ctl__head"><label for="pc-rise">Edge rise time</label><output id="pc-rise-out" for="pc-rise">60 ps</output></div>
+        <input type="range" id="pc-rise" min="0" max="6" step="1" value="2">
+        <span class="ctl__note">10&#8211;90% of the return current</span>
+      </div>
+    </div>
+    <div class="presets">
+      <button class="preset" type="button" data-preset="none" aria-pressed="true">No via</button>
+      <button class="preset" type="button" data-preset="near" aria-pressed="false">Via at 1 mm</button>
+      <button class="preset" type="button" data-preset="far" aria-pressed="false">Via at 10 mm</button>
+      <button class="preset" type="button" data-preset="ring" aria-pressed="false">Four vias</button>
+      <button class="preset" type="button" data-preset="pwr" aria-pressed="false">PWR, no cap</button>
+      <button class="preset" type="button" data-preset="pwrcap" aria-pressed="false">PWR, cap at 1 mm</button>
+      <button class="tool-btn" type="button" data-act="replay">replay</button>
+    </div>
+    <div class="transport"><span data-out="note">—</span></div>
+    </div>
+    </div>
+    </div>
+  </section>
+
+  <div class="prose">
+    <p>Some things to try, roughly in order:</p>
+
+    <ul class="tight">
+      <li><strong>Drop a stitching via right beside the signal via.</strong> The ripple shrinks, and the
+        dashed trace of the previous run stands above the new one at the victim.</li>
+      <li><strong>Drag the stitching via away.</strong> The victim noise climbs back as the gap
+        grows. This is the &#8220;within a few tens of mils&#8221; rule, made visible.</li>
+      <li><strong>Surround the signal via with four stitching vias.</strong> The return closes in a loop much
+        smaller than a wavelength, and very little reaches the rest of the board.</li>
+      <li><strong>Switch to GND to PWR.</strong> Each click now places a 100 nF capacitor with
+        0.7 nH of mounting inductance. At 1 GHz that inductance alone is
+        <span class="num">4.4 &#937;</span>, far more than the plane pair it is meant to short,
+        so the capacitor barely changes the ringing.</li>
+      <li><strong>Slow the edge to 300 ps.</strong> The upper resonances fade out of the spectrum
+        (the shaded band is where the edge has too little energy to measure the board), and the
+        ringing becomes smoother.</li>
+      <li><strong>Click the four mounting holes away.</strong> With nothing left between the planes, the
+        spectrum&#8217;s peaks land on the dotted lines, the closed-form modes of a bare
+        rectangular cavity. Every via you put back moves them.</li>
+    </ul>
+
     <h2 class="section-rule"><span>Rules that follow</span></h2>
 
     <p>
@@ -313,6 +434,56 @@
         pattern rather than by any individual via. That is a
         <a href="bga-escape-routing.html">breakout</a> problem as much as a transition one.
       </p>
+
+      <p>
+        <strong>How the panel works.</strong> Between two closely spaced planes, the only field
+        that matters is the vertical electric field E<sub>z</sub> and the magnetic field parallel to
+        the planes. Maxwell&#8217;s equations then reduce exactly to two dimensions, and the
+        voltage between the planes is <span class="num">V = E<sub>z</sub>h</span>. The panel steps
+        them on a Yee grid of 0.5 mm cells, <span class="num">24,000 cells</span> for this board,
+        with a time step of 95% of the stability limit:
+      </p>
+
+      <div class="eq">
+        <span class="eq__main">&#916;<i class="var">t</i> = 0.95 &#183; &#916;<i class="var">x</i> / (<i class="var">v</i><sub>&#8734;</sub>&#8730;2)</span>
+        <span class="eq__note"><span class="num">2.19 ps</span> per step, so a 20 ns record is about 9,100 steps</span>
+      </div>
+
+      <p>
+        A signal via that changes reference is a current source between the planes. A stitching via
+        forces V = 0 in its cell. A stitching capacitor is a series R, L and C stepped alongside the
+        field. The open board edge is treated as a magnetic wall, the textbook cavity boundary, so
+        the closed-form resonances are
+      </p>
+
+      <div class="eq">
+        <span class="eq__main"><i class="var">f</i><sub>mn</sub> = <i class="var">c</i> / (2&#8730;D<sub>k</sub>) &#183; &#8730;((<i class="var">m</i>/<i class="var">a</i>)&#178; + (<i class="var">n</i>/<i class="var">b</i>)&#178;)</span>
+        <span class="eq__note">the first, (1,0) along the 100 mm side, is at <span class="num">0.75 GHz</span></span>
+      </div>
+
+      <p>
+        Loss comes from the laminate (tan &#948; = 0.02, a Q of 50) and from the plane copper, whose
+        Q for a 0.2 mm pair is about 96 at 1 GHz and rises as &#8730;f. Together they give a
+        plane-pair <span class="num">Q of about 33</span> at 1 GHz. A constant conductivity cannot
+        hold Q roughly flat across frequency, so the solver uses one Debye pole plus a small
+        conductivity, which holds the combined loss within 15% of that target from 0.3 to 6 GHz.
+      </p>
+
+      <p>
+        The model gate checks the solver against physics it does not contain. With no vias and no
+        loss, its resonances land on f<sub>mn</sub> to within 0.5%. Field energy is conserved, the
+        planes charge at exactly I/C, nothing arrives before the wavefront, swapping the two vias
+        gives the same waveform, and the width of a resonance matches the loss tangent.
+      </p>
+
+      <p>
+        <strong>What it leaves out.</strong> The board is one plane pair, where a real stackup has
+        several cavities coupled through every antipad. A via is a single 0.5 mm cell with no
+        antipad and no barrel of its own above and below the pair. The edges do not radiate. The
+        signal&#8217;s own transmission line is not modelled; its return current is imposed. So read
+        the panel for mechanism and proportion &#8212; which via placement helps and roughly how much
+        &#8212; not as a sign-off number for a particular board.
+      </p>
     </details>
 
     <h2 class="section-rule"><span>In the real world</span></h2>
@@ -366,6 +537,10 @@
 </footer>
 
 <script src="../../js/site.js?v=61b8ff31" defer></script>
+<script src="../../js/viz-kit.js?v=80b25b0d" defer></script>
+<script src="../../js/models/plane-cavity-model.js?v=4beea499" defer></script>
+<script src="../../js/viz/plane-cavity.js?v=eabde55f" defer></script>
+<script src="../../js/viz-loader.js?v=3395e118" defer></script>
 <script src="../../js/search.js?v=dcc1e06b" defer></script>
 </body>
 </html>

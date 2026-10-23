@@ -873,8 +873,15 @@
             "return via",
             "layer change",
             "ground via",
-            "transition"
+            "transition",
+            "FDTD",
+            "plane cavity",
+            "cavity resonance",
+            "stitching capacitor",
+            "return path"
           ],
+          "viz": "planeCavity",
+          "updated": "2026-10-23",
           "reviewed": "2026-09-17",
           "reviewer": "Geetansh Arora"
         },
