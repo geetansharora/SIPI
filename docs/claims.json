@@ -3938,7 +3938,7 @@
     },
     {
       "id": "C-195",
-      "statement": "UCIe's key-metric targets give low-power entry and exit of 0.5 ns below 16 GT/s and 0.5 to 1 ns above 24 GT/s on the planar options, and 0 ns for UCIe-3D, which has no preamble or post-amble; areal bandwidth density is 22-192 GB/s/mm2 for UCIe-S and 188-1646 for UCIe-A at 110 and 45 um pitches.",
+      "statement": "UCIe's key-metric targets give low-power entry and exit of 0.5 ns below 16 GT/s and 0.5 to 1 ns above 24 GT/s on the planar options, and 0 ns for UCIe-3D, which has no preamble or post-amble.",
       "pages": [
         "interfaces/ucie"
       ],
@@ -3948,7 +3948,26 @@
       "source_title": "UCIe Consortium — overview deck, 2025, with the key metrics for UCIe 3.0",
       "conditions": "Targets in a consortium overview",
       "status": "verified",
-      "note": "Read from the key-metrics slide text.",
+      "note": "Read from the key-metrics slide text. The areal bandwidth density on the same slide is ledger row C-100, so it is not repeated here.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-23",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null
+    },
+    {
+      "id": "C-196",
+      "statement": "OCP publishes a Transaction and Link Layer Specification for BoW interfaces (Revision A): a protocol layer, a transaction layer that manages flow control of individual streams, and a link layer that serialises them into one bitstream for the BoW PHY, which it reaches through the slice logic interface.",
+      "pages": [
+        "interfaces/chiplet-interconnects"
+      ],
+      "source_type": "normative",
+      "source": "Open Compute Project, \"Transaction and Link Layer Specification for Bunch of Wires (BoW) Interfaces\", Revision A, marketplace listing",
+      "source_url": "https://www.opencompute.org/marketplace/it-infrastructure/transaction-and-link-layer-specification-for-bunch-of-wires-bow-interfaces/",
+      "source_title": "OCP — Transaction and Link Layer Specification for BoW interfaces (Rev A)",
+      "conditions": "The listing describes the layering; the specification body has not been read",
+      "status": "scoped",
+      "note": "Read on opencompute.org on 23 Oct 2026. It supports the page saying BoW leaves protocols to other documents (C-99); the page claims only that this layer exists.",
       "owner": "Geetansh",
       "sourceCheckedBy": "Claude Opus 5.5",
       "sourceCheckedOn": "2026-10-23",

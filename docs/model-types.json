@@ -1115,8 +1115,9 @@
     "suites": [
       "Chiplet layouts"
     ],
-    "reviewed": "2026-10-11",
-    "version": "1.1"
+    "reviewed": "2026-10-23",
+    "version": "1.1",
+    "reviewer": "Geetansh Arora"
   },
   "ucie3d": {
     "kind": "analytical",
@@ -1189,6 +1190,7 @@
       "Plane cavity"
     ],
     "version": "1.0",
-    "reviewed": "not yet"
+    "reviewed": "2026-10-23",
+    "reviewer": "Geetansh Arora"
   }
 }
