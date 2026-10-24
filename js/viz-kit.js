@@ -2662,6 +2662,22 @@
      the same 'input' event the module already listens for, and changes nothing
      about how modules are written. A slider whose output is a mapped label (a
      speed bin, an index) is left alone: parsing those back is guesswork. */
+  /* Reserve the height of the longest text a box will ever show. A preset note that is
+     five lines for one preset and six for the next changes the height of the column it
+     sits in, and with it the whole instrument: pressing a preset then shifts the page.
+     Measures each text in place, restores the current one, and sets min-height; call it
+     again on resize, since the line count depends on the width. */
+  K.reserveText = function (el, texts) {
+    const box = el && (el.closest('.transport') || el.parentElement);
+    if (!box) return;
+    const keep = el.textContent;
+    box.style.minHeight = '';
+    let hMax = 0;
+    texts.forEach((t) => { el.textContent = t; hMax = Math.max(hMax, box.getBoundingClientRect().height); });
+    el.textContent = keep;
+    if (hMax > 0) box.style.minHeight = Math.ceil(hMax) + 'px';
+  };
+
   K.numericEntry = function (root) {
     root.querySelectorAll('.ctl input[type="range"]').forEach((range) => {
       const out = root.querySelector('#' + range.id + '-out');

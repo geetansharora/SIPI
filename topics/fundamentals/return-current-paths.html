@@ -13,7 +13,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
 <link rel="stylesheet" href="../../css/base.css?v=1e3ae753">
-<link rel="stylesheet" href="../../css/components.css?v=d53a657c">
+<link rel="stylesheet" href="../../css/components.css?v=c532fdc4">
   <!-- meta:start -->
   <link rel="canonical" href="https://sipi.work/topics/fundamentals/return-current-paths.html">
   <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
@@ -31,7 +31,7 @@
   <meta name="twitter:description" content="Why high-frequency return current runs directly under the trace, what a plane split really costs, and how to check a layer transition.">
   <meta name="twitter:image" content="https://sipi.work/assets/og/fundamentals/return-current-paths.png">
   <meta name="twitter:image:alt" content="Return Current Paths: Reference Planes, Splits and Gaps: a figure from the page, on SIPI">
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Return Current Paths: Reference Planes, Splits and Gaps","description":"Why high-frequency return current runs directly under the trace, what a plane split really costs, and how to check a layer transition.","url":"https://sipi.work/topics/fundamentals/return-current-paths.html","articleSection":"Fundamentals","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer","url":"https://www.linkedin.com/in/geetansh-arora-a645714a/","sameAs":["https://www.linkedin.com/in/geetansh-arora-a645714a/"]},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-09-12","image":"https://sipi.work/assets/og/fundamentals/return-current-paths.png"}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Return Current Paths: Reference Planes, Splits and Gaps","description":"Why high-frequency return current runs directly under the trace, what a plane split really costs, and how to check a layer transition.","url":"https://sipi.work/topics/fundamentals/return-current-paths.html","articleSection":"Fundamentals","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer","url":"https://www.linkedin.com/in/geetansh-arora-a645714a/","sameAs":["https://www.linkedin.com/in/geetansh-arora-a645714a/"]},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-10-24","image":"https://sipi.work/assets/og/fundamentals/return-current-paths.png"}</script>
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"SIPI","item":"https://sipi.work/"},{"@type":"ListItem","position":2,"name":"Fundamentals","item":"https://sipi.work/#fundamentals"},{"@type":"ListItem","position":3,"name":"Return Current Paths: Reference Planes, Splits and Gaps"}]}</script>
   <!-- meta:end -->
 </head>
@@ -54,7 +54,7 @@
     <p class="crumb"><a href="../../index.html#fundamentals">Fundamentals</a> / 07</p>
     <h1>Return Current Paths: Reference Planes, Splits and Gaps</h1>
     <p class="byline">
-      <!-- review:start --><span>By <a href="https://www.linkedin.com/in/geetansh-arora-a645714a/" target="_blank" rel="author noopener">Geetansh Arora</a> — Principal SI/PI Engineer</span><time datetime="2026-09-12" title="Technical review by Geetansh Arora on this date">12 Sep 2026</time><span>10 min</span><!-- review:end -->
+      <!-- review:start --><span>By <a href="https://www.linkedin.com/in/geetansh-arora-a645714a/" target="_blank" rel="author noopener">Geetansh Arora</a> — Principal SI/PI Engineer</span><time datetime="2026-10-24" title="Technical review by Geetansh Arora on this date">24 Oct 2026</time><span>10 min</span><!-- review:end -->
     </p>
     <!-- share:head:start --><div class="share share--head" data-share data-share-url="https://sipi.work/topics/fundamentals/return-current-paths.html" data-share-title="Return Current Paths: Reference Planes, Splits and Gaps"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Ffundamentals%2Freturn-current-paths.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Ffundamentals%2Freturn-current-paths.html&amp;text=Return%20Current%20Paths%3A%20Reference%20Planes%2C%20Splits%20and%20Gaps" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=Return%20Current%20Paths%3A%20Reference%20Planes%2C%20Splits%20and%20Gaps&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Ffundamentals%2Freturn-current-paths.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:head:end -->
     <p class="answer">
@@ -199,6 +199,132 @@
       looks perfect on the netlist and the return path is where the damage is.
     </div>
 
+    <h2 class="section-rule" id="watch-it-choose"><span>Watch the path choose itself</span></h2>
+
+    <p>
+      The panel below is a copper plane 60 &#215; 40 mm with one trace above it, solved for where
+      the return current actually flows. It does not assume the answer. The plane is cut into
+      <span class="num">2,400</span> cells a millimetre square, and at each frequency the solver
+      finds the one current distribution that satisfies Kirchhoff&#8217;s voltage law around every
+      cell, which is the distribution of least impedance. The glow shows how much current flows
+      through each part of the plane; the moving streaks show which way it goes.
+    </p>
+
+    <p>
+      Press <b>sweep</b> and it plays from 10 Hz to 100 MHz. Before you do, predict where the
+      return will go in the opening preset, where the trace takes the long way round. At the bottom
+      of the range the return takes the shortest route between the two vias and fans out across the
+      plane, paying no attention to the trace at all. In the tens of kilohertz it starts to pull in,
+      and well before a megahertz it is a narrow band under the trace, following it all the way
+      round. The <b>Return under the trace</b> plot counts the share of the return within 2 mm of
+      the trace. The <b>Loop inductance</b> plot shows what the narrowing buys: the loop inductance falls as the loop shrinks,
+      while the resistance, in the readout above, rises, because the same current is now crowded
+      into less copper.
+    </p>
+
+    <p>
+      Why there? A wide path has less resistance than a narrow one, and a loop that strays from the
+      trace has more inductance. The two balance over a distance of about
+      <span class="num">2R<sub>s</sub>/(&#969;&#956;<sub>0</sub>)</span>, where R<sub>s</sub> is the
+      plane&#8217;s sheet resistance, <span class="num">0.49 m&#937;</span> per square for 1 oz copper.
+      That distance is about <span class="num">12 mm at 10 kHz</span> and
+      <span class="num">1.2 mm at 100 kHz</span>. Current further from the trace than that is
+      inductance-dominated and follows the trace, so the band narrows as 1/f. It stops narrowing at
+      about the trace height h, which happens near <span class="num">620 kHz</span> for h = 0.2 mm,
+      because the Lorentzian above is as narrow as a return can get.
+    </p>
+
+    <p>
+      Switch the drive to a <b>step</b> and the same story plays out in time. At the instant the
+      current starts, the return appears directly under the trace, exactly as at high frequency: a
+      sudden change sees only inductance. Then, over microseconds, it relaxes outward until it
+      settles into the DC spread. A digital edge is over long before that, which is why a signal&#8217;s
+      return lives under its trace.
+    </p>
+
+    <p>
+      Then break something. Drag across the copper to cut a slot, or press <b>Split plane</b>, and
+      watch the return swing out and around the end of the slot while the inductance curve climbs
+      above the dashed one from before the cut. Click the slot to bridge it with a 100 nF capacitor.
+      Its own inductance, 1 nH with its mounting, resonates with it near
+      <span class="num">16 MHz</span>. Below that the capacitor is a poor path and the return still
+      goes the long way round; above it, the capacitor carries the return straight across.
+    </p>
+
+  </div>
+
+  <!-- mobilenote:start -->
+  <p class="mobile-note" role="note">
+    <b>Best viewed on a laptop or desktop.</b>
+    These panels are built so you can move a slider and watch several charts
+    answer at once. A phone has no room to put them side by side.
+  </p>
+  <!-- mobilenote:end -->
+  <section class="instrument instrument--side" data-viz="returnPath" aria-label="Interactive solver for the return current in a plane under a trace: the current drawn as a glow and flowing streaks, swept from DC to 100 megahertz or followed in time after a step; cut slots, bridge them with capacitors, and move the vias">
+    <script type="application/json" data-contract>{"kind":"numerical","evidence":"independent","purpose":"Show where the return current under a trace flows in its reference plane, from the DC spread between the vias to the high-frequency band under the trace, after a step in time, and around a slot or through a capacitor that bridges it.","equations":["every plane bar: V = Zs I + jw (L I) + jw M I_trace, Zs = rho k coth(k t), k = (1 + j)/delta","every mesh of the plane: sum of V = 0; bar currents I = I_p + C psi + sum p_c I_c","partial inductance of two parallel thin tapes: (mu0/4pi)/(w1 w2) * sum over 16 corners of F(u, v, z), d4F/du2dv2 = 1/R","capacitor: Z = R + jwL + 1/(jwC)","Z_loop = sum over every branch of I V (Tellegen), R = sum R |I|^2","step: backward Euler, (C^T (R + L/dt) C) psi_n+1 = (C^T L C / dt) psi_n - C^T R I_p, from the inductive limit at t = 0+"],"units":"mm, nH, mohm, Hz, s","validity":"Quasi-static: the plane is much smaller than a wavelength (60 mm against 1.5 m in FR-4 at 100 MHz), so currents are solved without propagation delay or radiation, from 10 Hz to 100 MHz.","numerics":"2,400 square cells of 1 mm. Unknowns are mesh currents on the cell corners, tied across every missing bar. Plane-to-plane partial inductances are a Toeplitz kernel, applied by FFT convolution. Complex symmetric system solved by conjugate-orthogonal conjugate gradients to a relative residual of 1e-7, preconditioned by the sine-transform inverse of the slot-free operator. 43 frequencies (E6 series); 25 backward-Euler steps from 10 ns to 10 ms.","limitations":"One plane, no second reference and no other planes. The trace current is imposed rather than solved as a transmission line; the vias are lumped partial inductances. The band under the trace is drawn no narrower than one 1 mm cell, although the inductance converges (0.5 mm cells agree within 0.5%). The capacitor is lumped, its mounting loop not coupled to the plane. The step uses the DC sheet resistance. Mechanism and proportion, not a sign-off number.","suites":["Return path"],"version":"1.0","reviewed":"2026-10-24","panel":"returnPath"}</script>
+    <div class="instrument__bar">
+      <span class="instrument__title">Where does the return current flow?</span>
+      <span data-evidence="independent" data-model-version="1.0" class="model-tag model-tag--numerical">numerical</span>
+      <span class="instrument__readout" role="status" aria-live="off" aria-label="Current values">
+        <span>at <b data-out="at">—</b></span>
+        <span>loop inductance <b data-out="L">—</b></span>
+        <span>return resistance <b data-out="R">—</b></span>
+        <span>within 2 mm of the trace <b data-out="band">—</b></span>
+        <span>half-way point <b data-out="mid">—</b></span>
+      </span>
+    </div>
+    <div class="side-layout">
+    <div class="panels beside">
+      <div class="panel" data-lab-name="The plane">
+        <span class="panel__label">Return current in the plane &#183; drag to cut a slot, click it to bridge it, drag a via</span>
+        <canvas data-cv="board" role="img" aria-label="A 60 by 40 millimetre copper plane seen from above, with a trace drawn over it from a driver via to a load via. The return current in the plane is drawn as a blue glow, brighter where more current flows, with short streaks moving along it. At low frequency the glow spreads between the vias across the whole plane; at high frequency it gathers under the trace."></canvas>
+      </div>
+      <div class="panels">
+        <div class="panel" data-lab-name="Loop inductance">
+          <span class="panel__label">Loop inductance</span>
+          <canvas data-cv="ind" role="img" aria-label="Loop inductance of the trace and its return, in nanohenries, against frequency from 10 hertz to 100 megahertz on a log scale, falling as the return gathers under the trace, with the curve from before your last change dashed."></canvas>
+          <div class="legend"><span><i style="background:var(--signal)"></i>now</span><span><i class="dash" style="color:var(--muted)"></i>before your change</span></div>
+        </div>
+        <div class="panel" data-lab-name="Return under the trace">
+          <span class="panel__label">Return under the trace</span>
+          <canvas data-cv="share" role="img" aria-label="Share of the return current within 2 millimetres of the trace, from 0 to 100 percent, against frequency, or against time after a step when the drive is a step."></canvas>
+          <div class="legend"><span><i style="background:var(--signal)"></i>now</span><span><i class="dash" style="color:var(--muted)"></i>before your change</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="side">
+    <div class="side__inner">
+    <div class="controls">
+      <div class="ctl">
+        <div class="ctl__head"><label for="rp-mode">Drive</label></div>
+        <select id="rp-mode"><option value="sine">A sine wave, swept in frequency</option><option value="step">A step of current, followed in time</option></select>
+      </div>
+      <div class="ctl">
+        <div class="ctl__head"><label for="rp-at" id="rp-at-label">Frequency</label><output id="rp-at-out" for="rp-at">10 Hz</output></div>
+        <input type="range" id="rp-at" min="0" max="43" step="1" value="0">
+        <span class="ctl__note"><button class="tool-btn" type="button" data-act="play">sweep</button></span>
+      </div>
+      <div class="ctl">
+        <div class="ctl__head"><label for="rp-h">Trace height over the plane</label></div>
+        <select id="rp-h"><option value="0">0.2 mm: a four-layer board</option><option value="1">1.5 mm: a two-layer board</option></select>
+      </div>
+    </div>
+    <div class="presets">
+      <button class="preset" type="button" data-preset="straight" aria-pressed="false">Straight</button>
+      <button class="preset" type="button" data-preset="corner" aria-pressed="false">Corner</button>
+      <button class="preset" type="button" data-preset="detour" aria-pressed="true">Long way round</button>
+      <button class="preset" type="button" data-preset="split" aria-pressed="false">Split plane</button>
+      <button class="preset" type="button" data-preset="splitcap" aria-pressed="false">Split + capacitor</button>
+      <button class="tool-btn" type="button" data-act="heal">heal the plane</button>
+    </div>
+    <div class="transport"><span data-out="note">—</span></div>
+    </div>
+    </div>
+    </div>
+  </section>
+
+  <div class="prose">
+
     <h2 class="section-rule"><span>What a split plane actually costs</span></h2>
 
     <p>
@@ -340,10 +466,56 @@
 
       <p>
         Finally, a useful way to think about a plane crossing. When the return meets a gap, ask
-        what loop it is now forced to take, and estimate that loop's inductance at about 1 nH per
-        millimetre of detour. Then compare ωL at your knee frequency with 50 Ω. That comparison
+        what loop it is now forced to take, and price the detour per millimetre. The scale to
+        remember is μ<sub>0</sub>/π, <span class="num">0.4 nH</span> per millimetre; a return that
+        detours through a wide plane costs a little less, because the copper is wide. The panel
+        above shows how much less. Set it to 100 MHz and compare <b>Straight</b> with <b>Split
+        plane</b>: the slot ends <span class="num">9.5 mm</span> past the trace, so the return runs
+        that far out and back, and the loop inductance rises by about 6 nH, roughly a third of a
+        nanohenry per millimetre. Then compare ωL at your knee frequency with 50 Ω. That comparison
         turns “is this gap a problem?” from a judgement into an arithmetic question you can answer
         at a review.
+      </p>
+
+      <h3>How the panel above works</h3>
+
+      <p>
+        It is a partial-element equivalent circuit (PEEC) solver, the same idea as FastHenry,
+        written small enough to run in the browser. Each square cell is joined to its neighbours by
+        short copper bars. Every bar has its resistance, taken from the surface impedance of a
+        35 &#181;m sheet, so it rises as &#8730;f once the skin depth is thinner than the copper. Every
+        bar also has a partial inductance to every other bar and to the trace above. Those
+        inductances are exact for thin rectangular tapes: the four-fold integral of 1/r over two
+        rectangles has a closed form. The unknowns are loop currents around the cell corners, so
+        current is conserved by construction. The solver asks only that the voltage around every
+        cell add up to zero.
+      </p>
+
+      <p>
+        Because the inductance between two bars depends only on how far apart they are, the whole
+        inductance matrix is one convolution, done by FFT. The system is solved iteratively, with a
+        preconditioner built from sine transforms, and a frequency takes a few iterations. A slot is
+        cells removed. A step is followed in time from its inductive limit at t = 0+ by backward
+        Euler, with the plane at its DC sheet resistance.
+      </p>
+
+      <p>
+        Its checks are independent of its code. Under a long straight trace at high frequency, it
+        puts half the return within &#177;h and 80% within &#177;3h, the image-theory Lorentzian
+        above, and its loop inductance matches the image-theory value within 2%. At DC the plane
+        current is identical whichever way the trace is routed, as it must be when only resistance
+        matters. Its inductance never rises with frequency and its resistance never falls, as in
+        any network of resistors and inductors. Halving the cell size changes the inductance by
+        less than 1%.
+      </p>
+
+      <p>
+        What it leaves out: there is one plane and no second reference; the trace current is
+        imposed rather than solved as a transmission line; and the model is quasi-static, so it
+        ignores travel time across the board. That is a fair approximation up to 100 MHz on a 60 mm
+        board, where the wavelength in FR-4 is about 25 times longer than the board. The band under
+        the trace is drawn no narrower than a 1 mm cell, even where the true band is narrower. Treat
+        it as a model of mechanism and proportion, not a sign-off number.
       </p>
     </details>
 
@@ -399,6 +571,10 @@
 </footer>
 
 <script src="../../js/site.js?v=61b8ff31" defer></script>
+<script src="../../js/viz-kit.js?v=10c584e5" defer></script>
+<script src="../../js/models/return-path-model.js?v=c5a23152" defer></script>
+<script src="../../js/viz/return-path.js?v=8d03f9bf" defer></script>
+<script src="../../js/viz-loader.js?v=cc26dfd9" defer></script>
 <script src="../../js/search.js?v=dcc1e06b" defer></script>
 </body>
 </html>

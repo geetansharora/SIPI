@@ -13,7 +13,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
 <link rel="stylesheet" href="../../css/base.css?v=1e3ae753">
-<link rel="stylesheet" href="../../css/components.css?v=d53a657c">
+<link rel="stylesheet" href="../../css/components.css?v=c532fdc4">
   <!-- meta:start -->
   <link rel="canonical" href="https://sipi.work/topics/power-integrity/ir-drop-electromigration.html">
   <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
@@ -31,7 +31,7 @@
   <meta name="twitter:description" content="The static half of power integrity: where the DC budget goes before any AC noise appears, and why current density is a reliability limit rather than a target.">
   <meta name="twitter:image" content="https://sipi.work/assets/og/power-integrity/ir-drop-electromigration.png">
   <meta name="twitter:image:alt" content="DC IR Drop and Electromigration: a figure from the page, on SIPI">
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"DC IR Drop and Electromigration","description":"The static half of power integrity: where the DC budget goes before any AC noise appears, and why current density is a reliability limit rather than a target.","url":"https://sipi.work/topics/power-integrity/ir-drop-electromigration.html","articleSection":"Power Integrity","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer","url":"https://www.linkedin.com/in/geetansh-arora-a645714a/","sameAs":["https://www.linkedin.com/in/geetansh-arora-a645714a/"]},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-09-14","image":"https://sipi.work/assets/og/power-integrity/ir-drop-electromigration.png"}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"DC IR Drop and Electromigration","description":"The static half of power integrity: where the DC budget goes before any AC noise appears, and why current density is a reliability limit rather than a target.","url":"https://sipi.work/topics/power-integrity/ir-drop-electromigration.html","articleSection":"Power Integrity","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer","url":"https://www.linkedin.com/in/geetansh-arora-a645714a/","sameAs":["https://www.linkedin.com/in/geetansh-arora-a645714a/"]},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-10-24","image":"https://sipi.work/assets/og/power-integrity/ir-drop-electromigration.png"}</script>
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"SIPI","item":"https://sipi.work/"},{"@type":"ListItem","position":2,"name":"Power Integrity","item":"https://sipi.work/#power-integrity"},{"@type":"ListItem","position":3,"name":"DC IR Drop and Electromigration"}]}</script>
   <!-- meta:end -->
 </head>
@@ -54,7 +54,7 @@
     <p class="crumb"><a href="../../index.html#power-integrity">Power Integrity</a> / 07</p>
     <h1>DC IR Drop and Electromigration</h1>
     <p class="byline">
-      <!-- review:start --><span>By <a href="https://www.linkedin.com/in/geetansh-arora-a645714a/" target="_blank" rel="author noopener">Geetansh Arora</a> — Principal SI/PI Engineer</span><time datetime="2026-09-14" title="Technical review by Geetansh Arora on this date">14 Sep 2026</time><span>9 min</span><!-- review:end -->
+      <!-- review:start --><span>By <a href="https://www.linkedin.com/in/geetansh-arora-a645714a/" target="_blank" rel="author noopener">Geetansh Arora</a> — Principal SI/PI Engineer</span><time datetime="2026-10-24" title="Technical review by Geetansh Arora on this date">24 Oct 2026</time><span>9 min</span><!-- review:end -->
     </p>
     <!-- share:head:start --><div class="share share--head" data-share data-share-url="https://sipi.work/topics/power-integrity/ir-drop-electromigration.html" data-share-title="DC IR Drop and Electromigration"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Fpower-integrity%2Fir-drop-electromigration.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Fpower-integrity%2Fir-drop-electromigration.html&amp;text=DC%20IR%20Drop%20and%20Electromigration" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=DC%20IR%20Drop%20and%20Electromigration&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Fpower-integrity%2Fir-drop-electromigration.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:head:end -->
     <p class="answer">
@@ -151,6 +151,121 @@
       current density everywhere and still have a handful of balls carrying several times their share.
       The average is not the check; the map is.
     </div>
+
+    <h2 class="section-rule" id="swiss-cheese"><span>Watch the plane turn to Swiss cheese</span></h2>
+
+    <p>
+      Here is that map, solved as you change it. The panel below is a power plane in 1&nbsp;oz copper,
+      fed along its left edge by the regulator, under one corner of a BGA at 1&nbsp;mm pitch. In the
+      middle of the array is the core: power vias, in blue, alternating with ground vias. Around it
+      are two rings of signal and ground vias. Every via that is not a power via passes through the
+      plane in a clearance hole, its <b>antipad</b>, and every amp for the core has to find its way
+      between those holes.
+    </p>
+
+    <p>
+      Before you touch anything, predict what happens when the holes grow. The copper left between
+      two neighbouring holes is a neck, as wide as the pitch minus the antipad diameter: at a
+      0.9&nbsp;mm antipad on a 1&nbsp;mm pitch that is <span class="num">0.1 mm</span> of copper. Slide
+      the antipad diameter and watch three things. The shading is current density as a multiple of
+      the open plane to the left of the array, where 20&nbsp;A in this sheet is about
+      <span class="num">49 A/mm&#178;</span>. The grey lines are equipotentials, and they bunch
+      wherever the voltage is being lost. The plot below the map traces the drop against hole size,
+      with your budget across it.
+    </p>
+
+    <p>
+      The drop does not rise steadily. It barely moves while the necks are wide, then climbs ever
+      faster as they close, because the resistance of a neck grows without limit as its width goes
+      to zero. When the holes are as wide as the pitch they touch, the rings become a wall, and the
+      core is cut off from the regulator altogether. On a real board this is easy to miss, because a
+      layer plot zoomed out to the whole package shows the plane as continuous; the walls only
+      appear at the scale of the necks.
+    </p>
+
+    <p>
+      The second plot is the other half of the lesson. Even with no antipads at all, the power vias
+      nearest the regulator carry more than their share, because their path is shorter. As the
+      necks close, that imbalance grows. Then <b>tap a via</b> on the map to change it: a ground or
+      signal via becomes an empty site, an empty site becomes a power via, and a power via becomes
+      ground. Clear a lane through the rings, or press <b>Feed channel</b>, and see what a gap in the
+      right place is worth. Then push the antipads to 1&nbsp;mm and watch the lane keep the core
+      connected after the rest of the ring has closed. This is the &#8220;fix crowding with
+      geometry&#8221; advice below, made concrete.
+    </p>
+
+  </div>
+
+  <!-- mobilenote:start -->
+  <p class="mobile-note" role="note">
+    <b>Best viewed on a laptop or desktop.</b>
+    These panels are built so you can move a slider and watch several charts
+    answer at once. A phone has no room to put them side by side.
+  </p>
+  <!-- mobilenote:end -->
+  <section class="instrument instrument--side" data-viz="irPlane" aria-label="Interactive DC solver of a power plane under a BGA: grow the antipads round the ground and signal vias and watch the necks of copper between them carry more and more current density, the IR drop climb past a budget, and the power vias share the load unevenly; tap a via to change it">
+    <script type="application/json" data-contract>{"kind":"numerical","evidence":"independent","purpose":"Show how antipads round the ground and signal vias of a BGA turn a power plane into Swiss cheese: the copper necks between them crowd the current, the DC drop climbs past a budget as they close, the power vias share the load unevenly, and when neighbouring holes touch the core is cut off.","equations":["every cell: sum over its faces of g (V_cell - V_neighbour) = 0","a face: g = (t / rho) * copper length on the face / cell size, the copper length exact against every antipad circle","feed edge: g = 2 (t / rho) * copper on the edge / cell size, at the regulator's potential","a power via: g = 1 / (R_barrel + R_ball) from its pad to the package; R_barrel = rho L / (pi (D - t_plating) t_plating), R_ball = rho_SAC h / area","the package draws I; every result scales with I","neck density J = I_neck / ((pitch - d) t)"],"units":"mm, A, mV, A/mm^2","validity":"DC: no inductance, no frequency dependence. Copper at room temperature, resistance independent of current.","numerics":"Square cells of 0.2 mm, 100 x 59; a cut-cell finite-volume scheme in which each face conductance is the copper actually on it. Copper not connected to the feed is dropped. Symmetric positive-definite system solved by conjugate gradients with an incomplete Cholesky preconditioner to a relative residual of 1e-8. The drop sweep is solved at 19 antipad sizes, at 1 A and scaled.","limitations":"One plane and one rail; no parallel planes, no return rail. The regulator is an ideal edge and the package an ideal node. No Joule heating, so no rise of resistance in hot necks. The via barrel and ball are lumped resistances from their geometry. Mechanism and proportion, not a sign-off number.","suites":["IR plane"],"version":"1.0","reviewed":"2026-10-24","panel":"irPlane"}</script>
+    <div class="instrument__bar">
+      <span class="instrument__title">Swiss cheese: a plane under a BGA</span>
+      <span data-evidence="independent" data-model-version="1.0" class="model-tag model-tag--numerical">numerical</span>
+      <span class="instrument__readout readout--fixed" role="status" aria-live="off" aria-label="Current values">
+        <span>plane drop <b data-out="drop" style="min-width:12ch">—</b></span>
+        <span>budget <b data-out="budget" style="min-width:15ch">—</b></span>
+        <span>worst neck <b data-out="neck" style="min-width:20ch">—</b></span>
+        <span>busiest via <b data-out="via" style="min-width:9ch">—</b></span>
+      </span>
+    </div>
+    <div class="side-layout">
+    <div class="panels">
+      <div class="panel" data-lab-name="The plane">
+        <span class="panel__label">Current density in the plane &#183; tap a via to change it</span>
+        <canvas data-cv="map" role="img" aria-label="A power plane seen from above, fed along its left edge, under a ten by ten array of vias at 1 millimetre pitch. Clearance holes surround the ground and signal vias; the power vias in the core are blue discs shaded by the current each carries. The plane is shaded by current density, darkest and red in the narrow necks between holes, with grey equipotential lines that bunch where the voltage is lost."></canvas>
+      </div>
+      <div class="panels two-up">
+        <div class="panel" data-lab-name="Antipad sweep">
+          <span class="panel__label">Antipad sweep &#183; plane drop</span>
+          <canvas data-cv="drop" role="img" aria-label="Plane IR drop in millivolts against antipad diameter, flat for small holes and climbing steeply as the necks close, with the budget as a dashed line, the drop of a solid plane as a dotted line, and the region where the holes touch and the core is cut off shaded."></canvas>
+        </div>
+        <div class="panel" data-lab-name="Via sharing">
+          <span class="panel__label">Via sharing &#183; load per power via</span>
+          <canvas data-cv="vias" role="img" aria-label="Current in each power via, sorted from the busiest, as bars against a dashed line for an even share; the vias nearest the regulator carry the most."></canvas>
+        </div>
+      </div>
+    </div>
+    <div class="side">
+    <div class="side__inner">
+    <div class="controls">
+      <div class="ctl">
+        <div class="ctl__head"><label for="ir-d">Antipad diameter</label><output id="ir-d-out" for="ir-d">0.70 mm</output></div>
+        <input type="range" id="ir-d" min="0.3" max="1.05" step="0.01" value="0.7">
+      </div>
+      <div class="ctl">
+        <div class="ctl__head"><label for="ir-i">Load current</label><output id="ir-i-out" for="ir-i">20 A</output></div>
+        <input type="range" id="ir-i" min="5" max="60" step="1" value="20">
+      </div>
+      <div class="ctl">
+        <div class="ctl__head"><label for="ir-oz">Plane copper</label></div>
+        <select id="ir-oz"><option value="0.5">&#189; oz (17 &#181;m)</option><option value="1" selected>1 oz (35 &#181;m)</option><option value="2">2 oz (70 &#181;m)</option></select>
+      </div>
+      <div class="ctl">
+        <div class="ctl__head"><label for="ir-budget">Budget for this plane</label><output id="ir-budget-out" for="ir-budget">15 mV</output></div>
+        <input type="range" id="ir-budget" min="2" max="40" step="1" value="15">
+      </div>
+    </div>
+    <div class="presets">
+      <button class="preset" type="button" data-preset="generous" aria-pressed="false">Generous</button>
+      <button class="preset" type="button" data-preset="typical" aria-pressed="true">Typical</button>
+      <button class="preset" type="button" data-preset="swiss" aria-pressed="false">Swiss cheese</button>
+      <button class="preset" type="button" data-preset="cutoff" aria-pressed="false">Cut off</button>
+      <button class="preset" type="button" data-preset="channel" aria-pressed="false">Feed channel</button>
+    </div>
+    <div class="transport"><span data-out="note">—</span></div>
+    </div>
+    </div>
+    </div>
+  </section>
+
+  <div class="prose">
 
     <h2 class="section-rule"><span>Electromigration: the same current, a different failure</span></h2>
 
@@ -287,6 +402,53 @@
         line carrying balanced AC is largely exempt at the same RMS density. That asymmetry is why
         power delivery gets the reliability scrutiny and signal routing usually does not.
       </p>
+
+      <h3>How the panel above works</h3>
+
+      <p>
+        <strong>The plane.</strong> At DC a copper plane is a sheet of resistance, and its thickness
+        sets the resistance of one square of it, of any size: R<sub>s</sub> = &#961;/t. For 1&nbsp;oz
+        copper, 35&nbsp;&#181;m thick, that is <span class="num">0.49 m&#937;</span> per square. The
+        solver cuts the plane into cells 0.2&nbsp;mm across and joins each to its neighbours with a
+        conductance set by how much copper the face between them actually has. That length is
+        computed exactly against the circle of every antipad, so a neck narrower than a cell still
+        has its true width. Kirchhoff&#8217;s current law at every cell gives a set of linear
+        equations, solved by conjugate gradients.
+      </p>
+
+      <div class="eq">
+        <i class="var">g</i><sub>face</sub> = ( <i class="var">t</i> / <i class="var">&#961;</i> ) &#183; <i class="var">copper on the face</i> / <i class="var">cell size</i>, &nbsp;&nbsp; &#931; <i class="var">g</i> ( <i class="var">V</i><sub>cell</sub> &#8722; <i class="var">V</i><sub>neighbour</sub> ) = 0
+        <span class="cap">One equation per cell. The regulator holds the left edge at its set point; the package draws the load current through the power vias.</span>
+      </div>
+
+      <p>
+        <strong>The vias.</strong> Each power via&#8217;s pad is one node in the plane. Below it is a
+        plated barrel, 0.25&nbsp;mm drilled with 25&nbsp;&#181;m of copper, about
+        <span class="num">0.97 m&#937;</span> per millimetre of length, and a solder ball of roughly
+        <span class="num">0.33 m&#937;</span>. All of them meet at the package, which is treated as one
+        node. That is why the via shares depend on the plane: a via with a shorter, wider path
+        through the copper sees less resistance in series with the same barrel, so it takes more
+        current.
+      </p>
+
+      <p>
+        <strong>The numbers it reports.</strong> The drop is from the regulator&#8217;s edge to the
+        worst power via pad, in the plane alone, not through the barrel and ball. The neck density
+        is the current through the narrowest copper between two neighbouring antipads, divided by
+        its width and the copper thickness: a mean across the neck, which converges as the grid is
+        refined, rather than the peak at its edges, which on a fine enough grid would not. The
+        solver has been checked against an exact uniform strip and against the known extra
+        resistance of one small round hole in a strip, and the 0.2&nbsp;mm grid agrees with a grid
+        four times finer to within a percent or two.
+      </p>
+
+      <p>
+        <strong>What it leaves out.</strong> One plane and one rail; a real board has several planes
+        in parallel and the other rail&#8217;s return beside it. The regulator is a perfect edge, the
+        package is a perfect node, and copper resistance does not rise as the necks heat, which at
+        the densities the narrowest necks reach it would. Mechanism and proportion, not a sign-off
+        number.
+      </p>
     </details>
 
     <h2 class="section-rule"><span>In the real world</span></h2>
@@ -339,6 +501,10 @@
 </footer>
 
 <script src="../../js/site.js?v=61b8ff31" defer></script>
+<script src="../../js/viz-kit.js?v=10c584e5" defer></script>
+<script src="../../js/models/ir-plane-model.js?v=7f02db65" defer></script>
+<script src="../../js/viz/ir-plane.js?v=c1545e9f" defer></script>
+<script src="../../js/viz-loader.js?v=cc26dfd9" defer></script>
 <script src="../../js/search.js?v=dcc1e06b" defer></script>
 </body>
 </html>

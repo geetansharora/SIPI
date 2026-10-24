@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://sipi.work/</loc><lastmod>2026-10-23</lastmod></url>
+  <url><loc>https://sipi.work/</loc><lastmod>2026-10-24</lastmod></url>
   <url><loc>https://sipi.work/topics/groundwork/units-and-conventions.html</loc><lastmod>2026-09-12</lastmod></url>
   <url><loc>https://sipi.work/topics/groundwork/domain-bridges.html</loc><lastmod>2026-09-12</lastmod></url>
   <url><loc>https://sipi.work/topics/fundamentals/edge-rate-not-clock-rate.html</loc><lastmod>2026-09-26</lastmod></url>
@@ -9,7 +9,7 @@
   <url><loc>https://sipi.work/topics/fundamentals/reflections.html</loc><lastmod>2026-09-26</lastmod></url>
   <url><loc>https://sipi.work/topics/fundamentals/tdr.html</loc><lastmod>2026-10-01</lastmod></url>
   <url><loc>https://sipi.work/topics/fundamentals/termination-schemes.html</loc><lastmod>2026-09-12</lastmod></url>
-  <url><loc>https://sipi.work/topics/fundamentals/return-current-paths.html</loc><lastmod>2026-09-12</lastmod></url>
+  <url><loc>https://sipi.work/topics/fundamentals/return-current-paths.html</loc><lastmod>2026-10-24</lastmod></url>
   <url><loc>https://sipi.work/topics/fundamentals/crosstalk.html</loc><lastmod>2026-09-26</lastmod></url>
   <url><loc>https://sipi.work/topics/fundamentals/capacitive-inductive-coupling.html</loc><lastmod>2026-09-25</lastmod></url>
   <url><loc>https://sipi.work/topics/fundamentals/loss-mechanisms.html</loc><lastmod>2026-09-26</lastmod></url>
@@ -26,7 +26,7 @@
   <url><loc>https://sipi.work/topics/power-integrity/anti-resonance.html</loc><lastmod>2026-09-26</lastmod></url>
   <url><loc>https://sipi.work/topics/power-integrity/three-frequency-domains.html</loc><lastmod>2026-09-14</lastmod></url>
   <url><loc>https://sipi.work/topics/power-integrity/plane-resonance.html</loc><lastmod>2026-09-26</lastmod></url>
-  <url><loc>https://sipi.work/topics/power-integrity/ir-drop-electromigration.html</loc><lastmod>2026-09-14</lastmod></url>
+  <url><loc>https://sipi.work/topics/power-integrity/ir-drop-electromigration.html</loc><lastmod>2026-10-24</lastmod></url>
   <url><loc>https://sipi.work/topics/power-integrity/ssn-ground-bounce.html</loc><lastmod>2026-10-01</lastmod></url>
   <url><loc>https://sipi.work/topics/power-integrity/pdn-induced-jitter.html</loc><lastmod>2026-10-10</lastmod></url>
   <url><loc>https://sipi.work/topics/power-integrity/vrm-loop-bandwidth.html</loc><lastmod>2026-09-26</lastmod></url>
@@ -59,7 +59,7 @@
   <url><loc>https://sipi.work/topics/interfaces/usb-3x.html</loc><lastmod>2026-10-18</lastmod></url>
   <url><loc>https://sipi.work/topics/interfaces/ufs4.html</loc><lastmod>2026-10-18</lastmod></url>
   <url><loc>https://sipi.work/topics/methodology/simulation-flow.html</loc><lastmod>2026-09-18</lastmod></url>
-  <url><loc>https://sipi.work/topics/methodology/field-solvers.html</loc><lastmod>2026-09-18</lastmod></url>
+  <url><loc>https://sipi.work/topics/methodology/field-solvers.html</loc><lastmod>2026-10-24</lastmod></url>
   <url><loc>https://sipi.work/topics/methodology/correlation.html</loc><lastmod>2026-09-18</lastmod></url>
   <url><loc>https://sipi.work/topics/methodology/reporting-margin.html</loc><lastmod>2026-09-18</lastmod></url>
   <url><loc>https://sipi.work/topics/methodology/debug-playbook.html</loc><lastmod>2026-09-18</lastmod></url>
@@ -80,11 +80,11 @@
   <url><loc>https://sipi.work/topics/tools/plane-cavity-resonance.html</loc><lastmod>2026-09-24</lastmod></url>
   <url><loc>https://sipi.work/topics/tools/mounting-inductance.html</loc><lastmod>2026-09-24</lastmod></url>
   <url><loc>https://sipi.work/topics/tools/line-impedance.html</loc><lastmod>2026-09-24</lastmod></url>
-  <url><loc>https://sipi.work/start.html</loc><lastmod>2026-10-23</lastmod></url>
+  <url><loc>https://sipi.work/start.html</loc><lastmod>2026-10-24</lastmod></url>
   <url><loc>https://sipi.work/labs.html</loc><lastmod>2026-10-10</lastmod></url>
   <url><loc>https://sipi.work/calculators.html</loc><lastmod>2026-09-24</lastmod></url>
-  <url><loc>https://sipi.work/reference.html</loc><lastmod>2026-10-23</lastmod></url>
-  <url><loc>https://sipi.work/model-contract.html</loc><lastmod>2026-10-23</lastmod></url>
+  <url><loc>https://sipi.work/reference.html</loc><lastmod>2026-10-24</lastmod></url>
+  <url><loc>https://sipi.work/model-contract.html</loc><lastmod>2026-10-24</lastmod></url>
   <url><loc>https://sipi.work/colophon.html</loc></url>
   <url><loc>https://sipi.work/interview.html</loc><lastmod>2026-10-15</lastmod></url>
   <url><loc>https://sipi.work/interview-signal-integrity.html</loc><lastmod>2026-10-15</lastmod></url>

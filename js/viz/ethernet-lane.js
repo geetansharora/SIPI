@@ -107,8 +107,16 @@
     }));
     root.querySelector('.preset[data-preset="low10"]').setAttribute('aria-pressed', 'true');
     $('[data-out="note"]').textContent = PRESETS.low10.note;
+    // Room for the longest note, so pressing a preset changes the words, not the panel's height.
+    const notes = Object.values(PRESETS).map((q) => q.note).concat(['Custom']);
+    const reserve = () => K.reserveText($('[data-out="note"]'), notes);
+    reserve();
+    window.addEventListener('resize', reserve);
+    // A tab switch asks for pixels; without this the loader nudges the laminate select
+    // and the panel drops its preset.
+    const offRepaint = K.onRepaint(root, () => mnt.render());
     mnt.render();
-    return { start() {}, stop() {}, destroy() { mnt.teardown(); } };
+    return { start() {}, stop() {}, destroy() { window.removeEventListener('resize', reserve); offRepaint(); mnt.teardown(); } };
   };
   NS.viz.ethLane.PRESETS = PRESETS;
   NS.viz.ethLane.GRID = { LAMS, RQ, LEN, BUDGET };

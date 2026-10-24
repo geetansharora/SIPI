@@ -249,15 +249,21 @@
           "slug": "return-current-paths",
           "title": "Return Current Paths: Reference Planes, Splits and Gaps",
           "status": "live",
+          "viz": "returnPath",
           "keywords": [
             "return path",
             "ground",
             "split plane",
             "reference plane",
             "stitching via",
-            "loop area"
+            "loop area",
+            "return current animation",
+            "PEEC",
+            "least inductance",
+            "split crossing"
           ],
-          "reviewed": "2026-09-12",
+          "updated": "2026-10-24",
+          "reviewed": "2026-10-24",
           "reviewer": "Geetansh Arora"
         },
         {
@@ -547,15 +553,24 @@
           "slug": "ir-drop-electromigration",
           "title": "DC IR Drop and Electromigration",
           "status": "live",
+          "viz": "irPlane",
           "keywords": [
             "IR drop",
             "DC drop",
             "EM",
             "electromigration",
             "current density",
-            "Blacks equation"
+            "Blacks equation",
+            "antipad",
+            "swiss cheese",
+            "plane perforation",
+            "current crowding",
+            "neck",
+            "BGA breakout",
+            "sheet resistance"
           ],
-          "reviewed": "2026-09-14",
+          "updated": "2026-10-24",
+          "reviewed": "2026-10-24",
           "reviewer": "Geetansh Arora"
         },
         {
@@ -1546,6 +1561,7 @@
           "slug": "field-solvers",
           "title": "Field Solvers for SI/PI: 2D, 2.5D, and 3D",
           "status": "live",
+          "viz": "crossSection",
           "keywords": [
             "2D",
             "2.5D",
@@ -1555,9 +1571,16 @@
             "MoM",
             "FDTD",
             "hybrid",
-            "mesh"
+            "mesh",
+            "mesh convergence",
+            "2D field solver animation",
+            "cross-section",
+            "Laplace",
+            "Cohn",
+            "boundary"
           ],
-          "reviewed": "2026-09-18",
+          "updated": "2026-10-24",
+          "reviewed": "2026-10-24",
           "reviewer": "Geetansh Arora"
         },
         {

@@ -667,7 +667,7 @@
        spatial plot: it is the one that looks like a scope, it is what the time
        scrubber drives, and it is the only view whose meaning survives being 356 px
        wide. The wide layout shows every panel, so this only decides the phone. */
-    const defaults = { labWaves: 'probe', labChannel: 'eye', labPdn: 'z', cdr: 'transfer', coupling: 'time', adcLab: 'spectrum', tdr: 'profile', ddr5: 'eye', ddr5Flyby: 'dimm', lpddr6: 'wide', lpddr6Packet: 'packet' };
+    const defaults = { labWaves: 'probe', labChannel: 'eye', labPdn: 'z', cdr: 'transfer', coupling: 'time', adcLab: 'spectrum', tdr: 'profile', ddr5: 'eye', ddr5Flyby: 'dimm', lpddr6: 'wide', lpddr6Packet: 'packet', crossSection: 'section', irPlane: 'map', returnPath: 'board' };
 
     /* Controls that earn a place directly under the chart on a phone, by lab.
        A lab with no entry keeps its rails as they are. Every set here was chosen
@@ -708,7 +708,16 @@
          noise is what closes PAM4 first, and loss is what punishes faster NRZ. */
       lpddr6: ['l6-rate', 'l6-noise', 'l6-loss'],
       /* Under the burst: what is sent, what the last 16 bits do, and how long a bit lasts. */
-      lpddr6Packet: ['pk-pattern', 'pk-mode', 'pk-rate']
+      lpddr6Packet: ['pk-pattern', 'pk-mode', 'pk-rate'],
+      /* Under the cross-section, one per view (Geetansh, 24 Oct): width moves the answer,
+         the mesh is the convergence plot's lesson, the walls are the boundary plot's. */
+      crossSection: ['xs-w', 'xs-mesh', 'xs-box'],
+      /* Under the plane: the antipad is the Swiss cheese, copper weight is the remedy,
+         and the load current scales everything with it. */
+      irPlane: ['ir-d', 'ir-oz', 'ir-i'],
+      /* The panel has only these three: what drives the trace, at what frequency, and
+         how far above the plane it runs. */
+      returnPath: ['rp-mode', 'rp-at', 'rp-h']
     };
     if (!(el.dataset.viz in defaults)) return;
     const K = window.SIPI.kit;
@@ -741,7 +750,7 @@
       option.value = String(i);
       /* These name their own panels; the table above predates that and
          would call their 'time', 'spec' and 'sweep' something else. */
-      const own = ['coupling', 'adcLab', 'tdr', 'ddr5', 'ddr5Flyby', 'lpddr6', 'lpddr6Packet'].includes(el.dataset.viz) && panel.dataset.labName;
+      const own = ['coupling', 'adcLab', 'tdr', 'ddr5', 'ddr5Flyby', 'lpddr6', 'lpddr6Packet', 'crossSection', 'irPlane', 'returnPath'].includes(el.dataset.viz) && panel.dataset.labName;
       option.textContent = own || titles[cv.dataset.cv] || (caption ? caption.textContent : cv.getAttribute('aria-label') || cv.dataset.cv).trim().split(/[—.]/)[0];
       select.appendChild(option);
       if (cv.dataset.cv === defaults[el.dataset.viz]) active = i;
@@ -772,7 +781,10 @@
       ddr5: [['wc', 'Worst case'], ['taps', 'DFE taps']],
       ddr5Flyby: [['skew', 'First to last'], ['zl', 'Loaded line']],
       lpddr6: [['wide', 'Wide NRZ left'], ['pam4', 'PAM4 left']],
-      lpddr6Packet: [['ones', 'Ones sent'], ['energy', 'Energy']] }[el.dataset.viz];
+      lpddr6Packet: [['ones', 'Ones sent'], ['energy', 'Energy']],
+      crossSection: [['z', 'Solved'], ['lim', 'Limit']],
+      irPlane: [['drop', 'Plane drop'], ['neck', 'Worst neck']],
+      returnPath: [['L', 'Loop L'], ['band', 'Within 2 mm']] }[el.dataset.viz];
     const outputs = fields.map(([key, title]) => {
       const source = el.querySelector('[data-out="' + key + '"]');
       const item = document.createElement('span');

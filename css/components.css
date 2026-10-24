@@ -102,9 +102,23 @@
 .instrument__title { font-family: var(--font-mono); font-size: .74rem; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2); }
 .instrument__readout { font-family: var(--font-mono); font-size: .74rem; color: var(--muted); font-variant-numeric: tabular-nums; display: flex; gap: var(--s4); flex-wrap: wrap; }
 .instrument__readout b { color: var(--ink); font-weight: 500; }
+/* Readouts whose text changes length as the reader drags: each value keeps the width of its
+   longest form (set per value in ch), so the bar never re-wraps and shifts the panel below it. */
+.readout--fixed b, .readout--fixed [data-out="zname"] { display: inline-block; text-align: left; }
+/* Not on a phone, where the bar scrolls with the page: there the reserved widths put each
+   readout on a line of its own, and a reflow costs nothing (Geetansh, 24 Oct 2026). */
+@media (max-width: 47.99rem) {
+  .readout--fixed b, .readout--fixed [data-out] { min-width: 0 !important; }
+}
+/* A control that does not apply to the current structure stays in place, greyed, rather than
+   disappearing: hiding it would change the height of the column and move the panel. */
+.ctl.is-off { opacity: .4; }
 
 .panels { display: grid; gap: 1px; background: var(--border-soft); }
 @media (min-width: 62rem) { .panels.two-up { grid-template-columns: 1fr 1fr; } }
+/* A picture with two plots beside it on a laptop, the picture at full height on the
+   left and the plots stacked on the right. Stacks like any other panel below 62rem. */
+@media (min-width: 62rem) { .panels.beside { grid-template-columns: minmax(0, 1fr) minmax(15rem, 36%); } }
 .panel { background: var(--surface); padding: var(--s4); min-width: 0; display: flex; flex-direction: column; gap: var(--s2); }
 .panel__label { font-family: var(--font-mono); font-size: .7rem; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
 /* pan-y, not none. `touch-action: none` on every plot meant a finger landing on a
@@ -179,9 +193,22 @@
   .instrument--side .side { display: flex; flex-direction: column; background: var(--surface); min-width: 0; }
   .instrument--side .side .controls { grid-template-columns: 1fr; gap: var(--s3); border-top: 0; padding: var(--s3) var(--s4); }
   .instrument--side .side .presets { padding-top: 0; display: grid; grid-template-columns: 1fr 1fr; }
+  .instrument--side .side .controls--pairs { grid-template-columns: 1fr 1fr; column-gap: var(--s3); }
+  /* A wider side column for an instrument with paired controls, so a short label, its number
+     box and its unit share one line in each half. */
+  .instrument--side.side--wide .side-layout { grid-template-columns: minmax(0, 1fr) 20rem; }
+  .instrument--side .side .controls--pairs .ctl__head { gap: var(--s1); }
+  .instrument--side .side .controls--pairs .ctl__head label { margin-right: auto; white-space: nowrap; }
+  .instrument--side .side .controls--pairs select { width: 100%; min-width: 0; }
+  .instrument--side .side .controls--pairs .ctl__num { width: 3rem; }
+  .instrument--side .side .controls--pairs .ctl__unit { margin-left: 0; }
   /* When the plots are taller than the screen, the controls ride along beside them. */
   .instrument--side .side__inner { position: sticky; top: 0; }
   .instrument--side .panel { padding: var(--s2) var(--s4) var(--s3); gap: var(--s1); }
+  /* The preset's note is small mono text in a narrow column, not article prose: at the
+     body's 1.68 a four-line note took 80 px and held the Ethernet panel 16 px past a
+     1280 x 610 screen. */
+  .instrument--side .side .transport { line-height: 1.45; }
   /* The tall-panel rule pins controls to the screen's bottom edge; beside the plots
      they are already in view, so they stay where they are. */
   .instrument--side.is-tall .side .controls,
@@ -552,14 +579,36 @@ dialog.searchbox::backdrop { background: rgba(4, 8, 11, .58); }
 
 /* select control — same visual weight as a slider's row, for discrete choices
    where a range input would imply a continuum that does not exist */
-.ctl .sel {
-  width: 100%;
-  font-family: var(--font-mono); font-size: .76rem;
-  background: var(--surface-2); color: var(--ink);
+/* One dropdown for the whole site. Left to the browser, a select drew in the system
+   font with a black outline and a platform arrow, which read as a form field dropped
+   into an instrument (Geetansh, 24 Oct 2026: "looks basic"). It now takes the mono
+   face, the border and surface of the number boxes beside it, and a caret drawn from
+   two gradients, so it themes from the tokens with no image. :where() keeps it at
+   zero specificity; a component that needs another size sets only the size, and must
+   not use the `background` shorthand, which would wipe the caret. */
+:where(select) {
+  -webkit-appearance: none; appearance: none;
+  box-sizing: border-box; max-width: 100%; min-height: 1.9rem;
+  padding: .3rem 1.9rem .3rem .55rem;
+  font: .76rem/1.3 var(--font-mono); color: var(--ink);
+  background-color: var(--surface-2);
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--muted) 50%),
+    linear-gradient(135deg, var(--muted) 50%, transparent 50%);
+  background-position: right .95rem center, right .65rem center;
+  background-size: .3rem .3rem; background-repeat: no-repeat;
   border: 1px solid var(--border); border-radius: var(--radius);
-  padding: .3rem .4rem;
+  text-overflow: ellipsis; cursor: pointer;
+  transition: border-color .12s;
 }
-.ctl .sel:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
+:where(select):hover { border-color: var(--ink-2); }
+:where(select):focus-visible { outline: 2px solid var(--signal); outline-offset: 1px; border-color: var(--signal); }
+:where(select):disabled { cursor: not-allowed; color: var(--muted); border-color: var(--border-soft); }
+:where(select) option { color: var(--ink); background-color: var(--surface); }
+@media (max-width: 47.99rem) {
+  :where(select) { min-height: 2.75rem; font-size: .8rem; }   /* a finger, not a pointer */
+}
+.ctl .sel { width: 100%; }
 
 /* ---------- model badge ----------
    Every panel states what kind of model produced it. Astra's review: "computed",
@@ -1068,11 +1117,7 @@ dialog.searchbox::backdrop { background: rgba(4, 8, 11, .58); }
     font: .72rem var(--font-mono);
   }
   .workspace-picker label { flex: none; color: var(--muted); }
-  .workspace-picker select {
-    min-width: 0; width: 100%; padding: .5rem .3rem; font: inherit;
-    background: var(--surface-2); color: var(--ink); border: 1px solid var(--border); border-radius: 3px;
-  }
-  .workspace-picker select:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
+  .workspace-picker select { min-width: 0; width: 100%; }
 }
 @media (min-width: 48rem) {
   .controls-toggle { display: none; }
@@ -1368,11 +1413,12 @@ dialog.searchbox::backdrop { background: rgba(4, 8, 11, .58); }
 /* A prediction is a learner interaction, outside the physical control set. */
 .arrival-prediction { gap: .65rem; border-top: 1px solid var(--border); }
 .arrival-prediction p { font: 0.9rem/1.6 var(--font-display); margin: 0; max-width: 75ch; }
-.arrival-prediction button, .arrival-prediction select {
+.arrival-prediction button {
   font: 0.85rem/1.4 var(--font-display); color: var(--ink); background: var(--surface-2);
   border: 1px solid var(--border); border-radius: 4px; padding: .6rem .8rem;
   min-height: 44px; width: fit-content; max-width: 100%;
 }
+.arrival-prediction select { min-height: 44px; width: fit-content; max-width: 100%; }
 .arrival-prediction button { cursor: pointer; }
 .arrival-prediction button:disabled { opacity: .55; cursor: default; }
 .arrival-prediction button:focus-visible, .arrival-prediction select:focus-visible {
@@ -1430,7 +1476,7 @@ dialog.searchbox::backdrop { background: rgba(4, 8, 11, .58); }
 .topology-node:focus-visible { outline: 2px solid var(--signal); outline-offset: 3px; }
 
 /* Shared styling for model-owned inspection selectors. */
-.decision-controls select { min-height: 44px; max-width: 100%; padding: .4rem .6rem; color: var(--ink); background: var(--surface-2); border: 1px solid var(--border); border-radius: 3px; font: inherit; }
+.decision-controls select { min-height: 44px; max-width: 100%; }
 .decision-term-selected { background: var(--surface-2); outline: 1px solid var(--reflect); outline-offset: -1px; }
 
 /* Short learning sequences beside the live evidence. */
@@ -1906,6 +1952,10 @@ html.lab-lock, html.lab-lock body { overflow: hidden; }
   .lab-primary > .ctl { margin: 0; }
   .lab-primary .ctl__head { display: flex; align-items: baseline; justify-content: space-between; gap: var(--s3); }
   .lab-primary input[type="range"] { width: 100%; min-height: 24px; }
+  /* A side-layout panel (field solver, IR plane, return path) has no stage around the
+     track to inset it, so the charts and the three controls take the panel's own gutter. */
+  .instrument--side .lab-swipe > .panel { padding: 0 var(--s4); }
+  .instrument--side .lab-primary { padding-inline: var(--s4); padding-bottom: var(--s3); }
 }
 
 @media (max-width: 74.99rem) {
@@ -2064,12 +2114,7 @@ html.lab-lock, html.lab-lock body { overflow: hidden; }
 /* The Laminate preset: a select, and under it the data sheet the values came
    from. The source line is not a hint -- it stays on a laptop, because a number
    attributed to a data sheet must show which one, at what frequency. */
-.calc-in__sel {
-  box-sizing: border-box; min-width: 0; min-height: 32px; max-width: 13rem; padding: .2rem .4rem;
-  color: var(--ink); background: var(--surface-2);
-  border: 1px solid var(--border); border-radius: 3px; font: .76rem var(--font-mono);
-}
-.calc-in__sel:focus-visible { outline: 2px solid var(--signal); outline-offset: 1px; }
+.calc-in__sel { min-width: 0; min-height: 32px; max-width: 13rem; }
 .calc-src { margin: 0; font-family: var(--font-mono); font-size: .64rem; line-height: 1.4; color: var(--muted); }
 .calc-src[hidden] { display: none; }
 .calc-src b { font-weight: 500; color: var(--ink-2); }

@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
 <link rel="stylesheet" href="css/base.css?v=1e3ae753">
-<link rel="stylesheet" href="css/components.css?v=d53a657c">
+<link rel="stylesheet" href="css/components.css?v=c532fdc4">
   <!-- meta:start -->
   <link rel="canonical" href="https://sipi.work/model-contract.html">
   <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
@@ -47,10 +47,10 @@
   <div class="page-head">
     <p class="crumb"><a href="index.html">SIPI</a> / model contracts</p>
     <h1>Interactive model assumptions and evidence</h1>
-    <p class="byline"><span>Generated from <code>docs/model-types.json</code></span><span>52 panels</span><span>fidelity: 18 analytical, 14 exact, 7 illustrative, 13 numerical · evidence: 6 computed, 41 independent, 5 plausible</span></p>
+    <p class="byline"><span>Generated from <code>docs/model-types.json</code></span><span>55 panels</span><span>fidelity: 18 analytical, 14 exact, 7 illustrative, 16 numerical · evidence: 6 computed, 44 independent, 5 plausible</span></p>
     <p class="answer">
       Each interactive panel uses a model with a defined scope. This page publishes the
-      contract for all 52 panels: the
+      contract for all 55 panels: the
       topology, the reference planes, the equations, the units, the range over which it is
       valid, how it is computed, and the evidence available for its behavior.
     </p>
@@ -503,6 +503,25 @@
       <dt>Evidence</dt><dd>check-models.js — Coupling (20 and 40 dB/decade slopes, the Cm/(Cm+Cv) plateau, slow-edge closed forms, independence of each path from the other driver, the Z* crossover, an exact Fourier integral of the time-domain solution against the transfer functions, zero mean, 6.02 and 12.04 dB edge-rate bounds).</dd>
     </dl>
   </section>
+  <section class="contract" id="crossSection">
+    <div class="contract__head">
+      <h2>crossSection</h2>
+      <span class="model-tag model-tag--numerical">numerical model</span>
+      <span class="ev ev--independent">independent</span>
+      <span class="contract__ver">v1.0 &#183; reviewed 2026-10-24</span>
+    </div>
+    <p class="contract__purpose">Show what a 2D quasi-TEM field solver does with a trace cross-section, and the two checks every solver result needs: does the answer stop moving as the mesh is refined, and does it move when the walls of the solve are moved.</p>
+    <dl class="contract__body">
+      <dt>Topology</dt><dd>One trace, or a pair driven in odd or even mode, as microstrip over one plane or as stripline centred between two, in a laminate of one Dk. Width, height, copper thickness and gap in mils. The solve is closed by grounded walls a set number of trace heights from the copper.</dd>
+      <dt>Reference planes</dt><dd>The potential everywhere in the cross-section, its equipotentials and flux lines, the capacitance per length with the laminate and in air, and from them Z0 (or Zdiff, Zcomm), eeff, and L and C per inch.</dd>
+      <dt>Equations</dt><dd><ul class="tight"><li><code>div(eps grad phi) = 0, phi = 1 V on the trace, 0 on the planes and walls; odd mode: phi = 0 on the plane of symmetry, even mode: d phi/dn = 0</code></li><li><code>bilinear (Q1) finite elements on a graded tensor mesh; C = 2 W / V^2 with W = (1/2) phi^T K phi</code></li><li><code>Z0 = 1 / (c sqrt(C Cair)), eeff = C / Cair, L = 1 / (c^2 Cair)</code></li><li><code>Zdiff = 2 Zodd, Zcomm = Zeven / 2</code></li><li><code>limit by Aitken's delta-squared on the meshes of 4, 8 and 16 cells</code></li></ul></dd>
+      <dt>Units</dt><dd>mil, ohm, nH and pF per inch</dd>
+      <dt>Validity</dt><dd>Quasi-TEM: the cross-section is small against a wavelength, the conductors are perfect and the dielectric lossless, so Z0 is the high-frequency, lossless value. Microstrip is quasi-TEM and its eeff rises with frequency, which this does not show.</dd>
+      <dt>Numerics</dt><dd>Half the cross-section, mirrored. The mesh is finest at the copper edges (d/n, d the smallest of w, h and the gap), 1.5 d near the trace, and grows by 1 + 2/n per cell beyond; banded Cholesky numbered along the shorter side. Seven mesh levels, 2 to 16 cells; the wall sweep uses 8.</dd>
+      <dt>Known limitations</dt><dd>No loss, no frequency dependence, no solder mask, no etch trapezoid and no roughness. One dielectric for a stripline; microstrip is laminate below the trace bottom and air above. Grounded walls stand in for open space, which is what the boundary plot is there to show. Mechanism and proportion, not a sign-off number.</dd>
+      <dt>Evidence</dt><dd>check-models.js suite Cross-section: the extrapolated Z0 of a zero-thickness stripline matches Cohn's exact conformal-map answer within 0.1%, every mesh is below it and the extrapolation is nearer than the finest mesh; a stripline's eeff is its Dk exactly and Z0 scales as 1/sqrt(er); doubling every dimension leaves Z0 unchanged; Z0 rises at every mesh refinement; a microstrip agrees with Hammerstad-Jensen within 0.5%; a 30:1 strip sits just below the parallel-plate Z0; Z0 never falls as the walls move out; odd mode is below even mode in Z0 and eeff, both tend to the single line 20 h apart, and a stripline pair has equal modal eeff.</dd>
+    </dl>
+  </section>
   <section class="contract" id="crosstalk">
     <div class="contract__head">
       <h2>crosstalk</h2>
@@ -653,6 +672,25 @@
       <dt>Numerics</dt><dd>4096-point FFT, 32 samples/UI, 420 symbols.</dd>
       <dt>Known limitations</dt><dd>An expansion truncated at first order, not an exact network. It also uses the two-term magnitude loss law with a minimum phase, not the causal material model that labChannel now uses, so its phase is reconstructed rather than derived.</dd>
       <dt>Evidence</dt><dd>check-models.js — Networks and Impairment chain: the through-section loses at most 0.0481 dB and never notches, the echo is Gs.GL rather than GL^2, and the truncated series is bounded by |Gs.GL| of the retained term over the whole released range.</dd>
+    </dl>
+  </section>
+  <section class="contract" id="irPlane">
+    <div class="contract__head">
+      <h2>irPlane</h2>
+      <span class="model-tag model-tag--numerical">numerical model</span>
+      <span class="ev ev--independent">independent</span>
+      <span class="contract__ver">v1.0 &#183; reviewed 2026-10-24</span>
+    </div>
+    <p class="contract__purpose">Show how antipads round the ground and signal vias of a BGA turn a power plane into Swiss cheese: the copper necks between them crowd the current, the DC drop climbs past a budget as they close, the power vias share the load unevenly, and when neighbouring holes touch the core is cut off.</p>
+    <dl class="contract__body">
+      <dt>Topology</dt><dd>One power plane, 20 x 11.8 mm, fed along one edge by the regulator, under a 10 x 10 corner of a BGA at 1 mm pitch: a 6 x 6 core of alternating power and ground vias inside two rings of signal and ground. Ground and signal vias pass through round antipads; each power via joins the plane at a 0.5 mm pad and runs through a plated barrel and a solder ball to the package, one common node drawing the load current.</dd>
+      <dt>Reference planes</dt><dd>The voltage and current in every cell of the plane, the current in each power via, the drop from the feed edge to the worst power via pad, and the mean current density across each neck between neighbouring antipads.</dd>
+      <dt>Equations</dt><dd><ul class="tight"><li><code>every cell: sum over its faces of g (V_cell - V_neighbour) = 0</code></li><li><code>a face: g = (t / rho) * copper length on the face / cell size, the copper length exact against every antipad circle</code></li><li><code>feed edge: g = 2 (t / rho) * copper on the edge / cell size, at the regulator's potential</code></li><li><code>a power via: g = 1 / (R_barrel + R_ball) from its pad to the package; R_barrel = rho L / (pi (D - t_plating) t_plating), R_ball = rho_SAC h / area</code></li><li><code>the package draws I; every result scales with I</code></li><li><code>neck density J = I_neck / ((pitch - d) t)</code></li></ul></dd>
+      <dt>Units</dt><dd>mm, A, mV, A/mm^2</dd>
+      <dt>Validity</dt><dd>DC: no inductance, no frequency dependence. Copper at room temperature, resistance independent of current.</dd>
+      <dt>Numerics</dt><dd>Square cells of 0.2 mm, 100 x 59; a cut-cell finite-volume scheme in which each face conductance is the copper actually on it. Copper not connected to the feed is dropped. Symmetric positive-definite system solved by conjugate gradients with an incomplete Cholesky preconditioner to a relative residual of 1e-8. The drop sweep is solved at 19 antipad sizes, at 1 A and scaled.</dd>
+      <dt>Known limitations</dt><dd>One plane and one rail; no parallel planes, no return rail. The regulator is an ideal edge and the package an ideal node. No Joule heating, so no rise of resistance in hot necks. The via barrel and ball are lumped resistances from their geometry. Mechanism and proportion, not a sign-off number.</dd>
+      <dt>Evidence</dt><dd>check-models.js suite IR plane: a plain strip is R_s L / W exactly; one small hole in a strip adds the dipole value 2 pi a^2 R_s / W^2 within 3%; the drop never falls as the antipads grow (Rayleigh monotonicity), and when neighbouring holes touch the core is cut off; the vias carry and the feed supplies the whole current; dissipation equals I times the drop (Tellegen); the necks of the first column and the margins carry all of it; the drop is linear in current; a mirror-symmetric map shares current symmetrically; a very resistive via path forces an even share; the 0.2 mm grid agrees with 0.05 mm cells within 2% in drop and 1% in neck density.</dd>
     </dl>
   </section>
   <section class="contract" id="labChannel">
@@ -824,6 +862,25 @@
       <dt>Numerics</dt><dd>Closed-form lattice sum. The edge is a CUBIC SMOOTHSTEP, s^2*(3-2s), centred on t = 0 and spanning tr from 0 to 1 — not a raised cosine, which the contract and the module header both used to claim. The two differ by at most 1% pointwise, but the rise-time convention differs: a cubic smoothstep's 10-90% time is 0.608*tr where a raised cosine's is 0.590*tr.</dd>
       <dt>Known limitations</dt><dd>tr is the full 0-100% support of the smoothstep, not a 10-90% time. Multiply by 0.608 to compare with a datasheet 10-90% figure. Lossless, so late-time amplitudes are optimistic.</dd>
       <dt>Evidence</dt><dd>check-models.js — Line1D (21 assertions): Ohm's law at the load and Kirchhoff at the source hold to 1e-12 at every instant; energy balances across five terminations.</dd>
+    </dl>
+  </section>
+  <section class="contract" id="returnPath">
+    <div class="contract__head">
+      <h2>returnPath</h2>
+      <span class="model-tag model-tag--numerical">numerical model</span>
+      <span class="ev ev--independent">independent</span>
+      <span class="contract__ver">v1.0 &#183; reviewed 2026-10-24</span>
+    </div>
+    <p class="contract__purpose">Show where the return current under a trace flows in its reference plane, from the DC spread between the vias to the high-frequency band under the trace, after a step in time, and around a slot or through a capacitor that bridges it.</p>
+    <dl class="contract__body">
+      <dt>Topology</dt><dd>One copper plane, 60 x 40 mm, 35 um thick, under one trace 0.2 mm wide at 0.2 or 1.5 mm. The trace runs from a driver via to a load via along a Manhattan route; its current is imposed, 1 A. Slots are cells removed; a stitching capacitor is a series R-L-C between two cells across a slot.</dd>
+      <dt>Reference planes</dt><dd>The sheet current in the plane at every cell, the loop impedance of trace and return, and the share of the return within 2 mm of the trace across the middle of its longest run.</dd>
+      <dt>Equations</dt><dd><ul class="tight"><li><code>every plane bar: V = Zs I + jw (L I) + jw M I_trace, Zs = rho k coth(k t), k = (1 + j)/delta</code></li><li><code>every mesh of the plane: sum of V = 0; bar currents I = I_p + C psi + sum p_c I_c</code></li><li><code>partial inductance of two parallel thin tapes: (mu0/4pi)/(w1 w2) * sum over 16 corners of F(u, v, z), d4F/du2dv2 = 1/R</code></li><li><code>capacitor: Z = R + jwL + 1/(jwC)</code></li><li><code>Z_loop = sum over every branch of I V (Tellegen), R = sum R |I|^2</code></li><li><code>step: backward Euler, (C^T (R + L/dt) C) psi_n+1 = (C^T L C / dt) psi_n - C^T R I_p, from the inductive limit at t = 0+</code></li></ul></dd>
+      <dt>Units</dt><dd>mm, nH, mohm, Hz, s</dd>
+      <dt>Validity</dt><dd>Quasi-static: the plane is much smaller than a wavelength (60 mm against 1.5 m in FR-4 at 100 MHz), so currents are solved without propagation delay or radiation, from 10 Hz to 100 MHz.</dd>
+      <dt>Numerics</dt><dd>2,400 square cells of 1 mm. Unknowns are mesh currents on the cell corners, tied across every missing bar. Plane-to-plane partial inductances are a Toeplitz kernel, applied by FFT convolution. Complex symmetric system solved by conjugate-orthogonal conjugate gradients to a relative residual of 1e-7, preconditioned by the sine-transform inverse of the slot-free operator. 43 frequencies (E6 series); 25 backward-Euler steps from 10 ns to 10 ms.</dd>
+      <dt>Known limitations</dt><dd>One plane, no second reference and no other planes. The trace current is imposed rather than solved as a transmission line; the vias are lumped partial inductances. The band under the trace is drawn no narrower than one 1 mm cell, although the inductance converges (0.5 mm cells agree within 0.5%). The capacitor is lumped, its mounting loop not coupled to the plane. The step uses the DC sheet resistance. Mechanism and proportion, not a sign-off number.</dd>
+      <dt>Evidence</dt><dd>check-models.js suite Return path: under a long straight trace at high frequency 50% and 80% of the return lie within +-h and +-3h, the image-theory Lorentzian; the loop inductance matches the image-theory rectangle; the DC current depends only on the vias, not the route; the return crossing the middle is the whole current at every frequency; the bilinear and power forms of the loop impedance agree; L never rises and R never falls with frequency; a slot never lowers the high-frequency inductance or the DC resistance; the step starts at the inductive limit and ends at DC; a capacitor across a slot carries nothing at 1 kHz and most of the return well above its resonance.</dd>
     </dl>
   </section>
   <section class="contract" id="sparams">

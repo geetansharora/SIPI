@@ -58,7 +58,7 @@ function loadSite() {
   const files = ['js/viz-kit.js', 'js/models/calc-models.js', 'js/models/laminates.js', 'js/models/coupling-model.js', 'js/models/tdr-model.js', 'js/models/ddr5-model.js', 'js/models/lpddr6-model.js', 'js/models/ucie-model.js', 'js/models/d2d-model.js', 'js/models/ethernet-model.js', 'js/viz/ethernet-lane.js', 'js/viz/jitter.js', 'js/viz/crosstalk.js',
                  'js/viz/spectrum.js', 'js/viz/pdn-extras.js',
                  'js/viz/lab-waves.js', 'js/viz/lab-channel.js', 'js/viz/lab-pdn.js',
-                 'js/viz/cdr.js', 'js/models/adc-model.js', 'js/models/plane-cavity-model.js',
+                 'js/viz/cdr.js', 'js/models/adc-model.js', 'js/models/plane-cavity-model.js', 'js/models/return-path-model.js', 'js/models/cross-section-model.js', 'js/models/ir-plane-model.js',
                  'js/viz/home-showcase.js', 'js/search.js'];
   for (const f of files) {
     // eslint-disable-next-line no-eval
@@ -5401,6 +5401,235 @@ suite('Plane cavity — 2D FDTD of a plane pair under a layer change', () => {
   const c2 = cap(0.2), c7 = cap(0.7), c12 = cap(1.2);
   ok('stitching capacitor: via < 0.2 nH < 0.7 nH < 1.2 nH of mounting inductance', via < c2 && c2 < c7 && c7 < c12,
      [via, c2, c7, c12].map((v) => v.toFixed(2)).join(' < ') + ' mV');
+});
+
+/* ═════════ Return current paths: quasi-static PEEC of a plane under a trace ═════════
+   The panel claims to find where the return flows without being told. These tests
+   hold it to answers obtained another way: image theory for a perfectly conducting
+   plane, the resistive limit, Kirchhoff, Tellegen, and the monotonicity of RL networks. */
+suite('Return path — quasi-static PEEC of the plane under a trace', () => {
+  const RP = MODELS.returnPath;
+  if (!RP) { ok('return-path model loads', false); return; }
+  const S = [8.5, 20.5], L = [52.5, 20.5], straight = [S, L];
+
+  // 1 · Image theory: at high frequency the plane is a mirror, and the return under a
+  //     long trace is the Lorentzian (1/pi h) / (1 + (x/h)^2): 50% within +-h, 80% within +-3h.
+  const h = 1.5, m = RP.create({ S, L, route: straight, h });
+  const hf = m.solveFreq(1e8);
+  nearAbs('high frequency: share of the return within +-h is 1/2 (image theory)', m.share(hf.I, h).band, 0.5, 0.03);
+  nearAbs('high frequency: share within +-3h is (2/pi) atan 3', m.share(hf.I, 3 * h).band, 2 / Math.PI * Math.atan(3), 0.03);
+
+  // 2 · The loop over a mirror is half of the rectangle formed with its image (Grover's
+  //     straight-wire formulas, written out here, not taken from the model).
+  const Ls = (l, r) => 2e-10 * (l * Math.log((l + Math.hypot(l, r)) / r) - Math.hypot(l, r) + r);
+  const Mp = (l, D) => 2e-10 * (l * Math.log((l + Math.hypot(l, D)) / D) - Math.hypot(l, D) + D);
+  const len = L[0] - S[0], rt = 0.2235 * 0.2, rv = 0.15;   // a 0.2 mm tape has the GMD of a 0.0447 mm wire
+  const image = (2 * Ls(len, rt) + 2 * Ls(2 * h, rv) - 2 * Mp(len, 2 * h) - 2 * Mp(2 * h, len)) / 2;
+  nearRel('high-frequency loop inductance matches the image-theory rectangle', hf.L, image, 0.02, ' H');
+
+  // 3 · At DC only resistance matters, so the return cannot know the route of the trace.
+  const det = RP.create({ S, L, route: [S, [S[0], 6.5], [L[0], 6.5], L], h });
+  const a = m.dc(), b = det.dc();
+  let dmax = 0;
+  for (let k = 0; k < a.I.x.length; k++) dmax = Math.max(dmax, Math.abs(a.I.x[k] - b.I.x[k]));
+  nearAbs('DC: the plane current is the same for a straight trace and a detour', dmax, 0, 1e-9, ' A');
+  nearRel('DC: so is the return resistance', b.R, a.R, 1e-9, ' ohm');
+
+  // 4 · Kirchhoff: the whole return crosses any cut between the vias, at every frequency.
+  const fs = [10, 1e4, 1e6, 1e8], dr = fs.map((f) => det.solveFreq(f));
+  nearAbs('conservation: the return crossing the middle is the whole trace current at 10 Hz to 100 MHz',
+          Math.max(...dr.map((r) => Math.abs(r.crossing - 1))), 0, 1e-9);
+
+  // 5 · Tellegen: the bilinear sum over branches equals the dissipated power only if KVL holds.
+  nearAbs('solve: bilinear Re Z equals sum R |I|^2 (KVL satisfied)', Math.max(...dr.map((r) => Math.abs(r.R - r.Rpower) / r.R)), 0, 1e-6);
+
+  // 6 · An RL network's inductance never rises with frequency and its resistance never falls.
+  const sw = RP.SWEEP.map((f) => det.solveFreq(f));
+  const Lup = sw.some((r, k) => k && r.L > sw[k - 1].L * (1 + 1e-6)), Rdn = sw.some((r, k) => k && r.R < sw[k - 1].R * (1 - 1e-6));
+  ok('L(f) never rises and R(f) never falls, 10 Hz to 100 MHz', !Lup && !Rdn,
+     'L ' + (sw[0].L * 1e9).toFixed(1) + ' -> ' + (sw[sw.length - 1].L * 1e9).toFixed(1) + ' nH, R ' + (sw[0].R * 1e3).toFixed(2) + ' -> ' + (sw[sw.length - 1].R * 1e3).toFixed(1) + ' mohm');
+
+  // 7 · Reciprocity: driving from the other end gives the same loop impedance.
+  const fwd = det.solveFreq(1e5), rev = RP.create({ S: L, L: S, route: [L, [L[0], 6.5], [S[0], 6.5], S], h }).solveFreq(1e5);
+  nearRel('reciprocity: swapping driver and load leaves Z unchanged', Math.hypot(rev.Z[0], rev.Z[1]), Math.hypot(fwd.Z[0], fwd.Z[1]), 1e-6, ' ohm');
+
+  // 8 · Removing copper never helps (Rayleigh): a slot raises the inductive limit and the DC resistance.
+  const slot = RP.slotCells([30.5, 0], [30.5, 30], 1);
+  const thin = RP.create({ S, L, route: straight, h: 0.2 }), cut = RP.create({ S, L, route: straight, h: 0.2, voids: slot });
+  const Lt = thin.solveFreq(1e8).L, Lc = cut.solveFreq(1e8).L;
+  ok('a slot across the trace raises the high-frequency loop inductance and the DC resistance',
+     Lc > Lt && cut.dc().R > thin.dc().R, (Lt * 1e9).toFixed(2) + ' -> ' + (Lc * 1e9).toFixed(2) + ' nH');
+
+  // 8b · Regression guard for the page's prose, not a validation: the Split plane preset (slot cut
+  //      to y = 30 mm, the trace at y = 20.5 mm) adds "about 6 nH" at 100 MHz, "roughly a third of
+  //      a nanohenry per millimetre" of the 19 mm out-and-back detour, below the mu0/pi scale.
+  {
+    const P = [8.5, 20.5], Q = [51.5, 20.5];
+    const flat = RP.create({ S: P, L: Q, route: [P, Q], h: 0.2 }).solveFreq(1e8).L;
+    const split = RP.create({ S: P, L: Q, route: [P, Q], h: 0.2, voids: RP.slotCells([30.5, 0.5], [30.5, 29.5], 1) }).solveFreq(1e8).L;
+    const dL = (split - flat) * 1e9;
+    ok('prose guard: Split plane adds about 6 nH, 0.25-0.4 nH per mm of detour (below mu0/pi)',
+       dL > 5.5 && dL < 7 && dL / 19 > 0.25 && dL / 19 < 0.4, dL.toFixed(2) + ' nH, ' + (dL / 19).toFixed(3) + ' nH/mm');
+  }
+
+  // 9 · Initial and final value theorems: a step starts at the inductive limit and ends at DC.
+  let st = det.inductive();
+  const first = det.stepInfo(st).share, hfShare = det.solveFreq(1e8).share;
+  RP.TIMES.forEach((t) => { st = det.stepFrom(st, t); });
+  nearAbs('step: at t = 0+ the return is where it is at high frequency', first, hfShare, 0.01);
+  nearAbs('step: after 10 ms it is the DC spread', det.stepInfo(st).share, b.share, 1e-4);
+
+  // 10 · A capacitor across the slot is open at 1 kHz and, well above its 16 MHz resonance,
+  //      carries most of the return and shortens the loop.
+  const cap = RP.create({ S, L, route: straight, h: 0.2, voids: slot, caps: [{ a: [29.5, 20.5], b: [31.5, 20.5] }] });
+  const lo = cap.solveFreq(1e3), hi = cap.solveFreq(3e7), noCap = cut.solveFreq(3e7);
+  ok('stitching capacitor: no current at 1 kHz; most of the return and less inductance at 30 MHz',
+     Math.hypot(...lo.I.cap[0]) < 1e-3 && Math.hypot(...hi.I.cap[0]) > 0.5 && hi.L < noCap.L,
+     '|I| ' + Math.hypot(...lo.I.cap[0]).toExponential(1) + ', ' + Math.hypot(...hi.I.cap[0]).toFixed(2) + '; L ' + (hi.L * 1e9).toFixed(1) + ' < ' + (noCap.L * 1e9).toFixed(1) + ' nH');
+
+  // 11 · The plane's surface impedance: rho/t at DC, (1 + j) rho/delta when the skin is thin.
+  const rho = RP.COPPER.rho, tCu = RP.COPPER.t, z0 = RP.zSurface(1);
+  nearRel('surface impedance at 1 Hz is the DC sheet resistance rho/t', z0[0], rho / tCu, 1e-6, ' ohm');
+  const f9 = 1e10, dl = Math.sqrt(rho / (Math.PI * f9 * 4e-7 * Math.PI)), z9 = RP.zSurface(f9);
+  ok('surface impedance at 10 GHz is (1 + j) rho / delta', Math.abs(z9[0] / (rho / dl) - 1) < 0.01 && Math.abs(z9[1] / (rho / dl) - 1) < 0.01,
+     z9.map((v) => v.toFixed(4)).join(' + j') + ' ohm');
+
+  // 12 · The answer must not depend on the grid: halve the cells and the inductance holds.
+  const fine = RP.create({ S, L, route: straight, h: 0.2, d: 0.5 }).solveFreq(1e7).L, coarse = thin.solveFreq(1e7).L;
+  nearRel('grid: 0.5 mm cells give the same 10 MHz inductance as 1 mm ones', coarse, fine, 0.01, ' H');
+});
+
+suite('Cross-section — a 2D quasi-TEM field solver checked against what is known exactly', () => {
+  const XS = MODELS.crossSection;
+  if (!XS) { ok('cross-section model loads', false); return; }
+  const ETA0 = 376.730313668;
+
+  // 1 · Cohn's zero-thickness stripline is exact (conformal mapping, no approximation):
+  //     k = sech(pi w / 2b). Z0 = (eta0 / 4 sqrt er) K(k) / K(k'), and K is computed here by the arithmetic-geometric mean, not
+  //     taken from calc-models.js, so this does not share a line of code with the site.
+  const Kell = (k) => { let a = 1, b = Math.sqrt(1 - k * k); for (let i = 0; i < 40; i++) { const m = (a + b) / 2; b = Math.sqrt(a * b); a = m; } return Math.PI / (2 * a); };
+  const cohn = (w, b, er) => { const k = 1 / Math.cosh(Math.PI * w / (2 * b)); return ETA0 / (4 * Math.sqrt(er)) * Kell(k) / Kell(Math.sqrt(1 - k * k)); };
+  const sl = { type: 'sl', pair: false, w: 5, h: 5, t: 0, er: 4, box: 40 };
+  const exact = cohn(5, 10, 4);
+  const lad = XS.ladder(sl, 16);
+  nearRel('stripline: the extrapolated Z0 matches Cohn\'s exact conformal-map answer', lad.limit, exact, 0.001, ' Ω');
+  ok('stripline: every mesh is below the exact Z0 (energy C is an upper bound, so Z0 a lower one)',
+     lad.rungs.every((r) => r.z < exact), lad.rungs.map((r) => r.z.toFixed(2)).join(' '));
+  ok('stripline: the extrapolation lands nearer the exact answer than the finest mesh does',
+     Math.abs(lad.limit - exact) < Math.abs(lad.rungs[lad.rungs.length - 1].z - exact));
+
+  // 2 · A homogeneous dielectric: the wave travels at c / sqrt(er) whatever the shape.
+  const s1 = XS.line(sl, 8);
+  nearAbs('stripline: effective permittivity is the laminate Dk exactly', s1.eeff, 4, 1e-9);
+  nearRel('stripline: Z0 scales as 1/sqrt(er) (Dk 1 gives twice the Z0 of Dk 4)',
+          XS.line(Object.assign({}, sl, { er: 1 }), 8).z, 2 * s1.z, 1e-9, ' Ω');
+
+  // 3 · Laplace's equation has no length scale: doubling every dimension changes nothing.
+  const ms = { type: 'ms', pair: false, w: 6, h: 3.5, t: 1.4, er: 4.2, box: 40 };
+  const m8 = XS.line(ms, 8);
+  nearRel('microstrip: doubling every dimension leaves Z0 unchanged (scale invariance)',
+          XS.line(Object.assign({}, ms, { w: 12, h: 7, t: 2.8 }), 8).z, m8.z, 1e-6, ' Ω');
+  nearRel('microstrip: v = 1/sqrt(LC) is c/sqrt(eeff) (L from the air solve, C from the real one)',
+          1 / Math.sqrt(m8.L * m8.C), 299792458 / Math.sqrt(m8.eeff), 1e-9, ' m/s');
+  ok('microstrip: effective permittivity lies between air and the laminate', m8.eeff > 1 && m8.eeff < 4.2, m8.eeff.toFixed(3));
+
+  // 4 · Refining the mesh can only lower the energy-based C, so Z0 rises at every step.
+  const ml = XS.ladder(ms, 16);
+  ok('microstrip: Z0 rises monotonically as the mesh is refined',
+     ml.rungs.every((r, k) => k === 0 || r.z > ml.rungs[k - 1].z), ml.rungs.map((r) => r.z.toFixed(3)).join(' '));
+  // Hammerstad-Jensen is an independent curve fit to measured and computed data, quoted to ~0.2%.
+  nearRel('microstrip: the converged Z0 agrees with Hammerstad-Jensen', ml.limit, SIPI.calc.microstrip(6, 3.5, 1.4, 4.2).z0, 0.005, ' Ω');
+
+  // 5 · A very wide strip approaches the parallel plate, from below: fringing only adds C.
+  const wide = XS.line({ type: 'ms', pair: false, w: 105, h: 3.5, t: 0, er: 1, box: 40 }, 8);
+  const zpp = ETA0 * 3.5 / 105;
+  ok('microstrip: a 30:1 strip in air sits below the parallel-plate Z0, within the fringing',
+     wide.z < zpp && wide.z > 0.8 * zpp, `Z0 ${wide.z.toFixed(3)} Ω, parallel plate ${zpp.toFixed(3)} Ω`);
+
+  // 6 · Grounded walls brought closer can only add capacitance.
+  const boxes = [1, 1.5, 2, 3, 5, 8, 20, 40].map((b) => XS.line(Object.assign({}, ms, { box: b }), 8).z);
+  ok('walls: Z0 never falls as the walls of the solve move outward', boxes.every((z, k) => k === 0 || z >= boxes[k - 1] - 1e-9),
+     boxes.map((z) => z.toFixed(2)).join(' '));
+  ok('walls: walls at 1.5 h pull Z0 down by more than 10%', boxes[1] < 0.9 * boxes[boxes.length - 1]);
+
+  // 7 · A coupled pair: odd mode below even mode, both tending to the single line when far apart.
+  const pr = { type: 'ms', pair: true, w: 5.5, h: 4, t: 1.4, s: 7, er: 4.2, box: 40 };
+  const odd = XS.line(Object.assign({}, pr, { mode: 'odd' }), 8), even = XS.line(Object.assign({}, pr, { mode: 'even' }), 8);
+  ok('pair: odd-mode Z0 is below even-mode Z0', odd.z < even.z, `odd ${odd.z.toFixed(2)}, even ${even.z.toFixed(2)} Ω`);
+  ok('pair: odd-mode eeff is below even-mode eeff (more of the odd field is in air)', odd.eeff < even.eeff);
+  const single = XS.line({ type: 'ms', pair: false, w: 5.5, h: 4, t: 1.4, er: 4.2, box: 40 }, 8).z;
+  const far = (mode) => XS.line(Object.assign({}, pr, { s: 80, mode }), 8).z;
+  nearRel('pair: 20 h apart, the odd mode is the single line', far('odd'), single, 0.01, ' Ω');
+  nearRel('pair: 20 h apart, the even mode is the single line', far('even'), single, 0.01, ' Ω');
+  // Stripline pair in a homogeneous medium: both modes travel at the same speed.
+  const sp = { type: 'sl', pair: true, w: 4, h: 5, t: 0.6, s: 6, er: 3.5, box: 40 };
+  nearAbs('stripline pair: odd and even modes both see eeff = Dk (no far-end crosstalk)',
+          XS.line(Object.assign({}, sp, { mode: 'odd' }), 6).eeff - XS.line(Object.assign({}, sp, { mode: 'even' }), 6).eeff, 0, 1e-9);
+});
+
+suite('IR plane — DC current in a power plane pierced by antipads', () => {
+  const IR = MODELS.irPlane;
+  if (!IR) { ok('IR plane model loads', false); return; }
+  const Rs = IR.COPPER.rho / IR.COPPER.oz;                 // ohm per square, 1 oz
+
+  // 1 · A plain strip fed along one edge and drained along the other is R_s L / W, exactly:
+  //     the field is uniform, and a uniform field is what a finite-volume grid gets right.
+  const strip = IR.create({ holes: [], drainEdge: true, I: 1, cell: 0.2 }).solve(null, 1e-12);
+  nearRel('strip: resistance is R_s L / W', strip.drop, Rs * IR.BOARD.a / IR.BOARD.b, 1e-6, ' Ω');
+
+  // 2 · One small hole in a long strip adds 2 pi a^2 R_s / W^2 (the dipole of an insulating
+  //     cylinder in a uniform field; Maxwell Garnett in 2D gives sigma (1 - f)/(1 + f)).
+  const L = 30, W = 11.8, a = 0.8;
+  const base = IR.create({ holes: [], drainEdge: true, I: 1, cell: 0.1, a: L, b: W }).solve(null, 1e-11).drop;
+  const hole = IR.create({ holes: [[L / 2, W / 2, a]], drainEdge: true, I: 1, cell: 0.1, a: L, b: W }).solve(null, 1e-11).drop;
+  // (the side edges of the strip act as images and add about 1.5% at a/W = 0.07)
+  nearRel('one hole: the added resistance is the dipole value 2 pi a^2 R_s / W^2', hole - base, 2 * Math.PI * a * a * Rs / (W * W), 0.03, ' Ω');
+
+  // 3 · Rayleigh's monotonicity law: removing copper can never lower a resistance.
+  const D = [0, 0.4, 0.6, 0.8, 0.9, 0.95, 0.99];
+  const drops = D.map((d) => IR.create({ d, I: 1 }).solve().drop);
+  ok('antipads: the drop never falls as the holes grow', drops.every((v, k) => k === 0 || v >= drops[k - 1] - 1e-12),
+     drops.map((v) => (v * 1e3).toFixed(3)).join(' ') + ' mV/A');
+  ok('antipads: when neighbouring holes touch, the rings cut the core off', IR.create({ d: 1.0, I: 1 }).error === 'cut' && !IR.create({ d: 0.99, I: 1 }).error);
+
+  // 4 · Kirchhoff and Tellegen.
+  const m = IR.create({ d: 0.9, I: 20 }), r = m.solve(null, 1e-11);
+  nearRel('conservation: the power vias carry the whole load current', r.viaI.reduce((s, v) => s + v, 0), 20, 1e-7, ' A');
+  nearRel('conservation: the feed edge supplies the whole load current', r.feedI, 20, 1e-7, ' A');
+  nearRel('Tellegen: power dissipated in every conductance is I times the drop to the package', r.power, 20 * r.vPkg, 1e-7, ' W');
+  // Every amp crosses the line through the first column of balls: its webs plus the two margins.
+  const ii = Math.round(IR.X0 / m.h) - 1, col0 = r.webs.filter((w) => w.i === 0 && w.dj === 1);
+  const rr = m.d / 2;
+  let margin = 0;
+  for (let j = 0; j < m.ny; j++) {
+    const y0 = j * m.h, y1 = y0 + m.h;
+    if (y0 < IR.Y0 - rr - 1e-9 || y1 > IR.Y0 + 9 * IR.PITCH + rr + 1e-9) margin += r.Ix[ii + j * (m.nx - 1)];   // any face with copper outside the holes
+  }
+  nearRel('webs: the necks of the first column and the margins beside it carry all 20 A',
+          col0.reduce((s, w) => s + w.I, 0) + margin, 20, 1e-6, ' A');
+
+  // 5 · Linearity: a resistive network's drop is proportional to its current.
+  nearRel('linearity: twice the current, twice the drop', IR.create({ d: 0.9, I: 40 }).solve(null, 1e-11).drop, 2 * r.drop, 1e-7, ' V');
+
+  // 6 · A map that is its own mirror image top to bottom shares current symmetrically.
+  const half = IR.defaultMap().slice(0, 5), mirror = half.concat(half.slice().reverse());
+  const ms = IR.create({ d: 0.8, I: 1, map: mirror }), rs = ms.solve(null, 1e-11);
+  let asym = 0;
+  ms.vias.forEach((v, k) => { const twin = ms.vias.findIndex((u) => u.i === v.i && u.j === IR.NBALL - 1 - v.j); asym = Math.max(asym, Math.abs(rs.viaI[k] - rs.viaI[twin])); });
+  nearAbs('symmetry: a mirror-symmetric map gives mirror-symmetric via currents', asym, 0, 1e-8, ' A');
+
+  // 7 · When the via path is far more resistive than the plane, every via carries I/N.
+  const rv = IR.create({ d: 0.7, I: 1, rVia: 10 }).solve(null, 1e-12);
+  const n = rv.viaI.length, spread = Math.max(...rv.viaI) / Math.min(...rv.viaI) - 1;
+  ok('sharing: a 10 Ω via path forces an even share, within 0.1%', spread < 1e-3 && Math.abs(rv.viaI[0] - 1 / n) < 1e-3 / n, (spread * 100).toFixed(4) + '% spread');
+  // and with the real barrel and ball, the vias nearest the regulator carry more than their share
+  ok('crowding: with a real via path, the busiest via carries well over an even share', Math.max(...r.viaI) > 1.5 * 20 / r.viaI.length);
+
+  // 8 · The grid the panel uses, 0.2 mm cells, against 0.05 mm cells.
+  const fine = IR.create({ d: 0.9, I: 20, cell: 0.05 }).solve(null, 1e-9);
+  nearRel('grid: 0.2 mm cells give the drop of 0.05 mm cells within 2%', r.drop, fine.drop, 0.02, ' V');
+  const worst = (q) => Math.max(...q.webs.map((w) => w.J));
+  nearRel('grid: 0.2 mm cells give the worst neck density of 0.05 mm cells within 1%', worst(r), worst(fine), 0.01, ' A/mm²');
 });
 
 if (!PASS && !FAILS.length && !PENDING.length) {

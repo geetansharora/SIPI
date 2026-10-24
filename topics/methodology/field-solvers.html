@@ -13,7 +13,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
 <link rel="stylesheet" href="../../css/base.css?v=1e3ae753">
-<link rel="stylesheet" href="../../css/components.css?v=d53a657c">
+<link rel="stylesheet" href="../../css/components.css?v=c532fdc4">
   <!-- meta:start -->
   <link rel="canonical" href="https://sipi.work/topics/methodology/field-solvers.html">
   <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
@@ -31,7 +31,7 @@
   <meta name="twitter:description" content="What each class of solver assumes, which structures each is exact for, and how to partition a channel so the slow one runs on as little as possible.">
   <meta name="twitter:image" content="https://sipi.work/assets/og/methodology/field-solvers.png">
   <meta name="twitter:image:alt" content="Field Solvers for SI/PI: 2D, 2.5D, and 3D: a figure from the page, on SIPI">
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Field Solvers for SI/PI: 2D, 2.5D, and 3D","description":"What each class of solver assumes, which structures each is exact for, and how to partition a channel so the slow one runs on as little as possible.","url":"https://sipi.work/topics/methodology/field-solvers.html","articleSection":"Methodology","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer","url":"https://www.linkedin.com/in/geetansh-arora-a645714a/","sameAs":["https://www.linkedin.com/in/geetansh-arora-a645714a/"]},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-09-18","image":"https://sipi.work/assets/og/methodology/field-solvers.png"}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Field Solvers for SI/PI: 2D, 2.5D, and 3D","description":"What each class of solver assumes, which structures each is exact for, and how to partition a channel so the slow one runs on as little as possible.","url":"https://sipi.work/topics/methodology/field-solvers.html","articleSection":"Methodology","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer","url":"https://www.linkedin.com/in/geetansh-arora-a645714a/","sameAs":["https://www.linkedin.com/in/geetansh-arora-a645714a/"]},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-10-24","image":"https://sipi.work/assets/og/methodology/field-solvers.png"}</script>
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"SIPI","item":"https://sipi.work/"},{"@type":"ListItem","position":2,"name":"Methodology","item":"https://sipi.work/#methodology"},{"@type":"ListItem","position":3,"name":"Field Solvers for SI/PI: 2D, 2.5D, and 3D"}]}</script>
   <!-- meta:end -->
 </head>
@@ -54,7 +54,7 @@
     <p class="crumb"><a href="../../index.html#methodology">Methodology</a> / 02</p>
     <h1>Field Solvers for SI/PI: 2D, 2.5D, and 3D</h1>
     <p class="byline">
-      <!-- review:start --><span>By <a href="https://www.linkedin.com/in/geetansh-arora-a645714a/" target="_blank" rel="author noopener">Geetansh Arora</a> — Principal SI/PI Engineer</span><time datetime="2026-09-18" title="Technical review by Geetansh Arora on this date">18 Sep 2026</time><span>8 min</span><!-- review:end -->
+      <!-- review:start --><span>By <a href="https://www.linkedin.com/in/geetansh-arora-a645714a/" target="_blank" rel="author noopener">Geetansh Arora</a> — Principal SI/PI Engineer</span><time datetime="2026-10-24" title="Technical review by Geetansh Arora on this date">24 Oct 2026</time><span>8 min</span><!-- review:end -->
     </p>
     <!-- share:head:start --><div class="share share--head" data-share data-share-url="https://sipi.work/topics/methodology/field-solvers.html" data-share-title="Field Solvers for SI/PI: 2D, 2.5D, and 3D"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Fmethodology%2Ffield-solvers.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Fmethodology%2Ffield-solvers.html&amp;text=Field%20Solvers%20for%20SI%2FPI%3A%202D%2C%202.5D%2C%20and%203D" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=Field%20Solvers%20for%20SI%2FPI%3A%202D%2C%202.5D%2C%20and%203D&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Fmethodology%2Ffield-solvers.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:head:end -->
     <p class="answer">
@@ -194,6 +194,142 @@
       harder to find there.
     </p>
 
+    <h2 class="section-rule" id="watch-a-solver"><span>Watch a 2D solver work</span></h2>
+
+    <p>
+      The panel below is a small 2D field solver, running as you watch. It does what every
+      quasi-TEM 2D solver does. It solves Laplace&#8217;s equation for the potential around the trace
+      twice, once with the laminate in place and once with air everywhere, and takes the
+      characteristic impedance from the two capacitances per unit length. The blue wash is the
+      potential, and the blue lines are equipotentials, one every 10% of the trace voltage. The dark
+      lines are lines of electric flux, one for each equal share of the charge on the trace, so they
+      crowd where the charge does, at the corners. The faint grid behind them is the mesh, the only
+      thing the solver actually knows about your geometry.
+    </p>
+
+    <p>
+      Two plots go with it, one for each check this page asks of any solver result. The first
+      is <b>convergence</b>: the same structure solved on finer and finer meshes. A finite-element
+      solution can only overestimate capacitance, so Z<sub>0</sub> creeps up as the mesh refines,
+      and when the last points stop moving the answer has converged. The dotted line extrapolates
+      where they are heading. Press <b>Coarse mesh</b> and the panel still gives a plausible-looking
+      number, a few percent low. Nothing in the picture warns you; only the ladder does.
+    </p>
+
+    <p>
+      The second plot is the <b>boundary</b>. A solver has to stop somewhere, and this one stops at
+      grounded walls a set number of trace heights away. Slide them in, or press <b>Close walls</b>, and the field lines that should reach the plane end on the walls instead.
+      Capacitance rises and Z<sub>0</sub> falls, and the answer still converges, to the wrong
+      question. That is the 3D symptom from the fault list below, a result that changes with domain
+      size, made visible in 2D.
+    </p>
+
+    <p>
+      Then validate it against something you already know. The <b>Exact check</b> preset is a
+      zero-thickness strip 5 mil wide, centred between planes 10 mil apart in a laminate of
+      D<sub>k</sub> 4. Conformal mapping gives that geometry an exact answer,
+      <span class="num">50.2 &#937;</span>, with no approximation anywhere. Refine the mesh and watch the
+      solver close in on it. For a single microstrip the readout compares the solver with the
+      Hammerstad&#8211;Jensen formula used by the site&#8217;s impedance calculator; for a pair there is
+      no formula to compare with, which is exactly when you need a solver. Drag a trace&#8217;s outer
+      edge to change its width, drag the trace up or down to change its height, and drag the
+      right-hand trace of a pair to change the gap.
+    </p>
+
+  </div>
+
+  <!-- mobilenote:start -->
+  <p class="mobile-note" role="note">
+    <b>Best viewed on a laptop or desktop.</b>
+    These panels are built so you can move a slider and watch several charts
+    answer at once. A phone has no room to put them side by side.
+  </p>
+  <!-- mobilenote:end -->
+  <section class="instrument instrument--side side--wide" data-viz="crossSection" aria-label="Interactive 2D field solver for a trace cross-section: equipotentials, flux lines and the finite-element mesh, with a mesh-convergence ladder and a boundary-distance sweep for the characteristic impedance">
+    <script type="application/json" data-contract>{"kind":"numerical","evidence":"independent","purpose":"Show what a 2D quasi-TEM field solver does with a trace cross-section, and the two checks every solver result needs: does the answer stop moving as the mesh is refined, and does it move when the walls of the solve are moved.","equations":["div(eps grad phi) = 0, phi = 1 V on the trace, 0 on the planes and walls; odd mode: phi = 0 on the plane of symmetry, even mode: d phi/dn = 0","bilinear (Q1) finite elements on a graded tensor mesh; C = 2 W / V^2 with W = (1/2) phi^T K phi","Z0 = 1 / (c sqrt(C Cair)), eeff = C / Cair, L = 1 / (c^2 Cair)","Zdiff = 2 Zodd, Zcomm = Zeven / 2","limit by Aitken's delta-squared on the meshes of 4, 8 and 16 cells"],"units":"mil, ohm, nH and pF per inch","validity":"Quasi-TEM: the cross-section is small against a wavelength, the conductors are perfect and the dielectric lossless, so Z0 is the high-frequency, lossless value. Microstrip is quasi-TEM and its eeff rises with frequency, which this does not show.","numerics":"Half the cross-section, mirrored. The mesh is finest at the copper edges (d/n, d the smallest of w, h and the gap), 1.5 d near the trace, and grows by 1 + 2/n per cell beyond; banded Cholesky numbered along the shorter side. Seven mesh levels, 2 to 16 cells; the wall sweep uses 8.","limitations":"No loss, no frequency dependence, no solder mask, no etch trapezoid and no roughness. One dielectric for a stripline; microstrip is laminate below the trace bottom and air above. Grounded walls stand in for open space, which is what the boundary plot is there to show. Mechanism and proportion, not a sign-off number.","suites":["Cross-section"],"version":"1.0","reviewed":"2026-10-24","panel":"crossSection"}</script>
+    <div class="instrument__bar">
+      <span class="instrument__title">A 2D field solver, solving</span>
+      <span data-evidence="independent" data-model-version="1.0" class="model-tag model-tag--numerical">numerical</span>
+      <span class="instrument__readout readout--fixed" role="status" aria-live="off" aria-label="Current values">
+        <span><span data-out="zname" style="min-width:5ch">Z0</span> <b data-out="z" style="min-width:8ch">—</b></span>
+        <span>limit <b data-out="lim" style="min-width:8ch">—</b></span>
+        <span>&#949;<sub>eff</sub> <b data-out="eeff" style="min-width:5ch">—</b></span>
+        <span>per inch <b data-out="lc" style="min-width:19ch">—</b></span>
+        <span><b data-out="ref" style="min-width:21ch">—</b></span>
+      </span>
+    </div>
+    <div class="side-layout">
+    <div class="panels">
+      <div class="panel" data-lab-name="Cross-section">
+        <span class="panel__label">The cross-section, solved &#183; drag a trace&#8217;s edge, the trace itself, or a pair&#8217;s gap</span>
+        <canvas data-cv="section" role="img" aria-label="Cross-section of a trace over a ground plane, with the dielectric shaded, the potential as a blue wash with equipotential lines every 10 percent, dark flux lines leaving the trace and crowding at its corners, and the finite-element mesh as a faint grid that is finest at the trace edges."></canvas>
+      </div>
+      <div class="panels two-up">
+        <div class="panel" data-lab-name="Convergence">
+          <span class="panel__label">Convergence &#183; finer meshes</span>
+          <canvas data-cv="ladder" role="img" aria-label="Characteristic impedance against the number of mesh nodes on a log scale, rising and levelling off as the mesh is refined, with the extrapolated limit and, where one exists, the exact or closed-form value as dashed lines."></canvas>
+        </div>
+        <div class="panel" data-lab-name="Boundary">
+          <span class="panel__label">Boundary &#183; where the walls are</span>
+          <canvas data-cv="walls" role="img" aria-label="Characteristic impedance against the distance from the copper to the walls of the solve, in trace heights, on a log scale, falling steeply when the walls come close."></canvas>
+        </div>
+      </div>
+    </div>
+    <div class="side">
+    <div class="side__inner">
+    <div class="controls controls--pairs">
+      <div class="ctl">
+        <div class="ctl__head"><label for="xs-type">Structure</label></div>
+        <select id="xs-type"><option value="ms1">Microstrip</option><option value="ms2">Microstrip pair</option><option value="sl1">Stripline</option><option value="sl2">Stripline pair</option></select>
+      </div>
+      <div class="ctl">
+        <div class="ctl__head"><label for="xs-mode">Driven</label></div>
+        <select id="xs-mode"><option value="odd">Odd (diff)</option><option value="even">Even (comm)</option></select>
+      </div>
+      <div class="ctl">
+        <div class="ctl__head"><label for="xs-w">Width</label><output id="xs-w-out" for="xs-w">6 mil</output></div>
+        <input type="range" id="xs-w" min="1" max="30" step="0.5" value="6">
+      </div>
+      <div class="ctl">
+        <div class="ctl__head"><label for="xs-h">Height</label><output id="xs-h-out" for="xs-h">3.5 mil</output></div>
+        <input type="range" id="xs-h" min="1" max="20" step="0.5" value="3.5">
+      </div>
+      <div class="ctl">
+        <div class="ctl__head"><label for="xs-t">Copper</label><output id="xs-t-out" for="xs-t">1.4 mil</output></div>
+        <input type="range" id="xs-t" min="0" max="3" step="0.1" value="1.4">
+      </div>
+      <div class="ctl">
+        <div class="ctl__head"><label for="xs-s">Gap</label><output id="xs-s-out" for="xs-s">6 mil</output></div>
+        <input type="range" id="xs-s" min="2" max="30" step="0.5" value="6">
+      </div>
+      <div class="ctl">
+        <div class="ctl__head"><label for="xs-er">D<sub>k</sub></label><output id="xs-er-out" for="xs-er">4.2</output></div>
+        <input type="range" id="xs-er" min="2" max="10" step="0.1" value="4.2">
+      </div>
+      <div class="ctl">
+        <div class="ctl__head"><label for="xs-mesh">Mesh</label><output id="xs-mesh-out" for="xs-mesh">8 cells</output></div>
+        <input type="range" id="xs-mesh" min="0" max="6" step="1" value="4">
+      </div>
+      <div class="ctl">
+        <div class="ctl__head"><label for="xs-box">Walls</label><output id="xs-box-out" for="xs-box">40 h</output></div>
+        <input type="range" id="xs-box" min="0" max="8" step="1" value="8">
+      </div>
+    </div>
+    <div class="presets">
+      <button class="preset" type="button" data-preset="ms50" aria-pressed="true">50 Ω line</button>
+      <button class="preset" type="button" data-preset="pair100" aria-pressed="false">100 Ω pair</button>
+      <button class="preset" type="button" data-preset="exact" aria-pressed="false">Exact check</button>
+      <button class="preset" type="button" data-preset="coarse" aria-pressed="false">Coarse mesh</button>
+      <button class="preset" type="button" data-preset="walls" aria-pressed="false">Close walls</button>
+    </div>
+    <div class="transport"><span data-out="note">—</span></div>
+    </div>
+    </div>
+    </div>
+  </section>
+
+  <div class="prose">
+
     <h2 class="section-rule"><span>Why this decides how your board behaves</span></h2>
 
     <ul class="tight">
@@ -311,6 +447,58 @@
           radiation boundary distance), poor wave port sizing, or halting before adaptive mesh refinement achieves
           scattering parameter convergence (<span class="num">&Delta;S &le; 0.01</span>).</li>
       </ul>
+
+      <h3>How the panel above works</h3>
+
+      <p>
+        <strong>The equation.</strong> In a uniform line carrying a quasi-TEM wave, the transverse
+        field is the field of a static problem: Laplace&#8217;s equation for the potential, with the
+        trace at 1 V and the planes and walls at 0 V. The panel solves it twice. With the laminate in
+        place it gives the capacitance per length C; with air everywhere it gives C<sub>air</sub>,
+        and because the inductance of a line does not depend on its dielectric, L follows from that
+        alone. Then
+      </p>
+      <div class="eq">
+        <i class="var">Z</i><sub>0</sub> = 1 / ( <i class="var">c</i> &#8730;( <i class="var">C</i> &#183; <i class="var">C</i><sub>air</sub> ) ), &nbsp;&nbsp; <i class="var">&#949;</i><sub>eff</sub> = <i class="var">C</i> / <i class="var">C</i><sub>air</sub>, &nbsp;&nbsp; <i class="var">L</i> = 1 / ( <i class="var">c</i><sup>2</sup> <i class="var">C</i><sub>air</sub> )
+        <span class="cap">c is the speed of light in vacuum. In a stripline C = D<sub>k</sub> &#183; C<sub>air</sub> exactly, so &#949;<sub>eff</sub> = D<sub>k</sub>; in a microstrip part of the field is in air and &#949;<sub>eff</sub> lands between 1 and D<sub>k</sub>.</span>
+      </div>
+
+      <p>
+        <strong>The discretisation.</strong> The cross-section is cut into rectangles on a graded
+        mesh, smallest at the copper edges, where the field is singular and the charge piles up, and
+        growing away from them. Inside each rectangle the potential is bilinear. The capacitance comes
+        from the stored energy, C = 2W/V<sup>2</sup>. Because the finite-element solution is the
+        lowest-energy potential the mesh can represent, and the true potential is lower still, the
+        energy and so C can only be overestimated. That is why every point on the ladder is below
+        the converged Z<sub>0</sub> and why the curve only ever climbs. A solver that uses charge
+        instead of energy loses that guarantee, which is one reason commercial tools report a
+        convergence history rather than a single number.
+      </p>
+
+      <p>
+        <strong>Symmetry.</strong> Only the right half is solved. For a single trace, and for a pair in
+        even mode, the centre line is a plane no field line crosses. For a pair in odd mode it is a
+        plane at 0 V, which is why odd-mode field lines run straight across to it. The pair numbers
+        are Z<sub>diff</sub> = 2Z<sub>odd</sub> and Z<sub>comm</sub> = Z<sub>even</sub>/2. In a
+        stripline the two modes see the same D<sub>k</sub> and travel together; in a microstrip more
+        of the odd-mode field is in air, so the two modes separate, which is the far-end crosstalk
+        the <a href="../fundamentals/crosstalk.html">crosstalk page</a> describes.
+      </p>
+
+      <p>
+        <strong>The extrapolation.</strong> The solver runs at seven mesh levels. From the levels with
+        4, 8 and 16 cells across the smallest feature it estimates where the sequence is heading with
+        Aitken&#8217;s &#916;<sup>2</sup> method, which needs no assumption about how fast the
+        sequence converges. It is an estimate: trust it when the last three rungs are already close
+        together.
+      </p>
+
+      <p>
+        <strong>What it leaves out.</strong> Loss, frequency dependence, solder mask, the trapezoid of
+        a real etched trace and copper roughness. Each moves Z<sub>0</sub> by a percent or two, and a
+        sign-off solver includes them all. None of them changes the two lessons the panel is built
+        for: converge the mesh, and keep the walls away.
+      </p>
     </details>
 
     <h2 class="section-rule"><span>In the real world</span></h2>
@@ -362,6 +550,11 @@
 </footer>
 
 <script src="../../js/site.js?v=61b8ff31" defer></script>
+<script src="../../js/viz-kit.js?v=10c584e5" defer></script>
+<script src="../../js/models/calc-models.js?v=d640a591" defer></script>
+<script src="../../js/models/cross-section-model.js?v=d3ab2b40" defer></script>
+<script src="../../js/viz/cross-section.js?v=c368c0ad" defer></script>
+<script src="../../js/viz-loader.js?v=cc26dfd9" defer></script>
 <script src="../../js/search.js?v=dcc1e06b" defer></script>
 </body>
 </html>

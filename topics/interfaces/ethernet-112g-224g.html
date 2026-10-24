@@ -13,7 +13,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
 <link rel="stylesheet" href="../../css/base.css?v=1e3ae753">
-<link rel="stylesheet" href="../../css/components.css?v=d53a657c">
+<link rel="stylesheet" href="../../css/components.css?v=c532fdc4">
   <!-- meta:start -->
   <link rel="canonical" href="https://sipi.work/topics/interfaces/ethernet-112g-224g.html">
   <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
@@ -101,7 +101,7 @@
     answer at once. A phone has no room to put them side by side.
   </p>
   <!-- mobilenote:end -->
-  <section class="instrument instrument--side" data-viz="ethLane" aria-label="Interactive comparison of one board trace at 112G and 224G: loss per inch against frequency with both Nyquist frequencies marked, and the single-bit pulse each rate gets through the same length">
+  <section class="instrument instrument--side side--wide" data-viz="ethLane" aria-label="Interactive comparison of one board trace at 112G and 224G: loss per inch against frequency with both Nyquist frequencies marked, and the single-bit pulse each rate gets through the same length">
     <script type="application/json" data-contract>{"kind":"numerical","evidence":"independent","purpose":"Show what doubling the Ethernet lane rate costs on the same board trace: loss per inch at the 112G and 224G Nyquist frequencies, the reach a budget buys at each, and the single-bit pulse each rate gets.","equations":["loss per inch = dielectric + conductor, C.loss: alpha_d = pi f sqrt(Dk) Df / c, alpha_c = Rs K / (2 Z0 w), Rs = rho / skin depth","K = 1 + (2/pi) atan(1.4 (Rq / skin depth)^2), Hammerstad and Bekkadal","Dk, Df at each frequency from the manufacturer's published table (js/models/laminates.js), interpolated within one measurement series","reach = budget / loss per inch at each Nyquist","pulse: K.channelImpulse(loss at that rate's Nyquist) then K.singleBit"],"units":"GHz, dB/in, dB, in, ps, fraction of the swing","validity":"First-order loss of a smooth-walled TEM line with the conductor current on one face of the strip, which equals the wide-stripline limit of strip plus planes. Laminate values are typical published values, not guaranteed.","numerics":"Loss evaluated at 1 GHz steps to 60 GHz. Pulses by FFT of a minimum-phase channel, 32 samples per unit interval, 4096 points.","limitations":"No vias, packages, connectors, crosstalk or reflections. Narrow-strip fringing and differential coupling change the conductor loss; a measured trace (C-119, laminate not named) loses 1.25-1.40 dB/in at 53.125 GHz. FR-4 data stop at 10 GHz and are held flat above it. The pulse shape is the site's shared channel model with its fixed split of copper and dielectric loss; only the loss at each Nyquist comes from the laminate. No equalisation.","suites":["Ethernet lane","Convergence"],"version":"1.0","reviewed":"2026-10-15","panel":"ethLane"}</script>
     <div class="instrument__bar">
       <span class="instrument__title">Same board, twice the rate</span>
@@ -443,12 +443,12 @@
 </footer>
 
 <script src="../../js/site.js?v=61b8ff31" defer></script>
-<script src="../../js/viz-kit.js?v=80b25b0d" defer></script>
+<script src="../../js/viz-kit.js?v=10c584e5" defer></script>
 <script src="../../js/models/calc-models.js?v=d640a591" defer></script>
 <script src="../../js/models/laminates.js?v=32f3413d" defer></script>
 <script src="../../js/models/ethernet-model.js?v=7e023a05" defer></script>
-<script src="../../js/viz/ethernet-lane.js?v=9e809f42" defer></script>
-<script src="../../js/viz-loader.js?v=3395e118" defer></script>
+<script src="../../js/viz/ethernet-lane.js?v=e7051c11" defer></script>
+<script src="../../js/viz-loader.js?v=cc26dfd9" defer></script>
 <script src="../../js/search.js?v=dcc1e06b" defer></script>
 </body>
 </html>

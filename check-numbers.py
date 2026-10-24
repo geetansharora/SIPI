@@ -142,6 +142,18 @@ def plane_mode(a_mm, b_mm, dk, m=1, n=0):
     return (v / 2) * math.sqrt((m / a_mm) ** 2 + (n / b_mm) ** 2) * 1000
 
 
+def cohn_stripline(w, b, er):
+    """Exact Z0 of a zero-thickness strip centred between planes b apart (Cohn, 1954),
+    by conformal mapping: (eta0 / 4 sqrt er) K(k) / K(k'), k = sech(pi w / 2b)."""
+    def K(k):
+        a, g = 1.0, math.sqrt(1 - k * k)
+        for _ in range(40):
+            a, g = (a + g) / 2, math.sqrt(a * g)
+        return math.pi / (2 * a)
+    k = 1 / math.cosh(math.pi * w / (2 * b))
+    return 376.730313668 / (4 * math.sqrt(er)) * K(k) / K(math.sqrt(1 - k * k))
+
+
 def lorentz_frac(a):
     """Fraction of return current within +/- a*h of the trace centreline."""
     return 2 * math.atan(a) / math.pi * 100
@@ -676,6 +688,19 @@ CLAIMS = [
         ("plane-pair Q at 1 GHz, 1/(1/50 + 1/Qc)", 1 / (1 / 50 + 1 / qc), r"plane-pair Q of about (\d+)", 1.5),
     ])((2 * math.pi * 1e9 * 2 / 299792458) / (2 * math.sqrt(math.pi * 1e9 * 4e-7 * math.pi / 5.8e7) / (376.730313 / 2 * 0.2e-3)))],
 
+    # Return current paths: the plane solver and its notes. Rs is 1 oz (35 um) annealed copper.
+    *[("fundamentals/return-current-paths", desc, val, rx, tol) for desc, val, rx, tol in (lambda rs, mu0: [
+        ("60 x 40 mm in 1 mm cells", 60 * 40, r"plane is cut into ([\d,]+) cells", 0.1),
+        ("sheet resistance of 35 um copper, rho/t (mohm)", rs * 1e3, r"([\d.]+) mohm per square", 1.5),
+        ("2 Rs / (w mu0) at 10 kHz (mm)", 2 * rs / (2 * math.pi * 1e4 * mu0) * 1e3, r"about (\d+) mm at 10 kHz", 5),
+        ("2 Rs / (w mu0) at 100 kHz (mm)", 2 * rs / (2 * math.pi * 1e5 * mu0) * 1e3, r"([\d.]+) mm at 100 kHz", 5),
+        ("frequency where 2 Rs / (w mu0) = 0.2 mm (kHz)", rs / (math.pi * mu0 * 0.2e-3) / 1e3, r"near (\d+) kHz for h = 0\.2 mm", 1),
+        ("100 nF with 1 nH resonates at (MHz)", srf(100e-9, 1e-9) / 1e6, r"resonates with it near (\d+) MHz", 1),
+        ("wavelength at 100 MHz in Dk 4 over the 60 mm board", 299792458 / 1e8 / math.sqrt(4) / 0.060, r"about (\d+) times longer than the board", 2),
+        ("mu0 / pi, the per-length scale of a two-conductor loop (nH/mm)", mu0 / math.pi * 1e6, r"([\d.]+) nH per millimetre", 1),
+        ("Split plane: slot cut to y = 30 mm, trace at y = 20.5 mm (mm past the trace)", 30 - 20.5, r"slot ends ([\d.]+) mm past the trace", 0.1),
+    ])(1.72e-8 / 35e-6, 4e-7 * math.pi)],
+
     ("interfaces/ucie", "forwarded clock at 64 GT/s, quarter rate (GHz)", 64 / 4, r"At 64 GT/s the forwarded clock runs at (\d+) GHz", 0.1),
     ("interfaces/ucie", "forwarded clock at 48 GT/s, quarter rate (GHz)", 48 / 4, r"at 48 GT/s at (\d+) GHz", 0.1),
     ("interfaces/ucie", "P1 low-frequency level, sum of taps", -0.05 + 0.95 + 0, r"P1 -0\.05 0\.95 0 ([\d.]+) ", 0.5),
@@ -1093,6 +1118,18 @@ CLAIMS = [
      stub(60, 4.0), r"60 mil stub in D_k 4.0 resonates near (\d+) GHz", 4),
     (F + "/vias", "200 mil stub resonance (GHz)",
      stub(200, 4.0), r"lands at about ([\d.]+) GHz", 3),
+    (P + "/ir-drop-electromigration", "neck between 0.9 mm antipads at 1 mm pitch (mm)",
+     1.0 - 0.9, r"that is ([\d.]+) mm of copper", 0.5),
+    (P + "/ir-drop-electromigration", "20 A across an 11.8 mm plane of 1 oz copper (A/mm^2)",
+     20 / (11.8 * 34.8e-3), r"20\s*A in this sheet is about\s*([\d.]+) A/mm", 1),
+    (P + "/ir-drop-electromigration", "sheet resistance of 1 oz copper (mohm/sq)",
+     1.72e-8 / 34.8e-6 * 1e3, r"that is ([\d.]+) mohm per square", 1.5),
+    (P + "/ir-drop-electromigration", "plated barrel 0.25 mm, 25 um, per mm (mohm)",
+     1.72e-8 * 1e-3 / (math.pi * (0.25e-3 - 25e-6) * 25e-6) * 1e3, r"about\s*([\d.]+) mohm per millimetre", 1),
+    (P + "/ir-drop-electromigration", "SAC305 ball, 0.45 mm across, 0.4 mm tall (mohm)",
+     1.3e-7 * 0.4e-3 / (math.pi * 0.45e-3 ** 2 / 4) * 1e3, r"solder ball of roughly\s*([\d.]+) mohm", 1.5),
+    (M + "/field-solvers", "exact Z0, 5 mil strip, planes 10 mil apart, Dk 4 (ohm)",
+     cohn_stripline(5, 10, 4), r"an exact answer,\s*([\d.]+) ohm", 0.05),
     (F + "/return-current-paths", "return within +/-h (%)",
      lorentz_frac(1), r"(\d+)% within .h", 2),
     (F + "/return-current-paths", "return within +/-3h (%)",

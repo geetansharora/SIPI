@@ -121,6 +121,19 @@
       ]
     },
     {
+      "url": "topics/fundamentals/return-current-paths.html",
+      "panels": [
+        "returnPath"
+      ],
+      "presets": [
+        "corner",
+        "detour",
+        "split",
+        "splitcap",
+        "straight"
+      ]
+    },
+    {
       "url": "topics/fundamentals/s-parameters.html",
       "panels": [
         "sparams"
@@ -324,6 +337,19 @@
       ]
     },
     {
+      "url": "topics/methodology/field-solvers.html",
+      "panels": [
+        "crossSection"
+      ],
+      "presets": [
+        "coarse",
+        "exact",
+        "ms50",
+        "pair100",
+        "walls"
+      ]
+    },
+    {
       "url": "topics/package-board/layer-transitions.html",
       "panels": [
         "planeCavity"
@@ -360,6 +386,19 @@
         "lowesr",
         "one",
         "two"
+      ]
+    },
+    {
+      "url": "topics/power-integrity/ir-drop-electromigration.html",
+      "panels": [
+        "irPlane"
+      ],
+      "presets": [
+        "channel",
+        "cutoff",
+        "generous",
+        "swiss",
+        "typical"
       ]
     },
     {
@@ -571,8 +610,8 @@
     }
   ],
   "totals": {
-    "pages": 48,
-    "panels": 53,
-    "presets": 192
+    "pages": 51,
+    "panels": 56,
+    "presets": 207
   }
 }

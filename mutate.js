@@ -1096,6 +1096,119 @@ const MUTATIONS = [
        + 'exists to remove: inductive pickup follows how much current moves, not the swing.',
     active: true, fast: true
   },
+  {
+    id: 'return-path-trace-coupling-sign',
+    file: 'js/models/return-path-model.js',
+    find: '        for (let j = 0; j < ny; j++) for (let i = 0; i < nx - 1; i++) Mx[xb(i, j)] += s.dir * tapeM(',
+    with: '        for (let j = 0; j < ny; j++) for (let i = 0; i < nx - 1; i++) Mx[xb(i, j)] -= s.dir * tapeM(',
+    suite: 'Return path',
+    expect: 'share of the return within +-h is 1/2',
+    why: 'A sign slip between the trace current and the plane bars it couples to: the plane '
+       + 'then pushes its return away from a trace running along x instead of drawing it under.',
+    active: true, fast: true
+  },
+  {
+    id: 'return-path-tape-inductance',
+    file: 'js/models/return-path-model.js',
+    find: '    if (z > 0 && u !== 0 && v !== 0) f -= u * v * z * Math.atan(u * v / (z * R));',
+    with: '    if (z > 0 && u !== 0 && v !== 0) f += u * v * z * Math.atan(u * v / (z * R));',
+    suite: 'Return path',
+    expect: 'loop inductance matches the image-theory rectangle',
+    why: 'A sign slip in the closed-form partial inductance of two tapes in different '
+       + 'planes: the trace-to-plane coupling is then wrong at every height, and nothing '
+       + 'looks broken on screen. (A shift common to every partial inductance would cancel '
+       + 'in a loop, so it would not be a defect of any loop quantity.)',
+    active: true, fast: true
+  },
+  {
+    id: 'return-path-step-loses-resistance',
+    file: 'js/models/return-path-model.js',
+    find: '      for (let k = 0; k < N; k++) br[k] -= rp.r[k];',
+    with: '      for (let k = 0; k < N; k++) br[k] -= 0 * rp.r[k];',
+    suite: 'Return path',
+    expect: 'after 10 ms it is the DC spread',
+    why: 'Dropping the resistive drop of the imposed return from the time step: the step '
+       + 'then never relaxes from the inductive picture to the DC one.',
+    active: true, fast: true
+  },
+  {
+    id: 'cross-section-air-keeps-laminate',
+    file: 'js/models/cross-section-model.js',
+    find: "    const epsOf = (yc) => (air ? 1 : p.type === 'sl' ? p.er : yc < g.yb ? p.er : 1);",
+    with: "    const epsOf = (yc) => (false ? 1 : p.type === 'sl' ? p.er : yc < g.yb ? p.er : 1);",
+    suite: 'Cross-section',
+    expect: 'effective permittivity is the laminate Dk exactly',
+    why: 'The air solve, the reference capacitance that gives L, done with the laminate still '
+       + 'in place: eeff becomes 1 for every structure and Z0 is off by sqrt(er).',
+    active: true, fast: true
+  },
+  {
+    id: 'cross-section-odd-mirror-floats',
+    file: 'js/models/cross-section-model.js',
+    find: "      else if (i === 0 && p.pair && p.mode === 'odd') fixed[k] = 1;            // the odd-mode mirror: 0 V",
+    with: "      else if (i === 0 && p.pair && p.mode === 'odd' && false) fixed[k] = 1;   // the odd-mode mirror: 0 V",
+    suite: 'Cross-section',
+    expect: 'odd-mode Z0 is below even-mode Z0',
+    why: 'Forgetting that the plane of symmetry is a 0 V wall in odd mode: odd and even become '
+       + 'the same solve, and a differential pair has no coupling at all.',
+    active: true, fast: true
+  },
+  {
+    id: 'cross-section-trace-embedded',
+    file: 'js/models/cross-section-model.js',
+    find: "    const epsOf = (yc) => (air ? 1 : p.type === 'sl' ? p.er : yc < g.yb ? p.er : 1);",
+    with: "    const epsOf = (yc) => (air ? 1 : p.type === 'sl' ? p.er : yc < g.yt ? p.er : 1);",
+    suite: 'Cross-section',
+    expect: 'agrees with Hammerstad-Jensen',
+    why: 'Laminate drawn up to the top of the trace instead of its bottom, so the copper sits in '
+       + 'a dielectric slot its own thickness deep: a plausible-looking microstrip a few percent low.',
+    active: true, fast: true
+  },
+  {
+    id: 'cross-section-pair-charge-doubled',
+    file: 'js/models/cross-section-model.js',
+    find: '    const C = (p.pair ? 2 : 4) * W * EPS0;                 // F/m',
+    with: '    const C = (p.pair ? 4 : 4) * W * EPS0;                 // F/m',
+    suite: 'Cross-section',
+    expect: 'the odd mode is the single line',
+    why: 'Counting the mirror image of a pair trace as if it were the other half of the same '
+       + 'trace: every pair impedance is low by sqrt(2), and nothing in the picture changes.',
+    active: true, fast: true
+  },
+  {
+    id: 'ir-plane-feed-half-cell',
+    file: 'js/models/ir-plane-model.js',
+    find: '    for (let j = 0; j < ny; j++) if (live[j * nx]) diagG[node[j * nx]] += 2 * gs * feed[j];',
+    with: '    for (let j = 0; j < ny; j++) if (live[j * nx]) diagG[node[j * nx]] += gs * feed[j];',
+    suite: 'IR plane',
+    expect: 'strip: resistance is R_s L / W',
+    why: 'The feed edge is half a cell from the first cell centre, so its conductance is 2 g per '
+       + 'square. Taking it as a whole cell adds half a square of copper to every drop.',
+    active: true, fast: true
+  },
+  {
+    id: 'ir-plane-holes-only-block-y',
+    file: 'js/models/ir-plane-model.js',
+    find: '      fx[i + j * (nx - 1)] = 1 - blocked(y0, y1, chordsY(x, y0, y1)) / h;',
+    with: '      fx[i + j * (nx - 1)] = 1;',
+    suite: 'IR plane',
+    expect: 'one hole: the added resistance is the dipole value',
+    why: 'Antipads cut from the faces in one direction only: current flowing along x passes '
+       + 'straight through the holes, and the plane looks far healthier than it is.',
+    active: true, fast: false
+  },
+  {
+    id: 'ir-plane-web-off-by-one',
+    file: 'js/models/ir-plane-model.js',
+    find: '            const ii = Math.round(x / h) - 1;',
+    with: '            const ii = Math.round(x / h);',
+    suite: 'IR plane',
+    expect: 'grid: 0.2 mm cells give the worst neck density of 0.05 mm cells within 1%',
+    why: 'Reading the neck current one cell beside the line through the hole centres: a '
+       + 'plausible number, from a cut where the neck is not. The shift is a different '
+       + 'distance on each grid, so the two grids stop agreeing.',
+    active: true, fast: true
+  },
 ];
 
 /* A deliberately UNDETECTABLE mutation, used only by --selftest.
