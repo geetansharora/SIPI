@@ -1,0 +1,497 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- theme:start -->
+  <meta name="theme-color" content="#F7F8FA">
+  <script>(function(){try{var t=localStorage.getItem('sipi-theme');if(t==='dark'||t==='system'){document.documentElement.setAttribute('data-theme',t);var m=document.querySelector('meta[name=theme-color]');if(m&&(t==='dark'||matchMedia('(prefers-color-scheme:dark)').matches))m.content='#0B1015';}}catch(e){}})();</script>
+  <!-- theme:end -->
+<title>DisplayPort 2.1: UHBR Rates, Cable Loss and Link Training | SIPI</title>
+<meta name="description" content="DisplayPort 2.1 for signal integrity: UHBR10, 13.5 and 20 rates, 128b/132b payload, cable loss by gauge, retimers (LTTPR) and how link training falls back.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<link rel="stylesheet" href="../../css/base.css?v=1e3ae753">
+<link rel="stylesheet" href="../../css/components.css?v=9967e8fb">
+  <!-- meta:start -->
+  <link rel="canonical" href="https://sipi.work/topics/interfaces/displayport.html">
+  <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="SIPI">
+  <meta property="og:title" content="DisplayPort 2.1: UHBR Rates, Cable Loss and Link Training | SIPI">
+  <meta property="og:description" content="DisplayPort 2.1 for signal integrity: UHBR10, 13.5 and 20 rates, 128b/132b payload, cable loss by gauge, retimers (LTTPR) and how link training falls back.">
+  <meta property="og:url" content="https://sipi.work/topics/interfaces/displayport.html">
+  <meta property="og:image" content="https://sipi.work/assets/og/interfaces/displayport.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="DisplayPort 2.1: UHBR Rates, Cable Loss and Link Training: a figure from the page, on SIPI">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="DisplayPort 2.1: UHBR Rates, Cable Loss and Link Training | SIPI">
+  <meta name="twitter:description" content="DisplayPort 2.1 for signal integrity: UHBR10, 13.5 and 20 rates, 128b/132b payload, cable loss by gauge, retimers (LTTPR) and how link training falls back.">
+  <meta name="twitter:image" content="https://sipi.work/assets/og/interfaces/displayport.png">
+  <meta name="twitter:image:alt" content="DisplayPort 2.1: UHBR Rates, Cable Loss and Link Training: a figure from the page, on SIPI">
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"DisplayPort 2.1: UHBR Rates, Cable Loss and Link Training","description":"DisplayPort 2.1 for signal integrity: UHBR10, 13.5 and 20 rates, 128b/132b payload, cable loss by gauge, retimers (LTTPR) and how link training falls back.","url":"https://sipi.work/topics/interfaces/displayport.html","articleSection":"Interface sign-off","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer","url":"https://www.linkedin.com/in/geetansh-arora-a645714a/","sameAs":["https://www.linkedin.com/in/geetansh-arora-a645714a/"]},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-11-01","image":"https://sipi.work/assets/og/interfaces/displayport.png"}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"SIPI","item":"https://sipi.work/"},{"@type":"ListItem","position":2,"name":"Interface sign-off","item":"https://sipi.work/#interfaces"},{"@type":"ListItem","position":3,"name":"DisplayPort 2.1: UHBR Rates, Cable Loss and Link Training"}]}</script>
+  <!-- meta:end -->
+</head>
+<body>
+
+<header class="masthead">
+  <a class="wordmark" href="../../index.html">SIPI</a>
+  <button class="theme-toggle" data-act="theme" type="button">Light</button>
+  <nav aria-label="Site">
+    <a href="../../start.html">Start</a>
+    <a href="../../index.html#groundwork">Topics</a>
+    <a href="../../labs.html">Labs</a>
+    <a href="../../calculators.html">Calculators</a>
+    <a href="../../colophon.html">About</a>
+  </nav>
+</header>
+
+<main>
+  <div class="page-head">
+    <p class="crumb"><a href="../../index.html#interfaces">Interface sign-off</a> / 12</p>
+    <h1>DisplayPort 2.1: UHBR Rates, Cable Loss and Link Training</h1>
+    <p class="byline">
+      <!-- review:start --><span>By <a href="https://www.linkedin.com/in/geetansh-arora-a645714a/" target="_blank" rel="author noopener">Geetansh Arora</a> — Principal SI/PI Engineer</span><time datetime="2026-11-01" title="Technical review by Geetansh Arora on this date">1 Nov 2026</time><span>10 min</span><!-- review:end -->
+    </p>
+    <!-- share:head:start --><div class="share share--head" data-share data-share-url="https://sipi.work/topics/interfaces/displayport.html" data-share-title="DisplayPort 2.1: UHBR Rates, Cable Loss and Link Training"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Fdisplayport.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Fdisplayport.html&amp;text=DisplayPort%202.1%3A%20UHBR%20Rates%2C%20Cable%20Loss%20and%20Link%20Training" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=DisplayPort%202.1%3A%20UHBR%20Rates%2C%20Cable%20Loss%20and%20Link%20Training&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Fdisplayport.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:head:end -->
+    <p class="answer">
+      DisplayPort sends video on up to four lanes, each with its clock embedded in the data, at a rate the source and
+      sink agree on when the link comes up. DisplayPort 2.0 introduced three UHBR rates up to 20 Gb/s a lane with more efficient 128b/132b coding, for about 77 Gb/s of payload (C-204), and DisplayPort 2.1 keeps them (C-208). Whether a link reaches that rate is a loss
+      budget at each rate&#8217;s Nyquist frequency: link training starts at the top and steps down until the path fits.
+    </p>
+  </div>
+
+  <div class="prose">
+    <h2 class="section-rule" id="at-a-glance"><span>At a glance</span></h2>
+    <h3>What rates does DisplayPort run at?</h3>
+    <p>
+      Seven, per lane: RBR 1.62, HBR 2.7, HBR2 5.4 and HBR3 8.1 Gb/s with 8b/10b coding, and UHBR10, UHBR13.5 and
+      UHBR20 at 10, 13.5 and 20 Gb/s with 128b/132b coding (C-208). A link runs one rate on all its lanes, one, two or
+      four of them.
+    </p>
+    <h3>How much video does UHBR20 carry?</h3>
+    <p>
+      Four lanes at 20 Gb/s are 80 Gb/s on the wire. 128b/132b coding sends 128 data bits in every 132, so the coded
+      payload is 4 &#215; 20 &#215; 128/132 = <span class="num">77.58</span> Gb/s; VESA quotes a maximum payload of
+      77.37 Gb/s, slightly lower again for overhead inside the specification (C-204). HBR3 on four lanes carries
+      <span class="num">25.92</span> Gb/s after 8b/10b, so UHBR20 is three times as much.
+    </p>
+    <h3>Why do UHBR20 cables have to be short?</h3>
+    <p>
+      Because UHBR20&#8217;s Nyquist frequency is 10 GHz, and a cable loses more at 10 GHz than at HBR3&#8217;s 4.05 GHz:
+      skin effect squeezes the current into a thinner and thinner layer of each wire as the frequency rises. VESA
+      describes passive DP80 cables as limiting UHBR20 to about a metre, and its DP80LL active cables as reaching three
+      (C-210).
+    </p>
+    <h3>What happens when the link cannot run at the top rate?</h3>
+    <p>
+      It runs at a lower one. During link training the source tries the highest rate both ends support, raising its
+      drive strength over a few attempts; if the sink still cannot recover the clock, the source drops to the next
+      rate down and tries again, until it succeeds or fails at the lowest (C-206). The picture still appears, but the
+      payload, and with it the resolution or refresh rate on offer, falls.
+    </p>
+    <h3>What is an LTTPR?</h3>
+    <p>
+      A link-training tunable PHY repeater: a retimer that DisplayPort&#8217;s training knows about. It recovers the data
+      and sends it again cleanly, so the path on each side of it is a link with a full loss budget of its own.
+    </p>
+    <h3>Can DisplayPort run over USB-C?</h3>
+    <p>
+      Yes, in DisplayPort Alt Mode. With all four high-speed lanes of a USB-C cable given to DisplayPort it carries up
+      to 80 Gb/s; sharing the cable with SuperSpeed USB data leaves two lanes and up to 40 Gb/s (C-211).
+    </p>
+
+    <h2 class="section-rule" id="link"><span>A link with no clock wire</span></h2>
+    <p>
+      A DisplayPort link has three parts: up to four main-link lanes, each a 100 &#937; differential pair (C-206); a slow
+      auxiliary channel the two ends talk over; and a hot-plug detect line, which the sink raises to say it is there.
+      There is no clock lane. The sink recovers each lane&#8217;s clock from the edges in the data, as a PCIe or USB
+      receiver does (C-206).
+    </p>
+    <p>
+      That makes DisplayPort a SerDes link like any other, with one difference that shapes everything on this page: the
+      rate is not fixed. PCIe trains down too, but a slot that comes up a generation low is a fault someone will chase; a DisplayPort link that cannot run UHBR20 settles for UHBR13.5 as a normal outcome, and the monitor offers fewer modes. Signal integrity on DisplayPort is less often
+      &#8220;does it work&#8221; than &#8220;which rate does it reach&#8221;.
+    </p>
+
+    <h2 class="section-rule" id="budget"><span>One budget for each rate, at its own Nyquist</span></h2>
+    <p>
+      Each rate&#8217;s loss is judged at its Nyquist frequency, half the bit rate, where a non-return-to-zero signal
+      puts its fastest alternation. A path has one loss curve, but every rate reads it at a different point:
+    </p>
+
+    <div class="table-scroll">
+    <table class="data">
+      <caption>DisplayPort&#8217;s rates, their Nyquist frequencies, payload on four lanes, and the die-to-die budget the panel uses. * No public figure: HBR3&#8217;s, assumed.</caption>
+      <thead><tr><th>Rate</th><th>Gb/s a lane</th><th>Nyquist, GHz</th><th>Coding</th><th>Payload &#215;4, Gb/s</th><th>Budget, dB</th></tr></thead>
+      <tbody>
+        <tr><td>RBR</td><td>1.62</td><td>0.81</td><td>8b/10b</td><td>5.18</td><td>22*</td></tr>
+        <tr><td>HBR</td><td>2.7</td><td>1.35</td><td>8b/10b</td><td>8.64</td><td>22*</td></tr>
+        <tr><td>HBR2</td><td>5.4</td><td>2.7</td><td>8b/10b</td><td>17.28</td><td>22*</td></tr>
+        <tr><td>HBR3</td><td>8.1</td><td>4.05</td><td>8b/10b</td><td>25.92</td><td>22</td></tr>
+        <tr><td>UHBR10</td><td>10</td><td>5</td><td>128b/132b</td><td>38.79</td><td>23</td></tr>
+        <tr><td>UHBR13.5</td><td>13.5</td><td>6.75</td><td>128b/132b</td><td>52.36</td><td>21</td></tr>
+        <tr><td>UHBR20</td><td>20</td><td>10</td><td>128b/132b</td><td>77.58</td><td>22.5</td></tr>
+      </tbody>
+    </table>
+    </div>
+
+    <p>
+      The UHBR budgets are die to die, from the source&#8217;s silicon to the sink&#8217;s, as a PHY vendor summarises the
+      specification (C-205). HBR3&#8217;s is the low end of the 22 to 24 dB stress channel a DisplayPort 1.4 sink is calibrated against in compliance testing (C-207). That is a channel for testing a sink, not a die-to-die allowance: a sink has to cope with at least that much, so the panel&#8217;s HBR3 verdicts err on the cautious side. No public figure was found for the three slower rates, so the
+      panel gives them HBR3&#8217;s, and says so; at their Nyquist frequencies the path loses so much less that they are
+      never the rate that decides anything.
+    </p>
+    <p>
+      Notice that the budgets are not in order. UHBR13.5 is allowed less than UHBR10 or UHBR20. These are one vendor&#8217;s summary of the specification, and the page cannot tell you why UHBR13.5&#8217;s is the lowest; the panel uses them as published. That is one reason it checks each rate against its own budget rather than assuming that a path which fails one rate fails every rate above it.
+    </p>
+
+    <p>
+      Before you use the panel below, predict. A 1 m cable trains at UHBR20 with about 6 dB to spare. Triple the cable to 3 m.
+      Does the link lose one rate, two, or fall all the way to HBR3? Then put a retimer beside the source&#8217;s
+      connector: which rate does it get back?
+    </p>
+  </div>
+
+  <!-- mobilenote:start -->
+  <p class="mobile-note" role="note">
+    <b>Best viewed on a laptop or desktop.</b>
+    These panels are built so you can move a slider and watch several charts
+    answer at once. A phone has no room to put them side by side.
+  </p>
+  <!-- mobilenote:end -->
+  <section class="instrument lab" data-viz="displayLink" data-protocol="dp" aria-label="Interactive DisplayPort link: a path from source die to sink die through two boards, two connectors and a cable, with an optional retimer; its insertion loss against frequency with each rate's budget at its Nyquist, and the training ladder from the highest supported rate down to the one that trains">
+<script type="application/json" data-contract>{"kind":"numerical","evidence":"independent","purpose":"Show why a DisplayPort or HDMI link's rate is decided by loss at each rate's own Nyquist frequency: a path from source die to sink die through boards, connectors and a cable, with an optional retimer, checked against each rate's budget from the top rate down, the way link training steps down.","equations":["board: dielectric pi f sqrt(Dk) Df / c plus conductor Rs K / (2 w Z0), the laminate's published Dk and Df (NS.calc.loss)","cable pair: Z = (120/sqrt(er)) arccosh(D/d); R' = (2 Rs / pi d) (D/d) / sqrt((D/d)^2 - 1); loss = k R'/2Z + pi f sqrt(er) tan(d) / c, k fitted to C-118","package, connector: illustrative allowance at 10 GHz x (0.35 sqrt(f/10 GHz) + 0.65 f/10 GHz)","a rate trains if every segment's loss at its Nyquist is within its budget; the link takes the highest that does","payload = lanes x rate x coding (8/10 or 128/132)"],"units":"dB, GHz, Gb/s, in, m, AWG","validity":"Insertion loss only: smooth, matched segments whose decibels add. Budgets are die-to-die figures at Nyquist from public vendor material (DisplayPort UHBR and HBR3; HDMI FRL 12G, from a worst-case cable test channel, which makes HDMI cautious) or assumed (the other rates).","numerics":"Closed form at each rate's Nyquist; the loss chart samples each segment at 111 frequencies to 11 GHz.","limitations":"A loss budget, not an eye: no reflections, return loss, crosstalk, jitter or equalisation, so a path that fits can still fail and one that misses by a little can still train. Package and connector allowances, the cable's insulation and the budgets of RBR, HBR, HBR2 and every HDMI rate but FRL 12G are illustrative or assumed; HDMI's 20 dB is a cable test channel counted die to die, so its verdicts are cautious; the cable is a two-wire pair scaled by one factor fitted to one public twinax figure. The drive-level steps of clock recovery and the 128b/132b training sequence are not modelled. The HDMI order of retrying lower FRL rates before TMDS is not public; the ladder is the shape of the decision. Not the VESA or HDMI compliance test.","suites":["Display link"],"version":"1.2","reviewed":"2026-11-01","panel":"displayLink"}</script>
+<div class="lab-frame">
+<div class="instrument__bar">
+      <span class="instrument__title">Will it train?</span>
+      <span data-evidence="independent" data-model-version="1.2" class="model-tag model-tag--numerical">numerical</span>
+      <span class="instrument__readout readout--fixed" role="status" aria-live="off" aria-label="Current values">
+        <span>trains at <b data-out="rate" style="min-width:9ch">&#8212;</b></span>
+        <span>payload <b data-out="pay" style="min-width:10ch">&#8212;</b></span>
+        <span>margin <b data-out="margin" style="min-width:7ch">&#8212;</b></span>
+        <span>4K 10-bit up to <b data-out="video" style="min-width:6ch">&#8212;</b></span>
+      </span>
+      <button type="button" class="tool-btn lab-full" data-lab-full aria-pressed="false">full screen</button>
+</div>
+<aside class="lab-rail lab-rail--left" aria-label="Path controls">
+<p class="lab-rail__side">The path <span>source die to sink die</span></p>
+<details class="control-group lab-group" open><summary class="lab-group__title" id="dl-left-0">Boards</summary><div class="control-group__grid lab-group__body"><div class="ctl">
+        <div class="ctl__head"><label for="dl-src" title="The source board trace, package to connector">Source trace</label><output id="dl-src-out" for="dl-src">4 in</output></div>
+        <input type="range" id="dl-src" aria-describedby="dl-src-note" min="1" max="12" step="0.5" value="4">
+        <span class="ctl__note" id="dl-src-note">Board trace from the source package to its connector</span>
+      </div>
+<div class="ctl">
+        <div class="ctl__head"><label for="dl-sink" title="The sink board trace, connector to package">Sink trace</label><output id="dl-sink-out" for="dl-sink">3 in</output></div>
+        <input type="range" id="dl-sink" aria-describedby="dl-sink-note" min="1" max="12" step="0.5" value="3">
+        <span class="ctl__note" id="dl-sink-note">Board trace from the connector to the sink package</span>
+      </div>
+<div class="ctl">
+        <div class="ctl__head"><label for="dl-lam">Laminate</label></div>
+        <select id="dl-lam" aria-describedby="dl-lam-note"><option value="isola-370hr">FR-4</option><option value="megtron4">MEGTRON 4</option><option value="megtron6n">MEGTRON 6</option></select>
+        <span class="ctl__note" id="dl-lam-note">The laminate&#8217;s published Dk and Df, at each frequency</span>
+      </div></div></details>
+<details class="control-group lab-group" open><summary class="lab-group__title" id="dl-left-1">Cable</summary><div class="control-group__grid lab-group__body"><div class="ctl">
+        <div class="ctl__head"><label for="dl-cable">Cable length</label><output id="dl-cable-out" for="dl-cable">1.0 m</output></div>
+        <input type="range" id="dl-cable" aria-describedby="dl-cable-note" min="0.5" max="5" step="0.1" value="1">
+        <span class="ctl__note" id="dl-cable-note">Cable loss grows with length, and with frequency</span>
+      </div>
+<div class="ctl">
+        <div class="ctl__head"><label for="dl-awg">Wire gauge</label></div>
+        <select id="dl-awg" aria-describedby="dl-awg-note"><option value="28">28 AWG</option><option value="30">30 AWG</option><option value="32">32 AWG</option><option value="34">34 AWG</option></select>
+        <span class="ctl__note" id="dl-awg-note">A higher AWG is a thinner wire, which loses more</span>
+      </div></div></details>
+<p class="lab-help" aria-hidden="true">Point at or focus a control to see what it changes.</p>
+</aside>
+<div class="lab-stage">
+<div class="lab-row lab-row--anchor">
+<div data-lab-unit="loss" data-lab-name="Loss" class="panel">
+        <div class="lab-panel-head"><span class="panel__label">Insertion loss &#183; each segment, with every rate&#8217;s budget at its Nyquist</span><button type="button" class="tool-btn lab-expand" data-lab-expand aria-pressed="false" aria-label="Expand insertion loss">expand</button></div>
+        <canvas data-cv="loss" role="img" aria-label="Insertion loss in decibels against frequency in gigahertz for each segment of the path: one curve without a retimer, two with one. At each rate's Nyquist frequency a short bar marks that rate's budget and a dot marks the worst segment's loss: blue for the rate that trains, red for a rate that is too lossy, grey for a rate not tried."></canvas>
+        <div class="legend"><span><i style="background:var(--signal)"></i>path, or before the retimer</span><span><i class="dash" style="color:var(--reflect)"></i>after the retimer</span><span><i style="background:var(--ink)"></i>each rate&#8217;s budget (the slowest unnamed)</span></div>
+      </div>
+</div>
+<div class="lab-row lab-row--anchor">
+<div data-lab-unit="ladder" data-lab-name="Training" class="panel">
+        <div class="lab-panel-head"><span class="panel__label">Link training &#183; highest rate first, then down</span><button type="button" class="tool-btn lab-expand" data-lab-expand aria-pressed="false" aria-label="Expand link training">expand</button></div>
+        <canvas data-cv="ladder" role="img" aria-label="One row for each rate the link may try, highest first. Each row has a bar for the worst segment's loss at that rate's Nyquist, a tick at the rate's budget, and a word: trains, too lossy, or not tried."></canvas>
+      </div>
+</div>
+</div>
+<aside class="lab-rail lab-rail--right" aria-label="Link controls and scenarios">
+<p class="lab-rail__side">The link <span>what trains</span></p>
+<details class="control-group lab-group" open><summary class="lab-group__title" id="dl-right-0">Link</summary><div class="control-group__grid lab-group__body"><div class="ctl">
+        <div class="ctl__head"><label for="dl-cap" title="The highest rate both the source and the sink support">Both ends support</label></div>
+        <select id="dl-cap" aria-describedby="dl-cap-note"><option value="6">UHBR20</option><option value="5">UHBR13.5</option><option value="4">UHBR10</option><option value="3">HBR3</option><option value="2">HBR2</option></select>
+        <span class="ctl__note" id="dl-cap-note">The highest rate both ends advertise: training starts here</span>
+      </div>
+<div class="ctl">
+        <div class="ctl__head"><label for="dl-lanes">Lanes</label></div>
+        <select id="dl-lanes" aria-describedby="dl-lanes-note"><option value="4">4</option><option value="2">2, beside USB</option></select>
+        <span class="ctl__note" id="dl-lanes-note">Two lanes when a USB-C cable also carries USB data</span>
+      </div>
+<div class="ctl">
+        <div class="ctl__head"><label for="dl-rt" title="A retimer recovers the data and sends it again">Retimer</label></div>
+        <select id="dl-rt" aria-describedby="dl-rt-note"><option value="none">None</option><option value="source">By the source</option><option value="sink">By the sink</option></select>
+        <span class="ctl__note" id="dl-rt-note">A retimer splits the path in two, each part with the whole budget</span>
+      </div></div></details>
+<details class="control-group lab-group" open><summary class="lab-group__title" id="dl-right-1">Scenarios</summary><div class="control-group__grid lab-group__body"><div class="presets">
+      <button class="preset" type="button" data-preset="desk" aria-pressed="true">Desk, 1 m</button>
+      <button class="preset" type="button" data-preset="long" aria-pressed="false">3 m cable</button>
+      <button class="preset" type="button" data-preset="thin" aria-pressed="false">Thin cable</button>
+      <button class="preset" type="button" data-preset="retimer" aria-pressed="false">3 m + retimer</button>
+      <button class="preset" type="button" data-preset="usbc" aria-pressed="false">Laptop USB-C</button>
+      <button class="preset preset--act" type="button" data-act="train">Train</button>
+      <p class="presets__note" data-out="note">&#8212;</p>
+      </div></div></details>
+<p class="lab-help" aria-hidden="true">Point at or focus a control to see what it changes.</p>
+</aside>
+</div>
+</section>
+
+  <div class="prose">
+    <p>
+      The 3 m cable costs one rate: at 10 GHz the path loses about 26 dB against UHBR20&#8217;s 22.5, and at
+      UHBR13.5&#8217;s 6.75 GHz it just fits 21 dB, with under a decibel to spare. The payload drops by a third, from
+      77.6 to <span class="num">52.4</span> Gb/s. A retimer beside the source&#8217;s connector takes the source board
+      out of the cable&#8217;s segment, and UHBR20 fits again by a fifth of a decibel. Put the retimer by the sink instead
+      and it does not: the cable and the source board are still one segment, and that segment is the one that fails.
+    </p>
+
+    <h2 class="section-rule" id="where"><span>Where the decibels go</span></h2>
+    <p>
+      The panel builds the path from seven pieces, as an engineer would budget it. Three of them are physics you can change, the two board traces and the cable; the other four, two packages and two connectors, are allowances.
+    </p>
+    <ul class="tight">
+      <li><strong>Board traces.</strong> Dielectric and conductor loss of a 5 mil, 50 &#937; trace (one side of the
+        100 &#937; pair) on the chosen laminate, from the manufacturer&#8217;s published Dk and Df at each frequency,
+        the same arithmetic as the <a href="../tools/loss-budget.html">loss budget calculator</a>. At 10 GHz an inch
+        of FR-4 loses about 1.7 dB and an inch of MEGTRON 4 about <span class="num">0.96</span> dB.</li>
+      <li><strong>The cable.</strong> Each pair is two round copper wires of the chosen gauge, at 100 &#937;. Its loss
+        is worked out from the wire&#8217;s diameter: skin-effect resistance, the proximity effect of two wires side by
+        side, and a little loss in the insulation. A bare pair is the floor, since a real cable also has a shield and
+        a drain wire, so the conductor loss is scaled by one factor, about <span class="num">1.38</span>, which makes
+        30 AWG twinax lose what a worked example contributed to IEEE 802.3dj says it does at 53 GHz (C-118). The
+        result is about <span class="num">5.0</span> dB a metre at 10 GHz for 30 AWG and 7.7 for 34 AWG.</li>
+      <li><strong>Packages and connectors.</strong> 1.5 dB per package and 0.7 dB per mated connector at 10 GHz,
+        scaled with frequency. These are illustrative: no public source gives them for DisplayPort, and they are
+        labelled so in the panel&#8217;s model contract.</li>
+    </ul>
+    <p>
+      The cable is where the length lives, and the gauge is where the cable&#8217;s loss lives. Skin-effect resistance
+      goes as one over the wire&#8217;s diameter, so the 34 AWG wire of a thin, flexible cable, about 0.16 mm across, loses
+      half as much again as 30 AWG over the same length. Making a UHBR20 cable both thin and long is the hard part,
+      which is why VESA certifies cables by the rate they carry.
+    </p>
+
+    <h2 class="section-rule" id="training"><span>Training: highest first, then down</span></h2>
+    <p>
+      Texas Instruments&#8217; application note on DisplayPort 1.4 link training lays out the sequence (C-206). When the
+      sink raises hot-plug detect, the source reads the sink&#8217;s capabilities over the auxiliary channel: its lane
+      count, its rates, the drive levels it accepts. Clock recovery comes next. The source sends a simple training
+      pattern on every lane at the highest rate the sink supports, at its lowest voltage swing and pre-emphasis, and
+      after each interval asks the sink whether every lane has recovered a clock. Each &#8220;no&#8221; raises the drive a
+      step. After five attempts at one rate the source gives up on it, drops to the next rate down, and starts again
+      from the gentlest drive.
+    </p>
+    <p>
+      Once the clock is recovered, channel equalisation tunes the sink&#8217;s receiver on a richer pattern, and the
+      sink reports symbol lock and lane alignment; then video starts. If the clock never recovers, even at the lowest
+      rate with the strongest drive, training fails and the screen stays dark (C-206).
+    </p>
+    <p>
+      The panel&#8217;s <em>Train</em> button walks that ladder. It does not model the drive steps; it asks the question
+      each rung of the ladder settles, whether the path fits the rate&#8217;s budget, and stops at the first yes. The
+      UHBR rates use 128b/132b and a different training sequence in its details, which the public note does not cover;
+      the step-down pattern is the same.
+    </p>
+
+    <h2 class="section-rule" id="retimers"><span>Retimers split the budget</span></h2>
+    <p>
+      A linear redriver boosts the high frequencies and passes the noise and distortion along with them; the budget
+      it helps with is still one budget. A retimer recovers the bits and transmits them afresh, so the path on each side
+      of it is a separate link with the whole budget to itself. DisplayPort&#8217;s name for a retimer that takes part in
+      training is a link-training tunable PHY repeater, or LTTPR.
+    </p>
+    <p>
+      The panel&#8217;s two positions show the catch. A retimer helps only the segment it shortens. Beside the
+      source&#8217;s connector it removes the source board from the long segment; by the sink it removes only the sink
+      board, and the cable, still the largest term, stays with the source board on the far side. A retimer also brings
+      a package of its own into each segment, so it never gains quite the loss it removes.
+    </p>
+
+    <h2 class="section-rule" id="cables"><span>Cables: DP40, DP80 and DP80LL</span></h2>
+    <p>
+      VESA certifies UHBR cables by the rate they carry on four lanes. A DP40 cable supports UHBR10, 40 Gb/s on the wire;
+      a DP80 cable supports UHBR20, 80 Gb/s, and UHBR13.5 too (C-209). In January 2025 VESA added DP80LL, a low-loss
+      active cable that carries UHBR20 over up to three metres, against about one metre for a passive DP80 cable
+      (C-210). What an active cable contains is the maker&#8217;s choice and the release does not say.
+    </p>
+    <p>
+      A certified cable is a guarantee about the cable, not about the link. Its share of the budget assumes boards and
+      packages that leave it room; a long trace on FR-4 at either end can use up the margin the certification was
+      counting on. Take the &#8220;Desk&#8221; preset, set the laminate to FR-4 and drag the source trace to 8 in: the
+      same certified 1 m cable now trains at UHBR13.5, and at 10 in UHBR10.
+    </p>
+
+    <h2 class="section-rule" id="usbc"><span>DisplayPort over USB-C</span></h2>
+    <p>
+      In DisplayPort Alt Mode, a USB-C port hands its high-speed lanes to DisplayPort. All four give the full rate; a
+      port that keeps two for SuperSpeed USB data gives DisplayPort the other two, up to 40 Gb/s (C-211). Full-featured
+      passive USB-C cables already carry the UHBR rates (C-209). On a laptop the limit is often not loss at all: two
+      lanes at HBR3 carry <span class="num">12.96</span> Gb/s, enough for 4K at 10 bits a colour only up to about
+      52 frames a second before blanking. The &#8220;Laptop USB-C&#8221; preset trains with nearly 8 dB to spare and still
+      cannot drive a fast 4K monitor.
+    </p>
+
+    <h2 class="section-rule"><span>Why this decides how your board behaves</span></h2>
+    <ul class="tight">
+      <li><strong>The result of a marginal path is a lower rate, not a failure.</strong> It shows up as a missing
+        refresh rate in a monitor&#8217;s menu, which nobody files as a signal-integrity bug.</li>
+      <li><strong>The cable is the customer&#8217;s.</strong> A source board has to leave room for any certified cable a
+        customer plugs in, so its own share has to be met with the longest cable the product claims to support.</li>
+      <li><strong>Each rate is checked at its own frequency.</strong> Fixing loss at 10 GHz with a low-loss laminate
+        helps UHBR20 most and HBR3 hardly at all.</li>
+      <li><strong>A budget is not an eye.</strong> Reflections at connectors, crosstalk between lanes and jitter all
+        take margin this panel does not count; it answers the first question, not the last.</li>
+    </ul>
+
+    <h2 class="section-rule"><span>What to do about it</span></h2>
+    <ul class="tight">
+      <li>Budget the source board for the longest cable the product supports at the top rate, and check every rate at
+        its own Nyquist.</li>
+      <li>Keep UHBR20 traces short and on a lower-loss laminate; an inch of FR-4 at 10 GHz costs nearly twice what an
+        inch of MEGTRON 4 does.</li>
+      <li>If the path will not fit, place a retimer so that it splits the largest segment, usually next to the
+        connector on the side with the long trace.</li>
+      <li>Route the main link as 100 &#937; &#177; 10% pairs (C-206), and, as for any SerDes lane, match the two lines of each pair in length and leave no via stubs.</li>
+      <li>When a link trains low, read the training over the auxiliary channel: the rate and drive levels it settled
+        on tell you which rung failed and how hard it tried (C-206).</li>
+    </ul>
+
+    <details class="deeper" id="deeper">
+      <summary>Go deeper &#8212; the payload arithmetic, the cable model, and what is not sourced here</summary>
+
+      <p>
+        <strong>The payload arithmetic.</strong> Payload is lanes &#215; rate &#215; coding efficiency. 8b/10b sends
+        8 data bits in 10, 80%; 128b/132b sends 128 in 132, <span class="num">97.0</span>% (C-208). HBR3 on four lanes:
+        4 &#215; 8.1 &#215; 0.8 = 25.92 Gb/s, VESA&#8217;s own figure for DisplayPort 1.4a (C-204). UHBR20:
+        4 &#215; 20 &#215; 128/132 = 77.58 Gb/s, while VESA quotes 77.37 Gb/s, or <span class="num">19.34</span> Gb/s a
+        lane (C-204, C-211). The specification has overhead beyond the line coding that the public releases do not
+        itemise, so this page computes the coding ratio and reports VESA&#8217;s number beside it rather than inventing a
+        breakdown.
+      </p>
+      <p>
+        <strong>The video arithmetic.</strong> The &#8220;4K 10-bit&#8221; readout divides the payload by
+        3840 &#215; 2160 pixels &#215; 30 bits: <span class="num">311</span> frames a second at UHBR20 and 104 at four
+        lanes of HBR3. It counts active pixels only. Real timings add blanking, which lowers these, and Display Stream
+        Compression, which the specification supports (C-204), raises them by its compression ratio. It is arithmetic,
+        not signal integrity, and is there to show what a step down the ladder costs.
+      </p>
+      <p>
+        <strong>The cable model.</strong> For two round wires of diameter d, centres D apart, in a uniform insulation of relative permittivity &#949;<sub>r</sub> and nothing else nearby, the differential impedance is exactly
+      </p>
+      <div class="eq">Z = (120/&#8730;&#949;<sub>r</sub>) &#183; arccosh(D/d)</div>
+      <p>
+        so 100 &#937; fixes D/d. A real twinax pair, with its foil, shield and drain wire, comes close to this but not exactly. At high frequency the current in each wire crowds towards the other, and the resistance
+        of the pair per metre is
+      </p>
+      <div class="eq">R&#8242; = (2R<sub>s</sub> / &#960;d) &#183; (D/d) / &#8730;((D/d)&#178; &#8722; 1)</div>
+      <p>
+        with R<sub>s</sub> the surface resistance of copper. The loss is R&#8242;/2Z nepers a metre from the copper plus
+        &#960;f&#8730;&#949;<sub>r</sub>&#183;tan&#948;/c from the insulation, here &#949;<sub>r</sub> = 2.1 and
+        tan&#948; = 0.0003, an illustrative polyolefin. The conductor term is then multiplied by the single factor that
+        reproduces C-118&#8217;s 30 AWG twinax, 2.2 dB in 6.8 in at 53.125 GHz. That factor carries everything a bare
+        pair leaves out (shield, drain, plating, the shape of real conductors) as one number, and the same number is
+        used for every gauge and length.
+      </p>
+      <p>
+        <strong>What is not sourced here.</strong> VESA&#8217;s DisplayPort specification and compliance test
+        specification are for members. The rates, coding and cable classes come from VESA&#8217;s public releases and an
+        IP vendor&#8217;s glossary; the UHBR budgets from a PHY vendor&#8217;s summary; HBR3&#8217;s from a test-equipment
+        vendor&#8217;s method of implementation; the training sequence from a TI application note written to DisplayPort
+        1.4a. The slower rates&#8217; budgets, the package and connector allowances and the cable&#8217;s insulation are
+        assumptions, labelled where they are used, and each sourced figure is in the
+        <a href="../../docs/claims.md">claim ledger</a> with what it can and cannot establish.
+      </p>
+    </details>
+
+    <h2 class="section-rule"><span>In the real world</span></h2>
+    <p>
+      DisplayPort links run from graphics cards to monitors, from laptops through USB-C docks, and inside laptops as
+      embedded DisplayPort to the panel. The ones that reach UHBR20 are short, or retimed, or both; the rest train lower
+      and nobody notices unless the monitor&#8217;s fastest mode goes missing.
+    </p>
+    <p>
+      The engineering is the arithmetic this page has drawn: a budget per rate at its own frequency, a cable the
+      customer chooses, and a ladder that settles wherever the path lets it. Getting the top rate is a matter of leaving
+      the cable the room its certification assumed.
+    </p>
+
+    <h3>Related</h3>
+    <ul class="tight">
+      <li><a href="hdmi.html">HDMI 2.1: FRL, TMDS and Whether the Link Trains</a></li>
+      <li><a href="usb-3x.html">USB 3.x</a></li>
+      <li><a href="pcie-gen4-gen5.html">PCIe 4.0 and 5.0</a></li>
+      <li><a href="../package-board/connectors-cables.html">Connectors and cables</a></li>
+      <li><a href="../fundamentals/loss-mechanisms.html">Loss mechanisms</a></li>
+      <li><a href="../signal-integrity/channel-budgeting.html">Channel budgeting</a></li>
+    </ul>
+  </div>
+
+<!-- sources:start -->
+    <section class="sources">
+      <h2 class="section-rule"><span>Sources</span></h2>
+      <ul class="sources__list">
+      <li><a href="https://www.ieee802.org/3/dj/public/23_11/tracy_3dj_01a_2311.pdf" target="_blank" rel="noopener">Tracy et al. (TE Connectivity) — A Baseline Proposal To Enable More Flexible Architectures and Longer Reach 200Gb/Lane Passive Copper Cables, Nov 2023</a> <span class="src__for">C-118</span></li>
+      <li><a href="https://www.displayport.org/pr/vesa-publishes-displayport-2-0-video-standard-enabling-support-for-beyond-8k-resolutions-higher-refresh-rates-for-4k-hdr-and-virtual-reality-applications/" target="_blank" rel="noopener">VESA — DisplayPort 2.0 announcement</a> <span class="src__for">C-204</span></li>
+      <li><a href="https://www.design-reuse.com/article/61446--high-speed-low-power-and-flexibility-drive-displayport-s-increasing-popularity/" target="_blank" rel="noopener">Silicon Creations — High Speed, Low Power and Flexibility Drive DisplayPort's Increasing Popularity</a> <span class="src__for">C-205</span></li>
+      <li><a href="https://www.ti.com/lit/pdf/sdaa295" target="_blank" rel="noopener">Texas Instruments — Debugging Methodology for DisplayPort/eDP Link Training (SDAA295)</a> <span class="src__for">C-206</span></li>
+      <li><a href="https://downloads.graniteriverlabs.com/hubfs/GRL-DP14-SINKAN/document/GRL-DP14-SINKAN_MOIV1.10.22.pdf" target="_blank" rel="noopener">Granite River Labs — DisplayPort PHY 1.4 Sink Calibration and Test MOI</a> <span class="src__for">C-207</span></li>
+      <li><a href="https://docs.altera.com/r/docs/683273/25.3/displayport-ip-user-guide/displayport-terms-and-acronyms" target="_blank" rel="noopener">Altera — DisplayPort IP User Guide, Terms and Acronyms</a> <span class="src__for">C-208</span></li>
+      <li><a href="https://www.displayport.org/pr/vesa-readies-displayport-uhbr-ultra-high-bit-rate-device-certification-and-begins-certification-of-uhbr-cables/" target="_blank" rel="noopener">VESA — UHBR device and cable certification</a> <span class="src__for">C-209</span></li>
+      <li><a href="https://www.displayport.org/pr/vesa-to-update-displayport-2-1-with-new-active-cable-specification-for-up-to-3x-longer-dp80-cables/" target="_blank" rel="noopener">VESA — DP80LL active cable specification</a> <span class="src__for">C-210</span></li>
+      <li><a href="https://www.displayport.org/pr/vesa-releases-updated-displayport-alt-mode-spec-to-bring-displayport-2-0-performance-to-usb4-and-new-usb-type-c-devices/" target="_blank" rel="noopener">VESA — DisplayPort Alt Mode 2.0</a> <span class="src__for">C-211</span></li>
+      </ul>
+      <p class="sources__note">Rows marked with a claim id are tracked in <a href="../../docs/claims.md">the claim ledger</a>, which records what each source can and cannot establish.</p>
+    </section>
+    <!-- sources:end -->
+  <!-- share:foot:start --><div class="share share--foot" data-share data-share-url="https://sipi.work/topics/interfaces/displayport.html" data-share-title="DisplayPort 2.1: UHBR Rates, Cable Loss and Link Training"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Fdisplayport.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Fdisplayport.html&amp;text=DisplayPort%202.1%3A%20UHBR%20Rates%2C%20Cable%20Loss%20and%20Link%20Training" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=DisplayPort%202.1%3A%20UHBR%20Rates%2C%20Cable%20Loss%20and%20Link%20Training&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Fdisplayport.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:foot:end -->
+
+  <!-- pager:start -->
+  <nav class="pager" aria-label="Previous and next topic">
+    <a class="prev" href="../../topics/interfaces/mipi-dphy-cphy.html"><span class="dir">Previous</span><span>MIPI D-PHY vs C-PHY: Forwarded Clock, Trios and Three-Level Signalling</span></a>
+    <a class="next" href="../../topics/interfaces/hdmi.html"><span class="dir">Next</span><span>HDMI 2.1: FRL, TMDS and Whether the Link Trains</span></a>
+  </nav>
+  <!-- pager:end -->
+</main>
+
+<footer class="site-foot">
+  <span>SIPI &#8212; signal and power integrity, visualised.</span>
+  <nav class="site-foot__nav" aria-label="Site, footer">
+    <a href="../../start.html">Start</a>
+    <a href="../../labs.html">Labs</a>
+    <a href="../../calculators.html">Calculators</a>
+    <a href="../../reference.html">Reference</a>
+    <a href="../../interview.html">Interview guide</a>
+    <a href="../../colophon.html">About &amp; AI disclosure</a>
+    <a href="../../model-contract.html">Model assumptions</a>
+    <a href="../../docs/claims.md">Claim ledger (Markdown)</a>
+  </nav>
+  <span>Created and directed by <a href="https://www.linkedin.com/in/geetansh-arora-a645714a/" target="_blank" rel="author noopener">Geetansh Arora</a>. Text <a href="../../LICENSE-CONTENT">CC BY 4.0</a>, code <a href="../../LICENSE-CODE">MIT</a>.</span>
+</footer>
+
+<script src="../../js/site.js?v=61b8ff31" defer></script>
+<script src="../../js/viz-kit.js?v=212a7cd3" defer></script>
+<script src="../../js/models/calc-models.js?v=d640a591" defer></script>
+<script src="../../js/models/laminates.js?v=32f3413d" defer></script>
+<script src="../../js/models/display-link-model.js?v=76a6594c" defer></script>
+<script src="../../js/viz/display-link.js?v=c2a6c3c9" defer></script>
+<script src="../../js/lab-workspace.js?v=35449ccb" defer></script>
+<script src="../../js/viz-loader.js?v=9eaf05a5" defer></script>
+<script src="../../js/search.js?v=dcc1e06b" defer></script>
+</body>
+</html>

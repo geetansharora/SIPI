@@ -1,0 +1,446 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- theme:start -->
+  <meta name="theme-color" content="#F7F8FA">
+  <script>(function(){try{var t=localStorage.getItem('sipi-theme');if(t==='dark'||t==='system'){document.documentElement.setAttribute('data-theme',t);var m=document.querySelector('meta[name=theme-color]');if(m&&(t==='dark'||matchMedia('(prefers-color-scheme:dark)').matches))m.content='#0B1015';}}catch(e){}})();</script>
+  <!-- theme:end -->
+<title>MIPI D-PHY vs C-PHY: Forwarded Clock, Trios and Three-Level Signalling | SIPI</title>
+<meta name="description" content="MIPI D-PHY vs C-PHY for signal integrity: forwarded clock and LP/HS modes, three-wire trios, six wire states, 16 bits in 7 symbols, rates and the C-PHY eye.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<link rel="stylesheet" href="../../css/base.css?v=1e3ae753">
+<link rel="stylesheet" href="../../css/components.css?v=9967e8fb">
+  <!-- meta:start -->
+  <link rel="canonical" href="https://sipi.work/topics/interfaces/mipi-dphy-cphy.html">
+  <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="SIPI">
+  <meta property="og:title" content="MIPI D-PHY vs C-PHY: Forwarded Clock, Trios and Three-Level Signalling | SIPI">
+  <meta property="og:description" content="MIPI D-PHY vs C-PHY for signal integrity: forwarded clock and LP/HS modes, three-wire trios, six wire states, 16 bits in 7 symbols, rates and the C-PHY eye.">
+  <meta property="og:url" content="https://sipi.work/topics/interfaces/mipi-dphy-cphy.html">
+  <meta property="og:image" content="https://sipi.work/assets/og/interfaces/mipi-dphy-cphy.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="MIPI D-PHY vs C-PHY: Forwarded Clock, Trios and Three-Level Signalling: a figure from the page, on SIPI">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="MIPI D-PHY vs C-PHY: Forwarded Clock, Trios and Three-Level Signalling | SIPI">
+  <meta name="twitter:description" content="MIPI D-PHY vs C-PHY for signal integrity: forwarded clock and LP/HS modes, three-wire trios, six wire states, 16 bits in 7 symbols, rates and the C-PHY eye.">
+  <meta name="twitter:image" content="https://sipi.work/assets/og/interfaces/mipi-dphy-cphy.png">
+  <meta name="twitter:image:alt" content="MIPI D-PHY vs C-PHY: Forwarded Clock, Trios and Three-Level Signalling: a figure from the page, on SIPI">
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"MIPI D-PHY vs C-PHY: Forwarded Clock, Trios and Three-Level Signalling","description":"MIPI D-PHY vs C-PHY for signal integrity: forwarded clock and LP/HS modes, three-wire trios, six wire states, 16 bits in 7 symbols, rates and the C-PHY eye.","url":"https://sipi.work/topics/interfaces/mipi-dphy-cphy.html","articleSection":"Interface sign-off","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer","url":"https://www.linkedin.com/in/geetansh-arora-a645714a/","sameAs":["https://www.linkedin.com/in/geetansh-arora-a645714a/"]},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-11-01","image":"https://sipi.work/assets/og/interfaces/mipi-dphy-cphy.png"}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"SIPI","item":"https://sipi.work/"},{"@type":"ListItem","position":2,"name":"Interface sign-off","item":"https://sipi.work/#interfaces"},{"@type":"ListItem","position":3,"name":"MIPI D-PHY vs C-PHY: Forwarded Clock, Trios and Three-Level Signalling"}]}</script>
+  <!-- meta:end -->
+</head>
+<body>
+
+<header class="masthead">
+  <a class="wordmark" href="../../index.html">SIPI</a>
+  <button class="theme-toggle" data-act="theme" type="button">Light</button>
+  <nav aria-label="Site">
+    <a href="../../start.html">Start</a>
+    <a href="../../index.html#groundwork">Topics</a>
+    <a href="../../labs.html">Labs</a>
+    <a href="../../calculators.html">Calculators</a>
+    <a href="../../colophon.html">About</a>
+  </nav>
+</header>
+
+<main>
+  <div class="page-head">
+    <p class="crumb"><a href="../../index.html#interfaces">Interface sign-off</a> / 11</p>
+    <h1>MIPI D-PHY vs C-PHY: Forwarded Clock, Trios and Three-Level Signalling</h1>
+    <p class="byline">
+      <!-- review:start --><span>By <a href="https://www.linkedin.com/in/geetansh-arora-a645714a/" target="_blank" rel="author noopener">Geetansh Arora</a> — Principal SI/PI Engineer</span><time datetime="2026-11-01" title="Technical review by Geetansh Arora on this date">1 Nov 2026</time><span>10 min</span><!-- review:end -->
+    </p>
+    <!-- share:head:start --><div class="share share--head" data-share data-share-url="https://sipi.work/topics/interfaces/mipi-dphy-cphy.html" data-share-title="MIPI D-PHY vs C-PHY: Forwarded Clock, Trios and Three-Level Signalling"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Fmipi-dphy-cphy.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Fmipi-dphy-cphy.html&amp;text=MIPI%20D-PHY%20vs%20C-PHY%3A%20Forwarded%20Clock%2C%20Trios%20and%20Three-Level%20Signalling" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=MIPI%20D-PHY%20vs%20C-PHY%3A%20Forwarded%20Clock%2C%20Trios%20and%20Three-Level%20Signalling&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Fmipi-dphy-cphy.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:head:end -->
+    <p class="answer">
+      D-PHY and C-PHY are MIPI&#8217;s two physical layers for cameras and displays. D-PHY sends a clock on its own lane
+      beside differential data lanes, and drops to slow single-ended signalling between bursts. C-PHY drops the clock
+      lane altogether: it drives three wires at once, a trio, at three voltage levels, and guarantees that the wires
+      change state on every symbol, so the receiver finds the clock in the data. The same SoC pins can often do both
+      (C-200).
+    </p>
+  </div>
+
+  <div class="prose">
+    <h2 class="section-rule" id="at-a-glance"><span>At a glance</span></h2>
+    <h3>What is the difference between D-PHY and C-PHY?</h3>
+    <p>
+      D-PHY is a differential pair per data lane plus one more pair for the clock; the transmitter forwards its clock
+      and the receiver samples the data with it (C-202). C-PHY replaces pairs with trios of three wires, encodes data in
+      the change from one of six wire states to another, and needs no clock lane, because every symbol is a change
+      (C-199, C-202). D-PHY v3.5 added an optional embedded-clock mode of its own, which frees the clock lane for data
+      (C-201).
+    </p>
+    <h3>How fast are D-PHY and C-PHY?</h3>
+    <p>
+      MIPI gives D-PHY v3.0 9 Gb/s a lane over its standard channel and 11 Gb/s over its short channel (C-201). C-PHY
+      runs up to 6 gigasymbols a second in its 6-wirestate mode, about <span class="num">13.7</span> Gb/s a trio, so three
+      trios on nine wires carry about <span class="num">41</span> Gb/s; the 18-wirestate mode that C-PHY v3.0 added runs
+      at up to 5 Gsps for 17.8 Gb/s a trio (C-199).
+    </p>
+    <h3>Why does C-PHY carry about 2.28 bits per symbol?</h3>
+    <p>
+      From any wire state there are five others to move to, so one symbol could carry log<sub>2</sub>5, about
+      <span class="num">2.32</span> bits. C-PHY packs 16 bits into 7 symbols, because 2<sup>16</sup> = 65,536 fits inside
+      5<sup>7</sup> = 78,125: <span class="num">2.29</span> bits a symbol (16/7 = 2.2857), which MIPI gives, cut short rather than rounded, as approximately 2.28 (C-199, C-202).
+    </p>
+    <h3>What are LP-11, LP-01 and LP-00?</h3>
+    <p>
+      They are D-PHY&#8217;s low-power line states, named by the levels on the two wires of a lane. A lane rests in
+      LP-11, both wires high, and enters high-speed mode by stepping through LP-01 and LP-00; each high-speed burst
+      starts and ends at LP-11 (C-203). <a href="#dphy">The D-PHY section</a> draws the sequence.
+    </p>
+    <h3>How far can a D-PHY or C-PHY link run?</h3>
+    <p>
+      MIPI positions both for camera and display links up to 4 m (C-199, C-201). The channel limits behind that, and
+      the voltage levels, are in specifications only MIPI members can read; this page uses the public material and
+      says where it does.
+    </p>
+    <h3>Can one device support both?</h3>
+    <p>
+      Yes. MIPI says C-PHY can share device pins with D-PHY, so a dual-mode PHY can run either on the same balls
+      (C-200). A D-PHY with four data lanes and a clock lane uses ten wires and three C-PHY trios use nine, so the two fit in much the same footprint.
+    </p>
+
+    <h2 class="section-rule" id="dphy"><span>D-PHY: a forwarded clock and two speeds</span></h2>
+    <p>
+      D-PHY is source-synchronous. Beside one or more data lanes runs a clock lane, and the receiver samples each data
+      lane with the clock that arrived alongside it (C-202). That is the simplest possible way to recover timing, and
+      it makes one demand of the board: the clock and data lanes have to arrive together, so they are length-matched
+      as a group.
+    </p>
+    <p>
+      The other thing D-PHY does is change speed. Between bursts each wire of a lane is driven on its own with a large,
+      slow, single-ended swing, which costs almost nothing to hold; for a burst the same two wires become one small,
+      fast differential pair. The low-power states are named by the levels on the two wires, and the way into a burst
+      is a fixed walk through them (C-203).
+    </p>
+  </div>
+
+  <figure class="figure">
+    <div class="figure__bar"><span>A D-PHY data lane &#183; low-power states into a high-speed burst and back</span></div>
+    <div class="figure__body">
+        <svg viewBox="0 0 400 232" role="img" aria-label="The two wires of a D-PHY data lane over time. In LP-11 both wires sit high. In LP-01 one wire falls. In LP-00 both are low. Then the lane runs a high-speed burst, the two wires switching in opposite directions with a small swing near the bottom of the low-power range. After the burst both wires return high, to LP-11, the stop state every burst starts and ends at.">
+        <text class="lbl-hi" x="20" y="14">one data lane, two wires</text>
+        <text class="lbl" x="82" y="36" text-anchor="middle">LP-11</text>
+        <text class="lbl" x="130" y="36" text-anchor="middle">LP-01</text>
+        <text class="lbl" x="180" y="36" text-anchor="middle">LP-00</text>
+        <text class="lbl-sig" x="265" y="36" text-anchor="middle">high-speed burst</text>
+        <text class="lbl" x="352" y="36" text-anchor="middle">LP-11</text>
+        <path class="tick" d="M105,42 V150 M155,42 V150 M205,42 V150 M325,42 V150"/>
+        <polyline class="flow" points="60,56 155,56 158,140 205,140 205,120 215,120 215,134 225,134 225,120 245,120 245,134 255,134 255,120 265,120 265,134 285,134 285,120 295,120 295,134 315,134 315,120 325,120 328,56 380,56"/>
+        <polyline class="flow-2" points="60,60 105,60 108,140 205,140 205,134 215,134 215,120 225,120 225,134 245,134 245,120 255,120 255,134 265,134 265,120 285,120 285,134 295,134 295,120 315,120 315,134 325,134 328,60 380,60"/>
+        <text class="lbl" x="56" y="59" text-anchor="end">high</text>
+        <text class="lbl" x="56" y="143" text-anchor="end">low</text>
+        <text class="lbl" x="20" y="174">low power: each wire on its own, large swing, slow</text>
+        <text class="lbl-sig" x="20" y="190">high speed: the two wires as one small differential pair</text>
+        <text class="lbl" x="20" y="206">the clock lane does the same beside it, forwarding the clock</text>
+        <text class="lbl-hi" x="20" y="222">every burst starts and ends at LP-11, the stop state</text>
+        </svg>
+    </div>
+    <figcaption><b>Two speeds on the same two wires.</b> Between bursts the wires of a lane signal one at a time, with a large and slow swing; for a burst they become one small, fast differential pair. The way in is the walk LP-11, LP-01, LP-00, and every burst starts and ends at the LP-11 stop state (C-203). The voltages are drawn as shapes, not to scale: the levels are in the specification, which only MIPI members can read.</figcaption>
+  </figure>
+
+  <div class="prose">
+    <p>
+      The walk into high speed is how the receiver knows a burst is coming without a separate wire to say so: the
+      large single-ended levels are easy to detect even when the high-speed receiver is switched off. It also means
+      a D-PHY receiver sees two different kinds of signal on the same pins, and its input has to handle both. In practice that means anything that loads the lane, such as a probe, can disturb the low-power handshake as well as the high-speed eye; that is engineering experience, not a published figure.
+    </p>
+    <p>
+      D-PHY v3.0 added a CTLE at the receiver (a continuous-time linear equaliser, which boosts the high frequencies the channel lost) and doubled the standard-channel rate to 9 Gb/s a lane, and v3.5 added an
+      optional embedded clock, so a link can use the clock lane&#8217;s pins for data instead (C-201). At those rates D-PHY looks more like a SerDes, the serial links of PCIe and USB, than it used to, and the board has to treat it like one.
+    </p>
+
+    <h2 class="section-rule" id="cphy"><span>C-PHY: three wires, three levels, six states</span></h2>
+    <p>
+      A C-PHY lane is a trio of wires, A, B and C, and in every state one of them sits at a middle level while the
+      other two are driven high and low. Three wires and one choice of which sits in the middle, then which of the
+      other two is high, make six wire states: +x, &#8722;x, +y, &#8722;y, +z and &#8722;z (C-202). The receiver does
+      not look at the wires one by one. It has three differential receivers, each comparing two of the wires (C-202):
+    </p>
+    <div class="table-scroll">
+      <table class="data">
+        <caption>The six C-PHY wire states, in steps of the mid-to-high level, and what each receiver sees</caption>
+        <thead><tr><th>State</th><th>A</th><th>B</th><th>C</th><th>A &#8722; B</th><th>B &#8722; C</th><th>C &#8722; A</th></tr></thead>
+        <tbody>
+          <tr><th>+x</th><td>high</td><td>low</td><td>mid</td><td>+2</td><td>&#8722;1</td><td>&#8722;1</td></tr>
+          <tr><th>&#8722;x</th><td>low</td><td>high</td><td>mid</td><td>&#8722;2</td><td>+1</td><td>+1</td></tr>
+          <tr><th>+y</th><td>mid</td><td>high</td><td>low</td><td>&#8722;1</td><td>+2</td><td>&#8722;1</td></tr>
+          <tr><th>&#8722;y</th><td>mid</td><td>low</td><td>high</td><td>+1</td><td>&#8722;2</td><td>+1</td></tr>
+          <tr><th>+z</th><td>low</td><td>mid</td><td>high</td><td>&#8722;1</td><td>&#8722;1</td><td>+2</td></tr>
+          <tr><th>&#8722;z</th><td>high</td><td>mid</td><td>low</td><td>+1</td><td>+1</td><td>&#8722;2</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>
+      Three things in that table carry the whole design. The three receiver outputs always add up to zero, because
+      (A &#8722; B) + (B &#8722; C) + (C &#8722; A) is zero whatever the wires do. No receiver ever sees zero: each sees a
+      strong &#177;2 or a weak &#177;1, so every receiver has a definite answer in every state. And the six states give
+      six different patterns of signs, so any change of state flips at least one receiver. That last point is the
+      embedded clock: data is carried as a <em>change</em> of state, a symbol is one of the five other states to move
+      to, and so every symbol produces an edge for the receiver to recover timing from (C-199, C-202).
+    </p>
+    <p>
+      The panel below builds that from the bits up. Type a 16-bit word in hexadecimal and watch it become seven symbols,
+      each a number from 0 to 4 choosing the next state, then three wire voltages, then three receiver outputs. Before
+      you start, predict what the eye of a C-PHY receiver looks like: an NRZ eye (two levels, the ordinary non-return-to-zero kind) has one crossing per edge, so how many
+      should these receivers have, when some edges move by one step and some by three?
+    </p>
+  </div>
+
+  <!-- mobilenote:start -->
+  <p class="mobile-note" role="note">
+    <b>Best viewed on a laptop or desktop.</b>
+    These panels are built so you can move a slider and watch several charts
+    answer at once. A phone has no room to put them side by side.
+  </p>
+  <!-- mobilenote:end -->
+  <section class="instrument lab" data-viz="cphyTrio" aria-label="Interactive C-PHY trio: a 16-bit word encoded as seven symbols, the three wire voltages and wire states, the three differential receiver outputs, and the folded eye of those receivers for a chosen symbol rate, edge time, wire-to-wire skew and channel loss">
+<script type="application/json" data-contract>{"kind":"analytical","evidence":"independent","purpose":"Show how C-PHY carries data and clock on three wires: a 16-bit word as seven symbols, each a move to one of the five other wire states, the three wire voltages and the three differential receivers, and why the receivers' eye has more than one crossing and is sensitive to one late wire.","equations":["levels in steps: high +1, mid 0, low -1; receivers read +-1 or +-2","(A - B) + (B - C) + (C - A) = 0","word -> seven base-5 digits; digit d selects the d-th of the five other states (a valid mapping, not the specification's table)","rate per trio = symbol rate x 16 / 7"],"units":"Gsps, ps, dB, steps of the mid-to-high level","validity":"Linear wires with matched loss and no coupling between them; ideal level drivers.","numerics":"32 samples a symbol; the channel is K.channelImpulse convolved with each wire, its bulk delay removed; the eye is 36 random words folded over the symbol, its width the share of phases where every receiver is on the right side by at least 0.2 of the weak level.","limitations":"The mapper is a valid one chosen for the page, not the specification's table, which is members-only, as are the voltages. No receiver equalisation, no coupling within the trio, no termination network, no 18-wirestate mode and no D-PHY mode. Mechanism and proportion, not a sign-off.","suites":["C-PHY trio"],"version":"1.1","reviewed":"2026-11-01","panel":"cphyTrio"}</script>
+<div class="lab-frame">
+<div class="instrument__bar">
+      <span class="instrument__title">A trio, a symbol at a time</span>
+      <span data-evidence="independent" data-model-version="1.1" class="model-tag model-tag--analytical">analytical</span>
+      <span class="instrument__readout readout--fixed" role="status" aria-live="off" aria-label="Current values">
+        <span>symbols <b data-out="syms" style="min-width:13ch">&#8212;</b></span>
+        <span>a trio <b data-out="trio" style="min-width:9ch">&#8212;</b></span>
+        <span>three trios <b data-out="three" style="min-width:9ch">&#8212;</b></span>
+        <span>eye width <b data-out="ew" style="min-width:7ch">&#8212;</b></span>
+      </span>
+      <button type="button" class="tool-btn lab-full" data-lab-full aria-pressed="false">full screen</button>
+</div>
+<aside class="lab-rail lab-rail--left" aria-label="Data controls">
+<p class="lab-rail__side">The data <span>bits to symbols</span></p>
+<details class="control-group lab-group" open><summary class="lab-group__title" id="cp-left-0">Word</summary><div class="control-group__grid lab-group__body"><div class="ctl">
+        <div class="ctl__head"><label for="cp-word">Word (hex)</label></div>
+        <input type="text" id="cp-word" aria-describedby="cp-word-note" value="A5C3" maxlength="4" inputmode="text" autocomplete="off" spellcheck="false">
+        <span class="ctl__note" id="cp-word-note">Sixteen bits, written as four hexadecimal digits, become seven symbols</span>
+      </div>
+<div class="presets"><button class="preset preset--act" type="button" data-act="random">Random word</button></div></div></details>
+<p class="lab-help" aria-hidden="true">Point at or focus a control to see what it changes.</p>
+</aside>
+<div class="lab-stage">
+<div class="lab-row lab-row--anchor">
+<div data-lab-unit="wires" data-lab-name="Wires" class="panel">
+        <div class="lab-panel-head"><span class="panel__label">The three wires &#183; the state each symbol lands on, and the symbol</span><button type="button" class="tool-btn lab-expand" data-lab-expand aria-pressed="false" aria-label="Expand the three wires">expand</button></div>
+        <canvas data-cv="wires" role="img" aria-label="The voltages on wires A, B and C over two lead-in states and the seven symbols of the chosen word, each symbol labelled with the wire state it moves to above and its symbol value from 0 to 4 below."></canvas>
+        <div class="legend"><span><i style="background:var(--signal)"></i>A</span><span><i style="background:var(--reflect)"></i>B</span><span><i class="dash" style="color:var(--muted)"></i>C</span></div>
+      </div>
+</div>
+<div class="lab-row lab-row--anchor" style="--anchor-columns: minmax(0, 1fr) minmax(0, 1fr)">
+<div data-lab-unit="rx" data-lab-name="Receivers" class="panel">
+        <div class="lab-panel-head"><span class="panel__label">The three receivers</span><button type="button" class="tool-btn lab-expand" data-lab-expand aria-pressed="false" aria-label="Expand the three receivers">expand</button></div>
+        <canvas data-cv="rx" role="img" aria-label="The outputs of the three differential receivers, A minus B, B minus C and C minus A, over the same symbols, each settling on plus or minus one or two steps."></canvas>
+        <div class="legend"><span><i style="background:var(--signal)"></i>A&#8722;B</span><span><i style="background:var(--reflect)"></i>B&#8722;C</span><span><i class="dash" style="color:var(--muted)"></i>C&#8722;A</span></div>
+      </div>
+<div data-lab-unit="eye" data-lab-name="Eye" class="panel">
+        <div class="lab-panel-head"><span class="panel__label">Their eye, folded over two symbols</span><button type="button" class="tool-btn lab-expand" data-lab-expand aria-pressed="false" aria-label="Expand the eye">expand</button></div>
+        <canvas data-cv="eye" role="img" aria-label="The three receiver outputs for 252 random symbols folded over two unit intervals, with a shaded band at plus and minus 0.2 of the weak level marking where a decision is unsafe."></canvas>
+      </div>
+</div>
+</div>
+<aside class="lab-rail lab-rail--right" aria-label="Link controls and scenarios">
+<p class="lab-rail__side">The link <span>wires and channel</span></p>
+<details class="control-group lab-group" open><summary class="lab-group__title" id="cp-right-0">Link</summary><div class="control-group__grid lab-group__body"><div class="ctl">
+        <div class="ctl__head"><label for="cp-rate">Symbol rate</label><output id="cp-rate-out" for="cp-rate" data-numeric="off">2.5 Gsps</output></div>
+        <input type="range" id="cp-rate" aria-describedby="cp-rate-note" min="0" max="5" step="1" value="2">
+        <span class="ctl__note" id="cp-rate-note">Gigasymbols a second; each symbol carries 16/7 bits</span>
+      </div>
+<div class="ctl">
+        <div class="ctl__head"><label for="cp-tr">Edge</label><output id="cp-tr-out" for="cp-tr">40 ps</output></div>
+        <input type="range" id="cp-tr" aria-describedby="cp-tr-note" min="20" max="150" step="5" value="40">
+        <span class="ctl__note" id="cp-tr-note">Rise and fall time of each wire, 0 to 100%</span>
+      </div>
+<div class="ctl">
+        <div class="ctl__head"><label for="cp-skew">Wire C late</label><output id="cp-skew-out" for="cp-skew">0 ps</output></div>
+        <input type="range" id="cp-skew" aria-describedby="cp-skew-note" min="0" max="60" step="2" value="0">
+        <span class="ctl__note" id="cp-skew-note">Delay on wire C alone: skew inside the trio</span>
+      </div>
+<div class="ctl">
+        <div class="ctl__head"><label for="cp-loss">Loss at Nyquist</label><output id="cp-loss-out" for="cp-loss">0 dB</output></div>
+        <input type="range" id="cp-loss" aria-describedby="cp-loss-note" min="0" max="12" step="0.5" value="0">
+        <span class="ctl__note" id="cp-loss-note">The site&#8217;s channel model, with no equaliser</span>
+      </div></div></details>
+<details class="control-group lab-group" open><summary class="lab-group__title" id="cp-right-1">Scenarios</summary><div class="control-group__grid lab-group__body"><div class="presets">
+      <button class="preset" type="button" data-preset="clean" aria-pressed="true">Clean</button>
+      <button class="preset" type="button" data-preset="fast" aria-pressed="false">6 Gsps</button>
+      <button class="preset" type="button" data-preset="skew" aria-pressed="false">Skewed wire</button>
+      <button class="preset" type="button" data-preset="lossy" aria-pressed="false">Lossy</button>
+      <button class="preset" type="button" data-preset="slow" aria-pressed="false">Slow edges</button>
+      <p class="presets__note" data-out="note">&#8212;</p>
+      </div></div></details>
+<p class="lab-help" aria-hidden="true">Point at or focus a control to see what it changes.</p>
+</aside>
+</div>
+</section>
+
+  <div class="prose">
+    <p>
+      The mapping from bits to symbols in the panel is <em>a</em> valid one, labelled as such: the word written as a
+      seven-digit number in base 5, each digit choosing one of the five other states in a fixed order. The
+      specification&#8217;s own table, and its description of each symbol as a flip, a rotation and a polarity
+      (C-202), are members-only. Nothing the panel teaches depends on the table: any valid mapping gives a transition
+      on every symbol, three levels, edges of two, three or four steps, and the same eye.
+    </p>
+
+    <h2 class="section-rule" id="eye"><span>Why the C-PHY eye has more than one crossing</span></h2>
+    <p>
+      In an NRZ eye every edge goes from one level to the other, so every edge crosses zero at the same point in its
+      rise. A C-PHY receiver&#8217;s edges come in sizes. Going from &#8722;1 to +1 is a two-step edge; from &#8722;1 to
+      +2, or &#8722;2 to +1, a three-step edge; from &#8722;2 to +2, four steps. With a fixed edge time, each of those
+      crosses zero at a different moment, so the receiver sees a spread of crossing times even on a perfect channel.
+      That spread is a jitter that the code itself creates, and it is why a C-PHY eye is read with its own
+      conventions rather than as three NRZ eyes laid on top of each other.
+    </p>
+    <p>
+      Slower edges widen the spread, which is what the slow-edges preset shows. Loss does too, and it takes the weak
+      level first: a &#177;1 that has to climb out of a &#8722;2 is the slowest to arrive.
+    </p>
+
+    <h2 class="section-rule"><span>Routing a trio is not routing a pair</span></h2>
+    <p>
+      In a <a href="../fundamentals/differential-signalling.html">differential pair</a>, a length mismatch between the
+      two wires turns part of the signal into common mode and, much later, starts to close the eye. In a trio there is
+      no common mode to absorb it: the three receivers compare every wire with both of the others, so a late wire moves
+      the crossings of two receivers at once and spreads them further. The skewed-wire preset delays one wire by a
+      fifth of a symbol and the eye loses a sizeable share of its width. The practical rule that follows is engineering practice rather than a published figure: match the three wires of a trio to each other as you would the two wires of a pair, and route them as a group, with the same reference and the same neighbours.
+    </p>
+    <p>
+      What C-PHY saves is the clock lane and the matching between lanes. Each trio carries its own timing, so one trio
+      can arrive a little later than another without harm, which loosens the inter-lane matching that a D-PHY
+      clock-and-data group needs.
+    </p>
+
+    <h2 class="section-rule"><span>Why this decides how your board behaves</span></h2>
+    <ul class="tight">
+      <li><b>D-PHY sees two kinds of signal on one pair.</b> Anything that loads the lane, a probe or a test pad, can upset the low-power handshake as well as the high-speed eye, so check both.</li>
+      <li><b>D-PHY needs its group matched.</b> Clock and data arrive together or the sampling point moves; at 9 Gb/s a
+        lane the unit interval is <span class="num">111</span> ps, so a few picoseconds of mismatch is already a
+        measurable share of it.</li>
+      <li><b>C-PHY needs each trio matched to itself.</b> A late wire costs eye width in two receivers at once.</li>
+      <li><b>C-PHY&#8217;s eye is not an NRZ eye.</b> Its crossings spread with the edge time and the loss, and its
+        measurement conventions are its own.</li>
+      <li><b>A dual-mode footprint has to serve both.</b> The same balls carry four pairs or three trios, so the escape
+        and the matching rules have to satisfy whichever mode the product ships (C-200).</li>
+    </ul>
+
+    <h2 class="section-rule"><span>What to do about it</span></h2>
+    <ul class="tight">
+      <li>Match a D-PHY clock lane to its data lanes as a group, and keep the pairs coupled and on one reference.</li>
+      <li>Match the three wires of each C-PHY trio to each other, and route them together with the same spacing to
+        their neighbours, so no wire couples differently from the others.</li>
+      <li>On a dual-mode design, apply the stricter of the two rule sets to every wire that can be either.</li>
+      <li>When measuring, check the low-power handshake as well as the burst: probe loading and slow LP edges fail
+        there first.</li>
+      <li>For the electrical limits and the channel definitions, use the PHY vendor&#8217;s layout guide: the
+        specifications that hold them are members-only.</li>
+    </ul>
+
+    <details class="deeper" id="deeper">
+      <summary>Go deeper &#8212; the code&#8217;s arithmetic, what &#8220;embedded clock&#8221; buys, and what is not sourced here</summary>
+
+      <p>
+        <strong>The code&#8217;s arithmetic.</strong> Five possible next states per symbol give log<sub>2</sub>5, about
+        2.32 bits a symbol, as the most a symbol could carry. Seven symbols have 5<sup>7</sup> = 78,125 sequences, enough
+        for every one of the 65,536 sixteen-bit words, with 12,589 left over; six symbols have only 15,625, not enough. So
+        16 bits in 7 symbols, 16/7 = 2.29 bits a symbol, is the fewest symbols that hold a 16-bit word, at
+        <span class="num">98.4%</span> of the ceiling. At 6 Gsps a trio then carries 6 &#215; 16/7 = 13.7 Gb/s, and three trios <span class="num">41.1</span>
+        Gb/s, the &#8220;about 41 Gbps&#8221; MIPI quotes (C-199).
+      </p>
+      <p>
+        <strong>What the embedded clock buys and costs.</strong> Because every symbol changes the state, every symbol
+        changes at least one receiver&#8217;s sign: the six states have six different sign patterns, so moving between
+        any two of them flips at least one. A clock-recovery circuit therefore never goes a symbol without an edge, and
+        needs no run-length limit or scrambler to guarantee one. The cost is the crossing spread above: the timing
+        information arrives on edges of different sizes, which is a jitter the receiver&#8217;s clock recovery has to
+        live with.
+      </p>
+      <p>
+        <strong>The 18-wirestate mode.</strong> C-PHY v3.0 added a multi-phase coding with 18 wire states, at up to
+        5 Gsps for 17.8 Gb/s a trio (C-199). That is 3.56 bits a symbol, more than the 2.28 of the six-state code, consistent with more distinct states per symbol rather than a faster symbol rate. Its coding is not described in the public
+        material this page uses, so the panel stays with the six-state mode.
+      </p>
+      <p>
+        <strong>What is not sourced here.</strong> MIPI keeps the D-PHY and C-PHY specifications for members, so the
+        voltages, the timing parameters of the low-power handshake, the channel models and the mapper table are not on
+        this page. Rates and features come from MIPI&#8217;s own public pages, the coding structure from a PHY IP
+        vendor&#8217;s description, and the low-power entry sequence from a device datasheet, each recorded in the
+        <a href="../../docs/claims.md">claim ledger</a> with what it can and cannot establish.
+      </p>
+    </details>
+
+    <h2 class="section-rule"><span>In the real world</span></h2>
+    <p>
+      D-PHY and C-PHY carry almost every camera and display link in a phone, and increasingly in cars, drones and
+      robots, usually through CSI-2 for cameras and DSI-2 for displays (C-199, C-201). The links are short, but they
+      cross flex circuits and connectors, run beside RF and power, and spend much of their time switching between
+      sleeping and bursting.
+    </p>
+    <p>
+      The practical differences are the ones this page has drawn. A D-PHY board is a matching problem across a group
+      and a handshake problem at every burst; a C-PHY board is a matching problem inside each trio and an eye that has
+      to be read on its own terms. The pins are often the same, so the routing has to be right for both.
+    </p>
+
+    <h3>Related</h3>
+    <ul class="tight">
+      <li><a href="../fundamentals/differential-signalling.html">Differential Signaling: Common Mode and Mode Conversion</a></li>
+      <li><a href="ufs4.html">UFS 3.1 vs 4.0 vs 5.0: M-PHY Gears, Burst Mode and Signal Integrity</a></li>
+      <li><a href="../signal-integrity/nrz-vs-pam4.html">NRZ vs PAM4</a></li>
+      <li><a href="../signal-integrity/equalization.html">SerDes Equalization: CTLE, FFE, DFE and CDR</a></li>
+      <li><a href="../fundamentals/crosstalk.html">PCB Crosstalk: NEXT, FEXT, and Mutual Coupling</a></li>
+    </ul>
+  </div>
+
+<!-- sources:start -->
+    <section class="sources">
+      <h2 class="section-rule"><span>Sources</span></h2>
+      <ul class="sources__list">
+      <li><a href="https://www.mipi.org/specifications/c-phy" target="_blank" rel="noopener">MIPI Alliance — C-PHY specification page</a> <span class="src__for">C-199</span></li>
+      <li><a href="https://www.mipi.org/specifications/d-phy" target="_blank" rel="noopener">MIPI Alliance — D-PHY specification page</a> <span class="src__for">C-201</span></li>
+      <li><a href="https://us.design-reuse.com/articles/43954/demystifying-mipi-c-phy-dphy-subsystem.html" target="_blank" rel="noopener">Mixel — Demystifying MIPI C-PHY / D-PHY Subsystem</a> <span class="src__for">C-202</span></li>
+      <li><a href="https://www.ti.com/document-viewer/lit/html/SNLS552E/GUID-9E92727D-18BE-4604-B3E6-281D71F9A81B" target="_blank" rel="noopener">Texas Instruments — DS90UB953-Q1 datasheet, CSI-2 receiver operating modes</a> <span class="src__for">C-203</span></li>
+      </ul>
+      <p class="sources__note">Rows marked with a claim id are tracked in <a href="../../docs/claims.md">the claim ledger</a>, which records what each source can and cannot establish.</p>
+    </section>
+    <!-- sources:end -->
+  <!-- share:foot:start --><div class="share share--foot" data-share data-share-url="https://sipi.work/topics/interfaces/mipi-dphy-cphy.html" data-share-title="MIPI D-PHY vs C-PHY: Forwarded Clock, Trios and Three-Level Signalling"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Fmipi-dphy-cphy.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Fmipi-dphy-cphy.html&amp;text=MIPI%20D-PHY%20vs%20C-PHY%3A%20Forwarded%20Clock%2C%20Trios%20and%20Three-Level%20Signalling" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=MIPI%20D-PHY%20vs%20C-PHY%3A%20Forwarded%20Clock%2C%20Trios%20and%20Three-Level%20Signalling&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Fmipi-dphy-cphy.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:foot:end -->
+
+  <!-- pager:start -->
+  <nav class="pager" aria-label="Previous and next topic">
+    <a class="prev" href="../../topics/interfaces/ufs4.html"><span class="dir">Previous</span><span>UFS 3.1 vs 4.0 vs 5.0: M-PHY Gears, Burst Mode and Signal Integrity</span></a>
+    <a class="next" href="../../topics/interfaces/displayport.html"><span class="dir">Next</span><span>DisplayPort 2.1: UHBR Rates, Cable Loss and Link Training</span></a>
+  </nav>
+  <!-- pager:end -->
+</main>
+
+<footer class="site-foot">
+  <span>SIPI &#8212; signal and power integrity, visualised.</span>
+  <nav class="site-foot__nav" aria-label="Site, footer">
+    <a href="../../start.html">Start</a>
+    <a href="../../labs.html">Labs</a>
+    <a href="../../calculators.html">Calculators</a>
+    <a href="../../reference.html">Reference</a>
+    <a href="../../interview.html">Interview guide</a>
+    <a href="../../colophon.html">About &amp; AI disclosure</a>
+    <a href="../../model-contract.html">Model assumptions</a>
+    <a href="../../docs/claims.md">Claim ledger (Markdown)</a>
+  </nav>
+  <span>Created and directed by <a href="https://www.linkedin.com/in/geetansh-arora-a645714a/" target="_blank" rel="author noopener">Geetansh Arora</a>. Text <a href="../../LICENSE-CONTENT">CC BY 4.0</a>, code <a href="../../LICENSE-CODE">MIT</a>.</span>
+</footer>
+
+<script src="../../js/site.js?v=61b8ff31" defer></script>
+<script src="../../js/viz-kit.js?v=212a7cd3" defer></script>
+<script src="../../js/models/cphy-model.js?v=6880cd11" defer></script>
+<script src="../../js/viz/cphy-trio.js?v=ffc7250a" defer></script>
+<script src="../../js/lab-workspace.js?v=35449ccb" defer></script>
+<script src="../../js/viz-loader.js?v=9eaf05a5" defer></script>
+<script src="../../js/search.js?v=dcc1e06b" defer></script>
+</body>
+</html>

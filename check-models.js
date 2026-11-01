@@ -58,7 +58,8 @@ function loadSite() {
   const files = ['js/viz-kit.js', 'js/models/calc-models.js', 'js/models/laminates.js', 'js/models/coupling-model.js', 'js/models/tdr-model.js', 'js/models/ddr5-model.js', 'js/models/lpddr6-model.js', 'js/models/ucie-model.js', 'js/models/d2d-model.js', 'js/models/ethernet-model.js', 'js/viz/ethernet-lane.js', 'js/viz/jitter.js', 'js/viz/crosstalk.js',
                  'js/viz/spectrum.js', 'js/viz/pdn-extras.js',
                  'js/viz/lab-waves.js', 'js/viz/lab-channel.js', 'js/viz/lab-pdn.js',
-                 'js/viz/cdr.js', 'js/models/adc-model.js', 'js/models/plane-cavity-model.js', 'js/models/return-path-model.js', 'js/models/cross-section-model.js', 'js/models/ir-plane-model.js',
+                 'js/viz/cdr.js', 'js/models/adc-model.js', 'js/models/plane-cavity-model.js', 'js/models/return-path-model.js', 'js/models/cross-section-model.js', 'js/models/ir-plane-model.js', 'js/models/termination-model.js', 'js/viz/termination.js', 'js/models/diffpair-model.js', 'js/viz/diffpair.js',
+                 'js/models/pcie-eq-model.js', 'js/viz/pcie-eq.js', 'js/models/flit-fec-model.js', 'js/viz/flit-fec.js', 'js/models/ssc-model.js', 'js/viz/ssc.js', 'js/models/ufs-burst-model.js', 'js/viz/ufs-burst.js', 'js/models/cphy-model.js', 'js/viz/cphy-trio.js', 'js/models/display-link-model.js', 'js/viz/display-link.js',
                  'js/viz/home-showcase.js', 'js/search.js'];
   for (const f of files) {
     // eslint-disable-next-line no-eval
@@ -5630,6 +5631,974 @@ suite('IR plane — DC current in a power plane pierced by antipads', () => {
   nearRel('grid: 0.2 mm cells give the drop of 0.05 mm cells within 2%', r.drop, fine.drop, 0.02, ' V');
   const worst = (q) => Math.max(...q.webs.map((w) => w.J));
   nearRel('grid: 0.2 mm cells give the worst neck density of 0.05 mm cells within 1%', worst(r), worst(fine), 0.01, ' A/mm²');
+});
+
+/* ═════════ Termination schemes: Bergeron solver, reactive and biased ends ═════════
+   The panel's solver is a time-stepping one, so every check here is something a
+   time stepper can get wrong and closed-form physics cannot: a delay off by a step,
+   a companion model with the wrong history sign, an energy account that leaks. */
+suite('Termination — Bergeron line, companion models, closed-form limits', () => {
+  const TM = MODELS.termination;
+  if (!TM) { ok('termination model loads', false); return; }
+  const V = TM.VDD, Z = TM.Z0;
+  const base = { scheme: 'none', Rt: 50, Rs: 10, td: 1000, tap: false, tapAt: 0.5, cin: 0, cac: 100,
+    bias: 0.5, place: 'pin', pattern: 'step', rate: 0.2, tr: 300 };
+  const run = (c) => TM.simulate(Object.assign({}, base, c));
+
+  // 1 · A matched load reflects nothing: the far end is the launched wave, delayed by Td, exactly.
+  {
+    const r = run({ scheme: 'parallel', Rt: Z, Rs: 10 });
+    const a0 = V * Z / (10 + Z), tdU = r.tr.tdUsed[0], t0 = r.build.t0, ts = r.build.trSupport;
+    let err = 0, back = 0;
+    for (let k = 0; k <= r.N; k++) {
+      const t = k * r.dt;
+      err = Math.max(err, Math.abs(r.rec[r.nodes.F][k] - a0 * K.smoothStep(t - t0 - tdU, ts)));
+      if (t > t0 + ts) back = Math.max(back, Math.abs(r.rec[r.nodes.D][k] - a0));
+    }
+    nearAbs('matched load: far end is the launched wave a0, delayed by Td', err, 0, 1e-6, ' V');
+    nearAbs('matched load: nothing ever comes back to the driver', back, 0, 1e-6, ' V');
+  }
+
+  // 2 · Against K.line1D, which is exact by superposition: two independent methods, one answer.
+  [[10, null], [25, 100], [75, 30], [10, 5], [50, null]].forEach(([Rs, RL]) => {
+    const r = run(RL === null ? { scheme: 'none', Rs } : { scheme: 'parallel', Rs, Rt: RL });
+    const M = K.line1D({ Z0: Z, Rs, RL: RL === null ? 1 : RL, open: RL === null, td: r.tr.tdUsed[0], tr: r.build.trSupport, vs: V, nWave: 40 });
+    let err = 0;
+    for (let k = 0; k <= r.N; k++) {
+      const t = k * r.dt - r.build.t0;
+      err = Math.max(err, Math.abs(r.rec[r.nodes.F][k] - K.line1DAt(M, 1, t).v), Math.abs(r.rec[r.nodes.D][k] - K.line1DAt(M, 0, t).v));
+    }
+    nearAbs(`agrees with K.line1D at both ends, Rs ${Rs} Ω, ${RL === null ? 'open' : RL + ' Ω'}`, err, 0, 1e-6, ' V');
+  });
+
+  // 3 · Series termination seen from the middle: half the rail, for 2(Td - t_tap), then the full rail.
+  {
+    const r = run({ scheme: 'series', Rs: 10, Rt: 40, tap: true, tapAt: 0.25 });
+    const tdA = r.tr.tdUsed[0], tdB = r.tr.tdUsed[1], t0 = r.build.t0, ts = r.build.trSupport;
+    const mid = Math.round((t0 + tdA + tdB) / r.dt);       // half-way through the plateau
+    nearAbs('series + tap: the tap sits at Vdd/2 while the echo is away', r.rec[r.nodes.T][mid], V / 2, 1e-6, ' V');
+    nearRel('series + tap: the plateau lasts 2(Td - t_tap)', r.tap.band, 2 * tdB, (ts + 2 * r.dt) / (2 * tdB), ' ps');
+    nearAbs('series + tap: the far end gets the full rail in one step', r.levels.hi, V, 1e-6, ' V');
+    ok('series + tap: the far end never sits in the threshold band longer than its edge', r.far.band <= ts, r.far.band.toFixed(1) + ' ps');
+  }
+
+  // 4 · Settled levels are the resistive divider (Millman's theorem for the Thevenin pair).
+  {
+    const p = run({ scheme: 'parallel', Rs: 10, Rt: 50 });
+    nearAbs('parallel: high level is Vdd·Rt/(Rs+Rt)', p.levels.hi, V * 50 / 60, 1e-6, ' V');
+    const th = run({ scheme: 'thevenin', Rs: 10, Rt: 50, bias: 0.3 });
+    const R1 = 50 / 0.3, R2 = 50 / 0.7, mill = (vs) => (vs / 10 + V / R1) / (1 / 10 + 1 / R1 + 1 / R2);
+    nearAbs('Thevenin: high level by Millman', th.levels.hi, mill(V), 1e-6, ' V');
+    nearAbs('Thevenin: low level by Millman', th.levels.lo, mill(0), 1e-6, ' V');
+    const od = run({ scheme: 'odt', Rs: 10, Rt: 40 });
+    nearAbs('on-die to VDDQ: a 1 costs nothing, high level is the rail', od.dc.high.term, 0, 1e-12, ' W');
+    nearAbs('on-die to VDDQ: low level is Vdd·Rs/(Rs+Rt)', od.levels.lo, V * 10 / 50, 1e-6, ' V');
+    // the transient ends where DC says it should
+    const last = (q) => q.rec[q.nodes.F][q.N];
+    nearAbs('transient settles to the DC solution (parallel)', last(p), p.levels.hi, 1e-6, ' V');
+    nearAbs('transient settles to the DC solution (Thevenin)', last(th), th.levels.hi, 1e-6, ' V');
+  }
+
+  // 5 · AC termination's two limits, and its time constant.
+  {
+    const big = run({ scheme: 'ac', Rt: 50, cac: 1e7 }), par = run({ scheme: 'parallel', Rt: 50 });
+    const tiny = run({ scheme: 'ac', Rt: 50, cac: 1e-7 }), open = run({ scheme: 'none' });
+    let e1 = 0, e2 = 0;
+    for (let k = 0; k <= big.N; k++) {
+      e1 = Math.max(e1, Math.abs(big.rec[big.nodes.F][k] - par.rec[par.nodes.F][k]));
+      e2 = Math.max(e2, Math.abs(tiny.rec[tiny.nodes.F][k] - open.rec[open.nodes.F][k]));
+    }
+    nearAbs('AC: as C → ∞ it is a resistor to ground', e1, 0, 1e-3, ' V');
+    nearAbs('AC: as C → 0 it is an open', e2, 0, 1e-3, ' V');
+    // a long C charges through Rs + Rt once the line has settled: tau = (Rs + Rt)·C
+    const B = TM.build(Object.assign({}, base, { scheme: 'ac', Rs: 10, Rt: 50, cac: 2000, td: 200, tr: 100 }));
+    const tau = 60 * 2000, dt = 10, tr = TM.transient(B.net, { dt, N: Math.ceil((B.t0 + tau) / dt) });
+    nearRel('AC: the capacitor reaches 1 − 1/e of the rail after (Rs + Rt)·C', tr.rec[B.nodes.M][tr.N], V * (1 - Math.exp(-1)), 0.01, ' V');
+  }
+
+  // 6 · Companion models against closed forms: an LC tank rings at 1/(2π√LC).
+  {
+    let s = 0;
+    const net = { n: 2, S: [{ a: 0, R: 1, v: (t) => (t > 5 ? 1 : 0), parts: [{ R: 1, tag: 'driver' }] }],
+      R: [], C: [{ a: 1, b: -1, C: 1 }], L: [{ a: 0, b: 1, L: 1 }], T: [] };
+    const tr = TM.transient(net, { dt: 0.5, N: 4000 });
+    const x = tr.rec[1], cross = [];
+    for (let k = 20; k < x.length; k++) if ((x[k - 1] - 1) < 0 && (x[k] - 1) >= 0) cross.push(k - 1 + (1 - x[k - 1]) / (x[k] - x[k - 1]));
+    s = (cross[cross.length - 1] - cross[0]) / (cross.length - 1) * 0.5;
+    nearRel('LC: 1 nH and 1 pF ring at 2π√(LC) = 198.7 ps', s, 2 * Math.PI * Math.sqrt(1000 * 1), 0.005, ' ps');
+  }
+
+  // 7 · Energy. Charging a lossless line through a matched source is charging a capacitor
+  //     through a resistor: half the energy is stored, half is burned, whatever the resistor.
+  {
+    //     That is a step's answer. A finite edge charges more gently and burns less (the
+    //     adiabatic-charging bound), so the slow edge must come in under it.
+    const r = run({ scheme: 'series', Rs: 10, Rt: 40, tr: 10 });
+    const Cl = r.tr.tdUsed[0] / Z;                           // pF, the line's total capacitance
+    nearRel('series, open end: the line stores ½·C_line·V²', r.tr.stored1, 0.5 * Cl * V * V, 1e-6, ' pJ');
+    nearRel('series, 10 ps edge: the source resistors burn ½·C_line·V² again', r.tr.dissipated, 0.5 * Cl * V * V, 0.01, ' pJ');
+    const slow = run({ scheme: 'series', Rs: 10, Rt: 40, tr: 300 });
+    ok('series, 300 ps edge: a slower edge burns less than a step would', slow.tr.dissipated < 0.5 * (slow.tr.tdUsed[0] / Z) * V * V,
+       slow.tr.dissipated.toFixed(3) + ' pJ');
+    let worst = 0, where = '', worstR = 0;
+    TM.ORDER.forEach((sc) => ['step', 'clock', 'run'].forEach((pt) => [false, true].forEach((cin) => {
+      const q = run({ scheme: sc, Rt: TM.matched(sc, 10), pattern: pt, rate: 0.4, td: 600, cin: cin ? 2 : 0, place: 'stub', tap: cin, tr: 120 });
+      const rel = Math.abs(q.tr.balance) / q.tr.delivered;
+      // with no C and no L there is nothing second-order left: Tellegen closes it to rounding
+      if (!cin && sc !== 'ac' && !(['parallel', 'thevenin'].includes(sc))) worstR = Math.max(worstR, rel);
+      if (rel > worst) { worst = rel; where = sc + '/' + pt + (cin ? '/Cin+tap+stub' : ''); }
+    })));
+    ok('energy: delivered = dissipated + Δstored within 0.05%, every scheme and pattern', worst < 5e-4, (worst * 100).toFixed(5) + '% worst, ' + where);
+    // and what is left with a C in the circuit is a discretisation residual, not a leak: the
+    // power is summed at the end of each step while the companion model is trapezoidal, so the
+    // residual is first order and halves with the step (line delays chosen to stay whole steps)
+    const Bc = TM.build(Object.assign({}, base, { scheme: 'ac', Rt: 50, cac: 100, pattern: 'run', rate: 0.4, td: 600, cin: 2, tap: true, tr: 120 }));
+    const err = (dt) => { const q = TM.transient(Bc.net, { dt, N: Math.ceil(Bc.tEnd / dt) }); return Math.abs(q.balance) / q.delivered; };
+    const e1 = err(8), e2 = err(4), e3 = err(2);
+    ok('energy: the residual with capacitors halves with the step (first order, not a leak)', e1 / e2 > 1.8 && e2 / e3 > 1.8,
+       `×${(e1 / e2).toFixed(2)}, ×${(e2 / e3).toFixed(2)} for each halving`);
+    nearAbs('energy: lines and resistors alone close to rounding', worstR, 0, 1e-9, '');
+  }
+
+  // 8 · Edges. A resistive network is linear and time-invariant, so once each edge has settled
+  //     every edge of the same direction arrives the same way: no data-dependent spread at all.
+  //     An AC terminator's capacitor remembers the data, so its edges move with it. The
+  //     capacitor's current moves the level through the driver's own impedance, so an ideal
+  //     driver removes most of it (not all: the line still delays what the capacitor returns).
+  {
+    const slow = { pattern: 'prbs', rate: 0.1, td: 300, tr: 150, cin: 0 };
+    ['series', 'parallel', 'thevenin', 'odt'].forEach((sc) => {
+      const r = run(Object.assign({ scheme: sc, Rt: TM.matched(sc, 10) }, slow));
+      nearAbs(`edges: ${sc} on random data puts every edge at the same place`, r.far.edges.spread, 0, 0.5, ' ps');
+    });
+    const ac = { scheme: 'ac', Rt: 50, cac: 330, Rs: 20, td: 500, tr: 200, rate: 0.2, cin: 0 };
+    const onData = run(Object.assign({ pattern: 'run' }, ac)).far.edges.spread;
+    const onClock = run(Object.assign({ pattern: 'clock' }, ac)).far.edges.spread;
+    ok('edges: an AC terminator moves edges on data far more than on a clock', onData > 5 * onClock, `${onData.toFixed(1)} ps vs ${onClock.toFixed(1)} ps`);
+    const ideal = run(Object.assign({ pattern: 'run' }, ac, { Rs: 1e-3 })).far.edges.spread;
+    ok('edges: an ideal driver takes away most of the AC terminator\'s spread', ideal < onData / 5, `${ideal.toFixed(1)} ps vs ${onData.toFixed(1)} ps at 20 Ω`);
+  }
+
+  // 8b · Regression guard on the prose, not a validation: the page says the AC-on-data preset
+  //      (20 Ω driver, 330 pF) moves the edges by about 65 ps, and recommends a smaller capacitor.
+  {
+    const pre = SIPI.viz.termination && SIPI.viz.termination.PRESETS.acData, G = SIPI.viz.termination && SIPI.viz.termination.GRID;
+    if (!pre) ok('termination panel presets load', false);
+    else {
+      const cfg = { scheme: pre.scheme, Rt: pre.Rt, Rs: pre.Rs, td: G.LINES[pre.li], tap: false, tapAt: 0.5, cin: G.CIN,
+        cac: G.CACS[pre.ki], bias: 0.5, place: 'pin', pattern: pre.data, rate: G.RATES[pre.ri], tr: G.EDGES[pre.ti] };
+      const spread = TM.simulate(cfg).far.edges.spread;
+      ok('prose guard: the AC-on-data preset moves the edges by about 65 ps (60-70)', spread > 60 && spread < 70, spread.toFixed(1) + ' ps');
+      const smaller = TM.simulate(Object.assign({}, cfg, { cac: 47 })).far.edges.spread;
+      ok('prose guard: the suggested 47 pF moves them by about 12 ps (9-15)', smaller > 9 && smaller < 15, smaller.toFixed(1) + ' ps');
+    }
+  }
+
+  // 8c · The verdict word agrees with each preset's note (a regression guard on the
+  //      prose), and against physics: a tap on a line matched at its far end has no echo
+  //      to wait for, so it is never reported as sitting in the band, whatever the edge.
+  {
+    const V = SIPI.viz.termination, G = V && V.GRID;
+    if (!V || !V.verdict) ok('termination verdict loads', false);
+    else {
+      const cfgOf = (q) => ({ scheme: q.scheme === 'board' ? 'parallel' : q.scheme, place: q.scheme === 'board' ? 'stub' : 'pin',
+        Rt: q.Rt, Rs: q.Rs, td: G.LINES[q.li], tap: q.tap > 0, tapAt: G.TAPS[q.tap] || 0.5, cin: G.CIN,
+        cac: G.CACS[q.ki], bias: q.bias, pattern: q.data, rate: G.RATES[q.ri], tr: G.EDGES[q.ti] });
+      const want = { open: 'rings', tap: 'tap sits in the band', parallel: 'clean', acClock: 'clean', acData: 'clean', stub: 'rings' };
+      for (const k of Object.keys(want)) {
+        const w = V.verdict(TM.simulate(cfgOf(V.PRESETS[k])));
+        ok('prose guard: the ' + k + ' preset reads "' + want[k] + '"', w === want[k], w);
+      }
+      const st = TM.simulate(cfgOf(V.PRESETS.stub)), pin = TM.simulate(cfgOf(Object.assign({}, V.PRESETS.stub, { scheme: 'parallel' })));
+      ok('prose guard: moving the stub terminator to the pin halves the overshoot (0.4 to 0.6 of it)', pin.far.over / st.far.over > 0.4 && pin.far.over / st.far.over < 0.6, (pin.far.over / st.far.over).toFixed(2));
+      for (const ti of [0, 3, 6, 7, 8, 9]) {
+        const tp = V.PRESETS.tap;
+        const ser = V.verdict(TM.simulate(cfgOf(Object.assign({}, tp, { ti }))));
+        const par = V.verdict(TM.simulate(cfgOf(Object.assign({}, tp, { ti, scheme: 'parallel', Rt: 50 }))));
+        ok('tap: a series-terminated line strands the mid-line tap in the band (' + G.EDGES[ti] + ' ps edge)', ser === 'tap sits in the band', ser);
+        ok('tap: a far-end-matched line never does (' + G.EDGES[ti] + ' ps edge)', par !== 'tap sits in the band', par);
+      }
+    }
+  }
+
+  // 9 · Cost. A clock is high half the time, so a parallel terminator burns half its DC power.
+  {
+    const r = run({ scheme: 'parallel', Rs: 10, Rt: 50, pattern: 'clock', rate: 0.1, td: 300, tr: 100 });
+    nearRel('parallel on a clock: average power is half the power while high', r.avg.term, r.dc.high.term / 2, 0.03, ' W');
+    nearRel('parallel, 10 Ω driver: 20 mW while high, as the page says', r.dc.high.term, (V * 50 / 60) ** 2 / 50, 1e-6, ' W');
+  }
+});
+
+/* ═════════ Differential pair: where the common mode comes from ═════════ */
+suite('Differential pair — symmetry, mode conversion and the common-mode pulse', () => {
+  const DP = MODELS.diffpair;
+  if (!DP) { ok('differential-pair model loads', false); return; }
+  const base = { rate: 10, tr: 30, skew: 0, len: 10, dDk: 0, imb: 0, slow: 0 };
+  const cfg = (c) => Object.assign({}, base, c);
+
+  // 1 · Identical legs convert nothing, at any frequency and at any instant.
+  {
+    const A = DP.analyse(cfg({}));
+    nearAbs('balanced: the common mode is identically zero', A.cmPk, 0, 1e-12, ' V');
+    let worst = 0; for (let f = 0.1; f < 40; f += 0.7) worst = Math.max(worst, DP.mixed(A.W.L, f).scd);
+    nearAbs('balanced: SCD21 is zero at every frequency', worst, 0, 1e-12, '');
+  }
+
+  // 1b · The pattern repeats, so its waveform must close on itself: across the wrap
+  //      from the last sample to the first, each leg steps no further than it does
+  //      between any two neighbouring samples inside the period, whichever leg is early.
+  {
+    for (const c of [{ skew: 50 }, { skew: 100, rate: 25 }, { skew: 30, slow: 40 }, { skew: 100, len: 0, rate: 32 }]) {
+      const W = DP.waves(cfg(c));
+      for (const leg of ['P', 'N']) {
+        const x = W[leg], n = x.length;
+        let step = 0; for (let i = 1; i < n; i++) step = Math.max(step, Math.abs(x[i] - x[i - 1]));
+        const wrap = Math.abs(x[0] - x[n - 1]);
+        ok('periodic: leg ' + leg + ' closes on itself across the wrap (' + JSON.stringify(c) + ')', wrap <= step * 1.0001, 'wrap ' + wrap.toFixed(3) + ' V, largest step ' + step.toFixed(3) + ' V');
+      }
+    }
+  }
+
+  // 2 · Skew alone only redistributes: what is not differential is common, |SDD|² + |SCD|² = |H|².
+  {
+    const L = DP.legs(cfg({ skew: 23 })); let worst = 0;
+    for (let f = 0.1; f < 40; f += 0.37) {
+      const m = DP.mixed(L, f), h = DP.H(L.P, f), H2 = h[0] * h[0] + h[1] * h[1];
+      worst = Math.max(worst, Math.abs(m.sdd * m.sdd + m.scd * m.scd - H2));
+    }
+    nearAbs('skew: |SDD21|² + |SCD21|² is one leg\'s |H|² at every frequency', worst, 0, 1e-12, '');
+    // and the first null of SDD21 is at 1/(2·skew), here 21.74 GHz
+    const L2 = DP.legs(cfg({ skew: 23, tr: 1 }));
+    let fmin = 0, vmin = Infinity;
+    for (let f = 1; f < 30; f += 0.001) { const v = DP.mixed(L2, f).sdd; if (v < vmin) { vmin = v; fmin = f; } }
+    nearRel('skew: SDD21\'s first null is at 1/(2·skew)', fmin, 1000 / (2 * 23), 1e-3, ' GHz');
+  }
+
+  // 3 · One edge's common-mode pulse has area −A·skew/2 whatever the edge looks like: it is
+  //     the same edge twice, shifted by the skew, subtracted.
+  {
+    const bits = Array(32).fill(0).concat(Array(32).fill(1)), ui = 100;
+    [[10, 12], [40, 7], [10, 80]].forEach(([tr, skew]) => {
+      const L = DP.legs(cfg({ tr, skew })), dt = 0.25, ts = [];
+      for (let t = 1600; t <= 4800; t += dt) ts.push(t);
+      const P = DP.legWave(L.P, bits, ui, ts), N = DP.legWave(L.N, bits, ui, ts);
+      // V_cm = (P + N)/2, integrated by the trapezoidal rule
+      let area = 0; for (let k = 1; k < ts.length; k++) area += dt * ((P[k] + N[k]) + (P[k - 1] + N[k - 1])) / 4;
+      nearRel(`common-mode pulse area is −A·skew/2 (edge ${tr} ps, skew ${skew} ps)`, area, -DP.SWING * skew / 2, 2e-3, ' V·ps');   // A: one leg's step
+    });
+  }
+
+  // 4 · Swapping which leg is late flips the common mode and leaves the conversion's size alone.
+  {
+    const a = DP.legs(cfg({ skew: 9 })), b = DP.legs(cfg({ skew: -9 })); let dif = 0;
+    for (let f = 0.5; f < 30; f += 0.5) dif = Math.max(dif, Math.abs(DP.mixed(a, f).scd - DP.mixed(b, f).scd));
+    nearAbs('symmetry: reversing the skew leaves |SCD21| unchanged', dif, 0, 1e-12, '');
+    const wa = DP.waves(cfg({ skew: 9 })), wb = DP.waves(cfg({ skew: -9 }));
+    let s1 = 0, s2 = 0; for (let i = 0; i < wa.Cm.length; i++) { s1 += wa.Cm[i] * wb.Cm[i]; s2 += wa.Cm[i] * wa.Cm[i]; }
+    ok('symmetry: reversing the skew turns the common mode upside down', s1 < -0.99 * s2, (s1 / s2).toFixed(4));
+  }
+
+  // 5 · A drive imbalance alone converts a fixed share, a/2, at every frequency.
+  {
+    const L = DP.legs(cfg({ imb: 12 })); let worst = 0;
+    for (let f = 0.1; f < 40; f += 0.9) { const m = DP.mixed(L, f); worst = Math.max(worst, Math.abs(m.scd / m.sdd - 0.06)); }
+    nearAbs('imbalance: SCD21 / SDD21 = a/2 at every frequency', worst, 0, 1e-12, '');
+    // and in time it is the data itself, scaled: legs at ±(1 ± a/2)·SWING/2 average to a·SWING/4
+    nearAbs('imbalance: the common mode settles at a·(one leg\'s step)/4', DP.analyse(cfg({ imb: 12, tr: 10, rate: 1 })).cmPk, 0.12 * DP.SWING / 4, 1e-6, ' V');
+  }
+
+  // 6 · Small skew converts in proportion to it: twice the skew, 6 dB more emission.
+  {
+    const e1 = DP.emission(DP.legs(cfg({ skew: 1 })), 10), e2 = DP.emission(DP.legs(cfg({ skew: 2 })), 10);
+    nearAbs('emission: doubling a small skew adds 20·log10(2) dB', e2 - e1, 20 * Math.log10(2), 0.1, ' dB');
+  }
+
+  // 7 · Identical legs, growing skew: the eye never opens wider.
+  {
+    let prev = Infinity, fine = true, at = '';
+    for (let sk = 0; sk <= 100; sk += 5) {
+      const w = DP.analyse(cfg({ skew: sk })).eye.width;
+      if (w > prev + 1e-9) { fine = false; at = sk + ' ps'; }
+      prev = w;
+    }
+    ok('eye: width never grows as skew grows (identical legs)', fine, at);
+  }
+
+  // 8 · Regression guards on the prose, not validations: the page's weave arithmetic,
+  //     and the panel's glass-weave preset reading it back.
+  {
+    nearAbs('weave: no Dk difference, no skew', DP.weaveSkew(10, 0), 0, 1e-12, ' ps');
+    nearRel('prose guard: Dk 4 against 4.05 over 10 in is 10.6 ps', DP.weaveSkew(10, 0.05), 10.6, 0.005, ' ps');
+    const pre = SIPI.viz.diffPair && SIPI.viz.diffPair.PRESETS.weave, G = SIPI.viz.diffPair && SIPI.viz.diffPair.GRID;
+    if (!pre) ok('differential-pair presets load', false);
+    else {
+      const h = SIPI.viz.diffPair.PRESETS.halfUI, c = { rate: G.RATES[h.ri], tr: G.EDGES[h.ti], skew: h.skew, len: h.len, dDk: G.DDKS[h.ki], imb: 0, slow: 0 };
+      const m = DP.mixed(DP.legs(c), c.rate / 2), w = DP.analyse(c).eye.width;
+      nearAbs('preset guard: half a bit of skew leaves SDD21 and SCD21 equal at Nyquist', m.sdd - m.scd, 0, 1e-12, '');
+      ok('preset guard: half a bit of skew costs about a fifth of the eye width (15-28%)', w > 0.72 && w < 0.85, (100 * (1 - w)).toFixed(0) + '% lost');
+    }
+    if (pre) nearRel('prose guard: the glass-weave preset is that route', DP.legs({ rate: G.RATES[pre.ri], tr: G.EDGES[pre.ti], skew: pre.skew, len: pre.len, dDk: G.DDKS[pre.ki] }).skew, 10.6, 0.005, ' ps');
+  }
+});
+
+suite('PCIe equalisation — presets, a limited DFE and the worst-case eye', () => {
+  const PE = MODELS.pcieEq;
+  if (!PE) { ok('PCIe equalisation model loads', false); return; }
+  const T = PE.SPS, A = PE.A;
+  const cfg = (c) => Object.assign({ gen: 5, len: 9, dbIn: 1.78, preset: 4, ctle: -1, dfe: true }, c);
+
+  // 1 · P4 is no shaping: the FIR leaves the pulse exactly as it was, one UI later.
+  {
+    const p = PE.rxPulses(30, [8])[0], q = PE.shape(p, PE.PRESETS[4]);
+    let worst = 0;
+    for (let i = 0; i < p.length; i++) worst = Math.max(worst, Math.abs(q[i + T] - p[i]));
+    nearAbs('P4: the shaped pulse is the unshaped one, delayed one UI', worst, 0, 1e-15, '');
+  }
+
+  // 2 · The FIR, run on a pattern with no channel, launches each preset's preshoot and
+  //     de-emphasis. The levels are measured from the waveform, not read off the taps:
+  //     Va the first bit of a run, Vb the run's steady level, Vc the bit before it ends.
+  {
+    const DB = [[0, -6.0], [0, -3.5], [0, -4.4], [0, -2.5], [0, 0], [1.9, 0], [2.5, 0], [3.5, -6.0], [3.5, -3.5], [3.5, 0]];
+    const rect = new Float64Array(T).fill(1);
+    let worst = 0, peakOver = 0;
+    PE.PRESETS.forEach((taps, i) => {
+      const q = PE.shape(rect, taps);                 // the launched pulse for one bit
+      const bits = [-1, -1, -1, -1, 1, 1, 1, 1, 1, 1, -1, -1, -1, -1];
+      const n = bits.length * T, y = new Float64Array(n + q.length);
+      bits.forEach((b, k) => { for (let j = 0; j < q.length; j++) y[k * T + j] += b * q[j]; });
+      const at = (bit) => y[(bit + 1) * T + T / 2];   // the pulse sits one UI late
+      const Va = at(4), Vb = at(7), Vc = at(9);
+      const pre = 20 * Math.log10(Vc / Vb), de = 20 * Math.log10(Vb / Va);
+      worst = Math.max(worst, Math.abs(pre - DB[i][0]), Math.abs(de - DB[i][1]));
+      for (const v of y) peakOver = Math.max(peakOver, Math.abs(v) - 1);
+    });
+    ok('presets: the launched waveform has each preset\'s preshoot and de-emphasis to 0.1 dB', worst < 0.1, worst.toFixed(3) + ' dB worst');
+    ok('presets: no pattern launches more than the unshaped full swing', peakOver < 1e-9, peakOver.toExponential(2));
+    // regression guard: the table's own constraint, restated
+    let sum = 0; PE.PRESETS.forEach((t) => { sum = Math.max(sum, Math.abs(Math.abs(t[0]) + t[1] + Math.abs(t[2]) - 1)); });
+    ok('regression guard: every preset\'s taps are scaled to full swing, |c₋₁| + c₀ + |c₊₁| = 1', sum < 0.0015, sum.toFixed(4));
+  }
+
+  // 3 · Peak distortion against hand arithmetic: a pulse with one main cursor, one
+  //     pre- and one post-cursor. The eye is 2A(main − |pre| − |post|); a DFE with room
+  //     removes the post-cursor and nothing else.
+  {
+    const q = new Float64Array(8 * T);
+    const put = (ui, v) => { for (let k = -T / 4; k <= T / 4; k++) q[(ui * T) + k] = v * (1 - Math.abs(k) / (T / 2)); };
+    put(3, 0.1); put(4, 1); put(5, 0.25);
+    const E0 = PE.eye(q, []), E1 = PE.eye(q, [10]), Ep = PE.eye(q, [0.02]);
+    nearAbs('peak distortion: no DFE, the eye is 2A(1 − 0.1 − 0.25)', E0.height, 2 * A * 0.65, 1e-12, ' V');
+    nearAbs('peak distortion: an unlimited 1-tap DFE removes the post-cursor and leaves the pre-cursor', E1.height, 2 * A * 0.9, 1e-12, ' V');
+    nearAbs('peak distortion: a DFE tap clipped at 20 mV removes 20 mV of it and no more', Ep.height, 2 * (A * (1 - 0.1) - (A * 0.25 - 0.02)), 1e-12, ' V');
+  }
+
+  // 4 · The DFE cannot touch pre-cursor: a pulse with equal ISI either side of the
+  //     cursor keeps all of its pre-cursor however strong the DFE, and loses all of
+  //     its post-cursor.
+  {
+    const q = new Float64Array(8 * T);
+    for (let k = -T / 2; k < T / 2; k++) {
+      const tri = 1 - Math.abs(k) / T;
+      q[4 * T + k] = tri; q[3 * T + k] = 0.2 * tri; q[5 * T + k] = 0.2 * tri;
+    }
+    nearAbs('DFE: the pre-cursor survives three unlimited taps, the post-cursor does not', PE.eye(q, [9, 9, 9]).height, 2 * A * (1 - 0.2), 1e-12, ' V');
+  }
+
+  // 5 · A lossless channel: one bit arrives whole, nothing of it spills, the eye is the
+  //     launch swing itself.
+  {
+    const p = PE.rxPulses(0, [0])[0];
+    nearRel('lossless: the eye is the full 800 mV launch', PE.eye(PE.shape(p, PE.PRESETS[4]), []).height, PE.SWING, 0.01, ' V');
+  }
+
+  // 6 · More loss never opens the eye, preset, CTLE setting and DFE held fixed.
+  {
+    let prev = Infinity, rising = 0;
+    for (let len = 1; len <= 16; len += 1) {
+      const h = PE.evaluate(cfg({ len, preset: 7 }), 7, 6).height;
+      if (h > prev + 1e-9) rising++;
+      prev = h;
+    }
+    ok('monotonic: a longer board never opens the eye at a fixed P7, CTLE and DFE', rising === 0, rising + ' step(s) up');
+  }
+
+  // 7 · The worst case is a bound: no real pattern's sample at the sampling point sits
+  //     inside it.
+  {
+    const R = PE.analyse(cfg({ preset: 7 })), me = R.mine;
+    const tr = PE.traces(me.q, me.s0, me.dfe, 400);
+    let inner = Infinity;
+    for (let b = tr.from; b < tr.bits.length - 1; b++) inner = Math.min(inner, Math.abs(tr.y[b * tr.T]));
+    ok('bound: 400 bits of data never cross the worst-case eye at the sampling point', inner >= me.height / 2 - 1e-9,
+      (inner * 1e3).toFixed(2) + ' mV vs ' + (me.height * 500).toFixed(2) + ' mV');
+  }
+
+  // 8 · The sweep keeps the best: its winner is at least every other preset.
+  {
+    const S = PE.sweep(cfg({}));
+    ok('sweep: the chosen preset\'s eye is at least every other preset\'s', S.rows.every((r) => S.rows[S.win].height >= r.height));
+  }
+
+  // 9 · Nothing in the chain knows the clock: the same loss at Nyquist gives the same eye
+  //     in UI and volts at 16 and at 32 GT/s, CTLE setting shared and DFE off.
+  {
+    const g5 = cfg({ gen: 5, len: 6, dbIn: 1.5, dfe: false });
+    const L5 = PE.segments(g5).total, G4 = PE.GENS[4];
+    const len4 = (L5 - G4.pkg - G4.conn - G4.card) / (1.5 * PE.lawShare(G4.fN / 16));
+    const g4 = cfg({ gen: 4, len: len4, dbIn: 1.5, dfe: false });
+    const i5 = PE.GENS[5].ctle.indexOf(9), i4 = G4.ctle.indexOf(9);
+    const e5 = PE.evaluate(g5, 6, i5), e4 = PE.evaluate(g4, 6, i4);
+    nearAbs('dimensions: equal loss at Nyquist, equal eye height at Gen 4 and Gen 5', e4.height, e5.height, 1e-12, ' V');
+    nearAbs('dimensions: and equal width in UI', e4.width, e5.width, 1e-12, ' UI');
+  }
+
+  // 10 · Every DFE tap stays inside its limit (C-138).
+  {
+    let worst = 0;
+    for (const gen of [4, 5]) for (const len of [2, 9, 16]) {
+      const E = PE.analyse(cfg({ gen, len, preset: 0 })).mine;
+      E.dfe.forEach((d, i) => { worst = Math.max(worst, Math.abs(d) - PE.GENS[gen].dfe[i]); });
+    }
+    ok('DFE: no tap exceeds its limit at either generation', worst <= 1e-15, (worst * 1e3).toFixed(3) + ' mV over');
+  }
+
+  // Prose guards: the preset notes, against the model.
+  {
+    const V = SIPI.viz && SIPI.viz.pcieEq && SIPI.viz.pcieEq.PRESETS;
+    if (!V) { ok('PCIe panel presets load', false); return; }
+    const run = (q) => PE.analyse({ gen: q.gen, len: q.len, dbIn: q.dbIn, preset: q.preset, ctle: q.ctle - 1, dfe: !!q.dfe });
+    const s4 = run(V.short4), s5 = run(V.short5), t4 = run(V.ti4), t5 = run(V.ti5), ov = run(V.over);
+    ok('prose guard: on the short Gen 4 slot P4 already wins', s4.sweep.win === 4, 'P' + s4.sweep.win);
+    ok('prose guard: the same board at Gen 5 has less than half the eye', s5.mine.height < 0.5 * s4.mine.height, (s5.mine.height / s4.mine.height).toFixed(2));
+    nearAbs('prose guard: TI\'s Gen 4 allocation totals 28 dB', t4.seg.total, 28, 0.05, ' dB');
+    ok('prose guard: on it, unshaped P4 clears 15 mV and the winner is a preshoot preset', t4.mine.height > PE.TARGET.eh && PE.PRESETS[t4.sweep.win][0] < 0, 'P' + t4.sweep.win);
+    nearAbs('prose guard: TI\'s Gen 5 allocation totals 36 dB', t5.seg.total, 36, 0.05, ' dB');
+    ok('prose guard: on it, P4 misses 15 mV and the sweep finds a preset that meets it', t5.mine.height < PE.TARGET.eh && t5.sweep.rows[t5.sweep.win].height >= PE.TARGET.eh,
+      (t5.mine.height * 1e3).toFixed(1) + ' → ' + (t5.sweep.rows[t5.sweep.win].height * 1e3).toFixed(1) + ' mV');
+    ok('prose guard: about 11 dB over budget, every preset closes', Math.abs(ov.seg.total - 36 - 11) < 0.5 && ov.sweep.rows.every((r) => r.height <= 0),
+      (ov.seg.total - 36).toFixed(1) + ' dB over');
+  }
+});
+
+suite('Flit FEC — interleaved single-byte codes, bursts and replay', () => {
+  const FF = MODELS.flitFec;
+  if (!FF) { ok('flit FEC model loads', false); return; }
+
+  // 1 · Any burst of up to three consecutive bytes is corrected, wherever it starts;
+  //     any burst of four or more is not. Exhaustive over every start in the flit.
+  {
+    const run = (len) => { let ok3 = 0; for (let s = 0; s + len <= FF.FLIT; s++) { const b = []; for (let i = 0; i < len; i++) b.push(s + i); if (FF.correctable(b)) ok3++; } return ok3; };
+    ok('interleave: every burst of 1, 2 or 3 bytes is corrected, at all 256 starts', run(1) === 256 && run(2) === 255 && run(3) === 254, [run(1), run(2), run(3)].join(', '));
+    ok('interleave: no burst of 4 to 8 bytes is corrected, at any start', [4, 5, 6, 7, 8].every((L) => run(L) === 0));
+  }
+
+  // 2 · Two bad bytes fail exactly when they share a code: by counting pairs, that is
+  //     (C(86,2) + 2·C(85,2)) / C(256,2) of all pairs.
+  {
+    let fail = 0, all = 0;
+    for (let i = 0; i < FF.FLIT; i++) for (let j = i + 1; j < FF.FLIT; j++) { all++; if (!FF.correctable([i, j])) fail++; }
+    const c2 = (n) => n * (n - 1) / 2;
+    nearAbs('two bad bytes: the failing share is (C(86,2) + 2 C(85,2)) / C(256,2)', fail / all, (c2(86) + 2 * c2(85)) / c2(256), 1e-15, '');
+  }
+
+  // 3 · Independent errors, the low-rate limit: replay ≈ Σ_g C(n_g, 2) b², the chance two
+  //     bad bytes share a code, with b the byte error rate.
+  {
+    const fber = 1e-9, b = 1 - Math.pow(1 - fber, 8), c2 = (n) => n * (n - 1) / 2;
+    nearRel('errors alone, low rate: replay = Σ C(n,2) b²', FF.replayIndependent(fber), (c2(86) + 2 * c2(85)) * b * b, 1e-4, '');
+  }
+
+  // 4 · The burst machinery, with q = 0, agrees with the closed form within its own
+  //     draw error. At low rate the two-error term carries it, so the tolerance is three
+  //     standard errors of P(fail | 2 bursts) from DRAWS draws.
+  {
+    const f2 = FF.failGivenK(0)[2], se = Math.sqrt(f2 * (1 - f2) / FF.DRAWS);
+    nearRel('draws, q = 0: the burst model meets the closed form at FBER 1e-6', FF.replayBursty(1e-6, 0), FF.replayIndependent(1e-6), 3 * se / f2 + 0.012, '');
+  }
+
+  // 5 · One burst fails exactly when it runs to four bytes or more inside the flit:
+  //     (253/256)·q³, against the draws' own binomial error.
+  {
+    for (const q of [0.3, 0.6]) {
+      const f1 = FF.failGivenK(q)[1], want = (253 / 256) * q * q * q, se = Math.sqrt(want * (1 - want) / FF.DRAWS);
+      ok('one burst, q = ' + q + ': it fails with probability (253/256) q³, within 3σ of the draws', Math.abs(f1 - want) < 3 * se,
+        f1.toFixed(4) + ' vs ' + want.toFixed(4) + ' ± ' + (3 * se).toFixed(4));
+    }
+  }
+
+  // 6 · Limits and order: no errors, no replays; replays never fall as the rate rises
+  //     or as bursts lengthen; a replay never outnumbers the flits that had an error.
+  {
+    nearAbs('limit: at FBER → 0 nothing is replayed', FF.replayBursty(1e-15, 0.5), 0, 1e-12, '');
+    let up = 0, prev = -1;
+    for (let e = -9; e <= -3; e += 0.25) { const r = FF.replayBursty(Math.pow(10, e), 0.4); if (r < prev - 1e-15) up++; prev = r; }
+    ok('monotonic: more raw errors never mean fewer replays', up === 0, up + ' step(s) down');
+    let dn = 0; prev = -1;
+    for (let q = 0; q <= 0.9 + 1e-9; q += 0.1) { const r = FF.replayBursty(1e-6, +q.toFixed(2)); if (r < prev * (1 - 0.05)) dn++; prev = r; }
+    ok('monotonic: longer bursts never mean fewer replays (to the draws\' 5%)', dn === 0, dn + ' step(s) down');
+    let worst = 0;
+    for (let e = -8; e <= -3; e += 0.5) worst = Math.max(worst, FF.replayIndependent(Math.pow(10, e)) - FF.hitRate(Math.pow(10, e)));
+    ok('bound: the replayed share never exceeds the share of flits with any bad byte', worst <= 0);
+  }
+
+  // 7 · The flit time: 256 bytes at 64 GT/s a lane, 2 ns on x16 and 32 ns on x1, as the page says.
+  {
+    nearAbs('flit time on x16', FF.flitNs(16), 2, 1e-12, ' ns');
+    nearAbs('flit time on x1', FF.flitNs(1), 32, 1e-12, ' ns');
+  }
+
+  // Prose guards: the preset notes, against the model.
+  {
+    const V = SIPI.viz && SIPI.viz.flitFec && SIPI.viz.flitFec.PRESETS;
+    if (!V) { ok('flit panel presets load', false); return; }
+    const r = (q) => FF.analyse({ fber: Math.pow(10, q.lf), q: q.q, width: 16 });
+    const d = r(V.design), b = r(V.bursty), bad = r(V.bad);
+    ok('prose guard: half-chance bursts raise replays several hundredfold (200 to 900×)', b.pRep / d.pRep > 200 && b.pRep / d.pRep < 900, (b.pRep / d.pRep).toFixed(0) + '×');
+    ok('prose guard: the bad channel resends about one flit in sixty (50 to 75)', 1 / bad.pRep > 50 && 1 / bad.pRep < 75, '1 in ' + (1 / bad.pRep).toFixed(0));
+    ok('prose guard: the 3- and 4-byte presets draw what their notes say', FF.drawFlit(1e-6, 0.5, 3, 7).ok && !FF.drawFlit(1e-6, 0.5, 4, 7).ok);
+  }
+});
+
+suite('SSC tracking — a type-2 loop against a spread clock', () => {
+  const SS = MODELS.ssc;
+  if (!SS) { ok('SSC model loads', false); return; }
+  const base = { gen: 2, shape: 'tri', depth: 5000, fm: 33e3, fn: 1e6, zeta: 0.707 };
+  const cfg = (c) => Object.assign({}, base, c);
+
+  // 1 · The triangle's phase: the integral of a ±A triangle over half a period is
+  //     A·T/4, so the data swings A·T/4 peak to peak, A half the depth.
+  {
+    const A = SS.analyse(cfg({}));
+    nearRel('phase: a triangle of ±2500 ppm at 33 kHz moves the data A·T/4', A.xpp, 2500e-6 / 33e3 / 4, 1e-4, ' s');
+    nearRel('prose guard: that is about 189 UI at Gen 2', A.xpp / 100e-12, 189.4, 0.002, ' UI');
+    const B = SS.analyse(cfg({ fm: 30e3, gen: 1 }));
+    nearRel('prose guard: 104 UI at Gen 1 and 30 kHz, as the figure says', B.xpp / 200e-12, 104.2, 0.002, ' UI');
+  }
+
+  // 2 · A type-2 loop lags a steady frequency ramp by (ramp rate)/ωn², the same all
+  //     along the ramp once the corner's transient has died (fn ≫ fm). Checked an
+  //     eighth and three eighths into the period, where the frequency offset is +A/2
+  //     and -A/2: a loop that lagged the offset itself would differ at the two.
+  {
+    for (const fn of [1e6, 3e6]) {
+      const A = SS.analyse(cfg({ fn })), ramp = 4 * 2500e-6 * 33e3, wn = 2 * Math.PI * fn;
+      const lag = [A.r[SS.N / 8], A.r[3 * SS.N / 8]].map(Math.abs);
+      nearRel('ramp: mid-ramp lag is (dω/dt)/ωn² at fn = ' + fn / 1e6 + ' MHz', Math.max(...lag), ramp / (wn * wn), 0.01, ' s');
+      nearRel('ramp: and the same at +A/2 and -A/2 of offset, fn = ' + fn / 1e6 + ' MHz', lag[0], lag[1], 0.01, ' s');
+    }
+  }
+
+  // 3 · An independent method: step the loop in time, phase detector → proportional
+  //     + integral → integrator, against the triangle's phase written out by hand,
+  //     and compare the settled peak-to-peak with the model's Fourier answer.
+  {
+    for (const [fn, zeta] of [[1e6, 0.707], [3e5, 0.7], [1e6, 0.2]]) {
+      const T = 1 / 33e3, A = 2500e-6, wn = 2 * Math.PI * fn, dt = Math.min(T / 20000, 0.02 / wn);
+      const xin = (t) => {                                  // ∫ of the triangle about its mean
+        const u = ((t % T) + T) % T;
+        // frequency offset about the mean: +A at 0, -A at T/2, back to +A at T; the
+        // second half mirrors the first in sign
+        const half = (w) => A * w - (2 * A / T) * w * w;
+        return u < T / 2 ? half(u) : -half(u - T / 2);
+      };
+      let th = xin(0), v = 0, lo = Infinity, hi = -Infinity;
+      const steps = Math.round(8 * T / dt);
+      for (let i = 0; i < steps; i++) {
+        const t = i * dt, e = xin(t) - th;
+        v += wn * wn * e * dt;
+        th += (2 * zeta * wn * e + v) * dt;
+        if (t > 6 * T) { const r = xin(t + dt) - th; lo = Math.min(lo, r); hi = Math.max(hi, r); }
+      }
+      const M = SS.analyse(cfg({ fn, zeta }));
+      nearRel('time-stepped loop agrees with the Fourier steady state (fn ' + fn / 1e6 + ' MHz, ζ ' + zeta + ')', M.rpp, hi - lo, 0.02, ' s');
+    }
+  }
+
+  // 4 · Limits and order.
+  {
+    for (const shape of ['tri', 'fast']) {
+      const Z = SS.analyse(cfg({ depth: 0, shape }));
+      nearAbs('no spread (' + shape + '): nothing is left behind', Z.rpp, 0, 1e-18, ' s');
+      ok('no spread (' + shape + '): no phase, no slew, every number finite', Z.xpp === 0 && Z.slew === 0 && Array.prototype.every.call(Z.dev, Number.isFinite), 'xpp ' + Z.xpp + ', slew ' + Z.slew);
+    }
+    let up = 0, prev = Infinity;
+    for (const fn of [1e5, 2e5, 5e5, 1e6, 2e6, 5e6, 1e7]) { const r = SS.analyse(cfg({ fn })).rpp; if (r > prev) up++; prev = r; }
+    ok('monotonic: a faster loop never leaves more behind, damping fixed', up === 0, up + ' step(s) up');
+    nearAbs('loop: H → 1 well below fn', K.cdrLoop(1e3, 1e6, 0.7).h, 1, 1e-4, '');
+    ok('loop: H → 0 well above fn', K.cdrLoop(1e9, 1e6, 0.7).h < 0.01, K.cdrLoop(1e9, 1e6, 0.7).h.toExponential(2));
+  }
+
+  // 5 · The steep profile ramps at the slew limit and the triangle at 4·A·fm.
+  {
+    nearRel('profile: the steep one slews at 1250 ppm/µs', SS.analyse(cfg({ shape: 'fast' })).slew, 1250, 0.002, ' ppm/µs');
+    nearRel('profile: the triangle slews at 4·A·fm', SS.analyse(cfg({})).slew, 4 * 2500 * 33e3 / 1e6, 0.002, ' ppm/µs');
+  }
+
+  // Prose guards: the preset notes.
+  {
+    const V = SIPI.viz && SIPI.viz.ssc;
+    if (!V) { ok('SSC panel presets load', false); return; }
+    const run = (q) => SS.analyse({ gen: q.gen, shape: q.shape, depth: q.depth, fm: q.fm * 1e3, fn: V.FNS[q.fi] * 1e6, zeta: q.zeta });
+    const h = run(V.PRESETS.healthy), sl = run(V.PRESETS.slow), rg = run(V.PRESETS.ringing), st = run(V.PRESETS.steep);
+    ok('prose guard: the healthy loop leaves well under a picosecond', h.rpp < 0.5e-12, (h.rpp * 1e12).toFixed(2) + ' ps');
+    ok('prose guard: the 300 kHz loop lags each ramp by about one UI (0.7 to 1.3)', Math.abs(sl.r[SS.N / 4]) / 100e-12 > 0.7 && Math.abs(sl.r[SS.N / 4]) / 100e-12 < 1.3, (Math.abs(sl.r[SS.N / 4]) / 100e-12).toFixed(2) + ' UI');
+    const damped = run(Object.assign({}, V.PRESETS.ringing, { zeta: 0.7 }));
+    ok('prose guard: the underdamped loop leaves about twice the damped one (1.6 to 2.5×)', rg.rpp / damped.rpp > 1.6 && rg.rpp / damped.rpp < 2.5, (rg.rpp / damped.rpp).toFixed(2) + '×');
+    ok('prose guard: the steepest legal profile lags nearly four times as much (3 to 4.2×)', st.rpp / damped.rpp > 3 && st.rpp / damped.rpp < 4.2, (st.rpp / damped.rpp).toFixed(2) + '×');
+  }
+});
+
+suite('UFS burst — STALL, HIBERN8 and the energy account', () => {
+  const UB = MODELS.ufsBurst;
+  if (!UB) { ok('UFS burst model loads', false); return; }
+  const base = { gear: 5, kb: 4, gap: 2000, theta: 100, wake: 500, weak: false };
+  const cfg = (c) => Object.assign({}, base, c);
+
+  // 1 · The account is the integral of the power over the timeline, sampled finely
+  //     and summed, for a cycle that sleeps and one that does not.
+  {
+    for (const c of [cfg({}), cfg({ gap: 50 }), cfg({ kb: 1024, gap: 10, theta: 1000 })]) {
+      const C = UB.cycle(c), n = 400000, dt = C.T / n;
+      let E = 0; for (let i = 0; i < n; i++) E += UB.powerAt(C, (i + 0.5) * dt) * dt;
+      nearRel('energy: the account equals ∫P dt over the cycle (gap ' + c.gap + ' µs)', C.E, E, 2e-3, ' nJ');
+    }
+  }
+
+  // 2 · Break-even: where the two policies' energies cross, found by bisection on the
+  //     model's own energies, lands on θ + P_wake·t_wake / (P_stall − P_h8), and the
+  //     marker the panel draws (analyse().be) sits on that crossing for every threshold.
+  {
+    for (const wake of [200, 500, 1500]) for (const theta of [0, 100, 1000, 10000]) {
+      const d = (g) => UB.cycle(cfg({ gap: g, theta, wake })).E - UB.cycle(cfg({ gap: g, theta: Infinity, wake })).E;
+      let lo = theta + 1e-3, hi = 1e7;
+      for (let i = 0; i < 100; i++) { const m = Math.sqrt(lo * hi); (d(m) > 0) ? (lo = m) : (hi = m); }
+      const P = UB.P, at = Math.sqrt(lo * hi);
+      nearRel('break-even: the curves cross at θ + P_wake t_wake / (P_stall − P_h8), wake ' + wake + ' µs, θ ' + theta + ' µs', at, theta + P.wake * wake / (P.stall - P.h8), 1e-6, ' µs');
+      nearRel('break-even: the marker sits on the crossing, wake ' + wake + ' µs, θ ' + theta + ' µs', UB.analyse(cfg({ theta, wake })).be, at, 1e-6, ' µs');
+    }
+  }
+
+  // 3 · Limits: with no idle the policies cannot differ; sleeping adds exactly the
+  //     wake time to the transfer and staying in STALL adds none.
+  {
+    nearAbs('no idle: both policies spend the same', UB.cycle(cfg({ gap: 0, theta: 0 })).E, UB.cycle(cfg({ gap: 0, theta: Infinity })).E, 1e-9, ' nJ');
+    nearAbs('latency: a sleeping cycle waits the wake time', UB.cycle(cfg({})).latency, 500, 0, ' µs');
+    nearAbs('latency: a STALL cycle waits nothing', UB.cycle(cfg({ theta: Infinity })).latency, 0, 0, ' µs');
+  }
+
+  // 4 · Average power never rises as the gap grows, under either policy.
+  {
+    for (const theta of [Infinity, 100]) {
+      let up = 0, prev = Infinity;
+      for (let lg = 0; lg <= 5; lg += 0.05) { const a = UB.cycle(cfg({ gap: Math.pow(10, lg), theta })).avg; if (a > prev + 1e-9) up++; prev = a; }
+      ok('monotonic: average power never rises with the gap (HIBERN8 after ' + theta + ' µs)', up === 0, up + ' step(s) up');
+    }
+  }
+
+  // 5 · The rail is linear: twice the current step, twice the droop; none, none.
+  {
+    const a = UB.railStep({ tbUs: 3, weak: true }, 1), b = UB.railStep({ tbUs: 3, weak: true }, 2), z = UB.railStep({ tbUs: 3, weak: true }, 0);
+    const mn = (r) => Math.min(...r.v);
+    nearRel('rail: the droop scales with the current step', mn(b), 2 * mn(a), 1e-9, ' V');
+    nearAbs('rail: no step, no droop', Math.max(...Array.from(z.v, Math.abs)), 0, 1e-15, ' V');
+    // and settles to the DC drop through the series resistance once the step has held
+    const R = UB.stages(false), long = UB.railStep({ tbUs: 5.5, weak: false }, 1);
+    // the transform is circular: what the record's end leaves must not wrap onto its start
+    ok('rail: before the step the rail is still, to 1% of the droop', Math.abs(long.v[100]) < 0.01 * Math.abs(Math.min(...long.v)), (long.v[100] * 1e3).toFixed(4) + ' mV');
+    void R;
+  }
+
+  // 6 · The burst time is the transfer over two lanes after 8b10b.
+  nearRel('burst: 4 KB at HS-G5 over two lanes after 8b10b', UB.burstUs(4, 5), 4096 * 8 / (23.32e3 * 2 * 0.8), 1e-12, ' µs');
+
+  // Prose guards: the preset notes.
+  {
+    const V = SIPI.viz && SIPI.viz.ufsBurst;
+    if (!V) { ok('UFS panel presets load', false); return; }
+    const run = (q) => UB.analyse({ gear: q.gear, kb: V.GRID.SIZES[q.si], gap: Math.pow(10, q.lg), theta: V.GRID.THETAS[q.ti], wake: q.wake, weak: !!q.weak });
+    const sm = run(V.PRESETS.small), ea = run(V.PRESETS.eager), st = run(V.PRESETS.stream), wk = run(V.PRESETS.weak);
+    ok('prose guard: streaming never sleeps', !st.C.sleeps);
+    ok('prose guard: small writes cost about a third of STALL\'s energy (0.25 to 0.4)', sm.C.E / sm.S.E > 0.25 && sm.C.E / sm.S.E < 0.4, (sm.C.E / sm.S.E).toFixed(2));
+    ok('prose guard: sleeping too soon costs about three times the energy (2.5 to 4×)', ea.C.E / ea.S.E > 2.5 && ea.C.E / ea.S.E < 4, (ea.C.E / ea.S.E).toFixed(2) + '×');
+    ok('prose guard: the weak rail droops several times as far (2.5 to 6×)', wk.droop / st.droop > 2.5 && wk.droop / st.droop < 6, (wk.droop / st.droop).toFixed(2) + '×');
+  }
+});
+
+suite('C-PHY trio — wire states, the mapper and the three-receiver eye', () => {
+  const CP = MODELS.cphy;
+  if (!CP) { ok('C-PHY model loads', false); return; }
+
+  // 1 · The wire states: one wire at mid in each, the receivers sum to zero, no
+  //     receiver ever reads zero, and the six sign patterns are all different.
+  {
+    ok('states: exactly one wire at the mid level in every state', CP.STATES.every((s) => s.w.filter((v) => v === 0).length === 1));
+    ok('states: the three receivers sum to zero in every state', CP.STATES.every((s) => CP.rx(s.w).reduce((a, b) => a + b, 0) === 0));
+    ok('states: no receiver reads zero in any state', CP.STATES.every((s) => CP.rx(s.w).every((v) => v !== 0)));
+    const sig = new Set(CP.STATES.map((s) => CP.rx(s.w).map(Math.sign).join(',')));
+    ok('states: six states give six different receiver sign patterns', sig.size === 6, sig.size + ' patterns');
+  }
+
+  // 2 · The mapper: every 16-bit word round-trips through seven symbols, and from every
+  //     starting state every symbol moves the trio somewhere else, so every symbol flips
+  //     at least one receiver. Exhaustive: 65,536 words × 6 starts.
+  {
+    let inv = 0, stay = 0, noflip = 0, range = 0;
+    for (let w = 0; w < 65536; w++) {
+      const d = CP.encode(w);
+      if (CP.decode(d) !== w) inv++;
+      if (d.length !== 7 || d.some((x) => x < 0 || x > 4)) range++;
+      for (let s0 = 0; s0 < 6; s0++) {
+        let s = s0;
+        for (const t of CP.states(d, s0)) {
+          if (t === s) stay++;
+          const a = CP.rx(CP.STATES[s].w).map(Math.sign), b = CP.rx(CP.STATES[t].w).map(Math.sign);
+          if (a.every((v, j) => v === b[j])) noflip++;
+          s = t;
+        }
+        if (w % 4099 === 0 && CP.symbolsOf(CP.states(d, s0), s0).join() !== d.join()) inv++;
+      }
+    }
+    ok('mapper: decode(encode(w)) = w for all 65,536 words', inv === 0, inv + ' wrong');
+    ok('mapper: seven symbols of 0 to 4 for every word', range === 0, range + ' out of range');
+    ok('mapper: no symbol leaves the trio where it was (65,536 words × 6 starts)', stay === 0, stay + ' stays');
+    ok('mapper: every symbol flips at least one receiver', noflip === 0, noflip + ' without an edge');
+  }
+
+  // 3 · Skew is a pure delay of wire C: with a whole number of samples of skew, wires A
+  //     and B are unchanged and wire C is the unskewed wire C shifted by exactly that
+  //     many samples, with or without loss (a linear, time-invariant channel commutes
+  //     with a delay).
+  {
+    const seq = CP.stream(6, 11), d = 5;
+    let ab = 0, c = 0;
+    for (const loss of [0, 6]) {
+      const W0 = CP.waves(seq, { tr: 0.2, skew: 0, loss }), W1 = CP.waves(seq, { tr: 0.2, skew: d / CP.SPS, loss });
+      for (let i = 0; i < W1.n; i++) ab = Math.max(ab, Math.abs(W1.W[0][i] - W0.W[0][i]), Math.abs(W1.W[1][i] - W0.W[1][i]));
+      for (let i = d + CP.SPS; i < W1.n; i++) c = Math.max(c, Math.abs(W1.W[2][i] - W0.W[2][i - d]));
+    }
+    nearAbs('skew: wires A and B do not move when wire C is late', ab, 0, 1e-12, '');
+    nearAbs('skew: wire C is the same wave, ' + d + ' samples later', c, 0, 1e-9, '');
+  }
+
+  // 4 · Matched wires and no loss: by the end of each symbol every receiver has settled
+  //     on its full level, so the eye is fully open, height one weak level.
+  {
+    const E = CP.eye(CP.stream(30, 5), { tr: 0.25, skew: 0, loss: 0 });
+    nearAbs('ideal: the eye opens to the full weak level', E.height, 1, 1e-12, '');
+    ok('ideal: and is open over most of the symbol (above 70%)', E.width > 0.7, (E.width * 100).toFixed(0) + '%');
+  }
+
+  // 5 · Order: a later wire, a slower edge or more loss never widens the eye.
+  {
+    const seq = CP.stream(30, 5), run = (c) => CP.eye(seq, Object.assign({ tr: 0.24, skew: 0, loss: 0 }, c)).width;
+    const mono = (key, vals) => { let up = 0, prev = Infinity; for (const v of vals) { const w = run({ [key]: v }); if (w > prev + 1e-12) up++; prev = w; } return up; };
+    ok('monotonic: skew never widens the eye', mono('skew', [0, 0.03, 0.06, 0.1, 0.15, 0.2, 0.3]) === 0);
+    ok('monotonic: a slower edge never widens the eye', mono('tr', [0.1, 0.2, 0.3, 0.45, 0.6]) === 0);
+    ok('monotonic: more loss never widens the eye', mono('loss', [0, 2, 4, 6, 8, 10]) === 0);
+  }
+
+  // 6 · The code's arithmetic, independent of the mapper: 2^16 ≤ 5^7 and 2^16 > 5^6.
+  ok('arithmetic: seven symbols are the fewest that hold 16 bits', Math.pow(5, 7) >= 65536 && Math.pow(5, 6) < 65536);
+
+  // 7 · Where the eye is folded must not decide how wide it is: no fold point of the
+  //     same receiver waves, anywhere in a full symbol, gives a wider eye than the one
+  //     the model reports, with or without loss and skew. Regression guard: the model
+  //     scans fold points itself, so this catches a narrowed scan or a lost offset,
+  //     not a wrong physics.
+  {
+    const seq = CP.stream(30, 5), S = CP.SPS;
+    for (const c of [{ tr: 0.2, skew: 0, loss: 0 }, { tr: 0.24, skew: 0, loss: 4 }, { tr: 0.24, skew: 0, loss: 6 }, { tr: 0.2, skew: 0.15, loss: 3 }]) {
+      const E = CP.eye(seq, c), last = Math.floor(E.n / S) - 3;
+      let best = 0;
+      for (let o = -S / 2; o < S / 2; o++) {
+        let open = 0;
+        for (let ph = 0; ph < S; ph++) {
+          let m = Infinity;
+          for (let b = 9; b < last; b++) {
+            const want = CP.rx(CP.STATES[seq[b]].w);
+            for (let j = 0; j < 3; j++) m = Math.min(m, Math.sign(want[j]) * E.R[j][b * S + o + ph]);
+          }
+          if (m >= CP.THRESH) open++;
+        }
+        best = Math.max(best, open / S);
+      }
+      ok('fold: no other fold point opens the eye wider (loss ' + c.loss + ' dB, skew ' + c.skew + ' UI)', best <= E.width + 1 / S + 1e-12, 'reported ' + E.width.toFixed(3) + ', best ' + best.toFixed(3));
+    }
+  }
+
+  // Prose guards: the preset notes.
+  {
+    const V = SIPI.viz && SIPI.viz.cphyTrio;
+    if (!V) { ok('C-PHY panel presets load', false); return; }
+    const seq = CP.stream(36, 0x5eed);
+    const run = (q) => { const ui = 1000 / V.RATES[q.ri]; return CP.eye(seq, { tr: q.tr / ui, skew: q.skew / ui, loss: q.loss }); };
+    const cl = run(V.PRESETS.clean), sk = run(V.PRESETS.skew), fa = run(Object.assign({}, V.PRESETS.skew, { skew: 0 }));
+    ok('prose guard: the clean trio is fully open', cl.height > 0.999);
+    ok('prose guard: a fifth-of-a-symbol skew costs a sizeable share of the width (10 to 30 points)', fa.width - sk.width > 0.1 && fa.width - sk.width < 0.3, ((fa.width - sk.width) * 100).toFixed(0) + ' points');
+    ok('prose guard: ten decibels close the weak level most of the way (height below 0.35)', run(V.PRESETS.lossy).height < 0.35, run(V.PRESETS.lossy).height.toFixed(2));
+  }
+});
+
+suite('Display link — loss at each Nyquist, the training ladder and the payload', () => {
+  const DL = MODELS.displayLink;
+  if (!DL) { ok('display-link model loads', false); return; }
+  const DP = DL.PROTOCOLS.dp;
+  const base = { proto: 'dp', cap: 6, lanes: 4, srcIn: 4, sinkIn: 3, lam: 'megtron4', cableM: 1, awg: 30, retimer: 'none' };
+  const at = (o) => Object.assign({}, base, o);
+  const rate = (c) => { const t = DL.train(c); return t.trained ? t.trained.i : -1; };
+
+  // 1 · Coding efficiencies are the bit ratios, and HBR3 on four lanes reproduces the
+  //     25.92 Gb/s VESA publishes for DisplayPort 1.4a (C-204), a number from outside
+  //     this code.
+  {
+    const bad = DP.rates.filter((r) => !((r.code[0] === 8 && r.code[1] === 10) || (r.code[0] === 128 && r.code[1] === 132)));
+    ok('coding: every rate is 8b/10b or 128b/132b', bad.length === 0);
+    ok('coding: the three UHBR rates (and only they) use 128b/132b', DP.rates.every((r) => (r.id.startsWith('UHBR')) === (r.code[0] === 128)));
+    nearAbs('payload: HBR3 x 4 lanes = 25.92 Gb/s (VESA, C-204)', DL.payload(DP.rates[3], 4), 25.92, 1e-9, ' Gb/s');
+    nearRel('payload: two lanes carry half of four', DL.payload(DP.rates[6], 2), DL.payload(DP.rates[6], 4) / 2, 1e-12);
+    ok('payload: UHBR20 x 4 sits above VESA\'s 77.37 Gb/s and within 0.5% of it (coding is not all the overhead)',
+      DL.payload(DP.rates[6], 4) > 77.37 && DL.payload(DP.rates[6], 4) < 77.37 * 1.005, DL.payload(DP.rates[6], 4).toFixed(3));
+  }
+
+  // 2 · The cable. With the insulation's loss removed the bare pair is pure skin effect,
+  //     so four times the frequency gives twice the loss. The proximity factor of two
+  //     round wires close enough for 100 ohms is above one: the current crowds.
+  //     A thinner wire always loses more. The fitted factor is at least one: a real
+  //     cable is never better than the bare pair.
+  {
+    const q1 = DL.pairNp(2e9, 30), q4 = DL.pairNp(8e9, 30);
+    nearRel('cable: conductor loss goes as sqrt(f) (x4 in f -> x2 in loss)', q4.ac / q1.ac, 2, 1e-9);
+    const prox = DL.pairNp(5e9, 30).ac / DL.pairNp(5e9, 30, false).ac;
+    ok('cable: the proximity factor of a 100 ohm pair is above one', prox > 1.05 && prox < 1.5, prox.toFixed(3));
+    ok('cable: the fitted construction factor is at least one', DL.CAB_K >= 1, DL.CAB_K.toFixed(3));
+    nearRel('cable: the fit reproduces its source, 2.2 dB in 6.8 in of 30 AWG at 53.125 GHz (regression guard)',
+      DL.cablePerM(53.125e9, 30) * 6.8 * 0.0254, 2.2, 1e-9, ' dB');
+    let thin = 0; for (const f of [1e9, 4e9, 10e9]) for (let g = 28; g < 34; g++) if (!(DL.cablePerM(f, g + 2) > DL.cablePerM(f, g))) thin++;
+    ok('cable: a thinner wire always loses more', thin === 0, thin + ' exceptions');
+    nearRel('cable: AWG 36 is 0.127 mm by definition', DL.awgD(36), 0.127e-3, 1e-12);
+  }
+
+  // 3 · Every element is lossless at DC and loses more at every higher frequency.
+  {
+    let bad = 0;
+    for (const c of [base, at({ retimer: 'source', lam: 'isola-370hr', awg: 34 })]) {
+      for (const seg of DL.segments(c)) {
+        if (Math.abs(DL.segmentDb(seg, 0, c)) > 1e-12) bad++;
+        let prev = 0;
+        for (let f = 0.25e9; f <= 12e9; f += 0.25e9) { const v = DL.segmentDb(seg, f, c); if (!(v > prev)) bad++; prev = v; }
+      }
+    }
+    ok('loss: zero at DC and strictly rising with frequency, every segment', bad === 0, bad + ' exceptions');
+  }
+
+  // 4 · The ladder: the trained rate fits, and every rate above it up to the cap does
+  //     not; with nothing that fits, there is no link. Regression guard, not a
+  //     validation: this restates train()'s own "first rate that fits" rule, so it
+  //     catches a ladder walked the wrong way, not a wrong loss.
+  {
+    let bad = 0, n = 0;
+    for (const cableM of [0.5, 1, 2, 3, 4, 5]) for (const awg of [28, 32, 34]) for (const lam of DL.LAMINATES) for (const retimer of ['none', 'source', 'sink']) {
+      const t = DL.train(at({ cableM, awg, lam, retimer, srcIn: 8 })); n++;
+      if (t.trained && !t.trained.ok) bad++;
+      for (const x of t.ladder) { if (t.trained && x.i > t.trained.i && x.ok) bad++; if (!t.trained && x.ok) bad++; }
+      if (t.ladder[0].i !== 6) bad++;
+    }
+    ok('ladder: the trained rate fits, and every higher rate up to the cap fails (' + n + ' paths)', bad === 0, bad + ' exceptions');
+    const none = DL.train(at({ cableM: 40, awg: 34 }));
+    ok('ladder: a hopeless path trains nothing and carries nothing', none.trained === null && none.payload === 0);
+  }
+
+  // 5 · Monotonicity: more cable, more trace or thinner wire never trains a higher rate;
+  //     a retimer never a lower one; a lower cap never a higher one. The cap check is a
+  //     regression guard: it follows from the ladder starting at the cap.
+  {
+    const mono = (key, vals, extra) => { let up = 0, prev = Infinity; for (const v of vals) { const r = rate(at(Object.assign({ [key]: v }, extra))); if (r > prev) up++; prev = r; } return up; };
+    let up = 0;
+    for (const lam of DL.LAMINATES) for (const awg of [28, 30, 34]) {
+      up += mono('cableM', [0.5, 1, 1.5, 2, 2.5, 3, 4, 5], { lam, awg });
+      up += mono('srcIn', [1, 2, 4, 6, 8, 10, 12], { lam, awg, cableM: 2 });
+      up += mono('sinkIn', [1, 2, 4, 6, 8, 10, 12], { lam, awg, cableM: 2 });
+    }
+    ok('monotonic: longer cable or longer traces never train a higher rate', up === 0, up + ' rises');
+    ok('monotonic: a thinner gauge never trains a higher rate', mono('awg', [28, 30, 32, 34], { cableM: 2.5 }) === 0);
+    let worse = 0;
+    for (const cableM of [0.5, 1, 2, 3, 4, 5]) for (const lam of DL.LAMINATES) for (const s of [1, 6, 12]) {
+      const r0 = rate(at({ cableM, lam, srcIn: s, sinkIn: 13 - s }));
+      for (const retimer of ['source', 'sink']) if (rate(at({ cableM, lam, srcIn: s, sinkIn: 13 - s, retimer })) < r0) worse++;
+    }
+    ok('monotonic: adding a retimer never trains a lower rate', worse === 0, worse + ' drops');
+    let capUp = 0; for (let cap = 6; cap > 0; cap--) if (rate(at({ cap: cap - 1, cableM: 2 })) > rate(at({ cap, cableM: 2 }))) capUp++;
+    ok('monotonic: lowering the cap never raises the rate', capUp === 0);
+  }
+
+  // Prose guards: the preset notes and the numbers the page states.
+  {
+    const V = SIPI.viz && SIPI.viz.displayLink;
+    if (!V) { ok('display-link panel presets load', false); return; }
+    const P = V.PRESETS.dp, T = (k) => DL.train(Object.assign({ proto: 'dp' }, P[k]));
+    ok('prose guard: the desk link trains at UHBR20 with about 6 dB to spare', T('desk').trained.rate.id === 'UHBR20' && Math.abs(T('desk').trained.margin - 6) < 0.6, T('desk').trained.margin.toFixed(2));
+    ok('prose guard: the 3 m cable drops one rate, to UHBR13.5, with under a decibel to spare', T('long').trained.rate.id === 'UHBR13.5' && T('long').trained.margin < 1);
+    ok('prose guard: the 3 m path loses about 26 dB at 10 GHz', Math.abs(T('long').ladder[0].worst - 26) < 0.5, T('long').ladder[0].worst.toFixed(2));
+    ok('prose guard: the thin cable only just fits UHBR13.5', T('thin').trained.rate.id === 'UHBR13.5' && T('thin').trained.margin < 1);
+    ok('prose guard: a retimer by the source wins UHBR20 back by about a fifth of a decibel', T('retimer').trained.rate.id === 'UHBR20' && T('retimer').trained.margin > 0.1 && T('retimer').trained.margin < 0.3);
+    ok('prose guard: the same retimer by the sink does not', DL.train(Object.assign({ proto: 'dp' }, P.retimer, { retimer: 'sink' })).trained.rate.id !== 'UHBR20');
+    ok('prose guard: the laptop trains HBR3 on two lanes with nearly 8 dB spare', T('usbc').trained.rate.id === 'HBR3' && T('usbc').trained.margin > 7 && T('usbc').trained.margin < 8);
+    const fr4 = (s) => DL.train(Object.assign({ proto: 'dp' }, P.desk, { lam: 'isola-370hr', srcIn: s })).trained.rate.id;
+    ok('prose guard: desk on FR-4 with 8 in of source trace trains UHBR13.5, at 10 in UHBR10', fr4(8) === 'UHBR13.5' && fr4(10) === 'UHBR10');
+    const r1 = (v) => Math.round(v * 10) / 10, r2 = (v) => Math.round(v * 100) / 100;
+    ok('prose guard: an inch of MEGTRON 4 loses 0.96 dB at 10 GHz, of FR-4 about 1.7', r2(DL.boardDb(10e9, 1, 'megtron4')) === 0.96 && r1(DL.boardDb(10e9, 1, 'isola-370hr')) === 1.7);
+    ok('prose guard: the cable factor is about 1.38', r2(DL.CAB_K) === 1.38, DL.CAB_K.toFixed(3));
+    ok('prose guard: 30 AWG loses 5.0 dB a metre at 10 GHz and 34 AWG 7.7', r1(DL.cablePerM(10e9, 30)) === 5.0 && r1(DL.cablePerM(10e9, 34)) === 7.7);
+    const ratio = DL.cablePerM(10e9, 34) / DL.cablePerM(10e9, 30);
+    ok('prose guard: 34 AWG loses about half as much again as 30 AWG', ratio > 1.4 && ratio < 1.6, ratio.toFixed(2));
+    ok('prose guard: 34 AWG is about 0.16 mm across', r2(DL.awgD(34) * 1e3) === 0.16);
+  }
+
+  // HDMI on the same model. Structure first: FRL's four-lane modes use the lane the
+  // TMDS clock occupied, so they have four data lanes and no clock; TMDS has three
+  // data lanes beside a clock; three-lane FRL runs only at 3 and 6 Gb/s (C-212, C-214).
+  {
+    const H = DL.PROTOCOLS.hdmi.rates;
+    const frl = H.filter((r) => r.id.startsWith('FRL')), tmds = H.filter((r) => r.id.startsWith('TMDS'));
+    ok('HDMI: every FRL mode is 16b/18b with no clock lane', frl.every((r) => r.code[0] === 16 && r.code[1] === 18 && !r.clock));
+    ok('HDMI: four-lane FRL runs at 6, 8, 10 and 12 Gb/s, three-lane at 3 and 6', frl.filter((r) => r.lanes === 4).map((r) => r.gbps).join() === '6,8,10,12' && frl.filter((r) => r.lanes === 3).map((r) => r.gbps).join() === '3,6');
+    ok('HDMI: TMDS is three data lanes of 8b/10b beside a clock', tmds.every((r) => r.lanes === 3 && r.clock && r.code[0] === 8 && r.code[1] === 10));
+    nearRel('HDMI: FRL 12G x 4 carries 48 x 16/18 Gb/s', DL.payload(H[7], 1), 48 * 16 / 18, 1e-12);
+    nearRel('HDMI: TMDS 6G carries 18 x 8/10 Gb/s, the clock lane carrying none', DL.payload(H[1], 4), 18 * 0.8, 1e-12);
+    nearRel('HDMI: 16b/18b against 8b/10b is 10/9', (16 / 18) / (8 / 10), 10 / 9, 1e-12);
+    ok('HDMI: the reader\'s lane setting does not change an HDMI rate', DL.payload(H[7], 2) === DL.payload(H[7], 4));
+    // the ladder tries FRL from the top, then TMDS
+    const t = DL.train({ proto: 'hdmi', cap: 7, lanes: 4, srcIn: 3, sinkIn: 4, lam: 'isola-370hr', cableM: 40, awg: 34, retimer: 'none' });
+    ok('HDMI: the ladder tries every FRL rate before TMDS', t.ladder.map((x) => x.rate.id.slice(0, 4)).join() === 'FRL ,FRL ,FRL ,FRL ,FRL ,FRL ,TMDS,TMDS');
+    // loss alone never sends a link that fits FRL 3G to TMDS: TMDS 6G shares FRL 6G's
+    // Nyquist and TMDS 3.4G sits above FRL 3G's
+    let tm = 0;
+    for (let m = 0.5; m <= 12; m += 0.5) for (const awg of [28, 32, 34]) {
+      const r = DL.train({ proto: 'hdmi', cap: 7, lanes: 4, srcIn: 6, sinkIn: 6, lam: 'isola-370hr', cableM: m, awg, retimer: 'none' });
+      if (r.trained && r.trained.rate.id.startsWith('TMDS')) tm++;
+    }
+    ok('HDMI: with every budget equal, loss alone never lands an FRL sink in TMDS', tm === 0, tm + ' paths');
+    const V = SIPI.viz && SIPI.viz.displayLink, P = V && V.PRESETS.hdmi;
+    if (!P) { ok('HDMI presets load', false); return; }
+    const T = (k, o) => DL.train(Object.assign({ proto: 'hdmi' }, P[k], o || {}));
+    ok('prose guard: the 2 m TV link trains FRL 12G with about 3 dB to spare', T('tv').trained.rate.id === 'FRL 12G ×4' && Math.abs(T('tv').trained.margin - 3) < 0.6, T('tv').trained.margin.toFixed(2));
+    ok('prose guard: the 2 m path loses about 17 dB at 6 GHz', Math.abs(T('tv').ladder[0].worst - 17) < 0.5, T('tv').ladder[0].worst.toFixed(2));
+    ok('prose guard: the 4 m cable costs two rates, to FRL 8G', T('long').trained.rate.id === 'FRL 8G ×4');
+    ok('prose guard: the 4 m path loses about 23 dB at 6 GHz and over 20 at 5 GHz', Math.abs(T('long').ladder[0].worst - 23) < 0.5 && T('long').ladder[1].worst > 20);
+    { const x = T('long').ladder[1], miss = x.worst - x.rate.budget;
+      ok('prose guard: at 4 m FRL 10G misses by only about 0.2 dB (0.05 to 0.4)', !x.ok && miss > 0.05 && miss < 0.4, miss.toFixed(2) + ' dB'); }
+    ok('prose guard: the thin 4 m cable drops to FRL 6G on four lanes', T('thin').trained.rate.id === 'FRL 6G ×4');
+    ok('prose guard: a retimer by the sink wins FRL 12G back', T('retimer').trained.rate.id === 'FRL 12G ×4');
+    ok('prose guard: here the retimer helps more by the sink than by the source', T('retimer').trained.margin > T('retimer', { retimer: 'source' }).trained.margin);
+    ok('prose guard: the HDMI 2.0 TV runs TMDS 6G with loss to spare', T('hdmi20').trained.rate.id === 'TMDS 6G' && T('hdmi20').trained.margin > 5);
+    const r1 = (v) => Math.round(v * 10) / 10, r2 = (v) => Math.round(v * 100) / 100;
+    ok('prose guard: FR-4 loses 1.09 dB an inch at 6 GHz', r2(DL.boardDb(6e9, 1, 'isola-370hr')) === 1.09);
+    ok('prose guard: 28 AWG loses 3.1 dB a metre at 6 GHz and 32 AWG 4.7', r1(DL.cablePerM(6e9, 28)) === 3.1 && r1(DL.cablePerM(6e9, 32)) === 4.7);
+    const segs = DL.segments(Object.assign({ proto: 'hdmi' }, P.tv))[0], c = Object.assign({ proto: 'hdmi' }, P.tv);
+    const by = (n) => DL.segmentDb(segs.filter((e) => e.name === n), 6e9, c);
+    ok('prose guard: the TV link at 6 GHz is about 6 dB of cable, 3.3 and 4.4 of board', Math.round(by('cable')) === 6 && r1(by('source board')) === 3.3 && r1(by('sink board')) === 4.4);
+  }
 });
 
 if (!PASS && !FAILS.length && !PENDING.length) {

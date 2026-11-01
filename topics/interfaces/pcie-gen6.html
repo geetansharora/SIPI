@@ -13,7 +13,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
 <link rel="stylesheet" href="../../css/base.css?v=1e3ae753">
-<link rel="stylesheet" href="../../css/components.css?v=c532fdc4">
+<link rel="stylesheet" href="../../css/components.css?v=9967e8fb">
   <!-- meta:start -->
   <link rel="canonical" href="https://sipi.work/topics/interfaces/pcie-gen6.html">
   <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
@@ -31,7 +31,7 @@
   <meta name="twitter:description" content="PCIe 6.0 vs 5.0: 64 GT/s PAM4, 128 GB/s per direction on x16, a 32 dB channel loss budget, flits with FEC, and bandwidth tables for PCIe 1.0 to 7.0.">
   <meta name="twitter:image" content="https://sipi.work/assets/og/interfaces/pcie-gen6.png">
   <meta name="twitter:image:alt" content="PCIe 6.0 vs PCIe 5.0: PAM4, FLIT, FEC and Signal Integrity: a figure from the page, on SIPI">
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"PCIe 6.0 vs PCIe 5.0: PAM4, FLIT, FEC and Signal Integrity","description":"PCIe 6.0 vs 5.0: 64 GT/s PAM4, 128 GB/s per direction on x16, a 32 dB channel loss budget, flits with FEC, and bandwidth tables for PCIe 1.0 to 7.0.","url":"https://sipi.work/topics/interfaces/pcie-gen6.html","articleSection":"Interface sign-off","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer","url":"https://www.linkedin.com/in/geetansh-arora-a645714a/","sameAs":["https://www.linkedin.com/in/geetansh-arora-a645714a/"]},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-10-15","image":"https://sipi.work/assets/og/interfaces/pcie-gen6.png"}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"PCIe 6.0 vs PCIe 5.0: PAM4, FLIT, FEC and Signal Integrity","description":"PCIe 6.0 vs 5.0: 64 GT/s PAM4, 128 GB/s per direction on x16, a 32 dB channel loss budget, flits with FEC, and bandwidth tables for PCIe 1.0 to 7.0.","url":"https://sipi.work/topics/interfaces/pcie-gen6.html","articleSection":"Interface sign-off","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer","url":"https://www.linkedin.com/in/geetansh-arora-a645714a/","sameAs":["https://www.linkedin.com/in/geetansh-arora-a645714a/"]},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-11-01","image":"https://sipi.work/assets/og/interfaces/pcie-gen6.png"}</script>
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"SIPI","item":"https://sipi.work/"},{"@type":"ListItem","position":2,"name":"Interface sign-off","item":"https://sipi.work/#interfaces"},{"@type":"ListItem","position":3,"name":"PCIe 6.0 vs PCIe 5.0: PAM4, FLIT, FEC and Signal Integrity"}]}</script>
   <!-- meta:end -->
 </head>
@@ -54,7 +54,7 @@
     <p class="crumb"><a href="../../index.html#interfaces">Interface sign-off</a> / 05</p>
     <h1>PCIe 6.0 vs PCIe 5.0: PAM4, FLIT, FEC and Signal Integrity</h1>
     <p class="byline">
-      <!-- review:start --><span>By <a href="https://www.linkedin.com/in/geetansh-arora-a645714a/" target="_blank" rel="author noopener">Geetansh Arora</a> — Principal SI/PI Engineer</span><time datetime="2026-10-15" title="Technical review by Geetansh Arora on this date">15 Oct 2026</time><span>11 min</span><!-- review:end -->
+      <!-- review:start --><span>By <a href="https://www.linkedin.com/in/geetansh-arora-a645714a/" target="_blank" rel="author noopener">Geetansh Arora</a> — Principal SI/PI Engineer</span><time datetime="2026-11-01" title="Technical review by Geetansh Arora on this date">1 Nov 2026</time><span>11 min</span><!-- review:end -->
     </p>
     <!-- share:head:start --><div class="share share--head" data-share data-share-url="https://sipi.work/topics/interfaces/pcie-gen6.html" data-share-title="PCIe 6.0 vs PCIe 5.0: PAM4, FLIT, FEC and Signal Integrity"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Fpcie-gen6.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Fpcie-gen6.html&amp;text=PCIe%206.0%20vs%20PCIe%205.0%3A%20PAM4%2C%20FLIT%2C%20FEC%20and%20Signal%20Integrity" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=PCIe%206.0%20vs%20PCIe%205.0%3A%20PAM4%2C%20FLIT%2C%20FEC%20and%20Signal%20Integrity&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Fpcie-gen6.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:head:end -->
     <p class="answer">
@@ -298,6 +298,84 @@
       It does not remove all of it. Whether FEC delivers depends on how the errors cluster, and a raw error
       rate says nothing about that; the burst point below is the other half of the picture.
     </div>
+
+    <p>
+      How light can the code be? Take errors that arrive one at a time at a first-bit error rate (FBER) of
+      10<sup>&#8722;6</sup>. A byte goes bad about once in 125,000, so a flit only needs replaying when two bad bytes land
+      in the same one of the three codes: about <span class="num">7</span> flits in ten million, one replay every
+      <span class="num">2.9 ms</span> on an x16 link whose flits last 2 ns. Before you try the panel, predict what
+      happens to that number if each error has an even chance of spoiling the next byte too.
+    </p>
+  </div>
+
+  <!-- mobilenote:start -->
+  <p class="mobile-note" role="note">
+    <b>Best viewed on a laptop or desktop.</b>
+    These panels are built so you can move a slider and watch several charts
+    answer at once. A phone has no room to put them side by side.
+  </p>
+  <!-- mobilenote:end -->
+  <section class="instrument instrument--side side--wide" data-viz="flitFec" aria-label="Interactive PCIe 6.0 flit: 256 bytes coloured by which of three interleaved FEC codes owns each one, with one draw's bad bytes marked and whether the flit is corrected or replayed, and the chance a flit is replayed against the first-bit error rate for errors alone and in bursts">
+    <script type="application/json" data-contract>{"kind":"numerical","evidence":"independent","purpose":"Show why PCIe 6.0 can use a light FEC: three interleaved codes that each fix one bad byte correct any short burst in place, and the CRC and a replay take whatever is left, so the replay rate, not the raw error rate, is what the link pays for; and show how much worse bursts make it.","equations":["byte error rate b = 1 - (1 - FBER)^8","errors alone: P(replay) = 1 - prod over codes of [(1 - b)^n + n b (1 - b)^(n - 1)]","bursts: P(replay) = sum over k of C(256, k) b^k (1 - b)^(256 - k) P(fail | k bursts)","burst length: 1 + geometric, each further byte bad with probability q","flit time = 256 x 8 bits / (64 Gb/s x lanes)"],"units":"probability per flit, ns, lanes","validity":"Errors that start independently at the first-bit error rate, each extending into following bytes with a fixed probability. A proportion model of the mechanism.","numerics":"P(fail | k bursts) for k = 1 to 12 from 4000 seeded draws each, once per burst setting; a flit with more than 12 bursts is counted as failed. The closed form is used when errors arrive alone.","limitations":"No lane striping and no bursts crossing a flit boundary; no precoding, which shortens real bursts; no miscorrection, and every flit the FEC cannot fix is assumed caught by the CRC; no model of the replay round trip, so bandwidth and latency per replay are not computed. Not the specification's reliability analysis.","suites":["Flit FEC"],"version":"1.0","reviewed":"2026-11-01","panel":"flitFec"}</script>
+    <div class="instrument__bar">
+      <span class="instrument__title">Raw errors in, replays out</span>
+      <span data-evidence="independent" data-model-version="1.0" class="model-tag model-tag--numerical">numerical</span>
+      <span class="instrument__readout readout--fixed" role="status" aria-live="off" aria-label="Current values">
+        <span>flits hit <b data-out="hit" style="min-width:8ch">&#8212;</b></span>
+        <span>FEC fixes <b data-out="fixed" style="min-width:8ch">&#8212;</b></span>
+        <span>replayed <b data-out="rep" style="min-width:8ch">&#8212;</b></span>
+        <span>a replay every <b data-out="every" style="min-width:9ch">&#8212;</b></span>
+        <span>this flit <b data-out="flit" style="min-width:12ch">&#8212;</b></span>
+      </span>
+    </div>
+    <div class="side-layout">
+    <div class="panels">
+      <div class="panel" data-lab-name="Flit">
+        <span class="panel__label">One flit, 256 bytes in lane order &#183; tinted by FEC code</span>
+        <canvas data-cv="flit" role="img" aria-label="A grid of 256 bytes, 32 to a row, each tinted by which of the three interleaved FEC codes owns it, with the bad bytes of one random draw filled in: dark where their code can still correct them, red where two or more fall in one code and the flit must be replayed."></canvas>
+        <div class="legend"><span><i style="background:var(--signal);opacity:.4"></i>code 0</span><span><i style="background:var(--reflect);opacity:.4"></i>code 1</span><span><i style="background:var(--muted);opacity:.4"></i>code 2</span><span><i style="background:var(--ink)"></i>bad, corrected</span><span><i style="background:var(--alarm)"></i>bad, replayed</span></div>
+      </div>
+      <div class="panel" data-lab-name="Replay rate">
+        <span class="panel__label">The chance a flit is replayed &#183; against the raw error rate</span>
+        <canvas data-cv="curve" role="img" aria-label="Log-log chart of the probability per flit against the first-bit error rate from 1e-8 to 1e-3: flits with any bad byte, flits replayed when errors arrive alone, and flits replayed when errors come in bursts, with a dot at the current setting."></canvas>
+        <div class="legend"><span><i class="dash" style="color:var(--muted)"></i>any bad byte</span><span><i style="background:var(--signal)"></i>replayed, errors alone</span><span><i style="background:var(--reflect)"></i>replayed, in bursts</span></div>
+      </div>
+    </div>
+    <div class="side">
+    <div class="side__inner">
+    <div class="controls controls--pairs">
+      <div class="ctl">
+        <div class="ctl__head"><label for="ff-fber" title="First-bit error rate: the first error of each burst, per bit">FBER</label><output id="ff-fber-out" for="ff-fber">1.0&#215;10&#8315;&#8310;</output></div>
+        <input type="range" id="ff-fber" min="-8" max="-3" step="0.25" value="-6">
+      </div>
+      <div class="ctl">
+        <div class="ctl__head"><label for="ff-q" title="The chance each bad byte also spoils the next one, as DFE error propagation does">Bursts</label><output id="ff-q-out" for="ff-q">0%</output></div>
+        <input type="range" id="ff-q" min="0" max="0.9" step="0.05" value="0">
+      </div>
+      <div class="ctl">
+        <div class="ctl__head"><label for="ff-width">Link width</label></div>
+        <select id="ff-width"><option value="0">x1, 32 ns</option><option value="1">x4, 8 ns</option><option value="2">x16, 2 ns</option></select>
+      </div>
+      <div class="ctl">
+        <div class="ctl__head"><label for="ff-map">On the map</label></div>
+        <select id="ff-map"><option value="0">Random</option><option value="1">1-byte burst</option><option value="2">2-byte burst</option><option value="3">3-byte burst</option><option value="4">4-byte burst</option><option value="5">5-byte burst</option><option value="6">6-byte burst</option><option value="8">8-byte burst</option></select>
+      </div>
+    </div>
+    <div class="presets">
+      <button class="preset" type="button" data-preset="design" aria-pressed="true">1e-6, alone</button>
+      <button class="preset" type="button" data-preset="bursty" aria-pressed="false">1e-6, bursts</button>
+      <button class="preset" type="button" data-preset="burst3" aria-pressed="false">3-byte burst</button>
+      <button class="preset" type="button" data-preset="burst4" aria-pressed="false">4-byte burst</button>
+      <button class="preset" type="button" data-preset="bad" aria-pressed="false">Bad channel</button>
+      <button class="preset preset--act" type="button" data-act="redraw">Another flit</button>
+    </div>
+    <div class="transport"><span data-out="note">&#8212;</span></div>
+    </div>
+    </div>
+    </div>
+  </section>
+
+  <div class="prose">
 
     <h2 class="section-rule" id="budget"><span>Where the 32 dB goes</span></h2>
     <p>
@@ -590,6 +668,10 @@
 </footer>
 
 <script src="../../js/site.js?v=61b8ff31" defer></script>
+<script src="../../js/viz-kit.js?v=212a7cd3" defer></script>
+<script src="../../js/models/flit-fec-model.js?v=397fc267" defer></script>
+<script src="../../js/viz/flit-fec.js?v=4fe069d9" defer></script>
+<script src="../../js/viz-loader.js?v=9eaf05a5" defer></script>
 <script src="../../js/search.js?v=dcc1e06b" defer></script>
 </body>
 </html>

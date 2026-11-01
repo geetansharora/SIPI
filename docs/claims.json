@@ -2470,7 +2470,9 @@
       "id": "C-118",
       "statement": "Worked host examples contributed to the task force: the 11.5 dB host is a 5 dB package, 0.5 dB BGA and 6 dB for about 4.28 in of board trace, or 2.8 dB for 2 in of board, a 1 dB near-package connector and 2.2 dB for 6.8 in of 30 AWG twinax; the 16.5 dB host has a 9 dB package and is paired only with an 11.5 or 6.5 dB host, never with another 16.5 dB host; the 6.5 dB host a 3.9 dB package.",
       "pages": [
-        "interfaces/ethernet-112g-224g"
+        "interfaces/ethernet-112g-224g",
+        "interfaces/displayport",
+        "interfaces/hdmi"
       ],
       "source_type": "vendor",
       "source": "Tracy et al., Nov 2023, slides 7-9 and 12",
@@ -3971,6 +3973,367 @@
       "owner": "Geetansh",
       "sourceCheckedBy": "Claude Opus 5.5",
       "sourceCheckedOn": "2026-10-23",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null
+    },
+    {
+      "id": "C-197",
+      "statement": "The PCIe 4.0 reference receiver's CTLE has two poles and one zero with a DC gain range of -6 to -12 dB; the PCIe 5.0 reference CTLE has four poles and two zeros with a DC gain range of -5 to -15 dB. The PCIe 4.0 reference DFE has 2 taps and the PCIe 5.0 one 3.",
+      "pages": [
+        "interfaces/pcie-gen4-gen5"
+      ],
+      "source_type": "normative",
+      "source": "PCI Express Base Specification reference receivers, as tabulated by Anritsu and Tektronix, \"PCI Express Gen 5: Solving 32 GT/s Receiver Compliance and Validation Challenges\" (2 Mar 2021), slide 4; the Gen 5 range also in the MathWorks PCIe5 IBIS-AMI example",
+      "source_url": "https://www.tek.com.cn/-/media/china-marketing-documents/pcie/pci-express-gen-5-solving-32-gts-receiver-compliance-and-validation-challenges.pdf",
+      "source_title": "Anritsu & Tektronix — PCI Express Gen 5: Solving 32 GT/s Receiver Compliance and Validation Challenges, Mar 2021",
+      "conditions": "Behavioural reference receivers used for compliance, not a requirement on any silicon; the panel uses the gain ranges in 1 dB steps (7 and 11 settings, matching C-138's counts) on the site's one-zero, two-pole CTLE, not the specification's pole and zero placement",
+      "status": "scoped",
+      "note": "Slide 4 table: 'Reference CTLE 2 Poles; 1 Zero; DC Gain Range (-6 to -12) dB' (PCIe 4.0) and '4 Poles; 2 Zero; DC Gain Range (-5 to -15) dB' (PCIe 5.0); 'Reference DFE 2-Taps 3-Taps'. MathWorks PCIe5 example: 'the Rx CTLE block is setup for 11 configurations (0 through 10) to accommodate the Gain range of -5 to -15dB'. Scoped because the specification itself has not been read. Source check by Claude Opus 5.5 against both documents on 31 Oct 2026.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-31",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null
+    },
+    {
+      "id": "C-198",
+      "statement": "A PCIe transmitter's differential peak-to-peak output voltage (VTX-DIFFp-p) is 800 mV to 1.2 V at full swing.",
+      "pages": [
+        "interfaces/pcie-gen4-gen5"
+      ],
+      "source_type": "normative",
+      "source": "PCI Express Base Specification transmitter output voltage, as stated by Lattice Semiconductor answer record 3612; MathWorks PCIe4 and PCIe5 IBIS-AMI examples for the Gen 4 and Gen 5 settings",
+      "source_url": "https://www.latticesemi.com/zh-CN/Support/AnswerDatabase/3/6/1/3612",
+      "source_title": "Lattice Semiconductor — answer record 3612, ECP3 PCI-SIG compliance and VRX-DIFF_P-P",
+      "conditions": "Lattice's answer concerns a PCIe 1.x device and names no generation; the MathWorks examples set the transmitter at 1.05 V (Gen 4, 'according to the PCIe4 specification') and 1 V (Gen 5), inside the range. The panel launches at the range's low end, 800 mV, so its millivolts are the least a full-swing transmitter gives",
+      "status": "scoped",
+      "note": "Lattice: 'the Transmitter Differential Peak to Peak Output Voltage (VTX-DIFFp-p) should be in between 800mV to 1.2 V'. MathWorks PCIe4: 'Voltage is 1.05 V, Rise time is 12 ps ... according to the PCIe4 specification'; PCIe5: 'Voltage is 1V'. Scoped because no source read ties the range to 16 or 32 GT/s explicitly. Source check by Claude Opus 5.5 on 31 Oct 2026.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-31",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null
+    },
+    {
+      "id": "C-199",
+      "statement": "MIPI C-PHY uses three-phase symbol encoding with an embedded clock on three-wire lanes called trios, about 2.28 bits per symbol in its 6-wirestate mode, at up to 6 Gsps: 13.7 Gb/s a trio and about 41 Gb/s over three trios (nine wires). C-PHY v3.0 added an 18-wirestate mode at up to 5 Gsps, 17.8 Gb/s a trio and about 53 Gb/s over three. C-PHY supports CSI-2 and DSI-2 links up to 4 m.",
+      "pages": [
+        "interfaces/mipi-dphy-cphy"
+      ],
+      "source_type": "public-rate",
+      "source": "MIPI Alliance, C-PHY specification page",
+      "source_url": "https://www.mipi.org/specifications/c-phy",
+      "source_title": "MIPI Alliance — C-PHY specification page",
+      "conditions": "The standards body's public page; the specification itself is members-only and has not been read",
+      "status": "verified",
+      "note": "Read on mipi.org on 31 Oct 2026: 'three-phase symbol encoding to transmit data symbols on three-wire lanes, or \"trios,\"'; 'each trio includes an embedded clock'; 'approximately 2.28 bits/symbol when using C-PHY's 6-wirestate mode'; 'symbol rates up to 6 Gigasymbols per second (Gsps)'; 13.7 Gbps and 17.8 Gbps a trio over a standard channel; 'about 41 Gbps and 53 Gbps over a nine-wire physical interface'; 'MIPI C-PHY v3.0 introduced support for a new multi-phase 18-state coding scheme'; 'interconnect lengths up to 4 meters'. 16/7 = 2.2857, which MIPI states as approximately 2.28.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-31",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null
+    },
+    {
+      "id": "C-200",
+      "statement": "C-PHY interfaces can share device pins with D-PHY, so a device can be dual-mode.",
+      "pages": [
+        "interfaces/mipi-dphy-cphy"
+      ],
+      "source_type": "public-rate",
+      "source": "MIPI Alliance, C-PHY specification page",
+      "source_url": "https://www.mipi.org/specifications/c-phy",
+      "source_title": "MIPI Alliance — C-PHY specification page",
+      "conditions": "States that the coexistence is possible, not how a given device implements it",
+      "status": "verified",
+      "note": "Read on mipi.org on 31 Oct 2026: 'MIPI C-PHY interfaces can coexist on the same device pins as' MIPI D-PHY, 'enabling designers to develop dual-mode devices'.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-31",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null
+    },
+    {
+      "id": "C-201",
+      "statement": "MIPI D-PHY v3.0 doubled the standard-channel rate to 9 Gb/s a lane, with 11 Gb/s for its short channel, and added a CTLE at the receiver. D-PHY v3.5 added an optional embedded-clock mode, which frees the lane a forwarded clock needs; forwarded clock remains an option. D-PHY supports CSI-2 and DSI-2 links up to 4 m and offers low-latency transitions between high-speed and low-power modes.",
+      "pages": [
+        "interfaces/mipi-dphy-cphy"
+      ],
+      "source_type": "public-rate",
+      "source": "MIPI Alliance, D-PHY specification page",
+      "source_url": "https://www.mipi.org/specifications/d-phy",
+      "source_title": "MIPI Alliance — D-PHY specification page",
+      "conditions": "The standards body's public page; the specification itself is members-only and has not been read",
+      "status": "verified",
+      "note": "Read on mipi.org on 31 Oct 2026: 'Version 3.0 doubles the data rate of D-PHY's standard channel to 9 Gigabits per second (Gbps)' 'and 11 Gbps for its short channel'; 'introduces a Continuous-Time Linear Equalizer (CTLE) on the receiver side'; 'D-PHY v3.5 introduces an optional embedded clock mode'; 'Opting to use the embedded-clock mode with v3.5 frees a lane of traffic'; 'Forwarded clock remains an option in D-PHY v3.5'; 'interconnect lengths up to 4 meters'; 'low-latency transitions between high-speed and low-power modes'.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-31",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null
+    },
+    {
+      "id": "C-202",
+      "statement": "A C-PHY trio has six wire states, the permutations of three transmit levels (high, mid and low) over three wires; from any state there are five possible transitions, which the encoder expresses as flip, rotate and polarity. Sixteen bits are mapped to seven symbols, about 2.28 bits per symbol, chosen because 2^16 fits in 5^7. The receiver has three differential receivers, each comparing two of the three wires, and the clock is embedded in the data. D-PHY is source-synchronous, with one clock lane beside its data lanes.",
+      "pages": [
+        "interfaces/mipi-dphy-cphy"
+      ],
+      "source_type": "commercial",
+      "source": "Mixel (A. Takla), \"Demystifying MIPI C-PHY / D-PHY Subsystem\", Design & Reuse",
+      "source_url": "https://us.design-reuse.com/articles/43954/demystifying-mipi-c-phy-dphy-subsystem.html",
+      "source_title": "Mixel — Demystifying MIPI C-PHY / D-PHY Subsystem",
+      "conditions": "A PHY IP vendor's description of the coding, not the specification; the mapper's actual table is not given",
+      "status": "scoped",
+      "note": "Read on design-reuse.com on 31 Oct 2026: 'The number of wire states, six, is the permutation of the three TX signal levels, 3!'; 'there are five different unique transitions between the six wire states'; 'encodes the Flip, Rotate, Polarity symbol into a state changes'; 'map 16 binary bits to a certain number of C-PHY symbols', S = 7, 16/7; three differential receivers each 'looking at the difference between 2 of the 3 signals'; 'the clock is embedded into the data'; D-PHY 'a simple source synchronous PHY that uses one clock lane and a varying number of data lanes'. Scoped because the mapper table and the levels' voltages are in the specification.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-31",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null
+    },
+    {
+      "id": "C-203",
+      "statement": "A D-PHY data lane enters high-speed mode through the low-power states LP-11, LP-01 and LP-00; high-speed data then travels in a burst that starts and ends at the LP-11 stop state.",
+      "pages": [
+        "interfaces/mipi-dphy-cphy"
+      ],
+      "source_type": "commercial",
+      "source": "Texas Instruments, DS90UB953-Q1 datasheet (SNLS552E), section 6.3.1.1, CSI-2 receiver operating modes",
+      "source_url": "https://www.ti.com/document-viewer/lit/html/SNLS552E/GUID-9E92727D-18BE-4604-B3E6-281D71F9A81B",
+      "source_title": "Texas Instruments — DS90UB953-Q1 datasheet, CSI-2 receiver operating modes",
+      "conditions": "A device datasheet describing its D-PHY receiver; timing values are in the specification and not given here",
+      "status": "scoped",
+      "note": "Read on ti.com on 31 Oct 2026: 'The sequence to enter high-speed mode is: LP-11, LP-01, LP-00.'; 'the data lane remains in high-speed mode until a stop state (LP-11) is received'; 'In high-speed mode, the data transmission happens in a burst and starts and ends at a stop state (LP-11).'",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-31",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null
+    },
+    {
+      "id": "C-204",
+      "statement": "DisplayPort 2.0 raised the maximum link rate to 20 Gb/s a lane with 128b/132b channel coding, for a maximum payload of 77.37 Gb/s. DisplayPort 1.4a had a maximum link bandwidth of 32.4 Gb/s, which with 8b/10b coding is a maximum payload of 25.92 Gb/s.",
+      "pages": [
+        "interfaces/displayport"
+      ],
+      "source_type": "public-rate",
+      "source": "VESA press release, \"VESA Publishes DisplayPort 2.0 Video Standard\", 26 June 2019",
+      "source_url": "https://www.displayport.org/pr/vesa-publishes-displayport-2-0-video-standard-enabling-support-for-beyond-8k-resolutions-higher-refresh-rates-for-4k-hdr-and-virtual-reality-applications/",
+      "source_title": "VESA — DisplayPort 2.0 announcement",
+      "conditions": "The standards body's public announcement; the DisplayPort specification itself is for VESA members and has not been read",
+      "status": "verified",
+      "note": "Read on displayport.org on 31 Oct 2026: 'max payload of 77.37 Gbps'; 'up to 20 Gbps/lane'; '128b/132b channel coding'; 'maximum link bandwidth of 32.4 Gbps'; 'With 8b/10b channel coding, that equates to a maximum payload of 25.92 Gbps.' 32.4 x 8/10 = 25.92 exactly. 4 x 20 x 128/132 = 77.58, a little above 77.37; the gap is overhead inside the specification that the public release does not itemise, and the page says so rather than attributing it.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-31",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null
+    },
+    {
+      "id": "C-205",
+      "statement": "A PHY IP vendor summarises DisplayPort's loss allowances: the cable of a conventional source-to-sink link may lose up to 15 dB at 4 GHz for HBR3, and the total loss from source die to sink die may be up to 23 dB at 5 GHz for UHBR10, 21 dB at 6.75 GHz for UHBR13.5 and 22.5 dB at 10 GHz for UHBR20. The reference receiver for jitter tolerance testing is a CTLE for HBR and HBR2, with a one-tap DFE added for HBR3 and UHBR.",
+      "pages": [
+        "interfaces/displayport"
+      ],
+      "source_type": "commercial",
+      "source": "Silicon Creations, \"High Speed, Low Power and Flexibility Drive DisplayPort's Increasing Popularity\", Design And Reuse, 30 Oct 2023",
+      "source_url": "https://www.design-reuse.com/article/61446--high-speed-low-power-and-flexibility-drive-displayport-s-increasing-popularity/",
+      "source_title": "Silicon Creations — High Speed, Low Power and Flexibility Drive DisplayPort's Increasing Popularity",
+      "conditions": "A vendor's summary of a members-only specification, not the specification; the frequencies are each rate's Nyquist",
+      "status": "scoped",
+      "note": "Read on 31 Oct 2026: 'The insertion loss of this cable is allowed to be up to 15 dB @ 4 GHz for HBR3.'; 'the total loss of the link, from Source die to Sink die can be up to 23 dB @ 5 GHz for UHBR10, 21 dB @ 6.75 GHz for UHBR13.5 and 22.5 dB loss at 10 GHz for UHBR20.'; reference RX 'a continuous time linear equalizer (CTLE) for HBR and HBR2, in addition to a 1 tap decision-feedback equalizer (DFE) for HBR3 and UHBR.' The same article calls UHBR coding 128b/130b, which disagrees with VESA's 128b/132b (C-204); the page uses VESA's. Scoped: the budgets are used as stated, die to die, and the page labels them as this vendor's summary.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-31",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null
+    },
+    {
+      "id": "C-206",
+      "statement": "DisplayPort link training starts after hot-plug detect with the source reading the sink's capabilities, then clock recovery: the source sends training pattern TPS1 at the highest lane speed the sink supports, with the lowest voltage swing and pre-emphasis, raising them on each failed attempt; if the clock is not recovered after five attempts at one speed, the source reduces the lane speed and starts again, until training succeeds or fails at the lowest speed with the strongest setting. Channel equalisation (TPS2, TPS3 or TPS4), symbol lock and inter-lane alignment follow. Voltage swing and pre-emphasis levels cannot add to more than three. DisplayPort traces are routed at 100 ohms +/-10% differential.",
+      "pages": [
+        "interfaces/displayport"
+      ],
+      "source_type": "vendor",
+      "source": "Texas Instruments, SDAA295, \"Debugging Methodology for DisplayPort/embedded DisplayPort Link Training Utilizing the Auxiliary Channel\", March 2026, section 2.1",
+      "source_url": "https://www.ti.com/lit/pdf/sdaa295",
+      "source_title": "Texas Instruments — Debugging Methodology for DisplayPort/eDP Link Training (SDAA295)",
+      "conditions": "Based on DP v1.4a and eDP v1.4b, as the note states; 128b/132b (UHBR) training differs in detail and is not described there",
+      "status": "scoped",
+      "note": "Read on ti.com on 31 Oct 2026, section 2.1: 'The source transmits TPS1 at the highest supported DP/eDP lane speed by the sink, lowest voltage swing (VOD), and lowest pre-emphasis (PE).'; 'If the clock is not recovered after five times with the same lane speed, the source then reduces the lane speed, restarts from the lowest VOD/PE combination, and cycles until the clocks are successfully synchronized, or until it fails with the maximum VOD/PE combination at the lowest speed.'; 'VOD and PE cannot add to be greater than three.' Section 2.2.1: 'routed with 100Ω ± 10% differential impedance'. The page applies the step-down to the UHBR rates as the general pattern only.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-31",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null
+    },
+    {
+      "id": "C-207",
+      "statement": "In the DisplayPort 1.4 sink compliance test as one test-equipment vendor implements it, the HBR3 stressed signal is calibrated through a channel whose end-to-end insertion loss, including cables, fixtures and DC blocks, is verified to be within 22 to 24 dB.",
+      "pages": [
+        "interfaces/displayport"
+      ],
+      "source_type": "vendor",
+      "source": "Granite River Labs, \"DisplayPort PHY 1.4 Sink Calibration and Test, User Guide & MOI\", Rev. 3.0, 22 Oct 2024, section 5.2.4",
+      "source_url": "https://downloads.graniteriverlabs.com/hubfs/GRL-DP14-SINKAN/document/GRL-DP14-SINKAN_MOIV1.10.22.pdf",
+      "source_title": "Granite River Labs — DisplayPort PHY 1.4 Sink Calibration and Test MOI",
+      "conditions": "A test-equipment vendor's method of implementation of the VESA compliance test; the frequency of the insertion-loss figure is not stated",
+      "status": "scoped",
+      "note": "Read on 31 Oct 2026, section 5.2.4 note [a]: 'HBR3: TP3_CTLE calibration shall be done using CTLE curve with -8 dB Adc. Physical measurement of the end-to-end ISI should be made to verify that it is within 22 to 24 dB insertion loss, including all cables, fixtures, and DC blocks.' The page takes the low end, 22 dB, as HBR3's die-to-die budget at its 4.05 GHz Nyquist and labels it so; no public figure was found for RBR, HBR or HBR2, which the panel gives the same 22 dB, labelled as an assumption.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-31",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null
+    },
+    {
+      "id": "C-208",
+      "statement": "DisplayPort's link rates are RBR 1.62, HBR 2.7, HBR2 5.4 and HBR3 8.1 Gb/s a lane with 8b/10b channel coding (DP1.4), and UHBR10 10.0, UHBR13.5 13.5 and UHBR20 20.0 Gb/s a lane with 128b/132b (DP2.0 and DP2.1), which raises the coding efficiency from 80% to about 97%.",
+      "pages": [
+        "interfaces/displayport"
+      ],
+      "source_type": "vendor",
+      "source": "Altera (Intel), DisplayPort IP User Guide 683273, version 25.3, section 1.1, DisplayPort Terms and Acronyms",
+      "source_url": "https://docs.altera.com/r/docs/683273/25.3/displayport-ip-user-guide/displayport-terms-and-acronyms",
+      "source_title": "Altera — DisplayPort IP User Guide, Terms and Acronyms",
+      "conditions": "An IP vendor's glossary of the VESA rates",
+      "status": "verified",
+      "note": "Read on docs.altera.com on 31 Oct 2026: 'RBR Reduced Bit Rate (1.62 Gbps per lane)'; 'HBR High Bit Rate (2.7 Gbps per lane)'; 'HBR2 High Bit Rate 2 (5.4 Gbps per lane)'; 'HBR3 High Bit Rate 3 (8.1 Gbps per lane)'; 'UHBR10 Ultra High Bit Rate 10 (10.0 Gbps per lane)'; 'UHBR13.5 ... (13.5 Gbps per lane)'; 'UHBR20 ... (20.0 Gbps per lane)'; '8B/10B ... Used at DP1.4 link rates.'; '128B/132B ... improving the channel-coding efficiency from 80% of 8B/10B channel coding to 97%.' 128/132 = 0.9697.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-31",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null
+    },
+    {
+      "id": "C-209",
+      "statement": "VESA-certified DP40 cables support link rates up to UHBR10 on four lanes, 40 Gb/s; DP80 cables support up to UHBR20 on four lanes, 80 Gb/s, and also UHBR13.5. Full-featured passive USB-C cables already support UHBR rates.",
+      "pages": [
+        "interfaces/displayport"
+      ],
+      "source_type": "public-rate",
+      "source": "VESA press release, \"VESA Readies DisplayPort UHBR Device Certification and Begins Certification of UHBR Cables\", 28 Feb 2022",
+      "source_url": "https://www.displayport.org/pr/vesa-readies-displayport-uhbr-ultra-high-bit-rate-device-certification-and-begins-certification-of-uhbr-cables/",
+      "source_title": "VESA — UHBR device and cable certification",
+      "conditions": "The standards body's public announcement",
+      "status": "verified",
+      "note": "Read on displayport.org on 31 Oct 2026: 'VESA certified DP40 cables must support up to the UHBR10 link rate'; 'maximum throughput of 40 Gbps'; 'VESA certified DP80 cables must support up to the UHBR20 link rate (20 Gbps)'; 'maximum throughput of 80 Gbps'; 'DP80 cables will also support the UHBR13.5 link rate'; 'full-feature passive USB-C cables already support UHBR bit rate speeds'.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-31",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null
+    },
+    {
+      "id": "C-210",
+      "statement": "VESA's DP80LL (low-loss) active cable specification, in DisplayPort 2.1b, supports four-lane UHBR20, 80 Gb/s, over an active cable up to three metres long, up to three times the length of existing VESA-certified passive DP80 cables, which had limited UHBR20 users to about a one-metre connection.",
+      "pages": [
+        "interfaces/displayport"
+      ],
+      "source_type": "public-rate",
+      "source": "VESA press release, \"VESA to Update DisplayPort 2.1 with New Active Cable Specification for Up to 3X Longer DP80 Cables\", 6 Jan 2025",
+      "source_url": "https://www.displayport.org/pr/vesa-to-update-displayport-2-1-with-new-active-cable-specification-for-up-to-3x-longer-dp80-cables/",
+      "source_title": "VESA — DP80LL active cable specification",
+      "conditions": "The standards body's public announcement; what the active cable contains is not stated",
+      "status": "verified",
+      "note": "Read on displayport.org on 31 Oct 2026: 'enable up to four-lane UHBR20 link rate support'; 'a maximum throughput of 80 Gbps'; 'over an active cable up to three meters in length'; 'users are no longer limited to a one-meter cable connection'; 'up to 3X the cable length for UHBR20 GPU-to-display connections compared to existing VESA certified DP80 passive cables'.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-31",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null
+    },
+    {
+      "id": "C-211",
+      "statement": "DisplayPort Alt Mode 2.0 carries up to 80 Gb/s of DisplayPort video over USB Type-C using all four high-speed lanes, or up to 40 Gb/s with SuperSpeed USB data at the same time; DisplayPort 2.0's maximum payload is 77.37 Gb/s across four lanes, up to 19.34 Gb/s a lane.",
+      "pages": [
+        "interfaces/displayport"
+      ],
+      "source_type": "public-rate",
+      "source": "VESA press release, DisplayPort Alt Mode 2.0, 29 April 2020",
+      "source_url": "https://www.displayport.org/pr/vesa-releases-updated-displayport-alt-mode-spec-to-bring-displayport-2-0-performance-to-usb4-and-new-usb-type-c-devices/",
+      "source_title": "VESA — DisplayPort Alt Mode 2.0",
+      "conditions": "The standards body's public announcement",
+      "status": "verified",
+      "note": "Read on displayport.org on 31 Oct 2026: 'utilizing all four high-speed lanes in the cable, or up to 40 Gbps with simultaneous SuperSpeed USB data delivery'; 'DisplayPort 2.0 delivers a maximum payload of 77.37 Gbps across four lanes (up to 19.34 Gbps per lane)'. 77.37/4 = 19.34.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-31",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null
+    },
+    {
+      "id": "C-212",
+      "statement": "HDMI 2.1 (November 2017) added Fixed Rate Link (FRL): the clock is embedded in the data and recovered at the receiver, up to four channels carry data at up to 12 Gb/s each, and coding changes from 8b/10b to 16b/18b. The TMDS clock channel is redefined as FRL lane 3. FRL runs only on three lanes, at 3 or 6 Gb/s, or four, at 6, 8, 10 or 12 Gb/s. TMDS carried at most 3.4 Gb/s a channel (10.2 Gb/s in all) in HDMI 1.4b and 6 Gb/s (18 Gb/s) in HDMI 2.0, with a clock-to-data ratio of 1:10 and 1:40. A source and sink train FRL through link training states LTS:1 to LTS:3 and LTS:P: in LTS:1 the source reads the sink's EDID, whose Max_FRL_Rate field runs from 1 (3 Gb/s on three lanes only) to 6, 0 meaning no FRL, and which must also flag the status and control data channel (SCDC) present; in LTS:2 the source sets an FRL rate and a transmitter FFE level; in LTS:3 it sends the link training patterns the sink requests for each lane through SCDC registers; in LTS:P FRL transmission starts; LTS:4 updates the FRL rate; if link training fails or times out they enter LTS:L, legacy TMDS, and work in HDMI 1.4b/2.0 mode.",
+      "pages": [
+        "interfaces/hdmi"
+      ],
+      "source_type": "vendor",
+      "source": "Tektronix, \"如何实现HDMI 2.1的源端测试 规范解读\" (How to test an HDMI 2.1 source: reading the specification), August 2019, pages 3 to 6",
+      "source_url": "https://www.tek.com.cn/-/media/china-marketing-documents/campaign/automotive/hdmihdmi21rule.pdf",
+      "source_title": "Tektronix — HDMI 2.1 source test: reading the specification (Chinese)",
+      "conditions": "A test-equipment vendor's public reading of the HDMI 2.1 specification, which is available to HDMI adopters only; in Chinese, translated here",
+      "status": "scoped",
+      "note": "Read on 31 Oct 2026 (translated): FRL changes are that the separate clock becomes embedded in the data and is recovered at the receiver, at most 4 channels carry audio/video data, each up to 12 Gbps, and coding changes from 8b/10b to 16b/18b; the version table gives max data rate per channel 3.4 / 6 / 12 Gbps and max total throughput 10.2 / 18 / 48 Gbps for 1.4b / 2.0 / 2.1 (FRL), max clock 340 and 148.5 MHz and clock/data ratio 1:10 and 1:40; 'the original TMDS Clock channel is redefined as FRL lane3'; FRL has only 3-lane and 4-lane modes, 3 lanes supporting only 3 Gbps and 6 Gbps and 4 lanes 6/8/10/12 Gbps; the link training state table LTS:1, LTS:2, LTS:3, LTS:P; 'LTS:4 Update FRL_Rate' when the link updates its FRL rate; when link training fails or times out it enters LTS:L Legacy TMDS and source and sink work in TMDS mode, that is HDMI 1.4b/2.0 mode. The order in which a source tries lower FRL rates before TMDS is not stated; the page presents the ladder as the panel's simplification. Pages 4 to 6 also give: the source must first read the sink's EDID; an HDMI 2.1 sink sets SCDC_Present to 1 and Max_FRL_Rate in the HF-VSDB, 'the range is 1 to 6, 0 means FRL is not supported'; 'Max_FRL_Rate 1 means only 3 Gbps in 3-lane mode is supported … the other values follow by analogy', next to the six-row table of FRL lane rates (3G×3 to 12G×4), so 6 is read here as 12G on four lanes; SCDC at I2C address 0xA8/A9 is read and written by both ends; LTS:2 'set FRL_Rate and FFE level'; LTS:3 'send the pattern given by the Ln(x)_LTP_req register', the sink requesting a pattern for each lane through Ln(x)_LTP_req; LTS:P 'start FRL transmission'. (Added 1 Nov 2026 after a review found the page's training paragraph used these and the row did not record them.)",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-31",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null
+    },
+    {
+      "id": "C-213",
+      "statement": "An FPGA vendor's HDMI 2.1 design guide states that HDMI 2.1 operates up to 12 Gbps with cable loss of up to 16 dB, estimates the cable loss of a typical use case at 19 dB with two connectors, and characterises its sink against an HDMI 2.1 worst-case cable model whose test channel for FRL 12 Gb/s has 20.183 dB of insertion loss (its targeted loss calibration lists 20.11 dB). It recommends 90 to 100 ohm traces and 95 ohm connectors and cables, and notes that TMDS uses three data lanes and one clock lane while FRL runs on four data lanes, the TMDS clock path sharing an FRL data lane at the receiver, so its board uses a fan-out buffer, here integrated with a redriver at the receiver, to drive both paths. It requires a redriver on the board to meet the receiver compliance test and HDMI 2.1 cable loss, and notes that longer traces on larger boards need more equalisation.",
+      "pages": [
+        "interfaces/hdmi"
+      ],
+      "source_type": "vendor",
+      "source": "Intel, AN 952: Intel Arria 10 and Intel Stratix 10 HDMI 2.1 System Design Guidelines, 709310, 2022.06.21, sections 4.2 to 4.3.2",
+      "source_url": "https://www.intel.com/content/www/us/en/docs/programmable/709310/22-2/system-link-budgeting-recommendations.html",
+      "source_title": "Intel — AN 952: HDMI 2.1 System Design Guidelines",
+      "conditions": "A vendor's design guide for its own FPGAs with redrivers; the frequency at which the 20.183 dB is stated is not given",
+      "status": "scoped",
+      "note": "Read on 31 Oct 2026 (PDF of the 22.2 version): 'HDMI 2.1 operates up to 12 Gbps with cable loss of up to 16dB.'; 'In a typical use case scenario, there is an estimated cable loss of 19 dB with two connectors.'; Table 9, Worsecase Cable Model: HDMI_12000_FRL, 12,000 Mbps, test channel insertion loss 20.183 dB; Table 7 Targeted loss calibration 'Insertion Loss : 20.11 dB'; Table 2: 'Trace 90-100 Ω', 'Connectors & Cables 95 Ω'; 'TMDS supports legacy HDMI devices running on three data lanes and one clock lane.'; 'FRL runs on four data lanes.'; 'the TMDS clock path shares the FRL data lane'. The page takes 20 dB at FRL 12G's 6 GHz Nyquist as the die-to-die budget and labels it as this test channel; the other HDMI rates have no public figure and are given the same, labelled as an assumption. Section 4.2 also: 'you need a fanout buffer to split incoming RX signals to drive both paths to support both TMDS and FRL'; 'Another approach is to use an integrated fanout buffer option with redriver at the RX side'; 'For cost optimization, use the redriver at the transmitter side.' Section 4.3.2: 'You must use a redriver on the PCB panel to ensure compliance to RX CTS and HDMI 2.1 cable loss'; 'longer traces on larger PCB panels require higher equalization.' (Added 1 Nov 2026.)",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-31",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null
+    },
+    {
+      "id": "C-214",
+      "statement": "HDMI 2.1 supports FRL at 3 Gb/s on 3 lanes, 6 Gb/s on 3 lanes, and 6, 8, 10 and 12 Gb/s on 4 lanes. The TMDS clock lane is redefined as FRL data lane 3, which is not used in the 3-lane mode.",
+      "pages": [
+        "interfaces/hdmi"
+      ],
+      "source_type": "vendor",
+      "source": "Texas Instruments, SLLA598, TDP1204 and TMDS1204 application note, October 2022, section 2.1",
+      "source_url": "https://ti.com/document-viewer/lit/html/SLLA598/GUID-CB87B598-8142-49D9-9344-E266007FCFE7",
+      "source_title": "Texas Instruments — SLLA598, HDMI 2.1 FRL rates and lanes",
+      "conditions": "A redriver vendor's application note",
+      "status": "verified",
+      "note": "Read on ti.com on 31 Oct 2026: 'HDMI2.1 supports the following FRL rate and lane control.' followed by the six rate and lane pairs; 'The TMDS clock lane are re-defined as FRL data lane 3.'; 'Note when in the FRL 3 lanes operating mode, the FRL data lane 3 is not being used.' Agrees with C-212.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-31",
+      "humanReviewedBy": null,
+      "humanReviewedOn": null
+    },
+    {
+      "id": "C-215",
+      "statement": "The Ultra High Speed HDMI Cable was introduced in the HDMI 2.1 specification, entered the market in 2020, applies to configurations of up to 48 Gbps, and is covered by a mandatory certification programme that includes testing for low EMI.",
+      "pages": [
+        "interfaces/hdmi"
+      ],
+      "source_type": "public-rate",
+      "source": "HDMI Licensing Administrator, Ultra High Speed HDMI Cable page",
+      "source_url": "https://www.hdmi.org/spec21sub/ultrahighspeedcable",
+      "source_title": "HDMI.org — Ultra High Speed HDMI Cable",
+      "conditions": "The licensing body's public page; cable lengths and electrical limits are not stated",
+      "status": "verified",
+      "note": "Read on hdmi.org on 31 Oct 2026: 'The Ultra High Speed HDMI Cable was introduced in the HDMI 2.1 Specification and entered the market in 2020.'; 'It is applicable for system configurations supporting up to 48Gbps maximum bandwidth.'; 'Both cables are also required to be tested and certified to ensure low EMI.'; 'It is a mandatory certification program'.",
+      "owner": "Geetansh",
+      "sourceCheckedBy": "Claude Opus 5.5",
+      "sourceCheckedOn": "2026-10-31",
       "humanReviewedBy": null,
       "humanReviewedOn": null
     }

@@ -367,29 +367,68 @@
     });
   }
 
-  /* A scenario note in a rail is clamped to two lines with a toggle to open it. The
-     module rewrites the note on every preset, so whether the toggle is needed is
-     checked again each time; the clamped text stays whole for a screen reader. */
+  /* A scenario note in a rail shows in full wherever the rail has the room. Only
+     when the whole note would make the rail scroll is it cut, to as many lines as
+     still fit and never fewer than the stylesheet's clamp, with a toggle to open it.
+     The module rewrites the note on every preset and the rail's room changes with
+     the window and with groups opened in it, so the fit is redone on each. The cut
+     text stays whole for a screen reader. */
   function wireNote(root, off, state) {
-    const note = root.querySelector('.lab-rail [data-out="note"]');
+    // a phone may already have moved the scenarios under the chart (viz-loader.js)
+    const note = root.querySelector('.lab-rail [data-out="note"], .lab-primary [data-out="note"]');
     const boxEl = note && note.parentElement;
-    if (!boxEl) return;
+    if (!boxEl || !root.querySelector('.lab-rail')) return;
     const more = document.createElement('button');
     more.type = 'button';
     more.className = 'lab-more';
     boxEl.append(more);
     state.added.push(more);
+    let rail = null;
+    const fits = () => !rail || rail.scrollHeight <= rail.clientHeight + 1;
     const sync = () => {
+      if (state.dead) return;
+      rail = note.closest('.lab-rail');
       const open = boxEl.classList.contains('is-open');
+      note.style.removeProperty('display');
+      note.style.removeProperty('-webkit-line-clamp');
+      const floor = parseInt(getComputedStyle(note).webkitLineClamp, 10) || 3;
       more.textContent = open ? 'less' : 'more';
       more.setAttribute('aria-expanded', String(open));
-      more.hidden = !open && note.scrollHeight <= note.clientHeight + 1;
+      // the whole note first: if the rail holds it, there is nothing to open
+      more.hidden = true;
+      note.style.display = 'block';
+      if (fits()) return;
+      more.hidden = false;
+      if (open) return;
+      const line = parseFloat(getComputedStyle(note).lineHeight) || 16;
+      const lines = Math.round(note.scrollHeight / line);
+      note.style.removeProperty('display');
+      let n = lines - 1;
+      for (; n > floor; n--) {
+        note.style.setProperty('-webkit-line-clamp', String(n));
+        if (fits()) break;
+      }
+      note.style.setProperty('-webkit-line-clamp', String(Math.max(n, floor)));
+      more.hidden = note.scrollHeight <= note.clientHeight + 1;
     };
+    let timer = 0;
+    const later = () => { clearTimeout(timer); timer = setTimeout(sync, 0); };
+    off.push(() => clearTimeout(timer));
     off.push(on(more, 'click', () => { boxEl.classList.toggle('is-open'); sync(); }));
-    const mo = new MutationObserver(() => setTimeout(sync, 0));
+    // a group opened or closed in the rail changes the room left for the note
+    off.push(on(root, 'toggle', later, true));
+    const mo = new MutationObserver(later);
     mo.observe(note, { childList: true, characterData: true, subtree: true });
     state.observers.push(mo);
-    setTimeout(sync, 0);
+    // a rail's own box is set by the frame, so this sees the window and full
+    // screen, not the note's own changes
+    if ('ResizeObserver' in window) {
+      const ro = new ResizeObserver(later);
+      root.querySelectorAll('.lab-rail').forEach((r) => ro.observe(r));
+      state.observers.push(ro);
+    }
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(later);
+    later();
   }
 
   /* ---------- the eye's held scale ----------

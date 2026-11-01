@@ -233,7 +233,11 @@
           "slug": "termination-schemes",
           "title": "Termination Schemes: Series, Parallel, Thevenin and AC",
           "status": "live",
+          "viz": "termination",
           "keywords": [
+            "termination power",
+            "baseline wander",
+            "terminator stub",
             "series",
             "parallel",
             "Thevenin",
@@ -242,7 +246,8 @@
             "damping resistor",
             "source termination"
           ],
-          "reviewed": "2026-09-12",
+          "updated": "2026-11-01",
+          "reviewed": "2026-11-01",
           "reviewer": "Geetansh Arora"
         },
         {
@@ -398,7 +403,12 @@
           "slug": "differential-signalling",
           "title": "Differential Signaling: Common Mode and Mode Conversion",
           "status": "live",
+          "viz": "diffPair",
           "keywords": [
+            "SCD21",
+            "intra-pair skew",
+            "glass weave skew",
+            "fiber weave",
             "odd mode",
             "even mode",
             "common mode",
@@ -407,7 +417,8 @@
             "differential pair",
             "tightly coupled"
           ],
-          "reviewed": "2026-09-13",
+          "updated": "2026-11-01",
+          "reviewed": "2026-11-01",
           "reviewer": "Geetansh Arora"
         },
         {
@@ -1196,9 +1207,10 @@
           "slug": "pcie-gen4-gen5",
           "title": "PCIe 4.0 vs 5.0: Loss Budget, Tx Presets, Link Equalization",
           "status": "live",
-          "updated": "2026-10-15",
-          "reviewed": "2026-10-15",
+          "updated": "2026-11-01",
+          "reviewed": "2026-11-01",
           "reviewer": "Geetansh Arora",
+          "viz": "pcieEq",
           "keywords": [
             "PCIe",
             "PCIe 4.0",
@@ -1239,16 +1251,22 @@
             "bandwidth",
             "x16",
             "x4",
-            "backward compatible"
+            "backward compatible",
+            "reference receiver",
+            "reference CTLE",
+            "DFE tap limits",
+            "preset sweep",
+            "eye height"
           ]
         },
         {
           "slug": "pcie-gen6",
           "title": "PCIe 6.0 vs PCIe 5.0: PAM4, FLIT, FEC and Signal Integrity",
           "status": "live",
-          "updated": "2026-10-15",
-          "reviewed": "2026-10-15",
+          "updated": "2026-11-01",
+          "reviewed": "2026-11-01",
           "reviewer": "Geetansh Arora",
+          "viz": "flitFec",
           "keywords": [
             "PCIe",
             "Gen6",
@@ -1282,7 +1300,12 @@
             "L0p",
             "backward compatible",
             "RLM",
-            "SNDR"
+            "SNDR",
+            "FBER",
+            "first bit error rate",
+            "replay",
+            "burst errors",
+            "interleaved FEC"
           ]
         },
         {
@@ -1434,9 +1457,10 @@
           "slug": "usb-3x",
           "title": "USB 3.2 Gen 1 vs Gen 2 vs Gen 2x2: Loss Budget, SSC and Compliance",
           "status": "live",
-          "updated": "2026-10-18",
-          "reviewed": "2026-10-18",
+          "updated": "2026-11-01",
+          "reviewed": "2026-11-01",
           "reviewer": "Geetansh Arora",
+          "viz": "ssc",
           "keywords": [
             "USB",
             "USB 3.0",
@@ -1480,14 +1504,19 @@
             "SCD21",
             "redriver",
             "orientation",
-            "USB-IF"
+            "USB-IF",
+            "SSC tracking",
+            "CDR bandwidth",
+            "type-2 loop",
+            "spread spectrum clocking"
           ]
         },
         {
           "slug": "ufs4",
           "title": "UFS 3.1 vs 4.0 vs 5.0: M-PHY Gears, Burst Mode and Signal Integrity",
           "status": "live",
-          "updated": "2026-10-18",
+          "updated": "2026-11-01",
+          "viz": "ufsBurst",
           "keywords": [
             "UFS",
             "UFS 3.0",
@@ -1531,10 +1560,119 @@
             "23.2",
             "46.6",
             "4.2 GB/s",
-            "10.8 GB/s"
+            "10.8 GB/s",
+            "HIBERN8 break-even",
+            "wake latency",
+            "PHY power",
+            "burst energy"
           ],
-          "reviewed": "2026-10-18",
+          "reviewed": "2026-11-01",
           "reviewer": "Geetansh Arora"
+        },
+        {
+          "slug": "mipi-dphy-cphy",
+          "title": "MIPI D-PHY vs C-PHY: Forwarded Clock, Trios and Three-Level Signalling",
+          "status": "live",
+          "updated": "2026-11-01",
+          "reviewed": "2026-11-01",
+          "reviewer": "Geetansh Arora",
+          "viz": "cphyTrio",
+          "keywords": [
+            "MIPI",
+            "D-PHY",
+            "C-PHY",
+            "CSI-2",
+            "DSI-2",
+            "camera interface",
+            "display interface",
+            "trio",
+            "three-phase",
+            "wire state",
+            "LP-11",
+            "LP-00",
+            "HS mode",
+            "low-power mode",
+            "forwarded clock",
+            "embedded clock",
+            "clock lane",
+            "Gsps",
+            "symbol rate",
+            "2.28 bits per symbol",
+            "16 bits 7 symbols",
+            "dual-mode PHY",
+            "combo PHY",
+            "trio skew"
+          ]
+        },
+        {
+          "slug": "displayport",
+          "title": "DisplayPort 2.1: UHBR Rates, Cable Loss and Link Training",
+          "status": "live",
+          "updated": "2026-11-01",
+          "reviewed": "2026-11-01",
+          "reviewer": "Geetansh Arora",
+          "viz": "displayLink",
+          "keywords": [
+            "DisplayPort",
+            "DP 2.1",
+            "DP 1.4",
+            "UHBR",
+            "UHBR10",
+            "UHBR13.5",
+            "UHBR20",
+            "HBR3",
+            "HBR2",
+            "RBR",
+            "128b/132b",
+            "8b/10b",
+            "link training",
+            "clock recovery",
+            "TPS1",
+            "fallback",
+            "DP40",
+            "DP80",
+            "DP80LL",
+            "active cable",
+            "LTTPR",
+            "retimer",
+            "Alt Mode",
+            "USB-C display",
+            "AWG",
+            "cable loss"
+          ]
+        },
+        {
+          "slug": "hdmi",
+          "title": "HDMI 2.1: FRL, TMDS and Whether the Link Trains",
+          "status": "live",
+          "updated": "2026-11-01",
+          "reviewed": "2026-11-01",
+          "reviewer": "Geetansh Arora",
+          "viz": "displayLink",
+          "keywords": [
+            "HDMI",
+            "HDMI 2.1",
+            "HDMI 2.0",
+            "FRL",
+            "fixed rate link",
+            "TMDS",
+            "16b/18b",
+            "8b/10b",
+            "48 Gbps",
+            "12 Gbps",
+            "FRL lane",
+            "clock lane",
+            "link training",
+            "LTS",
+            "SCDC",
+            "Ultra High Speed HDMI cable",
+            "cable loss",
+            "redriver",
+            "retimer",
+            "AWG",
+            "4K 120",
+            "8K"
+          ]
         }
       ]
     },

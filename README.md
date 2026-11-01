@@ -24,14 +24,14 @@ HTTP, and it hides itself when it cannot fetch `topics.json`.
 
 | | |
 |---|---|
-| Topic pages | **79**, all `live`, each with a `deeper` section and its own review date |
-| Words | 188631; median 2293 per page |
-| Interactive panels | **55**, including four labs and twelve calculators |
-| SVG figures | 108 |
-| Arithmetic claims checked | **767** across 54 pages (`check-numbers.py`) |
-| Model assertions | **1218** (`check-models.js`), with **0 claims pending** |
-| Mutation coverage | **97 of 97** known defects have an assertion that provably catches them (`mutate.js`). This is regression coverage for defects already found, not a measure of what the gates would catch in general |
-| Specification claims | **206 tracked: 94 verified, 112 scoped, 0 awaiting a primary source** | <!-- generated from docs/claims.json -->
+| Topic pages | **82**, all `live`, each with a `deeper` section and its own review date |
+| Words | 198542; median 2309 per page |
+| Interactive panels | **63**, including four labs and twelve calculators |
+| SVG figures | 109 |
+| Arithmetic claims checked | **806** across 58 pages (`check-numbers.py`) |
+| Model assertions | **1477** (`check-models.js`), with **0 claims pending** |
+| Mutation coverage | **122 of 122** known defects have an assertion that provably catches them (`mutate.js`). This is regression coverage for defects already found, not a measure of what the gates would catch in general |
+| Specification claims | **225 tracked: 104 verified, 121 scoped, 0 awaiting a primary source** | <!-- generated from docs/claims.json -->
 
 ## How it is checked
 

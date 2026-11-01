@@ -667,7 +667,7 @@
        spatial plot: it is the one that looks like a scope, it is what the time
        scrubber drives, and it is the only view whose meaning survives being 356 px
        wide. The wide layout shows every panel, so this only decides the phone. */
-    const defaults = { labWaves: 'probe', labChannel: 'eye', labPdn: 'z', cdr: 'transfer', coupling: 'time', adcLab: 'spectrum', tdr: 'profile', ddr5: 'eye', ddr5Flyby: 'dimm', lpddr6: 'wide', lpddr6Packet: 'packet', crossSection: 'section', irPlane: 'map', returnPath: 'board' };
+    const defaults = { labWaves: 'probe', labChannel: 'eye', labPdn: 'z', cdr: 'transfer', coupling: 'time', adcLab: 'spectrum', tdr: 'profile', ddr5: 'eye', ddr5Flyby: 'dimm', lpddr6: 'wide', lpddr6Packet: 'packet', crossSection: 'section', irPlane: 'map', returnPath: 'board', displayLink: 'ladder', cphyTrio: 'eye' };
 
     /* Controls that earn a place directly under the chart on a phone, by lab.
        A lab with no entry keeps its rails as they are. Every set here was chosen
@@ -717,8 +717,16 @@
       irPlane: ['ir-d', 'ir-oz', 'ir-i'],
       /* The panel has only these three: what drives the trace, at what frequency, and
          how far above the plane it runs. */
-      returnPath: ['rp-mode', 'rp-at', 'rp-h']
+      returnPath: ['rp-mode', 'rp-at', 'rp-h'],
+      /* DisplayPort and HDMI share this module. Under the training ladder: the cable
+         is what a reader buys, the gauge is what makes a thin cable lose more, and the
+         retimer is the remedy (Claude proposed, Geetansh accepted, 1 Nov 2026). */
+      displayLink: ['dl-cable', 'dl-awg', 'dl-rt'],
+      /* Under the eye, the three that close it: the rate, a late wire and the loss.
+         Same provenance as displayLink. */
+      cphyTrio: ['cp-rate', 'cp-skew', 'cp-loss']
     };
+    const SCENARIOS_FIRST = ['displayLink', 'cphyTrio'];
     if (!(el.dataset.viz in defaults)) return;
     const K = window.SIPI.kit;
     const panels = [...el.querySelectorAll('.panel')].filter((p) => p.querySelector('canvas[data-cv]'));
@@ -750,7 +758,7 @@
       option.value = String(i);
       /* These name their own panels; the table above predates that and
          would call their 'time', 'spec' and 'sweep' something else. */
-      const own = ['coupling', 'adcLab', 'tdr', 'ddr5', 'ddr5Flyby', 'lpddr6', 'lpddr6Packet', 'crossSection', 'irPlane', 'returnPath'].includes(el.dataset.viz) && panel.dataset.labName;
+      const own = ['coupling', 'adcLab', 'tdr', 'ddr5', 'ddr5Flyby', 'lpddr6', 'lpddr6Packet', 'crossSection', 'irPlane', 'returnPath', 'displayLink', 'cphyTrio'].includes(el.dataset.viz) && panel.dataset.labName;
       option.textContent = own || titles[cv.dataset.cv] || (caption ? caption.textContent : cv.getAttribute('aria-label') || cv.dataset.cv).trim().split(/[—.]/)[0];
       select.appendChild(option);
       if (cv.dataset.cv === defaults[el.dataset.viz]) active = i;
@@ -784,7 +792,9 @@
       lpddr6Packet: [['ones', 'Ones sent'], ['energy', 'Energy']],
       crossSection: [['z', 'Solved'], ['lim', 'Limit']],
       irPlane: [['drop', 'Plane drop'], ['neck', 'Worst neck']],
-      returnPath: [['L', 'Loop L'], ['band', 'Within 2 mm']] }[el.dataset.viz];
+      returnPath: [['L', 'Loop L'], ['band', 'Within 2 mm']],
+      displayLink: [['rate', 'Trains at'], ['margin', 'Margin']],
+      cphyTrio: [['ew', 'Eye width'], ['three', 'Three trios']] }[el.dataset.viz];
     const outputs = fields.map(([key, title]) => {
       const source = el.querySelector('[data-out="' + key + '"]');
       const item = document.createElement('span');
@@ -844,6 +854,13 @@
     const primary = (PRIMARY[el.dataset.viz] || [])
       .map((id) => { const input = el.querySelector('#' + id); return input && input.closest('.ctl'); })
       .filter(Boolean);
+    /* On these labs the scenarios are the way in, so on a phone they lead the row
+       rather than waiting a thousand pixels down a rail, and move home with it. */
+    const scenarios = SCENARIOS_FIRST.includes(el.dataset.viz)
+      && el.querySelector('.lab-rail [data-preset]')?.closest('.presets');
+    if (scenarios && primary.length) primary.unshift(scenarios);
+    // the rail groups these leave, which a phone hides once nothing is left in them
+    const leftGroups = [...new Set(primary.map((c) => c.closest('.lab-group')).filter(Boolean))];
     const primaryHome = new Map(primary.map((c) => [c, [c.parentElement, c.nextSibling]]));
     if (primary.length) dots.after(primaryRow);
 
@@ -887,6 +904,8 @@
       if (onTrack) return;
       panels.forEach((pn) => { pn.hidden = false; pn.removeAttribute('data-mobile-active'); track.appendChild(pn); });
       primary.forEach((c) => primaryRow.appendChild(c));
+      // a rail group the row emptied would be a title over nothing
+      leftGroups.forEach((g) => { if (!g.querySelector('.lab-group__body > *')) g.hidden = true; });
       groups.forEach((g) => { if (g !== el) g.hidden = false; });
       onTrack = true;
     };
@@ -903,6 +922,7 @@
         const [parent, next] = primaryHome.get(c);
         parent.insertBefore(c, next && next.parentElement === parent ? next : null);
       });
+      leftGroups.forEach((g) => { g.hidden = false; });
       groups.forEach((g) => { if (g !== el) g.hidden = false; });
       onTrack = false;
     };

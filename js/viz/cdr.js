@@ -31,21 +31,9 @@
 
   const FLO = 1e3, FHI = 1e9, NF = 340;
 
-  /* Complex H and its complement, from one evaluation. `s = j*2*pi*f`. */
-  function loop(f, fn, zeta) {
-    const w = 2 * Math.PI * f, wn = 2 * Math.PI * fn;
-    // numerator 2*zeta*wn*s + wn^2  ->  wn^2 + j*2*zeta*wn*w
-    const nr = wn * wn, ni = 2 * zeta * wn * w;
-    // denominator s^2 + 2*zeta*wn*s + wn^2  ->  (wn^2 - w^2) + j*2*zeta*wn*w
-    const dr = wn * wn - w * w, di = 2 * zeta * wn * w;
-    const den = dr * dr + di * di;
-    const hr = (nr * dr + ni * di) / den, hi = (ni * dr - nr * di) / den;
-    /* THE COMPLEX complement. 1 - |H| would be a different function and would
-       give the wrong residual wherever H has phase, which is everywhere near
-       fn. */
-    const er = 1 - hr, ei = -hi;
-    return { hr, hi, h: Math.hypot(hr, hi), e: Math.hypot(er, ei) };
-  }
+  /* The loop's transfer lives in viz-kit.js (K.cdrLoop): the USB page's SSC
+     panel tracks a spread clock with the same loop. */
+  const loop = K.cdrLoop;
 
   NS.models = NS.models || {};
   NS.models.cdr = function (p) {

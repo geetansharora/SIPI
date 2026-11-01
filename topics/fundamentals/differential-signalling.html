@@ -13,7 +13,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
 <link rel="stylesheet" href="../../css/base.css?v=1e3ae753">
-<link rel="stylesheet" href="../../css/components.css?v=c532fdc4">
+<link rel="stylesheet" href="../../css/components.css?v=9967e8fb">
   <!-- meta:start -->
   <link rel="canonical" href="https://sipi.work/topics/fundamentals/differential-signalling.html">
   <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
@@ -31,7 +31,7 @@
   <meta name="twitter:description" content="Odd and even mode, why differential impedance is not twice single-ended, and how asymmetry turns a differential signal into common-mode noise.">
   <meta name="twitter:image" content="https://sipi.work/assets/og/fundamentals/differential-signalling.png">
   <meta name="twitter:image:alt" content="Differential Signaling: Common Mode and Mode Conversion: a figure from the page, on SIPI">
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Differential Signaling: Common Mode and Mode Conversion","description":"Odd and even mode, why differential impedance is not twice single-ended, and how asymmetry turns a differential signal into common-mode noise.","url":"https://sipi.work/topics/fundamentals/differential-signalling.html","articleSection":"Fundamentals","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer","url":"https://www.linkedin.com/in/geetansh-arora-a645714a/","sameAs":["https://www.linkedin.com/in/geetansh-arora-a645714a/"]},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-09-13","image":"https://sipi.work/assets/og/fundamentals/differential-signalling.png"}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Differential Signaling: Common Mode and Mode Conversion","description":"Odd and even mode, why differential impedance is not twice single-ended, and how asymmetry turns a differential signal into common-mode noise.","url":"https://sipi.work/topics/fundamentals/differential-signalling.html","articleSection":"Fundamentals","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer","url":"https://www.linkedin.com/in/geetansh-arora-a645714a/","sameAs":["https://www.linkedin.com/in/geetansh-arora-a645714a/"]},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-11-01","image":"https://sipi.work/assets/og/fundamentals/differential-signalling.png"}</script>
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"SIPI","item":"https://sipi.work/"},{"@type":"ListItem","position":2,"name":"Fundamentals","item":"https://sipi.work/#fundamentals"},{"@type":"ListItem","position":3,"name":"Differential Signaling: Common Mode and Mode Conversion"}]}</script>
   <!-- meta:end -->
 </head>
@@ -54,7 +54,7 @@
     <p class="crumb"><a href="../../index.html#fundamentals">Fundamentals</a> / 15</p>
     <h1>Differential Signaling: Common Mode and Mode Conversion</h1>
     <p class="byline">
-      <!-- review:start --><span>By <a href="https://www.linkedin.com/in/geetansh-arora-a645714a/" target="_blank" rel="author noopener">Geetansh Arora</a> — Principal SI/PI Engineer</span><time datetime="2026-09-13" title="Technical review by Geetansh Arora on this date">13 Sep 2026</time><span>10 min</span><!-- review:end -->
+      <!-- review:start --><span>By <a href="https://www.linkedin.com/in/geetansh-arora-a645714a/" target="_blank" rel="author noopener">Geetansh Arora</a> — Principal SI/PI Engineer</span><time datetime="2026-11-01" title="Technical review by Geetansh Arora on this date">1 Nov 2026</time><span>10 min</span><!-- review:end -->
     </p>
     <!-- share:head:start --><div class="share share--head" data-share data-share-url="https://sipi.work/topics/fundamentals/differential-signalling.html" data-share-title="Differential Signaling: Common Mode and Mode Conversion"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Ffundamentals%2Fdifferential-signalling.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Ffundamentals%2Fdifferential-signalling.html&amp;text=Differential%20Signaling%3A%20Common%20Mode%20and%20Mode%20Conversion" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=Differential%20Signaling%3A%20Common%20Mode%20and%20Mode%20Conversion&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Ffundamentals%2Fdifferential-signalling.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:head:end -->
     <p class="answer">
@@ -95,6 +95,92 @@
     </div>
     <figcaption><b>A coupled pair has two impedances, not one.</b> In <b>odd mode</b> the two conductors swing in opposition, so field runs directly between them &#8212; extra coupling capacitance that is not there when they are driven alone. More capacitance means a <em>lower</em> impedance, which is why Z<sub>odd</sub> is below the isolated single-ended Z&#8320; and Z<sub>diff</sub> = 2&#183;Z<sub>odd</sub> always comes out below 2&#215;Z&#8320;. Two 50 &#937; traces routed close together are not a 100 &#937; pair; they are perhaps 85&#8211;90 &#937;. In <b>even mode</b> both halves move together, no field runs between them, and each sees a higher impedance instead. Everything that goes wrong with a pair comes from breaking the symmetry between these two pictures: when the halves stop being identical, differential energy converts into common mode &#8212; measured as S<sub>CD21</sub> &#8212; and common mode is rejected only as far as the receiver's CMRR allows, returns through whatever reference structures happen to be available rather than a controlled path, and radiates.</figcaption>
   </figure>
+
+  <!-- mobilenote:start -->
+  <p class="mobile-note" role="note">
+    <b>Best viewed on a laptop or desktop.</b>
+    These panels are built so you can move a slider and watch several charts
+    answer at once. A phone has no room to put them side by side.
+  </p>
+  <!-- mobilenote:end -->
+  <section class="instrument instrument--side side--wide" data-viz="diffPair" aria-label="Interactive model of a differential pair whose two legs differ by a length mismatch, a glass-weave velocity difference, a drive imbalance or a slower edge: the two legs, their difference and their common mode in time, the differential and mode-converted transfer against frequency, and the differential eye">
+    <script type="application/json" data-contract>{"kind":"analytical","evidence":"independent","purpose":"Show where a differential pair's common mode comes from: how a length mismatch, a glass-weave velocity difference, a drive imbalance or one slower edge turns part of the differential signal into common mode, what that does to SDD21 and SCD21, and how little of it the differential eye shows.","equations":["H_k(f) = g_k exp(-j 2 pi f d_k) / (1 + j 2 pi f tau_k), tau = t_r / ln 9","S_DD21 = (H_P + H_N)/2, S_CD21 = (H_P - H_N)/2","V_diff = V_P - V_N, V_cm = (V_P + V_N)/2","weave skew = L (sqrt(Dk + dDk) - sqrt(Dk)) / c","emission vs one wire: peak over f of f |S_CD21| |sinc(f T)|, against the same for one wire driven alone"],"units":"ps, GHz, V, in, dB","validity":"Uncoupled, lossless legs with single-pole edges. Common mode is what the asymmetry makes, before any receiver rejects it.","numerics":"One full PRBS7 period at 32 samples per bit, every edge summed in closed form including earlier periods until the slowest edge has settled. Eye folded at the phase that leaves it whole; its width is the share of the UI open by at least 10% of the swing. 240 frequency points to twice the bit rate.","limitations":"No coupling between the legs, so no odd- and even-mode velocity difference and no Zdiff; the field solver page does that. No channel loss, no reflections, no receiver CMRR. The emission figure is a relative proxy for a short cable's radiation, not an emissions limit.","suites":["Differential pair"],"version":"1.1","reviewed":"2026-11-01","panel":"diffPair"}</script>
+    <div class="instrument__bar">
+      <span class="instrument__title">Where the common mode comes from</span>
+      <span data-evidence="independent" data-model-version="1.1" class="model-tag model-tag--analytical" title="Closed form: each leg a gain, a delay and a single-pole edge; mixed-mode quantities from the two legs.">analytical</span>
+      <span class="instrument__readout readout--fixed" role="status" aria-live="off" aria-label="Current values">
+        <span>skew <b data-out="skew" style="min-width:7ch">—</b></span>
+        <span>common mode <b data-out="cm" style="min-width:6ch">—</b></span>
+        <span>S<sub>CD21</sub> at Nyquist <b data-out="scd" style="min-width:8ch">—</b></span>
+        <span>emission vs one wire <b data-out="emi" style="min-width:6ch">—</b></span>
+        <span>eye <b data-out="eye" style="min-width:9ch">—</b></span>
+      </span>
+    </div>
+    <div class="side-layout">
+    <div class="panels">
+      <div class="panel" data-lab-name="In time">
+        <span class="panel__label">The two legs, their difference and their common mode</span>
+        <canvas data-cv="time" role="img" aria-label="Twelve bits of random data at the receiver: the P and N legs drawn thin, the differential voltage between them, and the common-mode voltage, which is zero for a perfectly balanced pair and spikes at every edge when the legs differ."></canvas>
+        <div class="legend"><span><i style="background:var(--signal)"></i>differential</span><span><i style="background:var(--reflect)"></i>common mode</span><span><i style="background:var(--muted)"></i>P leg</span><span><i class="dash" style="color:var(--muted)"></i>N leg</span></div>
+      </div>
+      <div class="panels two-up">
+        <div class="panel" data-lab-name="In frequency">
+          <span class="panel__label">S<sub>DD21</sub> and S<sub>CD21</sub></span>
+          <canvas data-cv="freq" role="img" aria-label="The pair's differential transfer SDD21 and its differential-to-common-mode conversion SCD21 in decibels, from DC to twice the bit rate, with the Nyquist frequency marked and, when there is skew, the first null of SDD21 at one over twice the skew."></canvas>
+          <div class="legend"><span><i style="background:var(--signal)"></i>S<sub>DD21</sub></span><span><i style="background:var(--reflect)"></i>S<sub>CD21</sub>, none when balanced</span></div>
+        </div>
+        <div class="panel" data-lab-name="The eye">
+          <span class="panel__label">Differential eye</span>
+          <canvas data-cv="eye" role="img" aria-label="The differential eye over two unit intervals from a full PRBS7 period, with a band of plus and minus ten percent of the swing that the opening has to clear."></canvas>
+          <div class="legend"><span><i style="background:var(--alarm);opacity:.3"></i>&#177;10% of the swing</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="side">
+    <div class="side__inner">
+    <div class="controls controls--pairs">
+      <div class="ctl">
+        <div class="ctl__head"><label for="dp-rate">Data rate</label><output id="dp-rate-out" for="dp-rate">10 Gb/s</output></div>
+        <input type="range" id="dp-rate" min="0" max="7" step="1" value="4">
+      </div>
+      <div class="ctl">
+        <div class="ctl__head"><label for="dp-tr">Edge</label><output id="dp-tr-out" for="dp-tr" data-numeric="off">30 ps</output></div>
+        <input type="range" id="dp-tr" min="0" max="7" step="1" value="3">
+      </div>
+      <div class="ctl">
+        <div class="ctl__head"><label for="dp-skew">Length skew</label><output id="dp-skew-out" for="dp-skew">0 ps</output></div>
+        <input type="range" id="dp-skew" min="0" max="100" step="1" value="0">
+      </div>
+      <div class="ctl">
+        <div class="ctl__head"><label for="dp-len">Route</label><output id="dp-len-out" for="dp-len">10 in</output></div>
+        <input type="range" id="dp-len" min="1" max="20" step="1" value="10">
+      </div>
+      <div class="ctl">
+        <div class="ctl__head"><label for="dp-dk">Weave &#916;D<sub>k</sub></label><output id="dp-dk-out" for="dp-dk">none</output></div>
+        <input type="range" id="dp-dk" min="0" max="5" step="1" value="0">
+      </div>
+      <div class="ctl">
+        <div class="ctl__head"><label for="dp-imb">Imbalance</label><output id="dp-imb-out" for="dp-imb">0%</output></div>
+        <input type="range" id="dp-imb" min="0" max="30" step="1" value="0">
+      </div>
+      <div class="ctl">
+        <div class="ctl__head"><label for="dp-slow">N edge</label><output id="dp-slow-out" for="dp-slow">same</output></div>
+        <input type="range" id="dp-slow" min="0" max="100" step="5" value="0">
+      </div>
+    </div>
+    <div class="presets">
+      <button class="preset" type="button" data-preset="balanced" aria-pressed="true">Balanced</button>
+      <button class="preset" type="button" data-preset="skew5" aria-pressed="false">5 ps skew</button>
+      <button class="preset" type="button" data-preset="halfUI" aria-pressed="false">Half-UI skew</button>
+      <button class="preset" type="button" data-preset="weave" aria-pressed="false">Glass weave</button>
+      <button class="preset" type="button" data-preset="imb" aria-pressed="false">Imbalance</button>
+      <button class="preset" type="button" data-preset="slow" aria-pressed="false">Slow N edge</button>
+    </div>
+    <div class="transport"><span data-out="note">—</span></div>
+    </div>
+    </div>
+    </div>
+  </section>
 
   <div class="prose">
     <h2>Why two wires beat one</h2>
@@ -205,6 +291,10 @@
       resin, giving them genuinely different propagation velocities even at identical routed lengths.
       Serpentine-matching the lengths does not fix it. Routing at an angle to the weave, or specifying a
       spread-glass style, is what fixes it — and both are stackup decisions made long before layout.
+      The size of it is easy to underestimate: a difference of only 0.05 in the D<sub>k</sub> each leg
+      sits over is about <span class="num">1.06 ps</span> per inch on a D<sub>k</sub> 4 laminate, so
+      <span class="num">10.6 ps</span> over a 10-inch route. The panel's <em>Glass weave</em> preset
+      shows what that does to the common mode while the eye barely moves.
     </div>
 
     <h2 class="section-rule"><span>Why this decides how your board behaves</span></h2>
@@ -382,6 +472,10 @@
 </footer>
 
 <script src="../../js/site.js?v=61b8ff31" defer></script>
+<script src="../../js/viz-kit.js?v=212a7cd3" defer></script>
+<script src="../../js/models/diffpair-model.js?v=2e6268a8" defer></script>
+<script src="../../js/viz/diffpair.js?v=0d160bb3" defer></script>
+<script src="../../js/viz-loader.js?v=9eaf05a5" defer></script>
 <script src="../../js/search.js?v=dcc1e06b" defer></script>
 </body>
 </html>

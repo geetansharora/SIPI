@@ -2313,6 +2313,29 @@
     return { sbr, cursor: Math.round((lo + hi) / 2), peak };
   };
 
+  /* ---------- CDR loop ----------
+     A second-order, type-2 clock-recovery loop, the one js/viz/cdr.js explains:
+
+       H(s) = (2 zeta wn s + wn^2) / (s^2 + 2 zeta wn s + wn^2)
+
+     H is input jitter to recovered clock; 1 - H, complex, is the residual the
+     decision sees. Complex H and its complement, from one evaluation;
+     s = j 2 pi f, f and fn in the same units. */
+  K.cdrLoop = function (f, fn, zeta) {
+    const w = 2 * Math.PI * f, wn = 2 * Math.PI * fn;
+    // numerator 2*zeta*wn*s + wn^2  ->  wn^2 + j*2*zeta*wn*w
+    const nr = wn * wn, ni = 2 * zeta * wn * w;
+    // denominator s^2 + 2*zeta*wn*s + wn^2  ->  (wn^2 - w^2) + j*2*zeta*wn*w
+    const dr = wn * wn - w * w, di = 2 * zeta * wn * w;
+    const den = dr * dr + di * di;
+    const hr = (nr * dr + ni * di) / den, hi = (ni * dr - nr * di) / den;
+    /* THE COMPLEX complement. 1 - |H| would be a different function and would
+       give the wrong residual wherever H has phase, which is everywhere near
+       fn. */
+    const er = 1 - hr, ei = -hi;
+    return { hr, hi, h: Math.hypot(hr, hi), e: Math.hypot(er, ei) };
+  };
+
   /* CTLE: one zero, two poles — a peaking filter, not an amplifier.
      |H| is normalised to its own maximum, so the block adds no net gain; the
      "boost" is the RATIO of the response at Nyquist to the response at DC, which

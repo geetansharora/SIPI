@@ -1209,6 +1209,284 @@ const MUTATIONS = [
        + 'distance on each grid, so the two grids stop agreeing.',
     active: true, fast: true
   },
+  {
+    id: 'termination-outgoing-wave-sign',
+    file: 'js/models/termination-model.js',
+    find: '        l.A[l.p] = vv[g(l.a)] - l.incA;',
+    with: '        l.A[l.p] = vv[g(l.a)] + l.incA;',
+    suite: 'Termination',
+    expect: 'agrees with K.line1D at both ends, Rs 10 Ω, open',
+    why: 'The wave leaving a line end is the end voltage less the wave arriving there. Adding '
+       + 'them sends the echo back out a second time, so a mismatched line rings at the wrong '
+       + 'amplitude; a matched one still looks right, which is why the check is against the '
+       + 'superposition model and not only the matched load.',
+    active: true, fast: true
+  },
+  {
+    id: 'termination-capacitor-companion',
+    file: 'js/models/termination-model.js',
+    find: '    const Cs = net.C.map((c) => ({ ...c, g: 2 * c.C / dt }));',
+    with: '    const Cs = net.C.map((c) => ({ ...c, g: c.C / dt }));',
+    suite: 'Termination',
+    expect: 'LC: 1 nH and 1 pF ring at 2π√(LC) = 198.7 ps',
+    why: 'Backward Euler\'s conductance under a trapezoidal history update: the capacitor then '
+       + 'stores half the charge it should, so every receiver load, AC terminator and tank is off '
+       + 'by a factor the waveforms do not show at a glance.',
+    active: true, fast: true
+  },
+  {
+    id: 'termination-thevenin-pair-swapped',
+    file: 'js/models/termination-model.js',
+    find: "      net.R.push({ a: P, b: -1, R: cfg.Rt / b, v: VDD, tag: 'term' });",
+    with: "      net.R.push({ a: P, b: -1, R: cfg.Rt / (1 - b), v: VDD, tag: 'term' });",
+    suite: 'Termination',
+    expect: 'Thevenin: high level by Millman',
+    why: 'The pair still matches the line (R1 and R2 in parallel are unchanged at mid-rail), '
+       + 'but the bias moves the wrong way: a perfectly terminated net at the wrong level, the '
+       + 'trap the page warns about.',
+    active: true, fast: true
+  },
+  {
+    id: 'diffpair-common-mode-not-halved',
+    file: 'js/models/diffpair-model.js',
+    find: '    for (let i = 0; i < ts.length; i++) { D[i] = P[i] - N[i]; Cm[i] = (P[i] + N[i]) / 2; }',
+    with: '    for (let i = 0; i < ts.length; i++) { D[i] = P[i] - N[i]; Cm[i] = P[i] + N[i]; }',
+    suite: 'Differential pair',
+    expect: 'imbalance: the common mode settles at a·(one leg\'s step)/4',
+    why: 'The common mode is the average of the legs, not their sum. Doubling it doubles every '
+       + 'common-mode readout and spike while the shape, and the balanced case, look perfect.',
+    active: true, fast: true
+  },
+  {
+    id: 'diffpair-conversion-is-the-sum',
+    file: 'js/models/diffpair-model.js',
+    find: '    const dd = [(p[0] + n[0]) / 2, (p[1] + n[1]) / 2], cd = [(p[0] - n[0]) / 2, (p[1] - n[1]) / 2];',
+    with: '    const dd = [(p[0] + n[0]) / 2, (p[1] + n[1]) / 2], cd = [(p[0] + n[0]) / 2, (p[1] + n[1]) / 2];',
+    suite: 'Differential pair',
+    expect: 'balanced: SCD21 is zero at every frequency',
+    why: 'SCD21 built from the sum of the legs instead of their difference is SDD21 again: a '
+       + 'perfectly balanced pair would then report full conversion.',
+    active: true, fast: true
+  },
+  {
+    id: 'diffpair-skew-on-both-legs',
+    file: 'js/models/diffpair-model.js',
+    find: '      N: { g: 1 - a / 2, d: -skew / 2, tau: tau * (1 + m), sign: -1 }',
+    with: '      N: { g: 1 - a / 2, d: skew / 2, tau: tau * (1 + m), sign: -1 }',
+    suite: 'Differential pair',
+    expect: 'skew: SDD21\'s first null is at 1/(2·skew)',
+    why: 'Delaying both legs by the same amount is a longer pair, not a skewed one: the common '
+       + 'mode vanishes and the panel would say no length mismatch matters.',
+    active: true, fast: true
+  },
+  {
+    id: 'pcie-precursor-tap-late',
+    file: 'js/models/pcie-eq-model.js',
+    find: '      q[i] = taps[0] * at(j + SPS) + taps[1] * at(j) + taps[2] * at(j - SPS);',
+    with: '      q[i] = taps[0] * at(j - SPS) + taps[1] * at(j) + taps[2] * at(j - SPS);',
+    suite: 'PCIe equalisation',
+    expect: 'presets: the launched waveform has each preset\'s preshoot and de-emphasis to 0.1 dB',
+    why: 'A pre-cursor tap applied to the bit already sent is a second post-cursor tap: every '
+       + 'preshoot preset would act as extra de-emphasis and the sweep would never prefer one.',
+    active: true, fast: true
+  },
+  {
+    id: 'pcie-dfe-unlimited',
+    file: 'js/models/pcie-eq-model.js',
+    find: '      return Math.max(-lim, Math.min(lim, v));',
+    with: '      return v;',
+    suite: 'PCIe equalisation',
+    expect: 'peak distortion: a DFE tap clipped at 20 mV removes 20 mV of it and no more',
+    why: 'Without the tap limits the reference DFE cancels any post-cursor, so a 36 dB Gen 5 '
+       + 'channel would look comfortable and the limits in C-138 would mean nothing.',
+    active: true, fast: true
+  },
+  {
+    id: 'pcie-dfe-reaches-precursor',
+    file: 'js/models/pcie-eq-model.js',
+    find: '        if (m >= 1 && m <= d.length) v -= d[m - 1];',
+    with: '        if (Math.abs(m) >= 1 && Math.abs(m) <= d.length) v -= Math.sign(v) * Math.min(Math.abs(v), Math.abs(d[Math.abs(m) - 1]));',
+    suite: 'PCIe equalisation',
+    expect: 'DFE: the pre-cursor survives three unlimited taps, the post-cursor does not',
+    why: 'A DFE feeds back bits already decided; one that cancelled pre-cursor would know the '
+       + 'future, and the page\'s reason for transmitter preshoot would disappear.',
+    active: true, fast: true
+  },
+  {
+    id: 'flit-interleave-two-way',
+    file: 'js/models/flit-fec-model.js',
+    find: '  const group = (i) => i % WAYS;',
+    with: '  const group = (i) => i % 2;',
+    suite: 'Flit FEC',
+    expect: 'interleave: every burst of 1, 2 or 3 bytes is corrected, at all 256 starts',
+    why: 'A two-way interleave puts two bytes of any 3-byte burst in one code: the page\'s '
+       + '"any burst up to 3 bytes is fixed in place" would be false and the panel would hide it.',
+    active: true, fast: true
+  },
+  {
+    id: 'flit-two-errors-allowed',
+    file: 'js/models/flit-fec-model.js',
+    find: '    for (const i of bad) if (++seen[group(i)] > 1) return false;',
+    with: '    for (const i of bad) if (++seen[group(i)] > 2) return false;',
+    suite: 'Flit FEC',
+    expect: 'interleave: no burst of 4 to 8 bytes is corrected, at any start',
+    why: 'A single-symbol code that "corrects" two bad bytes would make the light FEC look '
+       + 'twice as strong as it is and the replay curve fall two decades too low.',
+    active: true, fast: true
+  },
+  {
+    id: 'ssc-type-one-loop',
+    file: 'js/viz-kit.js',
+    find: '    const nr = wn * wn, ni = 2 * zeta * wn * w;',
+    with: '    const nr = wn * wn, ni = 0;',
+    suite: 'SSC tracking',
+    expect: 'ramp: mid-ramp lag is (dω/dt)/ωn² at fn = 1 MHz',
+    why: 'Dropping the zero makes the loop type 1: it then lags a frequency offset in proportion '
+       + 'to the offset, so SSC would leave hundreds of picoseconds behind and the panel would '
+       + 'blame the spread for what is a wrong loop.',
+    active: true, fast: true
+  },
+  {
+    id: 'ufs-wake-is-free',
+    file: 'js/models/ufs-burst-model.js',
+    find: ' + (sleeps ? P.wake * cfg.wake : 0);',
+    with: ' + 0;',
+    suite: 'UFS burst',
+    expect: 'break-even: the curves cross at θ + P_wake t_wake / (P_stall − P_h8), wake 500 µs, θ 0 µs',
+    why: 'A wake that costs no energy makes HIBERN8 win at any idle: the break-even vanishes and '
+       + 'the panel would teach that sleeping early is always right.',
+    active: true, fast: true
+  },
+  {
+    id: 'cphy-symbol-may-stay',
+    file: 'js/models/cphy-model.js',
+    find: "  const next = (s, d) => { const o = [0, 1, 2, 3, 4, 5].filter((t) => t !== s); return o[d]; };",
+    with: "  const next = (s, d) => { const o = [0, 1, 2, 3, 4, 5]; return o[d]; };",
+    suite: 'C-PHY trio',
+    expect: 'mapper: no symbol leaves the trio where it was (65,536 words × 6 starts)',
+    why: 'A symbol that can leave the trio in the state it found it produces no edge, and the '
+       + 'embedded clock, the reason C-PHY needs no clock lane, is gone.',
+    active: true, fast: true
+  },
+  {
+    id: 'dl-uhbr20-8b10b',
+    file: 'js/models/display-link-model.js',
+    find: "        { id: 'UHBR20', gbps: 20, code: [128, 132], budget: 22.5 }",
+    with: "        { id: 'UHBR20', gbps: 20, code: [8, 10], budget: 22.5 }",
+    suite: 'Display link',
+    expect: 'coding: the three UHBR rates (and only they) use 128b/132b',
+    why: 'UHBR coded as 8b/10b loses a sixth of the payload the rate exists to deliver, and every '
+       + 'video mode the page derives from it.',
+    active: true, fast: true
+  },
+  {
+    id: 'dl-retimer-no-split',
+    file: 'js/models/display-link-model.js',
+    find: "    if (cfg.retimer === 'source') return [src.concat([rt]), [rt].concat(mid, snk)];",
+    with: "    if (cfg.retimer === 'source') return [src.concat([rt], mid, snk)];",
+    suite: 'Display link',
+    expect: 'monotonic: adding a retimer never trains a lower rate',
+    why: 'A retimer that does not split the path is a package of extra loss: the one fix the page '
+       + 'recommends would make links train lower.',
+    active: true, fast: true
+  },
+  {
+    id: 'dl-ladder-from-bottom',
+    file: 'js/models/display-link-model.js',
+    find: "    const hit = ladder.find((x) => x.ok) || null;",
+    with: "    const hit = ladder.slice().reverse().find((x) => x.ok) || null;",
+    suite: 'Display link',
+    expect: 'ladder: the trained rate fits, and every higher rate up to the cap fails (162 paths)',
+    why: 'Training starts at the top and keeps the first rate that works; settling on the lowest '
+       + 'that works would leave every link at RBR.',
+    active: true, fast: true
+  },
+  {
+    id: 'dl-cable-loss-linear',
+    file: 'js/models/display-link-model.js',
+    find: "    const rs = NS.calc.skin(f, 1e4, 0).rs;                                // Ω per square, thick copper",
+    with: "    const rs = NS.calc.skin(1e9, 1e4, 0).rs * f / 1e9;",
+    suite: 'Display link',
+    expect: 'cable: conductor loss goes as sqrt(f) (x4 in f -> x2 in loss)',
+    why: 'Skin-effect loss rises as the square root of frequency; a linear law overstates the cable '
+       + 'at UHBR20 and understates it at HBR, and moves every rate the ladder settles on.',
+    active: true, fast: true
+  },
+  {
+    id: 'dl-frl-keeps-clock-lane',
+    file: 'js/models/display-link-model.js',
+    find: "        { id: 'FRL 12G ×4', gbps: 12, lanes: 4, code: [16, 18], budget: 20 }",
+    with: "        { id: 'FRL 12G ×4', gbps: 12, lanes: 3, clock: true, code: [16, 18], budget: 20 }",
+    suite: 'Display link',
+    expect: 'HDMI: every FRL mode is 16b/18b with no clock lane',
+    why: 'FRL\'s fourth data lane is the pair TMDS used for its clock; keeping the clock loses a '
+       + 'quarter of the 48 Gb/s the page is about.',
+    active: true, fast: true
+  },
+  {
+    id: 'ssc-fast-zero-depth-nan',
+    file: 'js/models/ssc-model.js',
+    find: "      const into = ramp > 0 ? Math.min(1, h / ramp) : 1;",
+    with: "      const into = Math.min(1, h / ramp);",
+    suite: 'SSC tracking',
+    expect: 'no spread (fast): no phase, no slew, every number finite',
+    why: 'With no spread the steep profile has a zero-length ramp; 0/0 fills the profile with NaN '
+       + 'and the panel prints -Infinity UI.',
+    active: true, fast: true
+  },
+  {
+    id: 'ufs-breakeven-ignores-threshold',
+    file: 'js/models/ufs-burst-model.js',
+    find: "  const breakEven = (wake, theta) => (isFinite(theta) ? theta : 0) + (P.wake * wake) / (P.stall - P.h8);",
+    with: "  const breakEven = (wake, theta) => (P.wake * wake) / (P.stall - P.h8);",
+    suite: 'UFS burst',
+    expect: 'break-even: the marker sits on the crossing',
+    why: 'Both policies spend the threshold in STALL, so the curves cross a threshold later than the '
+       + 'sleep-at-once break-even; the marker would sit decades left of the crossing.',
+    active: true, fast: true
+  },
+  {
+    id: 'cphy-eye-fixed-fold',
+    file: 'js/models/cphy-model.js',
+    find: "    for (let off = -SPS / 2; off < SPS / 2; off++) {",
+    with: "    for (let off = 0; off < 1; off++) {",
+    suite: 'C-PHY trio',
+    expect: 'fold: no other fold point opens the eye wider',
+    why: 'Folding at the symbol boundary cuts the open window in two and reports a narrower eye than '
+       + 'the waves have.',
+    active: true, fast: true
+  },
+  {
+    id: 'cphy-skew-moves-wire-a',
+    file: 'js/models/cphy-model.js',
+    find: "      const delay = j === 2 ? cfg.skew : 0;",
+    with: "      const delay = j === 0 ? cfg.skew : 0;",
+    suite: 'C-PHY trio',
+    expect: 'skew: wires A and B do not move when wire C is late',
+    why: 'The page and the control say wire C is late; skewing another wire changes which receivers '
+       + 'lose width.',
+    active: true, fast: true
+  },
+  {
+    id: 'diffpair-wrap-open',
+    file: 'js/models/diffpair-model.js',
+    find: "      for (let p = -back; p <= 1; p++) {",
+    with: "      for (let p = -back; p <= 0; p++) {",
+    suite: 'Differential pair',
+    expect: 'periodic: leg N closes on itself across the wrap',
+    why: 'The early leg misses the next period\'s first edges, so the folded eye gains a stray trace.',
+    active: true, fast: true
+  },
+  {
+    id: 'termination-tap-fixed-threshold',
+    file: 'js/viz/termination.js',
+    find: "    if (r.tap && r.tap.band > 2 * r.far.band + 2 * r.dt) return 'tap sits in the band';",
+    with: "    if (r.tap && r.tap.band > 2 * r.build.trSupport + 2 * r.dt) return 'tap sits in the band';",
+    suite: 'Termination',
+    expect: 'prose guard: the tap preset reads',
+    why: 'Against a fixed multiple of the edge, a 300 ps edge hides a tap stranded for a nanosecond.',
+    active: true, fast: true
+  },
 ];
 
 /* A deliberately UNDETECTABLE mutation, used only by --selftest.

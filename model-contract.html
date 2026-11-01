@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
 <link rel="stylesheet" href="css/base.css?v=1e3ae753">
-<link rel="stylesheet" href="css/components.css?v=c532fdc4">
+<link rel="stylesheet" href="css/components.css?v=9967e8fb">
   <!-- meta:start -->
   <link rel="canonical" href="https://sipi.work/model-contract.html">
   <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
@@ -47,10 +47,10 @@
   <div class="page-head">
     <p class="crumb"><a href="index.html">SIPI</a> / model contracts</p>
     <h1>Interactive model assumptions and evidence</h1>
-    <p class="byline"><span>Generated from <code>docs/model-types.json</code></span><span>55 panels</span><span>fidelity: 18 analytical, 14 exact, 7 illustrative, 16 numerical · evidence: 6 computed, 44 independent, 5 plausible</span></p>
+    <p class="byline"><span>Generated from <code>docs/model-types.json</code></span><span>63 panels</span><span>fidelity: 21 analytical, 14 exact, 8 illustrative, 20 numerical · evidence: 6 computed, 52 independent, 5 plausible</span></p>
     <p class="answer">
       Each interactive panel uses a model with a defined scope. This page publishes the
-      contract for all 55 panels: the
+      contract for all 63 panels: the
       topology, the reference planes, the equations, the units, the range over which it is
       valid, how it is computed, and the evidence available for its behavior.
     </p>
@@ -69,7 +69,7 @@
       The fourth level is listed for reference and is currently unused. These model labels do not
       claim validation against a published specification. Where a page states a
       specification claim, it is recorded in the
-      <a href="docs/claims.md">claim ledger</a> with its status. Of its 206 claims, 94 have been read against the source they cite, 112 have been narrowed to what their source supports, and none still awaits a source. None of the verified ones rests on the normative text of a standard; they rest on vendor documents, public announcements and measured data, and the source checks were made by an AI model, not by a person.
+      <a href="docs/claims.md">claim ledger</a> with its status. Of its 225 claims, 104 have been read against the source they cite, 121 have been narrowed to what their source supports, and none still awaits a source. None of the verified ones rests on the normative text of a standard; they rest on vendor documents, public announcements and measured data, and the source checks were made by an AI model, not by a person.
     </p>
     <p>
       <em>Kind</em> and <em>evidence</em> answer different questions. A deliberately
@@ -503,6 +503,25 @@
       <dt>Evidence</dt><dd>check-models.js — Coupling (20 and 40 dB/decade slopes, the Cm/(Cm+Cv) plateau, slow-edge closed forms, independence of each path from the other driver, the Z* crossover, an exact Fourier integral of the time-domain solution against the transfer functions, zero mean, 6.02 and 12.04 dB edge-rate bounds).</dd>
     </dl>
   </section>
+  <section class="contract" id="cphyTrio">
+    <div class="contract__head">
+      <h2>cphyTrio</h2>
+      <span class="model-tag model-tag--analytical">analytical model</span>
+      <span class="ev ev--independent">independent</span>
+      <span class="contract__ver">v1.1 &#183; reviewed 2026-11-01</span>
+    </div>
+    <p class="contract__purpose">Show how C-PHY carries data and clock on three wires: a 16-bit word as seven symbols, each a move to one of the five other wire states, the three wire voltages and the three differential receivers, and why the receivers' eye has more than one crossing and is sensitive to one late wire.</p>
+    <dl class="contract__body">
+      <dt>Topology</dt><dd>One trio, wires A, B and C, each driven at high, mid or low with a raised-cosine edge, optionally through the shared channel model; wire C optionally delayed. Three receivers: A - B, B - C and C - A.</dd>
+      <dt>Reference planes</dt><dd>The three wires at the receiver and the three differential receiver outputs.</dd>
+      <dt>Equations</dt><dd><ul class="tight"><li><code>levels in steps: high +1, mid 0, low -1; receivers read +-1 or +-2</code></li><li><code>(A - B) + (B - C) + (C - A) = 0</code></li><li><code>word -&gt; seven base-5 digits; digit d selects the d-th of the five other states (a valid mapping, not the specification's table)</code></li><li><code>rate per trio = symbol rate x 16 / 7</code></li></ul></dd>
+      <dt>Units</dt><dd>Gsps, ps, dB, steps of the mid-to-high level</dd>
+      <dt>Validity</dt><dd>Linear wires with matched loss and no coupling between them; ideal level drivers.</dd>
+      <dt>Numerics</dt><dd>32 samples a symbol; the channel is K.channelImpulse convolved with each wire, its bulk delay removed; the eye is 36 random words folded over the symbol, its width the share of phases where every receiver is on the right side by at least 0.2 of the weak level.</dd>
+      <dt>Known limitations</dt><dd>The mapper is a valid one chosen for the page, not the specification's table, which is members-only, as are the voltages. No receiver equalisation, no coupling within the trio, no termination network, no 18-wirestate mode and no D-PHY mode. Mechanism and proportion, not a sign-off.</dd>
+      <dt>Evidence</dt><dd>check-models.js suite C-PHY trio: one wire is at mid in every state, the receivers sum to zero and never read zero, and the six states give six sign patterns; all 65,536 words round-trip through seven symbols of 0 to 4, and from every start no symbol leaves the state unchanged and every symbol flips a receiver; the receivers sum to zero at every sample through edges, skew and loss; matched wires with no loss open fully to the weak level; skew, slower edges and loss never widen the eye; seven symbols are the fewest that hold 16 bits.</dd>
+    </dl>
+  </section>
   <section class="contract" id="crossSection">
     <div class="contract__head">
       <h2>crossSection</h2>
@@ -598,6 +617,44 @@
       <dt>Evidence</dt><dd>check-models.js — DDR5 page (with no load every gap costs the unloaded flight; with load the delay per DRAM approaches the loaded-line formula; more load never arrives sooner).</dd>
     </dl>
   </section>
+  <section class="contract" id="diffPair">
+    <div class="contract__head">
+      <h2>diffPair</h2>
+      <span class="model-tag model-tag--analytical">analytical model</span>
+      <span class="ev ev--independent">independent</span>
+      <span class="contract__ver">v1.1 &#183; reviewed 2026-11-01</span>
+    </div>
+    <p class="contract__purpose">Show where a differential pair's common mode comes from: how a length mismatch, a glass-weave velocity difference, a drive imbalance or one slower edge turns part of the differential signal into common mode, what that does to SDD21 and SCD21, and how little of it the differential eye shows.</p>
+    <dl class="contract__body">
+      <dt>Topology</dt><dd>Two uncoupled legs, P driven with PRBS7 and N with its complement, each a gain, a delay and a single-pole edge. The skew delays P by half and advances N by half. Glass-weave skew is the routed length at two velocities, Dk 4 against Dk 4 + dDk.</dd>
+      <dt>Reference planes</dt><dd>The two legs at the receiver; the differential and common-mode voltages formed from them.</dd>
+      <dt>Equations</dt><dd><ul class="tight"><li><code>H_k(f) = g_k exp(-j 2 pi f d_k) / (1 + j 2 pi f tau_k), tau = t_r / ln 9</code></li><li><code>S_DD21 = (H_P + H_N)/2, S_CD21 = (H_P - H_N)/2</code></li><li><code>V_diff = V_P - V_N, V_cm = (V_P + V_N)/2</code></li><li><code>weave skew = L (sqrt(Dk + dDk) - sqrt(Dk)) / c</code></li><li><code>emission vs one wire: peak over f of f |S_CD21| |sinc(f T)|, against the same for one wire driven alone</code></li></ul></dd>
+      <dt>Units</dt><dd>ps, GHz, V, in, dB</dd>
+      <dt>Validity</dt><dd>Uncoupled, lossless legs with single-pole edges. Common mode is what the asymmetry makes, before any receiver rejects it.</dd>
+      <dt>Numerics</dt><dd>One full PRBS7 period at 32 samples per bit, every edge summed in closed form including earlier periods until the slowest edge has settled. Eye folded at the phase that leaves it whole; its width is the share of the UI open by at least 10% of the swing. 240 frequency points to twice the bit rate.</dd>
+      <dt>Known limitations</dt><dd>No coupling between the legs, so no odd- and even-mode velocity difference and no Zdiff; the field solver page does that. No channel loss, no reflections, no receiver CMRR. The emission figure is a relative proxy for a short cable's radiation, not an emissions limit.</dd>
+      <dt>Evidence</dt><dd>check-models.js suite Differential pair: identical legs give no common mode and no SCD21 at all; for skew alone |SDD21|^2 + |SCD21|^2 equals one leg's |H|^2 and SDD21's first null falls at 1/(2 skew); the common-mode pulse of one edge has area -A skew / 2 whatever the edge shape; swapping the legs flips the common mode and leaves |SCD21| alone; a drive imbalance alone gives SCD21/SDD21 = a/2 at every frequency; doubling a small skew adds 6 dB of emission; the eye never widens as skew grows.</dd>
+    </dl>
+  </section>
+  <section class="contract" id="displayLink">
+    <div class="contract__head">
+      <h2>displayLink</h2>
+      <span class="model-tag model-tag--numerical">numerical model</span>
+      <span class="ev ev--independent">independent</span>
+      <span class="contract__ver">v1.2 &#183; reviewed 2026-11-01</span>
+    </div>
+    <p class="contract__purpose">Show why a DisplayPort or HDMI link's rate is decided by loss at each rate's own Nyquist frequency: a path from source die to sink die through boards, connectors and a cable, with an optional retimer, checked against each rate's budget from the top rate down, the way link training steps down.</p>
+    <dl class="contract__body">
+      <dt>Topology</dt><dd>Source package, source board trace, mated connector, cable, mated connector, sink board trace, sink package. A retimer beside either connector splits the path into two segments, each with a package of the retimer's.</dd>
+      <dt>Reference planes</dt><dd>Die to die, per segment.</dd>
+      <dt>Equations</dt><dd><ul class="tight"><li><code>board: dielectric pi f sqrt(Dk) Df / c plus conductor Rs K / (2 w Z0), the laminate's published Dk and Df (NS.calc.loss)</code></li><li><code>cable pair: Z = (120/sqrt(er)) arccosh(D/d); R' = (2 Rs / pi d) (D/d) / sqrt((D/d)^2 - 1); loss = k R'/2Z + pi f sqrt(er) tan(d) / c, k fitted to C-118</code></li><li><code>package, connector: illustrative allowance at 10 GHz x (0.35 sqrt(f/10 GHz) + 0.65 f/10 GHz)</code></li><li><code>a rate trains if every segment's loss at its Nyquist is within its budget; the link takes the highest that does</code></li><li><code>payload = lanes x rate x coding (8/10 or 128/132)</code></li></ul></dd>
+      <dt>Units</dt><dd>dB, GHz, Gb/s, in, m, AWG</dd>
+      <dt>Validity</dt><dd>Insertion loss only: smooth, matched segments whose decibels add. Budgets are die-to-die figures at Nyquist from public vendor material (DisplayPort UHBR and HBR3; HDMI FRL 12G, from a worst-case cable test channel, which makes HDMI cautious) or assumed (the other rates).</dd>
+      <dt>Numerics</dt><dd>Closed form at each rate's Nyquist; the loss chart samples each segment at 111 frequencies to 11 GHz.</dd>
+      <dt>Known limitations</dt><dd>A loss budget, not an eye: no reflections, return loss, crosstalk, jitter or equalisation, so a path that fits can still fail and one that misses by a little can still train. Package and connector allowances, the cable's insulation and the budgets of RBR, HBR, HBR2 and every HDMI rate but FRL 12G are illustrative or assumed; HDMI's 20 dB is a cable test channel counted die to die, so its verdicts are cautious; the cable is a two-wire pair scaled by one factor fitted to one public twinax figure. The drive-level steps of clock recovery and the 128b/132b training sequence are not modelled. The HDMI order of retrying lower FRL rates before TMDS is not public; the ladder is the shape of the decision. Not the VESA or HDMI compliance test.</dd>
+      <dt>Evidence</dt><dd>check-models.js suite Display link: the coding efficiencies are the bit ratios and HBR3 on four lanes reproduces VESA's published 25.92 Gb/s; the cable loss goes as the square root of frequency with no insulation loss, its proximity factor tends to one for widely spaced wires and exceeds one at 100 ohms, thinner wire always loses more, and the fitted factor is at least one; every segment's loss is zero at DC and rises with frequency; the trained rate fits its budget and every higher rate up to the cap does not; a longer cable, a longer trace or a thinner gauge never trains a higher rate, a retimer never a lower one, and lowering the cap never raises the rate. HDMI: FRL is 16b/18b on three lanes at 3 and 6 Gb/s or four at 6 to 12 with no clock lane, TMDS three data lanes beside a clock; FRL 12G carries 48 x 16/18; the ladder tries every FRL rate before TMDS, and with equal budgets loss alone never lands an FRL sink in TMDS.</dd>
+    </dl>
+  </section>
   <section class="contract" id="equalizer">
     <div class="contract__head">
       <h2>equalizer</h2>
@@ -653,6 +710,25 @@
       <dt>Numerics</dt><dd>Seeded LFSR and seeded Gaussians — reproducible.</dd>
       <dt>Known limitations</dt><dd>Fixed sampling phase; no adaptation. 858 symbols evidences 3.5e-3, not a compliance BER.</dd>
       <dt>Evidence</dt><dd>check-models.js — Evidence suite (13 assertions) guards the BER floor claim.</dd>
+    </dl>
+  </section>
+  <section class="contract" id="flitFec">
+    <div class="contract__head">
+      <h2>flitFec</h2>
+      <span class="model-tag model-tag--numerical">numerical model</span>
+      <span class="ev ev--independent">independent</span>
+      <span class="contract__ver">v1.0 &#183; reviewed 2026-11-01</span>
+    </div>
+    <p class="contract__purpose">Show why PCIe 6.0 can use a light FEC: three interleaved codes that each fix one bad byte correct any short burst in place, and the CRC and a replay take whatever is left, so the replay rate, not the raw error rate, is what the link pays for; and show how much worse bursts make it.</p>
+    <dl class="contract__body">
+      <dt>Topology</dt><dd>One 256-byte flit in one lane's byte order; byte i belongs to FEC code i mod 3 (86, 85 and 85 bytes). A flit with two or more bad bytes in any code is replayed.</dd>
+      <dt>Reference planes</dt><dd>The receiver's FEC decoder and CRC check, per flit.</dd>
+      <dt>Equations</dt><dd><ul class="tight"><li><code>byte error rate b = 1 - (1 - FBER)^8</code></li><li><code>errors alone: P(replay) = 1 - prod over codes of [(1 - b)^n + n b (1 - b)^(n - 1)]</code></li><li><code>bursts: P(replay) = sum over k of C(256, k) b^k (1 - b)^(256 - k) P(fail | k bursts)</code></li><li><code>burst length: 1 + geometric, each further byte bad with probability q</code></li><li><code>flit time = 256 x 8 bits / (64 Gb/s x lanes)</code></li></ul></dd>
+      <dt>Units</dt><dd>probability per flit, ns, lanes</dd>
+      <dt>Validity</dt><dd>Errors that start independently at the first-bit error rate, each extending into following bytes with a fixed probability. A proportion model of the mechanism.</dd>
+      <dt>Numerics</dt><dd>P(fail | k bursts) for k = 1 to 12 from 4000 seeded draws each, once per burst setting; a flit with more than 12 bursts is counted as failed. The closed form is used when errors arrive alone.</dd>
+      <dt>Known limitations</dt><dd>No lane striping and no bursts crossing a flit boundary; no precoding, which shortens real bursts; no miscorrection, and every flit the FEC cannot fix is assumed caught by the CRC; no model of the replay round trip, so bandwidth and latency per replay are not computed. Not the specification's reliability analysis.</dd>
+      <dt>Evidence</dt><dd>check-models.js suite Flit FEC: every burst of up to 3 bytes is corrected at every start and none of 4 to 8 bytes is; two bad bytes fail in exactly the share of pairs that share a code; at low rate the closed form is the two-error term; the burst model with no bursts meets the closed form within its own draw error; one burst fails with probability (253/256) q^3; nothing replays at zero error rate; replays never fall as the rate or the burst length grows and never exceed the flits with an error; flits last 2 ns on x16 and 32 ns on x1.</dd>
     </dl>
   </section>
   <section class="contract" id="impairments">
@@ -788,6 +864,25 @@
       <dt>Evidence</dt><dd>check-models.js — DFE and Convergence suites cover the chain's parts: exact cancellation with known symbols, the half-open tap window, gain-aware slicing for PAM4 (M2-7), and grid independence of the channel. The 9.54 dB figure is in check-numbers.py.</dd>
     </dl>
   </section>
+  <section class="contract" id="pcieEq">
+    <div class="contract__head">
+      <h2>pcieEq</h2>
+      <span class="model-tag model-tag--numerical">numerical model</span>
+      <span class="ev ev--independent">independent</span>
+      <span class="contract__ver">v1.0 &#183; reviewed 2026-11-01</span>
+    </div>
+    <p class="contract__purpose">Show why PCIe 4.0 and 5.0 links equalise at run time: on a channel built from the four places the loss budget goes, what each transmitter preset and the reference receiver's CTLE and limited DFE make of the eye, and which preset a Phase 2-3 sweep would keep.</p>
+    <dl class="contract__body">
+      <dt>Topology</dt><dd>CPU package, motherboard trace, CEM connector and add-in card in series; package, connector and card at TI's allocation for the generation, the board at the reader's length and laminate. A 3-tap transmitter FIR from the P0-P9 table at 800 mV full swing; a one-zero, two-pole CTLE at the reference DC gains; a 2-tap (Gen 4) or 3-tap (Gen 5) DFE with per-tap limits.</dd>
+      <dt>Reference planes</dt><dd>The transmitter pins to the receiver's slicer, after CTLE and DFE.</dd>
+      <dt>Equations</dt><dd><ul class="tight"><li><code>IL(f) = L_N (0.35 sqrt(f/fN) + 0.65 f/fN), L_N the sum of the four segments at Nyquist</code></li><li><code>board loss at 8 GHz = (loss at 16 GHz) x (0.35 sqrt(0.5) + 0.65 x 0.5)</code></li><li><code>launched pulse = c-1 p(t + UI) + c0 p(t) + c+1 p(t - UI)</code></li><li><code>DFE tap k = clip(A q(s + kUI), +/- limit_k)</code></li><li><code>worst-case eye at s = 2 (A q(s) - sum over k != 0 of |A q(s + kUI) - d_k|)</code></li></ul></dd>
+      <dt>Units</dt><dd>dB, GHz, in, mV, UI</dd>
+      <dt>Validity</dt><dd>A linear, time-invariant channel with the site's two-term loss law and no reflections; a noiseless receiver. Mechanism and proportion: which preset helps, by roughly how much, and when none can.</dd>
+      <dt>Numerics</dt><dd>Minimum-phase channel impulse at 32 samples per UI on a 4096-point FFT; one pulse response per channel, the CTLE applied to it for each reference setting (linear, so in either order); the eye is peak distortion over the whole pulse, its sampling point the tallest within a UI of the pulse peak, its width the span about that point where the height is at least 15 mV.</dd>
+      <dt>Known limitations</dt><dd>The CTLE is the site's one-zero, two-pole filter at the reference DC gains, not the Base specification's pole and zero placement (Gen 5's has four poles and two zeros). No noise, jitter, crosstalk or reflections, so via stubs and connector discontinuities are not in it. The eye is the worst case of any pattern, not an extrapolation to 1e-12, and the receiver's CTLE is chosen for the tallest eye, where a real one also weighs noise. Not SigTest, Seasim or any compliance flow.</dd>
+      <dt>Evidence</dt><dd>check-models.js suite PCIe equalisation: P4 leaves the pulse exactly as it was; the FIR, run on a pattern with no channel, launches every preset's preshoot and de-emphasis to 0.1 dB, and no pattern exceeds the unshaped swing; peak distortion matches hand arithmetic for a three-cursor pulse with no DFE, an unlimited DFE and a DFE clipped at 20 mV; the DFE never removes pre-cursor; a lossless channel gives the full 800 mV; more board never opens the eye; 400 bits of data never cross the worst-case eye; the sweep keeps its best preset; the same loss at Nyquist gives the same eye at 16 and 32 GT/s; no DFE tap exceeds its limit.</dd>
+    </dl>
+  </section>
   <section class="contract" id="pdnImpedance">
     <div class="contract__head">
       <h2>pdnImpedance</h2>
@@ -921,6 +1016,25 @@
       <dt>Evidence</dt><dd>check-models.js — Spectrum (a 50% duty square wave has no even harmonics).</dd>
     </dl>
   </section>
+  <section class="contract" id="ssc">
+    <div class="contract__head">
+      <h2>ssc</h2>
+      <span class="model-tag model-tag--analytical">analytical model</span>
+      <span class="ev ev--independent">independent</span>
+      <span class="contract__ver">v1.1 &#183; reviewed 2026-11-01</span>
+    </div>
+    <p class="contract__purpose">Show what USB's mandatory spread-spectrum clocking asks of the receiver: how far the sweep moves the data, how closely a type-2 clock-recovery loop follows it for a given bandwidth and damping, and why the sweep's slope, not its depth, sets the lag.</p>
+    <dl class="contract__body">
+      <dt>Topology</dt><dd>A down-spread clock, a triangle or a legal profile that ramps at the 1250 ppm/us limit and holds, driving the site's second-order type-2 CDR loop (K.cdrLoop).</dd>
+      <dt>Reference planes</dt><dd>The data's phase at the receiver, against a clock at the sweep's average rate; the recovered clock; their difference at the decision.</dd>
+      <dt>Equations</dt><dd><ul class="tight"><li><code>x(t) = integral of (df/f - mean) dt, the data's time error against the average-rate clock</code></li><li><code>H(s) = (2 zeta wn s + wn^2) / (s^2 + 2 zeta wn s + wn^2)</code></li><li><code>residual r = (1 - H) x, harmonic by harmonic over one SSC period</code></li><li><code>steady ramp lag of a type-2 loop = (ramp rate) / wn^2</code></li></ul></dd>
+      <dt>Units</dt><dd>ppm, kHz, MHz, ps, UI</dd>
+      <dt>Validity</dt><dd>A linear loop in its steady state against a periodic sweep. Exact for that loop at the 4096 samples per period used.</dd>
+      <dt>Numerics</dt><dd>One SSC period sampled 4096 times; the phase is the trapezoid integral of the profile, mean removed; one FFT, the complex 1 - H at each harmonic, one inverse FFT.</dd>
+      <dt>Known limitations</dt><dd>A linear, noiseless loop: no phase-detector gain variation, no bang-bang behaviour, no slew limit inside the loop, and no other jitter. The loop's natural frequency is reader-set; the specification states tolerance masks, not a loop. Not a compliance test.</dd>
+      <dt>Evidence</dt><dd>check-models.js suite SSC tracking: a triangle of plus or minus A moves the data A T / 4 peak to peak (189 UI at Gen 2, 104 at Gen 1 and 30 kHz); mid-ramp the loop lags by the ramp rate over wn^2, equally at plus and minus half the offset; a time-stepped loop against the triangle's phase written out by hand settles to the same peak-to-peak as the Fourier answer at three bandwidth and damping settings; no spread leaves nothing; a faster loop never leaves more; H tends to 1 below fn and 0 above it; the steep profile slews at 1250 ppm/us and the triangle at 4 A fm.</dd>
+    </dl>
+  </section>
   <section class="contract" id="ssn">
     <div class="contract__head">
       <h2>ssn</h2>
@@ -957,6 +1071,25 @@
       <dt>Numerics</dt><dd>S11 on an 8192-point grid at 1 ps (an 8.2 ns record), inverse FFT, O(N k) edge integration; time zero at the edge's 50% point.</dd>
       <dt>Known limitations</dt><dd>Single-ended only; no instrument or probe parasitics, no cable loss before the reference plane, no layer peeling, no dispersion beyond the loss law.</dd>
       <dt>Evidence</dt><dd>check-models.js — TDR page (a matched line reads Z0; an open reads +1 and a short -1; a long section reads its own impedance; a short one reads shallower; a feature appears at its round trip; the dip area equals Z0 C/2 and the bump area L/(2 Z0) for any edge; two features merge below the edge and separate above it; a lossy line reads rising; the fast integration equals the direct convolution).</dd>
+    </dl>
+  </section>
+  <section class="contract" id="termination">
+    <div class="contract__head">
+      <h2>termination</h2>
+      <span class="model-tag model-tag--numerical">numerical model</span>
+      <span class="ev ev--independent">independent</span>
+      <span class="contract__ver">v1.1 &#183; reviewed 2026-11-01</span>
+    </div>
+    <p class="contract__purpose">Show what each way of ending a line buys and costs on the same driver, line and data: the waveform at the far end, at a second receiver part-way along and at the driver pin, and the average power each scheme burns in its termination and in the driver.</p>
+    <dl class="contract__body">
+      <dt>Topology</dt><dd>An ideal source behind the driver's impedance, with a series resistor for series termination; one uniform lossless 50 ohm line, split at an optional second receiver; a 1 pF input capacitance at each receiver; at the far end nothing, R to ground, a Thevenin pair to the 1.2 V rail and ground, R + C to ground, or R to the rail inside the pin (on-die, to VDDQ). A board-mounted terminator can sit past a 5 mm stub of the same line and a 2 nH via.</dd>
+      <dt>Reference planes</dt><dd>The driver pin, the second receiver and the far-end pin; the terminator's own node behind a stub. Thresholds at 35% and 65% of the rail.</dd>
+      <dt>Equations</dt><dd><ul class="tight"><li><code>line end: v = 2 a(t) + Z0 i_in, a(t) = the wave leaving the other end at t - Td (Bergeron, exact for a lossless line)</code></li><li><code>capacitor: i(n+1) = (2C/dt) v(n+1) - [(2C/dt) v(n) + i(n)] (trapezoidal companion)</code></li><li><code>inductor: i(n+1) = (dt/2L) v(n+1) + [i(n) + (dt/2L) v(n)]</code></li><li><code>Thevenin pair: R1 = Rt / b, R2 = Rt / (1 - b), so R1 || R2 = Rt and the bias is b Vdd</code></li><li><code>power: i^2 R in every resistor, from the solved waveforms, averaged over the measured bits</code></li><li><code>edge spread: the far end's mid-swing crossings, each against when its edge was sent; max - min</code></li></ul></dd>
+      <dt>Units</dt><dd>ps, ns, V, ohm, pF, nH, mW</dd>
+      <dt>Validity</dt><dd>Lossless lines, linear terminations and an ideal driver behind a fixed resistance. The receiver is a capacitance and two thresholds.</dd>
+      <dt>Numerics</dt><dd>Nodal analysis at each time step with a matrix factored once; 20 samples per edge and at least 8 per line section, at most 60,000 steps (20,000 for the five schemes that only feed the cost chart). Line delays rounded to whole steps. The record starts from the DC operating point; a clock starts from its own average, as a clock that has been running does; the first two bits are left out of every measurement.</dd>
+      <dt>Known limitations</dt><dd>No line loss, so late-time ringing is optimistic; no driver nonlinearity, slew control or supply bounce; on-die termination is always on, not gated per burst; the receiver has no clamp diodes, so an unterminated far end's overshoot is not limited. Mechanism and proportion, not a sign-off number.</dd>
+      <dt>Evidence</dt><dd>check-models.js suite Termination: a matched load returns nothing and the far end is the launched wave delayed by Td exactly; the waveforms agree with the superposition model K.line1D at both ends for five resistive terminations; series termination seen from a tap sits at Vdd/2 for 2(Td - t_tap); settled levels are the resistive divider and Millman's theorem; AC termination tends to a resistor as C grows and to an open as it vanishes, and charges with (Rs + Rt) C; an LC tank rings at 2 pi sqrt(LC); charging the line through a matched source stores half the energy and burns the other half for a fast edge, less for a slow one; the energy account closes to rounding for lines and resistors, and with capacitors to a residual that halves with the step; resistive terminations put every edge in the same place on random data while an AC terminator moves them on data far more than on a clock.</dd>
     </dl>
   </section>
   <section class="contract" id="touchstone">
@@ -1033,6 +1166,25 @@
       <dt>Numerics</dt><dd>Lossless: superposition of closed-form step responses over a twenty-bit pattern, 80 reflection terms. Resistive: FFT of the source pattern, record long enough for echoes to fall below 1e-6, at least 32 samples per unit interval.</dd>
       <dt>Known limitations</dt><dd>No pad, ESD or receiver capacitance, no crosstalk, no equalization. Resistance is constant with frequency (no skin effect), which suits thin, DC-resistance-dominated interposer traces. Z0, the edge and 6.7 ps/mm are choices, not UCIe figures. A mechanism, not a sign-off margin.</dd>
       <dt>Evidence</dt><dd>check-models.js suite UCIe echo: a matched receiver and a matched driver each give no echo, the first arrival at an open receiver is 2*Z0/(Rs+Z0), a very short line behaves as a lumped load, the long-run level settles to the resistive divider; and for the resistive line, an independent frequency-domain solver reproduces the lattice at vanishing resistance, the first arrival is attenuated by exp(-R l / 2 Z0), and a terminated wire settles to Z0/(Z0+Rs+R l). The shared solver K.line1D is checked by the Line1D suite.</dd>
+    </dl>
+  </section>
+  <section class="contract" id="ufsBurst">
+    <div class="contract__head">
+      <h2>ufsBurst</h2>
+      <span class="model-tag model-tag--illustrative">illustrative model</span>
+      <span class="ev ev--independent">independent</span>
+      <span class="contract__ver">v1.1 &#183; reviewed 2026-11-01</span>
+    </div>
+    <p class="contract__purpose">Show where a UFS link's power goes between transfers: what staying in STALL and dropping to HIBERN8 each cost per transfer, the idle at which sleeping starts to pay, the latency the wake adds, and the rail step a burst draws when it starts.</p>
+    <dl class="contract__body">
+      <dt>Topology</dt><dd>Transfers of a set size over two lanes at HS-G4 or HS-G5 after 8b10b, an idle gap between them, and a policy: wait in STALL, or go to HIBERN8 after a threshold and wake before the next transfer. The rail is a regulator, a bulk capacitor, board decoupling and a package into the die.</dd>
+      <dt>Reference planes</dt><dd>The PHY's supply, as power by state; the die end of the rail for the droop.</dd>
+      <dt>Equations</dt><dd><ul class="tight"><li><code>t_burst = size x 8 / (rate x 2 lanes x 0.8)</code></li><li><code>E = P_burst t_burst + P_stall min(gap, theta) + P_h8 max(0, gap - theta) + [gap &gt; theta] P_wake t_wake</code></li><li><code>break-even idle = theta + P_wake t_wake / (P_stall - P_h8)</code></li><li><code>rail: v(t) = IFFT[ Z_PDN(f) x FFT[ i(t) ] ]</code></li></ul></dd>
+      <dt>Units</dt><dd>us, ms, mW, nJ, uJ, mV</dd>
+      <dt>Validity</dt><dd>A piecewise energy account with fixed power per state, and a linear rail.</dd>
+      <dt>Numerics</dt><dd>The account is closed form. The rail is K.pdnTransient on a 32 us record at 2 ns, of which the first 8 us are shown, long enough that the circular transform does not wrap the regulator's recovery onto the step.</dd>
+      <dt>Known limitations</dt><dd>The state powers (96, 30, 0.25 and 30 mW for burst, STALL, HIBERN8 and waking) and the rail's parts are illustrative: M-PHY's are in the members-only specification and a PHY's own figures in its datasheet. Only the gear rates and the wake-time range rest on the claim ledger. No SYNC or PREPARE overhead, no UniPro framing, no entry time for HIBERN8, and the wake is drawn at STALL's power. The lesson is the shape of the trade and the break-even's dependence on the wake, not any milliwatt.</dd>
+      <dt>Evidence</dt><dd>check-models.js suite UFS burst: the account equals the integral of power over the timeline; the policies' energy curves cross exactly at P_wake t_wake / (P_stall - P_h8) for three wake times; with no idle both policies cost the same; sleeping adds exactly the wake time and STALL adds none; average power never rises with the gap; the rail droop scales with the current step, vanishes without one and is still before the step; the burst time is the transfer over two lanes after 8b10b.</dd>
     </dl>
   </section>
   <section class="contract" id="lpddrBudget">

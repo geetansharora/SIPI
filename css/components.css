@@ -1643,6 +1643,8 @@ dialog.searchbox::backdrop { background: rgba(4, 8, 11, .58); }
    loader builds on a page without a workspace, authored here instead. Collapsing
    one is presentation — it changes nothing the model reads. */
 .lab-group { display: block; padding-top: .5rem; border-top: 1px solid var(--border-soft); border-bottom: 0; }
+/* a group whose controls a phone moved under the chart (viz-loader.js) */
+.lab-group[hidden] { display: none; }
 .lab-group > summary.lab-group__title {
   margin: 0; padding: 0; cursor: pointer; list-style: revert; border: 0;
   font: 600 .76rem/1.3 var(--font-display); color: var(--ink); text-transform: none; letter-spacing: normal;
@@ -1785,14 +1787,18 @@ dialog.searchbox::backdrop { background: rgba(4, 8, 11, .58); }
 }
 .lab-locate .locate { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s2) var(--s3); padding: 0; margin: 0; border: 0; background: none; }
 
-/* A scenario note can run to six lines in a rail; it shows three until opened. */
-.lab-rail [data-out="note"] {
+/* A scenario note is cut only where the rail has no room for all of it, and only
+   where lab-workspace.js has added the toggle that opens it again; it shows the
+   note whole, or cuts it to the lines that fit. A lab without that script (Lab B)
+   shows the note whole. */
+.lab-rail [data-out="note"] { margin: 0; font-size: .76rem; line-height: 1.45; color: var(--muted); }
+.lab-rail :has(> .lab-more) > [data-out="note"] {
   display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; overflow: hidden;
-  margin: 0; font-size: .76rem; line-height: 1.45; color: var(--muted);
 }
 .lab-rail .is-open > [data-out="note"] { display: block; -webkit-line-clamp: unset; }
 .lab-rail .instrument__hint { margin: 0; font-size: .74rem; line-height: 1.45; color: var(--muted); }
-.lab-more { padding: 0; border: 0; background: none; cursor: pointer; font: .7rem var(--font-mono); color: var(--signal-text); }
+/* .lab-rail as well: the transport row's button style would otherwise box it */
+.lab-more, .lab-rail .lab-more { padding: 0; border: 0; background: none; cursor: pointer; font: .7rem var(--font-mono); color: var(--signal-text); }
 .lab-more:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
 .lab-view > .viz-summary { max-height: 14rem; overflow-y: auto; overscroll-behavior: contain; }
 .lab-notes { margin-top: var(--s1); }
@@ -1862,7 +1868,7 @@ html.lab-lock, html.lab-lock body { overflow: hidden; }
   .lab-rail .presets { gap: .3rem; }
   .lab-rail .preset { padding-block: .2rem; }
   .lab-rail .presets__group { margin-top: 0; }
-  .lab-rail [data-out="note"] { -webkit-line-clamp: 2; }
+  .lab-rail :has(> .lab-more) > [data-out="note"] { -webkit-line-clamp: 2; }
   .lab-stage { gap: .5rem; padding-block: .5rem; }
 }
 
@@ -1950,6 +1956,8 @@ html.lab-lock, html.lab-lock body { overflow: hidden; }
     border-top: 1px solid var(--border-soft);
   }
   .lab-primary > .ctl { margin: 0; }
+  .lab-primary > .presets { padding: 0 0 var(--s2); background: none; border-bottom: 1px solid var(--border-soft); }
+  .lab-primary > .presets [data-out="note"] { margin: 0; flex-basis: 100%; font-size: .8rem; line-height: 1.45; color: var(--muted); }
   .lab-primary .ctl__head { display: flex; align-items: baseline; justify-content: space-between; gap: var(--s3); }
   .lab-primary input[type="range"] { width: 100%; min-height: 24px; }
   /* A side-layout panel (field solver, IR plane, return path) has no stage around the

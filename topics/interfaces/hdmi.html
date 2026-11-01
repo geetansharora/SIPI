@@ -1,0 +1,388 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- theme:start -->
+  <meta name="theme-color" content="#F7F8FA">
+  <script>(function(){try{var t=localStorage.getItem('sipi-theme');if(t==='dark'||t==='system'){document.documentElement.setAttribute('data-theme',t);var m=document.querySelector('meta[name=theme-color]');if(m&&(t==='dark'||matchMedia('(prefers-color-scheme:dark)').matches))m.content='#0B1015';}}catch(e){}})();</script>
+  <!-- theme:end -->
+<title>HDMI 2.1: FRL, TMDS and Whether the Link Trains | SIPI</title>
+<meta name="description" content="HDMI 2.1 for signal integrity: FRL at 3 to 12 Gb/s a lane, 16b/18b, the clock lane turned data lane, cable and board loss, and the fall back to TMDS.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<link rel="stylesheet" href="../../css/base.css?v=1e3ae753">
+<link rel="stylesheet" href="../../css/components.css?v=9967e8fb">
+  <!-- meta:start -->
+  <link rel="canonical" href="https://sipi.work/topics/interfaces/hdmi.html">
+  <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="SIPI">
+  <meta property="og:title" content="HDMI 2.1: FRL, TMDS and Whether the Link Trains | SIPI">
+  <meta property="og:description" content="HDMI 2.1 for signal integrity: FRL at 3 to 12 Gb/s a lane, 16b/18b, the clock lane turned data lane, cable and board loss, and the fall back to TMDS.">
+  <meta property="og:url" content="https://sipi.work/topics/interfaces/hdmi.html">
+  <meta property="og:image" content="https://sipi.work/assets/og/interfaces/hdmi.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="HDMI 2.1: FRL, TMDS and Whether the Link Trains: a figure from the page, on SIPI">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="HDMI 2.1: FRL, TMDS and Whether the Link Trains | SIPI">
+  <meta name="twitter:description" content="HDMI 2.1 for signal integrity: FRL at 3 to 12 Gb/s a lane, 16b/18b, the clock lane turned data lane, cable and board loss, and the fall back to TMDS.">
+  <meta name="twitter:image" content="https://sipi.work/assets/og/interfaces/hdmi.png">
+  <meta name="twitter:image:alt" content="HDMI 2.1: FRL, TMDS and Whether the Link Trains: a figure from the page, on SIPI">
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"HDMI 2.1: FRL, TMDS and Whether the Link Trains","description":"HDMI 2.1 for signal integrity: FRL at 3 to 12 Gb/s a lane, 16b/18b, the clock lane turned data lane, cable and board loss, and the fall back to TMDS.","url":"https://sipi.work/topics/interfaces/hdmi.html","articleSection":"Interface sign-off","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer","url":"https://www.linkedin.com/in/geetansh-arora-a645714a/","sameAs":["https://www.linkedin.com/in/geetansh-arora-a645714a/"]},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-11-01","image":"https://sipi.work/assets/og/interfaces/hdmi.png"}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"SIPI","item":"https://sipi.work/"},{"@type":"ListItem","position":2,"name":"Interface sign-off","item":"https://sipi.work/#interfaces"},{"@type":"ListItem","position":3,"name":"HDMI 2.1: FRL, TMDS and Whether the Link Trains"}]}</script>
+  <!-- meta:end -->
+</head>
+<body>
+
+<header class="masthead">
+  <a class="wordmark" href="../../index.html">SIPI</a>
+  <button class="theme-toggle" data-act="theme" type="button">Light</button>
+  <nav aria-label="Site">
+    <a href="../../start.html">Start</a>
+    <a href="../../index.html#groundwork">Topics</a>
+    <a href="../../labs.html">Labs</a>
+    <a href="../../calculators.html">Calculators</a>
+    <a href="../../colophon.html">About</a>
+  </nav>
+</header>
+
+<main>
+  <div class="page-head">
+    <p class="crumb"><a href="../../index.html#interfaces">Interface sign-off</a> / 13</p>
+    <h1>HDMI 2.1: FRL, TMDS and Whether the Link Trains</h1>
+    <p class="byline">
+      <!-- review:start --><span>By <a href="https://www.linkedin.com/in/geetansh-arora-a645714a/" target="_blank" rel="author noopener">Geetansh Arora</a> — Principal SI/PI Engineer</span><time datetime="2026-11-01" title="Technical review by Geetansh Arora on this date">1 Nov 2026</time><span>10 min</span><!-- review:end -->
+    </p>
+    <!-- share:head:start --><div class="share share--head" data-share data-share-url="https://sipi.work/topics/interfaces/hdmi.html" data-share-title="HDMI 2.1: FRL, TMDS and Whether the Link Trains"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Fhdmi.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Fhdmi.html&amp;text=HDMI%202.1%3A%20FRL%2C%20TMDS%20and%20Whether%20the%20Link%20Trains" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=HDMI%202.1%3A%20FRL%2C%20TMDS%20and%20Whether%20the%20Link%20Trains&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Fhdmi.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:head:end -->
+    <p class="answer">
+      HDMI 2.1 added Fixed Rate Link (FRL): up to four lanes at up to 12 Gb/s each with the clock embedded in the
+      data, coded 16b/18b, for 48 Gb/s on the wire and about 42.7 Gb/s of payload. The old TMDS clock lane becomes the
+      fourth data lane (C-212, C-214). Which FRL rate a link reaches is a loss question at each rate&#8217;s Nyquist
+      frequency, and if FRL training fails, the link falls back to TMDS and runs as HDMI 2.0 (C-212).
+    </p>
+  </div>
+
+  <div class="prose">
+    <h2 class="section-rule" id="at-a-glance"><span>At a glance</span></h2>
+    <h3>What is the difference between TMDS and FRL?</h3>
+    <p>
+      TMDS, used up to HDMI 2.0, sends data on three lanes and a clock on a fourth; the receiver samples the data with
+      that forwarded clock. FRL, added in HDMI 2.1, embeds the clock in the data, recovers it at the receiver, and turns
+      the clock lane into a fourth data lane (C-212, C-213).
+    </p>
+    <h3>What rates does FRL run at?</h3>
+    <p>
+      Six combinations: 3 or 6 Gb/s on three lanes, and 6, 8, 10 or 12 Gb/s on four (C-212, C-214). TMDS ran at up to
+      3.4 Gb/s a lane in HDMI 1.4b and 6 Gb/s in HDMI 2.0, 10.2 and 18 Gb/s across three lanes (C-212).
+    </p>
+    <h3>How much video does 48 Gb/s carry?</h3>
+    <p>
+      FRL&#8217;s 16b/18b coding sends 16 data bits in every 18, so four lanes at 12 Gb/s carry 48 &#215; 16/18 =
+      <span class="num">42.67</span> Gb/s. TMDS used 8b/10b, 8 bits in 10 (C-212). The two efficiencies stand in the
+      ratio (16/18)/(8/10) = 10/9: FRL carries a ninth more data for each bit on the wire.
+    </p>
+    <h3>What happens when a link cannot run FRL at 12G?</h3>
+    <p>
+      The source and sink go through FRL link training, and the rate can be changed and trained again. If FRL training
+      fails or times out, both ends drop to legacy TMDS and run in HDMI 1.4b or 2.0 mode (C-212). The picture appears,
+      at whatever that rate carries.
+    </p>
+    <h3>Which cable do I need for 48 Gb/s?</h3>
+    <p>
+      One certified as an Ultra High Speed HDMI Cable, the class HDMI 2.1 introduced for configurations up to 48 Gb/s.
+      Its certification is mandatory for the label and includes an EMI test (C-215).
+    </p>
+
+    <h2 class="section-rule" id="lanes"><span>Four lanes, and where the clock went</span></h2>
+    <p>
+      An HDMI connector has four high-speed pairs. Under TMDS three carry data and one carries a clock at a tenth of the
+      lane rate, or a fortieth at HDMI 2.0&#8217;s highest rates (C-212). FRL keeps the same connector and the same
+      pairs and reassigns them: the three data pairs become FRL lanes 0 to 2 and the clock pair becomes lane 3, unused in
+      the three-lane modes (C-214). Each lane now carries its own timing in its edges, as DisplayPort and PCIe lanes do.
+    </p>
+    <p>
+      Two things follow for the board. The pair that used to carry a modest clock now carries 12 Gb/s data, so it needs
+      the same care as the others: an FPGA vendor&#8217;s guide routes all four at 90 to 100 &#937; and uses 95 &#937;
+      connectors and cables (C-213). And a receiver that supports both modes has to take that pair to a clock input for
+      TMDS and to a data input for FRL; the same guide uses a fan-out buffer at the receiver to do it (C-213).
+    </p>
+
+    <h2 class="section-rule" id="budget"><span>A budget at each rate&#8217;s Nyquist</span></h2>
+    <p>
+      As on <a href="displayport.html">DisplayPort</a>, each rate&#8217;s loss is judged at half its bit rate: 6 GHz for
+      FRL 12G, 5 GHz for 10G, 4 for 8G, 3 for the 6 Gb/s modes and 1.5 for 3G. The one public figure for the loss an
+      HDMI 2.1 receiver has to handle is the worst-case cable model an FPGA vendor tests its sink through at FRL 12G:
+      a channel of 20.18 dB (C-213). The panel uses 20 dB at 6 GHz as FRL 12G&#8217;s budget and, with no public figure
+      for the others, gives every HDMI rate the same 20 dB, labelled so.
+    </p>
+    <p>
+      That makes the panel cautious. A sink is tested with the worst-case cable at its connector, so its own board and
+      package come on top of the 20 dB, where the panel counts them inside it. Intel&#8217;s guide shows how tight the
+      real path is: it allows the cable up to 16 dB at 12 Gb/s and puts redrivers on the boards to cover the rest
+      (C-213). Read the panel&#8217;s verdicts as a few decibels on the safe side.
+    </p>
+
+    <p>
+      Before you use the panel below, predict. A 2 m cable trains at FRL 12G with about 3 dB to spare. Double it to
+      4 m: does the link lose one rate or two? Then add a retimer by the television&#8217;s connector.
+    </p>
+  </div>
+
+  <!-- mobilenote:start -->
+  <p class="mobile-note" role="note">
+    <b>Best viewed on a laptop or desktop.</b>
+    These panels are built so you can move a slider and watch several charts
+    answer at once. A phone has no room to put them side by side.
+  </p>
+  <!-- mobilenote:end -->
+  <section class="instrument lab" data-viz="displayLink" data-protocol="hdmi" aria-label="Interactive HDMI link: a path from source die to sink die through two boards, two connectors and a cable, with an optional retimer; its insertion loss against frequency with each FRL and TMDS rate's budget at its Nyquist, and the training ladder from the highest supported rate down to the one that trains">
+<script type="application/json" data-contract>{"kind":"numerical","evidence":"independent","purpose":"Show why a DisplayPort or HDMI link's rate is decided by loss at each rate's own Nyquist frequency: a path from source die to sink die through boards, connectors and a cable, with an optional retimer, checked against each rate's budget from the top rate down, the way link training steps down.","equations":["board: dielectric pi f sqrt(Dk) Df / c plus conductor Rs K / (2 w Z0), the laminate's published Dk and Df (NS.calc.loss)","cable pair: Z = (120/sqrt(er)) arccosh(D/d); R' = (2 Rs / pi d) (D/d) / sqrt((D/d)^2 - 1); loss = k R'/2Z + pi f sqrt(er) tan(d) / c, k fitted to C-118","package, connector: illustrative allowance at 10 GHz x (0.35 sqrt(f/10 GHz) + 0.65 f/10 GHz)","a rate trains if every segment's loss at its Nyquist is within its budget; the link takes the highest that does","payload = lanes x rate x coding (8/10 or 128/132)"],"units":"dB, GHz, Gb/s, in, m, AWG","validity":"Insertion loss only: smooth, matched segments whose decibels add. Budgets are die-to-die figures at Nyquist from public vendor material (DisplayPort UHBR and HBR3; HDMI FRL 12G, from a worst-case cable test channel, which makes HDMI cautious) or assumed (the other rates).","numerics":"Closed form at each rate's Nyquist; the loss chart samples each segment at 111 frequencies to 11 GHz.","limitations":"A loss budget, not an eye: no reflections, return loss, crosstalk, jitter or equalisation, so a path that fits can still fail and one that misses by a little can still train. Package and connector allowances, the cable's insulation and the budgets of RBR, HBR, HBR2 and every HDMI rate but FRL 12G are illustrative or assumed; HDMI's 20 dB is a cable test channel counted die to die, so its verdicts are cautious; the cable is a two-wire pair scaled by one factor fitted to one public twinax figure. The drive-level steps of clock recovery and the 128b/132b training sequence are not modelled. The HDMI order of retrying lower FRL rates before TMDS is not public; the ladder is the shape of the decision. Not the VESA or HDMI compliance test.","suites":["Display link"],"version":"1.2","reviewed":"2026-11-01","panel":"displayLink"}</script>
+<div class="lab-frame">
+<div class="instrument__bar">
+      <span class="instrument__title">Will it train?</span>
+      <span data-evidence="independent" data-model-version="1.2" class="model-tag model-tag--numerical">numerical</span>
+      <span class="instrument__readout readout--fixed" role="status" aria-live="off" aria-label="Current values">
+        <span>trains at <b data-out="rate" style="min-width:11ch">&#8212;</b></span>
+        <span>payload <b data-out="pay" style="min-width:10ch">&#8212;</b></span>
+        <span>margin <b data-out="margin" style="min-width:7ch">&#8212;</b></span>
+        <span>4K 10-bit up to <b data-out="video" style="min-width:6ch">&#8212;</b></span>
+      </span>
+      <button type="button" class="tool-btn lab-full" data-lab-full aria-pressed="false">full screen</button>
+</div>
+<aside class="lab-rail lab-rail--left" aria-label="Path controls">
+<p class="lab-rail__side">The path <span>source die to sink die</span></p>
+<details class="control-group lab-group" open><summary class="lab-group__title" id="dl-left-0">Boards</summary><div class="control-group__grid lab-group__body"><div class="ctl">
+        <div class="ctl__head"><label for="dl-src" title="The source board trace, package to connector">Source trace</label><output id="dl-src-out" for="dl-src">3 in</output></div>
+        <input type="range" id="dl-src" aria-describedby="dl-src-note" min="1" max="12" step="0.5" value="3">
+        <span class="ctl__note" id="dl-src-note">Board trace from the source package to its connector</span>
+      </div>
+<div class="ctl">
+        <div class="ctl__head"><label for="dl-sink" title="The sink board trace, connector to package">Sink trace</label><output id="dl-sink-out" for="dl-sink">4 in</output></div>
+        <input type="range" id="dl-sink" aria-describedby="dl-sink-note" min="1" max="12" step="0.5" value="4">
+        <span class="ctl__note" id="dl-sink-note">Board trace from the connector to the sink package</span>
+      </div>
+<div class="ctl">
+        <div class="ctl__head"><label for="dl-lam">Laminate</label></div>
+        <select id="dl-lam" aria-describedby="dl-lam-note"><option value="isola-370hr">FR-4</option><option value="megtron4">MEGTRON 4</option><option value="megtron6n">MEGTRON 6</option></select>
+        <span class="ctl__note" id="dl-lam-note">The laminate&#8217;s published Dk and Df, at each frequency</span>
+      </div></div></details>
+<details class="control-group lab-group" open><summary class="lab-group__title" id="dl-left-1">Cable</summary><div class="control-group__grid lab-group__body"><div class="ctl">
+        <div class="ctl__head"><label for="dl-cable">Cable length</label><output id="dl-cable-out" for="dl-cable">2.0 m</output></div>
+        <input type="range" id="dl-cable" aria-describedby="dl-cable-note" min="0.5" max="8" step="0.1" value="2">
+        <span class="ctl__note" id="dl-cable-note">Cable loss grows with length, and with frequency</span>
+      </div>
+<div class="ctl">
+        <div class="ctl__head"><label for="dl-awg">Wire gauge</label></div>
+        <select id="dl-awg" aria-describedby="dl-awg-note"><option value="28">28 AWG</option><option value="30">30 AWG</option><option value="32">32 AWG</option><option value="34">34 AWG</option></select>
+        <span class="ctl__note" id="dl-awg-note">A higher AWG is a thinner wire, which loses more</span>
+      </div></div></details>
+<p class="lab-help" aria-hidden="true">Point at or focus a control to see what it changes.</p>
+</aside>
+<div class="lab-stage">
+<div class="lab-row lab-row--anchor">
+<div data-lab-unit="loss" data-lab-name="Loss" class="panel">
+        <div class="lab-panel-head"><span class="panel__label">Insertion loss &#183; each segment, with every rate&#8217;s budget at its Nyquist</span><button type="button" class="tool-btn lab-expand" data-lab-expand aria-pressed="false" aria-label="Expand insertion loss">expand</button></div>
+        <canvas data-cv="loss" role="img" aria-label="Insertion loss in decibels against frequency in gigahertz for each segment of the path: one curve without a retimer, two with one. At each rate's Nyquist frequency a short bar marks that rate's budget and a dot marks the worst segment's loss: blue for the rate that trains, red for a rate that is too lossy, grey for a rate not tried."></canvas>
+        <div class="legend"><span><i style="background:var(--signal)"></i>path, or before the retimer</span><span><i class="dash" style="color:var(--reflect)"></i>after the retimer</span><span><i style="background:var(--ink)"></i>each rate&#8217;s budget (the slowest unnamed)</span></div>
+      </div>
+</div>
+<div class="lab-row lab-row--anchor">
+<div data-lab-unit="ladder" data-lab-name="Training" class="panel">
+        <div class="lab-panel-head"><span class="panel__label">Link training &#183; FRL from the top, then TMDS</span><button type="button" class="tool-btn lab-expand" data-lab-expand aria-pressed="false" aria-label="Expand link training">expand</button></div>
+        <canvas data-cv="ladder" role="img" aria-label="One row for each FRL and TMDS rate the link may try, highest first. Each row has a bar for the worst segment's loss at that rate's Nyquist, a tick at the rate's budget, and a word: trains, too lossy, or not tried."></canvas>
+      </div>
+</div>
+</div>
+<aside class="lab-rail lab-rail--right" aria-label="Link controls and scenarios">
+<p class="lab-rail__side">The link <span>what trains</span></p>
+<details class="control-group lab-group" open><summary class="lab-group__title" id="dl-right-0">Link</summary><div class="control-group__grid lab-group__body"><div class="ctl">
+        <div class="ctl__head"><label for="dl-cap" title="The highest rate both the source and the sink support">Both ends support</label></div>
+        <select id="dl-cap" aria-describedby="dl-cap-note"><option value="7">FRL 12G &#215;4</option><option value="6">FRL 10G &#215;4</option><option value="5">FRL 8G &#215;4</option><option value="4">FRL 6G &#215;4</option><option value="3">FRL 6G &#215;3</option><option value="1">TMDS only</option></select>
+        <span class="ctl__note" id="dl-cap-note">The highest rate both ends advertise: training starts here</span>
+      </div>
+<div class="ctl">
+        <div class="ctl__head"><label for="dl-rt" title="A retimer recovers the data and sends it again">Retimer</label></div>
+        <select id="dl-rt" aria-describedby="dl-rt-note"><option value="none">None</option><option value="source">By the source</option><option value="sink">By the sink</option></select>
+        <span class="ctl__note" id="dl-rt-note">A retimer splits the path in two, each part with the whole budget</span>
+      </div></div></details>
+<details class="control-group lab-group" open><summary class="lab-group__title" id="dl-right-1">Scenarios</summary><div class="control-group__grid lab-group__body"><div class="presets">
+      <button class="preset" type="button" data-preset="tv" aria-pressed="true">TV, 2 m</button>
+      <button class="preset" type="button" data-preset="long" aria-pressed="false">4 m cable</button>
+      <button class="preset" type="button" data-preset="thin" aria-pressed="false">Thin cable</button>
+      <button class="preset" type="button" data-preset="retimer" aria-pressed="false">4 m + retimer</button>
+      <button class="preset" type="button" data-preset="hdmi20" aria-pressed="false">HDMI 2.0 TV</button>
+      <button class="preset preset--act" type="button" data-act="train">Train</button>
+      <p class="presets__note" data-out="note">&#8212;</p>
+      </div></div></details>
+<p class="lab-help" aria-hidden="true">Point at or focus a control to see what it changes.</p>
+</aside>
+</div>
+</section>
+
+  <div class="prose">
+    <p>
+      The 4 m cable costs two rates. At 6 GHz the path loses about 23 dB, and at 5 GHz still more than 20, so FRL 12G and 10G both fail and the link settles at FRL 8G: <span class="num">28.44</span> Gb/s, two thirds of the top
+      rate&#8217;s payload. Hold that verdict loosely: FRL 10G misses by only about 0.2 dB, against a budget the panel assumes, and the
+      cable lengths are typical thin-cable examples, not certification limits. A certified cable is held to a loss
+      mask, not a length, and Intel&#8217;s guide lets one lose up to 16 dB at 12 Gb/s (C-213). A retimer by the television&#8217;s connector takes its 4 in board out of the long segment and
+      FRL 12G fits again. Unlike the DisplayPort example, this one helps more by the sink, because here the sink has
+      the longer trace.
+    </p>
+
+    <h2 class="section-rule" id="where"><span>Where the decibels go</span></h2>
+    <p>
+      The panel builds the path the same way as the DisplayPort panel, from the same model. The board traces are 5 mil,
+      50 &#937; traces on the chosen laminate, from the laminate&#8217;s published Dk and Df: FR-4 loses about
+      <span class="num">1.09</span> dB an inch at 6 GHz. The cable is a two-wire line of the chosen gauge at 100 &#937;,
+      with skin effect and proximity effect worked out from the wire&#8217;s diameter and one construction factor fitted
+      to a published twinax figure (C-118): 28 AWG loses about <span class="num">3.1</span> dB a metre at 6 GHz and
+      32 AWG about 4.7. Packages and connectors are illustrative allowances, labelled so.
+    </p>
+    <p>
+      For the 2 m television link at 6 GHz that comes to about 6 dB of cable, 3.3 and 4.4 dB of source and sink board,
+      a decibel for each package and half a decibel for each connector: about 17 dB against 20. The cable is the largest
+      single term, and the boards together are larger still. That is the usual shape of an HDMI path, and why a
+      certified cable is necessary but not sufficient.
+    </p>
+
+    <h2 class="section-rule" id="training"><span>Training FRL, and falling back to TMDS</span></h2>
+    <p>
+      A source first reads the sink&#8217;s EDID, which says whether it supports FRL and the highest FRL rate it accepts,
+      on a scale from 1 (3G on three lanes) to 6 (12G on four). If it does, the source sets an FRL rate and a
+      transmitter equalisation level and sends training patterns, and the sink asks for the patterns it needs on each
+      lane over the status and control channel. When every lane is satisfied, FRL transmission starts. A separate state
+      exists for changing the FRL rate and training again. If training fails or times out, both ends go to legacy TMDS
+      and run as HDMI 1.4b or 2.0 (C-212).
+    </p>
+    <p>
+      The panel&#8217;s ladder tries the FRL rates from the top, then TMDS. The specification&#8217;s order for retrying a
+      lower FRL rate before giving up on FRL is not in the public material, so treat the ladder as the shape of the
+      decision rather than the exact sequence. Notice what the loss alone does: TMDS at 6 Gb/s has the same Nyquist
+      frequency as FRL at 6G, so a path that fails FRL 6G on loss fails TMDS 6G too, and FRL 3G, at half the frequency,
+      fits first. When a real link lands in TMDS, the cause is usually a sink without FRL, or a training failure that is
+      not plain loss: a reflection, a marginal lane, a cable that is not what its label says.
+    </p>
+
+    <h2 class="section-rule"><span>Why this decides how your board behaves</span></h2>
+    <ul class="tight">
+      <li><strong>The fourth pair is a data lane now.</strong> A clock pair routed with a clock&#8217;s tolerance will
+        be the lane that fails FRL training.</li>
+      <li><strong>The result of a marginal path is a lower rate.</strong> It shows up as a television that will not
+        offer 4K at 120 Hz, not as a dark screen.</li>
+      <li><strong>The cable is the customer&#8217;s.</strong> A source and sink have to leave the cable the room its
+        certification assumes, with the longest cable the product claims to support.</li>
+      <li><strong>A budget is not an eye.</strong> Reflections, crosstalk and jitter take margin this panel does not
+        count.</li>
+    </ul>
+
+    <h2 class="section-rule"><span>What to do about it</span></h2>
+    <ul class="tight">
+      <li>Route all four pairs to the same rules, at 90 to 100 &#937; with matched lengths (C-213).</li>
+      <li>Keep both boards&#8217; traces short; at 6 GHz an inch of FR-4 costs about a decibel, which is a metre of thin
+        cable&#8217;s worth every four inches.</li>
+      <li>Plan for a redriver or retimer where a long trace and a long cable meet. The FPGA vendor&#8217;s guide puts a redriver on its board, at the receiver, where an integrated fan-out buffer also splits FRL lane 3 off to the TMDS clock input, and notes that longer traces need more equalisation (C-213). A redriver is linear: it restores the high frequencies but does not split the path into two budgets the way the panel&#8217;s retimer does.</li>
+      <li>Support TMDS properly on a dual-mode receiver: the pair that is FRL lane 3 has to reach a clock input too
+        (C-213).</li>
+      <li>Test with certified Ultra High Speed cables at the longest length you claim (C-215).</li>
+    </ul>
+
+    <details class="deeper" id="deeper">
+      <summary>Go deeper &#8212; the payload arithmetic, why the clock lane mattered, and what is not sourced here</summary>
+      <p>
+        <strong>The payload arithmetic.</strong> Payload is data lanes &#215; rate &#215; coding. FRL 12G on four lanes:
+        4 &#215; 12 &#215; 16/18 = 42.67 Gb/s, which carries 4K at 10 bits a colour up to
+        <span class="num">171</span> frames a second before blanking. FRL 6G on four lanes: 21.33 Gb/s. TMDS 6G, HDMI
+        2.0&#8217;s top rate: 3 &#215; 6 &#215; 8/10 = <span class="num">14.4</span> Gb/s, because the fourth pair carries
+        the clock and no data. The step from HDMI 2.0 to 2.1 is therefore a third more data lanes, twice the lane rate
+        and a ninth better coding: 42.67 Gb/s against 14.4, close to three times the payload.
+      </p>
+      <p>
+        <strong>Why the clock lane mattered.</strong> A forwarded clock is the simplest timing there is, and it costs a
+        lane: under TMDS a quarter of the pairs carried no data. Recovering the clock from the data frees that lane and removes the skew between clock and data that a forwarded
+        clock has to be matched against; the price is a clock-recovery circuit in every lane and the link training that
+        sets it up.
+      </p>
+      <p>
+        <strong>What is not sourced here.</strong> The HDMI 2.1 specification is available to HDMI adopters, and its
+        compliance test specification likewise. The rates, lanes, coding and training states come from a test-equipment
+        vendor&#8217;s public reading of the specification and a redriver vendor&#8217;s application note; the 20 dB from an
+        FPGA vendor&#8217;s design guide; the cable class from the licensing body. The budgets of the rates below FRL 12G,
+        the package and connector allowances and the cable&#8217;s insulation are assumptions, labelled where they are
+        used, and each sourced figure is in the <a href="../../docs/claims.md">claim ledger</a>.
+      </p>
+    </details>
+
+    <h2 class="section-rule"><span>In the real world</span></h2>
+    <p>
+      HDMI 2.1 links run from consoles, set-top boxes and graphics cards to televisions and monitors, often through a
+      receiver or a soundbar on the way. Every one of those boxes is a source board and a sink board, and every cable
+      between them is the customer&#8217;s choice.
+    </p>
+    <p>
+      The engineering is the same arithmetic as on DisplayPort, with one difference worth remembering: the fourth pair
+      changed jobs. A board laid out for HDMI 2.0, with a clock pair that never had to carry data, is the board most
+      likely to train below the rate its silicon supports.
+    </p>
+
+    <h3>Related</h3>
+    <ul class="tight">
+      <li><a href="displayport.html">DisplayPort 2.1: UHBR Rates, Cable Loss and Link Training</a></li>
+      <li><a href="usb-3x.html">USB 3.x</a></li>
+      <li><a href="../package-board/connectors-cables.html">Connectors and cables</a></li>
+      <li><a href="../fundamentals/differential-signalling.html">Differential signalling</a></li>
+      <li><a href="../signal-integrity/channel-budgeting.html">Channel budgeting</a></li>
+    </ul>
+  </div>
+
+<!-- sources:start -->
+    <section class="sources">
+      <h2 class="section-rule"><span>Sources</span></h2>
+      <ul class="sources__list">
+      <li><a href="https://www.ieee802.org/3/dj/public/23_11/tracy_3dj_01a_2311.pdf" target="_blank" rel="noopener">Tracy et al. (TE Connectivity) — A Baseline Proposal To Enable More Flexible Architectures and Longer Reach 200Gb/Lane Passive Copper Cables, Nov 2023</a> <span class="src__for">C-118</span></li>
+      <li><a href="https://www.tek.com.cn/-/media/china-marketing-documents/campaign/automotive/hdmihdmi21rule.pdf" target="_blank" rel="noopener">Tektronix — HDMI 2.1 source test: reading the specification (Chinese)</a> <span class="src__for">C-212</span></li>
+      <li><a href="https://www.intel.com/content/www/us/en/docs/programmable/709310/22-2/system-link-budgeting-recommendations.html" target="_blank" rel="noopener">Intel — AN 952: HDMI 2.1 System Design Guidelines</a> <span class="src__for">C-213</span></li>
+      <li><a href="https://ti.com/document-viewer/lit/html/SLLA598/GUID-CB87B598-8142-49D9-9344-E266007FCFE7" target="_blank" rel="noopener">Texas Instruments — SLLA598, HDMI 2.1 FRL rates and lanes</a> <span class="src__for">C-214</span></li>
+      <li><a href="https://www.hdmi.org/spec21sub/ultrahighspeedcable" target="_blank" rel="noopener">HDMI.org — Ultra High Speed HDMI Cable</a> <span class="src__for">C-215</span></li>
+      </ul>
+      <p class="sources__note">Rows marked with a claim id are tracked in <a href="../../docs/claims.md">the claim ledger</a>, which records what each source can and cannot establish.</p>
+    </section>
+    <!-- sources:end -->
+  <!-- share:foot:start --><div class="share share--foot" data-share data-share-url="https://sipi.work/topics/interfaces/hdmi.html" data-share-title="HDMI 2.1: FRL, TMDS and Whether the Link Trains"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Fhdmi.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Fhdmi.html&amp;text=HDMI%202.1%3A%20FRL%2C%20TMDS%20and%20Whether%20the%20Link%20Trains" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=HDMI%202.1%3A%20FRL%2C%20TMDS%20and%20Whether%20the%20Link%20Trains&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Fhdmi.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:foot:end -->
+
+  <!-- pager:start -->
+  <nav class="pager" aria-label="Previous and next topic">
+    <a class="prev" href="../../topics/interfaces/displayport.html"><span class="dir">Previous</span><span>DisplayPort 2.1: UHBR Rates, Cable Loss and Link Training</span></a>
+    <a class="next" href="../../topics/methodology/simulation-flow.html"><span class="dir">Next</span><span>Signal Integrity Simulation Workflow</span></a>
+  </nav>
+  <!-- pager:end -->
+</main>
+
+<footer class="site-foot">
+  <span>SIPI &#8212; signal and power integrity, visualised.</span>
+  <nav class="site-foot__nav" aria-label="Site, footer">
+    <a href="../../start.html">Start</a>
+    <a href="../../labs.html">Labs</a>
+    <a href="../../calculators.html">Calculators</a>
+    <a href="../../reference.html">Reference</a>
+    <a href="../../interview.html">Interview guide</a>
+    <a href="../../colophon.html">About &amp; AI disclosure</a>
+    <a href="../../model-contract.html">Model assumptions</a>
+    <a href="../../docs/claims.md">Claim ledger (Markdown)</a>
+  </nav>
+  <span>Created and directed by <a href="https://www.linkedin.com/in/geetansh-arora-a645714a/" target="_blank" rel="author noopener">Geetansh Arora</a>. Text <a href="../../LICENSE-CONTENT">CC BY 4.0</a>, code <a href="../../LICENSE-CODE">MIT</a>.</span>
+</footer>
+
+<script src="../../js/site.js?v=61b8ff31" defer></script>
+<script src="../../js/viz-kit.js?v=212a7cd3" defer></script>
+<script src="../../js/models/calc-models.js?v=d640a591" defer></script>
+<script src="../../js/models/laminates.js?v=32f3413d" defer></script>
+<script src="../../js/models/display-link-model.js?v=76a6594c" defer></script>
+<script src="../../js/viz/display-link.js?v=c2a6c3c9" defer></script>
+<script src="../../js/lab-workspace.js?v=35449ccb" defer></script>
+<script src="../../js/viz-loader.js?v=9eaf05a5" defer></script>
+<script src="../../js/search.js?v=dcc1e06b" defer></script>
+</body>
+</html>

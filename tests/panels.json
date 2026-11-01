@@ -46,6 +46,20 @@
       ]
     },
     {
+      "url": "topics/fundamentals/differential-signalling.html",
+      "panels": [
+        "diffPair"
+      ],
+      "presets": [
+        "balanced",
+        "halfUI",
+        "imb",
+        "skew5",
+        "slow",
+        "weave"
+      ]
+    },
+    {
       "url": "topics/fundamentals/edge-rate-not-clock-rate.html",
       "panels": [
         "spectrum"
@@ -164,6 +178,20 @@
       ]
     },
     {
+      "url": "topics/fundamentals/termination-schemes.html",
+      "panels": [
+        "termination"
+      ],
+      "presets": [
+        "acClock",
+        "acData",
+        "open",
+        "parallel",
+        "stub",
+        "tap"
+      ]
+    },
+    {
       "url": "topics/fundamentals/when-is-a-trace-a-transmission-line.html",
       "panels": [
         "criticalLength"
@@ -211,6 +239,19 @@
       ]
     },
     {
+      "url": "topics/interfaces/displayport.html",
+      "panels": [
+        "displayLink"
+      ],
+      "presets": [
+        "desk",
+        "long",
+        "retimer",
+        "thin",
+        "usbc"
+      ]
+    },
+    {
       "url": "topics/interfaces/ethernet-112g-224g.html",
       "panels": [
         "ethLane"
@@ -220,6 +261,19 @@
         "low10",
         "rough",
         "smooth"
+      ]
+    },
+    {
+      "url": "topics/interfaces/hdmi.html",
+      "panels": [
+        "displayLink"
+      ],
+      "presets": [
+        "hdmi20",
+        "long",
+        "retimer",
+        "thin",
+        "tv"
       ]
     },
     {
@@ -253,6 +307,45 @@
       ]
     },
     {
+      "url": "topics/interfaces/mipi-dphy-cphy.html",
+      "panels": [
+        "cphyTrio"
+      ],
+      "presets": [
+        "clean",
+        "fast",
+        "lossy",
+        "skew",
+        "slow"
+      ]
+    },
+    {
+      "url": "topics/interfaces/pcie-gen4-gen5.html",
+      "panels": [
+        "pcieEq"
+      ],
+      "presets": [
+        "over",
+        "short4",
+        "short5",
+        "ti4",
+        "ti5"
+      ]
+    },
+    {
+      "url": "topics/interfaces/pcie-gen6.html",
+      "panels": [
+        "flitFec"
+      ],
+      "presets": [
+        "bad",
+        "burst3",
+        "burst4",
+        "bursty",
+        "design"
+      ]
+    },
+    {
       "url": "topics/interfaces/ucie.html",
       "panels": [
         "ucie",
@@ -273,6 +366,31 @@
         "slow",
         "slowS",
         "term64"
+      ]
+    },
+    {
+      "url": "topics/interfaces/ufs4.html",
+      "panels": [
+        "ufsBurst"
+      ],
+      "presets": [
+        "eager",
+        "small",
+        "stream",
+        "weak"
+      ]
+    },
+    {
+      "url": "topics/interfaces/usb-3x.html",
+      "panels": [
+        "ssc"
+      ],
+      "presets": [
+        "healthy",
+        "none",
+        "ringing",
+        "slow",
+        "steep"
       ]
     },
     {
@@ -610,8 +728,8 @@
     }
   ],
   "totals": {
-    "pages": 51,
-    "panels": 56,
-    "presets": 207
+    "pages": 60,
+    "panels": 65,
+    "presets": 253
   }
 }

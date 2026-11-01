@@ -13,7 +13,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
 <link rel="stylesheet" href="../../css/base.css?v=1e3ae753">
-<link rel="stylesheet" href="../../css/components.css?v=c532fdc4">
+<link rel="stylesheet" href="../../css/components.css?v=9967e8fb">
   <!-- meta:start -->
   <link rel="canonical" href="https://sipi.work/topics/fundamentals/termination-schemes.html">
   <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
@@ -31,7 +31,7 @@
   <meta name="twitter:description" content="Series, parallel, Thevenin, AC and on-die termination — what each one kills, what it costs in power, and where each belongs.">
   <meta name="twitter:image" content="https://sipi.work/assets/og/fundamentals/termination-schemes.png">
   <meta name="twitter:image:alt" content="Termination Schemes: Series, Parallel, Thevenin and AC: a figure from the page, on SIPI">
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Termination Schemes: Series, Parallel, Thevenin and AC","description":"Series, parallel, Thevenin, AC and on-die termination — what each one kills, what it costs in power, and where each belongs.","url":"https://sipi.work/topics/fundamentals/termination-schemes.html","articleSection":"Fundamentals","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer","url":"https://www.linkedin.com/in/geetansh-arora-a645714a/","sameAs":["https://www.linkedin.com/in/geetansh-arora-a645714a/"]},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-09-12","image":"https://sipi.work/assets/og/fundamentals/termination-schemes.png"}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Termination Schemes: Series, Parallel, Thevenin and AC","description":"Series, parallel, Thevenin, AC and on-die termination — what each one kills, what it costs in power, and where each belongs.","url":"https://sipi.work/topics/fundamentals/termination-schemes.html","articleSection":"Fundamentals","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer","url":"https://www.linkedin.com/in/geetansh-arora-a645714a/","sameAs":["https://www.linkedin.com/in/geetansh-arora-a645714a/"]},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-11-01","image":"https://sipi.work/assets/og/fundamentals/termination-schemes.png"}</script>
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"SIPI","item":"https://sipi.work/"},{"@type":"ListItem","position":2,"name":"Fundamentals","item":"https://sipi.work/#fundamentals"},{"@type":"ListItem","position":3,"name":"Termination Schemes: Series, Parallel, Thevenin and AC"}]}</script>
   <!-- meta:end -->
 </head>
@@ -54,7 +54,7 @@
     <p class="crumb"><a href="../../index.html#fundamentals">Fundamentals</a> / 06</p>
     <h1>Termination Schemes: Series, Parallel, Thevenin and AC</h1>
     <p class="byline">
-      <!-- review:start --><span>By <a href="https://www.linkedin.com/in/geetansh-arora-a645714a/" target="_blank" rel="author noopener">Geetansh Arora</a> — Principal SI/PI Engineer</span><time datetime="2026-09-12" title="Technical review by Geetansh Arora on this date">12 Sep 2026</time><span>11 min</span><!-- review:end -->
+      <!-- review:start --><span>By <a href="https://www.linkedin.com/in/geetansh-arora-a645714a/" target="_blank" rel="author noopener">Geetansh Arora</a> — Principal SI/PI Engineer</span><time datetime="2026-11-01" title="Technical review by Geetansh Arora on this date">1 Nov 2026</time><span>11 min</span><!-- review:end -->
     </p>
     <!-- share:head:start --><div class="share share--head" data-share data-share-url="https://sipi.work/topics/fundamentals/termination-schemes.html" data-share-title="Termination Schemes: Series, Parallel, Thevenin and AC"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Ffundamentals%2Ftermination-schemes.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Ffundamentals%2Ftermination-schemes.html&amp;text=Termination%20Schemes%3A%20Series%2C%20Parallel%2C%20Thevenin%20and%20AC" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=Termination%20Schemes%3A%20Series%2C%20Parallel%2C%20Thevenin%20and%20AC&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Ffundamentals%2Ftermination-schemes.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:head:end -->
     <p class="answer">
@@ -112,6 +112,94 @@
 </svg></div>
     <figcaption><b>Every scheme is the same idea in different packaging.</b> A reflection needs two mismatched ends to keep bouncing, so killing either coefficient is enough &#8212; and the choice between them is almost never about signal quality. <b>Series</b> costs one resistor and no DC current, but the far end is deliberately left unmatched, so anything tapped off the middle sees half amplitude for a round trip. <b>Parallel</b> and <b>Thevenin</b> both draw real current, which is why they disappeared from anything battery-powered. <b>On-die</b> wins on the thing the drawings make obvious: every board-mounted resistor sits a via and a stub away from the actual receiver, and at 8533 MT/s that parasitic inductance undoes most of what the termination was for. Putting it inside the pad removes the stub &#8212; and lets the controller switch it on only during a burst.</figcaption>
   </figure>
+
+  <!-- mobilenote:start -->
+  <p class="mobile-note" role="note">
+    <b>Best viewed on a laptop or desktop.</b>
+    These panels are built so you can move a slider and watch several charts
+    answer at once. A phone has no room to put them side by side.
+  </p>
+  <!-- mobilenote:end -->
+  <section class="instrument instrument--side side--wide" data-viz="termination" aria-label="Interactive solver for six ways to terminate a 50 ohm line, driven with a step, a clock or data: the voltage at the far end, at an optional second receiver and at the driver pin, and the average power each scheme burns under the same driver, line and data">
+    <script type="application/json" data-contract>{"kind":"numerical","evidence":"independent","purpose":"Show what each way of ending a line buys and costs on the same driver, line and data: the waveform at the far end, at a second receiver part-way along and at the driver pin, and the average power each scheme burns in its termination and in the driver.","equations":["line end: v = 2 a(t) + Z0 i_in, a(t) = the wave leaving the other end at t - Td (Bergeron, exact for a lossless line)","capacitor: i(n+1) = (2C/dt) v(n+1) - [(2C/dt) v(n) + i(n)] (trapezoidal companion)","inductor: i(n+1) = (dt/2L) v(n+1) + [i(n) + (dt/2L) v(n)]","Thevenin pair: R1 = Rt / b, R2 = Rt / (1 - b), so R1 || R2 = Rt and the bias is b Vdd","power: i^2 R in every resistor, from the solved waveforms, averaged over the measured bits","edge spread: the far end's mid-swing crossings, each against when its edge was sent; max - min"],"units":"ps, ns, V, ohm, pF, nH, mW","validity":"Lossless lines, linear terminations and an ideal driver behind a fixed resistance. The receiver is a capacitance and two thresholds.","numerics":"Nodal analysis at each time step with a matrix factored once; 20 samples per edge and at least 8 per line section, at most 60,000 steps (20,000 for the five schemes that only feed the cost chart). Line delays rounded to whole steps. The record starts from the DC operating point; a clock starts from its own average, as a clock that has been running does; the first two bits are left out of every measurement.","limitations":"No line loss, so late-time ringing is optimistic; no driver nonlinearity, slew control or supply bounce; on-die termination is always on, not gated per burst; the receiver has no clamp diodes, so an unterminated far end's overshoot is not limited. Mechanism and proportion, not a sign-off number.","suites":["Termination"],"version":"1.1","reviewed":"2026-11-01","panel":"termination"}</script>
+    <div class="instrument__bar">
+      <span class="instrument__title">Terminate it, then pay for it</span>
+      <span data-evidence="independent" data-model-version="1.1" class="model-tag model-tag--numerical" title="Time-stepped circuit solve: lossless lines by Bergeron's method, capacitors and inductors by trapezoidal companion models. Exact for the stated topology at the chosen step; no loss.">numerical</span>
+      <span class="instrument__readout readout--fixed" role="status" aria-live="off" aria-label="Current values">
+        <span>far end <b data-out="lv" style="min-width:11ch">—</b></span>
+        <span>overshoot <b data-out="over" style="min-width:4ch">—</b></span>
+        <span>edges move <b data-out="spread" style="min-width:6ch">—</b></span>
+        <span>tap in band <b data-out="tap" style="min-width:7ch">—</b></span>
+        <span>per net <b data-out="pnet" style="min-width:7ch">—</b></span>
+        <span>32 nets <b data-out="pbus" style="min-width:7ch">—</b></span>
+      </span>
+    </div>
+    <div class="side-layout">
+    <div class="panels">
+      <div class="panel" data-lab-name="Waveforms">
+        <span class="panel__label">What the receivers see &#183; far end, second receiver and driver pin</span>
+        <canvas data-cv="wave" role="img" aria-label="Voltage against time in nanoseconds at the far end of the line, at a second receiver part-way along it when there is one, and at the driver pin, with the receiver's threshold band between 35% and 65% of the 1.2 volt rail shaded."></canvas>
+        <div class="legend"><span><i style="background:var(--signal)"></i>far end</span><span><i style="background:var(--reflect)"></i>second receiver</span><span><i class="dash" style="color:var(--muted)"></i>driver pin</span><span><i style="background:var(--alarm);opacity:.3"></i>threshold band</span></div>
+      </div>
+      <div class="panel" data-lab-name="Cost">
+        <span class="panel__label">What each scheme costs &#183; same driver, line and data, each at its matched value</span>
+        <canvas data-cv="cost" role="img" aria-label="One bar for each of six termination schemes, showing the average power per net in milliwatts, split into what the termination burns and what the driver burns, with a word for how the far end looks. The scheme you chose keeps your values; the others are at their matched values."></canvas>
+        <div class="legend"><span><i style="background:var(--signal)"></i>in the termination</span><span><i style="background:var(--muted)"></i>in the driver</span></div>
+      </div>
+    </div>
+    <div class="side">
+    <div class="side__inner">
+    <div class="controls controls--pairs">
+      <div class="ctl">
+        <div class="ctl__head"><label for="tm-scheme">Scheme</label></div>
+        <select id="tm-scheme"><option value="none">Unterminated</option><option value="series">Series at the driver</option><option value="parallel">Parallel to ground</option><option value="board">Parallel, 5 mm + via away</option><option value="thevenin">Thevenin split</option><option value="ac">AC (R + C)</option><option value="odt">On-die, to VDDQ</option></select>
+      </div>
+      <div class="ctl">
+        <div class="ctl__head"><label for="tm-data">Data</label></div>
+        <select id="tm-data"><option value="step">One edge</option><option value="clock">A clock</option><option value="prbs">Random data</option><option value="run">A long run of ones</option></select>
+      </div>
+      <div class="ctl">
+        <div class="ctl__head"><label for="tm-rt" id="tm-rt-label">Terminator</label><output id="tm-rt-out" for="tm-rt">—</output></div>
+        <input type="range" id="tm-rt" min="5" max="150" step="1" value="50">
+      </div>
+      <div class="ctl">
+        <div class="ctl__head"><label for="tm-rs">Driver R<sub>s</sub></label><output id="tm-rs-out" for="tm-rs">10 &#937;</output></div>
+        <input type="range" id="tm-rs" min="5" max="60" step="1" value="10">
+      </div>
+      <div class="ctl">
+        <div class="ctl__head"><label for="tm-rate">Data rate</label><output id="tm-rate-out" for="tm-rate">200 Mb/s</output></div>
+        <input type="range" id="tm-rate" min="0" max="6" step="1" value="1">
+      </div>
+      <div class="ctl">
+        <div class="ctl__head"><label for="tm-tr">Edge</label><output id="tm-tr-out" for="tm-tr">300 ps</output></div>
+        <input type="range" id="tm-tr" min="0" max="9" step="1" value="7">
+      </div>
+      <div class="ctl">
+        <div class="ctl__head"><label for="tm-td">Line</label><output id="tm-td-out" for="tm-td">5.9 in</output></div>
+        <input type="range" id="tm-td" min="0" max="7" step="1" value="5">
+      </div>
+      <div class="ctl">
+        <div class="ctl__head"><label for="tm-tap">2nd receiver</label><output id="tm-tap-out" for="tm-tap">none</output></div>
+        <input type="range" id="tm-tap" min="0" max="3" step="1" value="0">
+      </div>
+      <div class="ctl">
+        <div class="ctl__head"><label for="tm-extra" id="tm-extra-label">AC capacitor</label><output id="tm-extra-out" for="tm-extra">—</output></div>
+        <input type="range" id="tm-extra" min="0" max="7" step="1" value="6">
+      </div>
+    </div>
+    <div class="presets">
+      <button class="preset" type="button" data-preset="open" aria-pressed="true">Unterminated</button>
+      <button class="preset" type="button" data-preset="tap" aria-pressed="false">Series + tap</button>
+      <button class="preset" type="button" data-preset="parallel" aria-pressed="false">Parallel</button>
+      <button class="preset" type="button" data-preset="acClock" aria-pressed="false">AC on a clock</button>
+      <button class="preset" type="button" data-preset="acData" aria-pressed="false">AC on data</button>
+      <button class="preset" type="button" data-preset="stub" aria-pressed="false">Board R, stub</button>
+    </div>
+    <div class="transport"><span data-out="note">—</span></div>
+    </div>
+    </div>
+    </div>
+  </section>
 
   <div class="prose">
     <h2>Why a resistor stops a reflection at all</h2>
@@ -220,10 +308,19 @@
 
     <p>
       <strong>AC termination</strong> puts a capacitor in series with the resistor so the DC path
-      disappears. It works well on a clock, where the duty cycle is fixed; it does badly on data,
-      because a long run of identical bits lets the capacitor charge and the termination stops
-      terminating. Size the capacitor so RC is several times the round trip — a few tens of pF is
-      typical — and remember you have traded DC power for switching power.
+      disappears. It works well on a clock: a clock's average never changes, so the capacitor sits
+      at mid-rail and every edge arrives the same way. On data it still absorbs every edge — the
+      network is linear, so each edge meets the same impedance whatever came before — but the
+      capacitor follows the data's average, and the current it draws or gives back flows through
+      the driver's own impedance. A long run of ones leaves the next edge starting from a different
+      level than a toggling bit did, and edges that start from different levels cross the threshold
+      at different times. That is data-dependent jitter: in the panel's <em>AC on data</em> preset,
+      a 20 Ω driver and 330 pF, the edges move by about <span class="num">65 ps</span>. That
+      capacitor is oversized on purpose, so the effect shows. Size it so RC is a few times the
+      line&#8217;s round trip and no larger, because the bigger it is, the longer it remembers the
+      data: on this 500 ps line that is about 47 pF (RC 2.4 ns), and the edges move by about
+      <span class="num">12 ps</span>. A shorter line wants less, often a few tens of pF. And remember you have
+      traded DC power for switching power.
     </p>
 
     <div class="note">
@@ -288,8 +385,13 @@
         <li><b>A net that works with ODT on and fails with it off, or vice versa.</b> Read the
           ODT calibration result, not the configuration register. Training picks a value; if the
           calibration reference is wrong, the register says 40 Ω and the silicon is not.</li>
-        <li><b>Overshoot only on the first edge after an idle period.</b> Look for AC termination
-          with too small a capacitor, or a gated ODT that enables a beat late.</li>
+        <li><b>Overshoot only on the first edge after an idle period.</b> Look for a gated ODT
+          that enables a beat late. An AC terminator with too small a capacitor is a different
+          signature: it overshoots on every edge, because a linear network treats every edge
+          alike.</li>
+        <li><b>Edges that wander with the data on an AC-terminated net.</b> The capacitor is
+          remembering the pattern. A smaller capacitor, still several round trips of RC, or a
+          stronger driver shrinks it.</li>
       </ul>
     </div>
 
@@ -400,6 +502,10 @@
 </footer>
 
 <script src="../../js/site.js?v=61b8ff31" defer></script>
+<script src="../../js/viz-kit.js?v=212a7cd3" defer></script>
+<script src="../../js/models/termination-model.js?v=d745b186" defer></script>
+<script src="../../js/viz/termination.js?v=713baf2f" defer></script>
+<script src="../../js/viz-loader.js?v=9eaf05a5" defer></script>
 <script src="../../js/search.js?v=dcc1e06b" defer></script>
 </body>
 </html>
