@@ -13,7 +13,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
 <link rel="stylesheet" href="../../css/base.css?v=1e3ae753">
-<link rel="stylesheet" href="../../css/components.css?v=9967e8fb">
+<link rel="stylesheet" href="../../css/components.css?v=d51b0104">
   <!-- meta:start -->
   <link rel="canonical" href="https://sipi.work/topics/groundwork/units-and-conventions.html">
   <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
@@ -31,7 +31,7 @@
   <meta name="twitter:description" content="dB and dBm, 10-90% and 20-80% rise times, RMS and peak-to-peak, and reference planes: the conventions SI/PI numbers depend on, and how to convert between them.">
   <meta name="twitter:image" content="https://sipi.work/assets/og/groundwork/units-and-conventions.png">
   <meta name="twitter:image:alt" content="SI/PI Units and Conventions: dB, Rise Time, RMS: a figure from the page, on SIPI">
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"SI/PI Units and Conventions: dB, Rise Time, RMS","description":"dB and dBm, 10-90% and 20-80% rise times, RMS and peak-to-peak, and reference planes: the conventions SI/PI numbers depend on, and how to convert between them.","url":"https://sipi.work/topics/groundwork/units-and-conventions.html","articleSection":"Groundwork","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer","url":"https://www.linkedin.com/in/geetansh-arora-a645714a/","sameAs":["https://www.linkedin.com/in/geetansh-arora-a645714a/"]},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-09-12","image":"https://sipi.work/assets/og/groundwork/units-and-conventions.png"}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"SI/PI Units and Conventions: dB, Rise Time, RMS","description":"dB and dBm, 10-90% and 20-80% rise times, RMS and peak-to-peak, and reference planes: the conventions SI/PI numbers depend on, and how to convert between them.","url":"https://sipi.work/topics/groundwork/units-and-conventions.html","articleSection":"Groundwork","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer","url":"https://www.linkedin.com/in/geetansh-arora-a645714a/","sameAs":["https://www.linkedin.com/in/geetansh-arora-a645714a/"]},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-11-16","image":"https://sipi.work/assets/og/groundwork/units-and-conventions.png"}</script>
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"SIPI","item":"https://sipi.work/"},{"@type":"ListItem","position":2,"name":"Groundwork","item":"https://sipi.work/#groundwork"},{"@type":"ListItem","position":3,"name":"SI/PI Units and Conventions: dB, Rise Time, RMS"}]}</script>
   <!-- meta:end -->
 </head>
@@ -54,7 +54,7 @@
     <p class="crumb"><a href="../../index.html#groundwork">Groundwork</a> / 01</p>
     <h1>SI/PI Units and Conventions: dB, Rise Time, RMS</h1>
     <p class="byline">
-      <!-- review:start --><span>By <a href="https://www.linkedin.com/in/geetansh-arora-a645714a/" target="_blank" rel="author noopener">Geetansh Arora</a> — Principal SI/PI Engineer</span><time datetime="2026-09-12" title="Technical review by Geetansh Arora on this date">12 Sep 2026</time><span>11 min</span><!-- review:end -->
+      <!-- review:start --><span>By <a href="https://www.linkedin.com/in/geetansh-arora-a645714a/" target="_blank" rel="author noopener">Geetansh Arora</a> — Principal SI/PI Engineer</span><time datetime="2026-11-16" title="Technical review by Geetansh Arora on this date">16 Nov 2026</time><span>11 min</span><!-- review:end -->
     </p>
     <!-- share:head:start --><div class="share share--head" data-share data-share-url="https://sipi.work/topics/groundwork/units-and-conventions.html" data-share-title="SI/PI Units and Conventions: dB, Rise Time, RMS"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Fgroundwork%2Funits-and-conventions.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Fgroundwork%2Funits-and-conventions.html&amp;text=SI%2FPI%20Units%20and%20Conventions%3A%20dB%2C%20Rise%20Time%2C%20RMS" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=SI%2FPI%20Units%20and%20Conventions%3A%20dB%2C%20Rise%20Time%2C%20RMS&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Fgroundwork%2Funits-and-conventions.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:head:end -->
     <p class="answer">
@@ -130,7 +130,7 @@
 
     <figure class="figure">
       <div class="figure__bar"><span>One 10&#8211;90% rise time &#183; three different 20&#8211;80% times</span></div>
-      <div class="figure__body"><svg viewBox="0 0 400 282" role="img" aria-label="Three edges drawn with the same 10 to 90 percent rise time: a Gaussian, a linear ramp and a first-order RC. Under each, a bar marks its 20 to 80 percent span, and the three bars have different lengths.">
+      <div class="figure__body"><svg viewBox="-10 0 410 282" role="img" aria-label="Three edges drawn with the same 10 to 90 percent rise time: a Gaussian, a linear ramp and a first-order RC. Under each, a bar marks its 20 to 80 percent span, and the three bars have different lengths.">
   <rect x="154.5" y="26" width="140.9" height="58" style="fill: var(--signal); fill-opacity: .07"/>
   <path d="M70,75.0 L380,75.0" class="tick" stroke-dasharray="2 3"/>
   <path d="M70,70.0 L380,70.0" class="tick" stroke-dasharray="2 3"/>

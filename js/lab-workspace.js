@@ -79,15 +79,26 @@
        cap. A floor in pixels rather than as a fraction lets a tall plot give up more
        height than a short one. The largest factor whose rows fit is found by
        bisection, since those floors make total height a piecewise function of it. */
+    /* A lab whose plots do not survive being drawn shorter -- a bar chart with a
+       row per contributor loses its last rows -- marks its frame data-lab-fit="grow".
+       Its plots are then never drawn below the heights its module asked for: they
+       grow where there is room (full screen, an expanded plot), and where there is
+       not, the stage scrolls as it would with no workspace at all. */
+    const grow = frame.dataset.labFit === 'grow';
     const native = (cv) => K.canvasHeight.native(cv) || box(cv).height;
     const heightAt = (cv, f) => {
+      // a plot that gains nothing from height, a row of bars, keeps its own
+      if (cv.hasAttribute('data-lab-fixed')) return native(cv);
       const cap = WIDTH_CAP * (cv.clientWidth || 320);
-      return Math.min(cap, Math.max(Math.min(MIN_PLOT_PX, cap), f * native(cv)));
+      const h = Math.min(cap, Math.max(Math.min(MIN_PLOT_PX, cap), f * native(cv)));
+      return grow ? Math.max(native(cv), h) : h;
     };
     const total = (f) => rows.reduce((s, row) => s + Math.max.apply(null, row.cvs.map((cv) => heightAt(cv, f))), 0);
-    let lo = 0.2, hi = ceiling;
+    let lo = grow ? 1 : 0.2, hi = ceiling;
     if (total(hi) <= room) lo = hi;
-    else for (let k = 0; k < 24; k++) { const mid = (lo + hi) / 2; if (total(mid) <= room) lo = mid; else hi = mid; }
+    else if (!grow || total(lo) <= room) {
+      for (let k = 0; k < 24; k++) { const mid = (lo + hi) / 2; if (total(mid) <= room) lo = mid; else hi = mid; }
+    }
 
     let changed = false;
     shown.forEach((cv) => {
@@ -345,26 +356,54 @@
      note element itself stays in the control and stays bound to its input by
      aria-describedby, so what a screen reader announces does not depend on hovering.
      A lab may offer one help line for both rails, marked data-lab-help. */
-  function wireHelp(root, off) {
+  function wireHelp(root, off, state) {
     const shared = root.querySelector('[data-lab-help]');
+    /* A short laptop screen has no height to spare for the help line, so the
+       stylesheet hides it there. The same words then float beside the control
+       being pointed at, over the rail rather than in it, so they take no room.
+       Never on a phone: there every note is printed under its own control. */
+    const tip = document.createElement('p');
+    tip.className = 'lab-tip';
+    tip.setAttribute('aria-hidden', 'true');
+    tip.hidden = true;
+    root.append(tip);
+    state.added.push(tip);
+    const wide = window.matchMedia('(min-width: 75rem)');
+    const hideTip = () => { tip.hidden = true; };
     root.querySelectorAll('.lab-rail').forEach((rail) => {
       const help = rail.querySelector('.lab-help') || shared;
       if (!help) return;
       let current = null;
       const show = (ctl) => {
-        if (!ctl || ctl === current) return;
-        current = ctl;
-        const input = ctl.querySelector('input[id], select[id]');
-        const label = input && root.querySelector('label[for="' + CSS.escape(input.id) + '"]');
-        const note = ctl.querySelector('.ctl__note');
-        const name = document.createElement('b');
-        name.textContent = label ? label.textContent.trim() : '';
-        help.replaceChildren(name, document.createTextNode(note ? ' ' + note.textContent.trim() : ''));
+        if (!ctl) { hideTip(); return; }
+        if (ctl !== current) {
+          current = ctl;
+          const input = ctl.querySelector('input[id], select[id]');
+          const label = input && root.querySelector('label[for="' + CSS.escape(input.id) + '"]');
+          const note = ctl.querySelector('.ctl__note');
+          const name = document.createElement('b');
+          name.textContent = label ? label.textContent.trim() : '';
+          help.replaceChildren(name, document.createTextNode(note ? ' ' + note.textContent.trim() : ''));
+        }
+        if (!wide.matches || getComputedStyle(help).display !== 'none') { hideTip(); return; }
+        tip.replaceChildren(...[].map.call(help.childNodes, (n) => n.cloneNode(true)));
+        tip.hidden = false;
+        // under the control, or above it where the window ends first
+        const c = box(ctl), r = box(rail);
+        tip.style.left = Math.round(r.left + 6) + 'px';
+        tip.style.width = Math.round(r.width - 12) + 'px';
+        const h = tip.offsetHeight;
+        const top = c.bottom + 4 + h <= window.innerHeight - 4 ? c.bottom + 4 : Math.max(4, c.top - h - 4);
+        tip.style.top = Math.round(top) + 'px';
       };
       // focus as well as pointer: the keyboard reaches every control the mouse does
       off.push(on(rail, 'focusin', (e) => show(e.target.closest('.ctl'))));
       off.push(on(rail, 'pointerover', (e) => show(e.target.closest('.ctl'))));
+      off.push(on(rail, 'pointerleave', hideTip));
+      off.push(on(rail, 'focusout', (e) => { if (!rail.contains(e.relatedTarget)) hideTip(); }));
+      off.push(on(rail, 'scroll', hideTip, { passive: true }));
     });
+    off.push(on(window, 'scroll', hideTip, { passive: true }));
   }
 
   /* A scenario note in a rail shows in full wherever the rail has the room. Only
@@ -500,7 +539,7 @@
     wireViews(root, refit, off, state);
     wireFocus(root, refit, off, state);
     wireFullScreen(root, refit, off, state);
-    wireHelp(root, off);
+    wireHelp(root, off, state);
     wireNote(root, off, state);
 
     /* Resizes are coalesced and the observer watches the stage, not the canvases:

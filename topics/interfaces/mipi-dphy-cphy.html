@@ -13,7 +13,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
 <link rel="stylesheet" href="../../css/base.css?v=1e3ae753">
-<link rel="stylesheet" href="../../css/components.css?v=9967e8fb">
+<link rel="stylesheet" href="../../css/components.css?v=d51b0104">
   <!-- meta:start -->
   <link rel="canonical" href="https://sipi.work/topics/interfaces/mipi-dphy-cphy.html">
   <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
@@ -31,7 +31,7 @@
   <meta name="twitter:description" content="MIPI D-PHY vs C-PHY for signal integrity: forwarded clock and LP/HS modes, three-wire trios, six wire states, 16 bits in 7 symbols, rates and the C-PHY eye.">
   <meta name="twitter:image" content="https://sipi.work/assets/og/interfaces/mipi-dphy-cphy.png">
   <meta name="twitter:image:alt" content="MIPI D-PHY vs C-PHY: Forwarded Clock, Trios and Three-Level Signalling: a figure from the page, on SIPI">
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"MIPI D-PHY vs C-PHY: Forwarded Clock, Trios and Three-Level Signalling","description":"MIPI D-PHY vs C-PHY for signal integrity: forwarded clock and LP/HS modes, three-wire trios, six wire states, 16 bits in 7 symbols, rates and the C-PHY eye.","url":"https://sipi.work/topics/interfaces/mipi-dphy-cphy.html","articleSection":"Interface sign-off","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer","url":"https://www.linkedin.com/in/geetansh-arora-a645714a/","sameAs":["https://www.linkedin.com/in/geetansh-arora-a645714a/"]},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-11-01","image":"https://sipi.work/assets/og/interfaces/mipi-dphy-cphy.png"}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"MIPI D-PHY vs C-PHY: Forwarded Clock, Trios and Three-Level Signalling","description":"MIPI D-PHY vs C-PHY for signal integrity: forwarded clock and LP/HS modes, three-wire trios, six wire states, 16 bits in 7 symbols, rates and the C-PHY eye.","url":"https://sipi.work/topics/interfaces/mipi-dphy-cphy.html","articleSection":"Interface sign-off","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer","url":"https://www.linkedin.com/in/geetansh-arora-a645714a/","sameAs":["https://www.linkedin.com/in/geetansh-arora-a645714a/"]},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-11-16","image":"https://sipi.work/assets/og/interfaces/mipi-dphy-cphy.png"}</script>
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"SIPI","item":"https://sipi.work/"},{"@type":"ListItem","position":2,"name":"Interface sign-off","item":"https://sipi.work/#interfaces"},{"@type":"ListItem","position":3,"name":"MIPI D-PHY vs C-PHY: Forwarded Clock, Trios and Three-Level Signalling"}]}</script>
   <!-- meta:end -->
 </head>
@@ -54,7 +54,7 @@
     <p class="crumb"><a href="../../index.html#interfaces">Interface sign-off</a> / 11</p>
     <h1>MIPI D-PHY vs C-PHY: Forwarded Clock, Trios and Three-Level Signalling</h1>
     <p class="byline">
-      <!-- review:start --><span>By <a href="https://www.linkedin.com/in/geetansh-arora-a645714a/" target="_blank" rel="author noopener">Geetansh Arora</a> — Principal SI/PI Engineer</span><time datetime="2026-11-01" title="Technical review by Geetansh Arora on this date">1 Nov 2026</time><span>10 min</span><!-- review:end -->
+      <!-- review:start --><span>By <a href="https://www.linkedin.com/in/geetansh-arora-a645714a/" target="_blank" rel="author noopener">Geetansh Arora</a> — Principal SI/PI Engineer</span><time datetime="2026-11-16" title="Technical review by Geetansh Arora on this date">16 Nov 2026</time><span>10 min</span><!-- review:end -->
     </p>
     <!-- share:head:start --><div class="share share--head" data-share data-share-url="https://sipi.work/topics/interfaces/mipi-dphy-cphy.html" data-share-title="MIPI D-PHY vs C-PHY: Forwarded Clock, Trios and Three-Level Signalling"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Fmipi-dphy-cphy.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Fmipi-dphy-cphy.html&amp;text=MIPI%20D-PHY%20vs%20C-PHY%3A%20Forwarded%20Clock%2C%20Trios%20and%20Three-Level%20Signalling" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=MIPI%20D-PHY%20vs%20C-PHY%3A%20Forwarded%20Clock%2C%20Trios%20and%20Three-Level%20Signalling&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Finterfaces%2Fmipi-dphy-cphy.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:head:end -->
     <p class="answer">
@@ -219,7 +219,7 @@
 <p class="lab-rail__side">The data <span>bits to symbols</span></p>
 <details class="control-group lab-group" open><summary class="lab-group__title" id="cp-left-0">Word</summary><div class="control-group__grid lab-group__body"><div class="ctl">
         <div class="ctl__head"><label for="cp-word">Word (hex)</label></div>
-        <input type="text" id="cp-word" aria-describedby="cp-word-note" value="A5C3" maxlength="4" inputmode="text" autocomplete="off" spellcheck="false">
+        <input type="text" class="ctl__text" id="cp-word" aria-describedby="cp-word-note" value="A5C3" maxlength="4" inputmode="text" autocomplete="off" spellcheck="false">
         <span class="ctl__note" id="cp-word-note">Sixteen bits, written as four hexadecimal digits, become seven symbols</span>
       </div>
 <div class="presets"><button class="preset preset--act" type="button" data-act="random">Random word</button></div></div></details>
@@ -439,7 +439,7 @@
 <script src="../../js/viz-kit.js?v=212a7cd3" defer></script>
 <script src="../../js/models/cphy-model.js?v=6880cd11" defer></script>
 <script src="../../js/viz/cphy-trio.js?v=ffc7250a" defer></script>
-<script src="../../js/lab-workspace.js?v=35449ccb" defer></script>
+<script src="../../js/lab-workspace.js?v=af1bf82d" defer></script>
 <script src="../../js/viz-loader.js?v=9eaf05a5" defer></script>
 <script src="../../js/search.js?v=dcc1e06b" defer></script>
 </body>

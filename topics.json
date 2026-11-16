@@ -106,7 +106,7 @@
             "reference plane",
             "convention"
           ],
-          "reviewed": "2026-09-12",
+          "reviewed": "2026-11-16",
           "reviewer": "Geetansh Arora"
         },
         {
@@ -344,7 +344,7 @@
             "pattern",
             "PRBS"
           ],
-          "reviewed": "2026-09-26",
+          "reviewed": "2026-11-16",
           "reviewer": "Geetansh Arora"
         },
         {
@@ -708,7 +708,7 @@
             "echo",
             "budget"
           ],
-          "reviewed": "2026-09-26",
+          "reviewed": "2026-11-16",
           "reviewer": "Geetansh Arora"
         },
         {
@@ -1573,8 +1573,8 @@
           "slug": "mipi-dphy-cphy",
           "title": "MIPI D-PHY vs C-PHY: Forwarded Clock, Trios and Three-Level Signalling",
           "status": "live",
-          "updated": "2026-11-01",
-          "reviewed": "2026-11-01",
+          "updated": "2026-11-16",
+          "reviewed": "2026-11-16",
           "reviewer": "Geetansh Arora",
           "viz": "cphyTrio",
           "keywords": [
@@ -1751,7 +1751,7 @@
             "stacking",
             "worst case"
           ],
-          "reviewed": "2026-09-18",
+          "reviewed": "2026-11-16",
           "reviewer": "Geetansh Arora"
         },
         {

@@ -3073,6 +3073,14 @@ def cmd_check():
         if "data-exercises" in html and "viz-loader" not in html:
             structural.append(f"{rel}: declares exercises but does not load viz-loader.js — "
                               f"they would render nothing")
+        # A lab frame is laid out by lab-workspace.js: expand, full screen, the help
+        # line and the scenario note's toggle. Without it those buttons are drawn and
+        # do nothing, which is how What closes the eye shipped. A lab whose plots must
+        # not be drawn shorter marks its frame data-lab-fit="grow" rather than
+        # leaving the script out.
+        if 'class="lab-frame' in html and "lab-workspace.js" not in html:
+            structural.append(f"{rel}: has a .lab-frame but does not load lab-workspace.js — "
+                              f"its expand and full screen buttons would do nothing")
         if "pager:start" not in html:
             structural.append(f"{rel}: no pager fence — run relink")
         # a page past "planned" must not still carry the generated placeholder text

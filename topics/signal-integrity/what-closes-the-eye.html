@@ -13,7 +13,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
 <link rel="stylesheet" href="../../css/base.css?v=1e3ae753">
-<link rel="stylesheet" href="../../css/components.css?v=9967e8fb">
+<link rel="stylesheet" href="../../css/components.css?v=d51b0104">
   <!-- meta:start -->
   <link rel="canonical" href="https://sipi.work/topics/signal-integrity/what-closes-the-eye.html">
   <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
@@ -31,7 +31,7 @@
   <meta name="twitter:description" content="Four channel impairments on one eye diagram: insertion loss, reflections, an impedance discontinuity and crosstalk, with representative numbers for each.">
   <meta name="twitter:image" content="https://sipi.work/assets/og/signal-integrity/what-closes-the-eye.png">
   <meta name="twitter:image:alt" content="Eye Closure Causes: Loss, Reflections and Crosstalk: a figure from the page, on SIPI">
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Eye Closure Causes: Loss, Reflections and Crosstalk","description":"Four channel impairments on one eye diagram: insertion loss, reflections, an impedance discontinuity and crosstalk, with representative numbers for each.","url":"https://sipi.work/topics/signal-integrity/what-closes-the-eye.html","articleSection":"SI in practice","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer","url":"https://www.linkedin.com/in/geetansh-arora-a645714a/","sameAs":["https://www.linkedin.com/in/geetansh-arora-a645714a/"]},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-09-26","image":"https://sipi.work/assets/og/signal-integrity/what-closes-the-eye.png"}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Eye Closure Causes: Loss, Reflections and Crosstalk","description":"Four channel impairments on one eye diagram: insertion loss, reflections, an impedance discontinuity and crosstalk, with representative numbers for each.","url":"https://sipi.work/topics/signal-integrity/what-closes-the-eye.html","articleSection":"SI in practice","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer","url":"https://www.linkedin.com/in/geetansh-arora-a645714a/","sameAs":["https://www.linkedin.com/in/geetansh-arora-a645714a/"]},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-11-16","image":"https://sipi.work/assets/og/signal-integrity/what-closes-the-eye.png"}</script>
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"SIPI","item":"https://sipi.work/"},{"@type":"ListItem","position":2,"name":"SI in practice","item":"https://sipi.work/#signal-integrity"},{"@type":"ListItem","position":3,"name":"Eye Closure Causes: Loss, Reflections and Crosstalk"}]}</script>
   <!-- meta:end -->
 </head>
@@ -54,7 +54,7 @@
     <p class="crumb"><a href="../../index.html#signal-integrity">SI in practice</a> / 02</p>
     <h1>Eye Closure Causes: Loss, Reflections and Crosstalk</h1>
     <p class="byline">
-      <!-- review:start --><span>By <a href="https://www.linkedin.com/in/geetansh-arora-a645714a/" target="_blank" rel="author noopener">Geetansh Arora</a> — Principal SI/PI Engineer</span><time datetime="2026-09-26" title="Technical review by Geetansh Arora on this date">26 Sep 2026</time><span>12 min</span><!-- review:end -->
+      <!-- review:start --><span>By <a href="https://www.linkedin.com/in/geetansh-arora-a645714a/" target="_blank" rel="author noopener">Geetansh Arora</a> — Principal SI/PI Engineer</span><time datetime="2026-11-16" title="Technical review by Geetansh Arora on this date">16 Nov 2026</time><span>12 min</span><!-- review:end -->
     </p>
     <!-- share:head:start --><div class="share share--head" data-share data-share-url="https://sipi.work/topics/signal-integrity/what-closes-the-eye.html" data-share-title="Eye Closure Causes: Loss, Reflections and Crosstalk"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Fsignal-integrity%2Fwhat-closes-the-eye.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Fsignal-integrity%2Fwhat-closes-the-eye.html&amp;text=Eye%20Closure%20Causes%3A%20Loss%2C%20Reflections%20and%20Crosstalk" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=Eye%20Closure%20Causes%3A%20Loss%2C%20Reflections%20and%20Crosstalk&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Fsignal-integrity%2Fwhat-closes-the-eye.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:head:end -->
     <p class="answer">
@@ -74,8 +74,8 @@
   </p>
   <!-- mobilenote:end -->
   <section class="instrument lab" data-viz="impairments" aria-label="Interactive eye diagram with independent controls for insertion loss, termination mismatch, an impedance discontinuity and crosstalk, plus interface presets and a sensitivity breakdown">
-    <script type="application/json" data-contract>{"kind":"analytical","evidence":"independent","purpose":"Compare four impairments on one consistent channel, as counterfactuals rather than a decomposition.","equations":["S21_disc=2/(2cos+j(r+1/r)sin)","S11_in=S11_disc*e^-j2wTd1 + S21_disc^2*GL*H^2*e^-j2wTd","echo = Gs.GL * H^2 * direct, delayed by 2*Td  (first term of a geometric series in Gs.GL)"],"units":"s, V, ohm, dB","validity":"FIRST ORDER in the reflection coefficients: one source-load round trip is kept and the (Gs.GL)^2 terms and beyond are dropped. The relative size of what is dropped is |Gs.GL|, measured at 0.06% to 0.71% of the retained echo across the released presets and 6.3% at the controls' extremes — so it is accurate here, but it is an expansion and not a cascade. Single-ended; fixed CTLE+DFE, not adapting. For a network with every internal re-reflection included exactly, see labChannel, which cascades ABCD matrices instead.","numerics":"4096-point FFT, 32 samples/UI, 420 symbols.","limitations":"An expansion truncated at first order, not an exact network. It also uses the two-term magnitude loss law with a minimum phase, not the causal material model that labChannel now uses, so its phase is reconstructed rather than derived.","suites":["Networks","Impairment chain"],"version":"2.0","reviewed":"2026-09-12","panel":"impairments"}</script>
-<div class="lab-frame">
+    <script type="application/json" data-contract>{"kind":"analytical","evidence":"independent","purpose":"Compare four impairments on one consistent channel, as counterfactuals rather than a decomposition.","equations":["S21_disc=2/(2cos+j(r+1/r)sin)","S11_in=S11_disc*e^-j2wTd1 + S21_disc^2*GL*H^2*e^-j2wTd","echo = Gs.GL * H^2 * direct, delayed by 2*Td  (first term of a geometric series in Gs.GL)"],"units":"s, V, ohm, dB","validity":"FIRST ORDER in the reflection coefficients: one source-load round trip is kept and the (Gs.GL)^2 terms and beyond are dropped. The relative size of what is dropped is |Gs.GL|, measured at 0.06% to 0.71% of the retained echo across the released presets and 6.3% at the controls' extremes — so it is accurate here, but it is an expansion and not a cascade. Single-ended; fixed CTLE+DFE, not adapting. For a network with every internal re-reflection included exactly, see labChannel, which cascades ABCD matrices instead.","numerics":"4096-point FFT, 32 samples/UI, 420 symbols.","limitations":"An expansion truncated at first order, not an exact network. It also uses the two-term magnitude loss law with a minimum phase, not the causal material model that labChannel now uses, so its phase is reconstructed rather than derived.","suites":["Networks","Impairment chain"],"version":"2.0","reviewed":"2026-11-16","panel":"impairments"}</script>
+<div class="lab-frame" data-lab-fit="grow">
 <div class="instrument__bar">
       <span class="instrument__title">Four impairments &#183; one eye &#183; pick an interface</span>
         <span data-evidence="independent" data-model-version="2.0" class="model-tag model-tag--analytical" title="One channel: loss, a through-section discontinuity, source and load mismatch, FEXT. FIRST ORDER in the reflection coefficients — one source-load round trip is kept and the (ΓsΓL)² terms are dropped, which is 0.06% to 0.71% of the retained echo across these presets. For a network with every re-reflection included exactly, see Lab B.">analytical</span>
@@ -139,7 +139,7 @@
 <div data-lab-unit="bars" data-lab-name="Sensitivity" class="panel">
         <div class="lab-panel-head"><span class="panel__label">Sensitivity &#8212; remove one, see what comes back</span><button type="button" class="tool-btn lab-expand" data-lab-expand aria-pressed="false" aria-label="Expand sensitivity">expand</button></div>
 
-        <canvas data-cv="bars" role="img" aria-label="A bar for each impairment showing how much eye height is regained if that impairment alone is removed."></canvas>
+        <canvas data-cv="bars" data-lab-fixed role="img" aria-label="A bar for each impairment showing how much eye height is regained if that impairment alone is removed."></canvas>
         <div class="legend"><span><i style="background:var(--alarm)"></i>the dominant one</span><span><i style="background:var(--signal)"></i>the others</span><span><i style="background:var(--reflect)"></i>removing it lowers the eye</span></div>
       </div>
 </div>
@@ -588,7 +588,8 @@
 
 <script src="../../js/site.js?v=61b8ff31" defer></script>
 <script src="../../js/viz-kit.js?v=212a7cd3" defer></script>
-<script src="../../js/viz/impairments.js?v=17e5e893" defer></script>
+<script src="../../js/viz/impairments.js?v=6c212aae" defer></script>
+<script src="../../js/lab-workspace.js?v=af1bf82d" defer></script>
 <script src="../../js/viz-loader.js?v=9eaf05a5" defer></script>
 <script src="../../js/search.js?v=dcc1e06b" defer></script>
 </body>

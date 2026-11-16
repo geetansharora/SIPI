@@ -13,7 +13,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
 <link rel="stylesheet" href="../../css/base.css?v=1e3ae753">
-<link rel="stylesheet" href="../../css/components.css?v=9967e8fb">
+<link rel="stylesheet" href="../../css/components.css?v=d51b0104">
   <!-- meta:start -->
   <link rel="canonical" href="https://sipi.work/topics/fundamentals/isi.html">
   <link rel="describedby" href="https://sipi.work/llms.txt" type="text/markdown">
@@ -31,7 +31,7 @@
   <meta name="twitter:description" content="Why frequency-dependent loss makes each bit depend on the bits before it, and how that becomes data-dependent jitter.">
   <meta name="twitter:image" content="https://sipi.work/assets/og/fundamentals/isi.png">
   <meta name="twitter:image:alt" content="Intersymbol Interference (ISI) and Channel Memory: a figure from the page, on SIPI">
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Intersymbol Interference (ISI) and Channel Memory","description":"Why frequency-dependent loss makes each bit depend on the bits before it, and how that becomes data-dependent jitter.","url":"https://sipi.work/topics/fundamentals/isi.html","articleSection":"Fundamentals","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer","url":"https://www.linkedin.com/in/geetansh-arora-a645714a/","sameAs":["https://www.linkedin.com/in/geetansh-arora-a645714a/"]},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-09-26","image":"https://sipi.work/assets/og/fundamentals/isi.png"}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"Intersymbol Interference (ISI) and Channel Memory","description":"Why frequency-dependent loss makes each bit depend on the bits before it, and how that becomes data-dependent jitter.","url":"https://sipi.work/topics/fundamentals/isi.html","articleSection":"Fundamentals","isPartOf":{"@type":"WebSite","name":"SIPI","url":"https://sipi.work/"},"author":{"@type":"Person","name":"Geetansh Arora","jobTitle":"Principal SI/PI Engineer","url":"https://www.linkedin.com/in/geetansh-arora-a645714a/","sameAs":["https://www.linkedin.com/in/geetansh-arora-a645714a/"]},"publisher":{"@type":"Person","name":"Geetansh Arora"},"dateModified":"2026-11-16","image":"https://sipi.work/assets/og/fundamentals/isi.png"}</script>
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"SIPI","item":"https://sipi.work/"},{"@type":"ListItem","position":2,"name":"Fundamentals","item":"https://sipi.work/#fundamentals"},{"@type":"ListItem","position":3,"name":"Intersymbol Interference (ISI) and Channel Memory"}]}</script>
   <!-- meta:end -->
 </head>
@@ -54,7 +54,7 @@
     <p class="crumb"><a href="../../index.html#fundamentals">Fundamentals</a> / 11</p>
     <h1>Intersymbol Interference (ISI) and Channel Memory</h1>
     <p class="byline">
-      <!-- review:start --><span>By <a href="https://www.linkedin.com/in/geetansh-arora-a645714a/" target="_blank" rel="author noopener">Geetansh Arora</a> — Principal SI/PI Engineer</span><time datetime="2026-09-26" title="Technical review by Geetansh Arora on this date">26 Sep 2026</time><span>10 min</span><!-- review:end -->
+      <!-- review:start --><span>By <a href="https://www.linkedin.com/in/geetansh-arora-a645714a/" target="_blank" rel="author noopener">Geetansh Arora</a> — Principal SI/PI Engineer</span><time datetime="2026-11-16" title="Technical review by Geetansh Arora on this date">16 Nov 2026</time><span>10 min</span><!-- review:end -->
     </p>
     <!-- share:head:start --><div class="share share--head" data-share data-share-url="https://sipi.work/topics/fundamentals/isi.html" data-share-title="Intersymbol Interference (ISI) and Channel Memory"><span class="share__label">Share</span><a class="share__btn" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fsipi.work%2Ftopics%2Ffundamentals%2Fisi.html" target="_blank" rel="noopener">LinkedIn</a><a class="share__btn" href="https://x.com/intent/post?url=https%3A%2F%2Fsipi.work%2Ftopics%2Ffundamentals%2Fisi.html&amp;text=Intersymbol%20Interference%20%28ISI%29%20and%20Channel%20Memory" target="_blank" rel="noopener">X</a><a class="share__btn" href="mailto:?subject=Intersymbol%20Interference%20%28ISI%29%20and%20Channel%20Memory&amp;body=https%3A%2F%2Fsipi.work%2Ftopics%2Ffundamentals%2Fisi.html" target="_blank" rel="noopener">Email</a><button class="share__btn" type="button" data-act="copy-link">Copy link</button><button class="share__btn" type="button" data-act="share-native" hidden>Share…</button></div><!-- share:head:end -->
     <p class="answer">
@@ -215,7 +215,7 @@
     <figure class="figure">
       <div class="figure__bar"><span>Every bit&#8217;s pulse, added &#183; where intersymbol interference comes from</span></div>
       <div class="figure__pair figure__pair--stack">
-        <div><span class="figure__label">one bit</span><svg viewBox="0 -6 400 124" role="img" aria-label="The response of a lossy channel to one bit: a rounded pulse that peaks at 0.63 of the full level, with a post-cursor tail over the next few bit periods and a small pre-cursor before the peak.">
+        <div><span class="figure__label">one bit</span><svg viewBox="0 -14 400 134" role="img" aria-label="The response of a lossy channel to one bit: a rounded pulse that peaks at 0.63 of the full level, with a post-cursor tail over the next few bit periods and a small pre-cursor before the peak.">
   <path d="M30,100 L386,100" class="tick"/>
   <path d="M30.0,100 L30.0,104" class="tick"/>
   <path d="M101.2,100 L101.2,104" class="tick"/>

@@ -1,5 +1,6 @@
 #!/usr/bin/env node
-/* Tier-3 figure labels, checked for collisions and for leaving the frame.
+/* Tier-3 figure labels, checked for collisions and for leaving the frame on
+ * any of its four sides.
  *
  * SVG <text> does not wrap. A label longer than the space its column has runs
  * straight over its neighbour, and because `.figure svg` is `overflow: visible`
@@ -25,6 +26,12 @@ const assert = require('assert');
 
 const SRC = process.env.SIPI_SRC || path.join(__dirname, '..');
 const ADVANCE = 0.6;                       // IBM Plex Mono, em per character
+/* Vertical extent of a label about its baseline, from the same font's OS/2
+   typographic metrics: sTypoAscender 780 and sTypoDescender -220 per 1000 em.
+   Those are the em box the glyphs are designed in -- ascenders and caps (698)
+   sit inside 0.78, descenders inside 0.22 -- so a box built from them contains
+   every glyph a label uses without needing to know which letters it has. */
+const ASCENT = 0.78, DESCENT = 0.22;
 
 /* Label class -> font size, read from the stylesheet rather than restated. */
 const css = fs.readFileSync(path.join(SRC, 'css', 'components.css'), 'utf8');
@@ -70,6 +77,7 @@ for (const [rel, html] of pagesWithFigures()) {
        would let a label run past the frame unnoticed on exactly those. */
     const vb = svgM[1].trim().split(/[\s,]+/).map(Number);
     const vbRight = vb[0] + vb[2], vbW = vb[2];
+    const vbTop = vb[1], vbBottom = vb[1] + vb[3], vbH = vb[3];
     const body = svgM[0];
 
     /* Every label, with the x/y it is drawn at and the width it will occupy.
@@ -130,6 +138,37 @@ for (const [rel, html] of pagesWithFigures()) {
         problems.push(`${rel}: "${l.text.slice(0, 44)}..." ends at `
           + `${Math.round(l.right)}, past the viewBox right edge of ${vbRight} `
           + `(${vbW} wide from ${vb[0]}), so it paints outside the figure`);
+      }
+    }
+
+    /* 1b. Past the left edge. Same advance model and the same one character of
+          slack as the right edge, mirrored: the first glyph's left side bearing
+          leaves its ink short of the box just as the last glyph's does. */
+    for (const l of labels) {
+      if (l.left < vb[0] - l.size * ADVANCE) {
+        problems.push(`${rel}: "${l.text.slice(0, 44)}..." starts at `
+          + `${Math.round(l.left)}, past the viewBox left edge of ${vb[0]} `
+          + `(${vbW} wide from ${vb[0]}), so it paints outside the figure`);
+      }
+    }
+
+    /* 1c. Past the bottom or top edge. Below the frame is the figcaption, so a
+          label there prints over the caption text rather than over empty margin
+          -- the USB 3.2 SSC figure did exactly that with a baseline at y=266 in a
+          frame 252 tall, while every check above passed it. No slack here: the
+          ascent/descent box is already the font's own em box, not an estimate,
+          and half a pixel absorbs coordinates written to one decimal. */
+    for (const l of labels) {
+      const bottom = l.y + l.size * DESCENT, top = l.y - l.size * ASCENT;
+      if (bottom > vbBottom + 0.5) {
+        problems.push(`${rel}: "${l.text.slice(0, 44)}..." has baseline y=${l.y} `
+          + `and descends to ${+bottom.toFixed(1)}, past the viewBox bottom edge of `
+          + `${vbBottom} (${vbH} tall from ${vbTop}), so it paints outside the figure`);
+      }
+      if (top < vbTop - 0.5) {
+        problems.push(`${rel}: "${l.text.slice(0, 44)}..." has baseline y=${l.y} `
+          + `and rises to ${+top.toFixed(1)}, past the viewBox top edge of `
+          + `${vbTop} (${vbH} tall from ${vbTop}), so it paints outside the figure`);
       }
     }
 

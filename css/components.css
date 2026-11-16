@@ -151,13 +151,15 @@
 .ctl__head label { color: var(--ink-2); }
 .ctl__head output { color: var(--signal-text); font-variant-numeric: tabular-nums; }
 .ctl input[type="range"] { width: 100%; accent-color: var(--signal); margin: 0; }
-.ctl input[type="number"] {
+.ctl input[type="number"],
+.ctl input.ctl__text {
   box-sizing: border-box; width: 100%; min-height: 44px; min-width: 0;
   padding: .5rem .6rem; color: var(--ink); background: var(--surface-2);
   border: 1px solid var(--border); border-radius: 3px;
   font: .78rem var(--font-mono); font-variant-numeric: tabular-nums;
 }
-.ctl input[type="number"]:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
+.ctl input[type="number"]:focus-visible,
+.ctl input.ctl__text:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
 .ctl__note { font-family: var(--font-mono); font-size: .66rem; color: var(--muted); }
 
 .presets { display: flex; flex-wrap: wrap; gap: var(--s2); padding: 0 var(--s4) var(--s4); background: var(--surface); }
@@ -1688,6 +1690,17 @@ dialog.searchbox::backdrop { background: rgba(4, 8, 11, .58); }
   background: var(--surface-2); border-radius: var(--radius);
 }
 .lab-help b { color: var(--ink); font-weight: 600; }
+/* The help line's words, floated beside the control on a short laptop screen,
+   where the line itself is hidden (lab-workspace.js wireHelp). Above full screen. */
+.lab-tip {
+  position: fixed; z-index: 1001; margin: 0; padding: .4rem .55rem;
+  font-size: .74rem; line-height: 1.45; color: var(--ink-2);
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  box-shadow: 0 6px 18px color-mix(in oklab, var(--ink) 16%, transparent);
+  pointer-events: none;
+}
+.lab-tip[hidden] { display: none; }
+.lab-tip b { color: var(--ink); font-weight: 600; }
 
 /* ── stage ─────────────────────────────────────────────────────────────────── */
 .lab-stage {

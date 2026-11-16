@@ -512,6 +512,10 @@
     root.querySelector('.preset[data-preset="pcie4"]').setAttribute('aria-pressed', 'true');
     $('[data-out="note"]').textContent = IFACES.pcie4.note;
     m.render();
-    return { start() {}, stop() {}, destroy() { m.teardown(); } };
+    /* The lab workspace resizes these plots and asks for a repaint. Answered here,
+       the repaint is a redraw; unanswered, the loader nudges a slider instead, and
+       the panel drops its interface preset for "Custom". */
+    const offRepaint = K.onRepaint(root, () => m.render());
+    return { start() {}, stop() {}, destroy() { offRepaint(); m.teardown(); } };
   };
 })();
